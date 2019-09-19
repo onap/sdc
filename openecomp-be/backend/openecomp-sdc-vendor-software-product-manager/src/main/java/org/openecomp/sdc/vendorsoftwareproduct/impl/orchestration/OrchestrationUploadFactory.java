@@ -19,6 +19,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.errors.OrchestrationTemplateFileExtensionErrorBuilder;
@@ -42,9 +43,9 @@ public class OrchestrationUploadFactory {
 
     }
 
-    public static OrchestrationTemplateFileHandler createOrchestrationTemplateFileHandler(String fileSuffix) {
-        String fileExtension = fileSuffix.toLowerCase();
-        ImplementationConfiguration orchestrationTemplateFileHandler = FILE_HANLDERS.get(fileExtension);
+    public static OrchestrationTemplateFileHandler createOrchestrationTemplateFileHandler(
+            final OnboardingTypesEnum onboardingType) {
+        final ImplementationConfiguration orchestrationTemplateFileHandler = FILE_HANLDERS.get(onboardingType.toString());
 
         if(Objects.isNull(orchestrationTemplateFileHandler)){
             throw new CoreException(new OrchestrationTemplateFileExtensionErrorBuilder

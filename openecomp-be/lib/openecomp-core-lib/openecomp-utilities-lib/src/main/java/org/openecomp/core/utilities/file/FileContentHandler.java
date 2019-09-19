@@ -21,14 +21,11 @@
 package org.openecomp.core.utilities.file;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
-
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.MapUtils;
 
 public class FileContentHandler {
@@ -36,13 +33,12 @@ public class FileContentHandler {
     private Map<String, byte[]> files = new HashMap<>();
 
     /**
-     * Gets file content.
+     * Gets file content as stream.
      *
      * @param fileName the file name
-     * @return the file content
+     * @return if the file was found, its content as stream, otherwise {@code null}.
      */
-    public InputStream getFileContent(String fileName) {
-
+    public InputStream getFileContentAsStream(final String fileName) {
         byte[] content = files.get(fileName);
         if (content == null || content.length == 0) {
             return null;
@@ -51,89 +47,67 @@ public class FileContentHandler {
         return new ByteArrayInputStream(content);
     }
 
-    /**
-     * Applies a business logic to a file's content while taking care of all retrieval logic.
-     *
-     * @param fileName  name of a file inside this content handler.
-     * @param processor the business logic to work on the file's input stream, which may not be set
-     *                  (check the {@link Optional} if no such file can be found
-     * @param <T>       return type, may be {@link java.lang.Void}
-     * @return result produced by the processor
-     */
-    public <T> T processFileContent(String fileName, Function<Optional<InputStream>, T> processor) {
-
-        // do not throw IOException to mimic the existing uses of getFileContent()
-        try (InputStream contentInputStream = getFileContent(fileName)) {
-            return processor.apply(Optional.ofNullable(contentInputStream));
-        } catch (IOException e) {
-            throw new ProcessingException("Failed to process file: " + fileName, e);
-        }
+    public byte[] getFileContent(final String fileName) {
+        return files.get(fileName);
     }
 
-    public void addFile(String fileName, byte[] content) {
-        files.put(fileName, content);
+    public boolean isFolder(final String fileName) {
+        return files.get(fileName) == null;
     }
 
-    public void addFile(String fileName, InputStream is) {
+    public boolean isFile(final String fileName) {
+        return files.get(fileName) != null;
+    }
 
+    public void addFolder(final String folder) {
+        files.put(folder, null);
+    }
+
+    public void addFile(final String fileName, final byte[] content) {
+        files.put(fileName, content == null ? new byte[0] : content);
+    }
+
+    public void addFile(final String fileName, final InputStream is) {
         files.put(fileName, FileUtils.toByteArray(is));
     }
 
     public Map<String, byte[]> getFiles() {
-        return files;
+        return files.entrySet().stream().filter(entry -> entry.getValue() != null)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public void setFiles(Map<String, byte[]> files) {
-        this.files = files;
-    }
-
-    public void setFiles(FileContentHandler extFiles) {
-        extFiles.getFileList().forEach(fileName -> this.addFile(fileName, extFiles.getFileContent(fileName)));
+    public void setFiles(final Map<String, byte[]> files) {
+        addAll(files);
     }
 
     public Set<String> getFileList() {
-        return files.keySet();
+        return files.keySet().stream().filter(this::isFile).collect(Collectors.toSet());
     }
 
-    public void putAll(Map<String, byte[]> files) {
-        this.files = files;
+    public Set<String> getFolderList() {
+        return files.keySet().stream().filter(this::isFolder).collect(Collectors.toSet());
     }
 
-    public void addAll(FileContentHandler other) {
-        this.files.putAll(other.files);
+    public void addAll(final FileContentHandler fileContentHandlerOther) {
+        addAll(fileContentHandlerOther.getFiles());
+    }
+
+    private void addAll(final Map<String, byte[]> files) {
+        if (!MapUtils.isEmpty(files)) {
+            files.forEach(this::addFile);
+        }
     }
 
     public boolean isEmpty() {
         return MapUtils.isEmpty(this.files);
     }
 
-    public void remove(String fileName) {
-        files.remove(fileName);
+    public byte[] remove(final String fileName) {
+        return files.remove(fileName);
     }
 
-    public boolean containsFile(String fileName) {
+    public boolean containsFile(final String fileName) {
         return files.containsKey(fileName);
     }
 
-    /**
-     * An application-specific runtime exception
-     */
-    private static class ProcessingException extends RuntimeException {
-
-        public ProcessingException() {
-            super();
-        }
-
-        public ProcessingException(String message) {
-            super(message);
-        }
-
-        public ProcessingException(Throwable cause) {
-            super(cause);
-        }
-
-        public ProcessingException(String msg, Throwable cause) {
-            super(msg, cause);
-        }
-    }
 }

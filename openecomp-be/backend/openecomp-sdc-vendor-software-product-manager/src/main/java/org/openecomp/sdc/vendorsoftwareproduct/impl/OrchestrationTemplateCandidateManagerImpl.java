@@ -65,7 +65,7 @@ public class OrchestrationTemplateCandidateManagerImpl
                                    final OnboardPackageInfo onboardPackageInfo) {
     final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
     final OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
-        OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(onboardPackage.getFileExtension());
+        OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(onboardPackageInfo.getPackageType());
 
     final UploadFileResponse uploadFileResponse =
         orchestrationTemplateFileHandler.upload(vspDetails, onboardPackageInfo, candidateService);
