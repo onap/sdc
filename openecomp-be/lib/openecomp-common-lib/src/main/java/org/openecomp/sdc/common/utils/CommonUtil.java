@@ -36,7 +36,6 @@ import org.openecomp.sdc.common.errors.Messages;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,7 +45,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
+import org.openecomp.sdc.common.exception.ZipException;
 import java.util.zip.ZipInputStream;
 
 public class CommonUtil {
@@ -114,6 +113,25 @@ public class CommonUtil {
 
     return new ImmutablePair<>(mapFileContent, folderList);
   }
+
+    public static FileContentHandler getZipContent(final byte[] zipFile) throws ZipException {
+        final FileContentHandler fileContentHandler = new FileContentHandler();
+        try (final ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(zipFile))) {
+            ZipEntry zipEntry;
+            while ((zipEntry = inputZipStream.getNextEntry()) != null) {
+                assertEntryNotVulnerable(zipEntry);
+                if (zipEntry.isDirectory()) {
+                    fileContentHandler.addFolder(zipEntry.getName());
+                } else {
+                    fileContentHandler.addFile(zipEntry.getName(), FileUtils.toByteArray(inputZipStream));
+                }
+            }
+        } catch (final IOException exception) {
+            throw new ZipException("An error has occured while extracting the Zip content", exception);
+        }
+
+        return fileContentHandler;
+    }
 
   private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
     if (entry.getName().contains("../")) {

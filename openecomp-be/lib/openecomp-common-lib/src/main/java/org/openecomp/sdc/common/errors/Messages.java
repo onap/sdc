@@ -22,6 +22,12 @@ public enum Messages {
   VERSION_UPGRADE("Item %s is of old version. A check out was made in order to get new " +
       "functionalities"),
 
+  PACKAGE_PROCESS_ERROR("Could not process package '%s'"),
+  PACKAGE_INVALID_EXTENSION("Invalid package '%s' extension. Expecting %s."),
+  PACKAGE_EMPTY_ERROR("The given package is empty '%s'"),
+  PACKAGE_PROCESS_INTERNAL_PACKAGE_ERROR("Could not process internal package '%s'"),
+  PACKAGE_INVALID_ERROR("Invalid package content '%s'"),
+  PACKAGE_MISSING_INTERNAL_PACKAGE("Missing expected internal package"),
   INVALID_ZIP_FILE("Invalid zip file"),
   INVALID_CSAR_FILE("Invalid csar file"),
   CSAR_FILE_NOT_FOUND("Each CSAR file must contain %s file."),
@@ -192,7 +198,7 @@ public enum Messages {
   /* Notifications */
   FAILED_TO_MARK_NOTIFICATION_AS_READ("Failed to mark notifications as read"),
   FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION("Failed to update last seen notification for user %s"),
-  FAILED_TO_VERIFY_SIGNATURE("Cannot verify signature of signed archive!");
+  FAILED_TO_VERIFY_SIGNATURE("Could not verify signature of signed package.");
 
   private String errorMessage;
 

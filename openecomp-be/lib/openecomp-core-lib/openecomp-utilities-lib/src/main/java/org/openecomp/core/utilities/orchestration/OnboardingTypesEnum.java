@@ -16,14 +16,13 @@
 
 package org.openecomp.core.utilities.orchestration;
 
-import java.util.Optional;
-
-import static java.util.Arrays.asList;
+import java.util.Arrays;
+import org.apache.commons.lang3.StringUtils;
 public enum OnboardingTypesEnum {
-    CSAR("csar"), ZIP("zip"), MANUAL("manual"), NONE("none");
-    private String type;
+    CSAR("csar"), ZIP("zip"), MANUAL("manual"), NONE("none"), SIGNED_CSAR("signed-csar");
+    private final String type;
 
-    OnboardingTypesEnum(String type) {
+    OnboardingTypesEnum(final String type) {
         this.type = type;
     }
 
@@ -32,15 +31,14 @@ public enum OnboardingTypesEnum {
         return type;
     }
 
-    public static final OnboardingTypesEnum getOnboardingTypesEnum(final String inStr) {
-        if (inStr == null) {
+    public static OnboardingTypesEnum getOnboardingTypesEnum(final String type) {
+        if (StringUtils.isEmpty(type)) {
             return null;
         }
 
-        Optional<OnboardingTypesEnum>  onboardingTypesOptional =  asList(OnboardingTypesEnum.values()).stream()
-                .filter(onboardingTypesEnum -> onboardingTypesEnum.toString().equals(inStr.toLowerCase()))
-            .findAny();
-      return onboardingTypesOptional.orElse(null);
+        return Arrays.stream(OnboardingTypesEnum.values())
+            .filter(onboardingTypesEnum -> onboardingTypesEnum.toString().equalsIgnoreCase(type))
+            .findAny().orElse(null);
     }
 
 }
