@@ -54,7 +54,7 @@ public class HeatTreeManagerUtil {
 
         HeatTreeManager heatTreeManager = new HeatTreeManager();
         fileContentMap.getFileList().forEach(
-                fileName -> heatTreeManager.addFile(fileName, fileContentMap.getFileContent(fileName)));
+                fileName -> heatTreeManager.addFile(fileName, fileContentMap.getFileContentAsStream(fileName)));
 
         return heatTreeManager;
     }

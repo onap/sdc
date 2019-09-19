@@ -229,9 +229,15 @@ public class FileUtils {
   public static FileContentHandler getFileContentMapFromZip(byte[] zipData)
       throws ZipException {
     final Map<String, byte[]> zipFileAndByteMap = ZipUtils.readZip(zipData, true);
-    final FileContentHandler mapFileContent = new FileContentHandler();
-    mapFileContent.setFiles(zipFileAndByteMap);
-    return mapFileContent;
+    final FileContentHandler fileContentHandler = new FileContentHandler();
+    zipFileAndByteMap.forEach((path, bytes) -> {
+      if (bytes == null) {
+        fileContentHandler.addFolder(path);
+      } else {
+        fileContentHandler.addFile(path, bytes);
+      }
+    });
+    return fileContentHandler;
   }
 
 
@@ -280,24 +286,23 @@ public class FileUtils {
    */
   public static Map<String, String> writeFilesFromFileContentHandler(final FileContentHandler fileContentHandler,
                                                                      final Path dir) throws IOException {
-    File file;
     final File dirFile = dir.toFile();
     final Map<String, String> filePaths = new HashMap<>();
+    File file;
+    for (final String folderPath : fileContentHandler.getFolderList()) {
+      file = new File(dirFile, folderPath);
+      filePaths.put(folderPath, file.getAbsolutePath());
+      if (!file.exists() && !file.mkdirs()) {
+        throw new IOException("Could not create directory " + file.getAbsolutePath());
+      }
+    }
     for (final Map.Entry<String, byte[]> fileEntry : fileContentHandler.getFiles().entrySet()) {
       file = new File(dirFile, fileEntry.getKey());
       filePaths.put(fileEntry.getKey(), file.getAbsolutePath());
       final byte[] fileBytes = fileEntry.getValue();
-      if (fileBytes == null) {
-        if (!file.exists() && !file.mkdirs()) {
-          throw new IOException("Could not create directory " + file.getAbsolutePath());
-        }
-        continue;
-      } else {
-        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-          throw new IOException("Could not create parent directory for " + file.getAbsolutePath());
-        }
+      if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+        throw new IOException("Could not create parent directory for " + file.getAbsolutePath());
       }
-
       try (final FileOutputStream fop = new FileOutputStream(file.getAbsolutePath());) {
         fop.write(fileBytes);
         fop.flush();

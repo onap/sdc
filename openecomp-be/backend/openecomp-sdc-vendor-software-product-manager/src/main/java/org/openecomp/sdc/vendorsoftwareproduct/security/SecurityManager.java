@@ -61,7 +61,6 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.util.Store;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
@@ -73,7 +72,6 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class SecurityManager {
 
     private static final String CERTIFICATE_DEFAULT_LOCATION = "cert";
-    private static SecurityManager INSTANCE = null;
 
     private Logger logger = LoggerFactory.getLogger(SecurityManager.class);
     private Set<X509Certificate> trustedCertificates = new HashSet<>();
@@ -90,10 +88,15 @@ public class SecurityManager {
     }
 
     public static SecurityManager getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new SecurityManager();
-        }
-        return INSTANCE;
+        return SecurityManagerInstanceHolder.instance;
+    }
+
+    /**
+     * Initialization on demand class / synchronized singleton pattern.
+     */
+    private static class SecurityManagerInstanceHolder {
+
+        private static final SecurityManager instance = new SecurityManager();
     }
 
     /**

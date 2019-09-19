@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import java.util.Set;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
@@ -54,13 +55,13 @@ class ONAPCsarValidator implements Validator {
     private List<ErrorMessage> uploadFileErrors = new ArrayList<>();
 
     @Override
-    public Map<String, List<ErrorMessage>> validateContent(FileContentHandler contentHandler, List<String> folderList) {
+    public Map<String, List<ErrorMessage>> validateContent(final FileContentHandler contentHandler) {
 
         Map<String, List<ErrorMessage>> errors = new HashMap<>();
         validateManifest(contentHandler);
         validateMetadata(contentHandler);
         validateNoExtraFiles(contentHandler);
-        validateFolders(folderList);
+        validateFolders(contentHandler.getFolderList());
 
         if(uploadFileErrors == null || uploadFileErrors.isEmpty()){
             return errors;
@@ -71,7 +72,7 @@ class ONAPCsarValidator implements Validator {
 
     private void validateMetadata(FileContentHandler contentMap){
         if (!validateTOSCAYamlFileInRootExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
-            try (InputStream metaFileContent = contentMap.getFileContent(TOSCA_META_PATH_FILE_NAME)) {
+            try (InputStream metaFileContent = contentMap.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME)) {
 
                 ToscaMetadata onboardingToscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(metaFileContent);
                 String entryDefinitionsPath = onboardingToscaMetadata.getMetaEntries().get(TOSCA_META_ENTRY_DEFINITIONS);
@@ -97,7 +98,7 @@ class ONAPCsarValidator implements Validator {
             return;
         }
 
-        try (InputStream fileContent = contentMap.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
+        try (InputStream fileContent = contentMap.getFileContentAsStream(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
 
             Manifest onboardingManifest = new ONAPManifestOnboarding();
             onboardingManifest.parse(fileContent);
@@ -122,7 +123,7 @@ class ONAPCsarValidator implements Validator {
         }
     }
 
-    private void validateFolders(List<String> folderList) {
+    private void validateFolders(Set<String> folderList) {
         List<String> filterResult =
                 folderList.stream().filter(this::filterFolders).collect(Collectors.toList());
         if (!filterResult.isEmpty()) {

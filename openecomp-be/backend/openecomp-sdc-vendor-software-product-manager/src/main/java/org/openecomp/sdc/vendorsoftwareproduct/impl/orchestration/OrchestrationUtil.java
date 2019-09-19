@@ -287,7 +287,7 @@ public class OrchestrationUtil {
                              FileContentHandler fileContentMap, HeatStructureTree tree) {
     Map<String, Object> manifestAsMap =
         fileContentMap.containsFile(SdcCommon.MANIFEST_NAME)
-            ? (Map<String, Object>) JsonUtil.json2Object(fileContentMap.getFileContent(
+            ? (Map<String, Object>) JsonUtil.json2Object(fileContentMap.getFileContentAsStream(
             SdcCommon.MANIFEST_NAME), Map.class)
             : new HashMap<>();
 
