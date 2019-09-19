@@ -19,13 +19,11 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
-import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +31,8 @@ import java.util.Optional;
 import javax.activation.DataHandler;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -52,8 +48,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateMan
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
-import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -65,7 +60,6 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplate
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
 import org.openecomp.sdcrests.vsp.rest.OrchestrationTemplateCandidate;
-import org.openecomp.sdcrests.vsp.rest.data.PackageArchive;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapFilesDataStructureToDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFileResponseDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
@@ -89,91 +83,41 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
   public Response upload(final String vspId, final String versionId,
                          final Attachment fileToUpload, final String user) {
     final byte[] fileToUploadBytes = fileToUpload.getObject(byte[].class);
-    String fileToUploadName = "";
-    String fileToUploadExtension = "";
     final DataHandler dataHandler = fileToUpload.getDataHandler();
-    if(dataHandler != null) {
-      final String filename = dataHandler.getName();
-      fileToUploadName = FilenameUtils.removeExtension(filename);
-      fileToUploadExtension = FilenameUtils.getExtension(filename);
-    }
-    final PackageArchive archive = new PackageArchive(fileToUploadBytes);
-    final Optional<UploadFileResponseDto> validatePackageArchiveResponse =
-        validatePackageArchive(archive);
-    if (!validatePackageArchiveResponse.isPresent()) {
-      final VspDetails vspDetails = new VspDetails(vspId, new Version(versionId));
-      return processOnboardPackage(fileToUpload, fileToUploadBytes, fileToUploadName,
-          fileToUploadExtension, archive, vspDetails);
-    } else {
-      return Response.ok(validatePackageArchiveResponse.get()).build();
-    }
-  }
+    final String filename = dataHandler.getName();
 
-  private Optional<UploadFileResponseDto> validatePackageArchive(final PackageArchive archive) {
-    UploadFileResponseDto uploadFileResponseDto;
-    try {
-      if (archive.isSigned() && !archive.isSignatureValid()) {
-        final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
-            getErrorWithParameters(Messages.FAILED_TO_VERIFY_SIGNATURE.getErrorMessage(), ""));
-        LOGGER.error(errorMessage.getMessage());
-        uploadFileResponseDto = buildUploadResponseWithError(errorMessage);
-        //returning OK as SDC UI won't show error message if NOT OK error code.
-        return Optional.of(uploadFileResponseDto);
-      }
-    } catch (final SecurityManagerException e) {
-      final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
-          getErrorWithParameters(e.getMessage(), ""));
-      LOGGER.error(errorMessage.getMessage(), e);
-      uploadFileResponseDto = buildUploadResponseWithError(errorMessage);
-      //returning OK as SDC UI won't show error message if NOT OK error code.
-      return Optional.of(uploadFileResponseDto);
-    }
-    return Optional.empty();
-  }
-
-  private Response processOnboardPackage(final Attachment fileToUpload,
-                                         final byte[] fileToUploadBytes,
-                                         final String fileToUploadName,
-                                         final String fileToUploadExtension,
-                                         final PackageArchive archive,
-                                         final VspDetails vspDetails) {
-    final String filename = archive.getArchiveFileName()
-        .orElse(fileToUpload.getContentDisposition().getFilename());
-    UploadFileResponseDto uploadFileResponseDto;
-    try {
-      final String archiveFileExtension = getFileExtension(filename);
-      final OnboardPackageInfo onboardPackageInfo;
-      if (OnboardingTypesEnum.CSAR.toString().equalsIgnoreCase(archiveFileExtension)) {
-        final OnboardPackage onboardPackage = new OnboardPackage(getNetworkPackageName(filename),
-            archiveFileExtension, ByteBuffer.wrap(archive.getPackageFileContents()));
-        onboardPackageInfo = new OnboardPackageInfo(fileToUploadName,
-            fileToUploadExtension, ByteBuffer.wrap(fileToUploadBytes), onboardPackage);
-      } else {
-        onboardPackageInfo = new OnboardPackageInfo(fileToUploadName,
-            fileToUploadExtension, ByteBuffer.wrap(fileToUploadBytes));
-      }
-      final UploadFileResponse uploadFileResponse = candidateManager
-          .upload(vspDetails, onboardPackageInfo);
-      uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
-          .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
-
-      return Response.ok(uploadFileResponseDto).build();
-    } catch (final SecurityManagerException e) {
-      final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
-          getErrorWithParameters(e.getMessage(), ""));
-      LOGGER.error(errorMessage.getMessage(), e);
-      uploadFileResponseDto = buildUploadResponseWithError(errorMessage);
-      //returning OK as SDC UI won't show error message if NOT OK error code.
+    final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(filename, fileToUploadBytes);
+    if (onboardingPackageProcessor.hasErrors()) {
+      final UploadFileResponseDto uploadFileResponseDto =
+          buildUploadResponseWithError(onboardingPackageProcessor.getErrorMessageSet().toArray(new ErrorMessage[0]));
       return Response.ok(uploadFileResponseDto).build();
     }
+
+    final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+
+    if (onboardPackageInfo == null) {
+      final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
+          new ErrorMessage(ErrorLevel.ERROR, Messages.PACKAGE_PROCESS_ERROR.formatMessage(filename)));
+      return Response.ok(uploadFileResponseDto).build();
+    }
+
+    final VspDetails vspDetails = new VspDetails(vspId, new Version(versionId));
+    return processOnboardPackage(onboardPackageInfo, vspDetails);
   }
 
-  private UploadFileResponseDto buildUploadResponseWithError(ErrorMessage errorMessage) {
-    UploadFileResponseDto uploadFileResponseDto = new UploadFileResponseDto();
-    Map<String, List<ErrorMessage>> errorMap = new HashMap<>();
-    List<ErrorMessage> errorMessages = new ArrayList<>();
-    errorMessages.add(errorMessage);
-    errorMap.put(SdcCommon.UPLOAD_FILE, errorMessages);
+    private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails) {
+        final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
+        final UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
+            .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
+        return Response.ok(uploadFileResponseDto).build();
+    }
+
+  private UploadFileResponseDto buildUploadResponseWithError(final ErrorMessage... errorMessages) {
+    final UploadFileResponseDto uploadFileResponseDto = new UploadFileResponseDto();
+    final Map<String, List<ErrorMessage>> errorMap = new HashMap<>();
+    final List<ErrorMessage> errorMessageList = new ArrayList<>();
+    Collections.addAll(errorMessageList, errorMessages);
+    errorMap.put(SdcCommon.UPLOAD_FILE, errorMessageList);
     uploadFileResponseDto.setErrors(errorMap);
     return uploadFileResponseDto;
   }

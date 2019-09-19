@@ -45,6 +45,7 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.exception.OnboardPackageException;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.CandidateServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.ManifestCreatorNamingConventionImpl;
@@ -119,23 +120,23 @@ public class UploadCSARFileTest {
   }
 
   @Test
-  public void testUploadFileIsEmpty() throws Exception {
+  public void testUploadFileIsEmpty() throws OnboardPackageException {
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
     onboardPackageInfo = new OnboardPackageInfo("file", OnboardingTypesEnum.CSAR.toString(),
-            ByteBuffer.wrap(new byte[]{}));
+            ByteBuffer.wrap(new byte[]{}), OnboardingTypesEnum.CSAR);
     UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
     assertEquals(1, uploadFileResponse.getErrors().size());
   }
 
   @Test
-  public void testInvalidManifestContent() throws Exception {
+  public void testInvalidManifestContent() throws IOException, OnboardPackageException {
 
     doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     try (InputStream inputStream = getClass()
         .getResourceAsStream(BASE_DIR + "/invalidManifestContent.csar")) {
       onboardPackageInfo = new OnboardPackageInfo("invalidManifestContent",
-              OnboardingTypesEnum.CSAR.toString(), convertFileInputStream(inputStream));
+              OnboardingTypesEnum.CSAR.toString(), convertFileInputStream(inputStream), OnboardingTypesEnum.CSAR);
       UploadFileResponse response =
           candidateManager.upload(vspDetails, onboardPackageInfo);
       assertEquals(1, response.getErrors().size());
@@ -156,12 +157,12 @@ public class UploadCSARFileTest {
   }
 
   private UploadFileResponse testCsarUpload(final String csarFileName,
-                                            final int expectedErrorsNumber) throws IOException {
+                                            final int expectedErrorsNumber) throws IOException, OnboardPackageException {
     UploadFileResponse uploadFileResponse;
     try (final InputStream inputStream = getClass()
         .getResourceAsStream(BASE_DIR + File.separator + csarFileName)) {
       onboardPackageInfo = new OnboardPackageInfo(csarFileName, OnboardingTypesEnum.CSAR.toString(),
-              convertFileInputStream(inputStream));
+              convertFileInputStream(inputStream), OnboardingTypesEnum.CSAR);
       uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
       assertThat(String.format("Expecting %s error(s) in file '%s'", expectedErrorsNumber, csarFileName), uploadFileResponse.getErrors().size(), is(expectedErrorsNumber));
     }

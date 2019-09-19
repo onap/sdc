@@ -34,12 +34,12 @@ public class ValidatorFactory {
     /**
      * Returns a validator based on the contents of the csar package.
      *
-     * @param contentMap the csar package
+     * @param fileContentHandler the csar package
      * @return Validator based on the contents of the csar package provided
      * @throws IOException when metafile is invalid
      */
-    public static Validator getValidator(FileContentHandler contentMap) throws IOException{
+    public static Validator getValidator(final FileContentHandler fileContentHandler) throws IOException {
         ETSIService etsiService = new ETSIServiceImpl(null);
-        return etsiService.isSol004WithToscaMetaDirectory(contentMap) ? new SOL004MetaDirectoryValidator() : new ONAPCsarValidator();
+        return etsiService.isSol004WithToscaMetaDirectory(fileContentHandler) ? new SOL004MetaDirectoryValidator() : new ONAPCsarValidator();
     }
 }

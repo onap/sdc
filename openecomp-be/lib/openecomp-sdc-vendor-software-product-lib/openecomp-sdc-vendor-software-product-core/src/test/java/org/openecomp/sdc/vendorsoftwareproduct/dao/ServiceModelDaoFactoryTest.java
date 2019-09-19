@@ -174,7 +174,7 @@ public class ServiceModelDaoFactoryTest {
     artifacts.put("art4", ("this is art4 desc:" + CommonMethods.nextUuId()).getBytes());
 
     FileContentHandler fileContentHandler = new FileContentHandler();
-    fileContentHandler.putAll(artifacts);
+    fileContentHandler.setFiles(artifacts);
     return fileContentHandler;
   }
 

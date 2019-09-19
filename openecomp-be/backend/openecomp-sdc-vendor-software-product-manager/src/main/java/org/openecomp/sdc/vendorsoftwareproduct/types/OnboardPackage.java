@@ -21,6 +21,10 @@ package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import java.nio.ByteBuffer;
 import lombok.Getter;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.common.zip.exception.ZipException;
+import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.vendorsoftwareproduct.exception.OnboardPackageException;
 
 @Getter
 public class OnboardPackage {
@@ -28,11 +32,30 @@ public class OnboardPackage {
     private final String filename;
     private final String fileExtension;
     private final ByteBuffer fileContent;
+    private final FileContentHandler fileContentHandler;
 
-    public OnboardPackage(final String filename, final String fileExtension, final ByteBuffer fileContent) {
+    public OnboardPackage(final String filename, final String fileExtension, final ByteBuffer fileContent,
+                          final FileContentHandler fileContentHandler) {
         this.filename = filename;
         this.fileExtension = fileExtension;
         this.fileContent = fileContent;
+        this.fileContentHandler = fileContentHandler;
     }
 
+    public OnboardPackage(final String filename, final String fileExtension, final ByteBuffer fileContent)
+        throws OnboardPackageException {
+        this.filename = filename;
+        this.fileExtension = fileExtension;
+        this.fileContent = fileContent;
+        try {
+            fileContentHandler = CommonUtil.getZipContent(fileContent.array());
+        } catch (final ZipException e) {
+            throw new OnboardPackageException("Could not read the package content", e);
+        }
+    }
+
+    public OnboardPackage(final String packageName, final String packageExtension, final byte[] packageContentBytes)
+        throws OnboardPackageException {
+        this(packageName, packageExtension, ByteBuffer.wrap(packageContentBytes));
+    }
 }

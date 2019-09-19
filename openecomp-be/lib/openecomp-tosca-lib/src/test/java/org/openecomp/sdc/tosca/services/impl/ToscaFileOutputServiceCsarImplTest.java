@@ -104,7 +104,7 @@ public class ToscaFileOutputServiceCsarImplTest {
 
 
         FileContentHandler heatFiles = new FileContentHandler();
-        heatFiles.putAll(dummyHeatArtifacts);
+        heatFiles.setFiles(dummyHeatArtifacts);
         Map<String, byte[]> licenseArtifacts = new HashMap<>();
 
         FileContentHandler licenseArtifactsFiles = new FileContentHandler();
@@ -116,7 +116,7 @@ public class ToscaFileOutputServiceCsarImplTest {
                 ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
                         "license-file-2.xml", file1Content.getBytes());
 
-        licenseArtifactsFiles.putAll(licenseArtifacts);
+        licenseArtifactsFiles.setFiles(licenseArtifacts);
 
         byte[] csarFile = toscaFileOutputServiceCSARImpl.createOutputFile(
                 new ToscaServiceModel(heatFiles, definitionsInput,

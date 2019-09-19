@@ -20,6 +20,7 @@
 package org.openecomp.sdc.common.utils;
 
 import com.google.common.collect.Multimap;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,11 +30,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -71,6 +75,14 @@ public class CommonUtil {
     return pair.getLeft();
   }
 
+  /**
+   * Extracts the zip in memory and build a pair of {@link FileContentHandler} and the zip folder list. The {@link
+   * FileContentHandler} will only contain the files, not the folders.
+   *
+   * @param uploadFileData the zip file to extract
+   * @return a pair of {@link FileContentHandler} only with the zip files and a list of the zip folders.
+   * @throws ZipException when there was a problem during the zip reading
+   */
   public static Pair<FileContentHandler, List<String>> getFileContentMapFromOrchestrationCandidateZip(
       byte[] uploadFileData) throws ZipException {
     final Map<String, byte[]> zipFileMap = ZipUtils.readZip(uploadFileData, true);
@@ -86,6 +98,26 @@ public class CommonUtil {
     });
 
     return new ImmutablePair<>(mapFileContent, folderList);
+  }
+
+  /**
+   * Extracts the zip in memory and build the {@link FileContentHandler}.
+   *
+   * @param zipFile the zip file to extract
+   * @return The {@link FileContentHandler} based on the zip content
+   * @throws ZipException when there was a problem during the zip reading
+   */
+  public static FileContentHandler getZipContent(final byte[] zipFile) throws ZipException {
+    final Map<String, byte[]> zipFileMap = ZipUtils.readZip(zipFile, true);
+    final FileContentHandler fileContentHandler = new FileContentHandler();
+    zipFileMap.forEach((key, value) -> {
+      if (value == null) {
+        fileContentHandler.addFolder(key);
+      } else {
+        fileContentHandler.addFile(key, value);
+      }
+    });
+    return fileContentHandler;
   }
 
   private static void validateNoFolders(List<String> folderList) {

@@ -20,16 +20,11 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-
 import java.io.ByteArrayInputStream;
 import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -59,33 +54,25 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
       return uploadFileResponse;
     }
 
-    final Optional<FileContentHandler> optionalContentMap =
-        getFileContentMap(uploadFileResponse, fileContentByteArray);
-    if (!optionalContentMap.isPresent()) {
-      logger.error(getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
-          getHandlerType().toString()));
-      uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
-          getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
-              getHandlerType().toString())));
+    final UploadFileResponse validateResponse = validate(onboardPackageInfo);
+
+    if (!MapUtils.isEmpty(validateResponse.getErrors())) {
+      uploadFileResponse.addStructureErrors(validateResponse.getErrors());
       return uploadFileResponse;
     }
 
-    if (!MapUtils.isEmpty(uploadFileResponse.getErrors())) {
-      return uploadFileResponse;
+    final UploadFileResponse responseFromUpdate = updateCandidateData(vspDetails, onboardPackageInfo,
+        candidateService);
+    if (!MapUtils.isEmpty(responseFromUpdate.getErrors())) {
+      uploadFileResponse.addStructureErrors(responseFromUpdate.getErrors());
     }
-    if (updateCandidateData(vspDetails, onboardPackageInfo, candidateService, uploadFileResponse,
-        optionalContentMap.get())) {
-      return uploadFileResponse;
-    }
+
     return uploadFileResponse;
-
   }
 
-  protected abstract boolean updateCandidateData(final VspDetails vspDetails,
+  protected abstract UploadFileResponse updateCandidateData(final VspDetails vspDetails,
                                                  final OnboardPackageInfo onboardPackageInfo,
-                                                 final CandidateService candidateService,
-                                                 final UploadFileResponse uploadFileResponse,
-                                                 final FileContentHandler contentMap);
+                                                 final CandidateService candidateService);
 
   private boolean isFileFileToUploadEmpty(final OnboardPackage onboardPackage,
                                           final UploadFileResponse uploadFileResponse,
@@ -114,9 +101,7 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
     return false;
   }
 
-  public abstract Optional<FileContentHandler> getFileContentMap(
-      UploadFileResponse uploadFileResponse,
-      byte[] uploadedFileData);
+  public abstract UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo);
 
   protected abstract OnboardingTypesEnum getHandlerType();
 }

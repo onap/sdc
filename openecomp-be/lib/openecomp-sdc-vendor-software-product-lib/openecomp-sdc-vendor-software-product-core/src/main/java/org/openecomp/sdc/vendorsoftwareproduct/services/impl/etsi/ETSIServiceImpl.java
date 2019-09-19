@@ -152,12 +152,11 @@ public class ETSIServiceImpl implements ETSIService {
     private Optional<Path> updateNonManoPathInHandler(final FileContentHandler handler, final NonManoType nonManoType,
                                                       final Path nonManoOriginalFilePath) {
         final Path fixedSourcePath = fixNonManoPath(nonManoOriginalFilePath);
-        final Map<String, byte[]> packageFileMap = handler.getFiles();
-        if (packageFileMap.containsKey(fixedSourcePath.toString())) {
+        if (handler.containsFile(fixedSourcePath.toString())) {
             final Path newNonManoPath = Paths.get(nonManoType.getType(), nonManoType.getLocation()
                 , fixedSourcePath.getFileName().toString());
-            if (!packageFileMap.containsKey(newNonManoPath.toString())) {
-                packageFileMap.put(newNonManoPath.toString(), packageFileMap.remove(fixedSourcePath.toString()));
+            if (!handler.containsFile(newNonManoPath.toString())) {
+                handler.addFile(newNonManoPath.toString(), handler.remove(fixedSourcePath.toString()));
                 return Optional.of(newNonManoPath);
             }
         }
@@ -254,10 +253,10 @@ public class ETSIServiceImpl implements ETSIService {
         ToscaMetadata metadata;
         if (handler.containsFile(TOSCA_META_PATH_FILE_NAME)) {
             metadata = OnboardingToscaMetadata
-                .parseToscaMetadataFile(handler.getFileContent(TOSCA_META_PATH_FILE_NAME));
+                .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
         } else if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
             metadata = OnboardingToscaMetadata
-                .parseToscaMetadataFile(handler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME));
+                .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_ORIG_PATH_FILE_NAME));
         } else {
             throw new IOException("TOSCA.meta file not found!");
         }
@@ -267,7 +266,7 @@ public class ETSIServiceImpl implements ETSIService {
     private ToscaMetadata getOriginalMetadata(final FileContentHandler handler) throws IOException {
         if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
             return OnboardingToscaMetadata
-                .parseToscaMetadataFile(handler.getFileContent(TOSCA_META_ORIG_PATH_FILE_NAME));
+                .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_ORIG_PATH_FILE_NAME));
         } else {
             throw new IOException(String.format("%s file not found", TOSCA_META_ORIG_PATH_FILE_NAME));
         }
@@ -276,9 +275,9 @@ public class ETSIServiceImpl implements ETSIService {
     private InputStream getManifestInputStream(FileContentHandler handler, String manifestLocation) throws IOException {
         InputStream io;
         if (manifestLocation == null || !handler.containsFile(manifestLocation)) {
-            io = handler.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME);
+            io = handler.getFileContentAsStream(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME);
         } else {
-            io = handler.getFileContent(manifestLocation);
+            io = handler.getFileContentAsStream(manifestLocation);
         }
 
         if (io == null) {

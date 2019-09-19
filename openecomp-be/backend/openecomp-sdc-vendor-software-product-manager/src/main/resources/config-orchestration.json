@@ -7,6 +7,10 @@
     "csar": {
       "enable": true,
       "implementationClass": "org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationTemplateCSARHandler"
+    },
+    "signed-csar": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationTemplateCSARHandler"
     }
   },
   "process_impl": {

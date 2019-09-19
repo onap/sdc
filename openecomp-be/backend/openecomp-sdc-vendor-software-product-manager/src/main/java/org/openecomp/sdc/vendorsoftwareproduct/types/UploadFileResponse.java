@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -108,5 +109,9 @@ public class UploadFileResponse {
 
   public Map<String, List<ErrorMessage>> getErrors() {
     return errors;
+  }
+
+  public boolean hasErrors() {
+    return !MapUtils.isEmpty(errors);
   }
 }
