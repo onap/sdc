@@ -7,9 +7,9 @@ template "sdc-yaml-config" do
     group "root"
     mode "0755"
     variables ({
-        :catalogBE_ip                 => node['Nodes']['BE'],
+        :catalogBE_host               => node['Nodes']['BE'],
         :catalogBE_port               => node['BE'][:http_port],
-        :webportal_ip                 => node['Nodes']['FE'],
+        :webportal_host               => node['Nodes']['FE'],
         :webportal_port               => node['FE'][:http_port],
         :janusgraph_file              => "#{tests_base}/conf/janusgraph.properties",
         :tests_base_ci                => "#{tests_base}/CI/tests",

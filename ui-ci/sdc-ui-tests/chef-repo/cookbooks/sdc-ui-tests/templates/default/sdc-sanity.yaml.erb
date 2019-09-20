@@ -1,22 +1,26 @@
-url: http://<%= @webportal_ip %>:8285/sdc1
 browser: firefox
 uiSimulator: true
 
 
-catalogBeHost:  <%= @catalogBE_ip %>
-catalogBePort:  <%= @catalogBE_port %>
-catalogFeHost:  <%= @webportal_ip %>
-catalogFePort:  <%= @webportal_port %>
-onboardingBeHost:  <%= node['ONBOARDING_BE_VIP'] %>
 <% if node[:disableHttp] -%>
 sdcHttpMethod: https
 onboardingBePort:  <%= node['ONBOARDING_BE'][:https_port] %>
+onboardingBeHost:  <%= node['ONBOARDING_BE'][:domain_name] %>
+url: https://<%= node['FE'][:domain_name] %>:8286/sdc1
+catalogBeHost:  <%= node['BE'][:domain_name] %>
+catalogBePort:  <%= node['BE'][:https_port] %>
+catalogFeHost:  <%= node['FE'][:domain_name] %>
+catalogFePort:  <%= node['FE'][:https_port] %>
 <% else %>
 sdcHttpMethod: http
 onboardingBePort:  <%= node['ONBOARDING_BE'][:http_port] %>
+onboardingBeHost:  <%= node['ONBOARDING_BE_VIP'] %>
+url: http://<%= @webportal_host %>:8285/sdc1
+catalogBeHost:  <%= @catalogBE_host %>
+catalogBePort:  <%= @catalogBE_port %>
+catalogFeHost:  <%= @webportal_host %>
+catalogFePort:  <%= @webportal_port %>
 <% end -%>
-
-
 
 
 esHost:         <%= @ES_IP %>
