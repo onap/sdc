@@ -52,15 +52,18 @@
    "override_attributes": {
       "FE": {
          "http_port": "8181",
-         "https_port": "9443"
+         "https_port": "9443",
+         "domain_name": "sdc"
       },
       "BE": {
          "http_port": "8080",
-         "https_port": "8443"
+         "https_port": "8443",
+         "domain_name": "sdc"
       },
       "ONBOARDING_BE": {
          "http_port": "8081",
          "https_port": "8445",
+         "domain_name": "sdc",
          "catalog_notification_url": "%s://%s:%s/sdc2/rest/v1/catalog/notif/vsp/"
       },
       "elasticsearch": {

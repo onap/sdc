@@ -2,17 +2,22 @@ outputFolder: <%= @target_path %>
 reportName: index.html
 esHost:         eshost
 disributionClientHost: disClient
-catalogFeHost:  <%= @webportal_ip %>
-catalogFePort:  <%= @webportal_port %>
-catalogBeHost:  <%= @catalogBE_ip %>
-catalogBePort:  <%= @catalogBE_port %>
-onboardingBeHost:  <%= node['ONBOARDING_BE_VIP'] %>
 <% if node[:disableHttp] -%>
 sdcHttpMethod: https
 onboardingBePort:  <%= node['ONBOARDING_BE'][:https_port] %>
+onboardingBeHost:  <%= node['ONBOARDING_BE'][:domain_name] %>
+catalogBeHost:  <%= node['BE'][:domain_name] %>
+catalogBePort:  <%= node['BE'][:https_port] %>
+catalogFeHost:  <%= node['FE'][:domain_name] %>
+catalogFePort:  <%= node['FE'][:https_port] %>
 <% else %>
 sdcHttpMethod: http
 onboardingBePort:  <%= node['ONBOARDING_BE'][:http_port] %>
+onboardingBeHost:  <%= node['ONBOARDING_BE_VIP'] %>
+catalogFeHost:  <%= @webportal_host %>
+catalogFePort:  <%= @webportal_port %>
+catalogBeHost:  <%= @catalogBE_host %>
+catalogBePort:  <%= @catalogBE_port %>
 <% end -%>
 disributionClientPort: 8181
 esPort: 9200

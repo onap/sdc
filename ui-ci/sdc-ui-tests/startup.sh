@@ -2,6 +2,25 @@
 
 /dockerstartup/vnc_startup.sh &
 
+# prepare env for HTTPS if used
+
+is_https=$(cat /root/chef-solo/environments/${ENVNAME}.json | \
+    jq -cr '.default_attributes.disableHttp' | \
+    tr '[:upper:]' '[:lower:]')
+
+if [ "$is_https" = true ] ; then
+    # setup /etc/hosts
+    SDC_FE_IP=$(cat /root/chef-solo/environments/${ENVNAME}.json | \
+        jq -cr '.default_attributes.Nodes.FE')
+    SDC_FE_HOSTNAME=$(cat /root/chef-solo/environments/${ENVNAME}.json | \
+        jq -cr '.override_attributes.FE.domain_name')
+    if ! grep -q "^[[:space:]]*${SDC_FE_IP}[[:space:]]" ; then
+        echo "${SDC_FE_IP}" "${SDC_FE_HOSTNAME}" >> /etc/hosts
+    fi
+fi
+
+# run tests
+
 cd /root/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 

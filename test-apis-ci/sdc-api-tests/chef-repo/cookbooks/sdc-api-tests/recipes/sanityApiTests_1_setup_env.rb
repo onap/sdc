@@ -47,3 +47,18 @@ tests_base="/var/lib/tests"
     mode '0755'
     action :create
  end
+
+ directory "create_etc_dir" do
+   path "/var/lib/tests/etc"
+   owner 'root'
+   group 'root'
+   mode '0755'
+   action :create
+ end
+
+cookbook_file "/var/lib/tests/etc/org.onap.sdc.trust.jks" do
+   source "org.onap.sdc.trust.jks"
+   owner "root"
+   group "root"
+   mode 0644
+end

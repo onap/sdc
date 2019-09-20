@@ -1,5 +1,15 @@
 FROM onap/base_sdc-sanity:1.4.1
 
+# install packages
+RUN \
+    apk update \
+    && \
+    apk add --no-cache \
+        jq \
+        openssl \
+    && \
+    rm -rf /var/cache/apk/*
+
 COPY chef-solo /root/chef-solo/
 
 COPY chef-repo/cookbooks/. /root/chef-solo/cookbooks/

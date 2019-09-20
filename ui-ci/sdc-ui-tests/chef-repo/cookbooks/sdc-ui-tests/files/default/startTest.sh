@@ -4,6 +4,10 @@ RERUN=false
 debug_port=8000
 TEST_SUITES=testSuites
 fileName=testng-failed.xml
+JAVA_OPTIONS="${JAVA_OPTIONS} \
+    -Djavax.net.ssl.trustStore=/var/lib/tests/etc/org.onap.sdc.trust.jks \
+    -Dtestng.show.stack.frames=true \
+    "
 
 function help_usage ()
 {
