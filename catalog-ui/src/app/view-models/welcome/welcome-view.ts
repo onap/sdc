@@ -52,6 +52,9 @@ export class WelcomeViewModel {
         this.$scope.onCloseButtonClick = ():void => {
             this.$state.go("dashboard", {});
         };
+        window.setTimeout(():void => {
+            this.$state.go("dashboard", {});
+        },4000);
     };
 
     private init = ():void => {
