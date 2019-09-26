@@ -71,6 +71,8 @@ public interface Manifest {
      */
     Optional<ResourceTypeEnum> getType();
 
+    boolean isSigned();
+
     /**
      * Gets the CMS manifest signature if present in manifest
      * @return

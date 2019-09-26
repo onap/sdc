@@ -12,6 +12,12 @@ Hash: 3b119b37da5b76ec7c933168b21cedd8
 
 Source: scripts/userdata.file.sm
 
+non_mano_artifact_sets:
+  foo_bar:
+    Source: foobar/foo/foo.yaml
+    Source: foobar/foo/foo.script
+    Source: foobar/bar/descriptor.xml
+
 -----BEGIN CMS-----
 MIIBcwYJKoZIhvcNAQcCoIIBZDCCAWACAQMxDTALBglghkgBZQMEAgEwCwYJKoZI
 hvcNAQcBMYIBPTCCATkCAQOAFGOGMKMvLSRzUBjkgZipSoZm1U/UMAsGCWCGSAFl
@@ -22,9 +28,3 @@ MwEyEsUqsCyJ63tAeYxZAqTZWA2pZi9ejCPoRnt6xl7EhEyogXiSBgc2P89hxhe6
 igNsuwzMNy5LfSjvp8xgWoxhWr4/zLRIZ5F5Z5qhz7lia9xDSGYMfPitDCVqI9XE
 O58S/FoHu+z3Tig7vauTFFbiJjIu9SkG0c33ayEUCKejuVQPjuY9
 -----END CMS-----
-
-non_mano_artifact_sets:
-  foo_bar:
-    Source: foobar/foo/foo.yaml
-    Source: foobar/foo/foo.script
-    Source: foobar/bar/descriptor.xml

@@ -80,7 +80,6 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
                     break;
                 case NON_MANO_ARTIFACT_SETS:
                     processNonManoArtifactEntry();
-                    continueToProcess = false;
                     break;
                 case SOURCE:
                     processSource();
@@ -100,6 +99,9 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
         Optional<String> currentLine = readNextNonEmptyLine();
         while (currentLine.isPresent()) {
             final ManifestTokenType manifestTokenType = detectLineEntry().orElse(null);
+            if (manifestTokenType == ManifestTokenType.CMS_BEGIN) {
+                return;
+            }
             if (manifestTokenType != null) {
                 reportError(Messages.MANIFEST_INVALID_NON_MANO_KEY, manifestTokenType.getToken());
                 continueToProcess = false;
@@ -162,24 +164,34 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
      */
     private void readCmsSignature() {
         if (cmsSignature != null) {
-            reportError(Messages.MANIFEST_DUPLICATED_CMS_SIGNATURE);
+            reportError(Messages.MANIFEST_SIGNATURE_DUPLICATED);
             continueToProcess = false;
             return;
         }
+        final StringBuilder cmsSignatureBuilder = new StringBuilder();
+
+        cmsSignatureBuilder.append(currentLine).append("\n");
         Optional<String> currentLine = readNextNonEmptyLine();
         if(!getCurrentLine().isPresent()) {
             return;
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        while (currentLine.isPresent() && detectLineEntry().orElse(null) != ManifestTokenType.CMS_END) {
-            stringBuilder.append(currentLine.get());
-            stringBuilder.append("\n");
+        while (currentLine.isPresent()) {
+            if (detectLineEntry().orElse(null) == ManifestTokenType.CMS_END) {
+                cmsSignatureBuilder.append(currentLine.get());
+                break;
+            }
+            cmsSignatureBuilder.append(currentLine.get()).append("\n");
             currentLine = readNextNonEmptyLine();
         }
 
         if (currentLine.isPresent()) {
-            cmsSignature = stringBuilder.toString();
+            cmsSignature = cmsSignatureBuilder.toString();
             readNextNonEmptyLine();
+        }
+
+        if (getCurrentLine().isPresent()) {
+            reportError(Messages.MANIFEST_SIGNATURE_LAST_ENTRY);
+            continueToProcess = false;
         }
     }
 

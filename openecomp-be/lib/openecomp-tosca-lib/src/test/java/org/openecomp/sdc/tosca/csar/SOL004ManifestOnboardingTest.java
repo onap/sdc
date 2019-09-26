@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThat;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class SOL004ManifestOnboardingTest {
         try (final InputStream manifestAsStream =
             getClass().getResourceAsStream("/vspmanager.csar/manifest/ValidTosca.mf")) {
             manifest.parse(manifestAsStream);
-            assertValidManifest(4, 5, Collections.emptyMap(), ResourceTypeEnum.VF);
+            assertValidManifest(4, 5, Collections.emptyMap(), ResourceTypeEnum.VF, false);
         }
     }
 
@@ -104,7 +105,7 @@ public class SOL004ManifestOnboardingTest {
             .getResourceAsStream("/vspmanager.csar/manifest/ValidNonManoTosca.mf")) {
             manifest.parse(manifestAsStream);
             assertValidManifest(4, 5,
-                ImmutableMap.of("foo_bar", 3, "prv.happy-nfv.cool", 3), ResourceTypeEnum.VF);
+                ImmutableMap.of("foo_bar", 3, "prv.happy-nfv.cool", 3), ResourceTypeEnum.VF, false);
         }
     }
 
@@ -154,7 +155,7 @@ public class SOL004ManifestOnboardingTest {
         try (final InputStream manifestAsStream = getClass()
             .getResourceAsStream("/vspmanager.csar/manifest/valid/signed.mf")) {
             manifest.parse(manifestAsStream);
-            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF);
+            assertValidManifest(4, 3, Collections.emptyMap(), ResourceTypeEnum.VF, true);
         }
     }
 
@@ -163,7 +164,7 @@ public class SOL004ManifestOnboardingTest {
         try (final InputStream manifestAsStream = getClass()
             .getResourceAsStream("/vspmanager.csar/manifest/valid/signed-with-non-mano.mf")) {
             manifest.parse(manifestAsStream);
-            assertValidManifest(4, 3, ImmutableMap.of("foo_bar", 3), ResourceTypeEnum.VF);
+            assertValidManifest(4, 3, ImmutableMap.of("foo_bar", 3), ResourceTypeEnum.VF, true);
             manifest.getType().ifPresent(typeEnum -> assertSame(typeEnum, ResourceTypeEnum.VF));
         }
     }
@@ -173,7 +174,7 @@ public class SOL004ManifestOnboardingTest {
         try (final InputStream manifestAsStream = getClass()
             .getResourceAsStream("/vspmanager.csar/manifest/valid/metadata-pnfd.mf")) {
             manifest.parse(manifestAsStream);
-            assertValidManifest(4, 3, new HashMap<>(), ResourceTypeEnum.PNF);
+            assertValidManifest(4, 3, new HashMap<>(), ResourceTypeEnum.PNF, true);
         }
     }
 
@@ -338,17 +339,22 @@ public class SOL004ManifestOnboardingTest {
     }
 
     @Test
-    public void testManifestWithDuplicatedCmsSignature() throws IOException {
+    public void testManifestWithDuplicatedCmsSignature()
+        throws IOException, NoSuchFieldException, IllegalAccessException {
         try (final InputStream manifestAsStream =
-            getClass().getResourceAsStream("/vspmanager.csar/manifest/invalid/double-signed.mf")) {
+                getClass().getResourceAsStream("/vspmanager.csar/manifest/valid/signed.mf")) {
+            //forcing an existing signature
+            final Field cmsSignatureField = AbstractOnboardingManifest.class.getDeclaredField("cmsSignature");
+            cmsSignatureField.setAccessible(true);
+            cmsSignatureField.set(manifest, "any value");
             manifest.parse(manifestAsStream);
+
             final List<String> expectedErrorList = new ArrayList<>();
             expectedErrorList
-                .add(buildErrorMessage(26, "-----BEGIN CMS-----", Messages.MANIFEST_DUPLICATED_CMS_SIGNATURE));
+                .add(buildErrorMessage(18, "-----BEGIN CMS-----", Messages.MANIFEST_SIGNATURE_DUPLICATED));
             assertInvalidManifest(expectedErrorList);
         }
     }
-
 
     @Test
     public void testGetEntry() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -408,7 +414,7 @@ public class SOL004ManifestOnboardingTest {
 
     private void assertValidManifest(final int expectedMetadataSize, final int expectedSourcesSize,
                                      final Map<String, Integer> expectedNonManoKeySize,
-                                     final ResourceTypeEnum resourceType) {
+                                     final ResourceTypeEnum resourceType, final boolean isSigned) {
         assertThat("Should have no errors", manifest.getErrors(), is(empty()));
         assertThat("Should be valid", manifest.isValid(), is(true));
         assertThat("Metadata should have the expected size",
@@ -425,6 +431,7 @@ public class SOL004ManifestOnboardingTest {
         }
         assertThat("Should have a type", manifest.getType().isPresent(), is(true));
         assertThat("Type should be as expected", manifest.getType().get(), equalTo(resourceType));
+        assertThat("Signature status should be as expected", manifest.isSigned(), is(isSigned));
     }
 
     private void assertInvalidManifest(final List<String> expectedErrorList) {
