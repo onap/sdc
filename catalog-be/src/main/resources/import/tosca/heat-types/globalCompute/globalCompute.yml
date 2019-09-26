@@ -12,31 +12,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: GB
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.ephemeral.size
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Size of ephemeral disk
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -49,31 +49,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: instance
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: instance
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Existence of instance
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -86,31 +86,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: MB
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: memory
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Volume of RAM allocated to the instance
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -123,31 +123,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: count/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.iops
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average disk iops
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -160,31 +160,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: request
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.read.requests
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of read requests
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -197,31 +197,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: ns
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: cpu.delta
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: CPU time used since previous datapoint
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Delta
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -234,31 +234,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.capacity
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: The amount of disk that the instance can see
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -271,31 +271,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.read.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Volume of reads
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -308,31 +308,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.write.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Volume of writes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -345,31 +345,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: ms
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.latency
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average disk latency
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -382,31 +382,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.read.bytes.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of reads
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -419,31 +419,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.usage
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: The physical size in bytes of the image container on the host
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -456,31 +456,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: '%'
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: cpu_util
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average CPU utilization
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -493,31 +493,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.allocation
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: The amount of disk per device occupied by the instance on the host machine
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -530,31 +530,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: request/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.write.requests.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of write requests
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -567,31 +567,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.write.bytes.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of writes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -604,31 +604,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: ms
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.latency
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average disk latency per device
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -641,31 +641,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: ns
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: cpu
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: CPU time used
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -678,31 +678,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: request
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.write.requests
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of write requests
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -715,31 +715,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.write.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Volume of writes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -752,31 +752,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: request
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.read.requests
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of read requests
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -789,31 +789,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: GB
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.root.size
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Size of root disk
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -826,31 +826,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.write.bytes.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of writes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -863,31 +863,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: vcpu
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: vcpus
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of virtual CPUs allocated to the instance
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -900,31 +900,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: count/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.iops
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average disk iops per device
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -937,31 +937,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.usage
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: The physical size in bytes of the image container on the host per device
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -974,31 +974,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: request/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.read.requests.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of read requests
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -1011,31 +1011,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: request/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.write.requests.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of write requests
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -1048,31 +1048,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.allocation
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: The amount of disk occupied by the instance on the host machine
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -1085,31 +1085,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.read.bytes.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of reads
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -1122,31 +1122,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.read.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Volume of reads
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -1159,31 +1159,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: MB
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: memory.usage
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Volume of RAM used by the instance from the amount of its allocated memory
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -1196,31 +1196,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.device.capacity
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: The amount of disk per device that the instance can see
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: disk
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -1233,31 +1233,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: MB
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: memory.resident
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Volume of RAM used by the instance on the physical machine
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -1270,31 +1270,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: request
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: disk.write.requests
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of write requests
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: compute
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED

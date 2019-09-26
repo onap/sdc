@@ -12,12 +12,12 @@ node_types:
         type: string
         description: Unique ID for this VF_MODULE instance
         required: true
-        status: SUPPORTED
+        status: supported
       vf_name:
         type: string
         description: The VF Name; defaults to VMVM for the virtual MVM VNF.
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - pattern: '[a-zA-Z0-9]+'
         - max_length: 4
@@ -26,12 +26,12 @@ node_types:
         type: string
         description: The cloud zone for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       vf_instance_num:
         type: string
         description: The number for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - pattern: '[0-9]+'
         - max_length: 2
@@ -40,70 +40,70 @@ node_types:
         type: string
         description: Virtual management network ip address
         required: true
-        status: SUPPORTED
+        status: supported
       indx:
         type: float
         description: Index of the current instance
         required: true
-        status: SUPPORTED
+        status: supported
       mvs_mgmt_ip_0:
         type: list
         description: List of Management network IP addresses for IPv4
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       flavor:
         type: string
         description: Server flavor
         required: true
-        status: SUPPORTED
+        status: supported
       key_name:
         type: string
         description: SSH key name
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: list
         description: List of Availability Zone IDs or Names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       mgmt_net_id:
         type: string
         description: Neutron UUID for the Management network
         required: true
-        status: SUPPORTED
+        status: supported
       vm_instance_num:
         type: list
         description: VM instance number list must be a list of three-digit numeric value
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       bootimage:
         type: string
         description: Master bootimage volume id
         required: true
-        status: SUPPORTED
+        status: supported
       sec_groups:
         type: list
         description: Security groups
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vf_component:
         type: string
         description: The component that this VF instance is running
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - pattern: '[a-zA-Z0-9]+'
         - max_length: 3

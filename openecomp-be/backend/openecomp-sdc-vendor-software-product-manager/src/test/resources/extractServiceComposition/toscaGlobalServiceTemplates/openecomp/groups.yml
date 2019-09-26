@@ -31,7 +31,7 @@ group_types:
       isBase:
         description: Whether this module should be deployed before other modules
         type: boolean
-        status: SUPPORTED
+        status: supported
         default: false
         required: true
       vf_module_label:

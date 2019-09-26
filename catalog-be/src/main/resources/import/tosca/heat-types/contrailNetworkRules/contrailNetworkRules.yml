@@ -7,29 +7,29 @@ node_types:
         type: org.openecomp.datatypes.heat.contrail.network.rule.RuleList
         description: A symbolic name for this contrail network rule
         required: false
-        status: SUPPORTED
+        status: supported
       name:
         type: string
         description: A symbolic name for this contrail network rule
         required: false
-        status: SUPPORTED
+        status: supported
     attributes:
       tenant_id:
         type: string
         description: tenant_id
-        status: SUPPORTED
+        status: supported
       fq_name:
         type: string
         description: fq_name
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: All attributes.
-        status: SUPPORTED
+        status: supported
       rules:
         type: list
         description: List of rules
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:

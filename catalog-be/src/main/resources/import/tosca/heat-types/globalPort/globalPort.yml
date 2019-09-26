@@ -57,31 +57,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: packet/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.packets.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of incoming packets
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -96,31 +96,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.outgoing.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of outgoing bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -133,31 +133,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: packet/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.outgoing.packets.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of outgoing packets
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -170,31 +170,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: packet
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.outpoing.packets
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of outgoing packets
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -207,31 +207,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.bytes.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of incoming bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -244,31 +244,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of incoming bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -281,31 +281,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.outgoing.bytes.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of outgoing bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED
@@ -318,31 +318,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: packet
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.packets
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of incoming packets
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
         occurrences:
         - 1
         - UNBOUNDED

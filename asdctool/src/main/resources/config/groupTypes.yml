@@ -6,12 +6,12 @@ org.openecomp.groups.heat.HeatStack:
       type: string
       description: Heat file which associate to this group/heat stack
       required: true
-      status: SUPPORTED
+      status: supported
     description:
       type: string
       description: group description
       required: true
-      status: SUPPORTED      
+      status: supported
 org.openecomp.groups.VfModule:
   derived_from: tosca.groups.Root
   description: Grouped all heat resources which are in the same VF Module
@@ -21,7 +21,7 @@ org.openecomp.groups.VfModule:
       description: Whether this module should be deployed before other modules
       required: true
       default: false
-      status: SUPPORTED
+      status: supported
     vf_module_label: 
       type: string
       required: true

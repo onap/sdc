@@ -15,13 +15,13 @@ data_types:
         type: string
         description: Substitute Service Template
         required: true
-        status: SUPPORTED
+        status: supported
       index_variable:
         type: string
         description: Index variable
         required: false
         default: '%index%'
-        status: SUPPORTED
+        status: supported
         constraints:
         - min_length: 3
       count:
@@ -29,19 +29,19 @@ data_types:
         description: Count
         required: false
         default: 1
-        status: SUPPORTED
+        status: supported
       scaling_enabled:
         type: boolean
         description: Indicates whether service scaling is enabled
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
       mandatory:
         type: boolean
         description: Mandatory
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
   org.openecomp.datatypes.heat.substitution.SubstitutionFiltering:
     derived_from: tosca.datatypes.Root
     description: Substitution Filter
@@ -50,13 +50,13 @@ data_types:
         type: string
         description: Substitute Service Template
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of the substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       count:
@@ -64,19 +64,19 @@ data_types:
         description: Count
         required: false
         default: 1
-        status: SUPPORTED
+        status: supported
       scaling_enabled:
         type: boolean
         description: Indicates whether service scaling is enabled
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
       mandatory:
         type: boolean
         description: Mandatory
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
 node_types:
   org.openecomp.resource.abstract.nodes.AbstractSubstitute:
     derived_from: tosca.nodes.Root
@@ -85,4 +85,4 @@ node_types:
         type: org.openecomp.datatypes.heat.substitution.SubstitutionFiltering
         description: Substitution Filter
         required: true
-        status: SUPPORTED
+        status: supported

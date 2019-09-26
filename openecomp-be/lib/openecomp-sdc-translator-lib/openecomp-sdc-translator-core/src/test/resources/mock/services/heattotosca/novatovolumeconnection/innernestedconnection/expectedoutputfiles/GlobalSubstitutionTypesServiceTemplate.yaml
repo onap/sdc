@@ -12,103 +12,103 @@ node_types:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       cmaui_cinder_volume_size:
         type: float
         description: the size of the CMAUI Cinder volume
         required: true
-        status: SUPPORTED
+        status: supported
       timezone:
         type: string
         description: timezone
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: string
         description: the name of security group
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_volume:
         type: string
         description: Volume for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       oam_network_netmask:
         type: string
         description: oam network gateway
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_image:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VNF instance
         required: false
         default: This_is_ths_MMSC-CMAUI_id
-        status: SUPPORTED
+        status: supported
       cmaui_flavor:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       oam_network_gateway:
         type: string
         description: oam network gateway
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       inner_cmaui_volume_b3:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       cmaui_oam_ips:
         type: list
         description: CMAUI oam_net IP addresses
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       inner_cmaui_volume_a1:
         type: string
         description: the name of the target volume backend
         required: true
-        status: SUPPORTED
+        status: supported
       inner_cmaui_volume_b2:
         type: string
         description: the name of the target volume backend
         required: true
-        status: SUPPORTED
+        status: supported
       external_dns:
         type: string
         description: dns server
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_name:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       external_ntp:
         type: string
         description: ntp server
         required: true
-        status: SUPPORTED
+        status: supported
       CMAUI_volume_type:
         type: string
         description: the name of the target volume backend
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_cmaui_port_2:
         capability: tosca.capabilities.Node

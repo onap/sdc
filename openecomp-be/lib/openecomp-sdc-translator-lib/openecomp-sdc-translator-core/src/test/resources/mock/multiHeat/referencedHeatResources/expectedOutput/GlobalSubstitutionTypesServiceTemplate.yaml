@@ -12,13 +12,13 @@ node_types:
         type: string
         description: cmaui metadata
         required: true
-        status: SUPPORTED
+        status: supported
       oam_flavor:
         type: string
         description: OAM flavor name
         required: false
         default: lc.xlarge4
-        status: SUPPORTED
+        status: supported
       eca_eca_mgmt_ips:
         type: list
         description: internal eca_mgmt network ips for eca VM
@@ -26,7 +26,7 @@ node_types:
         default:
         - 172.25.137.242
         - 172.25.137.243
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       eca_mgmt_net_name:
@@ -34,80 +34,80 @@ node_types:
         description: the name of the internal network
         required: false
         default: int_mms_eca_mgmt_net_1
-        status: SUPPORTED
+        status: supported
       ECA_OAM_volume_type:
         type: string
         description: the name of the target volume backend
         required: false
         default: Platinum
-        status: SUPPORTED
+        status: supported
       arb_eca_mgmt_ips:
         type: list
         description: internal eca_mgmt network ips for arb VM
         required: false
         default:
         - 172.25.137.244
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       networks:
         type: string
         description: cmaui network name
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_name:
         type: string
         description: cmaui name
         required: true
-        status: SUPPORTED
+        status: supported
       arb_volume_size:
         type: float
         description: the size of the ARB volume
         required: false
         default: 40
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VNF instance
         required: false
         default: This_is_ths_MMSC-ECA_id
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: availabilityzone name
         required: false
         default: nova
-        status: SUPPORTED
+        status: supported
       oam_image_name:
         type: string
         description: the OAM image name
         required: false
         default: ECABASE
-        status: SUPPORTED
+        status: supported
       oam_volume_size:
         type: float
         description: the size of the OAM volume
         required: false
         default: 1800
-        status: SUPPORTED
+        status: supported
       swift_eca_url:
         type: string
         description: Base URL for eca swift object store
         required: false
         default: http://object-store.rdm2.cci.com:8080/v1/AUTH_1bbab536a19b4756926e7d0ec1eb543c/eca
-        status: SUPPORTED
+        status: supported
       oam_net_name:
         type: string
         description: the name of the oam network
         required: false
         default: oam_protected_net_0
-        status: SUPPORTED
+        status: supported
       ARB_volume_type:
         type: string
         description: the name of the target volume backend
         required: false
         default: Platinum
-        status: SUPPORTED
+        status: supported
       eca_names:
         type: list
         description: the names of the OAM1,OAM2 VM instances
@@ -115,7 +115,7 @@ node_types:
         default:
         - ZRDM1MMSC02OAM001
         - ZRDM1MMSC02OAM002
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       arbiter_flavor:
@@ -123,7 +123,7 @@ node_types:
         description: arbiter flavor name
         required: false
         default: m1.large2
-        status: SUPPORTED
+        status: supported
       eca_oam_ips:
         type: list
         description: the ips of oam networks for eca VM
@@ -131,7 +131,7 @@ node_types:
         default:
         - 107.250.172.44
         - 107.250.172.45
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       security_group_name:
@@ -139,49 +139,49 @@ node_types:
         description: the name of security group
         required: false
         default: mmsc_security_group_1
-        status: SUPPORTED
+        status: supported
       user_data:
         type: string
         description: cmaui user data
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_image:
         type: string
         description: cmaui image
         required: true
-        status: SUPPORTED
+        status: supported
       arb_names:
         type: list
         description: the names of the arbiter VM instances
         required: false
         default:
         - ZRDM1MMSC02ARB001
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       cmaui_flavor:
         type: string
         description: cmaui flavor name
         required: true
-        status: SUPPORTED
+        status: supported
       user_data_format:
         type: string
         description: cmaui user data
         required: true
-        status: SUPPORTED
+        status: supported
       eca_oam_gateway:
         type: string
         description: the ip of oam gateway
         required: false
         default: 107.250.172.1
-        status: SUPPORTED
+        status: supported
       arb_oam_ips:
         type: list
         description: oam network ips for eca VM
         required: false
         default:
         - 107.250.172.46
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:

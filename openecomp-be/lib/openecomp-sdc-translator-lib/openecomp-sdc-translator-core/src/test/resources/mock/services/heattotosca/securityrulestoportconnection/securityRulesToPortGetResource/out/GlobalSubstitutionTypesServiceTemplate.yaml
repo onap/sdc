@@ -11,125 +11,125 @@ node_types:
       vf_module_id:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_cluster_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_private_net_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       version_number:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       domain_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       ntp_timezone:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       region_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       manager_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_names:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       tenant_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       security_group:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cdr_network:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_index:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_type_1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_type_2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_node_count:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_name_2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_name_1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_type_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_size_0:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_size_1:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       manager_oam_direct_ip_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_volume_size_2:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       rpmrepository_ip_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_cdr_network_port_1:
         capability: tosca.capabilities.Node
@@ -613,145 +613,145 @@ node_types:
       vf_module_id:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       packet_mirror_network:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_private_net_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vProbe_cluster_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vlb_agent_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_node_count:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       domain_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       ntp_timezone:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       packet_internal_network:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_cluster_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       region_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       manager_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_cluster_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       tenant_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       security_group:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_version_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_type:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_node_count:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_volume_type_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_volume_type_1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_volume_size_1:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_volume_type_2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_names:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vLBAgent_volume_size_2:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_volume_size_0:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_index:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_volume_name_2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_volume_name_1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLBAgent_volume_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       manager_oam_direct_ip_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       rpmrepository_ip_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_packet_mirror_network_port_1:
         capability: tosca.capabilities.Node
@@ -1319,137 +1319,137 @@ node_types:
       vf_module_id:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       packet_mirror_network:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_private_net_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vProbe_cluster_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_version_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_node_count:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       domain_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       ntp_timezone:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       packet_internal_network:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_type:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       region_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       manager_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_cluster_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       tenant_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_names:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vLB_index:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       security_group:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_name_2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_type_1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_name_1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_type_2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_type_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_size_1:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vlb_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_size_0:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       manager_oam_direct_ip_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       rpmrepository_ip_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_volume_size_2:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_packet_internal_network_port_2:
         capability: tosca.capabilities.Node
@@ -2017,153 +2017,153 @@ node_types:
       vf_module_id:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_type_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_type_1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qrouter_cluster_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_type_2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_private_net_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vProbe_cluster_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_type:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vLB_node_count:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       domain_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       ntp_timezone:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       packet_internal_network:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vProbe_version_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       region_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       qtrace_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_AppDependenciesMachineType:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       manager_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       win_domain_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       tenant_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_size_2:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_name_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_size_0:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_name_1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_size_1:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_volume_name_2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       security_group:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cdr_network:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vProbe_node_count:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       vprobe_names:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vprobe_index:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       manager_oam_direct_ip_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       rpmrepository_ip_0:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_ProbeInstance:
         capability: tosca.capabilities.Node

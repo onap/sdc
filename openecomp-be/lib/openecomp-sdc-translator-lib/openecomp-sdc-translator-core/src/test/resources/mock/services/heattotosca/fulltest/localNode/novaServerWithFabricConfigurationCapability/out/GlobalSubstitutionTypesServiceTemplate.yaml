@@ -11,247 +11,247 @@ node_types:
       port_vce_SRIOV2_0_port_binding:vnic_type:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_SRIOV1_0_port_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV2_0_port_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV1_0_port_value_specs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_vce_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_vce_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_vce_oam0_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV1_0_port_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_vce_SRIOV1_0_port_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV2_0_port_value_specs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_vce_SRIOV2_0_port_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vce_oam0_port_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_SRIOV2_0_port_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_oam0_port_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_oam0_port_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_vce_SRIOV1_0_port_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_oam0_port_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_vce_oam0_port_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_oam0_port_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV1_0_port_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_SRIOV2_0_port_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV1_0_port_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_vce_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_oam0_port_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_vce_SRIOV1_0_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV2_0_port_admin_state_up:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_vce_SRIOV2_0_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV1_0_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_vce_SRIOV1_0_port_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV1_0_port_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_vce_SRIOV2_0_port_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_vce_SRIOV2_0_port_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_SRIOV2_0_port_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_vce_SRIOV1_0_port_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_SRIOV2_0_port_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_oam0_port_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_vce_oam0_port_admin_state_up:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_vce_SRIOV2_0_port_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_oam0_port_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV2_0_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV1_0_port_admin_state_up:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       compute_vce_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vce_oam0_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_oam0_port_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vce_SRIOV1_0_port_binding:vnic_type:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:

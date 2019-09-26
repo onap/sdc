@@ -12,17 +12,17 @@ node_types:
         type: string
         description: PCRF CM server name
         required: true
-        status: SUPPORTED
+        status: supported
       pcm_server_name:
         type: string
         description: PCRF CM server name
         required: true
-        status: SUPPORTED
+        status: supported
       nove_001_vol_property:
         type: string
         description: PCRF CM server name
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_nova_001:
         capability: tosca.capabilities.Node

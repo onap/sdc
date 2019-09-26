@@ -8,25 +8,25 @@ node_types:
         type: list
         description: An ordered list of static routes to be added to this interface
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.contrail.port.StaticRoute
       virtual_network:
         type: string
         description: Virtual Network for this interface
         required: true
-        status: SUPPORTED
+        status: supported
       static_route:
         type: boolean
         description: Static route enabled
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       allowed_address_pairs:
         type: list
         description: List of allowed address pair for this interface
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.contrail.AddressPair
       shared_ip:
@@ -34,17 +34,17 @@ node_types:
         description: Shared ip enabled
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       ip_address:
         type: string
         description: IP for this interface
         required: false
-        status: SUPPORTED
+        status: supported
       interface_type:
         type: string
         description: Interface type
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - management
@@ -56,4 +56,4 @@ node_types:
       fq_name:
         type: string
         description: fq_name
-        status: SUPPORTED
+        status: supported

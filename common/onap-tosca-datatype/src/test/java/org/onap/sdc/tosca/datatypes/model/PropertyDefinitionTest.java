@@ -25,7 +25,7 @@ public class PropertyDefinitionTest {
     public void cloneTest() {
         PropertyDefinition propertyDefinition = new PropertyDefinition();
         propertyDefinition.setRequired(false);
-        propertyDefinition.setStatus(Status.DEPRECATED);
+        propertyDefinition.setStatus(Status.DEPRECATED.getName());
         Constraint constraint = new Constraint();
         constraint.setEqual("123");
         ArrayList<Constraint> constraints = new ArrayList<>();
@@ -34,8 +34,8 @@ public class PropertyDefinitionTest {
 
         PropertyDefinition propertyDefinitionClone = propertyDefinition.clone();
         Assert.assertEquals(propertyDefinition.getRequired(), propertyDefinitionClone.getRequired());
-        Assert.assertEquals(propertyDefinition.getStatus().getDisplayName(),
-                propertyDefinitionClone.getStatus().getDisplayName());
+        Assert.assertEquals(propertyDefinition.getStatus(),
+                propertyDefinitionClone.getStatus());
         Assert.assertEquals(propertyDefinition.getConstraints().get(0).getEqual(),
                 propertyDefinitionClone.getConstraints().get(0).getEqual());
     }

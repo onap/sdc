@@ -7,17 +7,17 @@ node_types:
         type: string
         description: A symbolic name for this contrail v2 network rule
         required: false
-        status: SUPPORTED
+        status: supported
       network_policy_entries:
         type: org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList
         description: A symbolic name for this contrail v2 network rule
         required: false
-        status: SUPPORTED
+        status: supported
     attributes:
       fq_name:
         type: string
         description: fq_name
-        status: SUPPORTED
+        status: supported
     requirements:
     - network:
         capability: tosca.capabilities.Attachment

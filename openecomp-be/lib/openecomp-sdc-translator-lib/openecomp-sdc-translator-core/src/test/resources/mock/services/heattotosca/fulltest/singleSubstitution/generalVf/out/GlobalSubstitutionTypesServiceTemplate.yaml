@@ -11,25 +11,25 @@ node_types:
       port_FSB_OAM_network_role_tag:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB2_Internal2_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_FSB_OAM_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_FSB2_Internal2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       index_value:
@@ -37,77 +37,77 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_FSB2_Internal2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_FSB2_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB_OAM_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_FSB2_Internal1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_FSB2_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB2_Internal1_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB_OAM_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_FSB2_Internal1_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_FSB_OAM_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB2_Internal1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB2_Internal2_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -608,117 +608,117 @@ node_types:
       port_VLC_SCTP_A_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_OAM_network_role_tag:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_GTP_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC2_Internal2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_SCTP_A_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_VLC_SCTP_B_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_SCTP_A_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_OAM_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC2_Internal2_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_OAM_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_VLC2_Internal1_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC2_Internal2_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC2_Internal1_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC_SCTP_A_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_SCTP_B_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_GTP_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC2_Internal1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_VLC2_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       index_value:
@@ -726,61 +726,61 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_VLC_SCTP_B_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_GTP_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC2_Internal1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_VLC2_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_GTP_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_OAM_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC_OAM_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_SCTP_B_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC2_Internal2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -1515,7 +1515,7 @@ node_types:
       port_NCB1_Internal2_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       index_value:
@@ -1523,69 +1523,69 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_NCB1_Internal1_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_NCB1_Internal1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_NCB1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_NCB1_Internal1_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_NCB1_Internal2_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_NCB1_Internal1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_NCB1_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_NCB1_Internal2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_NCB1_Internal2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -2010,75 +2010,75 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_NCB2_Internal1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_NCB2_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_NCB2_Internal2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_NCB2_Internal2_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_NCB2_Internal2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_NCB2_Internal1_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_NCB2_Internal1_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_NCB2_Internal2_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_NCB2_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_NCB2_Internal1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
     requirements:
@@ -2501,25 +2501,25 @@ node_types:
       port_GPB2_Internal2_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_GPB2_Internal2_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_GPB2_Internal1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_GPB2_Internal1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       index_value:
@@ -2527,51 +2527,51 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       compute_GPB2_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_GPB2_Internal1_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_GPB2_Internal2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_GPB2_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_GPB2_Internal1_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_GPB2_Internal2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -2994,111 +2994,111 @@ node_types:
       port_VLC1_Internal2_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC1_Internal1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_SCTP_A_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_OAM_network_role_tag:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC1_Internal1_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_GTP_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_SCTP_A_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_VLC1_Internal2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_SCTP_B_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_SCTP_A_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_OAM_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC1_Internal1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_OAM_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_VLC_SCTP_A_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_SCTP_B_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_GTP_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_VLC1_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       index_value:
@@ -3106,67 +3106,67 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_VLC1_Internal1_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC1_Internal2_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC_SCTP_B_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_GTP_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC_GTP_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_VLC_OAM_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC_OAM_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_VLC1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_VLC_SCTP_B_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_VLC1_Internal2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
     requirements:
@@ -3901,31 +3901,31 @@ node_types:
       port_FSB1_Internal1_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB_OAM_network_role_tag:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB1_Internal2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB_OAM_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       compute_FSB1_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       index_value:
@@ -3933,71 +3933,71 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_FSB1_Internal1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_FSB1_Internal2_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB_OAM_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_FSB1_Internal2_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_FSB1_Internal2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_FSB_OAM_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_FSB1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_FSB1_Internal1_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_FSB1_Internal1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_FSB_OAM_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -4498,7 +4498,7 @@ node_types:
       port_GPB1_Internal2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       index_value:
@@ -4506,69 +4506,69 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_GPB1_Internal1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_GPB1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_GPB1_Internal2_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       port_GPB1_Internal1_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_GPB1_Internal2_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_GPB1_Internal1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_GPB1_Internal1_mac_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.MacRequirements
       compute_GPB1_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_GPB1_Internal2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
     requirements:

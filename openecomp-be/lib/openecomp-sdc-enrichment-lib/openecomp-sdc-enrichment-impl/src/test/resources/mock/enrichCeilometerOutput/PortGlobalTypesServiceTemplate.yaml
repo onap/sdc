@@ -19,28 +19,28 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of incoming bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported

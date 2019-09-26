@@ -161,8 +161,8 @@ public class DataModelCloneUtilTest {
         Assert.assertEquals(originalMap.get(KEY1).getDescription(), cloneMap.get(KEY1).getDescription());
         Assert.assertEquals(originalMap.get(KEY2).getDescription(), cloneMap.get(KEY2).getDescription());
         Assert.assertEquals(originalMap.get(KEY1).getImplementation(), cloneMap.get(KEY1).getImplementation());
-        Assert.assertEquals(originalMap.get(KEY2).getInputs().get(INPUT_KEY1).getStatus().getDisplayName(),
-                cloneMap.get(DataModelCloneUtilTest.KEY2).getInputs().get(INPUT_KEY1).getStatus().getDisplayName());
+        Assert.assertEquals(originalMap.get(KEY2).getInputs().get(INPUT_KEY1).getStatus(),
+                cloneMap.get(DataModelCloneUtilTest.KEY2).getInputs().get(INPUT_KEY1).getStatus());
         Assert.assertEquals(originalMap.get(KEY2).getInputs().get(INPUT_KEY1).getConstraints().get(0).getEqual(),
                 cloneMap.get(KEY2).getInputs().get(INPUT_KEY1).getConstraints().get(0).getEqual());
     }
@@ -170,7 +170,7 @@ public class DataModelCloneUtilTest {
     private PropertyDefinition createPropertyDefinition() {
         PropertyDefinition propertyDefinition = new PropertyDefinition();
         propertyDefinition.setRequired(false);
-        propertyDefinition.setStatus(Status.UNSUPPORTED);
+        propertyDefinition.setStatus(Status.UNSUPPORTED.getName());
         Constraint constraint = new Constraint();
         constraint.setEqual("1234");
         ArrayList<Constraint> constraints = new ArrayList<>();

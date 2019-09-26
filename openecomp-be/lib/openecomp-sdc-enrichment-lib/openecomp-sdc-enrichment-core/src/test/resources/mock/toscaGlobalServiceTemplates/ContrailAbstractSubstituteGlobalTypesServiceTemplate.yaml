@@ -15,26 +15,26 @@ data_types:
         type: list
         description: An ordered list of static routes to be added to this interface
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.contrail.port.StaticRoute
       virtual_network:
         type: string
         description: Virtual Network for this interface
         required: true
-        status: SUPPORTED
+        status: supported
       allowed_address_pairs:
         type: list
         description: List of allowed address pair for this interface
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.contrail.AddressPair
       ip_address:
         type: string
         description: IP for this interface
         required: false
-        status: SUPPORTED
+        status: supported
 node_types:
   org.openecomp.resource.abstract.nodes.contrail.AbstractSubstitute:
     derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
@@ -43,12 +43,12 @@ node_types:
         type: string
         description: Availability zone to create servers in
         required: false
-        status: SUPPORTED
+        status: supported
       static_routes_list:
         type: list
         description: Static routes enabled
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       availability_zone_enable:
@@ -56,33 +56,33 @@ node_types:
         description: Indicates availability zone is enabled
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       service_template_name:
         type: string
         description: Service template name
         required: false
-        status: SUPPORTED
+        status: supported
       ordered_interfaces:
         type: boolean
         description: Indicates if service interface are ordered
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       flavor:
         type: string
         description: flavor
         required: false
-        status: SUPPORTED
+        status: supported
       image_name:
         type: string
         description: Image name
         required: true
-        status: SUPPORTED
+        status: supported
       service_type:
         type: string
         description: Service type
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - firewall
@@ -93,7 +93,7 @@ node_types:
         type: list
         description: List of interface types
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
           constraints:
@@ -106,19 +106,19 @@ node_types:
         type: string
         description: Service instance name
         required: true
-        status: SUPPORTED
+        status: supported
       interface_list:
         type: list
         description: List of interfaces
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.contrail.InterfaceData
       service_mode:
         type: string
         description: Service mode
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - transparent
@@ -128,39 +128,39 @@ node_types:
         type: list
         description: Shared ips enabled
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
     attributes:
       tenant_id:
         type: string
         description: Tenant id of the Service Instance
-        status: SUPPORTED
+        status: supported
       fq_name:
         type: string
         description: The FQ name of the service instance
-        status: SUPPORTED
+        status: supported
       service_template_name:
         type: string
         description: Service Template of the Service Instance
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: All attributes
-        status: SUPPORTED
+        status: supported
       active_vms:
         type: string
         description: Number of service VMs active for this Service Instance
-        status: SUPPORTED
+        status: supported
       service_instance_name:
         type: string
         description: The name of the service instance
-        status: SUPPORTED
+        status: supported
       virtual_machines:
         type: string
         description: Service VMs for the Service Instance
-        status: SUPPORTED
+        status: supported
       status:
         type: string
         description: Status of the service instance
-        status: SUPPORTED
+        status: supported

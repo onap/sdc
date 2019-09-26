@@ -29,7 +29,7 @@ node_types:
         description: Number of CPUs requested for a software node instance
         required: true
         default: 1
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 5.0
         - equal: 5
@@ -41,7 +41,7 @@ node_types:
       attDef1:
         type: string
         default: hi
-        status: SUPPORTED
+        status: supported
     requirements:
     - re1:
         capability: tosca.cap1

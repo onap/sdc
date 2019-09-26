@@ -6,7 +6,7 @@ node_types:
       target_range:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           description: Identifier of the reciever port of the VNF or the service
           type: integer
@@ -14,7 +14,7 @@ node_types:
         type: string
         description: protocol type that runs on the link
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - forwarder:
         capability: org.openecomp.capabilities.Forwarder

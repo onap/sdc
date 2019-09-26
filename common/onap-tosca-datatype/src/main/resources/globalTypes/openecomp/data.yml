@@ -68,17 +68,17 @@ data_types:
       name:
         description: Deployment Flavor Name
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       license_feature_group:
         description: license feature group associated with Deployment Flavor
         type: org.openecomp.datatypes.FeatureGroup
-        status: SUPPORTED
+        status: supported
         required: true
       compute_size:
         description: Size of VM
         type: org.openecomp.datatypes.ComputeFlavor
-        status: SUPPORTED
+        status: supported
         required: true
 
   org.openecomp.datatypes.FeatureGroup:
@@ -88,12 +88,12 @@ data_types:
       license_feature_group_ref:
         description: Deployment Flavor Name
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       part_number:
         description: refrence part number related to feature group
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
 
   org.openecomp.datatypes.EcompHoming:
@@ -242,22 +242,22 @@ data_types:
       name:
         description: Compute Flavor Name
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       num_cpus:
         description: Number of cpu
         type: integer
-        status: SUPPORTED
+        status: supported
         required: true
       disk_size:
         description: Disk size
         type: scalar-unit.size
-        status: SUPPORTED
+        status: supported
         required: true
       mem_size:
         description: Memory size
         type: scalar-unit.size
-        status: SUPPORTED
+        status: supported
         required: true
 
   org.openecomp.datatypes.network.MacAssignments:
@@ -374,12 +374,12 @@ data_types:
       substitute_service_template:
         description: Substitute Service Template
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       index_value:
         description: Index value of the substitution service template runtime instance
         type: integer
-        status: SUPPORTED
+        status: supported
         default: 0
         required: false
         constraints:
@@ -387,19 +387,19 @@ data_types:
       count:
         description: Count
         type: integer
-        status: SUPPORTED
+        status: supported
         default: 1
         required: false
       scaling_enabled:
         description: Indicates whether service scaling is enabled
         type: boolean
-        status: SUPPORTED
+        status: supported
         default: true
         required: false
       mandatory:
         description: Mandatory
         type: boolean
-        status: SUPPORTED
+        status: supported
         required: false
 
   org.openecomp.datatypes.network.NetworkFlows:

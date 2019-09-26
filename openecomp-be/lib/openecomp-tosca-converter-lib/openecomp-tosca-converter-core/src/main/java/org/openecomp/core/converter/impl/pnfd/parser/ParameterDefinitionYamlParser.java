@@ -50,7 +50,7 @@ public class ParameterDefinitionYamlParser {
         }
         parameterDefinition.setRequired((Boolean) parameterDefinitionYaml.get("required"));
         parameterDefinition.setType((String) parameterDefinitionYaml.get("type"));
-        parameterDefinition.setStatus((Status) parameterDefinitionYaml.get("status"));
+        parameterDefinition.setStatus((String) parameterDefinitionYaml.get("status"));
 
         return parameterDefinition;
     }

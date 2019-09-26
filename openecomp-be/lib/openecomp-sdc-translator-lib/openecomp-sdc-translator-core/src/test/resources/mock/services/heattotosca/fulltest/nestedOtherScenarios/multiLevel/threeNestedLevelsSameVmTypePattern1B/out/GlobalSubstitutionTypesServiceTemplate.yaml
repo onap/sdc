@@ -11,83 +11,83 @@ node_types:
       port_pd01_port_01_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_01_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_01_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd01_port_01_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_01_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_01_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_01_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_01_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_01_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_01_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -438,7 +438,7 @@ node_types:
       port_ps02_port_01_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       index_value:
@@ -446,77 +446,77 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_ps02_port_01_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_ps02_port_01_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_ps02_port_01_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_ps02_port_01_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_ps02_port_01_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_ps02_port_01_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_ps02_port_01_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_ps02_port_01_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_ps02_port_01_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_pd_server_ps02_port_01:
         capability: tosca.capabilities.Node
@@ -865,7 +865,7 @@ node_types:
       port_pd02_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       index_value:
@@ -873,75 +873,75 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd02_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd02_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd02_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -1292,83 +1292,83 @@ node_types:
       port_pd01_port_03_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_03_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_03_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_03_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_03_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_03_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_03_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_03_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_03_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_03_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -1719,31 +1719,31 @@ node_types:
       port_pd01_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
@@ -1751,51 +1751,51 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -2146,11 +2146,11 @@ node_types:
       port_pd02_port_03_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_03_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
@@ -2158,71 +2158,71 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd02_port_03_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_03_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_03_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_03_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_03_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_03_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd02_port_03_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd02_port_03_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
     requirements:
@@ -2573,83 +2573,83 @@ node_types:
       port_pd02_port_02_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_pd02_port_02_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd02_port_02_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_02_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_02_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_02_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_pd02_port_02_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_02_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_02_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_02_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -3000,83 +3000,83 @@ node_types:
       port_pd01_port_02_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_02_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_02_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_02_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_02_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_02_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_02_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_02_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_02_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_02_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -3428,49 +3428,49 @@ node_types:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       p1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p2:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       availabilityzone_name:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       pd_image_name:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       pd_server_names:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       net:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_ps02_port_01:
         capability: tosca.capabilities.Node
@@ -5544,49 +5544,49 @@ node_types:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       p1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p2:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       availabilityzone_name:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       pd_image_name:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       pd_server_names:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       net:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_test_nested3Level:
         capability: tosca.capabilities.Node
@@ -6968,49 +6968,49 @@ node_types:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       p1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p2:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       availabilityzone_name:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       pd_image_name:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       pd_server_names:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       net:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_server_pd_31:
         capability: tosca.capabilities.Node

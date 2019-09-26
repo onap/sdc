@@ -11,115 +11,115 @@ node_types:
       port_cdi_internal_0_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_0_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cdi_internal_0_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_0_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cdi_ims_core_0_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_0_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_0_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_internal_0_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       compute_cdi_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_cdi_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_cdi_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_internal_0_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cdi_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_ims_core_0_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_internal_0_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_internal_0_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_cdi_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_cdi_internal_0_port_0_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cdi_internal_0_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_internal_0_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       index_value:
@@ -127,83 +127,83 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_cdi_ims_core_0_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_0_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cdi_internal_0_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_ims_core_0_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cdi_internal_0_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cdi_ims_core_0_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cdi_internal_0_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_ims_core_0_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_internal_0_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cdi_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cdi_internal_0_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_0_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cdi_ims_core_0_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_0_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_cdi:
         capability: tosca.capabilities.Node
@@ -636,179 +636,179 @@ node_types:
       port_lbd_ims_core_1_port_2_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_lbd_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_ims_core_1_port_2_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_1_port_2_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_lbd_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_dpdk_1_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_lbd_internal_1_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_internal_1_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_1_port_2_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_1_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_lbd_internal_1_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_ims_core_1_port_2_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_internal_1_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_1_port_2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_lbd_dpdk_1_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_lbd_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_ims_core_1_port_2_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_1_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       compute_lbd_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_dpdk_1_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_internal_1_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_1_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_lbd_dpdk_1_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_lbd_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_lbd_internal_1_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_lbd_internal_1_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_1_port_2_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_1_port_2_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_internal_1_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_lbd_ims_core_1_port_2_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_lbd_ims_core_1_port_2_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_lbd_dpdk_1_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_1_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       index_value:
@@ -816,83 +816,83 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_lbd_ims_core_1_port_2_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_lbd_dpdk_1_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_dpdk_1_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_1_port_2_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_lbd_internal_1_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_1_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_lbd_internal_1_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_internal_1_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_lbd_dpdk_1_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       compute_lbd_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_dpdk_1_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_internal_1_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_lbd_internal_1_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_ims_core_1_port_2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -1411,197 +1411,197 @@ node_types:
       port_oam_oam_1_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_oam_internal_1_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_1_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_oam_oam_1_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_1_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_oam_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_oam_oam_1_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_1_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_1_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_1_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_oam_oam_1_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_oam_oam_1_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_1_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_oam_oam_1_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_oam_oam_1_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_oam_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_oam_1_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_1_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_1_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_1_port_0_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_oam_oam_1_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_oam_1_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_internal_1_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_oam_internal_1_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       compute_oam_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_internal_1_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_internal_1_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_oam_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_oam_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_internal_1_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_1_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_oam_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_internal_1_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_oam_1_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     requirements:
@@ -2036,197 +2036,197 @@ node_types:
       port_oam_internal_2_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_2_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_2_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_internal_2_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_2_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_2_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_oam_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_oam_internal_2_port_0_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_oam_oam_2_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_2_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_oam_oam_2_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_oam_2_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_oam_oam_2_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_2_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_2_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_oam_2_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_oam_internal_2_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_oam_oam_2_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_oam_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_internal_2_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_oam_internal_2_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_internal_2_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_oam_internal_2_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_2_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_oam_oam_2_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_2_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_oam_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_internal_2_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_oam_oam_2_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_2_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_oam_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_oam_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_internal_2_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_oam_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -2662,143 +2662,143 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       internal_net_id:
         type: string
         description: internal network name/uuid
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_release:
         type: string
         description: IMS release
         required: true
-        status: SUPPORTED
+        status: supported
       tdcore_security_group:
         type: string
         description: security group
         required: true
-        status: SUPPORTED
+        status: supported
       tdcore_names:
         type: list
         description: List of instance names for TDCORE instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id001
           type: string
       port_tdcore_dpdk_0_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_tdcore_dpdk_0_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_tdcore_internal_0_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       vcscf_gateway:
         type: string
         description: OAM unit virtual ip
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         description: Unique name for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       internal_dpdk_net_id:
         type: string
         description: internal dpdk network name/uuid
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_tdcore_dpdk_0_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_swrepo_address:
         type: string
         description: SWRepo IP or FQDN
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: Availability zone name.
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       tdcore_flavor_name:
         type: string
         description: flavor name
         required: true
-        status: SUPPORTED
+        status: supported
       tdcore_image_name:
         type: string
         description: image name
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_cmrepo_address:
         type: string
         description: CMRepo IP or FQDN
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_dns_address:
         type: string
         description: DNS server IP
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_internal_network_mtu:
         type: float
         description: MTU for internal network interface (eth0)
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: &id002
         - in_range:
           - 1000
@@ -2806,17 +2806,17 @@ node_types:
       port_tdcore_dpdk_0_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       tdcore_server_group:
         type: string
         description: server group name/id
         required: true
-        status: SUPPORTED
+        status: supported
       index:
         type: float
         description: index
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: &id003
         - in_range:
           - 0
@@ -2825,11 +2825,11 @@ node_types:
         type: string
         description: internal netmask
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vcscf_name_delimeter:
@@ -2837,7 +2837,7 @@ node_types:
         description: 'delimeter used in concatenating different words while naming
           (ex: "-","_",".",...)'
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: &id004
         - valid_values:
           - '-'
@@ -2848,53 +2848,53 @@ node_types:
         type: list
         description: List of Internal Lan IPs for TDCORE instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id005
           type: string
       tdcore_dpdk_ips:
         type: list
         description: List of DPDK Lan IPs for TDCORE instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id006
           type: string
       tdcore_uuids:
         type: list
         description: List of UUIDs generated by cmrepo for TDCORE instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id007
           type: string
       vcscf_dn:
         type: string
         description: DN name
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_du:
         type: string
         description: DU name
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_tdcore_internal_0_port_0:
         capability: tosca.capabilities.Node
@@ -3327,111 +3327,111 @@ node_types:
       port_cdi_ims_core_1_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cdi_internal_1_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cdi_ims_core_1_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_1_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_internal_1_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cdi_ims_core_1_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cdi_ims_core_1_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_internal_1_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cdi_ims_core_1_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cdi_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_cdi_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_cdi_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_ims_core_1_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_1_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_internal_1_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cdi_internal_1_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_1_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cdi_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_cdi_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       index_value:
@@ -3439,87 +3439,87 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_cdi_internal_1_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_internal_1_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_1_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cdi_internal_1_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cdi_internal_1_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_internal_1_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_ims_core_1_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cdi_ims_core_1_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cdi_ims_core_1_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_ims_core_1_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cdi_internal_1_port_0_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cdi_internal_1_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cdi_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cdi_internal_1_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cdi_internal_1_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_cdi_cdi_internal_1_port_0:
         capability: tosca.capabilities.Node
@@ -3952,213 +3952,213 @@ node_types:
       compute_lbd_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_ims_core_0_port_2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_lbd_internal_0_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_lbd_internal_0_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_internal_0_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_lbd_dpdk_0_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_0_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_lbd_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_dpdk_0_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_0_port_2_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_lbd_internal_0_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_ims_core_0_port_2_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_lbd_ims_core_0_port_2_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_0_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_dpdk_0_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       compute_lbd_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_ims_core_0_port_2_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_dpdk_0_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_lbd_ims_core_0_port_2_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_internal_0_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_lbd_ims_core_0_port_2_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       compute_lbd_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_internal_0_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_internal_0_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_0_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_lbd_internal_0_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_0_port_2_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_0_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       compute_lbd_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_lbd_internal_0_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_0_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_ims_core_0_port_2_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_0_port_2_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_0_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_lbd_dpdk_0_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_0_port_2_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_dpdk_0_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_internal_0_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_lbd_ims_core_0_port_2_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       index_value:
@@ -4166,49 +4166,49 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_lbd_ims_core_0_port_2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_internal_0_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_lbd_internal_0_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_ims_core_0_port_2_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       compute_lbd_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_lbd_dpdk_0_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_lbd_dpdk_0_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_lbd_internal_0_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -4727,331 +4727,331 @@ node_types:
       port_cif_oam_1_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_ims_core_1_port_2_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_1_port_4_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_1_port_4_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_3_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cif_ims_core_1_port_2_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_oam_1_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_3_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_3_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_3_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_ims_core_1_port_2_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_internal_1_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cif_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_1_port_3_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cif_oam_1_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_internal_1_port_0_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       compute_cif_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_oam_1_port_3_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_ims_core_1_port_2_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_1_port_4_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_1_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_internal_1_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_1_port_4_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_internal_1_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_oam_1_port_3_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_cif_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_internal_1_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_1_port_2_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cif_internal_1_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_1_port_4_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_1_port_2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_ims_core_1_port_2_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_oam_1_port_3_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_oam_1_port_3_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_ims_core_1_port_2_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_1_port_4_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cif_internal_1_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_3_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_1_port_2_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_1_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_oam_1_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_1_port_4_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cif_oam_1_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cif_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_1_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       compute_cif_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_1_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_1_port_2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_ims_li_1_port_4_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_internal_1_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_internal_1_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_ims_li_1_port_4_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_internal_1_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cif_ims_li_1_port_4_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_ims_li_1_port_4_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_internal_1_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_oam_1_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_3_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_ims_core_1_port_2_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_internal_1_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       index_value:
@@ -5059,83 +5059,83 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_cif_ims_core_1_port_2_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       compute_cif_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_cif_ims_core_1_port_2_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_ims_li_1_port_4_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_ims_li_1_port_4_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_3_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_1_port_4_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_ims_core_1_port_2_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_internal_1_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_1_port_3_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_1_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_oam_1_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cif_internal_1_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_1_port_3_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_cif:
         capability: tosca.capabilities.Node
@@ -5821,118 +5821,118 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       internal_net_id:
         type: string
         description: internal network name/uuid
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_release:
         type: string
         description: IMS release
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_internal_ips:
         type: list
         description: List of Internal Lan IPs for CSCF instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id008
           type: string
       vcscf_gateway:
         type: string
         description: OAM unit cipa ip
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         description: Unique name for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_image_name:
         type: string
         description: image name
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_names:
         type: list
         description: List of instance names for CSCF instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id009
           type: string
       port_cscf_internal_0_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_swrepo_address:
         type: string
         description: SWRepo IP or FQDN
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_uuids:
         type: list
         description: List of UUIDs generated by cmrepo for CSCF instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id010
           type: string
       vnf_id:
         type: string
         description: Unique ID for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       availability_zone_0:
         type: string
         description: Availability zone name for CSCF instances.
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_internal_v6_ips:
         type: list
         description: List of Internal Lan v6 IPs for CSCF instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id011
           type: string
       cscf_flavor_name:
         type: string
         description: flavor name
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_cmrepo_address:
         type: string
         description: CMRepo IP or FQDN
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_dns_address:
         type: string
         description: DNS server IP
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_internal_network_mtu:
         type: float
         description: MTU for internal network interface (eth0)
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: &id012
         - in_range:
           - 1000
@@ -5940,20 +5940,20 @@ node_types:
       port_cscf_internal_0_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cscf_internal_0_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       index:
         type: float
         description: index
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: &id013
         - in_range:
           - 0
@@ -5962,13 +5962,13 @@ node_types:
         type: string
         description: internal netmask
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_name_delimeter:
         type: string
         description: 'delimeter used in concatenating different words while naming
           (ex: "-","_",".",...)'
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: &id014
         - valid_values:
           - '-'
@@ -5978,30 +5978,30 @@ node_types:
       port_cscf_internal_0_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_dn:
         type: string
         description: DN name
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_du:
         type: string
         description: DU name
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_security_group:
         type: string
         description: security group
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_cscf_server_0:
         capability: tosca.capabilities.Node
@@ -6350,115 +6350,115 @@ node_types:
       port_oam_oam_0_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_0_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_oam_internal_0_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_0_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_oam_internal_0_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_0_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_oam_internal_0_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_0_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_oam_oam_0_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_oam_internal_0_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_oam_0_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_oam_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_oam_oam_0_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_oam_internal_0_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_0_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_0_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_oam_0_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_oam_0_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_0_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_oam_0_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       index_value:
@@ -6466,83 +6466,83 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_oam_internal_0_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_internal_0_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       compute_oam_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_internal_0_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_oam_oam_0_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_internal_0_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_oam_oam_0_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_oam_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_oam_internal_0_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       compute_oam_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_oam_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_oam_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_oam_internal_0_port_0_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_oam_oam_0_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_oam_oam_internal_0_port_0:
         capability: tosca.capabilities.Node
@@ -6976,167 +6976,167 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       internal_net_id:
         type: string
         description: internal network name/uuid
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_release:
         type: string
         description: IMS release
         required: true
-        status: SUPPORTED
+        status: supported
       tdcore_security_group:
         type: string
         description: security group
         required: true
-        status: SUPPORTED
+        status: supported
       tdcore_names:
         type: list
         description: List of instance names for TDCORE instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id001
       port_tdcore_dpdk_0_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_tdcore_dpdk_0_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_tdcore_internal_0_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       vcscf_gateway:
         type: string
         description: OAM unit virtual ip
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         description: Unique name for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       internal_dpdk_net_id:
         type: string
         description: internal dpdk network name/uuid
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_tdcore_dpdk_0_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_swrepo_address:
         type: string
         description: SWRepo IP or FQDN
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: Availability zone name.
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       tdcore_flavor_name:
         type: string
         description: flavor name
         required: true
-        status: SUPPORTED
+        status: supported
       tdcore_image_name:
         type: string
         description: image name
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_cmrepo_address:
         type: string
         description: CMRepo IP or FQDN
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_dns_address:
         type: string
         description: DNS server IP
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_internal_network_mtu:
         type: float
         description: MTU for internal network interface (eth0)
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: *id002
       port_tdcore_dpdk_0_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       tdcore_server_group:
         type: string
         description: server group name/id
         required: true
-        status: SUPPORTED
+        status: supported
       index:
         type: float
         description: index
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: *id003
       vcscf_internal_netmask:
         type: string
         description: internal netmask
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vcscf_name_delimeter:
@@ -7144,56 +7144,56 @@ node_types:
         description: 'delimeter used in concatenating different words while naming
           (ex: "-","_",".",...)'
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: *id004
       tdcore_internal_ips:
         type: list
         description: List of Internal Lan IPs for TDCORE instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id005
       tdcore_dpdk_ips:
         type: list
         description: List of DPDK Lan IPs for TDCORE instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id006
       tdcore_uuids:
         type: list
         description: List of UUIDs generated by cmrepo for TDCORE instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id007
       vcscf_dn:
         type: string
         description: DN name
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_du:
         type: string
         description: DU name
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_dpdk_0_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_tdcore_internal_0_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_tdcore_internal_0_port_0:
         capability: tosca.capabilities.Node
@@ -7626,315 +7626,315 @@ node_types:
       port_cif_internal_0_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_0_port_1_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cif_internal_0_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_internal_0_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cif_internal_0_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_internal_0_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_oam_0_port_1_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_ims_li_0_port_4_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_0_port_2_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_oam_0_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cif_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_0_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_ims_li_0_port_4_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cif_oam_0_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cif_ims_li_0_port_4_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_cif_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_ims_li_0_port_4_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_1_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_internal_0_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_ims_core_0_port_2_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_cif_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_internal_0_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_internal_0_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_0_port_4_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_0_port_2_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_0_port_2_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_oam_0_port_3_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_cif_oam_0_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_internal_0_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_1_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_ims_li_0_port_4_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_0_port_4_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cif_ims_core_0_port_2_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_0_port_3_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       compute_cif_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_cif_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_0_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_0_port_4_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_0_port_2_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_ims_core_0_port_2_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_internal_0_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_0_port_2_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cif_internal_0_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_ims_li_0_port_4_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cif_ims_core_0_port_2_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_0_port_4_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_internal_0_port_0_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       index_value:
@@ -7942,97 +7942,97 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_cif_oam_0_port_3_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_cif_internal_0_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_ims_core_0_port_2_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_0_port_4_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_core_0_port_2_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_cif_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_cif_ims_li_0_port_4_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_ims_core_0_port_2_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_cif_ims_core_0_port_2_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_oam_0_port_3_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_oam_0_port_3_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_cif_ims_core_0_port_2_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_internal_0_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_cif_oam_0_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_0_port_4_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_cif_ims_li_0_port_4_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_cif_oam_0_port_3_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
     requirements:
@@ -8720,172 +8720,172 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       internal_net_id:
         type: string
         description: internal network name/uuid
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_release:
         type: string
         description: IMS release
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_internal_ips:
         type: list
         description: List of Internal Lan IPs for CSCF instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id008
       vcscf_gateway:
         type: string
         description: OAM unit cipa ip
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         description: Unique name for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_image_name:
         type: string
         description: image name
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_names:
         type: list
         description: List of instance names for CSCF instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id009
       port_cscf_internal_0_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_swrepo_address:
         type: string
         description: SWRepo IP or FQDN
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_uuids:
         type: list
         description: List of UUIDs generated by cmrepo for CSCF instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id010
       vnf_id:
         type: string
         description: Unique ID for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       availability_zone_0:
         type: string
         description: Availability zone name for CSCF instances.
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_internal_v6_ips:
         type: list
         description: List of Internal Lan v6 IPs for CSCF instances
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id011
       cscf_flavor_name:
         type: string
         description: flavor name
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_cmrepo_address:
         type: string
         description: CMRepo IP or FQDN
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_dns_address:
         type: string
         description: DNS server IP
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_internal_network_mtu:
         type: float
         description: MTU for internal network interface (eth0)
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: *id012
       port_cscf_internal_0_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_cscf_internal_0_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       index:
         type: float
         description: index
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: *id013
       vcscf_internal_netmask:
         type: string
         description: internal netmask
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_name_delimeter:
         type: string
         description: 'delimeter used in concatenating different words while naming
           (ex: "-","_",".",...)'
         required: true
-        status: SUPPORTED
+        status: supported
         constraints: *id014
       port_cscf_internal_0_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_dn:
         type: string
         description: DN name
         required: true
-        status: SUPPORTED
+        status: supported
       vcscf_du:
         type: string
         description: DU name
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_cscf_internal_0_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       cscf_security_group:
         type: string
         description: security group
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_cscf_server_0:
         capability: tosca.capabilities.Node

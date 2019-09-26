@@ -11,271 +11,271 @@ node_types:
       port_template_VMInt_OAM_lb_4_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_key_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       compute_pd_server_personality:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_pd01_port_0_replacement_policy:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_image_update_policy:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_binding:vnic_type:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_4_virtual_machine_interface_allowed_address_pairs:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_port_security_enabled:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_pd01_port_0_value_specs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_pd01_port_0_admin_state_up:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_pd01_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_4_virtual_network_refs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_pd_server_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_pd_server_diskConfig:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_mac_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_admin_pass:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_flavor_update_policy:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_4_security_group_refs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_template_VMInt_OAM_lb_4_virtual_machine_interface_mac_addresses:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_template_VMInt_OAM_lb_4_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_4_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       port_pd01_port_0_fixed_ips:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       compute_pd_server_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_pd_server_software_config_transport:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_security_groups:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_pd_server_scheduler_hints:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_pd_server_contrail_service_instance_ind:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       port_template_VMInt_OAM_lb_4_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_0_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_template_VMInt_OAM_lb_4_virtual_machine_interface_properties:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_4_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_template_VMInt_OAM_lb_4_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_4_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_allowed_address_pairs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       port_pd01_port_0_device_id:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_qos_policy:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       index_value:
@@ -283,157 +283,157 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_template_VMInt_OAM_lb_4_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_template_VMInt_OAM_lb_4_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_user_data_update_policy:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_0_device_owner:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_template_VMInt_OAM_lb_4_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_reservation_id:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_template_VMInt_OAM_lb_4_port_tuple_refs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_pd01_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
     attributes:
       pd_server_pd01_port_0_port_security_enabled:
         type: boolean
-        status: SUPPORTED
+        status: supported
       pd_server_show:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_template_VMInt_OAM_lb_4_name:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_allowed_address_pairs:
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       pd_server_console_urls:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_security_groups:
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       pd_server_pd01_port_0_tenant_id:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_template_VMInt_OAM_lb_4_virtual_machine_interface_mac_addresses:
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       pd_server_template_VMInt_OAM_lb_4_fq_name:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_name:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_template_VMInt_OAM_lb_4_virtual_machine_interface_properties:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_subnets:
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       pd_server_pd01_port_0_show:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_status:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_qos_policy:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_accessIPv6:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_instance_name:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_accessIPv4:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_admin_state_up:
         type: boolean
-        status: SUPPORTED
+        status: supported
       pd_server_template_VMInt_OAM_lb_4_virtual_network_refs:
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       pd_server_addresses:
         type: map
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
       pd_server_pd01_port_0_device_id:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_network:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_mac_address:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_device_owner:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_pd01_port_0_fixed_ips:
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       pd_server_template_VMInt_OAM_lb_4_port_tuple_refs:
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       pd_server_template_VMInt_OAM_lb_4_show:
         type: string
-        status: SUPPORTED
+        status: supported
       pd_server_template_VMInt_OAM_lb_4_virtual_machine_interface_allowed_address_pairs:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node

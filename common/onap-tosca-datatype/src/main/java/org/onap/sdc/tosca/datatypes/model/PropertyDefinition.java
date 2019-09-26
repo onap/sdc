@@ -39,7 +39,7 @@ package org.onap.sdc.tosca.datatypes.model;
 public class PropertyDefinition extends DefinitionOfDataType {
 
   public PropertyDefinition() {
-    setStatus(Status.SUPPORTED);
+    setStatus(Status.SUPPORTED.getName());
     setRequired(true);
   }
 

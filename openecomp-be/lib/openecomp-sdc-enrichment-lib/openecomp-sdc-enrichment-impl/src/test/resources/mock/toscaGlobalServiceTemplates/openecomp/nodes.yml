@@ -43,7 +43,7 @@ node_types:
       service_template_filter:
         description: Substitution Filter
         type: org.openecomp.datatypes.substitution.SubstitutionFiltering
-        status: SUPPORTED
+        status: supported
         required: true
 
   org.openecomp.resource.vl.extVL:
@@ -309,7 +309,7 @@ node_types:
       license_feature_group_ref:
         description: refrence to license feature group
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
     requirements:
     - deployment_flavor:
@@ -329,48 +329,48 @@ node_types:
       high_availablity:
         description: high_availablity
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       vm_image_name:
         description: Master image_name volume id
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       vm_flavor_name:
         description: Master image_name volume id
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       nfc_naming_code:
         description: nfc code for instance naming
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       nfc_code:
         type: string
         description: nfc code
-        status: SUPPORTED
+        status: supported
         required: false
       nfc_function:
         type: string
         description: nfc function
-        status: SUPPORTED
+        status: supported
         required: false
       vm_type_tag:
         description: vm type based on naming Convention
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       vfc_naming:
         description: vfc naming
         type: org.openecomp.datatypes.Naming
-        status: SUPPORTED
+        status: supported
         default: false
         required: false
       min_instances:
         description: Minimum number of VFC Instances
         type: integer
-        status: SUPPORTED
+        status: supported
         default: 0
         required: false
         constraints:
@@ -378,7 +378,7 @@ node_types:
       max_instances:
         description: Maximum number of VFC Instances
         type: integer
-        status: SUPPORTED
+        status: supported
         required: false
         constraints:
         - greater_or_equal: 1
@@ -657,29 +657,29 @@ node_types:
         type: boolean
         description: Flag to enable/disable port security on the network
         required: false
-        status: SUPPORTED
+        status: supported
       device_id:
         type: string
         description: Device ID of this port
         required: false
-        status: SUPPORTED
+        status: supported
       qos_policy:
         type: string
         description: The name or ID of QoS policy to attach to this network
         required: false
-        status: SUPPORTED
+        status: supported
       allowed_address_pairs:
         type: list
         description: Additional MAC/IP address pairs allowed to pass through the port
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       binding:vnic_type:
         type: string
         description: The vnic type to be bound on the neutron port
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - macvtap
@@ -691,25 +691,25 @@ node_types:
         required: false
         default: {
           }
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       device_owner:
         type: string
         description: Name of the network owning the port
         required: false
-        status: SUPPORTED
+        status: supported
       network:
         type: string
         description: Network this port belongs to
         required: false
-        status: SUPPORTED
+        status: supported
       replacement_policy:
         type: string
         description: Policy on how to respond to a stack-update for this resource
         required: false
         default: AUTO
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - REPLACE_ALWAYS
@@ -718,59 +718,59 @@ node_types:
         type: list
         description: List of security group names or IDs
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       fixed_ips:
         type: list
         description: Desired IPs for this port
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       mac_address:
         type: string
         description: MAC address to give to this port
         required: false
-        status: SUPPORTED
+        status: supported
       admin_state_up:
         type: boolean
         description: A boolean value specifying the administrative status of the network
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
       name:
         type: string
         description: A symbolic name for this port
         required: false
-        status: SUPPORTED
+        status: supported
     attributes:
       tenant_id:
         type: string
         description: Tenant owning the port
-        status: SUPPORTED
+        status: supported
       network_id:
         type: string
         description: Unique identifier for the network owning the port
-        status: SUPPORTED
+        status: supported
       qos_policy_id:
         type: string
         description: The QoS policy ID attached to this network
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: Detailed information about resource
-        status: SUPPORTED
+        status: supported
       subnets:
         type: list
         description: Subnets of this network
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       status:
         type: string
         description: The status of the network
-        status: SUPPORTED
+        status: supported
     capabilities:
       attachment:
         type: tosca.capabilities.Attachment
@@ -793,25 +793,25 @@ node_types:
         type: list
         description: An ordered list of static routes to be added to this interface
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.contrail.port.StaticRoute
       virtual_network:
         type: string
         description: Virtual Network for this interface
         required: true
-        status: SUPPORTED
+        status: supported
       static_route:
         type: boolean
         description: Static route enabled
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       allowed_address_pairs:
         type: list
         description: List of allowed address pair for this interface
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.contrail.AddressPair
       shared_ip:
@@ -819,17 +819,17 @@ node_types:
         description: Shared ip enabled
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       ip_address:
         type: string
         description: IP for this interface
         required: false
-        status: SUPPORTED
+        status: supported
       interface_type:
         type: string
         description: Interface type
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - management
@@ -840,7 +840,7 @@ node_types:
       fq_name:
         type: string
         description: fq_name
-        status: SUPPORTED
+        status: supported
 
   org.openecomp.resource.cp.v2.extVirtualMachineInterfaceCP:
     derived_from: org.openecomp.resource.cp.v2.extCP
@@ -848,55 +848,55 @@ node_types:
       name:
         description: Virtual Machine Interface name
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       security_group_refs:
         description: List of security groups.
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
         required: false
       virtual_network_refs:
         description: List of virtual networks.
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
         required: false
       virtual_machine_interface_properties:
         description: virtual machine interface properties.
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
-        status: SUPPORTED
+        status: supported
         required: false
       port_tuple_refs:
         description: List of port tuples.
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
         required: false
       virtual_machine_interface_mac_addresses:
         description: List of mac addresses.
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
         required: false
       virtual_machine_interface_allowed_address_pairs:
         description: Virtual Machine Interface allowed address pairs.
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        status: SUPPORTED
+        status: supported
         required: false
     attributes:
       fq_name:
         description: The FQ name of the Virtual Network.
         type: string
-        status: SUPPORTED
+        status: supported
       show:
         description: All attributes.
         type: string
-        status: SUPPORTED
+        status: supported
     capabilities:
       binding:
         type: tosca.capabilities.network.Bindable

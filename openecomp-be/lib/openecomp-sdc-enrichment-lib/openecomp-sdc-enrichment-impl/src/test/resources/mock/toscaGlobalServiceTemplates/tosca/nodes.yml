@@ -12,16 +12,16 @@ node_types:
       tosca_id:
         type: string
         description: A unique identifier of the realized instance of a Node Template that derives from any TOSCA normative type.
-        status: SUPPORTED
+        status: supported
       tosca_name:
         type: string
         description: This attribute reflects the name of the Node Template as defined in the TOSCA service template. This name is not unique to the realized instance model of corresponding deployed application as each template in the model can result in one or more instances (e.g., scaled) when orchestrated to a provider environment.
-        status: SUPPORTED
+        status: supported
       state:
         type: string
         description: The state of the node instance.
         default: initial
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency:
         capability: tosca.capabilities.Node
@@ -47,19 +47,19 @@ node_types:
         type: string
         description: The logical name of the object store (or container).
         required: true
-        status: SUPPORTED
+        status: supported
       size:
         type: scalar-unit.size
         description: The requested initial storage size (default unit is in Gigabytes).
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0 GB
       maxsize:
         type: scalar-unit.size
         description: The requested maximum storage size (default unit is in Gigabytes).
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0 GB
     capabilities:
@@ -76,12 +76,12 @@ node_types:
         type: string
         description: The optional root password for the DBMS server.
         required: false
-        status: SUPPORTED
+        status: supported
       port:
         type: integer
         description: The DBMS server's port.
         required: false
-        status: SUPPORTED
+        status: supported
     capabilities:
       host:
         type: tosca.capabilities.Container
@@ -98,7 +98,7 @@ node_types:
         type: string
         description: The web application's context root which designates the application's URL path within the web server it is hosted on.
         required: false
-        status: SUPPORTED
+        status: supported
     requirements:
     - host:
         capability: tosca.capabilities.Container
@@ -117,21 +117,21 @@ node_types:
       private_address:
         type: string
         description: The primary private IP address assigned by the cloud provider that applications may use to access the Compute node.
-        status: SUPPORTED
+        status: supported
       public_address:
         type: string
         description: The primary public IP address assigned by the cloud provider that applications may use to access the Compute node.
-        status: SUPPORTED
+        status: supported
       networks:
         type: map
         description: The list of logical networks assigned to the compute host instance and information about them.
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: tosca.datatypes.network.NetworkInfo
       ports:
         type: map
         description: The list of logical ports assigned to the compute host instance and information about them.
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: tosca.datatypes.network.PortInfo
     requirements:
@@ -179,7 +179,7 @@ node_types:
         description: The IP version of the requested network.
         required: false
         default: 4
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - 4
@@ -188,53 +188,53 @@ node_types:
         type: string
         description: The cidr block of the requested network.
         required: false
-        status: SUPPORTED
+        status: supported
       start_ip:
         type: string
         description: The IP address to be used as the 1st one in a pool of addresses derived from the cidr block full IP range.
         required: false
-        status: SUPPORTED
+        status: supported
       end_ip:
         type: string
         description: The IP address to be used as the last one in a pool of addresses derived from the cidr block full IP range.
         required: false
-        status: SUPPORTED
+        status: supported
       gateway_ip:
         type: string
         description: The gateway IP address.
         required: false
-        status: SUPPORTED
+        status: supported
       network_name:
         type: string
         description: An Identifier that represents an existing Network instance in the underlying cloud infrastructure - OR - be used as the name of the new created network.
         required: false
-        status: SUPPORTED
+        status: supported
       network_id:
         type: string
         description: An Identifier that represents an existing Network instance in the underlying cloud infrastructure. This property is mutually exclusive with all other properties except network_name.
         required: false
-        status: SUPPORTED
+        status: supported
       segmentation_id:
         type: string
         description: A segmentation identifier in the underlying cloud infrastructure (e.g., VLAN id, GRE tunnel id). If the segmentation_id is specified, the network_type or physical_network properties should be provided as well.
         required: false
-        status: SUPPORTED
+        status: supported
       network_type:
         type: string
         description: Optionally, specifies the nature of the physical network in the underlying cloud infrastructure. Examples are flat, vlan, gre or vxlan. For flat and vlan types, physical_network should be provided too.
         required: false
-        status: SUPPORTED
+        status: supported
       physical_network:
         type: string
         description: Optionally, identifies the physical network on top of which the network is implemented, e.g. physnet1. This property is required if network_type is flat or vlan.
         required: false
-        status: SUPPORTED
+        status: supported
       dhcp_enabled:
         type: boolean
         description: Indicates the TOSCA container to create a virtual network instance with or without a DHCP service.
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable
@@ -291,12 +291,12 @@ node_types:
         type: version
         description: The optional software component's version.
         required: false
-        status: SUPPORTED
+        status: supported
       admin_credential:
         type: tosca.datatypes.Credential
         description: The optional credential that can be used to authenticate to the software component.
         required: false
-        status: SUPPORTED
+        status: supported
     requirements:
     - host:
         capability: tosca.capabilities.Container
@@ -310,19 +310,19 @@ node_types:
         type: scalar-unit.size
         description: The requested storage size (default unit is MB).
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 1 MB
       volume_id:
         type: string
         description: ID of an existing volume (that is in the accessible scope of the requesting application).
         required: false
-        status: SUPPORTED
+        status: supported
       snapshot_id:
         type: string
         description: Some identifier that represents an existing snapshot that should be used when creating the block storage (volume).
         required: false
-        status: SUPPORTED
+        status: supported
     capabilities:
       attachment:
         type: tosca.capabilities.Attachment
@@ -339,7 +339,7 @@ node_types:
         type: string
         description: Allow the user to set a fixed IP address. Note that this address is a request to the provider which they will attempt to fulfill but may not be able to dependent on the network the port is associated with.
         required: false
-        status: SUPPORTED
+        status: supported
       order:
         type: integer
         description: 'The order of the NIC on the compute instance (e.g. eth2). Note:
@@ -349,7 +349,7 @@ node_types:
           progression that starts with 0 (e.g. 0, 1, 2, ..., n).'
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       is_default:
@@ -357,22 +357,22 @@ node_types:
         description: Set is_default=true to apply a default gateway route on the running compute instance to the associated network gateway. Only one port that is associated to single compute node can set as default=true.
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       ip_range_start:
         type: string
         description: Defines the starting IP of a range to be allocated for the compute instances that are associated by this Port. Without setting this property the IP allocation is done from the entire CIDR block of the network.
         required: false
-        status: SUPPORTED
+        status: supported
       ip_range_end:
         type: string
         description: Defines the ending IP of a range to be allocated for the compute instances that are associated by this Port. Without setting this property the IP allocation is done from the entire CIDR block of the network.
         required: false
-        status: SUPPORTED
+        status: supported
     attributes:
       ip_address:
         type: string
         description: The IP address would be assigned to the associated compute instance.
-        status: SUPPORTED
+        status: supported
     requirements:
     - link:
         capability: tosca.capabilities.network.Linkable
@@ -405,22 +405,22 @@ node_types:
         type: string
         description: The logical database Name.
         required: true
-        status: SUPPORTED
+        status: supported
       port:
         type: integer
         description: The port the database service will use to listen for incoming data and requests.
         required: false
-        status: SUPPORTED
+        status: supported
       user:
         type: string
         description: The special user account used for database administration.
         required: false
-        status: SUPPORTED
+        status: supported
       password:
         type: string
         description: The password associated with the user account provided in the 'user' property.
         required: false
-        status: SUPPORTED
+        status: supported
     requirements:
     - host:
         capability: tosca.capabilities.Container

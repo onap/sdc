@@ -15,12 +15,12 @@ data_types:
         type: string
         description: The remote group ID to be associated with this security group rule
         required: false
-        status: SUPPORTED
+        status: supported
       protocol:
         type: string
         description: The protocol that is matched by the security group rule
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - tcp
@@ -31,7 +31,7 @@ data_types:
         description: Ethertype of the traffic
         required: false
         default: IPv4
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - IPv4
@@ -41,7 +41,7 @@ data_types:
         description: 'The maximum port number in the range that is matched by the
           security group rule. '
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 0
@@ -50,13 +50,13 @@ data_types:
         type: string
         description: The remote IP prefix (CIDR) to be associated with this security group rule
         required: false
-        status: SUPPORTED
+        status: supported
       remote_mode:
         type: string
         description: Whether to specify a remote group or a remote IP prefix
         required: false
         default: remote_ip_prefix
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - remote_ip_prefix
@@ -66,7 +66,7 @@ data_types:
         description: The direction in which the security group rule is applied
         required: false
         default: ingress
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - egress
@@ -75,7 +75,7 @@ data_types:
         type: integer
         description: The minimum port number in the range that is matched by the security group rule.
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 0
@@ -88,24 +88,24 @@ node_types:
         type: string
         description: Description of the security group
         required: false
-        status: SUPPORTED
+        status: supported
       name:
         type: string
         description: A symbolic name for this security group, which is not required to be unique.
         required: false
-        status: SUPPORTED
+        status: supported
       rules:
         type: list
         description: List of security group rules
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.neutron.SecurityRules.Rule
     attributes:
       show:
         type: string
         description: Detailed information about resource
-        status: SUPPORTED
+        status: supported
     requirements:
     - port:
         capability: tosca.capabilities.Attachment

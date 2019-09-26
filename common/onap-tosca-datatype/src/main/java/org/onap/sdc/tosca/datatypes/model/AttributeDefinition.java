@@ -31,11 +31,11 @@ public class AttributeDefinition implements Cloneable {
   private String type;
   private String description;
   private Object _default;
-  private Status status;
+  private String status;
   private EntrySchema entry_schema;
 
   public AttributeDefinition() {
-    status = Status.SUPPORTED;
+    status = Status.SUPPORTED.getName();
   }
 
 

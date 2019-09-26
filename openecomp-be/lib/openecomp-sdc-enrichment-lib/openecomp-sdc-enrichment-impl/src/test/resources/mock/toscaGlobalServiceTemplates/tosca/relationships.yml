@@ -12,16 +12,16 @@ relationship_types:
       tosca_id:
         type: string
         description: A unique identifier of the realized instance of a Relationship Template that derives from any TOSCA normative type.
-        status: SUPPORTED
+        status: supported
       tosca_name:
         type: string
         description: This attribute reflects the name of the Relationship Template as defined in the TOSCA service template. This name is not unique to the realized instance model of corresponding deployed application as each template in the model can result in one or more instances (e.g., scaled) when orchestrated to a provider environment.
-        status: SUPPORTED
+        status: supported
       state:
         type: string
         description: The state of the relationship instance.
         default: initial
-        status: SUPPORTED
+        status: supported
     interfaces:
       Configure:
         type: tosca.interfaces.relationship.Configure
@@ -46,21 +46,21 @@ relationship_types:
           / path such as ''/usr/data''. Note: The user must provide it and it cannot
           be "root".'
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - min_length: 1
       device:
         type: string
         description: The logical device name which for the attached device (which is represented by the target node in the model). e.g., '/dev/hda1'.
         required: false
-        status: SUPPORTED
+        status: supported
     attributes:
       device:
         type: string
         description: 'The logical name of the device as exposed to the instance. Note:
           A runtime property that gets set when the model gets instantiated by the
           orchestrator.'
-        status: SUPPORTED
+        status: supported
     valid_target_types:
     - tosca.capabilities.Attachment
   tosca.relationships.network.BindsTo:
@@ -85,6 +85,6 @@ relationship_types:
       credential:
         type: tosca.datatypes.Credential
         required: false
-        status: SUPPORTED
+        status: supported
     valid_target_types:
     - tosca.capabilities.Endpoint

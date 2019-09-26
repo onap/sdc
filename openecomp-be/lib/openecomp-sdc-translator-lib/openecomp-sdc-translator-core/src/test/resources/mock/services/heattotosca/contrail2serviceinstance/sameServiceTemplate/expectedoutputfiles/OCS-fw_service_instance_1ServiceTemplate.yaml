@@ -14,14 +14,14 @@ topology_template:
       type: string
       description: Availability zone to create servers in
       required: false
-      status: SUPPORTED
+      status: supported
     static_routes_list:
       hidden: false
       immutable: false
       type: list
       description: Static routes enabled
       required: false
-      status: SUPPORTED
+      status: supported
       entry_schema:
         type: boolean
     availability_zone_enable:
@@ -31,14 +31,14 @@ topology_template:
       description: Indicates availability zone is enabled
       required: false
       default: false
-      status: SUPPORTED
+      status: supported
     service_template_name:
       hidden: false
       immutable: false
       type: string
       description: Service template name
       required: false
-      status: SUPPORTED
+      status: supported
     ordered_interfaces:
       hidden: false
       immutable: false
@@ -46,28 +46,28 @@ topology_template:
       description: Indicates if service interface are ordered
       required: false
       default: false
-      status: SUPPORTED
+      status: supported
     flavor:
       hidden: false
       immutable: false
       type: string
       description: flavor
       required: false
-      status: SUPPORTED
+      status: supported
     image_name:
       hidden: false
       immutable: false
       type: string
       description: Image name
       required: true
-      status: SUPPORTED
+      status: supported
     service_type:
       hidden: false
       immutable: false
       type: string
       description: Service type
       required: true
-      status: SUPPORTED
+      status: supported
       constraints:
       - valid_values:
         - firewall
@@ -80,7 +80,7 @@ topology_template:
       type: list
       description: List of interface types
       required: true
-      status: SUPPORTED
+      status: supported
       entry_schema:
         type: string
         constraints:
@@ -95,14 +95,14 @@ topology_template:
       type: string
       description: Service instance name
       required: true
-      status: SUPPORTED
+      status: supported
     interface_list:
       hidden: false
       immutable: false
       type: list
       description: List of interfaces
       required: false
-      status: SUPPORTED
+      status: supported
       entry_schema:
         type: org.openecomp.datatypes.heat.network.contrail.InterfaceData
     service_mode:
@@ -111,7 +111,7 @@ topology_template:
       type: string
       description: Service mode
       required: true
-      status: SUPPORTED
+      status: supported
       constraints:
       - valid_values:
         - transparent
@@ -123,7 +123,7 @@ topology_template:
       type: list
       description: Shared ips enabled
       required: false
-      status: SUPPORTED
+      status: supported
       entry_schema:
         type: boolean
   node_templates:

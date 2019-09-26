@@ -12,64 +12,64 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_ids:
         type: list
         description: IDs of the security groups for the server
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_role:
         type: string
         description: VM Role for the db vms
         required: true
-        status: SUPPORTED
+        status: supported
       db_name:
         type: string
         description: Hostname of the database servers
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       server_group_id:
         type: string
         description: ID of the server group
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: Name of the availability zone for this server
         required: true
-        status: SUPPORTED
+        status: supported
       db_image_name:
         type: string
         description: Image to be used for the server
         required: true
-        status: SUPPORTED
+        status: supported
       keypair_id:
         type: string
         description: Name of the security key for the server
         required: true
-        status: SUPPORTED
+        status: supported
       db_volume_id_3:
         type: string
         description: IDs to be used for the database volume
         required: true
-        status: SUPPORTED
+        status: supported
       db_volume_id_2:
         type: string
         description: IDs to be used for the database volume
         required: true
-        status: SUPPORTED
+        status: supported
       deploy_timeout:
         type: float
         description: Timeout before declaring the stack deployment as failed.
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 60
@@ -78,27 +78,27 @@ node_types:
         type: string
         description: Name of the oam network
         required: true
-        status: SUPPORTED
+        status: supported
       db_oam_ip_0:
         type: string
         description: OAM IP Address of the database servers
         required: true
-        status: SUPPORTED
+        status: supported
       db_flavor_name:
         type: string
         description: Flavor to be used for the server
         required: true
-        status: SUPPORTED
+        status: supported
       db_volume_id_1:
         type: string
         description: IDs to be used for the database volume
         required: true
-        status: SUPPORTED
+        status: supported
       db_volume_id_0:
         type: string
         description: IDs to be used for the database volume
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_db_server_0:
         capability: tosca.capabilities.Node
@@ -364,64 +364,64 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       app_flavor_name:
         type: string
         description: Flavor to be used for the server
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_ids:
         type: list
         description: IDs of the security groups for the server
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_role:
         type: string
         description: VM Role for the application vms
         required: true
-        status: SUPPORTED
+        status: supported
       app_name:
         type: string
         description: Hostnames of the application servers
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       app_oam_ip_0:
         type: string
         description: OAM IP Addresses of the application servers
         required: true
-        status: SUPPORTED
+        status: supported
       server_group_id:
         type: string
         description: ID of the server group
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: Name of the availability zone for this server
         required: true
-        status: SUPPORTED
+        status: supported
       app_image_name:
         type: string
         description: Image to be used for the server
         required: true
-        status: SUPPORTED
+        status: supported
       keypair_id:
         type: string
         description: Name of the security key for the server
         required: true
-        status: SUPPORTED
+        status: supported
       deploy_timeout:
         type: float
         description: Timeout before declaring the stack deployment as failed.
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 60
@@ -430,7 +430,7 @@ node_types:
         type: string
         description: Name of the oam network
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_app_server_0:
         capability: tosca.capabilities.Node

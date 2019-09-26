@@ -42,72 +42,72 @@ node_types:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_gw:
         type: string
         description: CPS network gateway
         required: true
-        status: SUPPORTED
+        status: supported
       pcm_image_name:
         type: string
         description: PCRF CM image name
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: string
         description: the name of security group
         required: true
-        status: SUPPORTED
+        status: supported
       cps_net_ip:
         type: string
         description: CPS network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcm_flavor_name:
         type: string
         description: flavor name of PCRF CM instance
         required: true
-        status: SUPPORTED
+        status: supported
       pcm_vol:
         type: string
         description: CPS Cluman Cinder Volume
         required: true
-        status: SUPPORTED
+        status: supported
       pcm_server_name:
         type: string
         description: PCRF CM server name
         required: true
-        status: SUPPORTED
+        status: supported
       cps_net_name:
         type: string
         description: CPS network name
         required: true
-        status: SUPPORTED
+        status: supported
       cps_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ip:
         type: string
         description: OAM network ip
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_name:
         type: string
         description: OAM network name
         required: true
-        status: SUPPORTED
+        status: supported
     attributes:
       server_pcm_id:
         type: string
         description: the pcm nova service id
-        status: SUPPORTED
+        status: supported
     requirements:
     - link_pcm_port_1:
         capability: tosca.capabilities.network.Linkable
@@ -204,72 +204,72 @@ node_types:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_gw:
         type: string
         description: CPS network gateway
         required: true
-        status: SUPPORTED
+        status: supported
       oam_flavor_name:
         type: string
         description: flavor name of PCRF CM instance
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: string
         description: the name of security group
         required: true
-        status: SUPPORTED
+        status: supported
       cps_net_ip:
         type: string
         description: CPS network ip
         required: true
-        status: SUPPORTED
+        status: supported
       oam_server_name:
         type: string
         description: oam server name
         required: true
-        status: SUPPORTED
+        status: supported
       pcm_vol:
         type: string
         description: CPS Cluman Cinder Volume
         required: true
-        status: SUPPORTED
+        status: supported
       oam_image_name:
         type: string
         description: oam image name
         required: true
-        status: SUPPORTED
+        status: supported
       cps_net_name:
         type: string
         description: CPS network name
         required: true
-        status: SUPPORTED
+        status: supported
       cps_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ip:
         type: string
         description: OAM network ip
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_name:
         type: string
         description: OAM network name
         required: true
-        status: SUPPORTED
+        status: supported
     attributes:
       server_oam_id:
         type: string
         description: the oam nova service id
-        status: SUPPORTED
+        status: supported
     requirements:
     - local_storage_server_oam:
         capability: tosca.capabilities.Attachment
@@ -365,35 +365,35 @@ node_types:
       compute_compute_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       compute_compute_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_compute_config_drive:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:

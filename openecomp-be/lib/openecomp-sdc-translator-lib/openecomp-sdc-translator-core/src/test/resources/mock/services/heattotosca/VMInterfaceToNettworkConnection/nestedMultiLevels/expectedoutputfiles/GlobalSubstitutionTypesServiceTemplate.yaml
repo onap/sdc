@@ -12,57 +12,57 @@ node_types:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       p1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p2:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       template_PortTuple_LB1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_image:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       lb_st_interface_type_oam:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_sec_group_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_flavor:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       availability_zone_0:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_oam_ips:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_server_cmaui_1:
         capability: tosca.capabilities.Node
@@ -1764,57 +1764,57 @@ node_types:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       p1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p2:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       template_PortTuple_LB1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_image:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       lb_st_interface_type_oam:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_sec_group_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_flavor:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       availability_zone_0:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_oam_ips:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_server_cmaui_2:
         capability: tosca.capabilities.Node
@@ -3090,60 +3090,60 @@ node_types:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       p1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       template_PortTuple_LB1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_image:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       lb_st_interface_type_oam:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_sec_group_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_flavor:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       indx:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       availability_zone_0:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_oam_ips:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_template_VMInt_OAM_lb_5:
         capability: tosca.capabilities.Node
@@ -3993,56 +3993,56 @@ node_types:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       p1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       template_PortTuple_LB1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_image:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       lb_st_interface_type_oam:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_sec_group_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_flavor:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       availability_zone_0:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_oam_ips:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_template_VMInt_OAM_lb_7:
         capability: tosca.capabilities.Node

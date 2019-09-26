@@ -12,17 +12,17 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_a_name_0:
         type: string
         description: Name of Perimeta VM A instance
         required: true
-        status: SUPPORTED
+        status: supported
       int_ha_network_plen:
         type: float
         description: Prefix length of subnet associated with internal HA network
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 0
@@ -31,96 +31,96 @@ node_types:
         type: string
         description: Service network unused port network UUID
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_server_group:
         type: string
         description: Server group to use for these VMs
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_config:
         type: string
         description: JSON orchestration template configuration for instance.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_a_int_ha_ip_0:
         type: string
         description: Fixed IP address to use as HA IP of A instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VNF instance
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_untrusted_vlan_ids:
         type: list
         description: List of VLAN IDs to use on the untrusted/access network
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       int_ha_net_id:
         type: string
         description: HA network id
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_int_ha_ip_0:
         type: string
         description: Fixed IP address to use as HA IPs of B instance.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_mgmt_vip_0:
         type: string
         description: Management virtual IP address.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_a_trusted_ip_0:
         type: string
         description: Fixed IP address to use as Trusted/core fixed IPs of A instance.
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_keypair:
         type: string
         description: Keypair to use for accessing this Perimeta instance
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: VNF ID of this deployment
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: Availability zone for A instances.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_trusted_vip_0:
         type: string
         description: Trusted/core virtual IP address.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_untrusted_vip_0:
         type: string
         description: Untrusted/access virtual IP address
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_sec_groups:
         type: list
         description: List of security groups to add on trusted interfaces.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       ssc_a_untrusted_v6_ip_0:
         type: string
         description: Fixed IP address to use as Untrusted/access alternate fixed IP of A instance.
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_untrusted_num_vlans:
         type: float
         description: number of VLANs to connect to the untrusted/access interface
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 1
@@ -129,74 +129,74 @@ node_types:
         type: string
         description: RF virtual IP address to use for SSC.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_a_mgmt_ip_0:
         type: string
         description: Fixed IP address to use as management IP of A instance.
         required: true
-        status: SUPPORTED
+        status: supported
       trusted_net_id:
         type: string
         description: Trusted/core network UUID
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_untrusted_parent_vip_0:
         type: string
         description: Untrusted/access parent virtual IP address
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_untrusted_v6_vip_0:
         type: string
         description: Untrusted/access alternate virtual IP address
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_a_rf_ip_0:
         type: string
         description: RF fixed IP address to use for SSC A.
         required: true
-        status: SUPPORTED
+        status: supported
       vm_role:
         type: string
         description: Role of these VMs
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_a_untrusted_parent_ip_0:
         type: string
         description: Fixed IP address to use as Untrusted/access fixed IP of A parent instance.
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_untrusted_vlan_networks:
         type: list
         description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       ssc_a_untrusted_ip_0:
         type: string
         description: Fixed IP address to use as Untrusted/access fixed IP of A instance.
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_image_name:
         type: string
         description: Glance image for Perimeta instance
         required: true
-        status: SUPPORTED
+        status: supported
       mgmt_net_id:
         type: string
         description: Management network id
         required: true
-        status: SUPPORTED
+        status: supported
       int_untrusted_parent_net_id:
         type: string
         description: internal Untrusted/access parent network id
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_flavor_name:
         type: string
         description: Flavor to use for creating VM instances
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_perimeta_ssc_a_ha_0_port:
         capability: tosca.capabilities.Node
@@ -996,29 +996,29 @@ node_types:
         type: string
         description: Parent Contrail interface
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_v6_vip_0:
         type: string
         description: virtual IPv6 address associated with subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_subinterface_name_prefix:
         type: string
         description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_vlan_networks:
         type: list
         description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_subinterface_instance_index:
         type: float
         description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 1
@@ -1027,29 +1027,29 @@ node_types:
         type: string
         description: IPv4 address associated with subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_vip_0:
         type: string
         description: virtual IPv4 address associated with subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_vlan_ids:
         type: list
         description: List of VLAN IDs to use for subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_mac_address:
         type: string
         description: MAC address to use for subinterface
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_v6_ip_0:
         type: string
         description: IPv6 address associated with subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_contrail_vmi_subinterface:
         capability: tosca.capabilities.Node
@@ -1084,12 +1084,12 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       int_ha_network_plen:
         type: float
         description: Prefix length of subnet associated with internal HA network
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 0
@@ -1098,101 +1098,101 @@ node_types:
         type: string
         description: Service network unused port network UUID
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_server_group:
         type: string
         description: Server group to use for these VMs
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_name_0:
         type: string
         description: Name of Perimeta VM B instance
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_a_int_ha_ip_0:
         type: string
         description: Fixed IP address to use as HA IPs of A instance.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_untrusted_ip_0:
         type: string
         description: Fixed IP address to use as Untrusted/access fixed IP of B instance.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_mgmt_ip_0:
         type: string
         description: Fixed IP address to use as management IP of B instance.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_untrusted_parent_ip_0:
         type: string
         description: Fixed IP address to use as Untrusted/access fixed IP of B parent instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VNF instance
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_untrusted_vlan_ids:
         type: list
         description: List of VLAN IDs to use on the untrusted/access network
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       int_ha_net_id:
         type: string
         description: HA network id
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_int_ha_ip_0:
         type: string
         description: Fixed IP address to use as HA IP of B instance.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_mgmt_vip_0:
         type: string
         description: Management virtual IP address.
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_keypair:
         type: string
         description: Keypair to use for accessing this Perimeta instance
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: VNF ID of this deployment
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_1:
         type: string
         description: Availability zone for B instances.  May be the same as A instance.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_trusted_vip_0:
         type: string
         description: Trusted/core virtual IP address.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_untrusted_vip_0:
         type: string
         description: Untrusted/access virtual IP address
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_sec_groups:
         type: list
         description: List of security groups to add on trusted interfaces.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_untrusted_num_vlans:
         type: float
         description: number of VLANs to connect to the untrusted/access interface
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 1
@@ -1201,69 +1201,69 @@ node_types:
         type: string
         description: RF virtual IP address to use for SSC.
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_trusted_ip_0:
         type: string
         description: Fixed IP address to use as Trusted/core fixed IPs of B instance.
         required: true
-        status: SUPPORTED
+        status: supported
       trusted_net_id:
         type: string
         description: Trusted/core network UUID
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_untrusted_parent_vip_0:
         type: string
         description: Untrusted/access parent virtual IP address
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_untrusted_v6_vip_0:
         type: string
         description: Untrusted/access alternate virtual IP address
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_untrusted_v6_ip_0:
         type: string
         description: Fixed IP address to use as Untrusted/access alternate fixed IP of B instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vm_role:
         type: string
         description: Role of these VMs
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_untrusted_vlan_networks:
         type: list
         description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_image_name:
         type: string
         description: Glance image for Perimeta instance
         required: true
-        status: SUPPORTED
+        status: supported
       ssc_b_rf_ip_0:
         type: string
         description: RF fixed IP address to use for SSC B.
         required: true
-        status: SUPPORTED
+        status: supported
       mgmt_net_id:
         type: string
         description: Management network id
         required: true
-        status: SUPPORTED
+        status: supported
       int_untrusted_parent_net_id:
         type: string
         description: internal Untrusted/access parent network id
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_flavor_name:
         type: string
         description: Flavor to use for creating VM instances
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_perimeta_ssc_b_trusted_0_port:
         capability: tosca.capabilities.Node
@@ -2063,12 +2063,12 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       int_ha_network_plen:
         type: float
         description: Prefix length of subnet associated with internal HA network
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 0
@@ -2077,29 +2077,29 @@ node_types:
         type: string
         description: JSON orchestration template configuration for instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VNF instance
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_untrusted_vlan_ids:
         type: list
         description: List of VLAN IDs to use on the untrusted/access network
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       int_ha_net_id:
         type: string
         description: HA network id
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_instance_index:
         type: float
         description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 0
@@ -2108,50 +2108,50 @@ node_types:
         type: string
         description: Keypair to use for accessing this Perimeta instance
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_server_groups:
         type: list
         description: Server groups to use for these VMs
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vnf_id:
         type: string
         description: VNF ID of this deployment
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: Availability zone for A instances.
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_mgmt_vips:
         type: list
         description: List of management virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_sec_groups:
         type: list
         description: List of security groups to add on trusted interfaces.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_untrusted_parent_vips:
         type: list
         description: List of Untrusted/access parent virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_untrusted_num_vlans:
         type: float
         description: number of VLANs to connect to the untrusted/access interface
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 1
@@ -2160,114 +2160,114 @@ node_types:
         type: list
         description: List of fixed IP addresses to use as HA IPs of A instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_a_untrusted_parent_ips:
         type: list
         description: List of fixed IP addresses to use as Untrusted/access parent fixed IPs of A instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_a_trusted_ips:
         type: list
         description: List of fixed IP addresses to use as Trusted/core fixed IPs of A instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_untrusted_vips:
         type: list
         description: List of Untrusted/access virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       trusted_net_id:
         type: string
         description: Trusted/core network UUID
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_b_int_ha_ips:
         type: list
         description: List of fixed IP addresses to use as HA IPs of B instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_a_mgmt_ips:
         type: list
         description: List of fixed IP addresses to use as management IPs of A instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_a_untrusted_ips:
         type: list
         description: List of fixed IP addresses to use as Untrusted/access fixed IPs of A instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_role:
         type: string
         description: Role of these VMs
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_untrusted_v6_vips:
         type: list
         description: List of Untrusted/access alternate virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_untrusted_vlan_networks:
         type: list
         description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_a_untrusted_v6_ips:
         type: list
         description: List of fixed IP addresses to use as Untrusted/access alternate fixed IPs of A instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_image_name:
         type: string
         description: Glance image for Perimeta instance
         required: true
-        status: SUPPORTED
+        status: supported
       mgmt_net_id:
         type: string
         description: Management network id
         required: true
-        status: SUPPORTED
+        status: supported
       int_untrusted_parent_net_id:
         type: string
         description: internal Untrusted/access parent network id
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_a_names:
         type: list
         description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_flavor_name:
         type: string
         description: Flavor to use for creating VM instances
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_trusted_vips:
         type: list
         description: List of Trusted/core virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -2901,12 +2901,12 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       int_ha_network_plen:
         type: float
         description: Prefix length of subnet associated with internal HA network
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 0
@@ -2915,52 +2915,52 @@ node_types:
         type: list
         description: List of fixed IP addresses to use as Untrusted/access alternate fixed IPs of B instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_b_mgmt_ips:
         type: list
         description: List of fixed IP addresses to use as management IPs of B instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vnf_name:
         type: string
         description: Unique name for this VNF instance
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_untrusted_vlan_ids:
         type: list
         description: List of VLAN IDs to use on the untrusted/access network
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_b_names:
         type: list
         description: List of names of Perimeta VM B instances, indexed by perimeta_instance_index
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_b_untrusted_ips:
         type: list
         description: List of fixed IP addresses to use as Untrusted/access fixed IPs of B instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       int_ha_net_id:
         type: string
         description: HA network id
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_instance_index:
         type: float
         description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 0
@@ -2969,50 +2969,50 @@ node_types:
         type: string
         description: Keypair to use for accessing this Perimeta instance
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_server_groups:
         type: list
         description: Server groups to use for these VMs
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vnf_id:
         type: string
         description: VNF ID of this deployment
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_1:
         type: string
         description: Availability zone for B instances.  May be the same as A instance.
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_mgmt_vips:
         type: list
         description: List of management virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_sec_groups:
         type: list
         description: List of security groups to add on trusted interfaces.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_untrusted_parent_vips:
         type: list
         description: List of Untrusted/access parent virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_untrusted_num_vlans:
         type: float
         description: number of VLANs to connect to the untrusted/access interface
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 1
@@ -3021,86 +3021,86 @@ node_types:
         type: list
         description: List of fixed IP addresses to use as HA IPs of A instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_b_trusted_ips:
         type: list
         description: List of fixed IP addresses to use as Trusted/core fixed IPs of B instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       rtp_msc_untrusted_vips:
         type: list
         description: List of Untrusted/access virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       trusted_net_id:
         type: string
         description: Trusted/core network UUID
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_b_int_ha_ips:
         type: list
         description: List of fixed IP addresses to use as HA IPs of B instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_role:
         type: string
         description: Role of these VMs
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_untrusted_v6_vips:
         type: list
         description: List of Untrusted/access alternate virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_untrusted_vlan_networks:
         type: list
         description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       perimeta_image_name:
         type: string
         description: Glance image for Perimeta instance
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_b_untrusted_parent_ips:
         type: list
         description: List of fixed IP addresses to use as Untrusted/access parent fixed IPs of B instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       mgmt_net_id:
         type: string
         description: Management network id
         required: true
-        status: SUPPORTED
+        status: supported
       int_untrusted_parent_net_id:
         type: string
         description: internal Untrusted/access parent network id
         required: true
-        status: SUPPORTED
+        status: supported
       perimeta_flavor_name:
         type: string
         description: Flavor to use for creating VM instances
         required: true
-        status: SUPPORTED
+        status: supported
       rtp_msc_trusted_vips:
         type: list
         description: List of Trusted/core virtual IP addresses for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:

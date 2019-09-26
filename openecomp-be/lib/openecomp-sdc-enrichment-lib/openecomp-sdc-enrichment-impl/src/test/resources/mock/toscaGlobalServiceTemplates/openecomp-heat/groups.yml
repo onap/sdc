@@ -14,9 +14,9 @@ group_types:
         type: string
         description: Heat file which associate to this group/heat stack
         required: true
-        status: SUPPORTED
+        status: supported
       description:
         type: string
         description: group description
         required: true
-        status: SUPPORTED
+        status: supported

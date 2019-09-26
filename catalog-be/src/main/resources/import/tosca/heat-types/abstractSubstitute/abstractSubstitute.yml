@@ -7,4 +7,4 @@ node_types:
         type: org.openecomp.datatypes.heat.substitution.SubstitutionFiltering
         description: Substitution Filter
         required: true
-        status: SUPPORTED
+        status: supported

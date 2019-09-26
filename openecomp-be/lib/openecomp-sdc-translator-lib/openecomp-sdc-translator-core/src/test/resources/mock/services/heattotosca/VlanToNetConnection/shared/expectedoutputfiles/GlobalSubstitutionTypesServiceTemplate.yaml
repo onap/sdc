@@ -12,119 +12,119 @@ node_types:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       p2:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p3:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p4:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       p5:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       virtual_ip_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       virtual_ipv6_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       lb_st_vlan_type_oam:
         type: string
         description: dummy
         required: true
-        status: SUPPORTED
+        status: supported
       mac_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_instance_index:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       abc_flavor:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       template_PortTuple_LB1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_sec_group_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       lb_st_interface_type_oam:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       abc_names:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       security_group_name:
         description: not impotrtant
         required: true
-        status: SUPPORTED
+        status: supported
       vlan_ids:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       shared_network_id1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_image:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_flavor:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       abc_oam_ips:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_name_prefix:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_oam_ips:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       abc_image:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_template_Vlan_3:
         capability: tosca.capabilities.Node
@@ -209,70 +209,70 @@ node_types:
         type: list
         description: CMAUI1, CMAUI2 server names
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       p1:
         type: string
         description: UID of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       virtual_ip_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       security_group_name:
         description: not impotrtant
         required: true
-        status: SUPPORTED
+        status: supported
       vlan_ids:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_image:
         type: string
         description: Image for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       virtual_ipv6_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_flavor:
         type: string
         description: Flavor for CMAUI server
         required: true
-        status: SUPPORTED
+        status: supported
       lb_st_vlan_type_oam:
         type: string
         description: dummy
         required: true
-        status: SUPPORTED
+        status: supported
       mac_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       abc_oam_ips:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_name_prefix:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_instance_index:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
       cmaui_oam_ips:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_template_subint_oam_vmi_1:
         capability: tosca.capabilities.Node

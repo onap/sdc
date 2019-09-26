@@ -11,13 +11,13 @@ node_types:
       admin_pass:
         description: The administrator password for the server
         type: string
-        status: SUPPORTED
+        status: supported
         default: overridden default value
         required: false
       new_property:
         description: new property
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
     interfaces:
       Standard:
@@ -89,13 +89,13 @@ data_types:
       mac_address:
         description: MAC address
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
         default: overridden default value
       new_property:
         description: new property
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
   org.openecomp.datatypes.heat.network.MyNewAddressPair:
     derived_from: org.openecomp.datatypes.heat.network.MyAddressPair
@@ -104,7 +104,7 @@ data_types:
       mac_address:
         description: MAC address
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
         default: overridden default value
 interface_types:
