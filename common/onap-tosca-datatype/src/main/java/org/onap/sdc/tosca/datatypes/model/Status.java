@@ -20,27 +20,17 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-
+@Getter
+@AllArgsConstructor
 public enum Status {
-
   SUPPORTED("supported"),
-  supported("supported"),
   UNSUPPORTED("unsupported"),
-  unsupported("unsupported"),
   EXPERIMENTAL("experimental"),
-  experimental("experimental"),
-  DEPRECATED("deprecated"),
-  deprecated("deprecated");
-  private String displayName;
+  DEPRECATED("deprecated");
 
-  Status(String displayName) {
-    this.displayName = displayName;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
+  private final String name;
 
 }

@@ -12,146 +12,146 @@ node_types:
         type: string
         description: Policy Name
         required: true
-        status: SUPPORTED
+        status: supported
       st_static_routes_list:
         type: string
         description: List of static routes enabled-disabled
         required: true
-        status: SUPPORTED
+        status: supported
       st_type:
         type: string
         description: service type
         required: true
-        status: SUPPORTED
+        status: supported
       st_service_interface_type_list:
         type: string
         description: List of interface types
         required: true
-        status: SUPPORTED
+        status: supported
       st_mode:
         type: string
         description: service mode
         required: true
-        status: SUPPORTED
+        status: supported
       Cricket_OCS_protected_net_id:
         type: string
         description: Name of Cricket OCS network
         required: true
-        status: SUPPORTED
+        status: supported
       oam_mgmt_net_0_id:
         type: string
         description: Name of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       start_dst_ports:
         type: float
         description: Start of dst port
         required: true
-        status: SUPPORTED
+        status: supported
       st_flavor:
         type: string
         description: Flavor
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_1:
         type: string
         description: availability zone
         required: true
-        status: SUPPORTED
+        status: supported
       service_instance_name:
         type: string
         description: Service instance name
         required: true
-        status: SUPPORTED
+        status: supported
       st_scaling:
         type: string
         description: Indicates whether service scaling is enabled
         required: true
-        status: SUPPORTED
+        status: supported
       max_num_fw_instances:
         type: float
         description: maximum number of firewall instances for scaling
         required: true
-        status: SUPPORTED
+        status: supported
       start_src_ports:
         type: float
         description: Start of src port
         required: true
-        status: SUPPORTED
+        status: supported
       network_param2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       service_policy_direction:
         type: string
         description: Direction of Policy
         required: true
-        status: SUPPORTED
+        status: supported
       network_param1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       st_name:
         type: string
         description: Name of service template
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net3:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net4:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_gateway:
         type: string
         description: HSL (Logging) network gateway address
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       st_shared_ip_list:
         type: string
         description: List of shared ip enabled-disabled
         required: true
-        status: SUPPORTED
+        status: supported
       Cricket_OCS_direct_net_id:
         type: string
         description: Name of Cricket OCS network
         required: true
-        status: SUPPORTED
+        status: supported
       end_src_ports:
         type: float
         description: End of src port
         required: true
-        status: SUPPORTED
+        status: supported
       end_dst_ports:
         type: float
         description: End of dst port
         required: true
-        status: SUPPORTED
+        status: supported
       st_image_name:
         type: string
         description: Name of the image
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_id:
         type: string
         description: Name of HSL (Logging) network
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_cidr:
         type: string
         description: HSL (Logging) network address (CIDR notation)
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_hsl_direct_net_3:
         capability: tosca.capabilities.Node
@@ -240,146 +240,146 @@ node_types:
         type: string
         description: Policy Name
         required: true
-        status: SUPPORTED
+        status: supported
       st_static_routes_list:
         type: string
         description: List of static routes enabled-disabled
         required: true
-        status: SUPPORTED
+        status: supported
       st_type:
         type: string
         description: service type
         required: true
-        status: SUPPORTED
+        status: supported
       st_service_interface_type_list:
         type: string
         description: List of interface types
         required: true
-        status: SUPPORTED
+        status: supported
       st_mode:
         type: string
         description: service mode
         required: true
-        status: SUPPORTED
+        status: supported
       Cricket_OCS_protected_net_id:
         type: string
         description: Name of Cricket OCS network
         required: true
-        status: SUPPORTED
+        status: supported
       oam_mgmt_net_0_id:
         type: string
         description: Name of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       start_dst_ports:
         type: float
         description: Start of dst port
         required: true
-        status: SUPPORTED
+        status: supported
       st_flavor:
         type: string
         description: Flavor
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_1:
         type: string
         description: availability zone
         required: true
-        status: SUPPORTED
+        status: supported
       service_instance_name:
         type: string
         description: Service instance name
         required: true
-        status: SUPPORTED
+        status: supported
       st_scaling:
         type: string
         description: Indicates whether service scaling is enabled
         required: true
-        status: SUPPORTED
+        status: supported
       max_num_fw_instances:
         type: float
         description: maximum number of firewall instances for scaling
         required: true
-        status: SUPPORTED
+        status: supported
       start_src_ports:
         type: float
         description: Start of src port
         required: true
-        status: SUPPORTED
+        status: supported
       network_param2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       service_policy_direction:
         type: string
         description: Direction of Policy
         required: true
-        status: SUPPORTED
+        status: supported
       network_param1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       st_name:
         type: string
         description: Name of service template
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net3:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net4:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_gateway:
         type: string
         description: HSL (Logging) network gateway address
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       st_shared_ip_list:
         type: string
         description: List of shared ip enabled-disabled
         required: true
-        status: SUPPORTED
+        status: supported
       Cricket_OCS_direct_net_id:
         type: string
         description: Name of Cricket OCS network
         required: true
-        status: SUPPORTED
+        status: supported
       end_src_ports:
         type: float
         description: End of src port
         required: true
-        status: SUPPORTED
+        status: supported
       end_dst_ports:
         type: float
         description: End of dst port
         required: true
-        status: SUPPORTED
+        status: supported
       st_image_name:
         type: string
         description: Name of the image
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_id:
         type: string
         description: Name of HSL (Logging) network
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_cidr:
         type: string
         description: HSL (Logging) network address (CIDR notation)
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_hsl_direct_net_2:
         capability: tosca.capabilities.Node
@@ -592,146 +592,146 @@ node_types:
         type: string
         description: Policy Name
         required: true
-        status: SUPPORTED
+        status: supported
       st_static_routes_list:
         type: string
         description: List of static routes enabled-disabled
         required: true
-        status: SUPPORTED
+        status: supported
       st_type:
         type: string
         description: service type
         required: true
-        status: SUPPORTED
+        status: supported
       st_service_interface_type_list:
         type: string
         description: List of interface types
         required: true
-        status: SUPPORTED
+        status: supported
       st_mode:
         type: string
         description: service mode
         required: true
-        status: SUPPORTED
+        status: supported
       Cricket_OCS_protected_net_id:
         type: string
         description: Name of Cricket OCS network
         required: true
-        status: SUPPORTED
+        status: supported
       oam_mgmt_net_0_id:
         type: string
         description: Name of OAM network
         required: true
-        status: SUPPORTED
+        status: supported
       start_dst_ports:
         type: float
         description: Start of dst port
         required: true
-        status: SUPPORTED
+        status: supported
       st_flavor:
         type: string
         description: Flavor
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_1:
         type: string
         description: availability zone
         required: true
-        status: SUPPORTED
+        status: supported
       service_instance_name:
         type: string
         description: Service instance name
         required: true
-        status: SUPPORTED
+        status: supported
       st_scaling:
         type: string
         description: Indicates whether service scaling is enabled
         required: true
-        status: SUPPORTED
+        status: supported
       max_num_fw_instances:
         type: float
         description: maximum number of firewall instances for scaling
         required: true
-        status: SUPPORTED
+        status: supported
       start_src_ports:
         type: float
         description: Start of src port
         required: true
-        status: SUPPORTED
+        status: supported
       network_param2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       service_policy_direction:
         type: string
         description: Direction of Policy
         required: true
-        status: SUPPORTED
+        status: supported
       network_param1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       st_name:
         type: string
         description: Name of service template
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net3:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net4:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_gateway:
         type: string
         description: HSL (Logging) network gateway address
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       hsl_direct_net2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       st_shared_ip_list:
         type: string
         description: List of shared ip enabled-disabled
         required: true
-        status: SUPPORTED
+        status: supported
       Cricket_OCS_direct_net_id:
         type: string
         description: Name of Cricket OCS network
         required: true
-        status: SUPPORTED
+        status: supported
       end_src_ports:
         type: float
         description: End of src port
         required: true
-        status: SUPPORTED
+        status: supported
       end_dst_ports:
         type: float
         description: End of dst port
         required: true
-        status: SUPPORTED
+        status: supported
       st_image_name:
         type: string
         description: Name of the image
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_id:
         type: string
         description: Name of HSL (Logging) network
         required: true
-        status: SUPPORTED
+        status: supported
       HSL_direct_net_cidr:
         type: string
         description: HSL (Logging) network address (CIDR notation)
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_service_instance2:
         capability: tosca.capabilities.Node

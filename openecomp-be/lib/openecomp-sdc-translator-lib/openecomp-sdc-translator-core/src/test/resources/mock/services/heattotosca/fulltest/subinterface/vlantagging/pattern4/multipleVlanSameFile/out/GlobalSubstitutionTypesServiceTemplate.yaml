@@ -12,43 +12,43 @@ node_types:
         type: string
         description: Unique ID for this VF module inst
         required: true
-        status: SUPPORTED
+        status: supported
       control_int_net_rpf:
         type: string
         description: Reverse Path Filtering enable or disable for the control virtual network
         required: true
-        status: SUPPORTED
+        status: supported
       control_int_net_forwarding_mode:
         type: string
         description: forwarding mode of the control virtual network
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vdbe_untrusted_ip_1:
         type: string
         description: IPV4 address of the secondary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_aap_untrusted_ip_prefix_len:
         type: string
         description: ip prefix length for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       untrusted_num_vn:
         type: float
         description: Number of vDBE subinterface virtual Networks
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - in_range:
           - 1
@@ -57,157 +57,157 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       aap_address_mode:
         type: string
         description: Address mode for the vDBE cluster IP
         required: true
-        status: SUPPORTED
+        status: supported
       control_int_net_shared:
         type: boolean
         description: control virtual network shared
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_untrusted_v6_ip_1:
         type: string
         description: IPV6 address of the secondary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_untrusted_vmac_address:
         type: string
         description: Virtual MAC of the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       control_int_net_flood_unknown_unicast:
         type: boolean
         description: forwarding mode of the control virtual network
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_aap_sec_untrusted_ip_prefix:
         type: string
         description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF inst
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_name_1:
         type: string
         description: VM Name for this vdbe node 1
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       availability_zone_1:
         type: string
         description: The availability zone of secondary node1 vDBE vm in the local HA pair.
         required: true
-        status: SUPPORTED
+        status: supported
       untrusted_vn_networks:
         type: list
         description: List of subinterface virtual networks
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vdbe_image_name:
         type: string
         description: Image to use for vDBE
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_name:
         type: string
         description: Name of NSDNet network from which the management IP addresses will be allocated
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_aap_sec_untrusted_ip_prefix_len:
         type: string
         description: ip prefix length for the secondary DBE VM aap on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_aap_untrusted_v6_ip_prefix:
         type: string
         description: ipv6 prefix for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_aap_untrusted_v6_ip_prefix_len:
         type: string
         description: ipv6 prefix length for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       untrusted_vlan_tags:
         type: list
         description: List of subinterface vlan tags
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vdbe_flavor_name:
         type: string
         description: Flavor to use for vDBE
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       counter:
         type: float
         description: Counter.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_hw_untr_mac_1:
         type: string
         description: Secondary MAC address of the secondary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       untrusted_net_name:
         type: string
         description: Name of public untrusted network into which this vDBE HA cluster is deployed
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vdbe_device_name:
         type: string
         description: VDBE device Name for this vdbe VNF
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_1_port_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       vdbe_aap_untrusted_ip_prefix:
         type: string
         description: ip prefix for primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_vdbe_untr_2_subports:
         capability: tosca.capabilities.Node
@@ -633,84 +633,84 @@ node_types:
         type: string
         description: ip prefix for primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       aap_sec_untrusted_ip_prefix:
         type: string
         description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       ip_v6_address:
         type: string
         description: IPv6 address associated with subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
       counter:
         type: float
         description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
       subinterfaces_name_prefix:
         type: string
         description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
         required: true
-        status: SUPPORTED
+        status: supported
       ip_address:
         type: string
         description: IPv4 address associated with subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
       aap_address_mode:
         type: string
         description: Address mode for the vDBE cluster IP
         required: true
-        status: SUPPORTED
+        status: supported
       aap_untrusted_v6_ip_prefix:
         type: string
         description: ipv6 prefix for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       parent_interface:
         type: string
         description: Parent Contrail interface
         required: true
-        status: SUPPORTED
+        status: supported
       vn_network_list:
         type: string
         description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
         required: true
-        status: SUPPORTED
+        status: supported
       mac_address:
         type: string
         description: HW MAC address to use for subinterface
         required: true
-        status: SUPPORTED
+        status: supported
       vlan_tag_list:
         type: list
         description: List of VLAN IDs to use for subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       aap_sec_untrusted_ip_prefix_len:
         type: string
         description: ip prefix length for the secondary DBE VM aap on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       vmac_address:
         type: string
         description: virtual MAC address to use for subinterface
         required: true
-        status: SUPPORTED
+        status: supported
       aap_untrusted_v6_ip_prefix_len:
         type: string
         description: ipv6 prefix length for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       aap_untrusted_ip_prefix_len:
         type: string
         description: ip prefix length for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_vdbe_untr_x_subport:
         capability: tosca.capabilities.Node

@@ -15,12 +15,12 @@ data_types:
         type: string
         description: MAC address
         required: false
-        status: SUPPORTED
+        status: supported
       ip_address:
         type: string
         description: IP address
         required: false
-        status: SUPPORTED
+        status: supported
   org.openecomp.datatypes.heat.network.subnet.HostRoute:
     derived_from: tosca.datatypes.Root
     description: Host route info for the subnet
@@ -29,12 +29,12 @@ data_types:
         type: string
         description: The destination for static route
         required: false
-        status: SUPPORTED
+        status: supported
       nexthop:
         type: string
         description: The next hop for the destination
         required: false
-        status: SUPPORTED
+        status: supported
   org.openecomp.datatypes.heat.network.neutron.Subnet:
     derived_from: tosca.datatypes.Root
     description: A subnet represents an IP address block that can be used for assigning IP addresses to virtual instances
@@ -43,18 +43,18 @@ data_types:
         type: string
         description: The ID of the tenant who owns the network
         required: false
-        status: SUPPORTED
+        status: supported
       enable_dhcp:
         type: boolean
         description: Set to true if DHCP is enabled and false if DHCP is disabled
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
       ipv6_address_mode:
         type: string
         description: IPv6 address mode
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - dhcpv6-stateful
@@ -64,7 +64,7 @@ data_types:
         type: string
         description: IPv6 RA (Router Advertisement) mode
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - dhcpv6-stateful
@@ -76,35 +76,35 @@ data_types:
         required: false
         default: {
           }
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       allocation_pools:
         type: list
         description: The start and end addresses for the allocation pools
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AllocationPool
       subnetpool:
         type: string
         description: The name or ID of the subnet pool
         required: false
-        status: SUPPORTED
+        status: supported
       dns_nameservers:
         type: list
         description: A specified set of DNS name servers to be used
         required: false
         default: [
           ]
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       host_routes:
         type: list
         description: The gateway IP address
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.subnet.HostRoute
       ip_version:
@@ -112,7 +112,7 @@ data_types:
         description: The gateway IP address
         required: false
         default: 4
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - '4'
@@ -121,24 +121,24 @@ data_types:
         type: string
         description: The name of the subnet
         required: false
-        status: SUPPORTED
+        status: supported
       prefixlen:
         type: integer
         description: Prefix length for subnet allocation from subnet pool
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       cidr:
         type: string
         description: The CIDR
         required: false
-        status: SUPPORTED
+        status: supported
       gateway_ip:
         type: string
         description: The gateway IP address
         required: false
-        status: SUPPORTED
+        status: supported
   org.openecomp.datatypes.heat.network.AllocationPool:
     derived_from: tosca.datatypes.Root
     description: The start and end addresses for the allocation pool
@@ -147,12 +147,12 @@ data_types:
         type: string
         description: Start address for the allocation pool
         required: false
-        status: SUPPORTED
+        status: supported
       end:
         type: string
         description: End address for the allocation pool
         required: false
-        status: SUPPORTED
+        status: supported
 relationship_types:
   org.openecomp.relationships.AttachesTo:
     derived_from: tosca.relationships.Root
@@ -166,12 +166,12 @@ group_types:
         type: string
         description: Heat file which associate to this group/heat stack
         required: true
-        status: SUPPORTED
+        status: supported
       description:
         type: string
         description: Heat file description
         required: false
-        status: SUPPORTED
+        status: supported
 policy_types:
   org.openecomp.policies.placement.Colocate:
     derived_from: tosca.policy.placement
@@ -181,12 +181,12 @@ policy_types:
         type: string
         description: The name of the policy
         required: false
-        status: SUPPORTED
+        status: supported
       affinity:
         type: string
         description: affinity
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - host
@@ -200,12 +200,12 @@ policy_types:
         type: string
         description: The name of the policy
         required: false
-        status: SUPPORTED
+        status: supported
       container_type:
         type: string
         description: container type
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - host

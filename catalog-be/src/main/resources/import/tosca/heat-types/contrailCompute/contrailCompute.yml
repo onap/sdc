@@ -7,22 +7,22 @@ node_types:
         type: string
         description: flavor
         required: false
-        status: SUPPORTED
+        status: supported
       image_name:
         type: string
         description: Image name
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone:
         type: string
         description: Availability zone to create servers in
         required: false
-        status: SUPPORTED
+        status: supported
       service_type:
         type: string
         description: Service type
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - firewall
@@ -34,22 +34,22 @@ node_types:
         description: Indicates availability zone is enabled
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       service_template_name:
         type: string
         description: Service template name
         required: false
-        status: SUPPORTED
+        status: supported
       service_instance_name:
         type: string
         description: Service instance name
         required: true
-        status: SUPPORTED
+        status: supported
       service_mode:
         type: string
         description: Service mode
         required: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - transparent
@@ -59,24 +59,24 @@ node_types:
       tenant_id:
         type: string
         description: Tenant id of the VM
-        status: SUPPORTED
+        status: supported
       fq_name:
         type: string
         description: fq_name
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: All attributes
-        status: SUPPORTED
+        status: supported
       active_vms:
         type: string
         description: Number of active VMs
-        status: SUPPORTED
+        status: supported
       virtual_machines:
         type: string
         description: VMs of this compute
-        status: SUPPORTED
+        status: supported
       status:
         type: string
         description: status of the compute
-        status: SUPPORTED
+        status: supported

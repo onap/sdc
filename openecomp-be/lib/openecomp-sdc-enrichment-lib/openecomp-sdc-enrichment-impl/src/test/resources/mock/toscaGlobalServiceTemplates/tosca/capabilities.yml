@@ -19,28 +19,28 @@ capability_types:
         type: integer
         description: Number of (actual or virtual) CPUs associated with the Compute node.
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 1
       cpu_frequency:
         type: scalar-unit.frequency
         description: Specifies the operating frequency of CPU's core. This property expresses the expected frequency of one (1) CPU as provided by the property "num_cpus".
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0.1 GHz
       disk_size:
         type: scalar-unit.size
         description: Size of the local disk available to applications running on the Compute node (default unit is MB).
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0 MB
       mem_size:
         type: scalar-unit.size
         description: Size of memory available to applications running on the Compute node (default unit is MB).
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0 MB
   tosca.capabilities.Endpoint:
@@ -54,41 +54,41 @@ capability_types:
           tcp, udp, etc.'
         required: true
         default: tcp
-        status: SUPPORTED
+        status: supported
       port:
         type: tosca.datatypes.network.PortDef
         description: The optional port of the endpoint.
         required: false
-        status: SUPPORTED
+        status: supported
       secure:
         type: boolean
         description: Requests for the endpoint to be secure and use credentials supplied on the ConnectsTo relationship.
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       url_path:
         type: string
         description: The optional URL path of the endpoint's address if applicable for the protocol.
         required: false
-        status: SUPPORTED
+        status: supported
       port_name:
         type: string
         description: The optional name (or ID) of the network port this endpoint should be bound to.
         required: false
-        status: SUPPORTED
+        status: supported
       network_name:
         type: string
         description: 'The optional name (or ID) of the network this endpoint should
           be bound to. network_name: PRIVATE | PUBLIC | <network_name> | <network_id>.'
         required: false
         default: PRIVATE
-        status: SUPPORTED
+        status: supported
       initiator:
         type: string
         description: The optional indicator of the direction of the connection.
         required: false
         default: source
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - source
@@ -98,7 +98,7 @@ capability_types:
         type: map
         description: The optional map of ports the Endpoint supports (if more than one).
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - min_length: 1
         entry_schema:
@@ -108,7 +108,7 @@ capability_types:
         type: string
         description: 'Note: This is the IP address as propagated up by the associated
           node''s host (Compute) container.'
-        status: SUPPORTED
+        status: supported
   tosca.capabilities.Endpoint.Public:
     derived_from: tosca.capabilities.Endpoint
     description: |-
@@ -119,7 +119,7 @@ capability_types:
         type: string
         required: true
         default: PUBLIC
-        status: SUPPORTED
+        status: supported
         constraints:
         - equal: PUBLIC
   tosca.capabilities.Endpoint.Admin:
@@ -131,7 +131,7 @@ capability_types:
         description: Requests for the endpoint to be secure and use credentials supplied on the ConnectsTo relationship.
         required: true
         default: true
-        status: SUPPORTED
+        status: supported
         constraints:
         - equal: true
   tosca.capabilities.Endpoint.Database:
@@ -149,24 +149,24 @@ capability_types:
         description: 'The Operating System (OS) architecture. Examples of valid values
           include: x86_32, x86_64, etc.'
         required: false
-        status: SUPPORTED
+        status: supported
       type:
         type: string
         description: 'The Operating System (OS) type. Examples of valid values include:
           linux, aix, mac, windows, etc.'
         required: false
-        status: SUPPORTED
+        status: supported
       distribution:
         type: string
         description: 'The Operating System (OS) distribution. Examples of valid values
           for a "type" of "Linux" would include: debian, fedora, rhel and ubuntu.'
         required: false
-        status: SUPPORTED
+        status: supported
       version:
         type: version
         description: The Operating System version.
         required: false
-        status: SUPPORTED
+        status: supported
   tosca.capabilities.Scalable:
     derived_from: tosca.capabilities.Root
     description: This is the default TOSCA type that should be used to express a scalability capability for a node.
@@ -176,13 +176,13 @@ capability_types:
         description: This property is used to indicate the minimum number of instances that should be created for the associated TOSCA Node Template by a TOSCA orchestrator.
         required: true
         default: 1
-        status: SUPPORTED
+        status: supported
       max_instances:
         type: integer
         description: This property is used to indicate the maximum number of instances that should be created for the associated TOSCA Node Template by a TOSCA orchestrator.
         required: true
         default: 1
-        status: SUPPORTED
+        status: supported
       default_instances:
         type: integer
         description: 'An optional property that indicates the requested default number
@@ -191,7 +191,7 @@ capability_types:
           the range between the values set for "min_instances" and "max_instances"
           properties.'
         required: false
-        status: SUPPORTED
+        status: supported
   tosca.capabilities.network.Bindable:
     derived_from: tosca.capabilities.Node
     description: A node type that includes the Bindable capability indicates that it can be bound to a logical network association via a network port.
@@ -204,29 +204,29 @@ capability_types:
       version:
         type: list
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: version
       publish_all:
         type: boolean
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       publish_ports:
         type: list
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: PortSpec
       expose_ports:
         type: list
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: PortSpec
       volumes:
         type: list
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string

@@ -29,13 +29,13 @@ node_types:
       admin_pass:
         description: The administrator password for the server
         type: string
-        status: SUPPORTED
+        status: supported
         default: overridden default value
         required: false
       new_property:
         description: new property
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
 data_types:
   org.openecomp.datatypes.heat.network.MyString:

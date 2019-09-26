@@ -43,7 +43,7 @@ node_types:
       service_template_filter:
         description: Substitution Filter
         type: org.openecomp.datatypes.substitution.SubstitutionFiltering
-        status: SUPPORTED
+        status: supported
         required: true
 
   org.openecomp.resource.vl.extVL:
@@ -309,7 +309,7 @@ node_types:
       license_feature_group_ref:
         description: refrence to license feature group
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
     requirements:
     - deployment_flavor:
@@ -326,38 +326,38 @@ node_types:
       high_availablity:
         description: high_availablity
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       vm_image_name:
         description: Master image_name volume id
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       vm_flavor_name:
         description: Master image_name volume id
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       nfc_naming_code:
         description: nfc code for instance naming
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       vm_type_tag:
         description: vm type based on naming Convention
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       vfc_naming:
         description: vfc naming
         type: org.openecomp.datatypes.Naming
-        status: SUPPORTED
+        status: supported
         default: false
         required: false
       min_instances:
         description: Minimum number of VFC Instances
         type: integer
-        status: SUPPORTED
+        status: supported
         default: 0
         required: false
         constraints:
@@ -365,7 +365,7 @@ node_types:
       max_instances:
         description: Maximum number of VFC Instances
         type: integer
-        status: SUPPORTED
+        status: supported
         required: false
         constraints:
         - greater_or_equal: 1

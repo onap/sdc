@@ -7,55 +7,55 @@ node_types:
       name:
         description: Virtual Machine Interface name
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       security_group_refs:
         description: List of security groups.
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
           required: false
       virtual_network_refs:
         description: List of virtual networks.
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
           required: false
       virtual_machine_interface_properties:
         description: virtual machine interface properties.
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
-        status: SUPPORTED
+        status: supported
         required: false
       port_tuple_refs:
         description: List of port tuples.
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
           required: false
       virtual_machine_interface_mac_addresses:
         description: List of mac addresses.
         type: list
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
           required: false
       virtual_machine_interface_allowed_address_pairs:
         description: Virtual Machine Interface allowed address pairs.
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
-        status: SUPPORTED
+        status: supported
         required: false
     attributes:
       fq_name:
         description: The FQ name of the Virtual Network.
         type: string
-        status: SUPPORTED
+        status: supported
       show:
         description: All attributes.
         type: string
-        status: SUPPORTED
+        status: supported
     capabilities:
       binding:
         type: tosca.capabilities.network.Bindable

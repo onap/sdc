@@ -19,31 +19,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: packet/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.packets.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of incoming packets
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
       network.outgoing.bytes:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -53,31 +53,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.outgoing.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of outgoing bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
       network.outgoing.packets.rate:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -87,31 +87,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: packet/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.outgoing.packets.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of outgoing packets
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
       network.outpoing.packets:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -121,31 +121,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: packet
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.outpoing.packets
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of outgoing packets
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
       network.incoming.bytes.rate:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -155,31 +155,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.bytes.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of incoming bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
       network.incoming.bytes:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -189,31 +189,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.bytes
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of incoming bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
       network.outgoing.bytes.rate:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -223,31 +223,31 @@ node_types:
             description: Unit of the metric value
             required: true
             default: B/s
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.outgoing.bytes.rate
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Average rate of outgoing bytes
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Gauge
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported
       network.incoming.packets:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -257,28 +257,28 @@ node_types:
             description: Unit of the metric value
             required: true
             default: packet
-            status: SUPPORTED
+            status: supported
           name:
             type: string
             description: Ceilometer metric type name to monitor. (The name ceilometer is using)
             required: true
             default: network.incoming.packets
-            status: SUPPORTED
+            status: supported
           description:
             type: string
             description: Description of the metric
             required: false
             default: Number of incoming packets
-            status: SUPPORTED
+            status: supported
           type:
             type: string
             description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
             required: true
             default: Cumulative
-            status: SUPPORTED
+            status: supported
           category:
             type: string
             description: Category of the metric, for an example, compute, disk, network, storage and etc.
             required: false
             default: network
-            status: SUPPORTED
+            status: supported

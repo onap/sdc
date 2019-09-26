@@ -14,41 +14,41 @@ node_types:
         type: list
         description: The IDs of the DHCP agent to schedule the network
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       tenant_id:
         type: string
         description: The ID of the tenant which will own the network
         required: false
-        status: SUPPORTED
+        status: supported
       port_security_enabled:
         type: boolean
         description: Flag to enable/disable port security on the network
         required: false
-        status: SUPPORTED
+        status: supported
       shared:
         type: boolean
         description: Whether this network should be shared across all tenants
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       admin_state_up:
         type: boolean
         description: A boolean value specifying the administrative status of the network
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
       qos_policy:
         type: string
         description: The name or ID of QoS policy to attach to this network
         required: false
-        status: SUPPORTED
+        status: supported
       subnets:
         type: map
         description: Network related subnets
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.neutron.Subnet
       value_specs:
@@ -57,38 +57,38 @@ node_types:
         required: false
         default: {
           }
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     attributes:
       qos_policy_id:
         type: string
         description: The QoS policy ID attached to this network
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: Detailed information about resource
-        status: SUPPORTED
+        status: supported
       subnets_name:
         type: list
         description: Subnets name of this network
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subnets:
         type: map
         description: Network related subnets
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.neutron.Subnet
       mtu:
         type: scalar-unit.size
         description: The maximum transmission unit size(in bytes) for the network
-        status: SUPPORTED
+        status: supported
       status:
         type: string
         description: The status of the network
-        status: SUPPORTED
+        status: supported
     capabilities:
       attachment:
         type: tosca.capabilities.Attachment

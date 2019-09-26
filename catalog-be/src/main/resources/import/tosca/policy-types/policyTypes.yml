@@ -20,12 +20,12 @@ org.openecomp.policies.placement.Antilocate:
       type: string
       description: The name of the policy
       required: false
-      status: SUPPORTED
+      status: supported
     container_type:
       type: string
       description: container type
       required: false
-      status: SUPPORTED
+      status: supported
       constraints:
       - valid_values:
         - host
@@ -39,12 +39,12 @@ org.openecomp.policies.placement.Colocate:
       type: string
       description: The name of the policy
       required: false
-      status: SUPPORTED
+      status: supported
     affinity:
       type: string
       description: affinity
       required: true
-      status: SUPPORTED
+      status: supported
       constraints:
       - valid_values:
         - host
@@ -59,7 +59,7 @@ org.openecomp.policies.placement.valet.Diversity:
       description: diversity
       required: false
       default: host
-      status: SUPPORTED
+      status: supported
       constraints:
       - valid_values:
         - host
@@ -73,7 +73,7 @@ org.openecomp.policies.placement.valet.Exclusivity:
       description: exclusivity
       required: false
       default: host
-      status: SUPPORTED
+      status: supported
       constraints:
       - valid_values:
         - host
@@ -87,7 +87,7 @@ org.openecomp.policies.placement.valet.Affinity:
       description: affinity
       required: false
       default: host
-      status: SUPPORTED
+      status: supported
       constraints:
       - valid_values:
         - host

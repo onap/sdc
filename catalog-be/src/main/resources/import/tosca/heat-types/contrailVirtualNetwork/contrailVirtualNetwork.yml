@@ -7,66 +7,66 @@ node_types:
         type: string
         description: Is virtual network shared
         required: false
-        status: SUPPORTED
+        status: supported
       forwarding_mode:
         type: string
         description: forwarding mode of the virtual network
         required: false
-        status: SUPPORTED
+        status: supported
       external:
         type: string
         description: Is virtual network external
         required: false
-        status: SUPPORTED
+        status: supported
       allow_transit:
         type: string
         description: Whether this network should be transitive.
         required: false
-        status: SUPPORTED
+        status: supported
       flood_unknown_unicast:
         type: string
         description: flood L2 packets on network
         required: false
-        status: SUPPORTED
+        status: supported
       route_targets:
         type: list
         description: route targets associated with the virtual network
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subnets:
         type: map
         description: Network related subnets
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.neutron.Subnet
     attributes:
       fq_name:
         type: string
         description: fq_name
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: All attributes.
-        status: SUPPORTED
+        status: supported
       subnets_name:
         type: list
         description: Subnets name of this network
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subnets_show:
         type: map
         description: Detailed information about each subnet
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subnets:
         type: map
         description: Network related subnets
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.neutron.Subnet
     capabilities:

@@ -27,7 +27,7 @@ public class DefinitionOfDataType implements Cloneable {
   private Object value;
   private Boolean required;
   private Object _default;
-  private Status status;
+  private String status;
   private List<Constraint> constraints;
   private EntrySchema entry_schema;
 
@@ -71,11 +71,11 @@ public class DefinitionOfDataType implements Cloneable {
     this._default = _default;
   }
 
-  public Status getStatus() {
+  public String getStatus() {
     return status;
   }
 
-  public void setStatus(Status status) {
+  public void setStatus(String status) {
     this.status = status;
   }
 

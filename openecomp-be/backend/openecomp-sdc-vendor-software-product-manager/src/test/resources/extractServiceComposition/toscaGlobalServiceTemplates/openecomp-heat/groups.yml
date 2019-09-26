@@ -31,10 +31,10 @@ group_types:
       heat_file:
         description: Heat file which associate to this group/heat stack
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       description:
         description: group description
         type: string
-        status: SUPPORTED
+        status: supported
         required: true

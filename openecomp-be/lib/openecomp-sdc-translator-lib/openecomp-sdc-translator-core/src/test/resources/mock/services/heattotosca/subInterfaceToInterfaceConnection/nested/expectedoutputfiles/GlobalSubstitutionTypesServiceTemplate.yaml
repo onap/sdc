@@ -11,48 +11,48 @@ node_types:
       vlan_ids:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       p1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       p2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       virtual_ipv6_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       virtual_ip_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       net2:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       lb_st_vlan_type_oam:
         type: string
         description: dummy
         required: true
-        status: SUPPORTED
+        status: supported
       mac_address:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       net1:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_name_prefix:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_instance_index:
         type: float
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_template_Vlan_3_arrayParameter:
         capability: tosca.capabilities.Node

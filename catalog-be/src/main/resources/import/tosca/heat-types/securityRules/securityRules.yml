@@ -7,24 +7,24 @@ node_types:
         type: string
         description: Description of the security group
         required: false
-        status: SUPPORTED
+        status: supported
       name:
         type: string
         description: A symbolic name for this security group, which is not required to be unique.
         required: false
-        status: SUPPORTED
+        status: supported
       rules:
         type: list
         description: List of security group rules
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.neutron.SecurityRules.Rule
     attributes:
       show:
         type: string
         description: Detailed information about resource
-        status: SUPPORTED
+        status: supported
     requirements:
     - port:
         capability: tosca.capabilities.Attachment

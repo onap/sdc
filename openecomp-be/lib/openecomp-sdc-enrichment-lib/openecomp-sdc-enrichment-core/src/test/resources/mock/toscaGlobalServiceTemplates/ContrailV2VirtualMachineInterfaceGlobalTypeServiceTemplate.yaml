@@ -17,7 +17,7 @@ data_types:
         type: string
         description: Service Interface Type.
         required: false
-        status: SUPPORTED
+        status: supported
 node_types:
   org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface:
     derived_from: org.openecomp.resource.cp.nodes.network.Port
@@ -26,46 +26,46 @@ node_types:
         type: list
         description: List of mac addresses.
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       name:
         type: string
         description: Virtual Machine Interface name
         required: false
-        status: SUPPORTED
+        status: supported
       security_group_refs:
         type: list
         description: List of security groups.
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       virtual_network_refs:
         type: list
         description: List of virtual networks.
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       virtual_machine_interface_properties:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
         description: virtual machine interface properties.
         required: false
-        status: SUPPORTED
+        status: supported
       port_tuple_refs:
         type: list
         description: List of port tuples.
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     attributes:
       fq_name:
         type: string
         description: The FQ name of the Virtual Network.
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: All attributes.
-        status: SUPPORTED
+        status: supported

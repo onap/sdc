@@ -32,7 +32,7 @@ capability_types:
         type: map
         description: Deployment flavors instance
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
             type: org.openecomp.datatypes.DeploymentFlavor     
 
@@ -43,7 +43,7 @@ capability_types:
       oid:
         description: Object Id of the metric
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
 
   org.openecomp.capabilities.AllottedResource:
@@ -56,7 +56,7 @@ capability_types:
       oid:
         description: Object Id of the metric
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
 
   org.openecomp.capabilities.metric.Ceilometer:
@@ -66,7 +66,7 @@ capability_types:
       name:
         description: Ceilometer metric type name to monitor. (The name ceilometer is using)
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
 
   org.openecomp.capabilities.Metric:
@@ -76,28 +76,28 @@ capability_types:
       unit:
         description: Unit of the metric value
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       description:
         description: Description of the metric
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       type:
         description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
         type: string
-        status: SUPPORTED
+        status: supported
         required: true
       category:
         description: Category of the metric, for an example, compute, disk, network, storage and etc.
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
     attributes:
       value:
         description: Runtime monitored value
         type: string
-        status: SUPPORTED
+        status: supported
 
   org.openecomp.capabilities.Forwarder:
       derived_from: tosca.capabilities.Root

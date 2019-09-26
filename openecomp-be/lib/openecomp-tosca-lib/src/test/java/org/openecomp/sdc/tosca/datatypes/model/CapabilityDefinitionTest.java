@@ -75,7 +75,7 @@ public class CapabilityDefinitionTest {
     propertyDefinition.set_default(5);
     propertyDefinition.setEntry_schema(getMockEntrySchema());
     propertyDefinition.setRequired(false);
-    propertyDefinition.setStatus(Status.UNSUPPORTED);
+    propertyDefinition.setStatus(Status.UNSUPPORTED.getName());
     return propertyDefinition;
   }
 
@@ -102,7 +102,7 @@ public class CapabilityDefinitionTest {
     attributeDefinition.setType("type1");
     attributeDefinition.set_default("none");
     attributeDefinition.setEntry_schema(getMockEntrySchema());
-    attributeDefinition.setStatus(Status.UNSUPPORTED);
+    attributeDefinition.setStatus(Status.UNSUPPORTED.getName());
     return attributeDefinition;
   }
 

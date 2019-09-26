@@ -40,7 +40,7 @@ public class AttributeDefinitionTest {
         attributeDefinition.setType("type");
         attributeDefinition.setDescription("description");
         attributeDefinition.set_default("default");
-        attributeDefinition.setStatus(Status.SUPPORTED);
+        attributeDefinition.setStatus(Status.SUPPORTED.getName());
         attributeDefinition.setEntry_schema(new EntrySchema());
 
         AttributeDefinition cloned = attributeDefinition.clone();

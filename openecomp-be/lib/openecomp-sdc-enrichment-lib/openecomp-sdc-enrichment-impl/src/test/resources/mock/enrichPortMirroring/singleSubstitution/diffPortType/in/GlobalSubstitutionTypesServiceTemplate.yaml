@@ -11,201 +11,201 @@ node_types:
       port_pd01_port_replacement_policy:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_template_VMInt_OAM_lb_internal_VMI_virtual_machine_interface_properties:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd03_port_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_pd03_port_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd03_port_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_virtual_network_refs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_pd03_port_replacement_policy:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd02_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_pd03_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd03_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_virtual_machine_interface_mac_addresses:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_template_VMInt_OAM_lb_internal_VMI_port_tuple_refs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_pd02_port_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_security_group_refs:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       compute_pd_server_contrail_service_instance_ind:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: boolean
       compute_pd_server_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_pd_server_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd02_port_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd03_port_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_template_VMInt_OAM_lb_internal_VMI_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_replacement_policy:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd02_port_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd03_port_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_template_VMInt_OAM_lb_internal_VMI_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd03_port_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       compute_pd_server_user_data_format:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       index_value:
@@ -213,53 +213,53 @@ node_types:
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       port_template_VMInt_OAM_lb_internal_VMI_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_pd01_port_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd01_port_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_pd02_port_network:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_template_VMInt_OAM_lb_internal_VMI_virtual_machine_interface_allowed_address_pairs:
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node

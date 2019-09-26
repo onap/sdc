@@ -1099,10 +1099,10 @@ public class ToscaAnalyzerServiceImplTest {
         parameterDefinitionInput.setRequired(true);
         parameterDefinitionInput.set_default("default");
         parameterDefinitionInput.setConstraints(Collections.singletonList(new Constraint()));
-        parameterDefinitionInput.setStatus(Status.SUPPORTED);
+        parameterDefinitionInput.setStatus(Status.SUPPORTED.getName());
 
         ParameterDefinition parameterDefinitionOutput = new ParameterDefinition();
-        parameterDefinitionOutput.setStatus(Status.SUPPORTED);
+        parameterDefinitionOutput.setStatus(Status.SUPPORTED.getName());
 
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         serviceTemplate.setTopology_template(new TopologyTemplate());

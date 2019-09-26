@@ -7,23 +7,23 @@ node_types:
         type: string
         description: The administrator password for the server
         required: false
-        status: SUPPORTED
+        status: supported
       availability_zone:
         type: string
         description: Availability zone to create servers in
         required: false
-        status: SUPPORTED
+        status: supported
       image:
         type: string
         description: The ID or name of the image to boot with
         required: false
-        status: SUPPORTED
+        status: supported
       image_update_policy:
         type: string
         description: Policy on how to apply an image-id update
         required: false
         default: REBUILD
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - REBUILD_PRESERVE_EPHEMERAL
@@ -33,19 +33,19 @@ node_types:
         type: json
         description: Arbitrary JSON metadata to store for this server
         required: false
-        status: SUPPORTED
+        status: supported
       contrail_service_instance_ind:
         type: boolean
         description: Nova server related to service instance indicator
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       user_data_update_policy:
         type: string
         description: Policy on how to apply a user_data update
         required: false
         default: REPLACE
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - REPLACE
@@ -55,7 +55,7 @@ node_types:
         description: Policy on how to apply a flavor update
         required: false
         default: RESIZE
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - RESIZE
@@ -65,43 +65,43 @@ node_types:
         description: User data script to be executed by cloud-init
         required: false
         default: ''
-        status: SUPPORTED
+        status: supported
       flavor:
         type: string
         description: The ID or name of the flavor to boot onto
         required: true
-        status: SUPPORTED
+        status: supported
       key_name:
         type: string
         description: Name of keypair to inject into the server
         required: false
-        status: SUPPORTED
+        status: supported
       reservation_id:
         type: string
         description: A UUID for the set of servers being requested
         required: false
-        status: SUPPORTED
+        status: supported
       security_groups:
         type: list
         description: List of security group names or IDs
         required: false
         default: [
           ]
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       config_drive:
         type: boolean
         description: enable config drive on the server
         required: false
-        status: SUPPORTED
+        status: supported
       personality:
         type: map
         description: A map of files to create/overwrite on the server upon boot
         required: false
         default: {
           }
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       software_config_transport:
@@ -109,7 +109,7 @@ node_types:
         description: How the server should receive the metadata required for software configuration
         required: false
         default: POLL_SERVER_CFN
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - POLL_SERVER_CFN
@@ -121,7 +121,7 @@ node_types:
         description: How the user_data should be formatted for the server
         required: false
         default: HEAT_CFNTOOLS
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - SOFTWARE_CONFIG
@@ -131,7 +131,7 @@ node_types:
         type: string
         description: Control how the disk is partitioned when the server is created
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - AUTO
@@ -140,42 +140,42 @@ node_types:
         type: string
         description: Server name
         required: false
-        status: SUPPORTED
+        status: supported
       scheduler_hints:
         type: map
         description: Arbitrary key-value pairs specified by the client to help boot a server
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     attributes:
       accessIPv4:
         type: string
         description: The manually assigned alternative public IPv4 address of the server
-        status: SUPPORTED
+        status: supported
       addresses:
         type: map
         description: A dict of all network addresses with corresponding port_id
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
       accessIPv6:
         type: string
         description: The manually assigned alternative public IPv6 address of the server
-        status: SUPPORTED
+        status: supported
       instance_name:
         type: string
         description: AWS compatible instance name
-        status: SUPPORTED
+        status: supported
       name:
         type: string
         description: Name of the server
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: Detailed information about resource
-        status: SUPPORTED
+        status: supported
       console_urls:
         type: string
         description: URLs of servers consoles
-        status: SUPPORTED
+        status: supported

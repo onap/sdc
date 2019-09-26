@@ -12,47 +12,47 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id007
           type: string
       oam_net_security_group_id:
@@ -60,114 +60,114 @@ node_types:
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id008
           type: string
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id009
           type: string
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id010
           type: string
       port_vson_server_oam_net_port_10_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id011
           type: string
       port_vson_server_oam_net_port_10_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id012
           type: string
       port_vson_server_oam_net_port_10_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
     requirements:
@@ -519,43 +519,43 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       oam_net_security_group_id:
@@ -563,120 +563,120 @@ node_types:
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_image_name:
         type: string
         description: VM Image name the vSON instance will be created from.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IPv4 assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       oam_net_subnet_v6_prefix_length:
         type: string
         description: OAM network IPv6 subnet prefix length.
         required: true
-        status: SUPPORTED
+        status: supported
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       default_gateway_v6:
         type: string
         description: Default IPv6 gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       oam_net_v6_ips:
         type: list
         description: Fixed IPv6 assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vson_join_cluster_auth_token:
@@ -684,25 +684,25 @@ node_types:
         description: |
           Authentication Token generated for the user permitted to add a new Datacenter/vSON member to existing vSON Cluster.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -1054,53 +1054,53 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id001
           type: string
       oam_net_security_group_id:
@@ -1108,79 +1108,79 @@ node_types:
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_image_name:
         type: string
         description: VM Image name the vSON instance will be created from.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id002
           type: string
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id003
           type: string
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id004
           type: string
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id005
           type: string
       vson_join_cluster_auth_token:
@@ -1188,41 +1188,41 @@ node_types:
         description: "Authentication Token generated for the user permitted to add\
           \  a new Datacenter/vSON member to existing vSON Cluster. \n"
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_vson_server_oam_net_port_00_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id006
           type: string
       port_vson_server_oam_net_port_00_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_vson_server_2:
         capability: tosca.capabilities.Node
@@ -1572,169 +1572,169 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id001
       oam_net_security_group_id:
         type: string
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_image_name:
         type: string
         description: VM Image name the vSON instance will be created from.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id002
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id003
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id004
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id005
       vson_join_cluster_auth_token:
         type: string
         description: "Authentication Token generated for the user permitted to add\
           \  a new Datacenter/vSON member to existing vSON Cluster. \n"
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_vson_server_oam_net_port_00_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id006
       port_vson_server_oam_net_port_00_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_vson_server_2:
         capability: tosca.capabilities.Node
@@ -2084,156 +2084,156 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id007
       oam_net_security_group_id:
         type: string
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id008
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id009
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id010
       port_vson_server_oam_net_port_10_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id011
       port_vson_server_oam_net_port_10_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id012
       port_vson_server_oam_net_port_10_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
     requirements:
@@ -2585,169 +2585,169 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id001
       oam_net_security_group_id:
         type: string
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_image_name:
         type: string
         description: VM Image name the vSON instance will be created from.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id002
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id003
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id004
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id005
       vson_join_cluster_auth_token:
         type: string
         description: "Authentication Token generated for the user permitted to add\
           \  a new Datacenter/vSON member to existing vSON Cluster. \n"
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_vson_server_oam_net_port_00_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id006
       port_vson_server_oam_net_port_00_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_vson_server_2:
         capability: tosca.capabilities.Node
@@ -3097,169 +3097,169 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id001
       oam_net_security_group_id:
         type: string
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_image_name:
         type: string
         description: VM Image name the vSON instance will be created from.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id002
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id003
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id004
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id005
       vson_join_cluster_auth_token:
         type: string
         description: "Authentication Token generated for the user permitted to add\
           \  a new Datacenter/vSON member to existing vSON Cluster. \n"
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_vson_server_oam_net_port_00_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id006
       port_vson_server_oam_net_port_00_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_vson_server_2:
         capability: tosca.capabilities.Node
@@ -3609,169 +3609,169 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id001
       oam_net_security_group_id:
         type: string
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_image_name:
         type: string
         description: VM Image name the vSON instance will be created from.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id002
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id003
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id004
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id005
       vson_join_cluster_auth_token:
         type: string
         description: "Authentication Token generated for the user permitted to add\
           \  a new Datacenter/vSON member to existing vSON Cluster. \n"
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_00_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_vson_server_oam_net_port_00_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id006
       port_vson_server_oam_net_port_00_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_vson_server_2:
         capability: tosca.capabilities.Node
@@ -4121,54 +4121,54 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       vson_cluster_name:
         type: string
         description: Name of the vSON Cluster.
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       swift_storage_url:
         type: string
         description: |
           Swift storage URL. Example: http://172.16.209.246:8080/v1/AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 http://172.16.209.246:8080 - protocol, IP and port, v1 - API version AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 - account ID
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id013
           type: string
       port_vson_server_oam_net_port_20_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       oam_net_security_group_id:
@@ -4176,116 +4176,116 @@ node_types:
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_image_name:
         type: string
         description: VM Image name the vSON instance will be created from.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id014
           type: string
       swift_son_container_name:
         type: string
         description: Swift container storing vSON artifacts.
         required: true
-        status: SUPPORTED
+        status: supported
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id015
           type: string
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id016
           type: string
       port_vson_server_oam_net_port_20_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_vson_server_oam_net_port_20_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: &id017
           type: string
     requirements:
@@ -4637,53 +4637,53 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       vson_cluster_name:
         type: string
         description: Name of the vSON Cluster.
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       swift_storage_url:
         type: string
         description: |
           Swift storage URL. Example: http://172.16.209.246:8080/v1/AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 http://172.16.209.246:8080 - protocol, IP and port, v1 - API version AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 - account ID
         required: true
-        status: SUPPORTED
+        status: supported
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id013
       port_vson_server_oam_net_port_20_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       oam_net_security_group_id:
@@ -4691,113 +4691,113 @@ node_types:
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_image_name:
         type: string
         description: VM Image name the vSON instance will be created from.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id014
       swift_son_container_name:
         type: string
         description: Swift container storing vSON artifacts.
         required: true
-        status: SUPPORTED
+        status: supported
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id015
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id016
       port_vson_server_oam_net_port_20_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_vson_server_oam_net_port_20_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_20_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id017
     requirements:
     - dependency_vson_server_1:
@@ -5148,156 +5148,156 @@ node_types:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       default_gateway:
         type: string
         description: Default gateway.
         required: true
-        status: SUPPORTED
+        status: supported
       instance_index:
         type: float
         description: Index of the instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_name:
         type: string
         description: Unique name for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_subnet_prefix_length:
         type: string
         description: Prefix length of the subnet on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       vf_module_name:
         type: string
         description: Unique name for this VF module instance.
         required: true
-        status: SUPPORTED
+        status: supported
       dns_servers:
         type: list
         description: List of DNS servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id007
       oam_net_security_group_id:
         type: string
         description: |
           The ID of Security group applied on the port bound to the vSON OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       vnf_id:
         type: string
         description: Unique ID for this VF instance.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_clm_oam_net_ip:
         type: string
         description: IP of the vSON Cluster Manager.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       vson_dc_unit:
         type: string
         description: Name of the vSON Data Center.
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_ips:
         type: list
         description: Fixed IP assignments for vSON instances on the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id008
       vfc_role:
         type: string
         description: Unique ID for this VF Module instance
         required: true
-        status: SUPPORTED
+        status: supported
       swift_account_auth_token:
         type: string
         description: |
           Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
         required: true
-        status: SUPPORTED
+        status: supported
       vson_server_group_id:
         type: string
         description: |
           Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_flavor_name:
         type: string
         description: The ID or name of the flavor to boot onto.
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zones:
         type: list
         description: List of availability zones.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id009
       volume_ids:
         type: list
         description: List of Volumes IDs.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id010
       port_vson_server_oam_net_port_10_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       ntp_servers:
         type: list
         description: List of NTP servers.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id011
       port_vson_server_oam_net_port_10_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       oam_net_id:
         type: string
         description: The ID of the OAM network.
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       vson_vm_names:
         type: list
         description: A list of unique names to be issued to the vSON Cluster leaders.
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema: *id012
       port_vson_server_oam_net_port_10_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vson_server_oam_net_port_10_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
     requirements:

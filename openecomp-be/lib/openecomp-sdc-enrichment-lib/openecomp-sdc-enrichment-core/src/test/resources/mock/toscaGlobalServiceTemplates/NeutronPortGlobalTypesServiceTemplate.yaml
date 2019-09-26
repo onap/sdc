@@ -17,12 +17,12 @@ data_types:
         type: string
         description: Subnet in which to allocate the IP address for this port
         required: false
-        status: SUPPORTED
+        status: supported
       ip_address:
         type: string
         description: IP address desired in the subnet for this port
         required: false
-        status: SUPPORTED
+        status: supported
 node_types:
   org.openecomp.resource.cp.nodes.heat.network.neutron.Port:
     derived_from: org.openecomp.resource.cp.nodes.network.Port
@@ -31,29 +31,29 @@ node_types:
         type: boolean
         description: Flag to enable/disable port security on the network
         required: false
-        status: SUPPORTED
+        status: supported
       device_id:
         type: string
         description: Device ID of this port
         required: false
-        status: SUPPORTED
+        status: supported
       qos_policy:
         type: string
         description: The name or ID of QoS policy to attach to this network
         required: false
-        status: SUPPORTED
+        status: supported
       allowed_address_pairs:
         type: list
         description: Additional MAC/IP address pairs allowed to pass through the port
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.AddressPair
       binding:vnic_type:
         type: string
         description: The vnic type to be bound on the neutron port
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - macvtap
@@ -65,25 +65,25 @@ node_types:
         required: false
         default: {
           }
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       device_owner:
         type: string
         description: Name of the network owning the port
         required: false
-        status: SUPPORTED
+        status: supported
       network:
         type: string
         description: Network this port belongs to
         required: false
-        status: SUPPORTED
+        status: supported
       replacement_policy:
         type: string
         description: Policy on how to respond to a stack-update for this resource
         required: false
         default: AUTO
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - REPLACE_ALWAYS
@@ -92,59 +92,59 @@ node_types:
         type: list
         description: List of security group names or IDs
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       fixed_ips:
         type: list
         description: Desired IPs for this port
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       mac_address:
         type: string
         description: MAC address to give to this port
         required: false
-        status: SUPPORTED
+        status: supported
       admin_state_up:
         type: boolean
         description: A boolean value specifying the administrative status of the network
         required: false
         default: true
-        status: SUPPORTED
+        status: supported
       name:
         type: string
         description: A symbolic name for this port
         required: false
-        status: SUPPORTED
+        status: supported
     attributes:
       tenant_id:
         type: string
         description: Tenant owning the port
-        status: SUPPORTED
+        status: supported
       network_id:
         type: string
         description: Unique identifier for the network owning the port
-        status: SUPPORTED
+        status: supported
       qos_policy_id:
         type: string
         description: The QoS policy ID attached to this network
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: Detailed information about resource
-        status: SUPPORTED
+        status: supported
       subnets:
         type: list
         description: Subnets of this network
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       status:
         type: string
         description: The status of the network
-        status: SUPPORTED
+        status: supported
     capabilities:
       attachment:
         type: tosca.capabilities.Attachment

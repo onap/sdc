@@ -11,281 +11,281 @@ node_types:
       subinterface_vdbe_untr_1_subports_ip_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_aap_sec_untrusted_ip_prefix:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_aap_untrusted_v6_ip_prefix:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_vdbe_availability_zone:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_aap_address_mode:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_flavor_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_vdbe_untr_2_subports_aap_untrusted_ip_prefix_len:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_subinterfaces_name_prefix:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vm_image_name:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_vdbe_untr_1_subports_aap_untrusted_v6_ip_prefix_len:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_vdbe_metadata:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       subinterface_vdbe_untr_2_subports_counter:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: float
       subinterface_vdbe_untr_2_subports_vmac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vdbe_untr_port_1_related_networks:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.RelatedNetworksAssignments
       subinterface_vdbe_untr_1_subports_aap_address_mode:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_vlan_tag_list:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       port_vdbe_untr_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_port_1_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_vdbe_untr_1_subports_vn_network_list:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_vn_network_list:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_aap_untrusted_v6_ip_prefix:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_ip_v6_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_mac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_aap_untrusted_v6_ip_prefix_len:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       compute_vdbe_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_aap_sec_untrusted_ip_prefix_len:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_aap_sec_untrusted_ip_prefix_len:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_vlan_tag_list:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: json
       subinterface_vdbe_untr_2_subports_aap_untrusted_ip_prefix:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vdbe_untr_port_1_name:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vdbe_untr_port_1_network_role:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_port_1_network_role_tag:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       port_vdbe_untr_port_1_order:
         type: integer
         required: true
-        status: SUPPORTED
+        status: supported
       subinterface_vdbe_untr_1_subports_ip_v6_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       port_vdbe_untr_port_1_ip_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_vdbe_untr_port_1_subnetpoolid:
         type: string
         required: true
-        status: SUPPORTED
+        status: supported
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       subinterface_vdbe_untr_1_subports_parent_interface:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_service_template_filter_count:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: float
       subinterface_vdbe_untr_1_subports_service_template_filter_count:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: float
       port_vdbe_untr_port_1_vlan_requirements:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       subinterface_vdbe_untr_2_subports_ip_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_vmac_address:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_subinterfaces_name_prefix:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_aap_sec_untrusted_ip_prefix:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_1_subports_aap_untrusted_ip_prefix_len:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subinterface_vdbe_untr_2_subports_parent_interface:
         type: list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
     requirements:
@@ -697,84 +697,84 @@ node_types:
         type: string
         description: ip prefix for primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       aap_sec_untrusted_ip_prefix:
         type: string
         description: ip prefix for secondary vDBE VM aap on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       ip_v6_address:
         type: string
         description: IPv6 address associated with subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
       counter:
         type: float
         description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
         required: true
-        status: SUPPORTED
+        status: supported
       subinterfaces_name_prefix:
         type: string
         description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
         required: true
-        status: SUPPORTED
+        status: supported
       ip_address:
         type: string
         description: IPv4 address associated with subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
       aap_address_mode:
         type: string
         description: Address mode for the vDBE cluster IP
         required: true
-        status: SUPPORTED
+        status: supported
       aap_untrusted_v6_ip_prefix:
         type: string
         description: ipv6 prefix for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       parent_interface:
         type: string
         description: Parent Contrail interface
         required: true
-        status: SUPPORTED
+        status: supported
       vn_network_list:
         type: string
         description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
         required: true
-        status: SUPPORTED
+        status: supported
       mac_address:
         type: string
         description: HW MAC address to use for subinterface
         required: true
-        status: SUPPORTED
+        status: supported
       vlan_tag_list:
         type: list
         description: List of VLAN IDs to use for subinterfaces
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       aap_sec_untrusted_ip_prefix_len:
         type: string
         description: ip prefix length for the secondary DBE VM aap on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       vmac_address:
         type: string
         description: virtual MAC address to use for subinterface
         required: true
-        status: SUPPORTED
+        status: supported
       aap_untrusted_v6_ip_prefix_len:
         type: string
         description: ipv6 prefix length for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
       aap_untrusted_ip_prefix_len:
         type: string
         description: ip prefix length for the primary vDBE VM on the VAN untrusted network
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_vdbe_0_subint_untr_vmi_0:
         capability: tosca.capabilities.Node

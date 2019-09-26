@@ -10,21 +10,21 @@ node_types:
       private_address:
         type: string
         description: private address
-        status: SUPPORTED
+        status: supported
       public_address:
         type: string
         description: public_address
-        status: SUPPORTED
+        status: supported
       networks:
         type: map
         description: networks
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: tosca.datatypes.network.NetworkInfo
       ports:
         type: map
         description: ports
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: tosca.datatypes.network.PortInfo
     requirements:
@@ -69,25 +69,25 @@ node_types:
       ip_range_end:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       ip_range_start:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       ip_address:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       is_default:
         type: boolean
         required: false
         default: false
-        status: SUPPORTED
+        status: supported
       order:
         type: integer
         required: true
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
     requirements:
@@ -104,15 +104,15 @@ node_types:
       tosca_name:
         type: string
         description: tosca name
-        status: SUPPORTED
+        status: supported
       state:
         type: string
         description: state
-        status: SUPPORTED
+        status: supported
       tosca_id:
         type: string
         description: tosca id
-        status: SUPPORTED
+        status: supported
     interfaces: {
       }
   tosca.nodes.network.Network:
@@ -121,20 +121,20 @@ node_types:
       physical_network:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       segmentation_id:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       network_id:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       ip_version:
         type: integer
         required: false
         default: 4
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - 4
@@ -142,27 +142,27 @@ node_types:
       start_ip:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       network_name:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       cidr:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       gateway_ip:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       network_type:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       end_ip:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable
@@ -175,17 +175,17 @@ node_types:
       size:
         type: scalar-unit.size
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 1 MB
       volume_id:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
       snapshot_id:
         type: string
         required: false
-        status: SUPPORTED
+        status: supported
     capabilities:
       attachment:
         type: tosca.capabilities.Attachment

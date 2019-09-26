@@ -14,7 +14,7 @@ capability_types:
         type: map
         description: Deployment flavors instance
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.DeploymentFlavor
   org.openecomp.capabilities.metric.SnmpTrap:
@@ -25,7 +25,7 @@ capability_types:
         type: string
         description: Object Id of the metric
         required: true
-        status: SUPPORTED
+        status: supported
   org.openecomp.capabilities.AllottedResource:
     derived_from: tosca.capabilities.Root
   org.openecomp.capabilities.metric.SnmpPolling:
@@ -36,7 +36,7 @@ capability_types:
         type: string
         description: Object Id of the metric
         required: true
-        status: SUPPORTED
+        status: supported
   org.openecomp.capabilities.metric.Ceilometer:
     derived_from: org.openecomp.capabilities.Metric
     description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -45,7 +45,7 @@ capability_types:
         type: string
         description: Ceilometer metric type name to monitor. (The name ceilometer is using)
         required: true
-        status: SUPPORTED
+        status: supported
   org.openecomp.capabilities.Metric:
     derived_from: tosca.capabilities.Endpoint
     description: A node type that includes the Metric capability indicates that it can be monitored.
@@ -54,24 +54,24 @@ capability_types:
         type: string
         description: Unit of the metric value
         required: true
-        status: SUPPORTED
+        status: supported
       description:
         type: string
         description: Description of the metric
         required: false
-        status: SUPPORTED
+        status: supported
       type:
         type: string
         description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
         required: true
-        status: SUPPORTED
+        status: supported
       category:
         type: string
         description: Category of the metric, for an example, compute, disk, network, storage and etc.
         required: false
-        status: SUPPORTED
+        status: supported
     attributes:
       value:
         type: string
         description: Runtime monitored value
-        status: SUPPORTED
+        status: supported

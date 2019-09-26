@@ -6,34 +6,34 @@ node_types:
       availability_zone:
         description: The availability zone in which the volume will be created
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       image:
         description: If specified, the name or ID of the image to create the volume from
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       metadata:
         description: Key/value pairs to associate with the volume
         type: map
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
         required: false
       volume_type:
         description: If specified, the type of volume to use, mapping to a specific backend
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       description:
         description: A description of the volume
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       device_type:
         description: Device type
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
         constraints:
         - valid_values:
@@ -43,7 +43,7 @@ node_types:
         description: 'Bus of the device: hypervisor driver chooses a suitable default
           if omitted'
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
         constraints:
         - valid_values:
@@ -55,95 +55,95 @@ node_types:
       backup_id:
         description: If specified, the backup to create the volume from
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       source_volid:
         description: If specified, the volume to use as source
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       boot_index:
         description: Integer used for ordering the boot disks
         type: integer
-        status: SUPPORTED
+        status: supported
         required: false
       size:
         description: The requested storage size (default unit is MB)
         type: scalar-unit.size
-        status: SUPPORTED
+        status: supported
         required: false
         constraints:
         - greater_or_equal: 1 GB
       read_only:
         description: Enables or disables read-only access mode of volume
         type: boolean
-        status: SUPPORTED
+        status: supported
         required: false
       name:
         description: A name used to distinguish the volume
         type: string
-        status: SUPPORTED
+        status: supported
         required: false
       scheduler_hints:
         description: Arbitrary key-value pairs specified by the client to help the Cinder scheduler creating a volume
         type: map
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
         required: false
       swap_size:
         description: The size of the swap, in MB
         type: scalar-unit.size
-        status: SUPPORTED
+        status: supported
         required: false
       delete_on_termination:
         description: Indicate whether the volume should be deleted when the server is terminated
         type: boolean
-        status: SUPPORTED
+        status: supported
         required: false
       multiattach:
         description: Whether allow the volume to be attached more than once
         type: boolean
-        status: SUPPORTED
+        status: supported
         required: false
     attributes:
       display_description:
         description: Description of the volume
         type: string
-        status: SUPPORTED
+        status: supported
       attachments:
         description: The list of attachments of the volume
         type: string
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       encrypted:
         description: Boolean indicating if the volume is encrypted or not
         type: boolean
-        status: SUPPORTED
+        status: supported
       show:
         description: Detailed information about resource
         type: string
-        status: SUPPORTED
+        status: supported
       created_at:
         description: The timestamp indicating volume creation
         type: timestamp
-        status: SUPPORTED
+        status: supported
       display_name:
         description: Name of the volume
         type: string
-        status: SUPPORTED
+        status: supported
       metadata_values:
         description: Key/value pairs associated with the volume in raw dict form
         type: map
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       bootable:
         description: Boolean indicating if the volume can be booted or not
         type: boolean
-        status: SUPPORTED
+        status: supported
       status:
         description: The current status of the volume
         type: string
-        status: SUPPORTED
+        status: supported

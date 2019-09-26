@@ -12,22 +12,22 @@ relationship_types:
         type: string
         description: The ID of the volume to be attached
         required: true
-        status: SUPPORTED
+        status: supported
       location:
         type: string
         description: The location where the volume is exposed on the instance, mountpoint
         required: false
-        status: SUPPORTED
+        status: supported
       instance_uuid:
         type: string
         description: The ID of the server to which the volume attaches
         required: true
-        status: SUPPORTED
+        status: supported
     attributes:
       show:
         type: string
         description: Detailed information about resource
-        status: SUPPORTED
+        status: supported
 node_types:
   org.openecomp.resource.vfc.nodes.heat.cinder.Volume:
     derived_from: tosca.nodes.BlockStorage
@@ -36,34 +36,34 @@ node_types:
         type: string
         description: The availability zone in which the volume will be created
         required: false
-        status: SUPPORTED
+        status: supported
       image:
         type: string
         description: If specified, the name or ID of the image to create the volume from
         required: false
-        status: SUPPORTED
+        status: supported
       metadata:
         type: map
         description: Key/value pairs to associate with the volume
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       volume_type:
         type: string
         description: If specified, the type of volume to use, mapping to a specific backend
         required: false
-        status: SUPPORTED
+        status: supported
       description:
         type: string
         description: A description of the volume
         required: false
-        status: SUPPORTED
+        status: supported
       device_type:
         type: string
         description: Device type
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - cdrom
@@ -73,7 +73,7 @@ node_types:
         description: 'Bus of the device: hypervisor driver chooses a suitable default
           if omitted'
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - valid_values:
           - ide
@@ -85,92 +85,92 @@ node_types:
         type: string
         description: If specified, the backup to create the volume from
         required: false
-        status: SUPPORTED
+        status: supported
       source_volid:
         type: string
         description: If specified, the volume to use as source
         required: false
-        status: SUPPORTED
+        status: supported
       boot_index:
         type: integer
         description: Integer used for ordering the boot disks
         required: false
-        status: SUPPORTED
+        status: supported
       size:
         type: scalar-unit.size
         description: The requested storage size (default unit is MB)
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 1 GB
       read_only:
         type: boolean
         description: Enables or disables read-only access mode of volume
         required: false
-        status: SUPPORTED
+        status: supported
       name:
         type: string
         description: A name used to distinguish the volume
         required: false
-        status: SUPPORTED
+        status: supported
       scheduler_hints:
         type: map
         description: Arbitrary key-value pairs specified by the client to help the Cinder scheduler creating a volume
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       swap_size:
         type: scalar-unit.size
         description: The size of the swap, in MB
         required: false
-        status: SUPPORTED
+        status: supported
       delete_on_termination:
         type: boolean
         description: Indicate whether the volume should be deleted when the server is terminated
         required: false
-        status: SUPPORTED
+        status: supported
       multiattach:
         type: boolean
         description: Whether allow the volume to be attached more than once
         required: false
-        status: SUPPORTED
+        status: supported
     attributes:
       display_description:
         type: string
         description: Description of the volume
-        status: SUPPORTED
+        status: supported
       attachments:
         type: string
         description: The list of attachments of the volume
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       encrypted:
         type: boolean
         description: Boolean indicating if the volume is encrypted or not
-        status: SUPPORTED
+        status: supported
       show:
         type: string
         description: Detailed information about resource
-        status: SUPPORTED
+        status: supported
       created_at:
         type: timestamp
         description: The timestamp indicating volume creation
-        status: SUPPORTED
+        status: supported
       display_name:
         type: string
         description: Name of the volume
-        status: SUPPORTED
+        status: supported
       metadata_values:
         type: map
         description: Key/value pairs associated with the volume in raw dict form
-        status: SUPPORTED
+        status: supported
       bootable:
         type: boolean
         description: Boolean indicating if the volume can be booted or not
-        status: SUPPORTED
+        status: supported
       status:
         type: string
         description: The current status of the volume
-        status: SUPPORTED
+        status: supported

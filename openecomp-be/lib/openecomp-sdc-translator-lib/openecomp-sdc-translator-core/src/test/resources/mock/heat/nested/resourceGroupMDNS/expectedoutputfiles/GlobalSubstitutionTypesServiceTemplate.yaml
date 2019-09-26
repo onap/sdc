@@ -12,95 +12,95 @@ node_types:
         type: string
         description: Unique ID for this VF module instance
         required: true
-        status: SUPPORTED
+        status: supported
       name_with_index:
         type: string
         description: name parameter which will include the index value
         required: true
-        status: SUPPORTED
+        status: supported
       dns_int_bearer_ips:
         type: list
         description: DNS Bearer IP list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vnf_name:
         type: string
         description: Unique name for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       index:
         type: float
         description: index parameter
         required: true
-        status: SUPPORTED
+        status: supported
       security_group:
         type: string
         description: security group
         required: true
-        status: SUPPORTED
+        status: supported
       oam_protected_net_name:
         type: string
         description: OAM network where instaces will connect
         required: true
-        status: SUPPORTED
+        status: supported
       dns_oam_protected_ips:
         type: list
         description: DNS OAM IP list
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       dns_key:
         type: string
         description: server key
         required: true
-        status: SUPPORTED
+        status: supported
       int_bearer_net_name:
         type: string
         description: Bearer network where instaces will connect
         required: true
-        status: SUPPORTED
+        status: supported
       route_eth0:
         type: string
         description: OAM network routes
         required: true
-        status: SUPPORTED
+        status: supported
       dns_names:
         type: list
         description: server name
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       vnf_id:
         type: string
         description: Unique ID for this VF instance
         required: true
-        status: SUPPORTED
+        status: supported
       availability_zone_0:
         type: string
         description: availability zone ID or Name
         required: true
-        status: SUPPORTED
+        status: supported
       dns_image_name:
         type: string
         description: server image
         required: true
-        status: SUPPORTED
+        status: supported
       dns_int_bearer_ipv6_ips:
         type: list
         description: fixed IPv6 assignment for VM's on the Bearer network
         required: true
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       dns_flavor_name:
         type: string
         description: server flavor
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_dns_oam_protected_0_port:
         capability: tosca.capabilities.Node

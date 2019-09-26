@@ -7,7 +7,7 @@ org.openecomp.groups.MyHeatStack2:
       type: list
       description: Heat files which associate to this group/heat stack
       required: true
-      status: SUPPORTED
+      status: supported
       entry_schema:
         type: string
     url_credential:

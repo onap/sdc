@@ -12,47 +12,47 @@ node_types:
         type: string
         description: CPS network ip
         required: true
-        status: SUPPORTED
+        status: supported
       availabilityzone_name:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_vnf_id:
         type: string
         description: PCRF VNF Id
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_name:
         type: string
         description: CPS network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_pps_image_name:
         type: string
         description: PCRF PS image name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_pps_flavor_name:
         type: string
         description: flavor name of PCRF PS instance
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_pps_server_name:
         type: string
         description: PCRF PS server name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_security_group_name:
         type: string
         description: the name of security group
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_pcrf_pps_port_0:
         capability: tosca.capabilities.Node
@@ -402,167 +402,167 @@ node_types:
         type: string
         description: PCRF PD image name
         required: true
-        status: SUPPORTED
+        status: supported
       availabilityzone_name:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sp_net_ip:
         type: string
         description: Sp network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_ppd_server_name:
         type: string
         description: PCRF PD server name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_gx_net_ip:
         type: string
         description: Gx network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sy_net_name:
         type: string
         description: Sy network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sp_net_mask:
         type: string
         description: Sp network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sd_net_ip:
         type: string
         description: Sd network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_vnf_id:
         type: string
         description: PCRF VNF Id
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_name:
         type: string
         description: OAM network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_ip:
         type: string
         description: OAM network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_gx_net_mask:
         type: string
         description: Gx network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sgi_sy_net_name:
         type: string
         description: Sgi Sy network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sd_net_name:
         type: string
         description: Sd network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_gw:
         type: string
         description: CPS network gateway
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_rx_net_name:
         type: string
         description: Rx network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_rx_net_ip:
         type: string
         description: Rx network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sy_net_ip:
         type: string
         description: Sy network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sgi_sy_net_ip:
         type: string
         description: Sgi Sy network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_ppd_flavor_name:
         type: string
         description: flavor name of PCRF PD instance
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_ip:
         type: string
         description: CPS network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sy_net_mask:
         type: string
         description: Sy network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_name:
         type: string
         description: CPS network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_lb_management_vip:
         type: string
         description: CPS OAM LB VIP
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sgi_sy_net_mask:
         type: string
         description: Sgi Sy network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_lb_internal_vip:
         type: string
         description: CPS Internal LB VIP
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sd_net_mask:
         type: string
         description: Sd network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_gx_net_name:
         type: string
         description: Gx network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_sp_net_name:
         type: string
         description: Sp network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_rx_net_mask:
         type: string
         description: Rx network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_security_group_name:
         type: string
         description: the name of security group
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_pcrf_ppd_port_5:
         capability: tosca.capabilities.Node
@@ -1500,77 +1500,77 @@ node_types:
         type: string
         description: flavor name of PCRF CM instance
         required: true
-        status: SUPPORTED
+        status: supported
       availabilityzone_name:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_ip:
         type: string
         description: CPS network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_pcm_image_name:
         type: string
         description: PCRF CM image name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_vnf_id:
         type: string
         description: PCRF VNF Id
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_name:
         type: string
         description: OAM network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_name:
         type: string
         description: CPS network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_ip:
         type: string
         description: OAM network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_pcm_server_name:
         type: string
         description: PCRF CM server name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_gw:
         type: string
         description: CPS network gateway
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_pcm_volume_id:
         type: string
         description: CPS Cluman Cinder Volume
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_security_group_name:
         type: string
         description: the name of security group
         required: true
-        status: SUPPORTED
+        status: supported
     attributes:
       pcrf_server_pcm_id:
         type: string
         description: the pcm server id
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_pcrf_pcm_port_0:
         capability: tosca.capabilities.Node
@@ -2004,82 +2004,82 @@ node_types:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_flavor_name:
         type: string
         description: flavor name of PCRF OAM instance
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_server_name:
         type: string
         description: PCRF OAM server name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_ip:
         type: string
         description: CPS network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_vnf_id:
         type: string
         description: PCRF VNF Id
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_name:
         type: string
         description: OAM network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_name:
         type: string
         description: CPS network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_arbiter_vip:
         type: string
         description: OAM Arbiter LB VIP
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_ip:
         type: string
         description: OAM network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_volume_id:
         type: string
         description: CPS OAM Cinder Volume
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_net_gw:
         type: string
         description: CPS network gateway
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_oam_image_name:
         type: string
         description: PCRF OAM image name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_security_group_name:
         type: string
         description: the name of security group
         required: true
-        status: SUPPORTED
+        status: supported
     attributes:
       pcrf_oam_vol_attachment_id:
         type: string
         description: the pcrf_oam_vol_attachment_id id
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_pcrf_server_oam:
         capability: tosca.capabilities.Node
@@ -2513,47 +2513,47 @@ node_types:
         type: string
         description: CPS network ip
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_psm_flavor_name:
         type: string
         description: flavor name of PCRF SM instance
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_psm_image_name:
         type: string
         description: PCRF SM image name
         required: true
-        status: SUPPORTED
+        status: supported
       availabilityzone_name:
         type: string
         description: availabilityzone name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_vnf_id:
         type: string
         description: PCRF VNF Id
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_name:
         type: string
         description: CPS network name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_cps_net_mask:
         type: string
         description: CPS network mask
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_psm_server_name:
         type: string
         description: PCRF SM server name
         required: true
-        status: SUPPORTED
+        status: supported
       pcrf_security_group_name:
         type: string
         description: the name of security group
         required: true
-        status: SUPPORTED
+        status: supported
     requirements:
     - dependency_pcrf_server_psm:
         capability: tosca.capabilities.Node

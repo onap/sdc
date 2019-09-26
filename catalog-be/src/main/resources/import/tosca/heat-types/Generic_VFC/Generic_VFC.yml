@@ -9,27 +9,27 @@ node_types:
         type: string
         description: high_availablity
         required: false
-        status: SUPPORTED
+        status: supported
       vm_image_name:
         type: string
         description: Master image_name volume id
         required: true
-        status: SUPPORTED
+        status: supported
       vm_flavor_name:
         type: string
         description: Master image_name volume id
         required: true
-        status: SUPPORTED
+        status: supported
       nfc_naming_code:
         type: string
         description: nfc code for instance naming
         required: false
-        status: SUPPORTED
+        status: supported
       vm_type_tag:
         type: string
         description: vm type based on naming Convention
         required: false
-        status: SUPPORTED
+        status: supported
       nfc_naming:
         type: org.openecomp.datatypes.Naming
         description: vfc naming
@@ -38,13 +38,13 @@ node_types:
         description: Minimum number of VFC Instances
         required: false
         default: 0
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 0
       max_instances:
         type: integer
         description: Maximum number of VFC Instances
         required: false
-        status: SUPPORTED
+        status: supported
         constraints:
         - greater_or_equal: 1

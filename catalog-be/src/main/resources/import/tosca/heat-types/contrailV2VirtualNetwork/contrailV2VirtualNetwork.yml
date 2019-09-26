@@ -7,58 +7,58 @@ node_types:
         type: list
         description: IPAM references Data
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.IpamRefData
       network_policy_refs_data:
         type: list
         description: Policy references data
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefData
       network_ipam_refs:
         type: list
         description: IPAM references
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       network_policy_refs:
         type: list
         description: Policy references
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subnets:
         type: map
         description: Network related subnets
         required: false
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.neutron.Subnet
     attributes:
       fq_name:
         type: string
         description: fq_name
-        status: SUPPORTED
+        status: supported
       subnets_name:
         type: list
         description: Subnets name of this network
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subnets_show:
         type: map
         description: Detailed information about each subnet
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: string
       subnets:
         type: map
         description: Network related subnets
-        status: SUPPORTED
+        status: supported
         entry_schema:
           type: org.openecomp.datatypes.heat.network.neutron.Subnet
     capabilities:
