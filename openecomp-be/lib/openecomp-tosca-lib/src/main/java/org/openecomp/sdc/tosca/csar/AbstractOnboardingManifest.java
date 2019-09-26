@@ -372,6 +372,11 @@ abstract class AbstractOnboardingManifest implements Manifest {
     }
 
     @Override
+    public boolean isSigned() {
+        return getCmsSignature().isPresent();
+    }
+
+    @Override
     public Optional<String> getCmsSignature() {
         return Optional.ofNullable(cmsSignature);
     }
