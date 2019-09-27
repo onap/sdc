@@ -18,17 +18,21 @@ package org.openecomp.core.externaltesting.impl;
 
 import com.amdocs.zusammen.utils.fileutils.json.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import java.util.Map.Entry;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.externaltesting.api.*;
 import org.openecomp.core.externaltesting.errors.ExternalTestingException;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -58,7 +62,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ExternalTestingManagerImpl implements ExternalTestingManager {
@@ -97,6 +100,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
 
   private static final String SDC_CSAR = "sdc-csar";
   private static final String SDC_HEAT = "sdc-heat";
+  private final ImmutableSet<String> relevantArchiveFileExtensionSet =
+      ImmutableSet.of("yaml", "meta", "yml", "json", "env");
 
 
   private VersioningManager versioningManager;
@@ -721,10 +726,8 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
   private void processArchive(final VtpTestExecutionRequest test, final MultiValueMap<String, Object> body, final byte[] zip) {
 
     // We need to make one pass through the zip input stream.  Pull out files that match our expectations into a temporary
-    // map that we can process over.   These are not huge files so we shouldn't need to worry about memory.
-
-    List<String> extensions = Arrays.asList(".yaml", ".meta", ".yml", ".json", ".env");
-    final Map<String, byte[]> contentWeCareAbout = extractRelevantContent(zip, extensions);
+    // map that we can process over. These are not huge files so we shouldn't need to worry about memory.
+    final Map<String, byte[]> contentWeCareAbout = extractRelevantContent(zip);
 
     // VTP does not support concurrent executions of the same test with the same associated file name.
     // It writes files to /tmp and if we were to send two requests with the same file, the results are unpredictable.
@@ -891,34 +894,30 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
    * @param zip csar/heat zip to iterate over
    * @return relevant content from the archive file as a map.
    */
-  private Map<String, byte[]> extractRelevantContent(final byte[] zip, final List<String> extensions) {
-    final Map<String, byte[]> rv = new HashMap<>();  // FYI, rv = return value.
-    try (ByteArrayInputStream is = new ByteArrayInputStream(zip)) {
-      try (ZipInputStream zipStream = new ZipInputStream(is)) {
-        ZipEntry entry;
-        while ((entry = zipStream.getNextEntry()) != null) {
-          final String entryName = entry.getName();
-
-          // NOTE: leaving this debugging in for dublin...
-          logger.debug("archive contains entry {}", entryName);
-
-          extractIfMatching(extensions, rv, zipStream, entryName);
-        }
-      }
+  private Map<String, byte[]> extractRelevantContent(final byte[] zip) {
+    final Map<String, byte[]> zipFileAndByteMap;
+    try {
+      zipFileAndByteMap = ZipUtils.readZip(zip, false);
+    } catch (final ZipException ex) {
+      logger.error("An error occurred while processing archive", ex);
+      throw new ExternalTestingException(SDC_RESOLVER_ERR, 500, ex.getMessage(), ex);
     }
-    catch (IOException ex) {
-      logger.error("error encountered processing archive", ex);
-      throw new ExternalTestingException(SDC_RESOLVER_ERR, 500, ex.getMessage());
-    }
-    return rv;
+
+    return zipFileAndByteMap.entrySet().stream()
+        .filter(stringEntry -> hasRelevantExtension(stringEntry.getKey()))
+        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
   }
 
-  private void extractIfMatching(List<String> extensions, Map<String, byte[]> rv, ZipInputStream zipStream, String entryName) throws IOException {
-    int idx = entryName.lastIndexOf('.');
-    if ((idx >= 0) && (extensions.contains(entryName.substring(idx)))) {
-      byte[] content = IOUtils.toByteArray(zipStream);
-      rv.put(entryName, content);
-    }
+  /**
+   * Checks if the file matches with a expected extension.
+   *
+   * @param filePath the file path
+   * @return {@code true} if the file extension matches with {@link #relevantArchiveFileExtensionSet}, {@code false}
+   * otherwise
+   */
+  private boolean hasRelevantExtension(final String filePath) {
+    final String entryExtension = FilenameUtils.getExtension(filePath);
+    return StringUtils.isNotEmpty(entryExtension) && (relevantArchiveFileExtensionSet.contains(entryExtension));
   }
 
   /**

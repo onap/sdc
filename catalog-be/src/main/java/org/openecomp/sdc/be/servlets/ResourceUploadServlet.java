@@ -183,5 +183,4 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
         }
     }
 
-    /********************************************************************************************************************/
 }

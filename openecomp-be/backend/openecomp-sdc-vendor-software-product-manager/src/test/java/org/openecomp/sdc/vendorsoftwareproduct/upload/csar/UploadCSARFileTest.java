@@ -18,7 +18,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.upload.csar;
 
 
 import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
@@ -161,7 +163,7 @@ public class UploadCSARFileTest {
       onboardPackageInfo = new OnboardPackageInfo(csarFileName, OnboardingTypesEnum.CSAR.toString(),
               convertFileInputStream(inputStream));
       uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
-      assertEquals(expectedErrorsNumber, uploadFileResponse.getErrors().size());
+      assertThat(String.format("Expecting %s error(s) in file '%s'", expectedErrorsNumber, csarFileName), uploadFileResponse.getErrors().size(), is(expectedErrorsNumber));
     }
     return uploadFileResponse;
   }

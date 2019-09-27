@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdcrests.vsp.rest.data;
 
-import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
@@ -61,7 +61,7 @@ public class PackageArchive {
         try {
             handlerPair = CommonUtil.getFileContentMapFromOrchestrationCandidateZip(
                 outerPackageFileBytes);
-        } catch (IOException exception) {
+        } catch (final ZipException exception) {
             LOG.error("Error reading files inside archive", exception);
         }
     }

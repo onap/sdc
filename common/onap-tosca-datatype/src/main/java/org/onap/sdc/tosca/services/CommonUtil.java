@@ -34,8 +34,8 @@ import org.apache.commons.beanutils.BeanUtils;
 
 public class CommonUtil {
 
-    private static final String DEFAULT = "default";
-    private static final String UNDERSCORE_DEFAULT = "_default";
+    public static final String DEFAULT = "default";
+    public static final String UNDERSCORE_DEFAULT = "_default";
     private static ImmutableSet<Class<?>> complexClassType = ImmutableSet.of(Map.class, String.class, Integer.class, Float.class,
             Double.class, Set.class, Object.class, List.class);
 

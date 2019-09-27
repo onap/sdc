@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +41,8 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ZipUtil;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CsarInfoTest {
@@ -52,19 +53,18 @@ public class CsarInfoTest {
     private User user;
 
     private static final String CSAR_UUID = "csarUUID";
-    private static final String PAYLOAD_NAME = "/mock_service.csar";
+    private static final String PAYLOAD_NAME = "mock_service.csar";
     private static final String RESOURCE_NAME = "resourceName";
     private static final String MAIN_TEMPLATE_NAME = "Definitions/tosca_mock_vf.yaml";
-
     private static final String NEW_NODE_NAME = "new_db";
     private static final String NODE_TYPE = "tosca.nodes.Compute";
     private static final String DELIVER_FOR = "tosca.nodes.Root";
 
     @Before
-    public void setup() throws IOException, URISyntaxException {
-
+    public void setup() throws ZipException, URISyntaxException {
         // given
-        Map<String, byte[]> payload = ZipUtil.readData(PAYLOAD_NAME);
+        final File csarFile = new File(CsarInfoTest.class.getClassLoader().getResource(PAYLOAD_NAME).toURI());
+        final Map<String, byte[]> payload = ZipUtils.readZip(csarFile, false);
         String mainTemplateContent = new String(payload.get(MAIN_TEMPLATE_NAME));
 
         csarInfo = new CsarInfo(user, CSAR_UUID, payload, RESOURCE_NAME,

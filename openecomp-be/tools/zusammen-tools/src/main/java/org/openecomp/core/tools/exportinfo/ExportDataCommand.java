@@ -28,7 +28,6 @@ import com.datastax.driver.core.Session;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -52,8 +51,9 @@ import org.openecomp.core.tools.commands.Command;
 import org.openecomp.core.tools.commands.CommandName;
 import org.openecomp.core.tools.importinfo.ImportProperties;
 import org.openecomp.core.tools.util.Utils;
-import org.openecomp.core.tools.util.ZipUtils;
 import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -157,14 +157,14 @@ public final class ExportDataCommand extends Command {
         }, executor);
     }
 
-    private static void zipPath(Path rootDir) throws IOException {
-        LocalDateTime date = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        String dateStr = date.format(formatter);
-        dateStr = dateStr.replaceAll(":", "_");
-        String zipFile = System.getProperty("user.home") + File.separatorChar + "onboarding_import" + dateStr + ".zip";
-        ZipUtils.createZip(zipFile, rootDir);
-        Utils.printMessage(LOGGER, "Exported file :" + zipFile);
+    private static void zipPath(final Path rootDir) throws ZipException {
+        final LocalDateTime date = LocalDateTime.now();
+        final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        final String dateStr = date.format(formatter).replace(":", "_");
+        final Path zipFile = Paths.get(System.getProperty("user.home"),String.format("onboarding_import%s.zip", dateStr));
+        ZipUtils.createZipFromPath(rootDir, zipFile);
+        Utils.printMessage(LOGGER, "Zip file was created " + zipFile.toString());
+        Utils.printMessage(LOGGER, "Exported file :" + zipFile.toString());
     }
 
 
