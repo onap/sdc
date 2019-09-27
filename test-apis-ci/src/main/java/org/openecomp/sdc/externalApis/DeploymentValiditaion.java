@@ -39,7 +39,6 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.common.util.ZipUtil;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -48,7 +47,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -176,34 +174,6 @@ public class DeploymentValiditaion extends ComponentBaseTest{
 		}
 		return yamlList;
 	}
-
-	@Test (enabled=false)
-	public void testYaml() throws IOException{
-
-		System.out.println("");
-
-		File file = new File("\\\\Comp-1\\FileIO\\Stop.txt");
-
-		Map<String, byte[]> readZip = null;
-		Path path = Paths.get("C:\\Users\\ys9693\\Documents\\csar\\attributesWithProporties\\attributesWithProporties.csar");
-		byte[] data = Files.readAllBytes(path);
-		if (data != null && data.length > 0) {
-			readZip = ZipUtil.readZip(data);
-
-		}
-
-		byte[] artifactsBs = readZip.get("Definitions/VF_RI2_G6.yaml");
-		String str = new String(artifactsBs, StandardCharsets.UTF_8);
-
-		Yaml yaml = new Yaml();
-		Map<String, Object> load = (Map<String, Object>) yaml.load(str);
-		Map<String, Object> topology_template = (Map<String, Object>) load.get("topology_template");
-		Map<String, Object> node_templates = (Map<String, Object>) topology_template.get("node_templates");
-
-		Set<String> keySet = node_templates.keySet();
-	}
-
-
 
 	@Test
 	public void pasrseDataTypes() throws Exception{

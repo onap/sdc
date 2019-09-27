@@ -16,23 +16,21 @@
 
 package org.openecomp.sdc.common.utils;
 
-import org.testng.annotations.Test;
+import static org.onap.sdc.tosca.services.CommonUtil.DEFAULT;
+import static org.onap.sdc.tosca.services.CommonUtil.UNDERSCORE_DEFAULT;
+import static org.testng.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.testng.Assert.assertTrue;
+import org.testng.annotations.Test;
 
 public class CommonUtilTest {
 
     @Test
     public void testGetObjectAsMap() {
-        Map<String, String> obj = new HashMap<>(1);
-        obj.put(CommonUtil.DEFAULT, "");
-        Map<String, Object> newMap = CommonUtil.getObjectAsMap(obj);
-
-        boolean exists = newMap.containsKey(CommonUtil._DEFAULT);
-
-        assertTrue(exists);
+        final Map<String, String> obj = new HashMap<>(1);
+        obj.put(DEFAULT, "");
+        assertTrue(CommonUtil.getObjectAsMap(obj).containsKey(UNDERSCORE_DEFAULT));
     }
+
 }

@@ -50,11 +50,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -66,7 +62,8 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.common.util.ZipUtil;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
@@ -125,7 +122,7 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test()
-    public void testGetCsarInfoWithPayload() throws IOException, URISyntaxException {
+    public void testGetCsarInfoWithPayload() throws IOException, URISyntaxException, ZipException {
         // given
         Resource resource = new Resource();
         resource.setName(RESOURCE_NAME);
@@ -185,11 +182,11 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         test.validateCsarBeforeCreate(resource, AuditingActionEnum.ARTIFACT_DOWNLOAD, user, "csarUUID");
     }
 
-    public Map<String, byte[]> loadPayload(String payloadName) throws IOException, URISyntaxException {
+    public Map<String, byte[]> loadPayload(String payloadName) throws IOException, URISyntaxException, ZipException {
 
         Path path = Paths.get(getClass().getResource("/" + payloadName).toURI());
         byte[] data = Files.readAllBytes(path);
 
-        return ZipUtil.readZip(data);
+        return ZipUtils.readZip(data, false);
     }
 }

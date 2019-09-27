@@ -44,6 +44,8 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipSlipException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
@@ -426,6 +428,11 @@ public class CandidateServiceImpl implements CandidateService {
              new ByteArrayInputStream(contentData.array()))) {
       ZipEntry zipEntry;
       while ((zipEntry = zipStream.getNextEntry()) != null) {
+        try {
+          ZipUtils.checkForZipSlipInRead(zipEntry);
+        } catch (ZipSlipException e) {
+          throw new IOException(e);
+        }
         ZipEntry locZipEntry = new ZipEntry(zipEntry.getName());
         zos.putNextEntry(locZipEntry);
         byte[] buf = new byte[1024];
