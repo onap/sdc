@@ -17,8 +17,12 @@
 package org.openecomp.core.utilities.file;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +38,7 @@ import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 
 /**
  * @author EVITALIY
@@ -74,25 +79,22 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void testWriteFilesFromFileContentHandler() throws IOException {
-        Path dir = Files.createTempDirectory("CSAR_" + System.currentTimeMillis());
+    public void testWriteFilesFromFileContentHandler() throws IOException, ZipException {
+        final Path tempDirectory = Files.createTempDirectory("CSAR_" + System.currentTimeMillis());
         try {
-            byte[] uploadedFileData = IOUtils.toByteArray(
-                FileUtilsTest.class.getResource("resource-Spgw-csar-ZTE" +
-                    ".csar"));
-            FileContentHandler contentMap = FileUtils.getFileContentMapFromZip(uploadedFileData);
-            Map<String, String> filePaths = FileUtils.writeFilesFromFileContentHandler(contentMap,
-                dir);
+            byte[] uploadedFileData =
+                IOUtils.toByteArray(FileUtilsTest.class.getResource("resource-Spgw-csar-ZTE.csar"));
+            final FileContentHandler contentMap = FileUtils.getFileContentMapFromZip(uploadedFileData);
+            final Map<String, String> filePaths = FileUtils.writeFilesFromFileContentHandler(contentMap, tempDirectory);
 
-            assertFalse(filePaths.isEmpty());
-            assertEquals(filePaths.size(), 18);
-            for (Map.Entry<String, String> fileEntry : filePaths.entrySet()) {
-                File f = new File(fileEntry.getValue());
-                assertTrue(f.exists());
+            assertThat("The file map should not be empty", filePaths, is(not(anEmptyMap())));
+            assertThat("The file map should have size 20", filePaths, is(aMapWithSize(20)));
+            for (final Map.Entry<String, String> fileEntry : filePaths.entrySet()) {
+                final File f = new File(fileEntry.getValue());
+                assertThat(String.format("The file '%s' is expected to", f.getAbsolutePath()), f.exists(), is(true));
             }
-        }
-        finally {
-            org.apache.commons.io.FileUtils.deleteDirectory(dir.toFile());
+        } finally {
+            org.apache.commons.io.FileUtils.deleteDirectory(tempDirectory.toFile());
         }
     }
 
@@ -106,22 +108,22 @@ public class FileUtilsTest {
 
     @Test
     public void testGetFileWithoutExtention() {
-        Assert.assertEquals(FileUtils.getFileWithoutExtention("test.txt"), "test");
+        Assert.assertEquals("test", FileUtils.getFileWithoutExtention("test.txt"));
     }
 
     @Test
     public void testGetFileWithoutExtentionContainsNoExtension() {
-        Assert.assertEquals(FileUtils.getFileWithoutExtention("test"), "test");
+        Assert.assertEquals("test", FileUtils.getFileWithoutExtention("test"));
     }
 
     @Test
     public void testGetFileExtention() {
-        Assert.assertEquals(FileUtils.getFileExtension("test.txt"), "txt");
+        Assert.assertEquals("txt", FileUtils.getFileExtension("test.txt"));
     }
 
     @Test
     public void testGetNetworkPackageName() {
-        Assert.assertEquals(FileUtils.getNetworkPackageName("heat.zip"), "heat");
+        Assert.assertEquals("heat", FileUtils.getNetworkPackageName("heat.zip"));
     }
 
     @Test
@@ -191,6 +193,6 @@ public class FileUtilsTest {
         }
 
         Assert.assertNotNull(inputStream);
-        Assert.assertEquals(builder.toString(), "hello-test");
+        Assert.assertEquals("hello-test", builder.toString());
     }
 }

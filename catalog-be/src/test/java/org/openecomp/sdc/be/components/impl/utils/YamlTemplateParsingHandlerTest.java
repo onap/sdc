@@ -25,11 +25,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
+import java.io.File;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,8 +40,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import org.openecomp.sdc.ZipUtil;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.csar.YamlTemplateParsingHandler;
 import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
@@ -46,8 +47,15 @@ import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.validation.AnnotationValidator;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.GroupProperty;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class YamlTemplateParsingHandlerTest {
@@ -76,10 +84,8 @@ public class YamlTemplateParsingHandlerTest {
     private final static GroupTypeDefinition rootGroupType = buildRootGroupType();
     private final static String CAPABILITY_TYPE = "org.openecomp.capabilities.VLANAssignment";
     private final static String CAPABILITY_NAME = "vlan_assignment";
-    private static final String CSAR_FILE_PATH = "/csars/with_groups.csar";
-
+    private static final String CSAR_FILE_PATH = "csars/with_groups.csar";
     private static final String FILE_NAME = "MainServiceTemplate.yaml";
-
     private static final String CSAR_UUID = "csarUUID";
     private static final String RESOURCE_NAME = "resourceName";
     private static final String MAIN_TEMPLATE_NAME = "Definitions/MainServiceTemplate.yaml";
@@ -88,8 +94,10 @@ public class YamlTemplateParsingHandlerTest {
     private static final String NESTED_GROUP_NAME = "nested_mg_vepdg_group";
 
     @BeforeClass()
-    public static void prepareData() throws IOException, URISyntaxException {
-        csar = ZipUtil.readData(CSAR_FILE_PATH);
+    public static void prepareData() throws URISyntaxException, ZipException {
+        final File csarFile = new File(
+            YamlTemplateParsingHandlerTest.class.getClassLoader().getResource(CSAR_FILE_PATH).toURI());
+        csar = ZipUtils.readZip(csarFile, false);
 
         Optional<String> keyOp = csar.keySet().stream().filter(k -> k.endsWith(FILE_NAME)).findAny();
         byte[] mainTemplateService = keyOp.map(csar::get).orElse(null);

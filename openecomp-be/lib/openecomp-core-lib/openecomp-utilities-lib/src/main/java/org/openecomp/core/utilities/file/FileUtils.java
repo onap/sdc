@@ -16,11 +16,6 @@
 
 package org.openecomp.core.utilities.file;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.core.utilities.json.JsonUtil;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,11 +23,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipInputStream;
-import java.util.*;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 
 /**
  * The type File utils.
@@ -220,26 +224,14 @@ public class FileUtils {
    *
    * @param zipData the zip data
    * @return the file content map from zip
-   * @throws IOException the io exception
+   * @throws ZipException when an error occurs while extracting zip files
    */
-  public static FileContentHandler getFileContentMapFromZip(byte[] zipData) throws IOException {
-
-    try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(zipData))) {
-
-      FileContentHandler mapFileContent = new FileContentHandler();
-
-      ZipEntry zipEntry;
-
-      while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-        assertEntryNotVulnerable(zipEntry);
-        mapFileContent.addFile(zipEntry.getName(), FileUtils.toByteArray(inputZipStream));
-      }
-
-      return mapFileContent;
-
-    } catch (RuntimeException exception) {
-      throw new IOException(exception);
-    }
+  public static FileContentHandler getFileContentMapFromZip(byte[] zipData)
+      throws ZipException {
+    final Map<String, byte[]> zipFileAndByteMap = ZipUtils.readZip(zipData, true);
+    final FileContentHandler mapFileContent = new FileContentHandler();
+    mapFileContent.setFiles(zipFileAndByteMap);
+    return mapFileContent;
   }
 
 
@@ -286,20 +278,28 @@ public class FileUtils {
    * @return a map containing file names and their absolute paths
    * @throws IOException the io exception
    */
-  public static Map<String, String> writeFilesFromFileContentHandler(FileContentHandler
-                                                                         fileContentHandler,
-                                                                     Path dir)
-      throws IOException {
-
+  public static Map<String, String> writeFilesFromFileContentHandler(final FileContentHandler fileContentHandler,
+                                                                     final Path dir) throws IOException {
     File file;
-    File dirFile = dir.toFile();
-    Map<String, String> filePaths = new HashMap<>();
-    for (Map.Entry<String, byte[]> fileEntry : fileContentHandler.getFiles().entrySet()) {
+    final File dirFile = dir.toFile();
+    final Map<String, String> filePaths = new HashMap<>();
+    for (final Map.Entry<String, byte[]> fileEntry : fileContentHandler.getFiles().entrySet()) {
       file = new File(dirFile, fileEntry.getKey());
-      file.getParentFile().mkdirs();
       filePaths.put(fileEntry.getKey(), file.getAbsolutePath());
-      try (FileOutputStream fop = new FileOutputStream(file.getAbsolutePath());) {
-        fop.write(fileEntry.getValue());
+      final byte[] fileBytes = fileEntry.getValue();
+      if (fileBytes == null) {
+        if (!file.exists() && !file.mkdirs()) {
+          throw new IOException("Could not create directory " + file.getAbsolutePath());
+        }
+        continue;
+      } else {
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+          throw new IOException("Could not create parent directory for " + file.getAbsolutePath());
+        }
+      }
+
+      try (final FileOutputStream fop = new FileOutputStream(file.getAbsolutePath());) {
+        fop.write(fileBytes);
         fop.flush();
       }
     }
@@ -316,12 +316,6 @@ public class FileUtils {
   public static boolean isValidYamlExtension(String fileExtension){
     return fileExtension.equalsIgnoreCase(FileExtension.YML.getDisplayName()) ||
         fileExtension.equalsIgnoreCase(FileExtension.YAML.getDisplayName());
-  }
-
-  private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
-    if (entry.getName().contains("../")) {
-      throw new ZipException("Path traversal attempt discovered.");
-    }
   }
 
 }

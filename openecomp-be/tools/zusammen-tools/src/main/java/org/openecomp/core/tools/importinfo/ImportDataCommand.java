@@ -35,8 +35,9 @@ import org.openecomp.core.tools.commands.Command;
 import org.openecomp.core.tools.commands.CommandName;
 import org.openecomp.core.tools.exportinfo.ExportDataCommand;
 import org.openecomp.core.tools.util.Utils;
-import org.openecomp.core.tools.util.ZipUtils;
 import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
@@ -66,7 +67,7 @@ public class ImportDataCommand extends Command {
                 files.forEach(new ImportSingleTable()::importFile);
             }
             FileUtils.forceDelete(outputFolder.toFile()); // leaves directory clean
-        } catch (IOException e) {
+        } catch (final IOException | ZipException e) {
             Utils.logError(LOGGER, e);
         }
         return true;

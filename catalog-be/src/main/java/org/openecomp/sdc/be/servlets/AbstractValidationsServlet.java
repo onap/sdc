@@ -42,12 +42,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
@@ -75,7 +75,8 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
-import org.openecomp.sdc.common.util.ZipUtil;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.yaml.snakeyaml.Yaml;
 
@@ -168,37 +169,76 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     }
 
-    protected void validateZip(Wrapper<Response> responseWrapper, File file, String payloadName) {
-        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(file);
-        if (payloadName == null || payloadName.isEmpty() || !unzippedFolder.containsKey(payloadName)) {
-            log.info("Invalid json was received. payloadName should be yml file name");
+    protected void validateZip(final Wrapper<Response> responseWrapper, final File zipFile, final String payloadName) {
+        if (StringUtils.isEmpty(payloadName)) {
+            log.info("Invalid JSON was received. Payload name is empty");
+            final Response errorResponse =
+                buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            responseWrapper.setInnerElement(errorResponse);
+            return;
+        }
+        final Map<String, byte[]> unzippedFolder;
+        try {
+            unzippedFolder = ZipUtils.readZip(zipFile, false);
+        } catch (final ZipException e) {
+            log.error("Could not read ZIP file '{}' for validation", zipFile.getName(), e);
+            final Response errorResponse =
+                buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            responseWrapper.setInnerElement(errorResponse);
+            return;
+        }
+        if (!unzippedFolder.containsKey(payloadName)) {
+            log.info("Could no find payload '{}' in ZIP file '{}'", payloadName, zipFile.getName());
+            final Response errorResponse =
+                buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            responseWrapper.setInnerElement(errorResponse);
+        }
+
+
+    }
+
+    protected void validateCsar(final Wrapper<Response> responseWrapper, final File csarFile, final String payloadName) {
+        if (StringUtils.isEmpty(payloadName)) {
+            log.info("Invalid JSON was received. Payload name is empty");
+            Response errorResponse = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            responseWrapper.setInnerElement(errorResponse);
+            return;
+        }
+        final Map<String, byte[]> unzippedFolder;
+        try {
+            unzippedFolder = ZipUtils.readZip(csarFile, false);
+        } catch (final ZipException e) {
+            log.error("Could not read CSAR file '{}' for validation", csarFile.getName(), e);
+            final Response errorResponse =
+                buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            responseWrapper.setInnerElement(errorResponse);
+            return;
+        }
+        if (unzippedFolder.isEmpty()) {
+            log.info("The CSAR file is empty");
             Response errorResponse = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
             responseWrapper.setInnerElement(errorResponse);
         }
 
     }
-    protected void validateCsar(Wrapper<Response> responseWrapper, File file, String payloadName) {
-        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(file);
-        if (payloadName == null || payloadName.isEmpty() || unzippedFolder.isEmpty()) {
-            log.info("Invalid json was received. payloadName should be yml file name");
-            Response errorResponse = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
-            responseWrapper.setInnerElement(errorResponse);
-        }
 
-    }
-
-    protected void fillZipContents(Wrapper<String> yamlStringWrapper, File file) {
+    protected void fillZipContents(Wrapper<String> yamlStringWrapper, File file) throws ZipException {
         extractZipContents(yamlStringWrapper, file);
     }
 
-    public static void extractZipContents(Wrapper<String> yamlStringWrapper, File file) {
-        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(file);
+    public static void extractZipContents(Wrapper<String> yamlStringWrapper, File file) throws ZipException {
+        final Map<String, byte[]> unzippedFolder = ZipUtils.readZip(file, false);
         String ymlName = unzippedFolder.keySet().iterator().next();
         fillToscaTemplateFromZip(yamlStringWrapper, ymlName, file);
     }
 
     private static void fillToscaTemplateFromZip(Wrapper<String> yamlStringWrapper, String payloadName, File file) {
-        Map<String, byte[]> unzippedFolder = ZipUtil.readZip(file);
+        Map<String, byte[]> unzippedFolder = null;
+        try {
+            unzippedFolder = ZipUtils.readZip(file, false);
+        } catch (final ZipException e) {
+            log.info("Failed to unzip file", e);
+        }
         byte[] yamlFileInBytes = unzippedFolder.get(payloadName);
         String yamlAsString = new String(yamlFileInBytes, StandardCharsets.UTF_8);
         log.debug("received yaml: {}", yamlAsString);
@@ -738,19 +778,23 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         String csarUUID = innerElement.getPayloadName();
         String payloadData = innerElement.getPayloadData();
         if (payloadData == null) {
-            log.info("Failed to decode received csar", csarUUID);
+            log.info("Failed to decode received csar {}", csarUUID);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_NOT_FOUND, csarUUID));
         }
 
         byte[] decodedPayload = Base64.decodeBase64(payloadData.getBytes(StandardCharsets.UTF_8));
         if (decodedPayload == null) {
-            log.info("Failed to decode received csar", csarUUID);
+            log.info("Failed to decode received csar {}", csarUUID);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_NOT_FOUND, csarUUID));
         }
 
-        Map<String, byte[]> csar = ZipUtil.readZip(decodedPayload);
-        if (csar == null) {
-            log.info("Failed to unzip received csar", csarUUID);
+        Map<String, byte[]> csar = null;
+        try {
+            csar = ZipUtils.readZip(decodedPayload, false);
+        } catch (final ZipException e) {
+            log.info("Failed to unzip received csar {}", csarUUID, e);
+        }
+        if (MapUtils.isEmpty(csar)) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID, csarUUID));
         }
         return Either.left(csar);

@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.validation.impl;
 
-import org.apache.commons.collections4.CollectionUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -30,6 +34,8 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
@@ -38,77 +44,33 @@ import org.openecomp.sdc.validation.UploadValidationManager;
 import org.openecomp.sdc.validation.types.ValidationFileResponse;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 
 /**
  * Created by TALIO on 4/20/2016.
  */
 public class UploadValidationManagerImpl implements UploadValidationManager {
-  private static FileContentHandler getFileContentMapFromZip(byte[] uploadFileData)
-      throws IOException, CoreException {
 
-    ZipEntry zipEntry;
-    List<String> folderList = new ArrayList<>();
-    FileContentHandler mapFileContent = new FileContentHandler();
-    try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(uploadFileData))) {
-
-      byte[] fileByteContent;
-      String currentEntryName;
-
-      while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-        currentEntryName = zipEntry.getName();
-        // else, get the file content (as byte array) and save it in a map.
-        fileByteContent = FileUtils.toByteArray(inputZipStream);
-
-        int index = lastIndexFileSeparatorIndex(currentEntryName);
-        String currSubstringWithoutSeparator =
-            currentEntryName.substring(index + 1, currentEntryName.length());
-        if (index != -1) {
-          if (currSubstringWithoutSeparator.length() > 0) {
-            mapFileContent.addFile(currentEntryName.substring(index + 1, currentEntryName.length()),
-                fileByteContent);
-          } else {
-            folderList.add(currentEntryName);
-          }
-        } else {
-          mapFileContent.addFile(currentEntryName, fileByteContent);
-        }
-      }
-    } catch (RuntimeException exception) {
-      throw new IOException(exception);
+  private static FileContentHandler getFileContentMapFromZip(byte[] uploadFileData) throws IOException {
+    final Map<String, byte[]> zipFileAndByteMap;
+    try {
+      zipFileAndByteMap = ZipUtils.readZip(uploadFileData, true);
+    } catch (final ZipException e) {
+      throw new IOException(e);
     }
 
-    if (CollectionUtils.isNotEmpty(folderList)) {
+    final boolean zipHasFolders = zipFileAndByteMap.values().stream().anyMatch(Objects::isNull);
+    if (zipHasFolders) {
       throw new CoreException((new ErrorCode.ErrorCodeBuilder())
           .withMessage(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
           .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
           .withCategory(ErrorCategory.APPLICATION).build());
-
     }
+    final FileContentHandler mapFileContent = new FileContentHandler();
+    zipFileAndByteMap.entrySet().stream()
+        .filter(entry -> entry.getValue() != null)
+        .forEach(zipEntry -> mapFileContent.addFile(zipEntry.getKey(), zipEntry.getValue()));
 
     return mapFileContent;
-  }
-
-  private static int lastIndexFileSeparatorIndex(String filePath) {
-    int length = filePath.length() - 1;
-
-    for (int i = length; i >= 0; i--) {
-      char currChar = filePath.charAt(i);
-      if (currChar == '/' || currChar == File.separatorChar || currChar == File.pathSeparatorChar) {
-        return i;
-      }
-    }
-    // if we've reached to the start of the string and didn't find file separator - return -1
-    return -1;
   }
 
   @Override
