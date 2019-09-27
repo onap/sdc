@@ -32,6 +32,7 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
@@ -58,7 +59,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
       folderList = fileContentMapFromOrchestrationCandidateZip.getRight();
       Validator validator = ValidatorFactory.getValidator(contentMap);
       uploadFileResponse.addStructureErrors(validator.validateContent(contentMap, folderList));
-    } catch (IOException exception) {
+    } catch (final ZipException | IOException exception) {
       logger.error(exception.getMessage(), exception);
       uploadFileResponse.addStructureError(
           SdcCommon.UPLOAD_FILE,

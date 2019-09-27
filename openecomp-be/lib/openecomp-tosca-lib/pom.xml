@@ -56,6 +56,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>common-be</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
@@ -96,12 +102,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.be</groupId>
-            <artifactId>common-be</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
     <properties>

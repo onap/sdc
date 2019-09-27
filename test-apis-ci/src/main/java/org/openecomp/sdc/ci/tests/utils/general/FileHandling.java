@@ -20,24 +20,32 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import com.aventstack.extentreports.Status;
-import org.apache.commons.io.FileUtils;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
-import org.openecomp.sdc.common.util.GeneralUtility;
-import org.yaml.snakeyaml.Yaml;
+import static org.testng.AssertJUnit.assertTrue;
 
-import java.io.*;
+import com.aventstack.extentreports.Status;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import static org.testng.AssertJUnit.assertTrue;
+import org.apache.commons.io.FileUtils;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
+import org.openecomp.sdc.common.util.GeneralUtility;
+import org.yaml.snakeyaml.Yaml;
 
 public class FileHandling {
 
@@ -264,10 +272,6 @@ public class FileHandling {
 		return null;
 	}
 	
-//	public static Object[] getZipFileNamesFromFolder(String filepath) {
-//		return filterFileNamesFromFolder(filepath, ".zip");
-//	}
-	
 	public static List<String> getZipFileNamesFromFolder(String filepath) {
 		List<String> fileNamesListFromFolder = filterFileNamesListFromFolder(filepath, ".zip");
 		fileNamesListFromFolder.addAll(filterFileNamesListFromFolder(filepath, ".csar"));
@@ -284,16 +288,6 @@ public class FileHandling {
 		}
 		return fileCounter;
 	}
-	
-
-	/**
-	 * @return last modified file name from default directory
-	 * @throws Exception
-	 */
-//	TODO add download directory capability
-//	public static synchronized File getLastModifiedFileNameFromDir() throws Exception{
-//		return getLastModifiedFileNameFromDir(ComponentBaseTest.getWindowTest().getDownloadDirectory());
-//	}
 	
 	/**
 	 * @param dirPath
@@ -369,52 +363,6 @@ public class FileHandling {
 			ComponentBaseTest.getExtendTest().log(Status.INFO, "Unable to write to flie " + pathToFile);
 		}
 	}
-	
-//	public static synchronized void writeToFile(File pathToFile, Map<String, Pair<String, Object>> dataMap, Integer leftSpaceCount) throws IOException{
-//
-//		BufferedWriter bw = null;
-//		FileWriter fw = null;
-//		try {
-//			if(!pathToFile.exists()){
-//				createEmptyFile(pathToFile);
-//			}
-//			fw = new FileWriter(pathToFile, true);
-//			bw = new BufferedWriter(fw);
-//			StringBuilder sb = new StringBuilder();
-//			if(leftSpaceCount > 0 ){
-//				for(int i = 0; i < leftSpaceCount; i++){
-//					sb.append(" ");
-//				}
-//			}
-//			for(Map.Entry<String, Pair<String, Object>> entry : dataMap.entrySet()){
-//				Object record = ArtifactUIUtils.getFormatedData(entry.getKey(), entry.getValue().right);
-//				bw.write(sb.toString() + record);
-//				bw.newLine();
-//			}
-//			bw.close();
-//			fw.close();
-//		} catch (Exception e) {
-//			ComponentBaseTest.getExtendTest().log(Status.INFO, "Unable to write to flie " + pathToFile);
-//		}
-//	}
-	
-	public static void deleteLastDowloadedFiles(List<File> files) throws IOException {
-		for (File file : files) {
-			File fileToDelete =new File(Config.instance().getWindowsDownloadDirectory()+file.getName());
-			fileToDelete.delete();
-		}
-	}
-// TODO add work with directory capaability
-//	public static void cleanCurrentDownloadDir() throws IOException {
-//		try{
-//			ExtentTestActions.log(Status.INFO, "Cleaning directory " + ComponentBaseTest.getWindowTest().getDownloadDirectory());
-//			System.gc();
-//			FileUtils.cleanDirectory(new File(ComponentBaseTest.getWindowTest().getDownloadDirectory()));
-//		}
-//		catch(Exception e){
-//
-//		}
-//	}
 
 	public static String getCreateDirByName(String dirName) {
 		File dir = new File(dirName);
@@ -507,63 +455,7 @@ public class FileHandling {
 			}
 			return fileList;
 	}
-	
-	private static final int BUFFER_SIZE = 4096;
-//    public static void unzip(String zipFilePath, String destDirectory) throws IOException {
-//        File destDir = new File(destDirectory);
-//        if (!destDir.exists()) {
-//            destDir.mkdir();
-//        }
-//        ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
-//        ZipEntry entry = zipIn.getNextEntry();
-////         iterates over entries in the zip file
-//        while (entry != null) {
-//        	String entryName;
-//        	if(System.getProperty("os.name").contains("Windows")){
-//        		entryName = entry.getName().replaceAll("/", "\\"+File.separator);
-//        	}else{
-//        		entryName = entry.getName();
-//        	}
-//            String filePath = destDirectory + entryName;
-//            String currPath = destDirectory;
-//            String[] dirs = entryName.split("\\"+File.separator);
-//            String currToken;
-//            for(int i = 0; i<dirs.length;++i){
-//            	currToken = dirs[i];
-//            	if(!entry.isDirectory() && i==dirs.length-1){
-//            		 extractFile(zipIn, filePath);
-//            	} else {
-//            		if(currPath.endsWith(File.separator)){
-//            			currPath = currPath + currToken;
-//            		}else{
-//            			currPath = currPath + File.separator + currToken;
-//            		}
-////                     if the entry is a directory, make the directory
-//                    File dir = new File(currPath);
-//                    dir.mkdir();
-//                }
-//            }
-//            zipIn.closeEntry();
-//            entry = zipIn.getNextEntry();
-//        }
-//        zipIn.close();
-//    }
 
-    private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-        byte[] bytesIn = new byte[BUFFER_SIZE];
-        int read = 0;
-        while ((read = zipIn.read(bytesIn)) != -1) {
-            bos.write(bytesIn, 0, read);
-        }
-        bos.close();
-    }
-	
-//    public static int getFileCountFromDefaulDownloadDirectory(){
-//    	return new File(ComponentBaseTest.getWindowTest().getDownloadDirectory()).listFiles().length;
-//    }
-    
-    
     public static String getKeyByValueFromPropertyFormatFile(String fullPath, String key) {
 		Properties prop = new Properties();
 		InputStream input = null;

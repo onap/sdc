@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.servlets;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.Consumes;
@@ -40,6 +39,9 @@ import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.zip.exception.ZipException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import com.google.common.annotations.VisibleForTesting;
@@ -63,6 +65,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @OpenAPIDefinition(info = @Info(title = "Catalog Types Upload"))
 @Controller
 public class TypesUploadEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TypesUploadEndpoint.class);
 
     private final CommonImportManager commonImportManager;
     private final AnnotationTypeOperations annotationTypeOperations;
@@ -85,10 +88,14 @@ public class TypesUploadEndpoint {
             @ApiResponse(responseCode = "409", description = "annotation types already exist")})
     
     public Response uploadAnnotationTypes(@Parameter(description = "FileInputStream") @FormDataParam("annotationTypesZip") File file,
-            @HeaderParam("USER_ID") String userId) throws IOException {
+            @HeaderParam("USER_ID") String userId) {
         accessValidations.validateUserExists(userId, "Annotation Types Creation");
-        Wrapper<String> yamlStringWrapper = new Wrapper<>();
-        AbstractValidationsServlet.extractZipContents(yamlStringWrapper, file);
+        final Wrapper<String> yamlStringWrapper = new Wrapper<>();
+        try {
+            AbstractValidationsServlet.extractZipContents(yamlStringWrapper, file);
+        } catch (final ZipException e) {
+            LOGGER.error("Could not extract zip contents", e);
+        }
         List<ImmutablePair<AnnotationTypeDefinition, Boolean>> typesResults =
                 commonImportManager.createElementTypes(yamlStringWrapper.getInnerElement(),
                         TypesUploadEndpoint::buildAnnotationFromFieldMap, annotationTypeOperations);

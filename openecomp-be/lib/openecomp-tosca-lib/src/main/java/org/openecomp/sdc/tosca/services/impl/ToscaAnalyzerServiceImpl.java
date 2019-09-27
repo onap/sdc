@@ -58,6 +58,8 @@ import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipSlipException;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -123,6 +125,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(toscaCsarPackage))) {
             ZipEntry zipEntry;
             while ((zipEntry = inputZipStream.getNextEntry()) != null) {
+                ZipUtils.checkForZipSlipInRead(zipEntry);
                 byte[] fileContent = FileUtils.toByteArray(inputZipStream);
                 String currentEntryName = zipEntry.getName();
                 if (!isFile(currentEntryName)) {
@@ -141,7 +144,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
                 handleToscaCsarWithoutToscaMetadata(toscaServiceModel);
             }
 
-        } catch (IOException exc) {
+        } catch (IOException | ZipSlipException exc) {
             throw new SdcRuntimeException(exc.getMessage(), exc);
         }
         return toscaServiceModel;

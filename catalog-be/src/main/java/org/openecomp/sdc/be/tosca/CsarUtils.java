@@ -55,6 +55,7 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
+import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -339,23 +340,20 @@ public class CsarUtils {
 				isInCertificationRequest);
 	}
 
-	private Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromCassandra(ZipOutputStream zip,
-			byte[] schemaFileZip) {
-
+	private Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromCassandra(final ZipOutputStream zip,
+																				final byte[] schemaFileZip) {
 		final int initSize = 2048;
-
 		log.debug("Starting copy from Schema file zip to CSAR zip");
-
-		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-             BufferedOutputStream bos = new BufferedOutputStream(out, initSize)) {
+		try (final ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
+			final ByteArrayOutputStream out = new ByteArrayOutputStream();
+			final BufferedOutputStream bos = new BufferedOutputStream(out, initSize)) {
 
             ZipEntry entry;
 			while ((entry = zipStream.getNextEntry()) != null) {
-
-				String entryName = entry.getName();
+				ZipUtils.checkForZipSlipInRead(entry);
+				final String entryName = entry.getName();
 				int readSize = initSize;
-				byte[] entryData = new byte[initSize];
+				final byte[] entryData = new byte[initSize];
 
 				while ((readSize = zipStream.read(entryData, 0, readSize)) != -1) {
 					bos.write(entryData, 0, readSize);
@@ -368,13 +366,12 @@ public class CsarUtils {
 				zip.flush();
 				out.reset();
 			}
-		} catch (IOException | NullPointerException e) {
-			log.error("Error while writing the SDC schema file to the CSAR {}", e);
+		} catch (final Exception e) {
+			log.error("Error while writing the SDC schema file to the CSAR", e);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 
 		log.debug("Finished coppy from Schema file zip to CSAR zip");
-
 		return Either.left(zip);
 	}
 

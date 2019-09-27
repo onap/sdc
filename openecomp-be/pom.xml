@@ -32,7 +32,6 @@
     </parent>
 
     <dependencies>
-
         <dependency>
             <groupId>com.google.code.bean-matchers</groupId>
             <artifactId>bean-matchers</artifactId>

@@ -20,23 +20,7 @@
 package org.openecomp.sdc.common.utils;
 
 import com.google.common.collect.Multimap;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.Messages;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -45,37 +29,41 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipInputStream;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 
 public class CommonUtil {
-  static final String DEFAULT = "default";
-  static final String _DEFAULT = "_default";
 
   private CommonUtil() {
     // prevent instantiation
   }
 
-  public static FileContentHandler validateAndUploadFileContent(OnboardingTypesEnum type,
-                                                                byte[] uploadedFileData)
-      throws IOException {
-    return getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(type,
-        uploadedFileData);
-  }
-
   /**
-   * Gets files out of the zip AND validates zip is flat (no folders)
+   * Reads the files from the zip AND validates zip is flat (no folders).
    *
-   * @param uploadFileData zip file
+   * @param type the onboarding type
+   * @param uploadedFileData zip file bytes
    * @return FileContentHandler if input is valid and has no folders
+   * @throws IOException when the zip could not be read
    */
-  private static FileContentHandler getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(
-      OnboardingTypesEnum type, byte[] uploadFileData)
-      throws IOException {
-    Pair<FileContentHandler, List<String>> pair =
-        getFileContentMapFromOrchestrationCandidateZip(uploadFileData);
-
+  public static FileContentHandler validateAndUploadFileContent(final OnboardingTypesEnum type,
+                                                                final byte[] uploadedFileData) throws IOException {
+    final Pair<FileContentHandler, List<String>> pair;
+    try {
+      pair = getFileContentMapFromOrchestrationCandidateZip(uploadedFileData);
+    } catch (final ZipException e) {
+      throw new IOException(e);
+    }
     if (isFileOriginFromZip(type.toString())) {
       validateNoFolders(pair.getRight());
     }
@@ -84,45 +72,20 @@ public class CommonUtil {
   }
 
   public static Pair<FileContentHandler, List<String>> getFileContentMapFromOrchestrationCandidateZip(
-      byte[] uploadFileData)
-      throws IOException {
-    ZipEntry zipEntry;
-    List<String> folderList = new ArrayList<>();
-    FileContentHandler mapFileContent = new FileContentHandler();
-    try (ByteArrayInputStream in = new ByteArrayInputStream(uploadFileData);
-         ZipInputStream inputZipStream = new ZipInputStream(in)) {
-      byte[] fileByteContent;
-      String currentEntryName;
+      byte[] uploadFileData) throws ZipException {
+    final Map<String, byte[]> zipFileMap = ZipUtils.readZip(uploadFileData, true);
+    final List<String> folderList = new ArrayList<>();
+    final FileContentHandler mapFileContent = new FileContentHandler();
 
-      while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-        assertEntryNotVulnerable(zipEntry);
-        currentEntryName = zipEntry.getName();
-        fileByteContent = FileUtils.toByteArray(inputZipStream);
-
-        int index = lastIndexFileSeparatorIndex(currentEntryName);
-        if (index != -1) {
-          folderList.add(currentEntryName);
-        }
-        if (isFile(currentEntryName)) {
-          mapFileContent.addFile(currentEntryName, fileByteContent);
-        }
+    zipFileMap.forEach((key, value) -> {
+      if (value == null) {
+        folderList.add(key);
+      } else {
+        mapFileContent.addFile(key, value);
       }
-
-    } catch (RuntimeException exception) {
-      throw new IOException(exception);
-    }
+    });
 
     return new ImmutablePair<>(mapFileContent, folderList);
-  }
-
-  private static void assertEntryNotVulnerable(ZipEntry entry) throws ZipException {
-    if (entry.getName().contains("../")) {
-      throw new ZipException("Path traversal attempt discovered.");
-    }
-  }
-
-  private static boolean isFile(String currentEntryName) {
-    return !(currentEntryName.endsWith("\\") || currentEntryName.endsWith("/"));
   }
 
   private static void validateNoFolders(List<String> folderList) {
@@ -132,19 +95,6 @@ public class CommonUtil {
           .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage())
           .withCategory(ErrorCategory.APPLICATION).build());
     }
-  }
-
-  private static int lastIndexFileSeparatorIndex(String filePath) {
-    int length = filePath.length() - 1;
-
-    for (int i = length; i >= 0; i--) {
-      char currChar = filePath.charAt(i);
-      if (currChar == '/' || currChar == File.separatorChar || currChar == File.pathSeparatorChar) {
-        return i;
-      }
-    }
-    // if we've reached to the start of the string and didn't find file separator - return -1
-    return -1;
   }
 
   private static boolean validateFilesExtensions(Set<String> allowedExtensions, FileContentHandler

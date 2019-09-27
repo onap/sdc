@@ -501,7 +501,7 @@ public class FileHandling {
         while (entry != null) {
             String entryName;
             if (System.getProperty("os.name").contains("Windows")) {
-                entryName = entry.getName().replaceAll("/", "\\" + File.separator);
+                entryName = entry.getName().replace("/", "\\" + File.separator);
             } else {
                 entryName = entry.getName();
             }

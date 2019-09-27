@@ -17,7 +17,7 @@
       <groupId>org.openecomp.sdc</groupId>
       <artifactId>common-app-api</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
