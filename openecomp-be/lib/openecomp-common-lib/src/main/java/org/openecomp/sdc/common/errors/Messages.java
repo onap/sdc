@@ -58,6 +58,7 @@ public enum Messages {
   MANIFEST_EMPTY("The manifest is empty"),
   MANIFEST_ERROR_WITH_LINE("%s;%nAt line %s: '%s'."),
   MANIFEST_PARSER_INTERNAL("Invalid manifest file"),
+  MANIFEST_UNEXPECTED_ERROR("An unexpected error occurred while validating manifest '%s': %s"),
   METADATA_PARSER_INTERNAL("Invalid Metadata file"),
   METADATA_MISSING_OPTIONAL_FOLDERS("Missing folder %s in package"),
   METADATA_UNSUPPORTED_ENTRY("Following entry not supported in TOSCA.meta %s"),
@@ -67,6 +68,9 @@ public enum Messages {
   METADATA_NO_ENTRY_DEFINITIONS("TOSCA.meta must contain Entry Definitions"),
   METADATA_INVALID_ENTRY_DEFINITIONS("TOSCA.meta must contain key:value entries"),
   FAILED_TO_VALIDATE_METADATA("Failed to validate metadata file"),
+  ARTIFACT_INVALID_SIGNATURE("Invalid signature '%s' provided for artifact '%s'"),
+  ARTIFACT_SIGNATURE_VALIDATION_ERROR(
+      "Could not validate signature '%s' provided for artifact '%s' with certificate '%s': %s"),
   FAILED_TO_TRANSLATE_ZIP_FILE("Failed to translate zip file"),
   ZIP_NOT_EXIST("Zip file doesn't exist"),
 

@@ -27,11 +27,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.CREATED_BY_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.CSAR_VERSION_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_CHANGE_LOG;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_CHANGELOG_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_DEFINITION_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_MANIFEST_FILEPATH;
@@ -44,15 +47,19 @@ public class ValidatorFactoryTest {
     @Before
     public void setUp(){
         handler = new FileContentHandler();
-        metaFile =
-                "TOSCA-Meta-File-Version: 1.0\n" +
-                "CSAR-Version: 1.1\n" +
-                "Created-By: Bilal Iqbal\n";
+        metaFile = new StringBuilder()
+            .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
+                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
+            .append(CSAR_VERSION_ENTRY.getName())
+                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
+            .append(CREATED_BY_ENTRY.getName())
+                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
+            .toString();
     }
 
     @Test(expected = IOException.class)
     public void testGivenEmptyMetaFile_thenIOExceptionIsThrown() throws IOException{
-        handler.addFile(TOSCA_META_PATH_FILE_NAME, "".getBytes(StandardCharsets.UTF_8));
+        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -62,7 +69,7 @@ public class ValidatorFactoryTest {
 
     @Test
     public void testGivenEmptyBlock0_thenONAPCsarValidatorIsReturned() throws IOException{
-        handler.addFile(TOSCA_META_PATH_FILE_NAME, " ".getBytes(StandardCharsets.UTF_8));
+        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), " ".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -74,8 +81,8 @@ public class ValidatorFactoryTest {
     @Test
     public void testGivenNonSOL004MetaDirectoryCompliantMetaFile_thenONAPCSARValidatorIsReturned() throws IOException{
         metaFile = metaFile +
-                TOSCA_META_ENTRY_DEFINITIONS + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_DEFINITION_FILEPATH;
-        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+                ENTRY_DEFINITIONS.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_DEFINITION_FILEPATH;
+        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFile.getBytes(StandardCharsets.UTF_8));
 
         assertEquals(ONAPCsarValidator.class, ValidatorFactory.getValidator(handler).getClass());
     }
@@ -84,10 +91,10 @@ public class ValidatorFactoryTest {
     public void testGivenSOL004MetaDirectoryCompliantMetafile_thenONAPCsarValidatorIsReturned() throws IOException{
 
         metaFile = metaFile +
-                TOSCA_META_ENTRY_DEFINITIONS + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_DEFINITION_FILEPATH + "\n"
-                + TOSCA_META_ETSI_ENTRY_MANIFEST + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_MANIFEST_FILEPATH + "\n"
-                + TOSCA_META_ETSI_ENTRY_CHANGE_LOG + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_CHANGELOG_FILEPATH + "\n";
-        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+                ENTRY_DEFINITIONS.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_DEFINITION_FILEPATH + "\n"
+                + ETSI_ENTRY_MANIFEST.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_MANIFEST_FILEPATH + "\n"
+                + ETSI_ENTRY_CHANGE_LOG.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_CHANGELOG_FILEPATH + "\n";
+        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFile.getBytes(StandardCharsets.UTF_8));
 
        assertEquals(SOL004MetaDirectoryValidator.class, ValidatorFactory.getValidator(handler).getClass());
     }
@@ -95,7 +102,7 @@ public class ValidatorFactoryTest {
     @Test
     public void testGivenMultiBlockMetadataWithSOL00CompliantMetaFile_thenSOL004MetaDirectoryValidatorReturned() throws IOException {
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME, ValidatorUtil.getFileResource("/validation.files/metafile/metaFileWithMultipleBlocks.meta"));
+        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), ValidatorUtil.getFileResource("/validation.files/metafile/metaFileWithMultipleBlocks.meta"));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
