@@ -4695,7 +4695,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 log.info("vendor release  is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_VENDOR_RELEASE);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_VENDOR_RELEASE);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_VENDOR_RELEASE, vendorRelease);
             }
         }
     }
@@ -4728,7 +4728,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 log.info("vendor name  is not valid.");
                 ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_VENDOR_NAME);
                 componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_VENDOR_NAME);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_VENDOR_NAME, vendorName);
             }
         }
     }

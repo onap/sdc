@@ -799,19 +799,19 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME);
+            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
         }
     }
 
     private void testVendorReleaseWrongFormat() {
         Resource resource = createResourceObject(false);
         // contains >
-        String nameWrongFormat = "1>2";
-        resource.setVendorRelease(nameWrongFormat);
+        String vendorReleaseWrongFormat = "1>2";
+        resource.setVendorRelease(vendorReleaseWrongFormat);
         try {
             bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.INVALID_VENDOR_RELEASE);
+            assertComponentException(e, ActionStatus.INVALID_VENDOR_RELEASE, vendorReleaseWrongFormat);
         }
     }
 
@@ -1200,7 +1200,7 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME);
+            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
         }
     }
 
@@ -1223,7 +1223,7 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME);
+            assertComponentException(e, ActionStatus.INVALID_VENDOR_NAME, nameWrongFormat);
         }
     }
 

@@ -152,7 +152,7 @@ errors:
 # %1 - resource/service
     COMPONENT_INVALID_CATEGORY: {
         code: 400,
-        message: "Error: Invalid Content. Invalid %1 category.",
+        message: "Error: Invalid Content. Value %1 for the field Category is invalid.",
         messageId: "SVC4054"
     }
 #---------SVC4055------------------------------
@@ -265,20 +265,20 @@ errors:
 # %1 - Service/Resource
     INVALID_COMPONENT_NAME: {
         code: 400,
-        message: 'Error: Invalid Content. %1 name is not allowed to contain characters like <>:"\/|?* and space characters other than regular space.',
+        message: 'Error: Invalid Content. Value %1 for Component name is invalid. Only alphanumeric characters and regular spaces are allowed.',
         messageId: "SVC4070"
     }
 
 #---------SVC4071------------------------------
     INVALID_VENDOR_NAME: {
         code: 400,
-        message: 'Error: Invalid Content. Vendor name is not allowed to contain characters like <>:"\/|?* and space characters other than regular space.',
+        message: 'Error: Invalid Content. Value %1 for the field Vendor name is invalid. Only alphanumeric characters and regular spaces are allowed.',
         messageId: "SVC4071"
     }
 #---------SVC4072------------------------------
     INVALID_VENDOR_RELEASE: {
         code: 400,
-        message: 'Error: Invalid Content. Vendor release is not allowed to contain characters like <>:"\/|?* and space characters other than regular space.',
+        message: 'Error: Invalid Content. Value %1 for the field Vendor release is invalid. Only alphanumeric characters and regular spaces are allowed.',
         messageId: "SVC4072"
     }
 #---------SVC4073------------------------------
