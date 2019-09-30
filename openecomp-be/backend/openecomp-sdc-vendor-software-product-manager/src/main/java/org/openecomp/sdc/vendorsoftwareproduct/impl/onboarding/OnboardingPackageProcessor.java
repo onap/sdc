@@ -25,8 +25,9 @@ import static org.openecomp.sdc.common.errors.Messages.PACKAGE_INVALID_EXTENSION
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_MISSING_INTERNAL_PACKAGE;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_PROCESS_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_PROCESS_INTERNAL_PACKAGE_ERROR;
+import static org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager.ALLOWED_CERTIFICATE_EXTENSIONS;
+import static org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager.ALLOWED_SIGNATURE_EXTENSIONS;
 
-import com.google.common.collect.ImmutableSet;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Map;
@@ -43,15 +44,12 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.exception.OnboardPackageException;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 
 public class OnboardingPackageProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(OnboardingPackageProcessor.class);
-    private static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = ImmutableSet.of("cms");
-    private static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = ImmutableSet.of("cert", "crt");
     private static final String CSAR_EXTENSION = "csar";
     private static final String ZIP_EXTENSION = "zip";
 
@@ -93,11 +91,13 @@ public class OnboardingPackageProcessor {
         if (hasSignedPackageStructure()) {
             return processSignedPackage(packageName, packageExtension);
         } else {
-            final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
-                ByteBuffer.wrap(packageFileContent), onboardPackageContentHandler);
             if (packageExtension.equalsIgnoreCase(CSAR_EXTENSION)) {
+                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
+                    ByteBuffer.wrap(packageFileContent), new OnboardingPackageContentHandler(onboardPackageContentHandler));
                 return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.CSAR);
             } else if (packageExtension.equalsIgnoreCase(ZIP_EXTENSION)) {
+                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension,
+                    ByteBuffer.wrap(packageFileContent), onboardPackageContentHandler);
                 return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
             }
         }
@@ -127,12 +127,13 @@ public class OnboardingPackageProcessor {
         final String internalPackageBaseName = FilenameUtils.getBaseName(internalPackagePath);
         final String internalPackageExtension = FilenameUtils.getExtension(internalPackagePath);
         final byte[] internalPackageContent = onboardPackageContentHandler.getFileContent(internalPackagePath);
-
         final OnboardPackage onboardPackage;
         try {
+            final OnboardingPackageContentHandler fileContentHandler =
+                new OnboardingPackageContentHandler(CommonUtil.getZipContent(internalPackageContent));
             onboardPackage = new OnboardPackage(internalPackageBaseName, internalPackageExtension,
-                internalPackageContent);
-        } catch (final OnboardPackageException e) {
+                internalPackageContent, fileContentHandler);
+        } catch (final ZipException e) {
             final String message = PACKAGE_PROCESS_INTERNAL_PACKAGE_ERROR.formatMessage(internalPackageName);
             LOGGER.error(message, e);
             reportError(ErrorLevel.ERROR, message);
