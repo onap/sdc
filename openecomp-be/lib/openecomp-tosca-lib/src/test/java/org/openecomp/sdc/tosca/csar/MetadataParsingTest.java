@@ -24,9 +24,9 @@ package org.openecomp.sdc.tosca.csar;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_CHANGE_LOG;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ETSI_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_CHANGE_LOG;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +43,7 @@ public class MetadataParsingTest {
         .getResourceAsStream("/vspmanager.csar/metadata/Invalidtosca.meta")) {
       ToscaMetadata onboardingToscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(is);
       assertFalse(onboardingToscaMetadata.isValid());
-      assertNull(onboardingToscaMetadata.getMetaEntries().get(TOSCA_META_ENTRY_DEFINITIONS));
+      assertNull(onboardingToscaMetadata.getMetaEntries().get(ENTRY_DEFINITIONS.getName()));
     }
   }
 
@@ -52,7 +52,8 @@ public class MetadataParsingTest {
     try (InputStream is = getClass()
         .getResourceAsStream("/vspmanager.csar/metadata/Validtosca.meta")) {
       ToscaMetadata onboardingToscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(is);
-      assertEquals(onboardingToscaMetadata.getMetaEntries().get(TOSCA_META_ENTRY_DEFINITIONS), "Definitions/MainServiceTemplate.yaml");
+      assertEquals("Definitions/MainServiceTemplate.yaml", onboardingToscaMetadata.getMetaEntries().get(
+          ENTRY_DEFINITIONS.getName()));
     }
 
   }
@@ -80,9 +81,10 @@ public class MetadataParsingTest {
     try (InputStream is = getClass()
             .getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta")) {
       ToscaMetadata onboardingToscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(is);
-      assertEquals(onboardingToscaMetadata.getMetaEntries().get(TOSCA_META_ENTRY_DEFINITIONS), "Definitions/MainServiceTemplate.yaml");
-      assertEquals(onboardingToscaMetadata.getMetaEntries().get(TOSCA_META_ETSI_ENTRY_MANIFEST), "MainServiceTemplate.mf");
-      assertEquals(onboardingToscaMetadata.getMetaEntries().get(TOSCA_META_ETSI_ENTRY_CHANGE_LOG), "change.log");
+      assertEquals("Definitions/MainServiceTemplate.yaml", onboardingToscaMetadata.getMetaEntries().get(
+          ENTRY_DEFINITIONS.getName()));
+      assertEquals("MainServiceTemplate.mf", onboardingToscaMetadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName()));
+      assertEquals("change.log", onboardingToscaMetadata.getMetaEntries().get(ETSI_ENTRY_CHANGE_LOG.getName()));
     }
 
   }

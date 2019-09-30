@@ -20,7 +20,22 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ELIGBLE_FOLDERS;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ELIGIBLE_FILES;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
@@ -32,21 +47,6 @@ import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.csar.ONAPManifestOnboarding;
 import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.ToscaMetadata;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.ELIGBLE_FOLDERS;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.ELIGIBLE_FILES;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 
 class ONAPCsarValidator implements Validator {
 
@@ -56,7 +56,6 @@ class ONAPCsarValidator implements Validator {
 
     @Override
     public Map<String, List<ErrorMessage>> validateContent(final FileContentHandler contentHandler) {
-
         Map<String, List<ErrorMessage>> errors = new HashMap<>();
         validateManifest(contentHandler);
         validateMetadata(contentHandler);
@@ -72,10 +71,10 @@ class ONAPCsarValidator implements Validator {
 
     private void validateMetadata(FileContentHandler contentMap){
         if (!validateTOSCAYamlFileInRootExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
-            try (InputStream metaFileContent = contentMap.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME)) {
+            try (InputStream metaFileContent = contentMap.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME.getName())) {
 
                 ToscaMetadata onboardingToscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(metaFileContent);
-                String entryDefinitionsPath = onboardingToscaMetadata.getMetaEntries().get(TOSCA_META_ENTRY_DEFINITIONS);
+                String entryDefinitionsPath = onboardingToscaMetadata.getMetaEntries().get(ENTRY_DEFINITIONS.getName());
                 if (entryDefinitionsPath != null) {
                     validateFileExist(contentMap, entryDefinitionsPath);
                 } else {
@@ -92,24 +91,23 @@ class ONAPCsarValidator implements Validator {
         }
     }
 
-    private void validateManifest(FileContentHandler contentMap) {
-
+    private void validateManifest(final FileContentHandler contentMap) {
         if (!validateFileExist(contentMap, MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
             return;
         }
 
-        try (InputStream fileContent = contentMap.getFileContentAsStream(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
-
-            Manifest onboardingManifest = new ONAPManifestOnboarding();
+        try (final InputStream fileContent = contentMap.getFileContentAsStream(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
+            final Manifest onboardingManifest = new ONAPManifestOnboarding();
             onboardingManifest.parse(fileContent);
             if (!onboardingManifest.isValid()) {
-                onboardingManifest.getErrors().forEach(error -> uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR,
-                        error)));
+                onboardingManifest.getErrors()
+                    .forEach(error -> uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, error)));
             }
-
-        } catch (IOException e) {
-            // convert to runtime to keep the throws unchanged
-            throw new RuntimeException("Failed to validateContent manifest", e);
+        } catch (final IOException ex) {
+            final String errorMessage =
+                Messages.MANIFEST_UNEXPECTED_ERROR.formatMessage(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, ex.getMessage());
+            uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, errorMessage));
+            logger.error(errorMessage, ex);
         }
     }
 

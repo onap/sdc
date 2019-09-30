@@ -44,7 +44,7 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
     final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
     final UploadFileResponse uploadFileResponse = new UploadFileResponse();
     uploadFileResponse.setOnboardingType(getHandlerType());
-    if (isFileFileToUploadEmpty(onboardPackage, uploadFileResponse, candidateService)) {
+    if (isFileToUploadEmpty(onboardPackage, uploadFileResponse, candidateService)) {
       return uploadFileResponse;
     }
 
@@ -74,9 +74,9 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
                                                  final OnboardPackageInfo onboardPackageInfo,
                                                  final CandidateService candidateService);
 
-  private boolean isFileFileToUploadEmpty(final OnboardPackage onboardPackage,
-                                          final UploadFileResponse uploadFileResponse,
-                                          final CandidateService candidateService) {
+  private boolean isFileToUploadEmpty(final OnboardPackage onboardPackage,
+                                      final UploadFileResponse uploadFileResponse,
+                                      final CandidateService candidateService) {
     final ByteArrayInputStream fileToUpload = new ByteArrayInputStream(
         onboardPackage.getFileContent().array());
     Optional<ErrorMessage> errorMessage =

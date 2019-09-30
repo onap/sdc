@@ -16,6 +16,11 @@
 
 package org.openecomp.sdc.tosca.services.impl;
 
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.CREATED_BY_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.CSAR_VERSION_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION_ENTRY;
+
 import org.apache.commons.io.IOUtils;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileContentHandler;
@@ -46,14 +51,10 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
   private static final String ARTIFACTS_FOLDER_NAME = "Artifacts";
   //todo currently duplicated, to be changed when external artifacts are separated from internal
   private static final String TOSCA_META_FOLDER_NAME = "TOSCA-Metadata";
-  private static final String TOSCA_META_FILE_VERSION = "TOSCA-Meta-File-Version";
   private static final String TOSCA_META_FILE_VERSION_VALUE = "1.0";
   private static final String TOSCA_META_FILE_NAME = "TOSCA.meta";
-  private static final String CSAR_VERSION = "CSAR-Version";
   private static final String CSAR_VERSION_VALUE = "1.1";
-  private static final String CREATED_BY = "Created-By";
   private static final String CREATED_BY_VALUE = "ASDC Onboarding portal";
-  private static final String ENTRY_DEFINITIONS = "Entry-Definitions";
   private static final String META_FILE_DELIMITER = ":";
   private static final String SPACE = " ";
   private static final String FILE_SEPARATOR = File.separator;
@@ -86,11 +87,11 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
 
   @Override
   public String createMetaFile(String entryDefinitionsFileName) {
-    return TOSCA_META_FILE_VERSION + META_FILE_DELIMITER + SPACE + TOSCA_META_FILE_VERSION_VALUE
+    return TOSCA_META_FILE_VERSION_ENTRY.getName() + META_FILE_DELIMITER + SPACE + TOSCA_META_FILE_VERSION_VALUE
         + System.lineSeparator()
-        + CSAR_VERSION + META_FILE_DELIMITER + SPACE + CSAR_VERSION_VALUE + System.lineSeparator()
-        + CREATED_BY + META_FILE_DELIMITER + SPACE + CREATED_BY_VALUE + System.lineSeparator()
-        + ENTRY_DEFINITIONS + META_FILE_DELIMITER + SPACE + DEFINITIONS_FOLDER_NAME
+        + CSAR_VERSION_ENTRY.getName() + META_FILE_DELIMITER + SPACE + CSAR_VERSION_VALUE + System.lineSeparator()
+        + CREATED_BY_ENTRY.getName() + META_FILE_DELIMITER + SPACE + CREATED_BY_VALUE + System.lineSeparator()
+        + ENTRY_DEFINITIONS.getName() + META_FILE_DELIMITER + SPACE + DEFINITIONS_FOLDER_NAME
         + FILE_SEPARATOR
         + entryDefinitionsFileName;
   }
