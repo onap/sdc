@@ -72,6 +72,8 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class SecurityManager {
 
     private static final String CERTIFICATE_DEFAULT_LOCATION = "cert";
+    public static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = ImmutableSet.of("cms");
+    public static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = ImmutableSet.of("cert", "crt");
 
     private Logger logger = LoggerFactory.getLogger(SecurityManager.class);
     private Set<X509Certificate> trustedCertificates = new HashSet<>();

@@ -22,6 +22,27 @@
 
 package org.openecomp.core.impl;
 
+import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
+import static org.openecomp.core.converter.datatypes.Constants.definitionsDir;
+import static org.openecomp.core.converter.datatypes.Constants.globalStName;
+import static org.openecomp.core.converter.datatypes.Constants.globalSubstitution;
+import static org.openecomp.core.converter.datatypes.Constants.mainStName;
+import static org.openecomp.core.converter.datatypes.Constants.openecompHeatIndex;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_INDEX_IMPORT_FILE;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.ONAP_INDEX_IMPORT_FILE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.Import;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
@@ -41,39 +62,13 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Pattern;
-
-import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
-import static org.openecomp.core.converter.datatypes.Constants.definitionsDir;
-import static org.openecomp.core.converter.datatypes.Constants.globalStName;
-import static org.openecomp.core.converter.datatypes.Constants.globalSubstitution;
-import static org.openecomp.core.converter.datatypes.Constants.mainStName;
-import static org.openecomp.core.converter.datatypes.Constants.openecompHeatIndex;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_INDEX_IMPORT_FILE;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.ONAP_INDEX_IMPORT_FILE;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
-
 public abstract class AbstractToscaConverter implements ToscaConverter {
-
-    @Override
-    public abstract ToscaServiceModel convert(FileContentHandler fileContentHandler) throws IOException;
 
     public abstract void convertTopologyTemplate(ServiceTemplate serviceTemplate,
                                                  ServiceTemplateReaderService readerService);
 
     protected void handleMetadataFile(Map<String, byte[]> csarFiles) {
-        byte[] bytes = csarFiles.remove(TOSCA_META_PATH_FILE_NAME);
+        byte[] bytes = csarFiles.remove(TOSCA_META_PATH_FILE_NAME.getName());
         if (bytes != null) {
             csarFiles.put(TOSCA_META_ORIG_PATH_FILE_NAME, bytes);
         }
@@ -251,7 +246,7 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
     }
 
     protected boolean isMetadataFile(String fileName) {
-        return fileName.equals(TOSCA_META_PATH_FILE_NAME);
+        return fileName.equals(TOSCA_META_PATH_FILE_NAME.getName());
     }
 
     protected boolean isGlobalServiceTemplate(String fileName) {

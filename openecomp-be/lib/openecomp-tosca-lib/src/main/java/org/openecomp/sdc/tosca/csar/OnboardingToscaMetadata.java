@@ -22,6 +22,7 @@ package org.openecomp.sdc.tosca.csar;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.Optional;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -36,8 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
 
 public class OnboardingToscaMetadata implements ToscaMetadata {
 
@@ -77,7 +78,7 @@ public class OnboardingToscaMetadata implements ToscaMetadata {
       }
     }
 
-    if (!meta.metaEntries.containsKey(TOSCA_META_ENTRY_DEFINITIONS)) {
+    if (!meta.metaEntries.containsKey(ENTRY_DEFINITIONS.getName())) {
       meta.errors.add(new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(
               Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage())));
     }
@@ -90,7 +91,7 @@ public class OnboardingToscaMetadata implements ToscaMetadata {
 
   @Override
   public List<ErrorMessage> getErrors() {
-    return  ImmutableList.copyOf(errors);
+    return ImmutableList.copyOf(errors);
   }
 
 
@@ -100,6 +101,17 @@ public class OnboardingToscaMetadata implements ToscaMetadata {
       return Collections.emptyMap();
     }
     return ImmutableMap.copyOf(metaEntries);
+  }
+
+  @Override
+  public boolean hasEntry(final String entry) {
+    return metaEntries.containsKey(entry);
+
+  }
+
+  @Override
+  public Optional<String> getEntry(final ToscaMetaEntry entry) {
+    return Optional.ofNullable(metaEntries.get(entry.getName()));
   }
 }
 

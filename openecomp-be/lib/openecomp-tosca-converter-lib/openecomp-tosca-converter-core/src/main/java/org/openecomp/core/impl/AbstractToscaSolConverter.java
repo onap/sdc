@@ -22,6 +22,15 @@
 
 package org.openecomp.core.impl;
 
+import static org.openecomp.core.converter.datatypes.Constants.globalStName;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.logging.api.Logger;
@@ -30,15 +39,6 @@ import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static org.openecomp.core.converter.datatypes.Constants.globalStName;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 
 public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
 
@@ -96,8 +96,8 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
     private String getMainServiceDefinitionFileName(FileContentHandler contentHandler) throws IOException {
         try {
             ToscaMetadata toscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(
-                    contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
-            return toscaMetadata.getMetaEntries().get(TOSCA_META_ENTRY_DEFINITIONS);
+                    contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME.getName()));
+            return toscaMetadata.getMetaEntries().get(ENTRY_DEFINITIONS.getName());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new IOException(e.getMessage());

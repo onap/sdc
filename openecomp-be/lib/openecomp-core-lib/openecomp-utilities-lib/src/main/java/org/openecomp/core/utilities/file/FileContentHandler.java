@@ -33,6 +33,13 @@ public class FileContentHandler {
 
     private Map<String, byte[]> files = new HashMap<>();
 
+    public FileContentHandler() {
+    }
+
+    public FileContentHandler(final FileContentHandler other) {
+        addAll(other);
+    }
+
     /**
      * Gets file content as stream.
      *

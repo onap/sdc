@@ -22,9 +22,10 @@ package org.openecomp.sdc.vendorsoftwareproduct.types;
 import java.nio.ByteBuffer;
 import lombok.Getter;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.vendorsoftwareproduct.exception.OnboardPackageException;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageContentHandler;
 
 @Getter
 public class OnboardPackage {
@@ -48,14 +49,14 @@ public class OnboardPackage {
         this.fileExtension = fileExtension;
         this.fileContent = fileContent;
         try {
-            fileContentHandler = CommonUtil.getZipContent(fileContent.array());
+            fileContentHandler = new OnboardingPackageContentHandler(CommonUtil.getZipContent(fileContent.array()));
         } catch (final ZipException e) {
             throw new OnboardPackageException("Could not read the package content", e);
         }
     }
 
-    public OnboardPackage(final String packageName, final String packageExtension, final byte[] packageContentBytes)
-        throws OnboardPackageException {
-        this(packageName, packageExtension, ByteBuffer.wrap(packageContentBytes));
+    public OnboardPackage(final String packageName, final String packageExtension, final byte[] packageContentBytes,
+                          final FileContentHandler fileContentHandler) {
+        this(packageName, packageExtension, ByteBuffer.wrap(packageContentBytes), fileContentHandler);
     }
 }
