@@ -2069,7 +2069,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_dbc_volume_size_0) * 1024'
+        size:
+          get_input: vson_dbc_volume_size_0
         name:
           get_input: vson_dbc_volume_name_0
         description: vSON DB Config cinder volume.
@@ -2085,7 +2086,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_mdr_volume_size_0) * 1024'
+        size:
+          get_input: vson_mdr_volume_size_0
         name:
           get_input: vson_mdr_volume_name_0
         description: |
@@ -2102,7 +2104,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_mgt_volume_size_0) * 1024'
+        size:
+          get_input: vson_mgt_volume_size_0
         name:
           get_input: vson_mgt_volume_name_0
         description: |
@@ -2119,7 +2122,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_mon_volume_size_0) * 1024'
+        size:
+          get_input: vson_mon_volume_size_0
         name:
           get_input: vson_mon_volume_name_0
         description: |
@@ -2134,7 +2138,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_cll_volume_size_2) * 1024'
+        size:
+          get_input: vson_cll_volume_size_2
         name:
           str_replace:
             template: VNF_NAME_cll_volume_2
@@ -2152,7 +2157,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_cll_volume_size_0) * 1024'
+        size:
+          get_input: vson_cll_volume_size_0
         name:
           str_replace:
             template: VNF_NAME_cll_volume_0
@@ -2170,7 +2176,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_cll_volume_size_1) * 1024'
+        size:
+          get_input: vson_cll_volume_size_1
         name:
           str_replace:
             template: VNF_NAME_cll_volume_1
@@ -2311,7 +2318,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_dbs_volume_size_1) * 1024'
+        size:
+          get_input: vson_dbs_volume_size_1
         name:
           get_input: vson_dbs_volume_name_1
         description: Cinder volume for the second vSON DBS VM instance.
@@ -2393,7 +2401,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_dbs_volume_size_0) * 1024'
+        size:
+          get_input: vson_dbs_volume_size_0
         name:
           get_input: vson_dbs_volume_name_0
         description: Cinder volume for the first vSON DBS VM instance.
@@ -2472,7 +2481,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_dcl_volume_size_2) * 1024'
+        size:
+          get_input: vson_dcl_volume_size_2
         name:
           str_replace:
             template: VNF_NAME_dcl_volume_2
@@ -2490,7 +2500,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_dcl_volume_size_0) * 1024'
+        size:
+          get_input: vson_dcl_volume_size_0
         name:
           str_replace:
             template: VNF_NAME_dcl_volume_0
@@ -2508,7 +2519,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_dcl_volume_size_1) * 1024'
+        size:
+          get_input: vson_dcl_volume_size_1
         name:
           str_replace:
             template: VNF_NAME_dcl_volume_1
@@ -2885,7 +2897,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_dbg_volume_size_0) * 1024'
+        size:
+          get_input: vson_dbg_volume_size_0
         name:
           get_input: vson_dbg_volume_name_0
         description: vSON DB Global cinder volume.
@@ -3042,7 +3055,8 @@ topology_template:
             get_input: vnf_name
           vf_module_name:
             get_input: vf_module_name
-        size: '(get_input : vson_app_volume_size_0) * 1024'
+        size:
+          get_input: vson_app_volume_size_0
         name:
           get_input: vson_app_volume_name_0
         description: vSON APP cinder volume.

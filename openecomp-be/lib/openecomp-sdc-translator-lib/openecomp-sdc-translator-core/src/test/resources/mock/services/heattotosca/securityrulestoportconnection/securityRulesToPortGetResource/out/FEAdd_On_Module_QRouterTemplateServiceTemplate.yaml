@@ -160,7 +160,8 @@ topology_template:
       properties:
         volume_type:
           get_input: qrouter_volume_type_1
-        size: '(get_input : qrouter_volume_size_1) * 1024'
+        size:
+          get_input: qrouter_volume_size_1
         description:
           get_input: qrouter_volume_name_1
     qrouter_volume_0:
@@ -168,7 +169,8 @@ topology_template:
       properties:
         volume_type:
           get_input: qrouter_volume_type_0
-        size: '(get_input : qrouter_volume_size_0) * 1024'
+        size:
+          get_input: qrouter_volume_size_0
         description:
           get_input: qrouter_volume_name_0
     qrouter_volume_2:
@@ -176,7 +178,8 @@ topology_template:
       properties:
         volume_type:
           get_input: qrouter_volume_type_2
-        size: '(get_input : qrouter_volume_size_2) * 1024'
+        size:
+          get_input: qrouter_volume_size_2
         description:
           get_input: qrouter_volume_name_2
     QRouter1:

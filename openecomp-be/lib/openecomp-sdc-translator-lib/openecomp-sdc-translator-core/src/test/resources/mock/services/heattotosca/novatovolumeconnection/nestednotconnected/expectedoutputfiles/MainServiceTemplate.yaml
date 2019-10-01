@@ -153,7 +153,8 @@ topology_template:
       properties:
         volume_type:
           get_input: CMAUI_volume_type
-        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+        size:
+          get_input: cmaui_cinder_volume_size
     cmaui_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:

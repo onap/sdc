@@ -50,7 +50,8 @@ topology_template:
       properties:
         volume_type:
           get_input: volume_type
-        size: '(get_input : size) * 1024'
+        size:
+          get_input: size
         name:
           str_replace:
             template: VF_NAME_STACK_NAME_INDEX

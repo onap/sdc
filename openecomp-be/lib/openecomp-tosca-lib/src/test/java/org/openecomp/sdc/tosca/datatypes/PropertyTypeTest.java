@@ -34,7 +34,6 @@ public class PropertyTypeTest {
   @Test
   public void shouldReturnApproppriatePropertyTypeWhenDisplayNameExist() {
     String s = "scalar-unit.size";
-    Assert
-        .assertEquals(PropertyType.getPropertyTypeByDisplayName(s), PropertyType.SCALAR_UNIT_SIZE);
+    Assert.assertEquals(PropertyType.getPropertyTypeByDisplayName(s), PropertyType.SCALAR_UNIT_SIZE);
   }
 }
