@@ -20,14 +20,20 @@
 
 package org.openecomp.sdc.heat.datatypes;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.onap.sdc.tosca.datatypes.model.ScalarUnitValidator;
 
+@AllArgsConstructor
+@Getter
 public enum DefinedHeatParameterTypes {
     NUMBER("number"),
     STRING("string"),
@@ -39,18 +45,14 @@ public enum DefinedHeatParameterTypes {
 
     static {
         stringToDefinedType = new HashMap<>();
-        for (DefinedHeatParameterTypes definedHeatParameterType : DefinedHeatParameterTypes.values()) {
+        for (final DefinedHeatParameterTypes definedHeatParameterType : DefinedHeatParameterTypes.values()) {
             stringToDefinedType.put(definedHeatParameterType.type, definedHeatParameterType);
         }
     }
 
     private String type;
 
-    DefinedHeatParameterTypes(String type) {
-        this.type = type;
-    }
-
-    public static DefinedHeatParameterTypes findByHeatResource(String type) {
+    public static DefinedHeatParameterTypes findByHeatResource(final String type) {
         return stringToDefinedType.get(type);
     }
 
@@ -61,12 +63,17 @@ public enum DefinedHeatParameterTypes {
      * @param parameterType the parameter type
      * @return the boolean
      */
-    public static boolean isValueIsFromGivenType(Object value, String parameterType) {
-        DefinedHeatParameterTypes definedType = findByHeatResource(parameterType);
+    public static boolean isValueIsFromGivenType(final Object value, final String parameterType) {
+        final DefinedHeatParameterTypes definedType = findByHeatResource(parameterType);
 
         if (Objects.nonNull(definedType)) {
             switch (definedType) {
                 case NUMBER:
+                    if (isValueScalarUnit(value, ToscaScalarUnitSize.class) ||
+                        isValueScalarUnit(value, ToscaScalarUnitTime.class) ||
+                        isValueScalarUnit(value, ToscaScalarUnitFrequency.class)) {
+                        return isValueString(value);
+                    }
                     return NumberUtils.isNumber(String.valueOf(value));
 
                 case BOOLEAN:
@@ -87,35 +94,36 @@ public enum DefinedHeatParameterTypes {
         return false;
     }
 
-    public static boolean isNovaServerEnvValueIsFromRightType(Object value) {
+    public static boolean isNovaServerEnvValueIsFromRightType(final Object value) {
         return isValueIsFromGivenType(value, COMMA_DELIMITED_LIST.getType())
                 || isValueIsFromGivenType(value, STRING.getType());
     }
 
-    private static boolean isValueCommaDelimitedList(Object value) {
+    private static boolean isValueCommaDelimitedList(final Object value) {
         return value instanceof List
                 || String.valueOf(value).contains(",")
                 || isValueIsFromGivenType(value, DefinedHeatParameterTypes.STRING.type);
     }
 
-    private static boolean isValueString(Object value) {
+    private static boolean isValueString(final Object value) {
         return value instanceof String
                 || ClassUtils.isPrimitiveOrWrapper(value.getClass());
     }
 
-    private static boolean isValueJson(Object value) {
+    private static boolean isValueJson(final Object value) {
         return (value instanceof Map) || (value instanceof List);
     }
 
-    public static boolean isEmptyValueInEnv(Object value) {
+    public static boolean isEmptyValueInEnv(final Object value) {
         return Objects.isNull(value);
     }
 
-    public String getType() {
-        return type;
+    public static <E extends Enum<E>> boolean isValueScalarUnit(final Object value, final Class<E> enumClass) {
+        final ScalarUnitValidator scalarUnitValidator = ScalarUnitValidator.getInstance();
+        final String stringToValidate = String.valueOf(value);
+        return scalarUnitValidator.isScalarUnit(stringToValidate) && Arrays.stream(StringUtils.split(stringToValidate))
+            .anyMatch(strValue -> Arrays.stream(enumClass.getEnumConstants())
+                .anyMatch(scalarUnit -> scalarUnit.name().equalsIgnoreCase(strValue)));
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
 }

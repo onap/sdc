@@ -328,9 +328,9 @@ topology_template:
             - ocgapp_04
             source_type: HEAT
             param_name: ocgapp_volume_size_3
-      type: float
+      type: scalar-unit.size
       description: the size of the Cinder volume
-      default: 400
+      default: 400 MB
       constraints:
       - in_range:
         - 100
@@ -388,9 +388,9 @@ topology_template:
             - ocgapp_03
             source_type: HEAT
             param_name: ocgapp_volume_size_2
-      type: float
+      type: scalar-unit.size
       description: the size of the Cinder volume
-      default: 400
+      default: 400 MB
       constraints:
       - in_range:
         - 100
@@ -407,9 +407,9 @@ topology_template:
             - ocgapp_02
             source_type: HEAT
             param_name: ocgapp_volume_size_1
-      type: float
+      type: scalar-unit.size
       description: the size of the Cinder volume
-      default: 400
+      default: 400 MB
       constraints:
       - in_range:
         - 100
@@ -426,9 +426,9 @@ topology_template:
             - ocgapp_01
             source_type: HEAT
             param_name: ocgapp_volume_size_0
-      type: float
+      type: scalar-unit.size
       description: the size of the Cinder volume
-      default: 400
+      default: 400 MB
       constraints:
       - in_range:
         - 100
@@ -1784,7 +1784,8 @@ topology_template:
       properties:
         volume_type:
           get_input: ocgapp_volume_type_1
-        size: '(get_input : ocgapp_volume_size_1) * 1024'
+        size:
+          get_input: ocgapp_volume_size_1
         name:
           str_replace:
             template: VF_NAME_STACK_NAME_volume_1
@@ -1798,7 +1799,8 @@ topology_template:
       properties:
         volume_type:
           get_input: ocgapp_volume_type_0
-        size: '(get_input : ocgapp_volume_size_0) * 1024'
+        size:
+          get_input: ocgapp_volume_size_0
         name:
           str_replace:
             template: VF_NAME_STACK_NAME_volume_1
@@ -1812,7 +1814,8 @@ topology_template:
       properties:
         volume_type:
           get_input: ocgapp_volume_type_3
-        size: '(get_input : ocgapp_volume_size_3) * 1024'
+        size:
+          get_input: ocgapp_volume_size_3
         name:
           str_replace:
             template: VF_NAME_STACK_NAME_volume_3
@@ -1857,7 +1860,8 @@ topology_template:
       properties:
         volume_type:
           get_input: ocgapp_volume_type_2
-        size: '(get_input : ocgapp_volume_size_2) * 1024'
+        size:
+          get_input: ocgapp_volume_size_2
         name:
           str_replace:
             template: VF_NAME_STACK_NAME_volume_2

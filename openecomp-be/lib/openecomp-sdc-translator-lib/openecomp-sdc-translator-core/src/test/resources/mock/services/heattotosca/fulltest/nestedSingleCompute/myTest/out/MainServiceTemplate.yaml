@@ -1517,7 +1517,8 @@ topology_template:
       properties:
         availability_zone:
           get_input: availability_zone_0
-        size: '(get_input : oam_volume_size_0) * 1024'
+        size:
+          get_input: oam_volume_size_0
         name:
           str_replace:
             template: $VNF$DELoam$DELvolume$DEL0
@@ -1801,7 +1802,8 @@ topology_template:
       properties:
         availability_zone:
           get_input: availability_zone_1
-        size: '(get_input : oam_volume_size_0) * 1024'
+        size:
+          get_input: oam_volume_size_0
         name:
           str_replace:
             template: $VNF$DELoam$DELvolume$DEL1
@@ -1922,7 +1924,8 @@ topology_template:
       properties:
         availability_zone:
           get_input: availability_zone_0
-        size: '(get_input : cif_volume_size_0) * 1024'
+        size:
+          get_input: cif_volume_size_0
         name:
           str_replace:
             template: $VNF$DELcif$DELvolume$DEL0
@@ -1936,7 +1939,8 @@ topology_template:
       properties:
         availability_zone:
           get_input: availability_zone_1
-        size: '(get_input : cif_volume_size_0) * 1024'
+        size:
+          get_input: cif_volume_size_0
         name:
           str_replace:
             template: $VNF$DELcif$DELvolume$DEL1

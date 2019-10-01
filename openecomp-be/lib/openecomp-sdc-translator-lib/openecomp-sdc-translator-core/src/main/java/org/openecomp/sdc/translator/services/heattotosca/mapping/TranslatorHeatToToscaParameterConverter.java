@@ -23,14 +23,22 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-
 import org.apache.commons.collections4.MapUtils;
-import org.onap.sdc.tosca.datatypes.model.*;
+import org.onap.sdc.tosca.datatypes.model.Constraint;
+import org.onap.sdc.tosca.datatypes.model.EntrySchema;
+import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.onap.sdc.tosca.datatypes.model.ScalarUnitValidator;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.heatextend.AnnotationDefinition;
 import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.core.utilities.file.FileUtils;
-
+import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
+import org.openecomp.sdc.heat.datatypes.ToscaScalarUnitFrequency;
+import org.openecomp.sdc.heat.datatypes.ToscaScalarUnitSize;
+import org.openecomp.sdc.heat.datatypes.ToscaScalarUnitTime;
+import org.openecomp.sdc.heat.datatypes.ToscaScalarUnitTypes;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Parameter;
@@ -78,15 +86,17 @@ public class TranslatorHeatToToscaParameterConverter {
    * @return the map
    */
   public static Map<String, ParameterDefinition> parameterConverter(ServiceTemplate serviceTemplate,
-      Map<String, Parameter> parameters, HeatOrchestrationTemplate heatOrchestrationTemplate,
-      String heatFileName, String parentHeatFileName, TranslationContext context) {
+                                                                    Map<String, Parameter> parameters,
+                                                                    HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                                                    String heatFileName, String parentHeatFileName,
+                                                                    TranslationContext context,
+                                                                    Map<String, Object> heatEnvParameters) {
     Map<String, ParameterDefinition> parameterDefinitionMap = new HashMap<>();
     for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
       String heatParamName = entry.getKey();
       parameterDefinitionMap.put(heatParamName,
-          getToscaParameter(serviceTemplate,heatParamName, entry.getValue(),
-              heatOrchestrationTemplate,
-              heatFileName, parentHeatFileName, context));
+          getToscaParameter(serviceTemplate,heatParamName, entry.getValue(), heatOrchestrationTemplate, heatFileName,
+              parentHeatFileName, context, heatEnvParameters));
     }
     return parameterDefinitionMap;
   }
@@ -100,9 +110,9 @@ public class TranslatorHeatToToscaParameterConverter {
    * @param context                   the context
    * @return the map
    */
-  public static Map<String, ParameterDefinition> parameterOutputConverter(ServiceTemplate
-                                                                              serviceTemplate,
-      Map<String, Output> parameters, HeatOrchestrationTemplate heatOrchestrationTemplate,
+  public static Map<String, ParameterDefinition> parameterOutputConverter(ServiceTemplate serviceTemplate,
+                                                                          Map<String, Output> parameters,
+                                                                          HeatOrchestrationTemplate heatOrchestrationTemplate,
       String heatFileName, TranslationContext context) {
     Map<String, ParameterDefinition> parameterDefinitionMap = new HashMap<>();
     for (Map.Entry<String, Output> entry : parameters.entrySet()) {
@@ -125,16 +135,16 @@ public class TranslatorHeatToToscaParameterConverter {
    * @return the tosca parameter
    */
   private static ParameterDefinitionExt getToscaParameter(ServiceTemplate serviceTemplate,
-                                                         String heatParameterName,
-                                                         Parameter heatParameter,
-                                                         HeatOrchestrationTemplate
-                                                             heatOrchestrationTemplate,
-                                                         String heatFileName,
-                                                         String parentHeatFileName,
-                                                         TranslationContext context) {
+                                                          String heatParameterName,
+                                                          Parameter heatParameter,
+                                                          HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                                          String heatFileName,
+                                                          String parentHeatFileName,
+                                                          TranslationContext context,
+                                                          Map<String, Object> heatEnvParameters) {
 
     ParameterDefinitionExt toscaParameter = new ParameterDefinitionExt();
-    toscaParameter.setType(getToscaParameterType(heatParameter.getType()));
+    toscaParameter.setType(getToscaParameterType(heatParameter.getType(), heatEnvParameters));
     toscaParameter.setEntry_schema(getToscaParameterEntrySchema(toscaParameter.getType()));
     toscaParameter.setLabel(heatParameter.getLabel());
     toscaParameter.setDescription(heatParameter.getDescription());
@@ -330,7 +340,33 @@ public class TranslatorHeatToToscaParameterConverter {
     return entrySchema;
   }
 
-  protected static String getToscaParameterType(String heatParameterType) {
+  protected static String getToscaParameterType(final String heatParameterType,
+                                                final Map<String, Object> heatEnvParameters) {
+    if (heatEnvParameters != null && DefinedHeatParameterTypes.NUMBER.getType().equals(heatParameterType)) {
+      if (getScalarUnitType(heatParameterType, heatEnvParameters, ToscaScalarUnitSize.class) != null) {
+        return ToscaScalarUnitTypes.SCALAR_UNIT_SIZE.getType();
+      } else if (getScalarUnitType(heatParameterType, heatEnvParameters, ToscaScalarUnitTime.class) != null) {
+        return ToscaScalarUnitTypes.SCALAR_UNIT_TIME.getType();
+      } else if (getScalarUnitType(heatParameterType, heatEnvParameters, ToscaScalarUnitFrequency.class) != null) {
+        return ToscaScalarUnitTypes.SCALAR_UNIT_FREQUENCY.getType();
+      }
+    }
+
     return parameterTypeMapping.get(heatParameterType);
   }
+
+  private static <E extends Enum<E>> String getScalarUnitType(final String heatParameterType,
+                                                              final Map<String, Object> heatEnvParameters,
+                                                              final Class<E> enumClass) {
+    final ScalarUnitValidator scalarUnitValidator = ScalarUnitValidator.getInstance();
+    if (Arrays.stream(enumClass.getEnumConstants()).anyMatch(unitType ->
+            heatEnvParameters.values().stream().filter(Objects::nonNull)
+                .anyMatch(parameterValue -> scalarUnitValidator.isScalarUnit(parameterValue.toString()) &&
+                parameterValue.toString().contains(unitType.name())))) {
+      return enumClass.getTypeName();
+    }
+
+    return null;
+  }
+
 }
