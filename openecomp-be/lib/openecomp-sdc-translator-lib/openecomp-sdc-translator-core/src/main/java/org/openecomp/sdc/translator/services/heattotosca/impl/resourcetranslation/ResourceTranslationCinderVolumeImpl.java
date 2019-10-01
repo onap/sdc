@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import java.util.Map;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.services.HeatConstants;
@@ -25,16 +26,14 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
-import java.util.Map;
-
 
 public class ResourceTranslationCinderVolumeImpl extends ResourceTranslationBase {
 
     private static final String VOLUME_SIZE_PROPERTY_NAME = "size";
 
     @Override
-    public void translate(TranslateTo translateTo) {
-        NodeTemplate nodeTemplate = new NodeTemplate();
+    public void translate(final TranslateTo translateTo) {
+        final NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setType(ToscaNodeType.CINDER_VOLUME);
         nodeTemplate.setProperties(TranslatorHeatToToscaPropertyConverter
                 .getToscaPropertiesSimpleConversion(translateTo.getServiceTemplate(),
@@ -43,9 +42,9 @@ public class ResourceTranslationCinderVolumeImpl extends ResourceTranslationBase
                         translateTo.getHeatOrchestrationTemplate(), translateTo.getResource().getType(),
                         nodeTemplate, translateTo.getContext()));
         handleSizeProperty(nodeTemplate.getProperties());
-        String toscaReadOnlyPropName =
+        final String toscaReadOnlyPropName =
                 HeatToToscaUtil.getToscaPropertyName(translateTo, HeatConstants.READ_ONLY_PROPERTY_NAME);
-        Object readOnlyPropVal = nodeTemplate.getProperties().get(toscaReadOnlyPropName);
+        final Object readOnlyPropVal = nodeTemplate.getProperties().get(toscaReadOnlyPropName);
         if (readOnlyPropVal != null && !(readOnlyPropVal instanceof Map)) {
             nodeTemplate.getProperties().put(toscaReadOnlyPropName, HeatBoolean.eval(readOnlyPropVal));
         }
@@ -54,18 +53,11 @@ public class ResourceTranslationCinderVolumeImpl extends ResourceTranslationBase
     }
 
 
-    private void handleSizeProperty(Map<String, Object> nodeTemplateProperties) {
-        Object size = nodeTemplateProperties.get(VOLUME_SIZE_PROPERTY_NAME);
+    private void handleSizeProperty(final Map<String, Object> nodeTemplateProperties) {
+        final Object size = nodeTemplateProperties.get(VOLUME_SIZE_PROPERTY_NAME);
         if (size == null) {
             return;
         }
-        if (size instanceof Map) {
-            Map<String, Object> propMap = (Map) size;
-            Map.Entry<String, Object> entry = propMap.entrySet().iterator().next();
-            String val = "(" + entry.getKey() + " : " + entry.getValue() + ") * 1024";
-            nodeTemplateProperties.put(VOLUME_SIZE_PROPERTY_NAME, val);
-        } else {
-            nodeTemplateProperties.put(VOLUME_SIZE_PROPERTY_NAME, size + "*1024");
-        }
+        nodeTemplateProperties.put(VOLUME_SIZE_PROPERTY_NAME, size);
     }
 }

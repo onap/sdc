@@ -15,8 +15,17 @@
  */
 
 package org.onap.sdc.tosca.datatypes.model;
-import java.util.*;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum PropertyType {
 
   STRING("string"),
@@ -28,27 +37,21 @@ public enum PropertyType {
   MAP("map"),
   LIST("list"),
   SCALAR_UNIT_SIZE("scalar-unit.size"),
+  SCALAR_UNIT_TIME("scalar-unit.time"),
   SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
 
-  private static final Map<String, PropertyType> M_MAP =
-      Collections.unmodifiableMap(initializeMapping());
-  private static final Set<String> SIMPLE_PROPERTY_TYPES =
-      Collections.unmodifiableSet(initializeSimplePropertyTypes());
+  private static final Map<String, PropertyType> M_MAP = Collections.unmodifiableMap(initializeMapping());
+  private static final Set<String> SIMPLE_PROPERTY_TYPES = Collections.unmodifiableSet(initializeSimplePropertyTypes());
   private String displayName;
-
-  PropertyType(String displayName) {
-
-    this.displayName = displayName;
-  }
 
   /**
    * Initilize property type display name mapping.
    * @return Map
    */
   public static Map<String, PropertyType> initializeMapping() {
-    Map<String, PropertyType> typeMap = new HashMap<>();
-    for (PropertyType v : PropertyType.values()) {
-      typeMap.put(v.displayName, v);
+    final Map<String, PropertyType> typeMap = new HashMap<>();
+    for (final PropertyType propertyType : PropertyType.values()) {
+      typeMap.put(propertyType.displayName, propertyType);
     }
     return typeMap;
   }
@@ -58,7 +61,7 @@ public enum PropertyType {
    * @param displayName
    * @return PropertyType
    */
-  public static PropertyType getPropertyTypeByDisplayName(String displayName) {
+  public static PropertyType getPropertyTypeByDisplayName(final String displayName) {
     if (M_MAP.containsKey(displayName)) {
       return M_MAP.get(displayName);
     }
@@ -66,21 +69,19 @@ public enum PropertyType {
   }
 
   private static Set<String> initializeSimplePropertyTypes() {
-    final int setSize = 4;
-    Set<String> simplePropertyTypes = new HashSet<>(setSize);
+    final Set<String> simplePropertyTypes = new HashSet<>();
     simplePropertyTypes.add(STRING.getDisplayName().toLowerCase());
     simplePropertyTypes.add(INTEGER.getDisplayName().toLowerCase());
     simplePropertyTypes.add(FLOAT.getDisplayName().toLowerCase());
     simplePropertyTypes.add(BOOLEAN.getDisplayName().toLowerCase());
+    simplePropertyTypes.add(SCALAR_UNIT_SIZE.getDisplayName().toLowerCase());
+    simplePropertyTypes.add(SCALAR_UNIT_TIME.getDisplayName().toLowerCase());
+    simplePropertyTypes.add(SCALAR_UNIT_FREQUENCY.getDisplayName().toLowerCase());
     return simplePropertyTypes;
   }
 
   public static Set<String> getSimplePropertyTypes() {
     return SIMPLE_PROPERTY_TYPES;
-  }
-
-  public String getDisplayName() {
-    return displayName;
   }
 
 }

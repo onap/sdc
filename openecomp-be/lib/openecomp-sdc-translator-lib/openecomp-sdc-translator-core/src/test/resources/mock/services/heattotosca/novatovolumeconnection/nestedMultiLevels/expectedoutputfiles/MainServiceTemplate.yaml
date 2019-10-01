@@ -133,7 +133,8 @@ topology_template:
       properties:
         volume_type:
           get_input: CMAUI_volume_type
-        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+        size:
+          get_input: cmaui_cinder_volume_size
     test_resourceGroup:
       type: org.openecomp.resource.abstract.nodes.heat.nested3
       directives:
@@ -163,7 +164,8 @@ topology_template:
       properties:
         volume_type:
           get_input: CMAUI_volume_type
-        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+        size:
+          get_input: cmaui_cinder_volume_size
     test_nova:
       type: org.openecomp.resource.vfc.nodes.heat.jsa
       properties:
