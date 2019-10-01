@@ -76,6 +76,12 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${lang3.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.google.code.bean-matchers</groupId>
 			<artifactId>bean-matchers</artifactId>
 			<version>${bean-matchers.version}</version>

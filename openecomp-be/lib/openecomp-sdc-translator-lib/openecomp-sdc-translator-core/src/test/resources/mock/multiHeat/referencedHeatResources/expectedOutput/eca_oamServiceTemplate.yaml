@@ -298,7 +298,8 @@ topology_template:
       properties:
         volume_type:
           get_input: ARB_volume_type
-        size: '(get_input : arb_volume_size) * 1024'
+        size:
+          get_input: arb_volume_size
     oam1_instance:
       type: org.openecomp.resource.vfc.nodes.heat.eca
       properties:
@@ -325,13 +326,15 @@ topology_template:
       properties:
         volume_type:
           get_input: ECA_OAM_volume_type
-        size: '(get_input : oam_volume_size) * 1024'
+        size:
+          get_input: oam_volume_size
     oam1_volume:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
         volume_type:
           get_input: ECA_OAM_volume_type
-        size: '(get_input : oam_volume_size) * 1024'
+        size:
+          get_input: oam_volume_size
     oam1_int_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:

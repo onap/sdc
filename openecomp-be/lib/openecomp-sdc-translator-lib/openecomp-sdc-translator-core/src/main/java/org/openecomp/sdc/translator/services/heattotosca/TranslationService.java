@@ -232,12 +232,12 @@ public class TranslationService {
             return;
         }
 
+        final Environment heatEnvFile = getHeatEnvFile(heatFileData, context);
+        final Map<String, Object> parameters = heatEnvFile.getParameters();
         Map<String, ParameterDefinition> parameterDefinitionMap =
                 TranslatorHeatToToscaParameterConverter
                         .parameterConverter(serviceTemplate, heatOrchestrationTemplate.getParameters(),
-                                heatOrchestrationTemplate, heatFileName, heatFileData.getParentFile(), context);
-        Environment heatEnvFile = getHeatEnvFile(heatFileData, context);
-        Map<String, Object> parameters = heatEnvFile.getParameters();
+                                heatOrchestrationTemplate, heatFileName, heatFileData.getParentFile(), context, parameters);
         Object parameterValue;
         if (parameters != null) {
             for (Map.Entry<String, ParameterDefinition> entry : parameterDefinitionMap.entrySet()) {

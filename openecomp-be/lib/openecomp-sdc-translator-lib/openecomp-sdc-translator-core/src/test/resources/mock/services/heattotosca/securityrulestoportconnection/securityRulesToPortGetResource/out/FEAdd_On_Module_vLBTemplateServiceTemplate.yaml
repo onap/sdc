@@ -215,19 +215,22 @@ topology_template:
       properties:
         volume_type:
           get_input: vLB_volume_type_1
-        size: '(get_input : vLB_volume_size_1) * 1024'
+        size:
+          get_input: vLB_volume_size_1
     vLB_volume_0:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
         volume_type:
           get_input: vLB_volume_type_0
-        size: '(get_input : vLB_volume_size_0) * 1024'
+        size:
+          get_input: vLB_volume_size_0
     vLB_volume_2:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
         volume_type:
           get_input: vLB_volume_type_2
-        size: '(get_input : vLB_volume_size_2) * 1024'
+        size:
+          get_input: vLB_volume_size_2
     vLBInstance:
       type: org.openecomp.resource.vfc.nodes.heat.vLB
       properties:

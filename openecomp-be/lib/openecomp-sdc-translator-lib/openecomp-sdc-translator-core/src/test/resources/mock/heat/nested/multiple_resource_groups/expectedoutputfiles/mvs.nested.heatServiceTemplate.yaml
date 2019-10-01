@@ -128,7 +128,7 @@ topology_template:
             - availability_zone_0
         image:
           get_input: bootimage
-        size: 35*1024
+        size: 35
         name:
           str_replace:
             template: Z$CLOUD_ZONE_ID$VF_NAME$VF_INSTANCE_NUM$VF_COMPONENT$VM_INSTANCE_NUM-boot-volume
@@ -192,7 +192,7 @@ topology_template:
           - get_input: indx
           - get_input:
             - availability_zone_0
-        size: 265*1024
+        size: 265
         name:
           str_replace:
             template: Z$CLOUD_ZONE_ID$VF_NAME$VF_INSTANCE_NUM$VF_COMPONENT$VM_INSTANCE_NUM-data-volume
