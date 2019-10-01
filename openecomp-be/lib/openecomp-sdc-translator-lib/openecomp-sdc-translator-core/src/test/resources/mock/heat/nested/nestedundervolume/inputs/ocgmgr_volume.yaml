@@ -8,7 +8,7 @@ parameters:
     label: OCG VNF Name
     description: OCG VNF Name
   ocgmgr_volume_size_0:
-    type: number
+    type: scalar-unit.size
     label: Cinder volume 1 size
     description: the size of the Cinder volume
     constraints:

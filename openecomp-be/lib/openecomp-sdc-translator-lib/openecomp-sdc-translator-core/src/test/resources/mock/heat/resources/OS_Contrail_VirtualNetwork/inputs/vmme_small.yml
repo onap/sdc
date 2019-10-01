@@ -256,7 +256,7 @@ parameters:
     type: string
     description: volume
   volume_size:
-    type: string
+    type: scalar-unit.size
     description: volume
   FSB1_volume_name:
     type: string

@@ -66,6 +66,7 @@ public class TranslatorHeatToToscaParameterConverter {
     parameterTypeMapping.put("comma_delimited_list", "list");
     parameterTypeMapping.put("json", "json");
     parameterTypeMapping.put("boolean", "boolean");
+    parameterTypeMapping.put("scalar-unit.size", "scalar-unit.size");
   }
 
   /**

@@ -6,7 +6,7 @@ parameters:
     label: OCG VNF Name
     description: OCG VNF Name
   ocgapp_volume_size_1:
-    type: number
+    type: scalar-unit.size
     label: Cinder volume size
     description: the size of the Cinder volume
     constraints:

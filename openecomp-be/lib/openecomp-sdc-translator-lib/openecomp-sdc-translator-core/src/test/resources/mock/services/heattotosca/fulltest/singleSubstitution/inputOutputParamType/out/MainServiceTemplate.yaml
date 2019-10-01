@@ -320,7 +320,7 @@ topology_template:
           - allowed_address_pair
           - 0
           - mac
-        size: 50*1024
+        size: 50
         name:
           get_attribute:
           - abstract_pd_server
@@ -376,7 +376,10 @@ topology_template:
           get_attribute:
           - abstract_pd_server
           - pd_server_pd01_port_0_port_security_enabled
-        size: '(get_attribute : [pd01_port_0, network]) * 1024'
+        size:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_0_network
         read_only:
           get_attribute:
           - abstract_pd_server

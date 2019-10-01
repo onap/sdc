@@ -158,7 +158,8 @@ topology_template:
       properties:
         volume_type:
           get_input: pd01_volume_type
-        size: '(get_input : pd01_cinder_volume_size) * 1024'
+        size:
+          get_input: pd01_cinder_volume_size
     abstract_pd_server:
       type: org.openecomp.resource.abstract.nodes.pd_server
       directives:

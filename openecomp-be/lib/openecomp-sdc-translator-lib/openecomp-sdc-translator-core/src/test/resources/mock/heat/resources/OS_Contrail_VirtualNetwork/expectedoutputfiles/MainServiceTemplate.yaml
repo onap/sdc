@@ -1183,7 +1183,7 @@ topology_template:
             - vmme_small
             source_type: HEAT
             param_name: volume_size
-      type: string
+      type: scalar-unit.size
       description: volume
     fsb2-image:
       hidden: false
@@ -1612,7 +1612,7 @@ topology_template:
           get_input: FSB_1_image
         volume_type:
           get_input: volume_type
-        size: 3*1024
+        size: 3
         name:
           get_input: FSB1_volume_name
     testConvertGetParamFunctions:
@@ -1637,7 +1637,8 @@ topology_template:
           get_input: FSB_2_image
         volume_type:
           get_input: volume_type
-        size: '(get_input : volume_size) * 1024'
+        size:
+          get_input: volume_size
         name:
           get_input: FSB2_volume_name
     FSB1_OAM:

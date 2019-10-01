@@ -9,7 +9,7 @@ parameters:
     constraints:
       - allowed_values: [0, 1, 2]
   size:
-    type: number
+    type: scalar-unit.size
     label: Volume Size
     description: size of the cinder volumes
     constraints:

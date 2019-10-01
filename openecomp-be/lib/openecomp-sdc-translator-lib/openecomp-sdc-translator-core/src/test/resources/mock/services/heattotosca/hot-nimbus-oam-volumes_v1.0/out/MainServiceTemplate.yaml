@@ -81,9 +81,9 @@ topology_template:
             - hot-nimbus-oam_v1.0
             source_type: HEAT
             param_name: pcrf_oam_vol_size
-      type: float
+      type: scalar-unit.size
       description: the size of the Cinder volume
-      default: 500
+      default: 500 MB
     pcrf_oam_vol_name_2:
       label: OAM volume name 2
       hidden: false
@@ -1053,7 +1053,8 @@ topology_template:
       properties:
         volume_type:
           get_input: pcrf_oam_volume_silver-1
-        size: '(get_input : pcrf_oam_vol_size) * 1024'
+        size:
+          get_input: pcrf_oam_vol_size
         name:
           get_input: pcrf_oam_vol_name_1
     server_pcrf_oam_001:
@@ -1339,7 +1340,8 @@ topology_template:
       properties:
         volume_type:
           get_input: pcrf_pcm_volume_silver
-        size: '(get_input : pcrf_pcm_vol_size) * 1024'
+        size:
+          get_input: pcrf_pcm_vol_size
         name:
           get_input: pcrf_pcm_vol_name_1
     server_pcrf_ppd_001:
@@ -1761,7 +1763,8 @@ topology_template:
       properties:
         volume_type:
           get_input: pcrf_oam_volume_silver-2
-        size: '(get_input : pcrf_oam_vol_size) * 1024'
+        size:
+          get_input: pcrf_oam_vol_size
         name:
           get_input: pcrf_oam_vol_name_2
     server_pcrf_psm_009:

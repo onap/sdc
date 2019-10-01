@@ -303,7 +303,8 @@ topology_template:
       properties:
         volume_type:
           get_input: vprobe_volume_type_2
-        size: '(get_input : vprobe_volume_size_2) * 1024'
+        size:
+          get_input: vprobe_volume_size_2
         description:
           get_input: vprobe_volume_name_2
     vprobe_volume_1:
@@ -311,7 +312,8 @@ topology_template:
       properties:
         volume_type:
           get_input: vprobe_volume_type_1
-        size: '(get_input : vprobe_volume_size_1) * 1024'
+        size:
+          get_input: vprobe_volume_size_1
         description:
           get_input: vprobe_volume_name_1
     vprobe_volume_0:
@@ -319,7 +321,8 @@ topology_template:
       properties:
         volume_type:
           get_input: vprobe_volume_type_0
-        size: '(get_input : vprobe_volume_size_0) * 1024'
+        size:
+          get_input: vprobe_volume_size_0
         description:
           get_input: vprobe_volume_name_0
     oam_private_net_network_port_1:

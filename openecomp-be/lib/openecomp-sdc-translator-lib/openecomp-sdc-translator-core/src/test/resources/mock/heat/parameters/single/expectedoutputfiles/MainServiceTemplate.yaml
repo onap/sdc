@@ -287,7 +287,7 @@ topology_template:
           get_input: FSB_1_image
         volume_type:
           get_input: volume_type
-        size: 3*1024
+        size: 3
         name:
           get_input: FSB1_volume_name
   groups:

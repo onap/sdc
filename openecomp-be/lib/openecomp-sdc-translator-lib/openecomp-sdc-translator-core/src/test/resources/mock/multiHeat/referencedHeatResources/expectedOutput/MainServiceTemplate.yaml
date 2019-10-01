@@ -2595,7 +2595,8 @@ topology_template:
       properties:
         volume_type:
           get_input: MMSC_volume_type
-        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+        size:
+          get_input: mmsc_cinder_volume_size
     lb2_eca_traffic_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -2704,13 +2705,15 @@ topology_template:
       properties:
         volume_type:
           get_input: MMSC_volume_type
-        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+        size:
+          get_input: mmsc_cinder_volume_size
     cmaui1_volume:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
         volume_type:
           get_input: CMAUI_volume_type
-        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+        size:
+          get_input: cmaui_cinder_volume_size
     nems_traffic_net:
       type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
       properties:
@@ -3365,7 +3368,8 @@ topology_template:
       properties:
         volume_type:
           get_input: MMSC_volume_type
-        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+        size:
+          get_input: mmsc_cinder_volume_size
     eca_trx7_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -3509,7 +3513,8 @@ topology_template:
       properties:
         volume_type:
           get_input: CMAUI_volume_type
-        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+        size:
+          get_input: cmaui_cinder_volume_size
     eca_trx3_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -3601,7 +3606,8 @@ topology_template:
       properties:
         volume_type:
           get_input: MMSC_volume_type
-        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+        size:
+          get_input: mmsc_cinder_volume_size
     nems_imap_net:
       type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
       properties:
@@ -3867,7 +3873,8 @@ topology_template:
       properties:
         volume_type:
           get_input: NEMS_FE_volume_type
-        size: '(get_input : nems_volume_size) * 1024'
+        size:
+          get_input: nems_volume_size
     server_nems_be1:
       type: org.openecomp.resource.vfc.nodes.heat.nems_be
       properties:
@@ -4682,7 +4689,8 @@ topology_template:
       properties:
         volume_type:
           get_input: NEMS_BE_volume_type
-        size: '(get_input : nems_be_volume_size) * 1024'
+        size:
+          get_input: nems_be_volume_size
     server_mmsc4:
       type: org.openecomp.resource.vfc.nodes.heat.mmsc
       properties:
@@ -5208,7 +5216,8 @@ topology_template:
       properties:
         volume_type:
           get_input: NEMS_FE_volume_type
-        size: '(get_input : nems_volume_size) * 1024'
+        size:
+          get_input: nems_volume_size
     eca_trx10_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -5889,7 +5898,8 @@ topology_template:
       properties:
         volume_type:
           get_input: MMSC_volume_type
-        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+        size:
+          get_input: mmsc_cinder_volume_size
   relationship_templates:
     nems1_fe_volume_attachment:
       type: org.openecomp.relationships.VolumeAttachesTo

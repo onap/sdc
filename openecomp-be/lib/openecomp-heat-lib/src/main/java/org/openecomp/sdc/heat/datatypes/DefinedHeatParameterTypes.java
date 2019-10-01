@@ -24,33 +24,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+import lombok.Getter;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.ClassUtils;
 
+@Getter
 public enum DefinedHeatParameterTypes {
     NUMBER("number"),
     STRING("string"),
     COMMA_DELIMITED_LIST("comma_delimited_list"),
     JSON("json"),
-    BOOLEAN("boolean");
+    BOOLEAN("boolean"),
+    SCALAR_UNIT_SIZE("scalar-unit.size"),
+    SCALAR_UNIT_TIME("scalar-unit.time"),
+    SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
 
     private static Map<String, DefinedHeatParameterTypes> stringToDefinedType;
 
     static {
         stringToDefinedType = new HashMap<>();
-        for (DefinedHeatParameterTypes definedHeatParameterType : DefinedHeatParameterTypes.values()) {
+        for (final DefinedHeatParameterTypes definedHeatParameterType : DefinedHeatParameterTypes.values()) {
             stringToDefinedType.put(definedHeatParameterType.type, definedHeatParameterType);
         }
     }
 
     private String type;
 
-    DefinedHeatParameterTypes(String type) {
+    DefinedHeatParameterTypes(final String type) {
         this.type = type;
     }
 
-    public static DefinedHeatParameterTypes findByHeatResource(String type) {
+    public static DefinedHeatParameterTypes findByHeatResource(final String type) {
         return stringToDefinedType.get(type);
     }
 
@@ -61,8 +65,8 @@ public enum DefinedHeatParameterTypes {
      * @param parameterType the parameter type
      * @return the boolean
      */
-    public static boolean isValueIsFromGivenType(Object value, String parameterType) {
-        DefinedHeatParameterTypes definedType = findByHeatResource(parameterType);
+    public static boolean isValueIsFromGivenType(final Object value, final String parameterType) {
+        final DefinedHeatParameterTypes definedType = findByHeatResource(parameterType);
 
         if (Objects.nonNull(definedType)) {
             switch (definedType) {
@@ -78,6 +82,9 @@ public enum DefinedHeatParameterTypes {
                 case JSON:
                     return isValueJson(value);
 
+                case SCALAR_UNIT_SIZE:
+                case SCALAR_UNIT_TIME:
+                case SCALAR_UNIT_FREQUENCY:
                 case STRING:
                     return isValueString(value);
                 default:
@@ -87,35 +94,27 @@ public enum DefinedHeatParameterTypes {
         return false;
     }
 
-    public static boolean isNovaServerEnvValueIsFromRightType(Object value) {
+    public static boolean isNovaServerEnvValueIsFromRightType(final Object value) {
         return isValueIsFromGivenType(value, COMMA_DELIMITED_LIST.getType())
                 || isValueIsFromGivenType(value, STRING.getType());
     }
 
-    private static boolean isValueCommaDelimitedList(Object value) {
+    private static boolean isValueCommaDelimitedList(final Object value) {
         return value instanceof List
                 || String.valueOf(value).contains(",")
                 || isValueIsFromGivenType(value, DefinedHeatParameterTypes.STRING.type);
     }
 
-    private static boolean isValueString(Object value) {
+    private static boolean isValueString(final Object value) {
         return value instanceof String
                 || ClassUtils.isPrimitiveOrWrapper(value.getClass());
     }
 
-    private static boolean isValueJson(Object value) {
+    private static boolean isValueJson(final Object value) {
         return (value instanceof Map) || (value instanceof List);
     }
 
-    public static boolean isEmptyValueInEnv(Object value) {
+    public static boolean isEmptyValueInEnv(final Object value) {
         return Objects.isNull(value);
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 }
