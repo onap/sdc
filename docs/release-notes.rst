@@ -5,10 +5,10 @@ Release Notes
 =============
 
 
-Version: 1.5.1
+Version: 1.5.2
 ==============
 
-:Release Date: 2019-?-?
+:Release Date: 2019-10-10
 
 SDC SDKs Versions
 -----------------
@@ -19,78 +19,76 @@ SDC SDKs Versions
 
 -  sdc-tosca
 
-   :Version: 1.6.0
+   :Version: 1.6.2
 
 Release Purpose
 ----------------
 
 
--   `SDC-2421 <https://jira.onap.org/browse/SDC-2421>`_ Support multiple Tosca import formats
--   `SDC-2395 <https://jira.onap.org/browse/SDC-2395>`_ Operation implementation artifact path not correct in proxy node type
--   `SDC-2396 <https://jira.onap.org/browse/SDC-2396>`_ dcae-dt version is not aligned with the rest of dcae-d
--   `SDC-2384 <https://jira.onap.org/browse/SDC-2384>`_ SDC uiSanity test fails in master
--   `SDC-2377 <https://jira.onap.org/browse/SDC-2377>`_ the path of the implementation under interfaces points to a non-existing path
--   `SDC-2367 <https://jira.onap.org/browse/SDC-2367>`_ Sdc-docker-base is not able to generate base images
--   `SDC-2363 <https://jira.onap.org/browse/SDC-2363>`_ Hidden action buttons on the Monitoring dashboard.
--   `SDC-2359 <https://jira.onap.org/browse/SDC-2359>`_ Fix Service Proxy Node Template
--   `SDC-2358 <https://jira.onap.org/browse/SDC-2358>`_ Template.json missing DCAE_TOSCA_LAB_VIP
--   `SDC-2361 <https://jira.onap.org/browse/SDC-2361>`_ setup_sdc_for_sanity.sh cleanup
--   `SDC-2352 <https://jira.onap.org/browse/SDC-2352>`_ Remove obsolete startup scripts from SDC CSIT
--   `SDC-2346 <https://jira.onap.org/browse/SDC-2346>`_ Insufficient logs dir permissions fail DCAE-BE logging in CSIT
--   `SDC-2342 <https://jira.onap.org/browse/SDC-2342>`_ kill_containers_and_remove_dataFolders.sh does not handle dcae-related containers
--   `SDC-2343 <https://jira.onap.org/browse/SDC-2343>`_ Add lombok support to RelationshipTemplate
--   `SDC-2321 <https://jira.onap.org/browse/SDC-2321>`_ Use inheritance in ComponentException
--   `SDC-2320 <https://jira.onap.org/browse/SDC-2320>`_ Ingress support for list of FQDNs in SDC Workflow
--   `SDC-2316 <https://jira.onap.org/browse/SDC-2316>`_ Unable to select a type from Operation screen when using Capabilities Properties
--   `SDC-2317 <https://jira.onap.org/browse/SDC-2317>`_ Auto collapse properties tables after sorting by capability column is not applied
--   `SDC-2294 <https://jira.onap.org/browse/SDC-2294>`_ Support Capability Properties
--   `SDC-2284 <https://jira.onap.org/browse/SDC-2284>`_ SDC Pod couldn't start up
--   `SDC-2369 <https://jira.onap.org/browse/SDC-2369>`_ Missing property uid in property to policy declaration
--   `SDC-2368 <https://jira.onap.org/browse/SDC-2368>`_ sdc/README.md typo corrections
--   `SDC-2366 <https://jira.onap.org/browse/SDC-2366>`_ Optimize Dockerfile to reduce SDC image size
--   `SDC-2362 <https://jira.onap.org/browse/SDC-2362>`_ kill_containers_and_remove_dataFolders.sh does not remove data folder
--   `SDC-2357 <https://jira.onap.org/browse/SDC-2357>`_ Remove references to DCAE-DS from core SDC docker utilities
--   `SDC-2356 <https://jira.onap.org/browse/SDC-2356>`_ tosca-lab's version.properties is not aligned with pom.xml
--   `SDC-2354 <https://jira.onap.org/browse/SDC-2354>`_ Add lombok support to simple classes
--   `SDC-2341 <https://jira.onap.org/browse/SDC-2341>`_ tosca-lab needs to be added to docker_run.sh for CSIT
--   `SDC-2332 <https://jira.onap.org/browse/SDC-2332>`_ docker_run.sh expects same label for core SDC and DCAE images
--   `SDC-2333 <https://jira.onap.org/browse/SDC-2333>`_ Minor typos in docker_health.sh script
--   `SDC-2331 <https://jira.onap.org/browse/SDC-2331>`_ add lombok support to PreconditionDefinition
--   `SDC-2313 <https://jira.onap.org/browse/SDC-2313>`_ Fix Service Proxy Node Type
--   `SDC-2274 <https://jira.onap.org/browse/SDC-2274>`_ Workflow Artifact delivery call fails for PNF
--   `SDC-2270 <https://jira.onap.org/browse/SDC-2270>`_ SDC-2216Consider upgrade or remove com.springsource.org.apache.poi
--   `SDC-2269 <https://jira.onap.org/browse/SDC-2269>`_ SDC-2216Beanutils - upgrade to 1.9.2 should be considered
--   `SDC-2266 <https://jira.onap.org/browse/SDC-2266>`_ SDC-2216Consider upgrade or remove BeanShell 2.0b6
--   `SDC-2268 <https://jira.onap.org/browse/SDC-2268>`_ SDC-2216Upgrade jetty-http
--   `SDC-2262 <https://jira.onap.org/browse/SDC-2262>`_ SDC-2216Upgrade sdc-parser jackson-databind version
--   `SDC-2263 <https://jira.onap.org/browse/SDC-2263>`_ SDC-2216Upgrade netty / netty-handler dependencies
--   `SDC-2264 <https://jira.onap.org/browse/SDC-2264>`_ SDC-2216Upgrade libthrift to 0.12.0
--   `SDC-2255 <https://jira.onap.org/browse/SDC-2255>`_ Declared properties lost in node_type when user adds one or more properties to SELF
--   `SDC-2247 <https://jira.onap.org/browse/SDC-2247>`_ miss a "/" in the directory path in docker_run.sh
--   `SDC-2142 <https://jira.onap.org/browse/SDC-2142>`_ Enhance Service/VF/PNF to support Req\&Cap
--   `SDC-2202 <https://jira.onap.org/browse/SDC-2202>`_ Spike - Investigate the Impacts of Changing the Onboarding Process to Accept the VNFD Package
--   `SDC-2104 <https://jira.onap.org/browse/SDC-2104>`_ PM-Mapper Policy Model support
--   `SDC-2017 <https://jira.onap.org/browse/SDC-2017>`_ User Guide for Service Design is on the wiki
--   `SDC-1961 <https://jira.onap.org/browse/SDC-1961>`_ Purge APIs for Service and Resource
--   `SDC-1832 <https://jira.onap.org/browse/SDC-1832>`_ Can not add value to complex property after declare in input tab on property assignment screen of VF
--   `SDC-2471 <https://jira.onap.org/browse/SDC-2471>`_ Remove Proprietary notices
--   `SDC-2420 <https://jira.onap.org/browse/SDC-2420>`_ Can't set property for VF
--   `SDC-2265 <https://jira.onap.org/browse/SDC-2265>`_ SDC-2216Consider upgrade or remove Lucene
--   `SDC-1353 <https://jira.onap.org/browse/SDC-1353>`_ Fix some of sonar issues
--   `SDC-2296 <https://jira.onap.org/browse/SDC-2296>`_ Upgrade SDC from Titan to Janus Graph
--   `SDC-2442 <https://jira.onap.org/browse/SDC-2442>`_ SDC-2397catalog-be servlets - avoid extracting beans from context
--   `SDC-2386 <https://jira.onap.org/browse/SDC-2386>`_ SDC README.md has unqualified Windows-specific instructions
--   `SDC-2400 <https://jira.onap.org/browse/SDC-2400>`_ SDC-2397Catalog-be - use constructor injection where applicable
--   `SDC-2403 <https://jira.onap.org/browse/SDC-2403>`_ SDC-2397asdctool refactoring - use constructor injection
--   `SDC-2406 <https://jira.onap.org/browse/SDC-2406>`_ SDC-2397openecomp-be - constructors injection
--   `SDC-2372 <https://jira.onap.org/browse/SDC-2372>`_ Fix bdd tests docker to new node version
--   `SDC-2347 <https://jira.onap.org/browse/SDC-2347>`_ fix declaration of complex property
--   `SDC-2478 <https://jira.onap.org/browse/SDC-2478>`_ Update SDC versions
--   `SDC-2419 <https://jira.onap.org/browse/SDC-2419>`_ Migrate all SDC projects to O-Parent
--   `SDC-2261 <https://jira.onap.org/browse/SDC-2261>`_ SDC-2216Upgrade Swagger-UI in openecomp-be
--   `SDC-2370 <https://jira.onap.org/browse/SDC-2370>`_ SDC - add support for api documentation swagger (html)
--   `SDC-2371 <https://jira.onap.org/browse/SDC-2371>`_ SDC fails to deploy in Windriver lab
--   `SDC-2374 <https://jira.onap.org/browse/SDC-2374>`_ SDC appears to lose connectivity to Cassandra and Titan intermittently
+**Epics**
+
+-  [`SDC-1425`_] - SDC documentation improvement
+-  [`SDC-2461`_] - El Alto release planning milestone
+-  [`SDC-2487`_] - Functionality and API Freeze
+-  [`SDC-2523`_] - Code Freeze
+-  [`SDC-2566`_] - Release Candidate 0 Integration and Test
+
+.. _SDC-1425: https://jira.onap.org/browse/SDC-1425
+.. _SDC-2461: https://jira.onap.org/browse/SDC-2461
+.. _SDC-2487: https://jira.onap.org/browse/SDC-2487
+.. _SDC-2523: https://jira.onap.org/browse/SDC-2523
+.. _SDC-2566: https://jira.onap.org/browse/SDC-2566
+
+**Stories**
+
+-  [`SDC-1894`_] - Enable Certificate for SDC
+-  [`SDC-1961`_] - Purge APIs for Service and Resource
+-  [`SDC-2072`_] - Create VSP from VNF csar
+-  [`SDC-2101`_] - RestConf - Policy model support
+-  [`SDC-2102`_] - DFC - Policy model support
+-  [`SDC-2104`_] - PM-Mapper Policy Model support
+-  [`SDC-2142`_] - Enhance Service/VF/PNF to support Req & Cap
+-  [`SDC-2166`_] - Enable transport level encryption on all interfaces
+   and the option to turn it off
+-  [`SDC-2294`_] - Support Capability Properties
+-  [`SDC-2296`_] - Upgrade SDC from Titan to Janus Graph
+-  [`SDC-2313`_] - Fix Service Proxy Node Type
+-  [`SDC-2359`_] - Fix Service Proxy Node Template
+-  [`SDC-2397`_] - SDC Constructor injection - better practice
+-  [`SDC-2416`_] - Embed AAF generated certificate in SDC
+-  [`SDC-2419`_] - Migrate all SDC projects to O-Parent
+-  [`SDC-2475`_] - Package Handling - Validate PM Dictionary and VES
+   Events YAML Files in SOL004 package
+-  [`SDC-2478`_] - Update SDC versions
+-  [`SDC-2509`_] - Descriptor Handling - Model-driven mapping from
+   SOL001 to internal model
+-  [`SDC-2510`_] - Package Handling - Store the original onboarded
+   package, whether it's a CSAR or a ZIP
+-  [`SDC-2540`_] - Package Handling - Fix artifacts references in main
+   TOSCA descriptor while converting packages
+-  [`SDC-2560`_] - Update SDC versions
+
+.. _SDC-1894: https://jira.onap.org/browse/SDC-1894
+.. _SDC-1961: https://jira.onap.org/browse/SDC-1961
+.. _SDC-2072: https://jira.onap.org/browse/SDC-2072
+.. _SDC-2101: https://jira.onap.org/browse/SDC-2101
+.. _SDC-2102: https://jira.onap.org/browse/SDC-2102
+.. _SDC-2104: https://jira.onap.org/browse/SDC-2104
+.. _SDC-2142: https://jira.onap.org/browse/SDC-2142
+.. _SDC-2166: https://jira.onap.org/browse/SDC-2166
+.. _SDC-2294: https://jira.onap.org/browse/SDC-2294
+.. _SDC-2296: https://jira.onap.org/browse/SDC-2296
+.. _SDC-2313: https://jira.onap.org/browse/SDC-2313
+.. _SDC-2359: https://jira.onap.org/browse/SDC-2359
+.. _SDC-2397: https://jira.onap.org/browse/SDC-2397
+.. _SDC-2416: https://jira.onap.org/browse/SDC-2416
+.. _SDC-2419: https://jira.onap.org/browse/SDC-2419
+.. _SDC-2475: https://jira.onap.org/browse/SDC-2475
+.. _SDC-2478: https://jira.onap.org/browse/SDC-2478
+.. _SDC-2509: https://jira.onap.org/browse/SDC-2509
+.. _SDC-2510: https://jira.onap.org/browse/SDC-2510
+.. _SDC-2540: https://jira.onap.org/browse/SDC-2540
+.. _SDC-2560: https://jira.onap.org/browse/SDC-2560
 
 
 Security Notes
@@ -100,20 +98,11 @@ Security Notes
 
 *Known Security Issues*
 
--  [`OJSI-31 <https://jira.onap.org/browse/OJSI-31>`__\ ] - Unsecured Swagger UI Interface in sdc-wfd-be
--  CVE-2019-12115 [`OJSI-76 <https://jira.onap.org/browse/OJSI-76>`__\ ] - demo-sdc-sdc-be exposes JDWP on port 4000 which allows for arbitrary code execution
--  CVE-2019-12116 [`OJSI-77 <https://jira.onap.org/browse/OJSI-77>`__\ ] - demo-sdc-sdc-fe exposes JDWP on port 6000 which allows for arbitrary code execution
--  CVE-2019-12117 [`OJSI-78 <https://jira.onap.org/browse/OJSI-78>`__\ ] - demo-sdc-sdc-onboarding-be exposes JDWP on port 4001 which allows for arbitrary code execution
--  CVE-2019-12118 [`OJSI-79 <https://jira.onap.org/browse/OJSI-79>`__\ ] - demo-sdc-sdc-wfd-be exposes JDWP on port 7001 which allows for arbitrary code execution
--  CVE-2019-12119 [`OJSI-80 <https://jira.onap.org/browse/OJSI-80>`__\ ] - demo-sdc-sdc-wfd-fe exposes JDWP on port 7000 which allows for arbitrary code execution
 -  [`OJSI-90 <https://jira.onap.org/browse/OJSI-90>`__\ ] - SDC exposes unprotected API for user creation
 -  [`OJSI-94 <https://jira.onap.org/browse/OJSI-94>`__\ ] - sdc-wfd-fe allows to impersonate any user by setting USER_ID
--  [`OJSI-101 <https://jira.onap.org/browse/OJSI-101>`__\ ] - In default deployment SDC (sdc-be) exposes HTTP port 30205 outside of cluster.
--  [`OJSI-102 <https://jira.onap.org/browse/OJSI-102>`__\ ] - In default deployment SDC (sdc-fe) exposes HTTP port 30206 outside of cluster.
 -  [`OJSI-126 <https://jira.onap.org/browse/OJSI-126>`__\ ] - In default deployment SDC (sdc-wfd-fe) exposes HTTP port 30256 outside of cluster.
 -  [`OJSI-127 <https://jira.onap.org/browse/OJSI-127>`__\ ] - In default deployment SDC (sdc-wfd-be) exposes HTTP port 30257 outside of cluster.
--  [`OJSI-132 <https://jira.onap.org/browse/OJSI-132>`__\ ] - In default deployment SDC (sdc-dcae-fe) exposes HTTP port 30263 outside of cluster.
--  [`OJSI-133 <https://jira.onap.org/browse/OJSI-133>`__\ ] - In default deployment SDC (sdc-dcae-dt) exposes HTTP port 30265 outside of cluster.
+
 
 *Known Vulnerabilities in Used Modules*
 
