@@ -22,7 +22,7 @@
                 {{menuComponentTitle}}
             </div>
             <div class="i-sdc-designer-sidebar-section-content-item" ng-class="{'selected': isSelected(menuItem)}" ng-repeat="menuItem in leftBarTabs.menuItems track by $index">
-                <div class="expand-collapse-menu-box-item-text" ng-click="menuItem.callback()" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu">{{menuItem.text}}</div>
+                <div class="expand-collapse-menu-box-item-text" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu" ><button type="button" class="i-sdc-designer-sidebar-section-content-item-service-cat" ng-click="menuItem.callback()" ng-disabled={{menuItem.disabledCategory}}>{{menuItem.text}}</button></div>
             </div>
         </div>
 

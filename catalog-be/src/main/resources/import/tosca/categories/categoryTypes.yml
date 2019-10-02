@@ -17,6 +17,9 @@ services:
     Network_Service:
       name: "Network Service"
       icons: ['network_l_1-3']
+    Partner_Domain_Service:
+      name: "Partner Domain Service"
+      icons: ['partner_domain_service']
 resources:
   NetworkLayer23:
     name: "Network L2-3"

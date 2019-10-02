@@ -177,6 +177,7 @@ export class WorkspaceViewModel {
     }
 
     private role:string;
+    private category:string;
     private components:Array<Component>;
 
     private initViewMode = ():WorkspaceMode => {
@@ -216,6 +217,7 @@ export class WorkspaceViewModel {
         this.$scope.version = this.cacheService.get('version');
         this.$scope.user = this.cacheService.get("user");
         this.role = this.$scope.user.role;
+        this.category = this.$scope.component.selectedCategory;
         this.$scope.mode = this.initViewMode();
         this.$scope.isValidForm = true;
         this.initChangeLifecycleStateButtons();
@@ -870,6 +872,21 @@ export class WorkspaceViewModel {
         return tempMenuItems;
     };
 
+	private updateMenuItemByCategory = (menuItems:Array<any>, category:string) => {
+        let tempMenuItems:Array<any> = new Array<any>();
+        menuItems.forEach((item:any) => {
+            //update flag disabledCategory to true if category is disabled
+            item.disabledCategory = false;
+            if ((item.disabledCategories && item.disabledCategories.indexOf(category) > -1))
+            {
+                item.disabledCategory = true;
+            }
+            tempMenuItems.push(item);
+        });
+        return tempMenuItems;
+    };
+
+
     private deleteArchiveCache = () => {
         this.cacheService.remove("archiveComponents"); //delete the cache to ensure the archive is reloaded from server
     };
@@ -894,7 +911,13 @@ export class WorkspaceViewModel {
 
         let inCreateMode = this.$scope.isCreateMode();
         this.$scope.leftBarTabs = new MenuItemGroup();
-        const menuItemsObjects:Array<any> = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option[this.$scope.component.getComponentSubType()], this.role);
+        //const menuItemsObjects:Array<any> = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option[this.$scope.component.getComponentSubType()], this.role);
+        let menuItemsObjects:Array<any> = this.updateMenuItemByRole(this.sdcMenu.component_workspace_menu_option[this.$scope.component.getComponentSubType()], this.role);
+        if(this.$scope.component.getComponentSubType()==="SERVICE")
+        {
+            let menuItemsObjectsCategory:Array<any> = this.updateMenuItemByCategory(menuItemsObjects, this.category);
+        	menuItemsObjects = menuItemsObjectsCategory;
+        }
 
         // Only adding plugins to the workspace if they can be displayed for the current user role
         _.each(PluginsConfiguration.plugins, (plugin: Plugin) => {
@@ -909,7 +932,7 @@ export class WorkspaceViewModel {
         });
 
         this.$scope.leftBarTabs.menuItems = menuItemsObjects.map((item:MenuItem) => {
-            const menuItem = new MenuItem(item.text, item.callback, item.state, item.action, item.params, item.blockedForTypes);
+            const menuItem = new MenuItem(item.text, item.callback, item.state, item.action, item.params, item.blockedForTypes, item.disabledCategory);
             if (menuItem.params) {
                 menuItem.params.state = menuItem.state;
             }
@@ -918,7 +941,9 @@ export class WorkspaceViewModel {
             }
             menuItem.callback = () => this.$scope[menuItem.action](menuItem.state, menuItem.params);
             menuItem.isDisabled = (inCreateMode && States.WORKSPACE_GENERAL != menuItem.state) ||
-                (States.WORKSPACE_DEPLOYMENT === menuItem.state && this.$scope.component.modules && this.$scope.component.modules.length === 0 && this.$scope.component.isResource());
+                (States.WORKSPACE_DEPLOYMENT === menuItem.state && this.$scope.component.modules
+                && this.$scope.component.modules.length === 0 && this.$scope.component.isResource()) ||
+                (menuItem.disabledCategory === true);
             return menuItem;
         });
 

@@ -32,6 +32,7 @@ export class MenuItem {
     action:string;
     params:any;
     isDisabled:boolean;
+    disabledCategory:boolean;
     disabledRoles:Array<string>;
     blockedForTypes:Array<string>;  // This item will not be shown for specific components types.
 
@@ -43,13 +44,14 @@ export class MenuItem {
     url:string;                     // Data added to menu item, in case the function need to use it, example: for function "changeLifecycleState", I need to pass also the state "CHECKOUT" that I want the state to change to.
 
 
-    constructor(text:string, callback:(...args:Array<any>) => ng.IPromise<boolean>, state:string, action:string, params?:any, blockedForTypes?:Array<string>) {
+    constructor(text:string, callback:(...args:Array<any>) => ng.IPromise<boolean>, state:string, action:string, params?:any, blockedForTypes?:Array<string>, disabledCategory?:boolean) {
         this.text = text;
         this.callback = callback;
         this.state = state;
         this.action = action;
         this.params = params;
         this.blockedForTypes = blockedForTypes;
+        this.disabledCategory = disabledCategory;
     }
 }
 
