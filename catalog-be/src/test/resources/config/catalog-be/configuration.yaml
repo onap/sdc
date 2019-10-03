@@ -134,6 +134,7 @@ artifactTypes:
    - SNMP_POLL
    - SNMP_TRAP
    - GUIDE
+   - PNF_SW_INFORMATION
 
 licenseTypes:
    - User
@@ -529,6 +530,12 @@ resourceInformationalArtifacts:
             - VF
             - VFC
             - CVFC
+    PNF_SW_INFORMATION:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes:
+            - PNF
 
 resourceInformationalDeployedArtifacts:
 

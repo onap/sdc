@@ -41,18 +41,6 @@ public class ArtifactTypeEnumTest {
 		testSubject = createTestSubject();
 		result = testSubject.getType();
 	}
-
-	
-	@Test
-	public void testSetType() throws Exception {
-		ArtifactTypeEnum testSubject;
-		String type = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setType(type);
-	}
-
 	
 	@Test
 	public void testFindType() throws Exception {

@@ -17,3 +17,6 @@ nonManoKeyFolderMapping:
   onap_others:
     location: OTHER
     type: Informational
+  onap_pnf_sw_information:
+    location: PNF_SW_INFORMATION
+    type: Informational

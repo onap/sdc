@@ -94,7 +94,8 @@ public class FileData {
         VENDOR_LICENSE("VENDOR_LICENSE"),
         VF_LICENSE("VF_LICENSE"),
         CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT("CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT"),
-        OTHER("OTHER");
+        OTHER("OTHER"),
+        PNF_SW_INFORMATION("PNF_SW_INFORMATION");
 
         private String displayName;
 

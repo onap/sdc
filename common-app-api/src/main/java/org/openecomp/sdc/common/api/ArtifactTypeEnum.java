@@ -22,10 +22,14 @@ package org.openecomp.sdc.common.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Enum That Represents possible Artifacts Types.
  */
+@Getter
+@AllArgsConstructor
 public enum ArtifactTypeEnum {
     CHEF("CHEF"), PUPPET("PUPPET"), YANG("YANG"), SHELL_SCRIPT("SHELL_SCRIPT"), SHELL("SHELL"), ICON("ICON"), UNKNOWN("UNKNOWN"), HEAT("HEAT"), DG_XML("DG_XML"), MURANO_PKG("MURANO_PKG"), HEAT_ENV("HEAT_ENV"), YANG_XML("YANG_XML"), HEAT_VOL("HEAT_VOL"),
     HEAT_NET("HEAT_NET"), OTHER("OTHER"), WORKFLOW("WORKFLOW"), NETWORK_CALL_FLOW("NETWORK_CALL_FLOW"), TOSCA_TEMPLATE("TOSCA_TEMPLATE"), TOSCA_CSAR("TOSCA_CSAR"), VNF_CATALOG("VNF_CATALOG"), VF_LICENSE("VF_LICENSE"), BPEL("BPEL"),
@@ -40,25 +44,12 @@ public enum ArtifactTypeEnum {
     // MIB artifacts
     SNMP_POLL("SNMP_POLL"), SNMP_TRAP("SNMP_TRAP"), GUIDE("GUIDE"),
     PLAN("PLAN"), PM_DICTIONARY("PM_DICTIONARY"), YANG_MODULE("YANG_MODULE"),
-    ANSIBLE_PLAYBOOK("ANSIBLE_PLAYBOOK"), ONBOARDED_PACKAGE("ONBOARDED_PACKAGE");
+    ANSIBLE_PLAYBOOK("ANSIBLE_PLAYBOOK"), ONBOARDED_PACKAGE("ONBOARDED_PACKAGE"), PNF_SW_INFORMATION("PNF_SW_INFORMATION");
 
-    private String type;
-
-    ArtifactTypeEnum(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+    private final String type;
 
     public static ArtifactTypeEnum findType(final String type) {
-        for (ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
-            // According to Pavel/Ella
+        for (final ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
             if (ate.getType().equalsIgnoreCase(type)) {
                 return ate;
             }
@@ -67,8 +58,8 @@ public enum ArtifactTypeEnum {
     }
 
     public static List<String> getAllTypes() {
-        List<String> types = new ArrayList<>();
-        for (ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
+        final List<String> types = new ArrayList<>();
+        for (final ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
             types.add(ate.getType());
         }
         return types;
