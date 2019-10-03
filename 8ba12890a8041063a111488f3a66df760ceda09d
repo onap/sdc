@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e8d8255_2a1ee5de",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-10-03T15:53:41Z",
+      "side": 1,
+      "message": "could be this button tag that wasn\u0027t there before",
+      "range": {
+        "startLine": 25,
+        "startChar": 158,
+        "endLine": 25,
+        "endChar": 164
+      },
+      "revId": "8ba12890a8041063a111488f3a66df760ceda09d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
