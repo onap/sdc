@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Enum That Represents possible Artifacts Types.
  *
@@ -32,7 +29,7 @@ public enum ArtifactTypeEnum {
 	HEAT_ENV("HEAT_ENV"), YANG_XML("YANG_XML"), HEAT_VOL("HEAT_VOL"), HEAT_NET("HEAT_NET"), OTHER("OTHER"), WORKFLOW("WORKFLOW"), NETWORK_CALL_FLOW("NETWORK_CALL_FLOW"), 
 	TOSCA_TEMPLATE("TOSCA_TEMPLATE"), TOSCA_CSAR("TOSCA_CSAR"), VNF_CATALOG("VNF_CATALOG"), VF_LICENSE("VF_LICENSE"), VENDOR_LICENSE("VENDOR_LICENSE"), 
 	MODEL_INVENTORY_PROFILE("MODEL_INVENTORY_PROFILE"), MODEL_QUERY_SPEC("MODEL_QUERY_SPEC"), APPC_CONFIG("APPC_CONFIG"), HEAT_NESTED("HEAT_NESTED"), 
-	HEAT_ARTIFACT("HEAT_ARTIFACT"), VF_MODULES_METADATA("VF_MODULES_METADATA"),
+	HEAT_ARTIFACT("HEAT_ARTIFACT"), VF_MODULES_METADATA("VF_MODULES_METADATA"), PNF_SW_INFORMATION("PNF_SW_INFORMATION"),
 	// DCAE Artifacts
 	DCAE_TOSCA("DCAE_TOSCA"), DCAE_JSON("DCAE_JSON"), DCAE_POLICY("DCAE_POLICY"), DCAE_DOC("DCAE_DOC"), DCAE_EVENT("DCAE_EVENT"), DCAE_INVENTORY_TOSCA("DCAE_INVENTORY_TOSCA"), 
 	DCAE_INVENTORY_JSON("DCAE_INVENTORY_JSON"), DCAE_INVENTORY_POLICY("DCAE_INVENTORY_POLICY"), DCAE_INVENTORY_DOC("DCAE_INVENTORY_DOC"), 
@@ -43,35 +40,22 @@ public enum ArtifactTypeEnum {
 	SNMP_POLL ("SNMP_POLL"), SNMP_TRAP("SNMP_TRAP"), GUIDE("GUIDE")
 	;
 
-	ArtifactTypeEnum(String type) {
+	ArtifactTypeEnum(final String type) {
 		this.type = type;
 	}
 
-	private String type;
+	private final String type;
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public static ArtifactTypeEnum findType(final String type) {
-		for (ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
-			// According to Pavel/Ella
+		for (final ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
 			if (ate.getType().equalsIgnoreCase(type)) {
 				return ate;
 			}
 		}
 		return null;
-	}
-
-	public static List<String> getAllTypes() {
-		List<String> types = new ArrayList<String>();
-		for (ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
-			types.add(ate.getType());
-		}
-		return types;
 	}
 }

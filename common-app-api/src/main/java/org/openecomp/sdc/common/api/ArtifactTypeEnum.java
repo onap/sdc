@@ -40,11 +40,11 @@ public enum ArtifactTypeEnum {
     // MIB artifacts
     SNMP_POLL("SNMP_POLL"), SNMP_TRAP("SNMP_TRAP"), GUIDE("GUIDE"),
     PLAN("PLAN"), PM_DICTIONARY("PM_DICTIONARY"), YANG_MODULE("YANG_MODULE"),
-    ANSIBLE_PLAYBOOK("ANSIBLE_PLAYBOOK"), ONBOARDED_PACKAGE("ONBOARDED_PACKAGE");
+    ANSIBLE_PLAYBOOK("ANSIBLE_PLAYBOOK"), ONBOARDED_PACKAGE("ONBOARDED_PACKAGE"), PNF_SW_INFORMATION("PNF_SW_INFORMATION");
 
-    private String type;
+    private final String type;
 
-    ArtifactTypeEnum(String type) {
+    ArtifactTypeEnum(final String type) {
         this.type = type;
     }
 
@@ -52,13 +52,8 @@ public enum ArtifactTypeEnum {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public static ArtifactTypeEnum findType(final String type) {
-        for (ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
-            // According to Pavel/Ella
+        for (final ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
             if (ate.getType().equalsIgnoreCase(type)) {
                 return ate;
             }
@@ -67,8 +62,8 @@ public enum ArtifactTypeEnum {
     }
 
     public static List<String> getAllTypes() {
-        List<String> types = new ArrayList<>();
-        for (ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
+        final List<String> types = new ArrayList<>();
+        for (final ArtifactTypeEnum ate : ArtifactTypeEnum.values()) {
             types.add(ate.getType());
         }
         return types;

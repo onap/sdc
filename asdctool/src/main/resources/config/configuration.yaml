@@ -154,6 +154,7 @@ artifactTypes:
    - SNMP_TRAP
    - GUIDE
    - CONTROLLER_BLUEPRINT_ARCHIVE
+   - PNF_SW_INFORMATION
 
 licenseTypes:
    - User
@@ -591,6 +592,12 @@ resourceInformationalArtifacts:
             - VF
             - VFCMT
             - Abstract
+            - PNF
+    PNF_SW_INFORMATION:
+        acceptedTypes:
+            - yml
+            - yaml
+        validForResourceTypes:
             - PNF
     SNMP_POLL:
         acceptedTypes:
