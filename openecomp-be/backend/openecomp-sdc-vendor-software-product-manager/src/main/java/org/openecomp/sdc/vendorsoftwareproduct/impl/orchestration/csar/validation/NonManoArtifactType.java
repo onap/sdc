@@ -28,7 +28,8 @@ public enum NonManoArtifactType {
     ONAP_YANG_MODULES("onap_yang_modules"),
     ONAP_ANSIBLE_PLAYBOOKS("onap_ansible_playbooks"),
     ONAP_SCRIPTS("onap_scripts"),
-    ONAP_OTHERS("onap_others");
+    ONAP_OTHERS("onap_others"),
+    ONAP_SW_INFORMATION("onap_pnf_sw_information");
 
     private final String type;
 
