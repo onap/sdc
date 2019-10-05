@@ -96,6 +96,13 @@ Security Notes
 
 *Fixed Security Issues*
 
+-  [`OJSI-31 <https://jira.onap.org/browse/OJSI-31>`__\ ] - Unsecured Swagger UI Interface in sdc-wfd-be
+-  CVE-2019-12115 [`OJSI-76 <https://jira.onap.org/browse/OJSI-76>`__\ ] - demo-sdc-sdc-be exposes JDWP on port 4000 which allows for arbitrary code execution
+-  CVE-2019-12116 [`OJSI-77 <https://jira.onap.org/browse/OJSI-77>`__\ ] - demo-sdc-sdc-fe exposes JDWP on port 6000 which allows for arbitrary code execution
+-  CVE-2019-12117 [`OJSI-78 <https://jira.onap.org/browse/OJSI-78>`__\ ] - demo-sdc-sdc-onboarding-be exposes JDWP on port 4001 which allows for arbitrary code execution
+-  CVE-2019-12118 [`OJSI-79 <https://jira.onap.org/browse/OJSI-79>`__\ ] - demo-sdc-sdc-wfd-be exposes JDWP on port 7001 which allows for arbitrary code execution
+-  CVE-2019-12119 [`OJSI-80 <https://jira.onap.org/browse/OJSI-80>`__\ ] - demo-sdc-sdc-wfd-fe exposes JDWP on port 7000 which allows for arbitrary code execution
+
 *Known Security Issues*
 
 -  [`OJSI-90 <https://jira.onap.org/browse/OJSI-90>`__\ ] - SDC exposes unprotected API for user creation
