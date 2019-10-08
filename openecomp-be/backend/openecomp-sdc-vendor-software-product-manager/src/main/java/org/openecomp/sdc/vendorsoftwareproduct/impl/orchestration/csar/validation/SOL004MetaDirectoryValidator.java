@@ -21,6 +21,8 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_VES_EVENTS;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.CSAR_VERSION_1_0;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.CSAR_VERSION_1_1;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_METADATA_LIMIT;
@@ -37,8 +39,6 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
 
 import java.io.IOException;
 import java.io.InputStream;

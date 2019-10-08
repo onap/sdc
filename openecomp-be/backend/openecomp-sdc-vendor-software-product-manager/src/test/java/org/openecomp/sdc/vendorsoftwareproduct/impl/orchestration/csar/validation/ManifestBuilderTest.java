@@ -20,16 +20,16 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_VES_EVENTS;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_ARCHIVE_VERSION;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_NAME;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_PROVIDER;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_RELEASE_DATE_TIME;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
@@ -53,7 +53,7 @@ public class ManifestBuilderTest {
     @Test
     public void givenNoManifestInformation_whenBuildingManifest_thenEmptyStringShouldBeReturned() {
         final String manifest = manifestBuilder.build();
-        assertThat("Manifest should be empty", manifest, isEmptyString());
+        assertThat("Manifest should be empty", manifest, is(emptyString()));
     }
 
     @Test

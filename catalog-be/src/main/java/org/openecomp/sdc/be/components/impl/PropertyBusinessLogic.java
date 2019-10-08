@@ -32,6 +32,7 @@ import javax.servlet.ServletContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -51,18 +52,21 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ToscaOperationException;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,6 +218,75 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
             graphLockOperation.unlockComponent(componentId, nodeType);
         }
 
+    }
+
+    /**
+     * Copies a list of properties to a component.
+     *
+     * @param component the component to add the copied properties
+     * @param propertiesToCopyList the properties to be copied
+     * @return the updated component with the copied properties.
+     * @throws ToscaOperationException when a problem happens during the copy operation
+     */
+    public Component copyPropertyToComponent(final Component component,
+                                             final List<PropertyDefinition> propertiesToCopyList) throws ToscaOperationException {
+        return copyPropertyToComponent(component, propertiesToCopyList, true);
+    }
+
+    /**
+     * Copies a list of properties to a component.
+     *
+     * @param component the component to add the copied properties
+     * @param propertiesToCopyList the properties to be copied
+     * @param refreshComponent refresh the component from database after update
+     * @return the component refreshed from database if refreshComponent is {@code true}, the same component reference
+     * otherwise
+     * @throws ToscaOperationException when a problem happens during the copy operation
+     */
+    public Component copyPropertyToComponent(final Component component,
+                                             final List<PropertyDefinition> propertiesToCopyList,
+                                             final boolean refreshComponent) throws ToscaOperationException {
+        if (CollectionUtils.isEmpty(propertiesToCopyList)) {
+            return component;
+        }
+
+        for (final PropertyDefinition propertyDefinition : propertiesToCopyList) {
+            copyPropertyToComponent(component, propertyDefinition);
+        }
+
+        if (refreshComponent) {
+            return toscaOperationFacade.getToscaElement(component.getUniqueId()).left().value();
+        }
+
+        return component;
+    }
+
+    /**
+     * Copies one property to a component.
+     *
+     * @param component the component to add the copied property
+     * @param propertyDefinition the property to be copied
+     * @throws ToscaOperationException when a problem happens during the copy operation
+     */
+    private void copyPropertyToComponent(final Component component,
+                                         final PropertyDefinition propertyDefinition) throws ToscaOperationException {
+        final PropertyDefinition copiedPropertyDefinition = new PropertyDefinition(propertyDefinition);
+        final String componentId = component.getUniqueId();
+        final String propertyName = copiedPropertyDefinition.getName();
+        copiedPropertyDefinition.setUniqueId(
+            UniqueIdBuilder.buildPropertyUniqueId(componentId, propertyName)
+        );
+        copiedPropertyDefinition.setParentUniqueId(componentId);
+        final Either<PropertyDefinition, StorageOperationStatus> operationResult = toscaOperationFacade
+            .addPropertyToComponent(propertyName, copiedPropertyDefinition, component);
+        if (operationResult.isRight()) {
+            final String error = String.format(
+                "Failed to add copied property '%s' to component '%s'. Operation status: '%s'",
+                propertyDefinition.getUniqueId(), componentId, operationResult.right().value()
+            );
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, PropertyBusinessLogic.class.getName(), "catalog-be", error);
+            throw new ToscaOperationException(error, operationResult.right().value());
+        }
     }
 
     /**
@@ -475,6 +548,55 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
             graphLockOperation.unlockComponent(componentId, nodeType);
         }
 
+    }
+
+    /**
+     * Finds a component by id,
+     *
+     * @param componentId the component id to find
+     * @return an Optional<Component> if the component with given id was found, otherwise Optional.empty()
+     * @throws BusinessLogicException when a problem happens during the find operation
+     */
+    public Optional<Component> findComponentById(final String componentId) throws BusinessLogicException {
+        final Either<Component, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(componentId);
+        if (status.isRight()) {
+            final StorageOperationStatus operationStatus = status.right().value();
+            if (operationStatus == StorageOperationStatus.NOT_FOUND) {
+                return Optional.empty();
+            }
+            final ResponseFormat responseFormat = componentsUtils.getResponseFormat(operationStatus);
+            throw new BusinessLogicException(responseFormat);
+        }
+        return Optional.ofNullable(status.left().value());
+    }
+
+    /**
+     * Updates a component property.
+     *
+     * @param componentId the component id that owns the property
+     * @param propertyDefinition the existing property to update
+     * @return the updated property
+     * @throws BusinessLogicException if the component was not found or if there was a problem during the update
+     * operation.
+     */
+    public PropertyDefinition updateComponentProperty(final String componentId,
+                                                      final PropertyDefinition propertyDefinition)
+            throws BusinessLogicException {
+        final Component component = findComponentById(componentId).orElse(null);
+        if (component == null) {
+            throw new BusinessLogicException(
+                componentsUtils.getResponseFormatByResource(ActionStatus.RESOURCE_NOT_FOUND, componentId));
+        }
+        final Either<PropertyDefinition, StorageOperationStatus> updateResultEither =
+            toscaOperationFacade.updatePropertyOfComponent(component, propertyDefinition);
+        if (updateResultEither.isRight()) {
+            final ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
+                componentsUtils.convertFromStorageResponse(updateResultEither.right().value()), component.getName()
+            );
+            throw new BusinessLogicException(responseFormat);
+        }
+
+        return updateResultEither.left().value();
     }
 
     private boolean isPropertyExistInComponent(List<PropertyDefinition> properties, String propertyName) {

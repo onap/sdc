@@ -49,6 +49,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.parser.utils.YamlToObjectConverter;
+import org.openecomp.sdc.be.config.NonManoConfiguration;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.tosca.csar.Manifest;
@@ -73,8 +74,8 @@ public class ETSIServiceImplTest {
     @Before
     public void setUp() throws IOException {
         YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
-        Configuration configuration = yamlToObjectConverter.convert("src/test/resources",
-                Configuration.class, "nonManoConfig.yaml");
+        NonManoConfiguration configuration = yamlToObjectConverter.convert("src/test/resources",
+                NonManoConfiguration.class, "nonManoConfig.yaml");
         etsiService = Mockito.spy(new ETSIServiceImpl(configuration));
     }
 
