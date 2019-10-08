@@ -17,27 +17,18 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
+package org.openecomp.sdc.be.components.impl.exceptions;
 
-/**
- * Stores non mano artifact types.
- */
-public enum NonManoArtifactType {
-    ONAP_VES_EVENTS("onap_ves_events"),
-    ONAP_PM_DICTIONARY("onap_pm_dictionary"),
-    ONAP_YANG_MODULES("onap_yang_modules"),
-    ONAP_ANSIBLE_PLAYBOOKS("onap_ansible_playbooks"),
-    ONAP_SCRIPTS("onap_scripts"),
-    ONAP_OTHERS("onap_others"),
-    ONAP_SW_INFORMATION("onap_pnf_sw_information");
+import lombok.Getter;
+import org.openecomp.sdc.exception.ResponseFormat;
 
-    private final String type;
+public class BusinessLogicException extends Exception {
 
-    NonManoArtifactType(final String type) {
-        this.type = type;
+    @Getter
+    private final ResponseFormat responseFormat;
+
+    public BusinessLogicException(final ResponseFormat responseFormat) {
+        this.responseFormat = responseFormat;
     }
 
-    public String getType() {
-        return type;
-    }
 }

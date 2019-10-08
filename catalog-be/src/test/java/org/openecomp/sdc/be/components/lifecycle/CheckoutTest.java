@@ -30,8 +30,10 @@ import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CompositionBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.SoftwareInformationBusinessLogic;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
 import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -58,13 +60,15 @@ public class CheckoutTest extends LifecycleTestBase {
     private final MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
     private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
     private final CsarBusinessLogic csarBusinessLogic = Mockito.mock(CsarBusinessLogic.class);
+    private final PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
+    private final SoftwareInformationBusinessLogic softwareInformationBusinessLogic = Mockito.mock(SoftwareInformationBusinessLogic.class);
 
     @InjectMocks
     ResourceBusinessLogic bl = new ResourceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
         groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
         componentInstanceBusinessLogic, resourceImportManager, inputsBusinessLogic, compositionBusinessLogic,
         resourceDataMergeBusinessLogic, csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils,
-        uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation);
+        uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation, propertyBusinessLogic, softwareInformationBusinessLogic);
 
     @Before
     public void setup() {
