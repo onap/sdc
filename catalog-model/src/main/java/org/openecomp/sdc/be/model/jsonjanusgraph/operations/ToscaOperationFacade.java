@@ -2229,50 +2229,45 @@ public class ToscaOperationFacade {
         return nodeTemplateOperation.generateCustomizationUUIDOnInstanceGroup(componentId, instanceId, groupInstances);
     }
 
-		public Either<PropertyDefinition, StorageOperationStatus> addPropertyToComponent(String propertyName,
+    public Either<PropertyDefinition, StorageOperationStatus> addPropertyToComponent(String propertyName,
 																					 PropertyDefinition newPropertyDefinition,
 																					 Component component) {
-
-		Either<PropertyDefinition, StorageOperationStatus> result = null;
-		Either<Component, StorageOperationStatus> getUpdatedComponentRes = null;
 		newPropertyDefinition.setName(propertyName);
 
 		StorageOperationStatus status = getToscaElementOperation(component)
 				.addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, newPropertyDefinition, JsonPresentationFields.NAME);
 		if (status != StorageOperationStatus.OK) {
 			CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to add the property {} to the component {}. Status is {}. ", propertyName, component.getName(), status);
-			result = Either.right(status);
+            return Either.right(status);
 		}
-		if (result == null) {
-			ComponentParametersView filter = new ComponentParametersView(true);
-			filter.setIgnoreProperties(false);
-			filter.setIgnoreInputs(false);
-			getUpdatedComponentRes = getToscaElement(component.getUniqueId(), filter);
-			if (getUpdatedComponentRes.isRight()) {
-				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to get updated component {}. Status is {}. ", component.getUniqueId(), getUpdatedComponentRes.right().value());
-				result = Either.right(status);
-			}
-		}
-		if (result == null) {
-			PropertyDefinition newProperty = null;
-			List<PropertyDefinition> properties =
-					(getUpdatedComponentRes.left().value()).getProperties();
-			if (CollectionUtils.isNotEmpty(properties)) {
-				Optional<PropertyDefinition> propertyOptional = properties.stream().filter(
-						propertyEntry -> propertyEntry.getName().equals(propertyName)).findAny();
-				if (propertyOptional.isPresent()) {
-					newProperty = propertyOptional.get();
-				}
-			}
-			if (newProperty == null) {
-				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to find recently added property {} on the component {}. Status is {}. ", propertyName, component.getUniqueId(), StorageOperationStatus.NOT_FOUND);
-				result = Either.right(StorageOperationStatus.NOT_FOUND);
-			} else {
-				result = Either.left(newProperty);
-			}
-		}
-		return result;
+
+        ComponentParametersView filter = new ComponentParametersView(true);
+        filter.setIgnoreProperties(false);
+        filter.setIgnoreInputs(false);
+        Either<Component, StorageOperationStatus> getUpdatedComponentRes = getToscaElement(component.getUniqueId(), filter);
+        if (getUpdatedComponentRes.isRight()) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to get updated component {}. Status is {}. ", component.getUniqueId(), getUpdatedComponentRes.right().value());
+            return Either.right(status);
+        }
+
+        PropertyDefinition newProperty = null;
+        List<PropertyDefinition> properties =
+                (getUpdatedComponentRes.left().value()).getProperties();
+        if (CollectionUtils.isNotEmpty(properties)) {
+            Optional<PropertyDefinition> propertyOptional = properties.stream().filter(
+                    propertyEntry -> propertyEntry.getName().equals(propertyName)).findAny();
+            if (propertyOptional.isPresent()) {
+                newProperty = propertyOptional.get();
+            }
+        }
+        if (newProperty == null) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to find recently added property {} on the component {}. Status is {}. ", propertyName, component.getUniqueId(), StorageOperationStatus.NOT_FOUND);
+            return Either.right(StorageOperationStatus.NOT_FOUND);
+        }
+
+        return Either.left(newProperty);
 	}
+
 	public StorageOperationStatus deletePropertyOfComponent(Component component, String propertyName) {
 		return getToscaElementOperation(component).deleteToscaDataElement(component.getUniqueId(), EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, propertyName, JsonPresentationFields.NAME);
 	}

@@ -145,6 +145,10 @@ public class ResourceBusinessLogicMockitoTest {
     private IGraphLockOperation graphLockOperation;
     @Mock
     private GenericTypeBusinessLogic genericTypeBusinessLogic;
+    @Mock
+    private PropertyBusinessLogic propertyBusinessLogic;
+    @Mock
+    private SoftwareInformationBusinessLogic softwareInformationBusinessLogic;
 
     private ResourceBusinessLogic resourceBusinessLogic;
 
@@ -167,7 +171,9 @@ public class ResourceBusinessLogicMockitoTest {
             mergeInstanceUtils,
             uiComponentDataConverter,
             csarBusinessLogic,
-            artifactToscaOperation);
+            artifactToscaOperation,
+            propertyBusinessLogic,
+            softwareInformationBusinessLogic);
 
         resourceBusinessLogic.setLifecycleManager(lifecycleManager);
         resourceBusinessLogic.setApplicationDataTypeCache(applicationDataTypeCache);

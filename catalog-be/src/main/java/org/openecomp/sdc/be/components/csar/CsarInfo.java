@@ -21,9 +21,17 @@
  */
 package org.openecomp.sdc.be.components.csar;
 
+import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.config.NonManoArtifactType;
+import org.openecomp.sdc.be.config.NonManoConfiguration;
+import org.openecomp.sdc.be.config.NonManoConfigurationManager;
+import org.openecomp.sdc.be.config.NonManoFolderType;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Resource;
@@ -42,17 +50,31 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.*;
 public class CsarInfo {
     private static final Logger log = Logger.getLogger(CsarInfo.class);
 
+    @Getter
+    @Setter
     private String vfResourceName;
+    @Getter
+    @Setter
     private User modifier;
+    @Getter
+    @Setter
     private String csarUUID;
+    @Getter
+    @Setter
     private Map<String, byte[]> csar;
+    @Getter
     private String mainTemplateName;
+    @Getter
     private String mainTemplateContent;
+    @Getter
     private Map<String, Object> mappedToscaMainTemplate;
+    @Getter
     private Map<String, String> createdNodesToscaResourceNames;
     private Queue<String> cvfcToCreateQueue;
     private boolean isUpdate;
+    @Getter
     private Map<String, Resource> createdNodes;
+    private final NonManoConfiguration nonManoConfiguration;
 
     @SuppressWarnings("unchecked")
     public CsarInfo(User modifier, String csarUUID, Map<String, byte[]> csar, String vfResourceName, String mainTemplateName, String mainTemplateContent, boolean isUpdate){
@@ -67,46 +89,12 @@ public class CsarInfo {
         this.cvfcToCreateQueue = new PriorityQueue<>();
         this.isUpdate = isUpdate;
         this.createdNodes  = new HashMap<>();
+        this.nonManoConfiguration = NonManoConfigurationManager.getInstance().getNonManoConfiguration();
     }
 
-    public String getVfResourceName() {
-        return vfResourceName;
-    }
-
-    public void setVfResourceName(String vfResourceName) {
-        this.vfResourceName = vfResourceName;
-    }
-
-    public User getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(User modifier) {
-        this.modifier = modifier;
-    }
-
-    public String getCsarUUID() {
-        return csarUUID;
-    }
-
-    public void setCsarUUID(String csarUUID) {
-        this.csarUUID = csarUUID;
-    }
-
-    public Map<String, byte[]> getCsar() {
-        return csar;
-    }
-
-    public void setCsar(Map<String, byte[]> csar) {
-        this.csar = csar;
-    }
-
-    public Map<String, Object> getMappedToscaMainTemplate() {
-        return mappedToscaMainTemplate;
-    }
-
-    public Map<String, String> getCreatedNodesToscaResourceNames() {
-        return createdNodesToscaResourceNames;
+    @VisibleForTesting
+    CsarInfo(final NonManoConfiguration nonManoConfiguration) {
+        this.nonManoConfiguration = nonManoConfiguration;
     }
 
     public void addNodeToQueue(String nodeName) {
@@ -130,10 +118,6 @@ public class CsarInfo {
 
     public void setUpdate(boolean isUpdate) {
         this.isUpdate = isUpdate;
-    }
-
-    public Map<String, Resource> getCreatedNodes() {
-        return createdNodes;
     }
 
     public Map<String,NodeTypeInfo> extractNodeTypesInfo() {
@@ -236,11 +220,19 @@ public class CsarInfo {
         }
     }
 
-    public String getMainTemplateName() {
-        return mainTemplateName;
-    }
-
-    public String getMainTemplateContent() {
-        return mainTemplateContent;
+    /**
+     * Gets the software information yaml path from the csar file map.
+     *
+     * @return the software information yaml path if it is present in the csar file map
+     */
+    public Optional<String> getSoftwareInformationPath() {
+        if (MapUtils.isEmpty(csar)) {
+            return Optional.empty();
+        }
+        final NonManoFolderType softwareInformationType =
+            nonManoConfiguration.getNonManoType(NonManoArtifactType.ONAP_SW_INFORMATION);
+        return csar.keySet().stream()
+            .filter(filePath -> filePath.startsWith(softwareInformationType.getPath()))
+            .findFirst();
     }
 }
