@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b097558f_ccccf1a3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaNodeTemplate.java",
+        "patchSetId": 25
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-08T10:41:13Z",
+      "side": 1,
+      "message": "I\u0027d suggest to remove all getter and replace with lombok Getter for clarity.",
+      "range": {
+        "startLine": 30,
+        "startChar": 13,
+        "endLine": 30,
+        "endChar": 30
+      },
+      "revId": "0a930e215eeb1f38c071469de0f3bbc52da5434e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03f69d76_06cdbf91",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaTemplateArtifact.java",
+        "patchSetId": 25
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-08T10:41:13Z",
+      "side": 1,
+      "message": "I\u0027d suggest to remove all getter and setter and replace with lombok Getter/Setter for clarity.",
+      "range": {
+        "startLine": 30,
+        "startChar": 3,
+        "endLine": 44,
+        "endChar": 5
+      },
+      "revId": "0a930e215eeb1f38c071469de0f3bbc52da5434e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b063a0dc_55c57d7b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
+        "patchSetId": 25
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-08T10:41:13Z",
+      "side": 1,
+      "message": "missing Assert",
+      "range": {
+        "startLine": 273,
+        "startChar": 0,
+        "endLine": 273,
+        "endChar": 100
+      },
+      "revId": "0a930e215eeb1f38c071469de0f3bbc52da5434e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a32bc729_a276c6a5",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadArtifactInfo.java",
+        "patchSetId": 25
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-08T10:41:13Z",
+      "side": 1,
+      "message": "I\u0027d suggest to remove all getters and setters and replace with lombok Getter/Setter for clarity.",
+      "range": {
+        "startLine": 34,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 25
+      },
+      "revId": "0a930e215eeb1f38c071469de0f3bbc52da5434e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6105f076_e5ee990b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadComponentInstanceInfo.java",
+        "patchSetId": 25
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-08T10:41:13Z",
+      "side": 1,
+      "message": "I\u0027d suggest to remove all getter and setter and replace with lombok Getter/Setter for clarity.",
+      "range": {
+        "startLine": 27,
+        "startChar": 13,
+        "endLine": 27,
+        "endChar": 40
+      },
+      "revId": "0a930e215eeb1f38c071469de0f3bbc52da5434e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3642840b_6a4a1cc5",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaArtifactDataDefinition.java",
+        "patchSetId": 25
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-08T10:41:13Z",
+      "side": 1,
+      "message": "I\u0027d suggest to remove all getter and setter and replace with lombok Getter/Setter for clarity.",
+      "range": {
+        "startLine": 25,
+        "startChar": 13,
+        "endLine": 25,
+        "endChar": 40
+      },
+      "revId": "0a930e215eeb1f38c071469de0f3bbc52da5434e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
