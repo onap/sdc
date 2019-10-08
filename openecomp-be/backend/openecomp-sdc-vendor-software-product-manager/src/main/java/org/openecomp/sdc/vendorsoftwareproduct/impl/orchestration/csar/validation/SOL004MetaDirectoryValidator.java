@@ -68,8 +68,8 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_FILE_VERSION
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_TYPE_PNF;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_TYPE_VNF;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_VES_EVENTS;
 
 /**
  * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure

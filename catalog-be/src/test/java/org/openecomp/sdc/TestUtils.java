@@ -40,4 +40,16 @@ public class TestUtils {
         }
         return result;
     }
+
+    public static InputStream getResourceAsStream(final String resourcePath) {
+        return TestUtils.class.getClassLoader().getResourceAsStream(resourcePath);
+    }
+
+    public static byte[] getResourceAsByteArray(final String resourcePath) throws IOException {
+        final InputStream resourceAsStream = getResourceAsStream(resourcePath);
+        if (resourceAsStream == null) {
+            throw new IOException("Could not find file: " + resourcePath);
+        }
+        return IOUtils.toByteArray(resourceAsStream);
+    }
 }

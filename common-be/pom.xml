@@ -55,6 +55,18 @@
     </dependency>
 
     <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
@@ -70,6 +82,11 @@
       <groupId>org.onap.sdc.common</groupId>
       <artifactId>onap-tosca-datatype</artifactId>
       <version>${tosca.datatype.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.sdc.sdc-tosca</groupId>
+      <artifactId>sdc-tosca</artifactId>
+      <version>${sdc-tosca-parser.version}</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

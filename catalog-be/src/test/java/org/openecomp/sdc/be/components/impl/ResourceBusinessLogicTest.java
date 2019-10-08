@@ -175,6 +175,7 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
     InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
     ArtifactsOperations artifactToscaOperation = Mockito.mock(ArtifactsOperations.class);
+    private PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
     ArtifactsResolver artifactsResolver = Mockito.mock(ArtifactsResolver.class);
     InterfaceLifecycleOperation interfaceLifecycleTypeOperation = Mockito.mock(InterfaceLifecycleOperation.class);
     ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
@@ -185,6 +186,7 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = Mockito.mock(CsarArtifactsAndGroupsBusinessLogic.class);
     MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
     UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    private SoftwareInformationBusinessLogic softwareInformationBusinessLogic = Mockito.mock(SoftwareInformationBusinessLogic.class);
 
     ResponseFormatManager responseManager = null;
     GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
@@ -278,7 +280,7 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
             interfaceOperation, interfaceLifecycleTypeOperation, artifactManager, componentInstanceBusinessLogic,
             resourceImportManager, inputsBusinessLogic, compositionBusinessLogic, resourceDataMergeBusinessLogic,
             csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
-            artifactToscaOperation);
+            artifactToscaOperation, propertyBusinessLogic, softwareInformationBusinessLogic);
 
         artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
         bl.setUserAdmin(mockUserAdmin);
