@@ -432,11 +432,7 @@ public class ComponentsUtilsTest {
 		testSubject.auditComponent(responseFormat, modifier, component, actionEnum, prevComponent,info);
 	}
 
-	
 
-
-
-	
 	@Test
 	public void testAuditComponent_1() throws Exception {
 		ComponentsUtils testSubject;
@@ -451,14 +447,6 @@ public class ComponentsUtilsTest {
 		testSubject = createTestSubject();
 		testSubject.auditComponent(responseFormat, modifier, component, actionEnum, type, prevComponent);
 	}
-
-
-
-
-
-
-	
-
 
 		
 	@Test
