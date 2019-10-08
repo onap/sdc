@@ -17,27 +17,29 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
+package org.openecomp.sdc.be.components.csar;
 
-/**
- * Stores non mano artifact types.
- */
-public enum NonManoArtifactType {
-    ONAP_VES_EVENTS("onap_ves_events"),
-    ONAP_PM_DICTIONARY("onap_pm_dictionary"),
-    ONAP_YANG_MODULES("onap_yang_modules"),
-    ONAP_ANSIBLE_PLAYBOOKS("onap_ansible_playbooks"),
-    ONAP_SCRIPTS("onap_scripts"),
-    ONAP_OTHERS("onap_others"),
-    ONAP_SW_INFORMATION("onap_pnf_sw_information");
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-    private final String type;
+@AllArgsConstructor
+@EqualsAndHashCode
+@Getter
+public class PnfSoftwareVersion {
 
-    NonManoArtifactType(final String type) {
-        this.type = type;
-    }
+    private final String version;
+    private final String description;
 
-    public String getType() {
-        return type;
+    /**
+     * Stores the pnf software version yaml fields.
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum PnfSoftwareVersionField {
+        DESCRIPTION("description"),
+        PNF_SOFTWARE_VERSION("pnf_software_version");
+
+        private final String fieldName;
     }
 }

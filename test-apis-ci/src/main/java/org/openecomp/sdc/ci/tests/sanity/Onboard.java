@@ -25,6 +25,7 @@ import com.aventstack.extentreports.Status;
 import fj.data.Either;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
@@ -43,23 +44,17 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
 import org.testng.annotations.*;
 
-
-
-
-
-
 public class Onboard extends ComponentBaseTest {
-	
-	
+
+	private String makeDistributionValue;
+	private String makeToscaValidationValue;
 	@Rule
-	public static TestName name = new TestName();
+	public static final TestName name = new TestName();
 	
 	public Onboard() {
 		super(name, Onboard.class.getName());
 	}
 
-	protected String makeDistributionValue;
-	protected String makeToscaValidationValue;
 
 
 	@Parameters({ "makeDistribution" })
@@ -78,62 +73,58 @@ public class Onboard extends ComponentBaseTest {
 	
 
 	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
-	public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception, Throwable {
+	public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception {
 		setLog(vnfFile);
-		runOnboardToDistributionFlow(filePath, vnfFile);
+		runOnboardToDistributionFlow(filePath, vnfFile, ResourceTypeEnum.VF);
 	}
 
 	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "PNF_List")
-	public void onboardPNFFlow(String filePath, String pnfFile) throws Exception, Throwable {
+	public void onboardPNFFlow(String filePath, String pnfFile) throws Exception {
 		setLog(pnfFile);
-		runOnboardToDistributionFlow(filePath, pnfFile);
+		runOnboardToDistributionFlow(filePath, pnfFile, ResourceTypeEnum.PNF);
 	}
 	
 	@Test
 	public void passTest() {
 		System.out.println("print - >" + "test Passed");
 	}
-	
 
-	
-
-	
-	public void runOnboardToDistributionFlow(String filePath, String vnfFile) throws Exception {
-
-		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
+	private void runOnboardToDistributionFlow(String packageFilePath, String packageFileName, ResourceTypeEnum resourceTypeEnum) throws Exception {
+		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the %s %s", resourceTypeEnum.getValue(), packageFileName));
 		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
      	ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
+		resourceReqDetails.setResourceType(resourceTypeEnum.getValue());
+		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, packageFilePath, packageFileName, user);
 
 		//		create VF base on VNF imported from previous step - have, resourceReqDetails object include part of resource metadata
-		resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
-		ExtentTestActions.log(Status.INFO, String.format("Create VF %s From VSP", resourceReqDetails.getName()));
+		OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
+		resourceReqDetails.setResourceType(resourceTypeEnum.getValue());
+		ExtentTestActions.log(Status.INFO, String.format("Create %s %s From VSP", resourceTypeEnum.getValue(), resourceReqDetails.getName()));
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails, UserRoleEnum.DESIGNER);
-		ExtentTestActions.log(Status.INFO, String.format("Certify VF"));
+		ExtentTestActions.log(Status.INFO, String.format("Certify %s", resourceTypeEnum.getValue()));
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		//--------------------------SERVICE--------------------------------	
 		ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(user);
 		ExtentTestActions.log(Status.INFO, String.format("Create Service %s", serviceReqDetails.getName()));
 		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-		ExtentTestActions.log(Status.INFO, String.format("add VF to Service"));
+		ExtentTestActions.log(Status.INFO, String.format("Add %s to Service", resourceTypeEnum.getValue()));
 		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
 		addComponentInstanceToComponentContainer.left().value();
-		ExtentTestActions.log(Status.INFO, String.format("Certify Service"));
+		ExtentTestActions.log(Status.INFO,"Certify Service");
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		if (makeDistributionValue.equals("true")) {
-			ExtentTestActions.log(Status.INFO, String.format("Distribute Service"));
+			ExtentTestActions.log(Status.INFO, "Distribute Service");
 			AtomicOperationUtils.distributeService(service, true);
 		}
 
 		if (makeToscaValidationValue.equals("true")) {
-
 			ExtentTestActions.log(Status.INFO, "Start tosca validation");
-			AtomicOperationUtils.toscaValidation(service ,vnfFile);
+			AtomicOperationUtils.toscaValidation(service ,packageFileName);
 		}
 
-		ExtentTestActions.log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
+		ExtentTestActions.log(Status.INFO, String.format("The onboarding process for '%s' finished with success", packageFileName));
 	}
 
 }
