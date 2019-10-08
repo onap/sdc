@@ -33,6 +33,7 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStr
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
+import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -48,8 +49,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import fj.data.Either;
+import javax.servlet.ServletContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -62,6 +62,7 @@ import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -131,6 +132,7 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ToscaOperationException;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
@@ -159,20 +161,22 @@ import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.servlet.ServletContext;
-
 @org.springframework.stereotype.Component("resourceBusinessLogic")
 public class ResourceBusinessLogic extends ComponentBusinessLogic {
+
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ResourceBusinessLogic.class);
 
     private static final String DELETE_RESOURCE = "Delete Resource";
     private static final String IN_RESOURCE = "  in resource {} ";
@@ -200,6 +204,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private final MergeInstanceUtils mergeInstanceUtils;
     private final UiComponentDataConverter uiComponentDataConverter;
     private final CsarBusinessLogic csarBusinessLogic;
+    private final PropertyBusinessLogic propertyBusinessLogic;
+    private final SoftwareInformationBusinessLogic softwareInformationBusinessLogic;
 
     @Autowired
     public ResourceBusinessLogic(IElementOperation elementDao,
@@ -215,7 +221,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic,
         CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic, MergeInstanceUtils mergeInstanceUtils,
         UiComponentDataConverter uiComponentDataConverter, CsarBusinessLogic csarBusinessLogic,
-        ArtifactsOperations artifactToscaOperation) {
+        ArtifactsOperations artifactToscaOperation, PropertyBusinessLogic propertyBusinessLogic,
+                                 SoftwareInformationBusinessLogic softwareInformationBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation);
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
@@ -227,6 +234,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.mergeInstanceUtils = mergeInstanceUtils;
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.csarBusinessLogic = csarBusinessLogic;
+        this.propertyBusinessLogic = propertyBusinessLogic;
+        this.softwareInformationBusinessLogic = softwareInformationBusinessLogic;
     }
 
     public LifecycleBusinessLogic getLifecycleBusinessLogic() {
@@ -1346,26 +1355,36 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         try {
             log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
-            Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
-            resource = createResourceTransaction(resource,
-                    csarInfo.getModifier(), isNormative);
+            final Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
+            resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
             log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
             log.trace("************* Going to add inputs from yaml {}", yamlName);
-            if (resource.shouldGenerateInputs())
+            if (resource.shouldGenerateInputs()) {
                 generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
-
-            Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
+            }
+            final Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             resource = createInputsOnResource(resource, inputs);
             log.trace("************* Finish to add inputs from yaml {}", yamlName);
+            if (resource.getResourceType() == ResourceTypeEnum.PNF) {
+                log.trace("************* Adding generic properties to PNF");
+                resource = (Resource) propertyBusinessLogic.copyPropertyToComponent(resource, genericResource.getProperties());
+                log.trace("************* Adding software information to PNF");
+                softwareInformationBusinessLogic.setSoftwareInformation(resource, csarInfo);
+                log.trace("************* Removing non-mano software information file from PNF");
+                if (!softwareInformationBusinessLogic.removeSoftwareInformationFile(csarInfo)) {
+                    log.warn(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR , ResourceBusinessLogic.class.getName(),
+                        "catalog-be", "Could not remove the software information file.");
+                }
+            }
 
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo
                     .getInstances();
-            log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
-
+            log.trace("************* Going to create nodes, Resource Instances and Relations from yaml {}", yamlName);
             resource = createRIAndRelationsFromYaml(yamlName, resource, uploadComponentInstanceInfoMap,
                     topologyTemplateYaml, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
                     nodeTypesArtifactsToCreate, nodeName);
-            log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
+
+            log.trace("************* Finished to create nodes, Resource Instances and Relations from yaml {}", yamlName);
             // validate update vf module group names
             Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic
                     .validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), resource.getSystemName());
@@ -1373,6 +1392,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ByResponseFormatComponentException(validateUpdateVfGroupNamesRes.right().value());
             }
+
             // add groups to resource
             Map<String, GroupDefinition> groups;
             log.trace("************* Going to add groups from yaml {}", yamlName);
@@ -1411,9 +1431,19 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             ASDCKpiApi.countCreatedResourcesKPI();
             return resource;
 
-        } catch(ComponentException|StorageException e) {
+        } catch (final ComponentException | StorageException e) {
             rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw e;
+        } catch (final ToscaOperationException e) {
+            LOGGER.error("An error has occurred during resource and resource instance creation", e);
+            rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR
+                , ResourceBusinessLogic.class.getName(), "catalog-be", e.getMessage());
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+        } catch (final BusinessLogicException e) {
+            LOGGER.error("An error has occurred during resource and resource instance creation", e);
+            rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+            throw new ByResponseFormatComponentException(e.getResponseFormat());
         } finally {
             if (!inTransaction) {
                 janusGraphDao.commit();
