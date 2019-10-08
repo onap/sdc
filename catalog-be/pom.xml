@@ -658,6 +658,9 @@
                     <include>src/main/resources/**/*.y*ml</include>
                     <include>src/test/resources/**/*.y*ml</include>
                   </includes>
+                  <excludes>
+                    <exclude>src/test/resources/artifacts/pnfSoftwareInformation/**</exclude>
+                  </excludes>
                 </validationSet>
                 <validationSet>
                   <includes>

@@ -1,0 +1,6 @@
+description: "pnf software information"
+provider: "Ericsson"
+version: "1.0"
+pnf_software_information_invalid:
+  description: "first software version of PNF"
+  pnf_software_version: "version1"
