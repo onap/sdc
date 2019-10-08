@@ -1785,9 +1785,9 @@
         "tags": [
           "CRUD External Servlet"
         ],
-        "summary": "creates a resource",
-        "description": "Creates a resource",
-        "operationId": "createResourceExternal",
+        "summary": "creates a resource or service",
+        "description": "Creates a resource or service",
+        "operationId": "createComponentExternal",
         "consumes": [
           "application/json"
         ],

@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -82,6 +83,7 @@ public class AssetsDataServletTest extends JerseyTest {
     public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
     public static final ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
     public static final ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
+    public static final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
     public static final ElementBusinessLogic elementBusinessLogic = Mockito.mock(ElementBusinessLogic.class);
     public static final Resource resource = Mockito.mock(Resource.class);
     public static final CategoryDefinition categoryDefinition = Mockito.mock(CategoryDefinition.class);
@@ -203,6 +205,7 @@ public class AssetsDataServletTest extends JerseyTest {
                         bind(assetMetadataConverter).to(AssetMetadataConverter.class);
                         bind(lifecycleBusinessLogic).to(LifecycleBusinessLogic.class);
                         bind(resourceBusinessLogic).to(ResourceBusinessLogic.class);
+                        bind(serviceBusinessLogic).to(ServiceBusinessLogic.class);
                     }
                 })
                 .property("contextConfig", context);
