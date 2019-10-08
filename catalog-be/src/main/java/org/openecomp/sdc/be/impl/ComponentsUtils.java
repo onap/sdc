@@ -612,6 +612,34 @@ public class ComponentsUtils {
 
         getAuditingManager().auditEvent(factory);
     }
+    
+    public void auditCreateServiceExternalApi(ResponseFormat responseFormat, HttpServletRequest request, Component service) {
+    	
+    	String invariantUuid = null;
+        String serviceInstanceId = null;
+    	
+    	User modifier = new User();
+        modifier.setUserId(request.getHeader(Constants.USER_ID_HEADER));
+        DistributionData distributionData = new DistributionData(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER), request.getRequestURI());
+        String requestId = request.getHeader(Constants.X_ECOMP_REQUEST_ID_HEADER);
+        
+        if(null != service) {
+        	invariantUuid = service.getInvariantUUID();
+        	serviceInstanceId = service.getUUID();
+        }
+        
+    	AuditEventFactory factory = new AuditCreateServiceExternalApiEventFactory(
+                CommonAuditData.newBuilder()
+                        .status(responseFormat.getStatus())
+                        .description(getMessageString(responseFormat))
+                        .requestId(requestId)
+                        .serviceInstanceId(serviceInstanceId)
+                        .build(),
+                        new ResourceCommonInfo(ComponentTypeEnum.SERVICE.name()), distributionData, invariantUuid, modifier);
+
+        getAuditingManager().auditEvent(factory);
+    	
+    }
 
     public void auditExternalActivateService(ResponseFormat responseFormat, DistributionData distributionData, String requestId, String serviceInstanceUuid, User modifier) {
         AuditEventFactory factory = new AuditActivateServiceExternalApiEventFactory(

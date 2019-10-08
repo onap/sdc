@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.auditing.impl.externalapi.AuditChangeLifecycleExternalApiEventFactory;
 import org.openecomp.sdc.be.auditing.impl.externalapi.AuditCreateResourceExternalApiEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditCreateServiceExternalApiEventFactory;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
@@ -560,7 +561,7 @@ public class ComponentsUtilsTest {
         when(request.getRequestURI()).thenReturn(DIST_RESOURCE_URL);
 
         utils.auditCreateResourceExternalApi(responseFormat, new ResourceCommonInfo(RESOURCE_NAME, ComponentTypeEnum.RESOURCE.getValue()),
-                                request, null);
+                request, null);
 
         verify(manager).auditEvent(factoryCaptor.capture());
         AuditCreateResourceExternalApiEventFactory factory = (AuditCreateResourceExternalApiEventFactory)factoryCaptor.getValue();
@@ -635,6 +636,82 @@ public class ComponentsUtilsTest {
         assertThat(event.getInvariantUuid()).isEqualTo(INVARIANT_UUID);
         assertThat(event.getResourceName()).isEqualTo(RESOURCE_NAME);
         assertThat(event.getResourceType()).isEqualTo(ComponentTypeEnum.RESOURCE.getValue());
+    }
+
+    @Test
+    public void auditExternalCreateServiceEventWhenResourceObjectIsNull() {
+        when(responseFormat.getStatus()).thenReturn(Integer.valueOf(STATUS_500));
+        when(responseFormat.getFormattedMessage()).thenReturn(DESC_ERROR);
+
+        when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(USER_ID);
+        when(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER)).thenReturn(DIST_CONSUMER_ID);
+        when(request.getHeader(Constants.X_ECOMP_REQUEST_ID_HEADER)).thenReturn(REQUEST_ID);
+        when(request.getRequestURI()).thenReturn(DIST_RESOURCE_URL);
+
+        utils.auditCreateServiceExternalApi(responseFormat, request, null);
+
+        verify(manager).auditEvent(factoryCaptor.capture());
+        AuditCreateServiceExternalApiEventFactory factory = (AuditCreateServiceExternalApiEventFactory)factoryCaptor.getValue();
+
+        ExternalApiEvent event = (ExternalApiEvent)factory.getDbEvent();
+        verifyCommonDataForExternalApiEvent(event, false);
+        verifyPreviousResourceVersionInfoForExternalApiEvent(event, true);
+        verifyCurrentResourceVersionInfoForExternalApiEvent(event, true);
+        verifyDistributionDataForExternalApiEvent(event);
+        assertThat(event.getModifier()).isEqualTo("(" + USER_ID + ")");
+        assertThat(event.getInvariantUuid()).isNull();
+    }
+
+    @Test
+    public void auditExternalCreateServiceEventWhenResourceObjectIsNullAndRequestDataIsNotProvided() {
+        when(responseFormat.getStatus()).thenReturn(Integer.valueOf(STATUS_500));
+        when(responseFormat.getFormattedMessage()).thenReturn(DESC_ERROR);
+
+        when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(null);
+        when(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER)).thenReturn(null);
+        when(request.getHeader(Constants.X_ECOMP_REQUEST_ID_HEADER)).thenReturn(REQUEST_ID);
+        when(request.getRequestURI()).thenReturn(null);
+
+        utils.auditCreateServiceExternalApi(responseFormat, request, null);
+
+        verify(manager).auditEvent(factoryCaptor.capture());
+        AuditCreateServiceExternalApiEventFactory factory = (AuditCreateServiceExternalApiEventFactory)factoryCaptor.getValue();
+
+        ExternalApiEvent event = (ExternalApiEvent)factory.getDbEvent();
+        verifyCommonDataForExternalApiEvent(event, false);
+        verifyPreviousResourceVersionInfoForExternalApiEvent(event, true);
+        verifyCurrentResourceVersionInfoForExternalApiEvent(event, true);
+        verifyDistributionDataNotSetForExternalApiEvent(event);
+        assertThat(event.getModifier()).isEmpty();
+        assertThat(event.getInvariantUuid()).isNull();
+    }
+
+    @Test
+    public void auditExternalCreateServiceEventWhenResourceObjectAndRequestDataProvided() {
+        when(responseFormat.getStatus()).thenReturn(Integer.valueOf(STATUS_OK));
+        when(responseFormat.getFormattedMessage()).thenReturn(DESCRIPTION);
+
+        when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(USER_ID);
+        when(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER)).thenReturn(DIST_CONSUMER_ID);
+        when(request.getHeader(Constants.X_ECOMP_REQUEST_ID_HEADER)).thenReturn(REQUEST_ID);
+        when(request.getRequestURI()).thenReturn(DIST_RESOURCE_URL);
+
+        Service service = new Service();
+        service.setInvariantUUID(INVARIANT_UUID);
+        service.setUUID(SERVICE_INSTANCE_ID);
+
+        utils.auditCreateServiceExternalApi(responseFormat, request, service);
+
+        verify(manager).auditEvent(factoryCaptor.capture());
+        AuditCreateServiceExternalApiEventFactory factory = (AuditCreateServiceExternalApiEventFactory)factoryCaptor.getValue();
+
+        ExternalApiEvent event = (ExternalApiEvent)factory.getDbEvent();
+        verifyCommonDataForExternalApiEvent(event, true);
+        verifyPreviousResourceVersionInfoForExternalApiEvent(event, true);
+        verifyDistributionDataForExternalApiEvent(event);
+        assertThat(event.getCurrArtifactUuid()).isNull();
+        assertThat(event.getModifier()).isEqualTo("(" + USER_ID + ")");
+        assertThat(event.getInvariantUuid()).isEqualTo(INVARIANT_UUID);
     }
 
     @Test

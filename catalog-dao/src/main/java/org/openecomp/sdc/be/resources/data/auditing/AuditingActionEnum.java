@@ -53,6 +53,7 @@ public enum AuditingActionEnum {
     ARTIFACT_DELETE_BY_API("ArtifactDeleteByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     DOWNLOAD_ARTIFACT("DownloadArtifact",AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     CREATE_RESOURCE_BY_API("CreateResourceByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+    CREATE_SERVICE_BY_API("CreateServiceByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     CHANGE_LIFECYCLE_BY_API("ChangeLifecycleByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
     ACTIVATE_SERVICE_BY_API("ActivateServiceByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
 

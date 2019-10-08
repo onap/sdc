@@ -242,6 +242,13 @@ public class AuditTestUtils {
             "\" CURR_STATE = \"" + CURRENT_STATE + "\" CURR_ARTIFACT_UUID = \"" + ARTIFACT_UUID + "\" STATUS = \"" + STATUS_OK +
             "\" SERVICE_INSTANCE_ID = \"" + SERVICE_INSTANCE_ID + "\" INVARIANT_UUID = \"" + INVARIANT_UUID + "\" DESC = \"" + DESCRIPTION + "\"";
 
+    public final static String EXPECTED_EXTERNAL_CREATE_SERVICE_LOG_STR = "ACTION = \"" + AuditingActionEnum.CREATE_SERVICE_BY_API.getName() +
+            "\" RESOURCE_TYPE = \"" + RESOURCE_TYPE + "\" CONSUMER_ID = \"" + DIST_CONSUMER_ID +
+            "\" RESOURCE_URL = \"" + DIST_RESOURCE_URL + "\" MODIFIER = \"" + MODIFIER_UID +
+            "\" STATUS = \"" + STATUS_OK + "\" SERVICE_INSTANCE_ID = \"" + SERVICE_INSTANCE_ID +
+            "\" INVARIANT_UUID = \"" + INVARIANT_UUID + "\" DESC = \"" + DESCRIPTION + "\"";
+
+
     public static User user;
     public static User modifier;
 
