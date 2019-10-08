@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -72,25 +73,25 @@ import static org.mockito.Mockito.when;
 
 public class AssetsDataServletTest extends JerseyTest {
 
-    public static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-    public static final HttpSession session = Mockito.mock(HttpSession.class);
-    public static final ServletContext servletContext = Mockito.mock(ServletContext.class);
-    public static final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-    public static final WebApplicationContext webApplicationContext = Mockito.mock(WebApplicationContext.class);
-    public static final ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
-    public static final ServletUtils servletUtils = Mockito.mock(ServletUtils.class);
-    public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
-    public static final ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
-    public static final ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
-    public static final ElementBusinessLogic elementBusinessLogic = Mockito.mock(ElementBusinessLogic.class);
-    public static final Resource resource = Mockito.mock(Resource.class);
-    public static final CategoryDefinition categoryDefinition = Mockito.mock(CategoryDefinition.class);
-    public static final SubCategoryDefinition subCategoryDefinition = Mockito.mock(SubCategoryDefinition.class);
-    public static final AssetMetadataConverter assetMetadataConverter = Mockito.mock(AssetMetadataConverter.class);
-    public static final ResourceAssetMetadata resourceAssetMetadata = new ResourceAssetMetadata();
-    public static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
-    public static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    public static final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
+    private static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private static final HttpSession session = Mockito.mock(HttpSession.class);
+    private static final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    private static final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
+    private static final WebApplicationContext webApplicationContext = Mockito.mock(WebApplicationContext.class);
+    private static final ServletUtils servletUtils = Mockito.mock(ServletUtils.class);
+    private static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+    private static final ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
+    private static final ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
+    private static final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
+    private static final ElementBusinessLogic elementBusinessLogic = Mockito.mock(ElementBusinessLogic.class);
+    private static final Resource resource = Mockito.mock(Resource.class);
+    private static final CategoryDefinition categoryDefinition = Mockito.mock(CategoryDefinition.class);
+    private static final SubCategoryDefinition subCategoryDefinition = Mockito.mock(SubCategoryDefinition.class);
+    private static final AssetMetadataConverter assetMetadataConverter = Mockito.mock(AssetMetadataConverter.class);
+    private static final ResourceAssetMetadata resourceAssetMetadata = new ResourceAssetMetadata();
+    private static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
+    private static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    private static final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
 
 
 
@@ -203,6 +204,7 @@ public class AssetsDataServletTest extends JerseyTest {
                         bind(assetMetadataConverter).to(AssetMetadataConverter.class);
                         bind(lifecycleBusinessLogic).to(LifecycleBusinessLogic.class);
                         bind(resourceBusinessLogic).to(ResourceBusinessLogic.class);
+                        bind(serviceBusinessLogic).to(ServiceBusinessLogic.class);
                     }
                 })
                 .property("contextConfig", context);
