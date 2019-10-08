@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_VES_EVENTS;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_ARCHIVE_VERSION;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.PNFD_NAME;
@@ -46,8 +48,6 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_LICENSES;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_TESTS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION_ENTRY;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.EMPTY_YAML_FILE_PATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.INVALID_YAML_FILE_PATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.SAMPLE_DEFINITION_FILE_PATH;
@@ -90,23 +90,23 @@ public class SOL004MetaDirectoryValidatorTest {
         handler = new OnboardingPackageContentHandler();
         metaFileBuilder = new StringBuilder()
             .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
             .append(CSAR_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
             .append(CREATED_BY_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
             .append(ENTRY_DEFINITIONS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.yaml").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.yaml").append("\n")
             .append(ETSI_ENTRY_MANIFEST.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.mf").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.mf").append("\n")
             .append(ETSI_ENTRY_CHANGE_LOG.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Artifacts/changeLog.text").append("\n");
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Artifacts/changeLog.text").append("\n");
     }
 
     @Test
     public void testGivenTOSCAMetaFile_whenEntryHasNoValue_thenErrorIsReturned() {
         final String metaFileWithInvalidEntry = "TOSCA-Meta-File-Version: \n" +
-                "Entry-Definitions: Definitions/MainServiceTemplate.yaml";
+            "Entry-Definitions: Definitions/MainServiceTemplate.yaml";
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileWithInvalidEntry.getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
@@ -125,11 +125,12 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFolder("Files/Licenses/");
         metaFileBuilder
             .append(ETSI_ENTRY_TESTS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(entryTestFilePath).append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(entryTestFilePath).append("\n")
             .append(ETSI_ENTRY_LICENSES.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(entryLicenseFilePath).append("\n");
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(entryLicenseFilePath).append("\n");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
 
@@ -157,10 +158,11 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenTOSCAMeta_withUnsupportedEntry_thenWarningIsReturned() {
         metaFileBuilder = new StringBuilder()
             .append(ENTRY_EVENTS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken())
-                .append(" Definitions/events.log");
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken())
+            .append(" Definitions/events.log");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
         List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
         assertTrue(errors.size() == 1 && errorMessages.size() == 1);
@@ -174,20 +176,21 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenTOSCAMetaFile_withInvalidTOSCAMetaFileVersionAndCSARVersion_thenErrorIsReturned() {
         final StringBuilder metaFileBuilder = new StringBuilder()
             .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(Integer.MAX_VALUE).append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(Integer.MAX_VALUE).append("\n")
             .append(CSAR_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(Integer.MAX_VALUE).append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(Integer.MAX_VALUE).append("\n")
             .append(CREATED_BY_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
             .append(ENTRY_DEFINITIONS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.yaml").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.yaml").append("\n")
             .append(ETSI_ENTRY_MANIFEST.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.mf").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.mf").append("\n")
             .append(ETSI_ENTRY_CHANGE_LOG.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Artifacts/changeLog.text");
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Artifacts/changeLog.text");
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler.addFile(ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME.getName(),
+            metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
@@ -205,7 +208,8 @@ public class SOL004MetaDirectoryValidatorTest {
 
     @Test
     public void testGivenTOSCAMetaFile_withNonExistentFileReferenced_thenErrorsReturned() {
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
         assertThat("Total of errors should be as expected", errors.size(), is(1));
@@ -218,7 +222,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenDefinitionFile_whenValidImportStatementExist_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -227,7 +232,8 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(SAMPLE_SOURCE, "".getBytes());
         manifestBuilder.withSource(SAMPLE_SOURCE);
 
-        handler.addFile("Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml", getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
+        handler.addFile("Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml",
+            getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
         manifestBuilder.withSource("Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml");
 
         final String definitionFileWithValidImports = "/validation.files/definition/definitionFileWithValidImports.yaml";
@@ -245,7 +251,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenDefinitionFile_whenMultipleDefinitionsImportStatementExist_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -254,15 +261,18 @@ public class SOL004MetaDirectoryValidatorTest {
         handler.addFile(SAMPLE_SOURCE, "".getBytes());
         manifestBuilder.withSource(SAMPLE_SOURCE);
 
-        final byte [] sampleDefinitionFile1 = getResourceBytes("/validation.files/definition/sampleDefinitionFile1.yaml");
+        final byte[] sampleDefinitionFile1 = getResourceBytes(
+            "/validation.files/definition/sampleDefinitionFile1.yaml");
         handler.addFile(TOSCA_DEFINITION_FILEPATH, sampleDefinitionFile1);
         manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
 
-        final byte [] sampleDefinitionFile2 = getResourceBytes("/validation.files/definition/sampleDefinitionFile2.yaml");
+        final byte[] sampleDefinitionFile2 = getResourceBytes(
+            "/validation.files/definition/sampleDefinitionFile2.yaml");
         handler.addFile("Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml", sampleDefinitionFile2);
         manifestBuilder.withSource("Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml");
 
-        final byte [] sampleDefinitionFile3 = getResourceBytes("/validation.files/definition/sampleDefinitionFile1.yaml");
+        final byte[] sampleDefinitionFile3 = getResourceBytes(
+            "/validation.files/definition/sampleDefinitionFile1.yaml");
         handler.addFile("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml", sampleDefinitionFile3);
         manifestBuilder.withSource("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml");
 
@@ -277,7 +287,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenDefinitionFile_whenInvalidImportStatementExist_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -305,7 +316,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenDefinitionFile_whenReferencedImportDoesNotExist_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -318,7 +330,8 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource("Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml");
 
         manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
-        handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes("/validation.files/definition/sampleDefinitionFile2.yaml"));
+        handler.addFile(TOSCA_DEFINITION_FILEPATH,
+            getResourceBytes("/validation.files/definition/sampleDefinitionFile2.yaml"));
 
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
@@ -334,7 +347,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenDefinitionFile_withInvalidYAML_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -358,7 +372,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenManifestFile_withValidSourceAndNonManoSources_thenNoErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -393,7 +408,8 @@ public class SOL004MetaDirectoryValidatorTest {
         //non existent reference
         manifestBuilder.withSource("Artifacts/Deployment/Events/RadioNode_pnf_v1.yaml");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -421,7 +437,8 @@ public class SOL004MetaDirectoryValidatorTest {
      */
     @Test
     public void testGivenManifestFile_withInvalidData_thenErrorIsReturned() {
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, getResourceBytes("/validation.files/manifest/invalidManifest.mf"));
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
@@ -432,10 +449,11 @@ public class SOL004MetaDirectoryValidatorTest {
     }
 
     @Test
-    public void testGivenManifestAndDefinitionFile_withSameNames_thenNoErrorReturned()  {
+    public void testGivenManifestAndDefinitionFile_withSameNames_thenNoErrorReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -461,21 +479,22 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenManifestAndMainDefinitionFile_withDifferentNames_thenErrorIsReturned() {
         metaFileBuilder = new StringBuilder()
             .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
             .append(CSAR_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
             .append(CREATED_BY_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
             .append(ENTRY_DEFINITIONS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.yaml\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.yaml\n")
             .append(ETSI_ENTRY_MANIFEST.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate2.mf\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate2.mf\n")
             .append(ETSI_ENTRY_CHANGE_LOG.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Artifacts/changeLog.text\n");
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Artifacts/changeLog.text\n");
 
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -488,32 +507,34 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(SAMPLE_DEFINITION_IMPORT_FILE_PATH);
 
         manifestBuilder.withSource("Definitions/MainServiceTemplate2.mf");
-        handler.addFile("Definitions/MainServiceTemplate2.mf", manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile("Definitions/MainServiceTemplate2.mf", manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
         assertExpectedErrors("Main TOSCA definitions file and Manifest file with different name should return error",
-               errors, 1);
+            errors, 1);
     }
 
     @Test
     public void testGivenManifestFile_withDifferentExtension_thenErrorIsReturned() {
         metaFileBuilder = new StringBuilder()
             .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
             .append(CSAR_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
             .append(CREATED_BY_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
             .append(ENTRY_DEFINITIONS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.yaml\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.yaml\n")
             .append(ETSI_ENTRY_MANIFEST.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.txt\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Definitions/MainServiceTemplate.txt\n")
             .append(ETSI_ENTRY_CHANGE_LOG.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Artifacts/changeLog.text\n");
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Artifacts/changeLog.text\n");
 
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -526,18 +547,20 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(SAMPLE_DEFINITION_IMPORT_FILE_PATH);
 
         manifestBuilder.withSource("Definitions/MainServiceTemplate.txt");
-        handler.addFile("Definitions/MainServiceTemplate.txt", manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile("Definitions/MainServiceTemplate.txt", manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
         assertExpectedErrors("Manifest file with different extension than .mf should return error",
-                errors, 1);
+            errors, 1);
     }
 
     @Test
     public void testGivenManifestFile_withValidVnfMetadata_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
         manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
@@ -555,7 +578,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenManifestFile_withValidPnfMetadata_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -583,7 +607,8 @@ public class SOL004MetaDirectoryValidatorTest {
             .withMetaData(PNFD_ARCHIVE_VERSION.getToken(), "1.0")
             .withMetaData(VNF_RELEASE_DATE_TIME.getToken(), "2019-12-14T11:25:00+00:00");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
         manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
@@ -606,7 +631,8 @@ public class SOL004MetaDirectoryValidatorTest {
             .withMetaData("invalid_package_version", "1.0")
             .withMetaData("invalid_release_date_time", "2019-12-14T11:25:00+00:00");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -629,7 +655,8 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withMetaData(PNFD_NAME.getToken(), "RadioNode");
         manifestBuilder.withMetaData(PNFD_RELEASE_DATE_TIME.getToken(), "2019-12-14T11:25:00+00:00");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -652,7 +679,8 @@ public class SOL004MetaDirectoryValidatorTest {
 
         manifestBuilder.withMetaData(VNF_PRODUCT_NAME.getToken(), "RadioNode");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -680,7 +708,8 @@ public class SOL004MetaDirectoryValidatorTest {
             .withMetaData(PNFD_ARCHIVE_VERSION.getToken(), "1.0")
             .withMetaData(PNFD_RELEASE_DATE_TIME.getToken(), "2019-03-11T11:25:00+00:00");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -701,11 +730,12 @@ public class SOL004MetaDirectoryValidatorTest {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         metaFileBuilder
             .append(ETSI_ENTRY_TESTS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Files/Tests").append("\n")
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Files/Tests").append("\n")
             .append(ETSI_ENTRY_LICENSES.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Files/Licenses");
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Files/Licenses");
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
@@ -728,7 +758,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenDefinitionFileWithImportedDescriptor_whenImportedDescriptorImportsMissingFile_thenMissingImportErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -738,7 +769,8 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(SAMPLE_SOURCE);
 
         final String definitionImportOne = "Definitions/importOne.yaml";
-        handler.addFile(definitionImportOne, getResourceBytes("/validation.files/definition/sampleDefinitionFile2.yaml"));
+        handler
+            .addFile(definitionImportOne, getResourceBytes("/validation.files/definition/sampleDefinitionFile2.yaml"));
         manifestBuilder.withSource(definitionImportOne);
 
         final String definitionFileWithValidImports = "/validation.files/definition/definitionFileWithOneImport.yaml";
@@ -765,7 +797,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void testGivenDefinitionFileWithImportedDescriptor_whenInvalidImportStatementExistInImportedDescriptor_thenInvalidImportErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -775,7 +808,8 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(SAMPLE_SOURCE);
 
         final String definitionImportOne = "Definitions/importOne.yaml";
-        handler.addFile(definitionImportOne, getResourceBytes("/validation.files/definition/definitionFileWithInvalidImport.yaml"));
+        handler.addFile(definitionImportOne,
+            getResourceBytes("/validation.files/definition/definitionFileWithInvalidImport.yaml"));
         manifestBuilder.withSource(definitionImportOne);
 
         final String definitionFileWithValidImports = "/validation.files/definition/definitionFileWithOneImport.yaml";
@@ -799,7 +833,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void givenManifestWithNonManoPmAndVesArtifacts_whenNonManoArtifactsAreValid_thenNoErrorsOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
@@ -829,7 +864,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsYamlAreInvalid_thenInvalidYamlErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
@@ -867,7 +903,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsYamlAreEmpty_thenEmptyYamlErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
@@ -905,7 +942,8 @@ public class SOL004MetaDirectoryValidatorTest {
     public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsHaveNotYamlExtension_thenInvalidYamlExtensionErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        handler
+            .addFile(TOSCA_META_PATH_FILE_NAME.getName(), metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME.getName());
 
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytes(SAMPLE_DEFINITION_FILE_PATH));
@@ -939,7 +977,8 @@ public class SOL004MetaDirectoryValidatorTest {
         assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
     }
 
-    private void assertExpectedErrors(final String testCase, final Map<String, List<ErrorMessage>> errors, final int expectedErrors){
+    private void assertExpectedErrors(final String testCase, final Map<String, List<ErrorMessage>> errors,
+                                      final int expectedErrors) {
         final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
         printErrorMessages(errorMessages);
         if (expectedErrors > 0) {

@@ -20,24 +20,34 @@
 
 package org.openecomp.sdc.be.components.csar;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.config.NonManoArtifactType;
+import org.openecomp.sdc.be.config.NonManoConfiguration;
+import org.openecomp.sdc.be.config.NonManoFolderType;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.User;
@@ -47,11 +57,6 @@ import org.openecomp.sdc.common.zip.exception.ZipException;
 @RunWith(MockitoJUnitRunner.class)
 public class CsarInfoTest {
 
-    private CsarInfo csarInfo;
-
-    @Mock
-    private User user;
-
     private static final String CSAR_UUID = "csarUUID";
     private static final String PAYLOAD_NAME = "mock_service.csar";
     private static final String RESOURCE_NAME = "resourceName";
@@ -59,6 +64,9 @@ public class CsarInfoTest {
     private static final String NEW_NODE_NAME = "new_db";
     private static final String NODE_TYPE = "tosca.nodes.Compute";
     private static final String DELIVER_FOR = "tosca.nodes.Root";
+    private CsarInfo csarInfo;
+    @Mock
+    private User user;
 
     @Before
     public void setup() throws ZipException, URISyntaxException {
@@ -68,7 +76,7 @@ public class CsarInfoTest {
         String mainTemplateContent = new String(payload.get(MAIN_TEMPLATE_NAME));
 
         csarInfo = new CsarInfo(user, CSAR_UUID, payload, RESOURCE_NAME,
-                MAIN_TEMPLATE_NAME, mainTemplateContent, true);
+            MAIN_TEMPLATE_NAME, mainTemplateContent, true);
     }
 
     @Test
@@ -111,5 +119,34 @@ public class CsarInfoTest {
 
         assertEquals(MAIN_TEMPLATE_NAME, csarInfo.getMainTemplateName());
         assertEquals(csarInfo.getMainTemplateName(), nodeTypeInfo.getTemplateFileName());
+    }
+
+    @Test
+    public void getSoftwareInformationPathTest() {
+        final NonManoConfiguration nonManoConfigurationMock = Mockito.mock(NonManoConfiguration.class);
+        final CsarInfo csarInfo = new CsarInfo(nonManoConfigurationMock);
+        final NonManoFolderType testNonManoFolderType = new NonManoFolderType();
+        testNonManoFolderType.setLocation("sw-location-test");
+        testNonManoFolderType.setType("informational-test");
+        when(nonManoConfigurationMock.getNonManoType(NonManoArtifactType.ONAP_SW_INFORMATION))
+            .thenReturn(testNonManoFolderType);
+        final Map<String, byte[]> csarFileMap = new HashMap<>();
+        final String expectedPath = testNonManoFolderType.getPath() + "/" + "software-file.yaml";
+        csarFileMap.put(expectedPath, new byte[0]);
+        csarInfo.setCsar(csarFileMap);
+        final Optional<String> softwareInformationPath = csarInfo.getSoftwareInformationPath();
+        assertThat("The software information yaml path should be present", softwareInformationPath.isPresent(),
+            is(true));
+        softwareInformationPath.ifPresent(path -> {
+            assertThat("The software information yaml ", path, is(equalTo(expectedPath)));
+        });
+    }
+
+    @Test
+    public void getSoftwareInformationPathTest_emptyCsar() {
+        csarInfo.setCsar(new HashMap<>());
+        final Optional<String> softwareInformationPath = csarInfo.getSoftwareInformationPath();
+        assertThat("The software information yaml path should not be present", softwareInformationPath.isPresent(),
+            is(false));
     }
 }

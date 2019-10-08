@@ -37,8 +37,6 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_PM_DICTIONARY;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.NonManoArtifactType.ONAP_VES_EVENTS;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,6 +72,17 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.exceptions.Inv
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
 import org.yaml.snakeyaml.Yaml;
+
+import static org.openecomp.sdc.tosca.csar.CSARConstants.CSAR_VERSION_1_0;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.CSAR_VERSION_1_1;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_METADATA_LIMIT;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_VNF_METADATA;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_MANIFEST_FILE_EXT;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_TYPE_PNF;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_TYPE_VNF;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_VES_EVENTS;
 
 /**
  * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure
@@ -137,10 +146,11 @@ class SOL004MetaDirectoryValidator implements Validator {
     }
 
     private void verifySignedFiles() {
-        final Map<String, String> signedFileMap = contentHandler.getFileAndSignaturePathMap(SecurityManager.ALLOWED_SIGNATURE_EXTENSIONS);
+        final Map<String, String> signedFileMap = contentHandler
+            .getFileAndSignaturePathMap(SecurityManager.ALLOWED_SIGNATURE_EXTENSIONS);
         final String packageCertificatePath = getCertificatePath().orElse(null);
         final byte[] packageCert = contentHandler.getFileContent(packageCertificatePath);
-        if(packageCert == null) {
+        if (packageCert == null) {
             throw new MissingCertificateException("Expected package certificate");
         }
         signedFileMap.entrySet().stream().filter(entry -> entry.getValue() != null).forEach(entry -> {
@@ -407,6 +417,7 @@ class SOL004MetaDirectoryValidator implements Validator {
             new Yaml().loadAll(fileContent).iterator().next();
         } catch (final Exception e) {
             reportError(ErrorLevel.ERROR, Messages.INVALID_YAML_FORMAT_1.formatMessage(filePath, e.getMessage()));
+            LOGGER.warn("Failed to validate YAML", e);
         }
     }
 

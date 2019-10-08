@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -138,18 +138,17 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     private static final String RESOURCE_SUBCATEGORY = "Router";
 
     private static final String UPDATED_SUBCATEGORY = "Gateway";
-
-    private String resourceId = "resourceId1";
-    private String operationId = "uniqueId1";
-    Resource resourceUpdate;
-
     private static final String RESOURCE_NAME = "My-Resource_Name with   space";
     private static final String RESOURCE_TOSCA_NAME = "My-Resource_Tosca_Name";
     private static final String GENERIC_VF_NAME = "org.openecomp.resource.abstract.nodes.VF";
     private static final String GENERIC_CR_NAME = "org.openecomp.resource.abstract.nodes.CR";
     private static final String GENERIC_PNF_NAME = "org.openecomp.resource.abstract.nodes.PNF";
-
     final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    final LifecycleBusinessLogic lifecycleBl = Mockito.mock(LifecycleBusinessLogic.class);
+    final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
+    final PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
+    final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+    Resource resourceUpdate;
     IElementOperation mockElementDao = new ElementOperationMock();
     JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
@@ -157,16 +156,11 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
     NodeTemplateOperation nodeTemplateOperation = Mockito.mock(NodeTemplateOperation.class);
     TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
-    final LifecycleBusinessLogic lifecycleBl = Mockito.mock(LifecycleBusinessLogic.class);
-    final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
-    final PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
-    final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
     WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     UserValidations userValidations = Mockito.mock(UserValidations.class);
     WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
     IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
     ArtifactCassandraDao artifactCassandraDao = Mockito.mock(ArtifactCassandraDao.class);
-
     CsarUtils csarUtils = Mockito.mock(CsarUtils.class);
     IUserBusinessLogic userBusinessLogic = Mockito.mock(IUserBusinessLogic.class);
     IGroupOperation groupOperation = Mockito.mock(IGroupOperation.class);
@@ -182,10 +176,10 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
     CompositionBusinessLogic compositionBusinessLogic = Mockito.mock(CompositionBusinessLogic.class);
     ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic = Mockito.mock(ResourceDataMergeBusinessLogic.class);
-    CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = Mockito.mock(CsarArtifactsAndGroupsBusinessLogic.class);
+    CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = Mockito
+        .mock(CsarArtifactsAndGroupsBusinessLogic.class);
     MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
     UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-
     ResponseFormatManager responseManager = null;
     GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
     User user = null;
@@ -200,9 +194,14 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     @InjectMocks
     CsarBusinessLogic csarBusinessLogic;
     Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
-    private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     List<Resource> reslist;
     ResourceBusinessLogic bl;
+    private String resourceId = "resourceId1";
+    private String operationId = "uniqueId1";
+    private PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
+    private SoftwareInformationBusinessLogic softwareInformationBusinessLogic = Mockito
+        .mock(SoftwareInformationBusinessLogic.class);
+    private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
 
     public ResourceBusinessLogicTest() {
     }
@@ -216,7 +215,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
 
         // init Configuration
         String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
         componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
 
@@ -235,20 +235,24 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(user);
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
+        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
+            .thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
         when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
 
         Either<Integer, StorageOperationStatus> eitherCountRoot = Either.left(1);
         Either<Boolean, StorageOperationStatus> eitherFalse = Either.left(true);
-        when(toscaOperationFacade.validateComponentNameExists("Root", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherFalse);
-
+        when(toscaOperationFacade.validateComponentNameExists("Root", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+            .thenReturn(eitherFalse);
 
         Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(true);
-        when(toscaOperationFacade.validateComponentNameExists("alreadyExists", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCountExist);
+        when(toscaOperationFacade
+            .validateComponentNameExists("alreadyExists", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+            .thenReturn(eitherCountExist);
 
         Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
-        when(toscaOperationFacade.validateComponentNameExists(eq(RESOURCE_NAME), any(ResourceTypeEnum.class), eq(ComponentTypeEnum.RESOURCE))).thenReturn(eitherCount);
+        when(toscaOperationFacade.validateComponentNameExists(eq(RESOURCE_NAME), any(ResourceTypeEnum.class),
+            eq(ComponentTypeEnum.RESOURCE))).thenReturn(eitherCount);
         /*when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
         when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.PNF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
         when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.CR, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);*/
@@ -257,8 +261,10 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
 
         Either<Boolean, StorageOperationStatus> validateDerivedNotExists = Either.left(false);
         when(toscaOperationFacade.validateToscaResourceNameExists("kuku")).thenReturn(validateDerivedNotExists);
-        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
-        when(graphLockOperation.lockComponentByName(Mockito.anyString(), eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Resource)))
+            .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponentByName(Mockito.anyString(), eq(NodeTypeEnum.Resource)))
+            .thenReturn(StorageOperationStatus.OK);
 
         // createResource
         resourceResponse = createResourceObject(true);
@@ -270,15 +276,18 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
         // BL object
-        artifactManager = new ArtifactsBusinessLogic(artifactCassandraDao, toscaExportHandler, csarUtils, lifecycleBl, userBusinessLogic,
-            artifactsResolver, mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
+        artifactManager = new ArtifactsBusinessLogic(artifactCassandraDao, toscaExportHandler, csarUtils, lifecycleBl,
+            userBusinessLogic,
+            artifactsResolver, mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            interfaceOperation,
             interfaceLifecycleTypeOperation, artifactToscaOperation);
 
-        bl = new ResourceBusinessLogic(mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
+        bl = new ResourceBusinessLogic(mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
+            groupBusinessLogic,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactManager, componentInstanceBusinessLogic,
             resourceImportManager, inputsBusinessLogic, compositionBusinessLogic, resourceDataMergeBusinessLogic,
             csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
-            artifactToscaOperation);
+            artifactToscaOperation, propertyBusinessLogic, softwareInformationBusinessLogic);
 
         artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
         bl.setUserAdmin(mockUserAdmin);
@@ -309,10 +318,13 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         reslist.add(genericCR);
         reslist.add(genericVFC);
         reslist.add(genericPNF);
-        Either<List<Resource>, StorageOperationStatus> returneval= Either.left(reslist);
+        Either<List<Resource>, StorageOperationStatus> returneval = Either.left(reslist);
         when(toscaOperationFacade.getAllCertifiedResources(true, true)).thenReturn(returneval);
-        when(toscaOperationFacade.validateComponentNameUniqueness("Resource", ResourceTypeEnum.CR, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(true));
-        Either<List<Resource>, StorageOperationStatus> returnevalexception= Either.right(StorageOperationStatus.BAD_REQUEST);
+        when(toscaOperationFacade
+            .validateComponentNameUniqueness("Resource", ResourceTypeEnum.CR, ComponentTypeEnum.RESOURCE))
+            .thenReturn(Either.left(true));
+        Either<List<Resource>, StorageOperationStatus> returnevalexception = Either
+            .right(StorageOperationStatus.BAD_REQUEST);
         when(toscaOperationFacade.getAllCertifiedResources(false, false)).thenReturn(returnevalexception);
 
     }
@@ -389,10 +401,10 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         Resource resource = createResourceObject(false);
         Resource createdResource = null;
-        try{
-            createdResource= bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+        try {
+            createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
             assertThat(createResourceObject(true)).isEqualTo(createdResource);
-        } catch(ByResponseFormatComponentException e){
+        } catch (ByResponseFormatComponentException e) {
             assertThat(new Integer(200)).isEqualTo(e.getResponseFormat().getStatus());
         }
     }
@@ -403,7 +415,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         setCanWorkOnResource(resource);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         Either<Resource, StorageOperationStatus> resourceLinkedToCsarRes = Either.left(resource);
-        when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(), resource.getSystemName())).thenReturn(resourceLinkedToCsarRes);
+        when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(),
+            resource.getSystemName())).thenReturn(resourceLinkedToCsarRes);
         Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
         when(toscaOperationFacade.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
         Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
@@ -411,10 +424,10 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
         when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
         Resource createdResource = null;
-        try{
-            createdResource= bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId());
+        try {
+            createdResource = bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId());
             assertThat(resource.getUniqueId()).isEqualTo(createdResource.getUniqueId());
-        } catch(ByResponseFormatComponentException e){
+        } catch (ByResponseFormatComponentException e) {
             assertThat(new Integer(200)).isEqualTo(e.getResponseFormat().getStatus());
         }
     }
@@ -469,7 +482,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByResponseFormatComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resourceName);
+            assertComponentException(e, ActionStatus.COMPONENT_NAME_ALREADY_EXIST,
+                ComponentTypeEnum.RESOURCE.getValue(), resourceName);
         }
     }
 
@@ -493,7 +507,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT,
+                ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
         }
     }
 
@@ -515,7 +530,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     private void testResourceDescExceedsLimitCreate() {
         Resource resourceExccedsDescLimit = createResourceObject(false);
         // 1025 chars, the limit is 1024
-        String tooLongResourceDesc = "1GUODojQ0sGzKR4NP7e5j82ADQ3KHTVOaezL95qcbuaqDtjZhAQGQ3iFwKAy580K4WiiXs3u3zq7RzXcSASl5fm0RsWtCMOIDP"
+        String tooLongResourceDesc =
+            "1GUODojQ0sGzKR4NP7e5j82ADQ3KHTVOaezL95qcbuaqDtjZhAQGQ3iFwKAy580K4WiiXs3u3zq7RzXcSASl5fm0RsWtCMOIDP"
                 + "AOf9Tf2xtXxPCuCIMCR5wOGnNTaFxgnJEHAGxilBhZDgeMNHmCN1rMK5B5IRJOnZxcpcL1NeG3APTCIMP1lNAxngYulDm9heFSBc8TfXAADq7703AvkJT0QPpGq2z2P"
                 + "tlikcAnIjmWgfC5Tm7UH462BAlTyHg4ExnPPL4AO8c92VrD7kZSgSqiy73cN3gLT8uigkKrUgXQFGVUFrXVyyQXYtVM6bLBeuCGQf4C2j8lkNg6M0J3PC0PzMRoinOxk"
                 + "Ae2teeCtVcIj4A1KQo3210j8q2v7qQU69Mabsa6DT9FgE4rcrbiFWrg0Zto4SXWD3o1eJA9o29lTg6kxtklH3TuZTmpi5KVp1NFhS1RpnqF83tzv4mZLKsx7Zh1fEgYvRFwx1"
@@ -528,7 +544,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExccedsDescLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT,
+                ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
         }
     }
 
@@ -541,7 +558,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(notEnglish, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_INVALID_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
+            assertComponentException(e, ActionStatus.COMPONENT_INVALID_DESCRIPTION,
+                ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -552,7 +570,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
+            assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION,
+                ComponentTypeEnum.RESOURCE.getValue());
         }
     }
 
@@ -563,7 +582,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
+            assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION,
+                ComponentTypeEnum.RESOURCE.getValue());
         }
     }
     // Resource description - end
@@ -597,7 +617,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT,
+                ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
         }
     }
 
@@ -675,7 +696,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT,
+                "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
         }
     }
 
@@ -691,7 +713,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT,
+                "" + ValidationUtils.TAG_MAX_LENGTH);
         }
     }
 
@@ -776,7 +799,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExccedsVendorNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
+                "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
         }
     }
 
@@ -785,9 +809,11 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         String tooLongVendorModelNumber = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
         resourceExccedsVendorModelNumberLimit.setResourceVendorModelNumber(tooLongVendorModelNumber);
         try {
-            bl.createResource(resourceExccedsVendorModelNumberLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+            bl.createResource(resourceExccedsVendorModelNumberLimit, AuditingActionEnum.CREATE_RESOURCE, user, null,
+                null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT, "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
+                "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
         }
     }
 
@@ -822,7 +848,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT,
+                "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
         }
     }
 
@@ -884,12 +911,13 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         createResourceObject.setCost(cost);
         createResourceObject.setLicenseType(licenseType);
         Resource createdResource;
-        try{
-            createdResource = bl.createResource(createResourceObject, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+        try {
+            createdResource = bl
+                .createResource(createResourceObject, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
             createResourceObjectAfterCreate.setCost(cost);
             createResourceObjectAfterCreate.setLicenseType(licenseType);
             assertThat(createResourceObjectAfterCreate).isEqualTo(createdResource);
-        }catch(ByResponseFormatComponentException e){
+        } catch (ByResponseFormatComponentException e) {
             assertThat(new Integer(200)).isEqualTo(e.getResponseFormat().getStatus());
         }
     }
@@ -956,13 +984,16 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
             assertComponentException(e, ActionStatus.PARENT_RESOURCE_NOT_FOUND);
         }
     }
+
     // Derived from stop
-    private void assertComponentException(ByResponseFormatComponentException e, ActionStatus expectedStatus, String... variables) {
+    private void assertComponentException(ByResponseFormatComponentException e, ActionStatus expectedStatus,
+                                          String... variables) {
         ResponseFormat actualResponse = e.getResponseFormat();
         assertResponse(actualResponse, expectedStatus, variables);
     }
 
-    private void assertComponentException(ByActionStatusComponentException e, ActionStatus expectedStatus, String... variables) {
+    private void assertComponentException(ByActionStatusComponentException e, ActionStatus expectedStatus,
+                                          String... variables) {
         ResponseFormat actualResponse = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
         assertResponse(actualResponse, expectedStatus, variables);
     }
@@ -973,7 +1004,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         assertThat(expectedResponse.getFormattedMessage()).isEqualTo(actualResponse.getFormattedMessage());
     }
 
-    private void assertResponse(Either<Resource, ResponseFormat> createResponse, ActionStatus expectedStatus, String... variables) {
+    private void assertResponse(Either<Resource, ResponseFormat> createResponse, ActionStatus expectedStatus,
+                                String... variables) {
         assertResponse(createResponse.right().value(), expectedStatus, variables);
     }
 
@@ -1039,7 +1071,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resourceName);
+            assertComponentException(e, ActionStatus.COMPONENT_NAME_ALREADY_EXIST,
+                ComponentTypeEnum.RESOURCE.getValue(), resourceName);
         }
     }
 
@@ -1055,7 +1088,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
         // 1025 chars, the limit is 1024
-        String tooLongResourceDesc = "1GUODojQ0sGzKR4NP7e5j82ADQ3KHTVOaezL95qcbuaqDtjZhAQGQ3iFwKAy580K4WiiXs3u3zq7RzXcSASl5fm0RsWtCMOIDP"
+        String tooLongResourceDesc =
+            "1GUODojQ0sGzKR4NP7e5j82ADQ3KHTVOaezL95qcbuaqDtjZhAQGQ3iFwKAy580K4WiiXs3u3zq7RzXcSASl5fm0RsWtCMOIDP"
                 + "AOf9Tf2xtXxPCuCIMCR5wOGnNTaFxgnJEHAGxilBhZDgeMNHmCN1rMK5B5IRJOnZxcpcL1NeG3APTCIMP1lNAxngYulDm9heFSBc8TfXAADq7703AvkJT0QPpGq2z2P"
                 + "tlikcAnIjmWgfC5Tm7UH462BAlTyHg4ExnPPL4AO8c92VrD7kZSgSqiy73cN3gLT8uigkKrUgXQFGVUFrXVyyQXYtVM6bLBeuCGQf4C2j8lkNg6M0J3PC0PzMRoinOxk"
                 + "Ae2teeCtVcIj4A1KQo3210j8q2v7qQU69Mabsa6DT9FgE4rcrbiFWrg0Zto4SXWD3o1eJA9o29lTg6kxtklH3TuZTmpi5KVp1NFhS1RpnqF83tzv4mZLKsx7Zh1fEgYvRFwx1"
@@ -1069,7 +1103,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT,
+                ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
         }
     }
 
@@ -1179,7 +1214,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT,
+                "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
         }
     }
 
@@ -1243,7 +1279,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         try {
             bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
         } catch (ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
+            assertComponentException(e, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT,
+                "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
         }
     }
 
@@ -1367,10 +1404,13 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
         Either<Boolean, StorageOperationStatus> isToscaNameExtending = Either.left(true);
-        when(toscaOperationFacade.validateToscaResourceNameExtends(Mockito.anyString(), Mockito.anyString())).thenReturn(isToscaNameExtending);
+        when(toscaOperationFacade.validateToscaResourceNameExtends(Mockito.anyString(), Mockito.anyString()))
+            .thenReturn(isToscaNameExtending);
 
-        Either<Map<String, PropertyDefinition>, StorageOperationStatus> findPropertiesOfNode = Either.left(new HashMap<>());
-        when(propertyOperation.deleteAllPropertiesAssociatedToNode(any(NodeTypeEnum.class), Mockito.anyString())).thenReturn(findPropertiesOfNode);
+        Either<Map<String, PropertyDefinition>, StorageOperationStatus> findPropertiesOfNode = Either
+            .left(new HashMap<>());
+        when(propertyOperation.deleteAllPropertiesAssociatedToNode(any(NodeTypeEnum.class), Mockito.anyString()))
+            .thenReturn(findPropertiesOfNode);
 
         resource.setVersion("1.0");
 
@@ -1395,7 +1435,7 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
 
         Either<Boolean, StorageOperationStatus> isToscaNameExtending = Either.left(false);
         when(toscaOperationFacade.validateToscaResourceNameExtends(Mockito.anyString(), Mockito.anyString()))
-                .thenReturn(isToscaNameExtending);
+            .thenReturn(isToscaNameExtending);
 
         resource.setVersion("1.0");
 
@@ -1404,8 +1444,10 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         updatedResource.setDerivedFrom(derivedFrom);
         Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
         when(toscaOperationFacade.updateToscaElement(updatedResource)).thenReturn(dataModelResponse);
-        Either<Map<String, PropertyDefinition>, StorageOperationStatus> findPropertiesOfNode = Either.left(new HashMap<>());
-        when(propertyOperation.deleteAllPropertiesAssociatedToNode(any(NodeTypeEnum.class), Mockito.anyString())).thenReturn(findPropertiesOfNode);
+        Either<Map<String, PropertyDefinition>, StorageOperationStatus> findPropertiesOfNode = Either
+            .left(new HashMap<>());
+        when(propertyOperation.deleteAllPropertiesAssociatedToNode(any(NodeTypeEnum.class), Mockito.anyString()))
+            .thenReturn(findPropertiesOfNode);
 
         try {
             bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
@@ -1419,21 +1461,28 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     public void createOrUpdateResourceAlreadyCheckout() {
         Resource resourceExist = createResourceObject(false);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        Resource createdResource = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+        Resource createdResource = bl
+            .createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         createdResource.setLastUpdaterUserId(user.getUserId());
         assertThat(createdResource).isNotNull();
         Either<Resource, StorageOperationStatus> getLatestResult = Either.left(createdResource);
         Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(createdResource);
-        when(toscaOperationFacade.getLatestByToscaResourceName(resourceExist.getToscaResourceName())).thenReturn(getCompLatestResult);
-        when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class))).thenReturn(getLatestResult);
+        when(toscaOperationFacade.getLatestByToscaResourceName(resourceExist.getToscaResourceName()))
+            .thenReturn(getCompLatestResult);
+        when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class)))
+            .thenReturn(getLatestResult);
 
         Resource resourceToUpdtae = createResourceObject(false);
 
-        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
+        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl
+            .createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
         assertNotNull(createOrUpdateResource);
 
-        Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(any(Resource.class), any(Resource.class));
-        Mockito.verify(lifecycleBl, Mockito.times(0)).changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT), any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
+        Mockito.verify(toscaOperationFacade, Mockito.times(1))
+            .overrideComponent(any(Resource.class), any(Resource.class));
+        Mockito.verify(lifecycleBl, Mockito.times(0))
+            .changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT),
+                any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
     }
 
@@ -1441,7 +1490,8 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     public void createOrUpdateResourceCertified() {
         Resource resourceExist = createResourceObject(false);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        Resource createdResource = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+        Resource createdResource = bl
+            .createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
         assertThat(createdResource).isNotNull();
         createdResource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
@@ -1449,17 +1499,26 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
 
         Either<Resource, StorageOperationStatus> getLatestResult = Either.left(createdResource);
         Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(createdResource);
-        when(toscaOperationFacade.getLatestByToscaResourceName(resourceExist.getToscaResourceName())).thenReturn(getCompLatestResult);        when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class))).thenReturn(getLatestResult);
+        when(toscaOperationFacade.getLatestByToscaResourceName(resourceExist.getToscaResourceName()))
+            .thenReturn(getCompLatestResult);
+        when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class)))
+            .thenReturn(getLatestResult);
 
-        when(lifecycleBl.changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT), any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(Either.left(createdResource));
+        when(lifecycleBl.changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT),
+            any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean()))
+            .thenReturn(Either.left(createdResource));
 
         Resource resourceToUpdtae = createResourceObject(false);
 
-        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
+        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl
+            .createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
         assertNotNull(createOrUpdateResource);
 
-        Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(any(Resource.class), any(Resource.class));
-        Mockito.verify(lifecycleBl, Mockito.times(1)).changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT), any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
+        Mockito.verify(toscaOperationFacade, Mockito.times(1))
+            .overrideComponent(any(Resource.class), any(Resource.class));
+        Mockito.verify(lifecycleBl, Mockito.times(1))
+            .changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT),
+                any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
     }
 
@@ -1470,15 +1529,21 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         Either<Component, StorageOperationStatus> getLatestResult = Either.right(StorageOperationStatus.NOT_FOUND);
         when(toscaOperationFacade.getLatestByName(resourceToUpdtae.getName())).thenReturn(getLatestResult);
 
-        Either<Component, StorageOperationStatus> getLatestToscaNameResult = Either.right(StorageOperationStatus.NOT_FOUND);
-        when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdtae.getToscaResourceName())).thenReturn(getLatestToscaNameResult);
+        Either<Component, StorageOperationStatus> getLatestToscaNameResult = Either
+            .right(StorageOperationStatus.NOT_FOUND);
+        when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdtae.getToscaResourceName()))
+            .thenReturn(getLatestToscaNameResult);
 
-        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
+        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl
+            .createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
         assertThat(createOrUpdateResource).isNotNull();
 
         Mockito.verify(toscaOperationFacade, times(1)).createToscaComponent(eq(resourceToUpdtae));
-        Mockito.verify(toscaOperationFacade, Mockito.times(0)).overrideComponent(any(Resource.class), any(Resource.class));
-        Mockito.verify(lifecycleBl, Mockito.times(0)).changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT), any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
+        Mockito.verify(toscaOperationFacade, Mockito.times(0))
+            .overrideComponent(any(Resource.class), any(Resource.class));
+        Mockito.verify(lifecycleBl, Mockito.times(0))
+            .changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT),
+                any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
     }
 
@@ -1488,19 +1553,27 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "." + "abc";
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml");
         CsarInfo csarInfo = new CsarInfo(user, "abcd1234", new HashMap<>(),
-                RESOURCE_NAME, "template name", jsonContent, true);
-        String nestedResourceName = bl.buildNestedToscaResourceName(resourceToUpdate.getResourceType().name(), csarInfo.getVfResourceName(), nodeName).getRight();
-        when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName)).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+            RESOURCE_NAME, "template name", jsonContent, true);
+        String nestedResourceName = bl
+            .buildNestedToscaResourceName(resourceToUpdate.getResourceType().name(), csarInfo.getVfResourceName(),
+                nodeName).getRight();
+        when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName()))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName()))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
-        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdate, user, false, false, false, csarInfo,
+        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl
+            .createOrUpdateResourceByImport(resourceToUpdate, user, false, false, false, csarInfo,
                 nodeName, false);
         assertThat(createOrUpdateResource).isNotNull();
 
         Mockito.verify(toscaOperationFacade, times(1)).createToscaComponent(eq(resourceToUpdate));
         Mockito.verify(toscaOperationFacade, times(0)).overrideComponent(any(Resource.class), any(Resource.class));
-        Mockito.verify(lifecycleBl, times(0)).changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT), any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
+        Mockito.verify(lifecycleBl, times(0))
+            .changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT),
+                any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
     }
 
     @Test
@@ -1510,18 +1583,27 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "." + "abc";
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml");
         CsarInfo csarInfo = new CsarInfo(user, "abcd1234", new HashMap<>(),
-                RESOURCE_NAME, "template name", jsonContent, true);
-        String nestedResourceName = bl.buildNestedToscaResourceName(resourceToUpdate.getResourceType().name(), csarInfo.getVfResourceName(), nodeName).getRight();
-        when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName)).thenReturn(Either.left(resourceResponse));
-        when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class))).thenReturn(Either.left(resourceResponse));
+            RESOURCE_NAME, "template name", jsonContent, true);
+        String nestedResourceName = bl
+            .buildNestedToscaResourceName(resourceToUpdate.getResourceType().name(), csarInfo.getVfResourceName(),
+                nodeName).getRight();
+        when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName()))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName()))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName))
+            .thenReturn(Either.left(resourceResponse));
+        when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class)))
+            .thenReturn(Either.left(resourceResponse));
 
-        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdate, user, false, false, false, csarInfo,
+        ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl
+            .createOrUpdateResourceByImport(resourceToUpdate, user, false, false, false, csarInfo,
                 nodeName, false);
         assertThat(createOrUpdateResource).isNotNull();
         Mockito.verify(toscaOperationFacade, times(1)).overrideComponent(any(Resource.class), any(Resource.class));
-        Mockito.verify(lifecycleBl, times(0)).changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT), any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
+        Mockito.verify(lifecycleBl, times(0))
+            .changeState(Mockito.anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT),
+                any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
     }
 
     @Test
@@ -1590,19 +1672,23 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         deploymentArtifactToUpdate.setArtifactName(deploymentArtifactToUpdateFileName);
         deploymentArtifactToUpdate.setArtifactType("SNMP_POLL");
         deploymentArtifactToUpdate.setPayload(oldPayloadData);
-        deploymentArtifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
+        deploymentArtifactToUpdate
+            .setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
 
         ArtifactDefinition deploymentArtifactToDelete = new ArtifactDefinition();
         deploymentArtifactToDelete.setMandatory(false);
         deploymentArtifactToDelete.setArtifactName(deploymentArtifactToDeleteFileName);
         deploymentArtifactToDelete.setArtifactType("SNMP_TRAP");
         deploymentArtifactToDelete.setPayload(oldPayloadData);
-        deploymentArtifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
+        deploymentArtifactToDelete
+            .setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
 
         ArtifactDefinition deploymentArtifactToIgnore = new ArtifactDefinition();
 
-        deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToUpdate.getArtifactName()), deploymentArtifactToUpdate);
-        deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToDelete.getArtifactName()), deploymentArtifactToDelete);
+        deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToUpdate.getArtifactName()),
+            deploymentArtifactToUpdate);
+        deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToDelete.getArtifactName()),
+            deploymentArtifactToDelete);
         deploymentArtifacts.put("ignore", deploymentArtifactToIgnore);
 
         Map<String, ArtifactDefinition> artifacts = new HashMap<>();
@@ -1634,35 +1720,43 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
 
         artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToUpdate.getArtifactName()), artifactToUpdate);
         artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToDelete.getArtifactName()), artifactToDelete);
-        artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToNotDelete.getArtifactName()), artifactToNotDelete);
+        artifacts
+            .put(ValidationUtils.normalizeArtifactLabel(artifactToNotDelete.getArtifactName()), artifactToNotDelete);
         artifacts.put("ignore", artifactToIgnore);
 
         resource.setDeploymentArtifacts(deploymentArtifacts);
         resource.setArtifacts(artifacts);
 
         List<NonMetaArtifactInfo> artifactPathAndNameList = new ArrayList<>();
-        NonMetaArtifactInfo deploymentArtifactInfoToUpdate = new NonMetaArtifactInfo(deploymentArtifactToUpdate.getArtifactName(), null,
-                ArtifactTypeEnum.findType(deploymentArtifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
-                newPayloadData, deploymentArtifactToUpdate.getArtifactName(), false);
+        NonMetaArtifactInfo deploymentArtifactInfoToUpdate = new NonMetaArtifactInfo(
+            deploymentArtifactToUpdate.getArtifactName(), null,
+            ArtifactTypeEnum.findType(deploymentArtifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
+            newPayloadData, deploymentArtifactToUpdate.getArtifactName(), false);
 
-        NonMetaArtifactInfo informationalArtifactInfoToUpdate = new NonMetaArtifactInfo(artifactToUpdate.getArtifactName(), null,
-                ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
-                newPayloadData, artifactToUpdate.getArtifactName(), false);
+        NonMetaArtifactInfo informationalArtifactInfoToUpdate = new NonMetaArtifactInfo(
+            artifactToUpdate.getArtifactName(), null,
+            ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
+            newPayloadData, artifactToUpdate.getArtifactName(), false);
 
-        NonMetaArtifactInfo informationalArtifactInfoToUpdateFromCsar = new NonMetaArtifactInfo(artifactToUpdate.getArtifactName(), null,
-                ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.INFORMATIONAL,
-                newPayloadData, artifactToUpdate.getArtifactName(), true);
+        NonMetaArtifactInfo informationalArtifactInfoToUpdateFromCsar = new NonMetaArtifactInfo(
+            artifactToUpdate.getArtifactName(), null,
+            ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.INFORMATIONAL,
+            newPayloadData, artifactToUpdate.getArtifactName(), true);
 
-        NonMetaArtifactInfo deploymentArtifactInfoToUpdateFromCsar = new NonMetaArtifactInfo(artifactToUpdate.getArtifactName(), null,
-                ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
-                newPayloadData, artifactToUpdate.getArtifactName(), true);
+        NonMetaArtifactInfo deploymentArtifactInfoToUpdateFromCsar = new NonMetaArtifactInfo(
+            artifactToUpdate.getArtifactName(), null,
+            ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
+            newPayloadData, artifactToUpdate.getArtifactName(), true);
 
-        NonMetaArtifactInfo deploymentArtifactInfoToCreate = new NonMetaArtifactInfo(deploymentArtifactToCreateFileName, null,
-                ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData, deploymentArtifactToCreateFileName, false);
+        NonMetaArtifactInfo deploymentArtifactInfoToCreate = new NonMetaArtifactInfo(deploymentArtifactToCreateFileName,
+            null,
+            ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData,
+            deploymentArtifactToCreateFileName, false);
 
-        NonMetaArtifactInfo informationalArtifactInfoToCreate = new NonMetaArtifactInfo(artifactInfoToCreateFileName, null,
-                ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.INFORMATIONAL,
-                newPayloadData, artifactInfoToCreateFileName, false);
+        NonMetaArtifactInfo informationalArtifactInfoToCreate = new NonMetaArtifactInfo(artifactInfoToCreateFileName,
+            null,
+            ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.INFORMATIONAL,
+            newPayloadData, artifactInfoToCreateFileName, false);
 
         artifactPathAndNameList.add(deploymentArtifactInfoToUpdate);
         artifactPathAndNameList.add(informationalArtifactInfoToUpdate);
@@ -1677,9 +1771,11 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
             Method method = targetClass.getDeclaredMethod(methodName, argClasses);
             method.setAccessible(true);
             Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandleRes =
-                    (Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat>) method.invoke(bl, argObjects);
+                (Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat>) method
+                    .invoke(bl, argObjects);
             assertTrue(findVfCsarArtifactsToHandleRes.isLeft());
-            EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> foundVfArtifacts = findVfCsarArtifactsToHandleRes.left().value();
+            EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> foundVfArtifacts = findVfCsarArtifactsToHandleRes
+                .left().value();
             assertEquals(4, foundVfArtifacts.get(ArtifactOperationEnum.CREATE).size());
             assertEquals(4, foundVfArtifacts.get(ArtifactOperationEnum.UPDATE).size());
             assertEquals(1, foundVfArtifacts.get(ArtifactOperationEnum.DELETE).size());
@@ -1738,10 +1834,10 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         assertEquals(6, resource.getInputs().size());
         //verify inputs ownerId fields were removed - user may delete/edit inputs
         assertEquals(6, resource.getInputs()
-                                .stream()
-                                .filter(p -> null == p.getOwnerId())
-                                .collect(Collectors.toList())
-                                .size());
+            .stream()
+            .filter(p -> null == p.getOwnerId())
+            .collect(Collectors.toList())
+            .size());
     }
 
 
@@ -1764,13 +1860,15 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         genericVF.setProperties(new ArrayList<>());
         genericVF.getProperties().add(newProp);
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericVF));
-        when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericVF.getProperties(), genericVF.getUniqueId())).thenCallRealMethod();
+        when(genericTypeBusinessLogic
+            .convertGenericTypePropertiesToInputsDefintion(genericVF.getProperties(), genericVF.getUniqueId()))
+            .thenCallRealMethod();
         String currentDerivedFromVersion = resource.getDerivedFromGenericVersion();
         assertEquals(6, resource.getInputs()
-                                .stream()
-                                .filter(p -> null != p.getOwnerId())
-                                .collect(Collectors.toList())
-                                .size());
+            .stream()
+            .filter(p -> null != p.getOwnerId())
+            .collect(Collectors.toList())
+            .size());
         Either<Boolean, ResponseFormat> upgradeToLatestGeneric = bl.shouldUpgradeToLatestGeneric(resource);
         //verify success
         assertTrue(upgradeToLatestGeneric.isLeft());
@@ -1782,16 +1880,16 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
         assertEquals(7, resource.getInputs().size());
         //verify user defined input exists
         assertEquals(1, resource.getInputs()
-                                .stream()
-                                .filter(p -> null == p.getOwnerId())
-                                .collect(Collectors.toList())
-                                .size());
+            .stream()
+            .filter(p -> null == p.getOwnerId())
+            .collect(Collectors.toList())
+            .size());
         assertEquals("integer", resource.getInputs()
-                                        .stream()
-                                        .filter(p -> null == p.getOwnerId())
-                                        .findAny()
-                                        .get()
-                                        .getType());
+            .stream()
+            .filter(p -> null == p.getOwnerId())
+            .findAny()
+            .get()
+            .getType());
     }
 
     @Test
@@ -1812,14 +1910,17 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     private Resource createVF() {
 
         genericVF = setupGenericTypeMock(GENERIC_VF_NAME);
-        when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_VF_NAME)).thenReturn(Either.left(genericVF));
+        when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_VF_NAME))
+            .thenReturn(Either.left(genericVF));
         Resource resource = createResourceObject(true);
         resource.setDerivedFrom(null);
         resource.setResourceType(ResourceTypeEnum.VF);
         when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericVF));
         when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericVF)).thenCallRealMethod();
-        when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericVF.getProperties(), resource.getUniqueId())).thenCallRealMethod();
+        when(genericTypeBusinessLogic
+            .convertGenericTypePropertiesToInputsDefintion(genericVF.getProperties(), resource.getUniqueId()))
+            .thenCallRealMethod();
         Resource createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         assertThat(createdResource).isNotNull();
         return createdResource;
@@ -1829,14 +1930,17 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     private Resource createCR() {
 
         genericCR = setupGenericTypeMock(GENERIC_CR_NAME);
-        when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_CR_NAME)).thenReturn(Either.left(genericCR));
+        when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_CR_NAME))
+            .thenReturn(Either.left(genericCR));
         Resource resource = createResourceObject(true);
         resource.setDerivedFrom(null);
         resource.setResourceType(ResourceTypeEnum.CR);
         when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericCR));
         when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericCR)).thenCallRealMethod();
-        when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericCR.getProperties(), resource.getUniqueId())).thenCallRealMethod();
+        when(genericTypeBusinessLogic
+            .convertGenericTypePropertiesToInputsDefintion(genericCR.getProperties(), resource.getUniqueId()))
+            .thenCallRealMethod();
         Resource createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         assertThat(createdResource).isNotNull();
         return createdResource;
@@ -1845,14 +1949,17 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     private Resource createPNF() {
 
         genericPNF = setupGenericTypeMock(GENERIC_PNF_NAME);
-        when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_PNF_NAME)).thenReturn(Either.left(genericPNF));
+        when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_PNF_NAME))
+            .thenReturn(Either.left(genericPNF));
         Resource resource = createResourceObject(true);
         resource.setDerivedFrom(null);
         resource.setResourceType(ResourceTypeEnum.PNF);
         when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericPNF));
         when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericPNF)).thenCallRealMethod();
-        when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericPNF.getProperties(), resource.getUniqueId())).thenCallRealMethod();
+        when(genericTypeBusinessLogic
+            .convertGenericTypePropertiesToInputsDefintion(genericPNF.getProperties(), resource.getUniqueId()))
+            .thenCallRealMethod();
         Resource createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
         assertThat(createdResource).isNotNull();
         return createdResource;
@@ -1879,9 +1986,15 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
             put("max_instances", "integer");
         }};
 
-        if (toscaName.contains("PNF")) return PNFProps;
-        if (toscaName.contains("CR")) return CRProps;
-        if (toscaName.contains("VF")) return VFProps;
+        if (toscaName.contains("PNF")) {
+            return PNFProps;
+        }
+        if (toscaName.contains("CR")) {
+            return CRProps;
+        }
+        if (toscaName.contains("VF")) {
+            return VFProps;
+        }
 
         return new HashMap<>();
     }
@@ -1913,19 +2026,20 @@ public class ResourceBusinessLogicTest extends ComponentBusinessLogicMock {
     @Test
     public void testgetAllCertifiedResources() throws Exception {
         List<Resource> list = bl.getAllCertifiedResources(true, HighestFilterEnum.HIGHEST_ONLY, "USER");
-        Assert.assertEquals(reslist,list);
+        Assert.assertEquals(reslist, list);
     }
 
     @Test(expected = StorageException.class)
     public void testgetAllCertifiedResources_exception() throws Exception {
         List<Resource> list = bl.getAllCertifiedResources(false, HighestFilterEnum.NON_HIGHEST_ONLY, "USER");
-        Assert.assertEquals(reslist,list);
+        Assert.assertEquals(reslist, list);
     }
 
     @Test
     public void testvalidateResourceNameExists() throws Exception {
-        Either<Map<String, Boolean>, ResponseFormat> res = bl.validateResourceNameExists("Resource", ResourceTypeEnum.CR, "jh0003");
-        Assert.assertEquals(true,res.isLeft());
+        Either<Map<String, Boolean>, ResponseFormat> res = bl
+            .validateResourceNameExists("Resource", ResourceTypeEnum.CR, "jh0003");
+        Assert.assertEquals(true, res.isLeft());
     }
 
 

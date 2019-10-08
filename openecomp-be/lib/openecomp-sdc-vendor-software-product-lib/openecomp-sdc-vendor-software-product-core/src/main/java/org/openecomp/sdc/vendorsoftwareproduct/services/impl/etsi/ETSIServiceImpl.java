@@ -31,7 +31,6 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_N
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -41,11 +40,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.parser.utils.YamlToObjectConverter;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.be.config.NonManoConfiguration;
+import org.openecomp.sdc.be.config.NonManoConfigurationManager;
+import org.openecomp.sdc.be.config.NonManoFolderType;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -59,20 +59,14 @@ public class ETSIServiceImpl implements ETSIService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ETSIServiceImpl.class);
 
-    private Configuration configuration;
+    private final NonManoConfiguration nonManoConfiguration;
 
-    public ETSIServiceImpl() throws IOException {
-        final InputStream io = getClass().getClassLoader().getResourceAsStream("nonManoConfig.yaml");
-        if (io == null) {
-            throw new IOException("Non Mano configuration not found");
-        }
-        final String data = IOUtils.toString(io, StandardCharsets.UTF_8);
-        final YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
-        configuration = yamlToObjectConverter.convertFromString(data, Configuration.class);
+    public ETSIServiceImpl() {
+        nonManoConfiguration = NonManoConfigurationManager.getInstance().getNonManoConfiguration();
     }
 
-    public ETSIServiceImpl(Configuration configuration) {
-        this.configuration = configuration;
+    public ETSIServiceImpl(final NonManoConfiguration nonManoConfiguration) {
+        this.nonManoConfiguration = nonManoConfiguration;
     }
 
     @Override
@@ -82,7 +76,8 @@ public class ETSIServiceImpl implements ETSIService {
     }
 
     @Override
-    public Optional<Map<String, Path>> moveNonManoFileToArtifactFolder(final FileContentHandler handler) throws IOException {
+    public Optional<Map<String, Path>> moveNonManoFileToArtifactFolder(final FileContentHandler handler)
+        throws IOException {
         final Manifest manifest;
         try {
             manifest = getManifest(handler);
@@ -102,19 +97,24 @@ public class ETSIServiceImpl implements ETSIService {
             throw ex;
         }
         final Map<String, Path> fromToPathMap = new HashMap<>();
-        final Map<String, NonManoType> nonManoKeyFolderMapping = configuration.getNonManoKeyFolderMapping();
+        final Map<String, NonManoFolderType> nonManoKeyFolderMapping = nonManoConfiguration
+            .getNonManoKeyFolderMapping();
         manifest.getNonManoSources().entrySet().stream()
-            .filter(manifestNonManoSourceEntry -> nonManoKeyFolderMapping.containsKey(manifestNonManoSourceEntry.getKey()))
+            .filter(
+                manifestNonManoSourceEntry -> nonManoKeyFolderMapping.containsKey(manifestNonManoSourceEntry.getKey()))
             .forEach(manifestNonManoSourceEntry -> {
-                final NonManoType nonManoType = nonManoKeyFolderMapping.get(manifestNonManoSourceEntry.getKey());
+                final NonManoFolderType nonManoFolderType = nonManoKeyFolderMapping
+                    .get(manifestNonManoSourceEntry.getKey());
                 final List<String> nonManoFileList = manifestNonManoSourceEntry.getValue();
                 final Map<String, Path> actualFromToPathMap = nonManoFileList.stream()
                     .map(nonManoFilePath -> {
                         final Path normalizedFilePath = resolveNonManoFilePath(originalManifestPath, nonManoFilePath);
-                        final Optional<Path> changedPath = updateNonManoPathInHandler(handler, nonManoType, normalizedFilePath);
+                        final Optional<Path> changedPath = updateNonManoPathInHandler(handler, nonManoFolderType,
+                            normalizedFilePath);
                         if (changedPath.isPresent()) {
                             final Map<String, Path> fromAndToPathMap = new HashMap<>();
-                            fromAndToPathMap.put(nonManoFilePath, Paths.get(ARTIFACTS_FOLDER).resolve(changedPath.get()));
+                            fromAndToPathMap
+                                .put(nonManoFilePath, Paths.get(ARTIFACTS_FOLDER).resolve(changedPath.get()));
                             return fromAndToPathMap;
                         }
                         return null;
@@ -134,7 +134,7 @@ public class ETSIServiceImpl implements ETSIService {
      * Resolves the non mano file path based on the original manifest path of the onboarded package.
      *
      * @param originalManifestPath The original path from the onboarded package manifest
-     * @param nonManoFilePath The non mano file path defined in the manifest
+     * @param nonManoFilePath      The non mano file path defined in the manifest
      * @return The resolved and normalized non mano path.
      */
     private Path resolveNonManoFilePath(final Path originalManifestPath, final String nonManoFilePath) {
@@ -144,16 +144,17 @@ public class ETSIServiceImpl implements ETSIService {
     /**
      * Updates the non mano file path in the package file handler based on the non mano type.
      *
-     * @param handler The package file handler
-     * @param nonManoType The Non Mano type of the file to update
+     * @param handler                 The package file handler
+     * @param nonManoFolderType       The Non Mano type of the file to update
      * @param nonManoOriginalFilePath The Non Mano file original path
      * @return The new file path if it was updated in the package file handler, otherwise empty.
      */
-    private Optional<Path> updateNonManoPathInHandler(final FileContentHandler handler, final NonManoType nonManoType,
+    private Optional<Path> updateNonManoPathInHandler(final FileContentHandler handler,
+                                                      final NonManoFolderType nonManoFolderType,
                                                       final Path nonManoOriginalFilePath) {
         final Path fixedSourcePath = fixNonManoPath(nonManoOriginalFilePath);
         if (handler.containsFile(fixedSourcePath.toString())) {
-            final Path newNonManoPath = Paths.get(nonManoType.getType(), nonManoType.getLocation()
+            final Path newNonManoPath = Paths.get(nonManoFolderType.getType(), nonManoFolderType.getLocation()
                 , fixedSourcePath.getFileName().toString());
             if (!handler.containsFile(newNonManoPath.toString())) {
                 handler.addFile(newNonManoPath.toString(), handler.remove(fixedSourcePath.toString()));
@@ -166,7 +167,7 @@ public class ETSIServiceImpl implements ETSIService {
 
     /**
      * Fix the original non mano file path to the ONAP package file path.
-     *
+     * <p>
      * Non mano artifacts that were inside the {@link org.openecomp.sdc.tosca.csar.CSARConstants#ARTIFACTS_FOLDER} path
      * are not moved when parsed to ONAP package, but the Manifest declaration can still have the {@link
      * org.openecomp.sdc.tosca.csar.CSARConstants#ARTIFACTS_FOLDER} reference in it. If so, that reference is removed.
@@ -209,7 +210,8 @@ public class ETSIServiceImpl implements ETSIService {
     }
 
     private boolean isMetaFilePresent(Map<String, byte[]> handler) {
-        return handler.containsKey(TOSCA_META_PATH_FILE_NAME.getName()) || handler.containsKey(TOSCA_META_ORIG_PATH_FILE_NAME);
+        return handler.containsKey(TOSCA_META_PATH_FILE_NAME.getName()) || handler
+            .containsKey(TOSCA_META_ORIG_PATH_FILE_NAME);
     }
 
     public ResourceTypeEnum getResourceType(FileContentHandler handler) throws IOException {
@@ -284,5 +286,9 @@ public class ETSIServiceImpl implements ETSIService {
             throw new IOException("Manifest file not found!");
         }
         return io;
+    }
+
+    public NonManoConfiguration getConfiguration() {
+        return nonManoConfiguration;
     }
 }

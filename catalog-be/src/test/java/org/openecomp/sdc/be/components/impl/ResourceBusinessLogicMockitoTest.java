@@ -145,6 +145,10 @@ public class ResourceBusinessLogicMockitoTest {
     private IGraphLockOperation graphLockOperation;
     @Mock
     private GenericTypeBusinessLogic genericTypeBusinessLogic;
+    @Mock
+    private PropertyBusinessLogic propertyBusinessLogic;
+    @Mock
+    private SoftwareInformationBusinessLogic softwareInformationBusinessLogic;
 
     private ResourceBusinessLogic resourceBusinessLogic;
 
@@ -167,7 +171,9 @@ public class ResourceBusinessLogicMockitoTest {
             mergeInstanceUtils,
             uiComponentDataConverter,
             csarBusinessLogic,
-            artifactToscaOperation);
+            artifactToscaOperation,
+            propertyBusinessLogic,
+            softwareInformationBusinessLogic);
 
         resourceBusinessLogic.setLifecycleManager(lifecycleManager);
         resourceBusinessLogic.setApplicationDataTypeCache(applicationDataTypeCache);
@@ -192,9 +198,13 @@ public class ResourceBusinessLogicMockitoTest {
 
     @Test
     public void shouldValidateResourceNameExistsIfDataModelResponseIsRight() {
-        Mockito.when(userValidations.validateUserExists(USER_ID, VALIDATE_RESOURCE_NAME_EXISTS, false)).thenReturn(user);
-        Mockito.when(toscaOperationFacade.validateComponentNameUniqueness(RESOURCE_NAME, ResourceTypeEnum.ABSTRACT, ComponentTypeEnum.RESOURCE)).thenReturn(Either.right(StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION));
-        Mockito.when(componentUtils.convertFromStorageResponse(StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION)).thenReturn(ActionStatus.DECLARED_INPUT_USED_BY_OPERATION);
+        Mockito.when(userValidations.validateUserExists(USER_ID, VALIDATE_RESOURCE_NAME_EXISTS, false))
+            .thenReturn(user);
+        Mockito.when(toscaOperationFacade
+            .validateComponentNameUniqueness(RESOURCE_NAME, ResourceTypeEnum.ABSTRACT, ComponentTypeEnum.RESOURCE))
+            .thenReturn(Either.right(StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION));
+        Mockito.when(componentUtils.convertFromStorageResponse(StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION))
+            .thenReturn(ActionStatus.DECLARED_INPUT_USED_BY_OPERATION);
         Either<Map<String, Boolean>, ResponseFormat> response = resourceBusinessLogic
             .validateResourceNameExists(RESOURCE_NAME, ResourceTypeEnum.ABSTRACT, USER_ID);
         assertTrue(response.isRight());
@@ -203,7 +213,8 @@ public class ResourceBusinessLogicMockitoTest {
     @Test(expected = ByResponseFormatComponentException.class)
     public void shouldThrowExceptionOnCreateResourceIfCsarUUIDIsNotEmptyIfAlreadyExist() {
         Mockito.when(elementDao
-            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(getCategoryDefinitions()));
+            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+            .thenReturn(Either.left(getCategoryDefinitions()));
         Mockito.when(toscaOperationFacade.validateToscaResourceNameExists(Mockito.any())).thenReturn(Either.left(true));
         Resource resource = getResource();
         Map<String, byte[]> csarUIPayload = Collections.emptyMap();
@@ -212,20 +223,23 @@ public class ResourceBusinessLogicMockitoTest {
         Map<String, UploadComponentInstanceInfo> nonEmptyMap = new HashMap<>();
         nonEmptyMap.put(ANY, new UploadComponentInstanceInfo());
         resource.setResourceType(ResourceTypeEnum.ABSTRACT);
-        Mockito.when(graphLockOperation.lockComponentByName(Mockito.any(), Mockito.any())).thenReturn(StorageOperationStatus.OK);
+        Mockito.when(graphLockOperation.lockComponentByName(Mockito.any(), Mockito.any()))
+            .thenReturn(StorageOperationStatus.OK);
         Mockito.when(parsedToscaYamlInfo.getInstances()).thenReturn(nonEmptyMap);
         Mockito.when(csarBusinessLogic.getParsedToscaYamlInfo(null, null, nodeTypeInfo, csarInfo, null)).thenReturn(
             parsedToscaYamlInfo);
         Mockito.when(toscaOperationFacade.validateComponentNameExists(
             resource.getName(), resource.getResourceType(), resource.getComponentType())).thenReturn(Either.left(true));
-        Mockito.when(genericTypeBusinessLogic.fetchDerivedFromGenericType(Mockito.any())).thenReturn(Either.left(resource));
+        Mockito.when(genericTypeBusinessLogic.fetchDerivedFromGenericType(Mockito.any()))
+            .thenReturn(Either.left(resource));
         resourceBusinessLogic.createResource(resource, AuditingActionEnum.ADD_USER, user, csarUIPayload, PAYLOAD);
     }
 
     @Test(expected = ByResponseFormatComponentException.class)
     public void shouldThrowExceptionOnCreateResourceIfCsarUUIDIsNotEmptyButComponentNameNotExists() {
         Mockito.when(elementDao
-            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(getCategoryDefinitions()));
+            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+            .thenReturn(Either.left(getCategoryDefinitions()));
         Mockito.when(toscaOperationFacade.validateToscaResourceNameExists(Mockito.any())).thenReturn(Either.left(true));
         Resource resource = getResource();
         Map<String, byte[]> csarUIPayload = Collections.emptyMap();
@@ -234,20 +248,24 @@ public class ResourceBusinessLogicMockitoTest {
         Map<String, UploadComponentInstanceInfo> nonEmptyMap = new HashMap<>();
         nonEmptyMap.put(ANY, new UploadComponentInstanceInfo());
         resource.setResourceType(ResourceTypeEnum.ABSTRACT);
-        Mockito.when(graphLockOperation.lockComponentByName(Mockito.any(), Mockito.any())).thenReturn(StorageOperationStatus.OK);
+        Mockito.when(graphLockOperation.lockComponentByName(Mockito.any(), Mockito.any()))
+            .thenReturn(StorageOperationStatus.OK);
         Mockito.when(parsedToscaYamlInfo.getInstances()).thenReturn(nonEmptyMap);
         Mockito.when(csarBusinessLogic.getParsedToscaYamlInfo(null, null, nodeTypeInfo, csarInfo, null)).thenReturn(
             parsedToscaYamlInfo);
         Mockito.when(toscaOperationFacade.validateComponentNameExists(
-            resource.getName(), resource.getResourceType(), resource.getComponentType())).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
-        Mockito.when(genericTypeBusinessLogic.fetchDerivedFromGenericType(Mockito.any())).thenReturn(Either.left(resource));
+            resource.getName(), resource.getResourceType(), resource.getComponentType()))
+            .thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+        Mockito.when(genericTypeBusinessLogic.fetchDerivedFromGenericType(Mockito.any()))
+            .thenReturn(Either.left(resource));
         resourceBusinessLogic.createResource(resource, AuditingActionEnum.ADD_USER, user, csarUIPayload, PAYLOAD);
     }
 
     @Test(expected = ByActionStatusComponentException.class)
     public void shouldThrowExceptionOnCreateResourceIfCsarUUIDIsNotEmptyButEmptyDerivedFromGenericType() {
         Mockito.when(elementDao
-            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(getCategoryDefinitions()));
+            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+            .thenReturn(Either.left(getCategoryDefinitions()));
         Mockito.when(toscaOperationFacade.validateToscaResourceNameExists(Mockito.any())).thenReturn(Either.left(true));
         Resource resource = getResource();
         Map<String, byte[]> csarUIPayload = Collections.emptyMap();
@@ -256,9 +274,11 @@ public class ResourceBusinessLogicMockitoTest {
         Map<String, UploadComponentInstanceInfo> nonEmptyMap = new HashMap<>();
         nonEmptyMap.put(ANY, new UploadComponentInstanceInfo());
         resource.setResourceType(ResourceTypeEnum.ABSTRACT);
-        Mockito.when(graphLockOperation.lockComponentByName(Mockito.any(), Mockito.any())).thenReturn(StorageOperationStatus.OK);
+        Mockito.when(graphLockOperation.lockComponentByName(Mockito.any(), Mockito.any()))
+            .thenReturn(StorageOperationStatus.OK);
         Mockito.when(parsedToscaYamlInfo.getInstances()).thenReturn(nonEmptyMap);
-        Mockito.when(genericTypeBusinessLogic.fetchDerivedFromGenericType(Mockito.any())).thenReturn(Either.right(new ResponseFormat()));
+        Mockito.when(genericTypeBusinessLogic.fetchDerivedFromGenericType(Mockito.any()))
+            .thenReturn(Either.right(new ResponseFormat()));
         Mockito.when(csarBusinessLogic.getParsedToscaYamlInfo(null, null, nodeTypeInfo, csarInfo, null)).thenReturn(
             parsedToscaYamlInfo);
         resourceBusinessLogic.createResource(resource, AuditingActionEnum.ADD_USER, user, csarUIPayload, PAYLOAD);
@@ -267,7 +287,8 @@ public class ResourceBusinessLogicMockitoTest {
     @Test(expected = ByResponseFormatComponentException.class)
     public void shouldThrowExceptionOnCreateResourceIfCsarUUIDIsNotEmptyButInvalidLockResponse() {
         Mockito.when(elementDao
-            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(getCategoryDefinitions()));
+            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+            .thenReturn(Either.left(getCategoryDefinitions()));
         Mockito.when(toscaOperationFacade.validateToscaResourceNameExists(Mockito.any())).thenReturn(Either.left(true));
         Resource resource = getResource();
         Map<String, byte[]> csarUIPayload = Collections.emptyMap();
@@ -277,7 +298,8 @@ public class ResourceBusinessLogicMockitoTest {
         nonEmptyMap.put(ANY, new UploadComponentInstanceInfo());
         resource.setResourceType(ResourceTypeEnum.ABSTRACT);
         Mockito.when(parsedToscaYamlInfo.getInstances()).thenReturn(nonEmptyMap);
-        Mockito.when(graphLockOperation.lockComponentByName(Mockito.any(), Mockito.any())).thenReturn(StorageOperationStatus.BAD_REQUEST);
+        Mockito.when(graphLockOperation.lockComponentByName(Mockito.any(), Mockito.any()))
+            .thenReturn(StorageOperationStatus.BAD_REQUEST);
         Mockito.when(csarBusinessLogic.getParsedToscaYamlInfo(null, null, nodeTypeInfo, csarInfo, null)).thenReturn(
             parsedToscaYamlInfo);
         resourceBusinessLogic.createResource(resource, AuditingActionEnum.ADD_USER, user, csarUIPayload, PAYLOAD);
@@ -287,7 +309,8 @@ public class ResourceBusinessLogicMockitoTest {
     @Test(expected = ByActionStatusComponentException.class)
     public void shouldThrowExceptionOnNonPnfResource() {
         Mockito.when(elementDao
-            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(getCategoryDefinitions()));
+            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+            .thenReturn(Either.left(getCategoryDefinitions()));
         Mockito.when(toscaOperationFacade.validateToscaResourceNameExists(Mockito.any())).thenReturn(Either.left(true));
         Resource resource = getResource();
         Map<String, byte[]> csarUIPayload = Collections.emptyMap();
@@ -301,18 +324,23 @@ public class ResourceBusinessLogicMockitoTest {
     @Test(expected = ByActionStatusComponentException.class)
     public void shouldThrowExceptionOnFailedToRetrieveResourceCategoriesFromJanusGraph() {
         Mockito.when(elementDao
-            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
+            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+            .thenReturn(Either.right(ActionStatus.ARTIFACT_NOT_FOUND));
         Resource resource = getResource();
-        resourceBusinessLogic.createResource(resource, AuditingActionEnum.ADD_USER, user, Collections.emptyMap(), PAYLOAD);
+        resourceBusinessLogic
+            .createResource(resource, AuditingActionEnum.ADD_USER, user, Collections.emptyMap(), PAYLOAD);
     }
 
     @Test(expected = ByActionStatusComponentException.class)
     public void shouldThrowExceptionOnRightDataModelResponse() {
         Mockito.when(elementDao
-            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(getCategoryDefinitions()));
-        Mockito.when(toscaOperationFacade.validateToscaResourceNameExists(Mockito.any())).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
+            .thenReturn(Either.left(getCategoryDefinitions()));
+        Mockito.when(toscaOperationFacade.validateToscaResourceNameExists(Mockito.any()))
+            .thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
         Resource resource = getResource();
-        resourceBusinessLogic.createResource(resource, AuditingActionEnum.ADD_USER, user, Collections.emptyMap(), PAYLOAD);
+        resourceBusinessLogic
+            .createResource(resource, AuditingActionEnum.ADD_USER, user, Collections.emptyMap(), PAYLOAD);
     }
 
     private Resource getResource() {
