@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.be.test.util.TestResourcesHandler;
 
 public class YamlTestUtil {
 
@@ -45,7 +46,7 @@ public class YamlTestUtil {
     }
 
     public static Object read(final String yamlFilePath) throws IOException {
-        try (final InputStream resourceInputStream = TestResourcesUtil.getFileResourceAsStream(yamlFilePath)) {
+        try (final InputStream resourceInputStream = TestResourcesHandler.getResourceAsStream(yamlFilePath)) {
             return read(resourceInputStream);
         }
     }

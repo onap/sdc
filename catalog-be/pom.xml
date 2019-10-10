@@ -76,6 +76,13 @@
     </dependency>
     <dependency>
       <groupId>org.openecomp.sdc.be</groupId>
+      <artifactId>common-be</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openecomp.sdc.be</groupId>
       <artifactId>catalog-dao</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

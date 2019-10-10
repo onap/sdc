@@ -17,16 +17,15 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.components.csar;
+package org.openecomp.sdc.be.csar.pnf;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.be.components.csar.PnfSoftwareInformation.PnfSoftwareInformationField;
-import org.openecomp.sdc.be.components.csar.PnfSoftwareVersion.PnfSoftwareVersionField;
+import org.openecomp.sdc.be.csar.pnf.PnfSoftwareInformation.PnfSoftwareInformationField;
+import org.openecomp.sdc.be.csar.pnf.PnfSoftwareVersion.PnfSoftwareVersionField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +56,8 @@ public class SoftwareInformationArtifactYamlParser {
             }
 
             softwareVersionYamlObject = (Map<String, Object>) yaml; // unchecked warning suppressed
-        } catch (final IOException e) {
-            LOGGER.warn("Could not parse the software information yaml file", e);
+        } catch (final Exception ex) {
+            LOGGER.warn("Could not parse the software information yaml file", ex);
             return Optional.empty();
         }
 

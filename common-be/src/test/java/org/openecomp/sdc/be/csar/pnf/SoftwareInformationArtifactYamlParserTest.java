@@ -17,7 +17,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.components.csar;
+package org.openecomp.sdc.be.csar.pnf;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -27,14 +27,14 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.Test;
-import org.openecomp.sdc.TestUtils;
+import org.openecomp.sdc.be.test.util.TestResourcesHandler;
 
 public class SoftwareInformationArtifactYamlParserTest {
 
     @Test
     public void parse() throws IOException {
         //given
-        final byte[] resourceAsByteArray = TestUtils
+        final byte[] resourceAsByteArray = TestResourcesHandler
             .getResourceAsByteArray("artifacts/pnfSoftwareInformation/pnf-sw-information.yaml");
         //when
         final Optional<PnfSoftwareInformation> pnfSoftwareInformation = SoftwareInformationArtifactYamlParser

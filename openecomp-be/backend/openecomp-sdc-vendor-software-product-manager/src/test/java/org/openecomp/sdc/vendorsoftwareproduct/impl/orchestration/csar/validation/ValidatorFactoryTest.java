@@ -20,13 +20,8 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.openecomp.core.utilities.file.FileContentHandler;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.be.test.util.TestResourcesHandler.getResourceBytesOrFail;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.CREATED_BY_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.CSAR_VERSION_ENTRY;
@@ -38,6 +33,12 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_N
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_CHANGELOG_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_DEFINITION_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_MANIFEST_FILEPATH;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import org.junit.Before;
+import org.junit.Test;
+import org.openecomp.core.utilities.file.FileContentHandler;
 
 public class ValidatorFactoryTest {
 
@@ -102,7 +103,7 @@ public class ValidatorFactoryTest {
     @Test
     public void testGivenMultiBlockMetadataWithSOL00CompliantMetaFile_thenSOL004MetaDirectoryValidatorReturned() throws IOException {
 
-        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), ValidatorUtil.getFileResource("/validation.files/metafile/metaFileWithMultipleBlocks.meta"));
+        handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), getResourceBytesOrFail("validation.files/metafile/metaFileWithMultipleBlocks.meta"));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
