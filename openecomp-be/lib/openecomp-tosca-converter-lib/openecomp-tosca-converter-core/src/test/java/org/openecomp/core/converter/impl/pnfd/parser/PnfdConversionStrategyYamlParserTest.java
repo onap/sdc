@@ -25,20 +25,23 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.Test;
 import org.openecomp.core.converter.pnfd.strategy.PnfdConversionStrategy;
-import org.openecomp.core.util.TestResourcesUtil;
 import org.openecomp.core.util.YamlTestUtil;
+import org.openecomp.sdc.be.test.util.TestResourcesHandler;
 
 public class PnfdConversionStrategyYamlParserTest {
 
     @Test
     public void parseInvalidYamlObject() {
         final Object replaceStrategyYaml;
-        final String strategyYamlFilePath = "transformation/strategy/strategyMissingStrategyAttribute.yaml";
-        try (final InputStream resourceInputStream = TestResourcesUtil.getFileResourceAsStream(strategyYamlFilePath)) {
+        final Path strategyYamlFilePath =
+            Paths.get("transformation", "strategy", "strategyMissingStrategyAttribute.yaml");
+        try (final InputStream resourceInputStream = TestResourcesHandler.getResourceAsStream(strategyYamlFilePath)) {
             replaceStrategyYaml = YamlTestUtil.read(resourceInputStream);
         } catch (final IOException e) {
             fail(String.format("Could not load %s", strategyYamlFilePath));

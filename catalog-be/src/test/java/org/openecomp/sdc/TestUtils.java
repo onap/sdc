@@ -20,36 +20,20 @@
 
 package org.openecomp.sdc;
 
-import org.apache.commons.io.IOUtils;
-
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-
 import static org.junit.Assert.assertArrayEquals;
 
+import java.io.InputStream;
+import javax.ws.rs.core.Response;
+import org.apache.commons.io.IOUtils;
+
 public class TestUtils {
-    public static boolean downloadedPayloadMatchesExpected(Response response, byte[] expected) {
-        boolean result = false;
-        try (InputStream is = response.readEntity(InputStream.class)) {
-            byte[] body = IOUtils.toByteArray(is);
+    public static boolean downloadedPayloadMatchesExpected(final Response response, final byte[] expected) {
+        try (final InputStream is = response.readEntity(InputStream.class)) {
+            final byte[] body = IOUtils.toByteArray(is);
             assertArrayEquals(expected, body);
-            result = true;
-        } catch(Exception ex) {
-            result = false;
+            return true;
+        } catch (final Exception ignored) {
+            return false;
         }
-        return result;
-    }
-
-    public static InputStream getResourceAsStream(final String resourcePath) {
-        return TestUtils.class.getClassLoader().getResourceAsStream(resourcePath);
-    }
-
-    public static byte[] getResourceAsByteArray(final String resourcePath) throws IOException {
-        final InputStream resourceAsStream = getResourceAsStream(resourcePath);
-        if (resourceAsStream == null) {
-            throw new IOException("Could not find file: " + resourcePath);
-        }
-        return IOUtils.toByteArray(resourceAsStream);
     }
 }
