@@ -22,6 +22,30 @@
       "revId": "c530c3f0526665b3905fc399e08429551dd697a0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "582e392f_668b1baa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 3130,
+      "author": {
+        "id": 5721
+      },
+      "writtenOn": "2019-10-10T07:45:50Z",
+      "side": 1,
+      "message": "This type should already be defined, if not, an error will be reported when importing VSP.",
+      "parentUuid": "d8ea55cf_9d46e611",
+      "range": {
+        "startLine": 3130,
+        "startChar": 16,
+        "endLine": 3130,
+        "endChar": 55
+      },
+      "revId": "c530c3f0526665b3905fc399e08429551dd697a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
