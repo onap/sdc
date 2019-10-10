@@ -17,11 +17,12 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.components.csar;
+package org.openecomp.sdc.be.csar.pnf;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -41,5 +42,9 @@ public class PnfSoftwareVersion {
         PNF_SOFTWARE_VERSION("pnf_software_version");
 
         private final String fieldName;
+    }
+
+    public boolean isValid() {
+        return StringUtils.isNotEmpty(version);
     }
 }

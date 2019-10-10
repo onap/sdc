@@ -22,8 +22,10 @@ package org.openecomp.core.impl;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
-import static org.openecomp.core.util.TestResourcesUtil.getResourceBytesOrFail;
+import static org.openecomp.sdc.be.test.util.TestResourcesHandler.getResourceBytesOrFail;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,7 +41,7 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 public class ToscaDefinitionImportHandlerTest {
 
-    private static final String RESOURCES_FILE_PATH = "/toscaDefinitionImportHandler/";
+    private static final Path RESOURCES_FILE_PATH = Paths.get("toscaDefinitionImportHandler");
     private Map<String, byte[]> descriptorFileMap;
 
     @Before
@@ -56,7 +58,9 @@ public class ToscaDefinitionImportHandlerTest {
             "Definitions/descriptorWithRelativePaths.yaml", "Artifacts/descriptorWithAbsolutePaths.yaml",
             "Artifacts/descriptorCyclicReference.yaml");
 
-        filesToHandleList.forEach(file -> descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH + file)));
+        filesToHandleList.forEach(file ->
+            descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH.resolve(file)))
+        );
 
         final ToscaDefinitionImportHandler toscaDefinitionImportHandler = new ToscaDefinitionImportHandler(
             descriptorFileMap,
@@ -108,7 +112,9 @@ public class ToscaDefinitionImportHandlerTest {
         final List<String> filesToHandleList = Arrays.asList("Definitions/Main.yaml",
             "Definitions/descriptorBasicImport.yaml", "Definitions/descriptorWithRelativePaths.yaml",
             "Artifacts/descriptorWithAbsolutePaths.yaml");
-        filesToHandleList.forEach(file -> descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH + file)));
+        filesToHandleList.forEach(file ->
+            descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH.resolve(file)))
+        );
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR,
@@ -140,7 +146,9 @@ public class ToscaDefinitionImportHandlerTest {
 
         final List<String> filesToHandleList = Arrays.asList(mainDefinitionFile,
             "Definitions/descriptorInvalidImportStatement.yaml");
-        filesToHandleList.forEach(file -> descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH + file)));
+        filesToHandleList.forEach(file ->
+            descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH.resolve(file)))
+        );
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR,
@@ -172,7 +180,9 @@ public class ToscaDefinitionImportHandlerTest {
         final String invalidMainDefinitionFilePath = "../Definitions/InvalidMainDefinitionFile.yaml";
 
         final List<String> filesToHandleList = Arrays.asList(mainDefinitionFilePath);
-        filesToHandleList.forEach(file -> descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH + file)));
+        filesToHandleList.forEach(file ->
+            descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH.resolve(file)))
+        );
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR, Messages.MISSING_IMPORT_FILE.formatMessage(invalidMainDefinitionFilePath)));
@@ -200,7 +210,9 @@ public class ToscaDefinitionImportHandlerTest {
         final String mainDefinitionFile = "Definitions/descriptorInvalid.yaml";
 
         final List<String> filesToHandleList = Arrays.asList(mainDefinitionFile);
-        filesToHandleList.forEach(file -> descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH + file)));
+        filesToHandleList.forEach(file ->
+            descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH.resolve(file)))
+        );
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR, String.format(Messages.INVALID_YAML_FORMAT.getErrorMessage()
@@ -236,7 +248,9 @@ public class ToscaDefinitionImportHandlerTest {
         final String mainDefinitionFile = "Definitions/descriptorFileWithValidImportStatements.yaml";
 
         final List<String> filesToHandleList = Arrays.asList(mainDefinitionFile, "Artifacts/descriptorCyclicReference.yaml");
-        filesToHandleList.forEach(file -> descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH + file)));
+        filesToHandleList.forEach(file ->
+            descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH.resolve(file)))
+        );
 
         final ToscaDefinitionImportHandler toscaDefinitionImportHandler =
             new ToscaDefinitionImportHandler(descriptorFileMap, mainDefinitionFile);
@@ -258,17 +272,25 @@ public class ToscaDefinitionImportHandlerTest {
     public void testGivenDescriptorFileWithNonexistentRelativeImport_whenIncorrectMainDescriptorIsHandled_aMissingFileErrorIsReported() {
         final String mainDefinitionFile = "Definitions/MainWithNonexistentReferences.yaml";
 
-        final List<String> filesToHandleList = Arrays.asList(mainDefinitionFile, "Definitions/descriptorNonexistentImport.yaml",
-            "Artifacts/descriptorCyclicReference.yaml");
-        filesToHandleList.forEach(file -> descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH + file)));
+        final List<String> filesToHandleList = Arrays.asList(mainDefinitionFile,
+            "Definitions/descriptorNonexistentImport.yaml", "Artifacts/descriptorCyclicReference.yaml");
+        filesToHandleList.forEach(file ->
+            descriptorFileMap.put(file, getResourceBytesOrFail(RESOURCES_FILE_PATH.resolve(file)))
+        );
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR,
-            String.format(Messages.MISSING_IMPORT_FILE.getErrorMessage(), "Definitions/descriptorCyclicReference.yaml")));
+            String.format(Messages.MISSING_IMPORT_FILE.getErrorMessage(),
+                "Definitions/descriptorCyclicReference.yaml"))
+        );
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR,
-            String.format(Messages.MISSING_IMPORT_FILE.getErrorMessage(), "Definitions/descriptorCyclicReference.yaml")));
+            String.format(Messages.MISSING_IMPORT_FILE.getErrorMessage(),
+                "Definitions/descriptorCyclicReference.yaml"))
+        );
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR,
-            String.format(Messages.MISSING_IMPORT_FILE.getErrorMessage(), "Definitions/descriptorCyclicReference.yaml")));
+            String.format(Messages.MISSING_IMPORT_FILE.getErrorMessage(),
+                "Definitions/descriptorCyclicReference.yaml"))
+        );
 
         final ToscaDefinitionImportHandler toscaDefinitionImportHandler = new ToscaDefinitionImportHandler(
             descriptorFileMap,

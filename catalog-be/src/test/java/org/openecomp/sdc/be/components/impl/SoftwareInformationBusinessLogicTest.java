@@ -34,11 +34,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.TestUtils;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.test.util.TestResourcesHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,7 +148,7 @@ public class SoftwareInformationBusinessLogicTest {
     private void mockCsarFileMap(final String softwareInformationArtifactPath) {
         final byte[] softwareInformationFile;
         try {
-            softwareInformationFile = TestUtils.getResourceAsByteArray(softwareInformationArtifactPath);
+            softwareInformationFile = TestResourcesHandler.getResourceAsByteArray(softwareInformationArtifactPath);
         } catch (final IOException e) {
             final String errorMsg = "Could not find software information artifact " + softwareInformationArtifactPath;
             LOGGER.error(errorMsg, e);

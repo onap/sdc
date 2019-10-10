@@ -63,7 +63,7 @@ public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHa
       candidateService
           .updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(), candidateData);
     } catch (final Exception exception) {
-      logger.error(getErrorWithParameters(Messages.FILE_CONTENT_MAP.getErrorMessage(),
+      logger.error(getErrorWithParameters(Messages.FILE_LOAD_CONTENT_ERROR.getErrorMessage(),
           getHandlerType().toString()), exception);
       uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE,
           new ErrorMessage(ErrorLevel.ERROR, exception.getMessage()));
