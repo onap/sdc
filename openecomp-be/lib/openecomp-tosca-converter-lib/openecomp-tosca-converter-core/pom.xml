@@ -25,6 +25,13 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.openecomp.sdc.be</groupId>
+      <artifactId>common-be</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest</artifactId>
       <version>${hamcrest.version}</version>

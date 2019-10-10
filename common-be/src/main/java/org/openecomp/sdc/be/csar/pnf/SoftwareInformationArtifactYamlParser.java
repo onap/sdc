@@ -17,7 +17,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.components.csar;
+package org.openecomp.sdc.be.csar.pnf;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.be.components.csar.PnfSoftwareInformation.PnfSoftwareInformationField;
-import org.openecomp.sdc.be.components.csar.PnfSoftwareVersion.PnfSoftwareVersionField;
+import org.openecomp.sdc.be.csar.pnf.PnfSoftwareInformation.PnfSoftwareInformationField;
+import org.openecomp.sdc.be.csar.pnf.PnfSoftwareVersion.PnfSoftwareVersionField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.error.YAMLException;
