@@ -17,7 +17,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.components.csar;
+package org.openecomp.sdc.be.csar.pnf;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -25,6 +25,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Represents the Pnf software information non-mano yaml
@@ -65,4 +66,13 @@ public class PnfSoftwareInformation {
         private final String fieldName;
 
     }
+
+    public boolean isValid() {
+        if(CollectionUtils.isEmpty(softwareVersionSet)) {
+            return false;
+        }
+
+        return softwareVersionSet.stream().allMatch(PnfSoftwareVersion::isValid);
+    }
+
 }

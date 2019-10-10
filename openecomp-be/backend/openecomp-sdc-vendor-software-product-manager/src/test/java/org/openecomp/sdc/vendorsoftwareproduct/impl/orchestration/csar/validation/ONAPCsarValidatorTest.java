@@ -20,16 +20,17 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.be.test.util.TestResourcesHandler.getResourceBytesOrFail;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 
 public class ONAPCsarValidatorTest {
@@ -41,9 +42,9 @@ public class ONAPCsarValidatorTest {
     public void setUp() throws IOException{
         onapCsarValidator = new ONAPCsarValidator();
         contentHandler = new FileContentHandler();
-        contentHandler.addFile("TOSCA-Metadata/TOSCA.meta", ValidatorUtil.getFileResource("/validation.files/metafile/nonSOL004WithMetaDirectoryCompliantMetaFile.meta"));
-        contentHandler.addFile("MainServiceTemplate.mf", ValidatorUtil.getFileResource("/validation.files/manifest/sampleManifest.mf"));
-        contentHandler.addFile(TestConstants.TOSCA_DEFINITION_FILEPATH, ValidatorUtil.getFileResource(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
+        contentHandler.addFile("TOSCA-Metadata/TOSCA.meta", getResourceBytesOrFail("validation.files/metafile/nonSOL004WithMetaDirectoryCompliantMetaFile.meta"));
+        contentHandler.addFile("MainServiceTemplate.mf", getResourceBytesOrFail("validation.files/manifest/sampleManifest.mf"));
+        contentHandler.addFile(TestConstants.TOSCA_DEFINITION_FILEPATH, getResourceBytesOrFail(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
     }
 
     @Test
@@ -55,9 +56,9 @@ public class ONAPCsarValidatorTest {
     @Test
     public void testGivenCSARPackage_withInvalidManifestFile_thenErrorsReturned() throws IOException{
         contentHandler = new FileContentHandler();
-        contentHandler.addFile("TOSCA-Metadata/TOSCA.meta", ValidatorUtil.getFileResource("/validation.files/metafile/nonSOL004WithMetaDirectoryCompliantMetaFile.meta"));
-        contentHandler.addFile("MainServiceTemplate.mf", ValidatorUtil.getFileResource("/validation.files/manifest/invalidManifest.mf"));
-        contentHandler.addFile(TestConstants.TOSCA_DEFINITION_FILEPATH, ValidatorUtil.getFileResource(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
+        contentHandler.addFile("TOSCA-Metadata/TOSCA.meta", getResourceBytesOrFail("validation.files/metafile/nonSOL004WithMetaDirectoryCompliantMetaFile.meta"));
+        contentHandler.addFile("MainServiceTemplate.mf", getResourceBytesOrFail("validation.files/manifest/invalidManifest.mf"));
+        contentHandler.addFile(TestConstants.TOSCA_DEFINITION_FILEPATH, getResourceBytesOrFail(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
 
         assertExpectedErrors("CSAR package with invalid manifest file should have errors", onapCsarValidator.validateContent(contentHandler), 1);
 

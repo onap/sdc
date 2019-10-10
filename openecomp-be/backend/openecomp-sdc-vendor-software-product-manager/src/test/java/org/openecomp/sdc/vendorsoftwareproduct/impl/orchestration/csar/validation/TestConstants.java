@@ -20,20 +20,21 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-class TestConstants {
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+class TestConstants {
 
     public static final String SAMPLE_DEFINITION_IMPORT_FILE_PATH = "Definitions/etsi_nfv_sol001_pnfd_2_5_1_types.yaml";
     public static final String SAMPLE_SOURCE = "Artifacts/Deployment/Events/RadioNode_pnf_v1.yaml";
-    public static final String SAMPLE_DEFINITION_FILE_PATH = "/validation.files/definition/sampleDefinitionFile.yaml";
-    public static final String SAMPLE_MANIFEST_FILE_PATH = "/validation.files/manifest/sampleManifest.mf";
+    public static final Path SAMPLE_DEFINITION_FILE_PATH = Paths.get("validation.files/definition/sampleDefinitionFile.yaml");
     public static final String TOSCA_DEFINITION_FILEPATH = "Definitions/MainServiceTemplate.yaml";
     public static final String TOSCA_MANIFEST_FILEPATH = "Definitions/MainServiceTemplate.mf";
     public static final String TOSCA_CHANGELOG_FILEPATH = "Artifacts/changeLog.text";
-    public static final String EMPTY_YAML_FILE_PATH = "/validation.files/empty.yaml";
-    public static final String INVALID_YAML_FILE_PATH = "/validation.files/invalid.yaml";
+    public static final Path EMPTY_YAML_FILE_PATH = Paths.get("validation.files/empty.yaml");
+    public static final Path INVALID_YAML_FILE_PATH = Paths.get("validation.files/invalid.yaml");
 
-    private TestConstants(){
+    private TestConstants() {
 
     }
 }
