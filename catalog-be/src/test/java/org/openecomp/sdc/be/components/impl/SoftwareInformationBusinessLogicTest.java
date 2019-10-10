@@ -34,11 +34,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.TestUtils;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.test.util.TestResourcesHandler;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SoftwareInformationBusinessLogicTest {
@@ -58,8 +58,8 @@ public class SoftwareInformationBusinessLogicTest {
 
     private void mockCsarInfo() throws IOException {
         final String softwareInformationPath = "Artifact/Informational/SW_INFORMATION";
-        final byte[] softwareInformationFile = TestUtils
-            .getResourceAsByteArray("artifacts/pnfSoftwareInformation/pnf-sw-information.yaml");
+        final byte[] softwareInformationFile =
+            TestResourcesHandler.getResourceAsByteArray("artifacts/pnfSoftwareInformation/pnf-sw-information.yaml");
         final HashMap<String, byte[]> csarFileMap = new HashMap<>();
         csarFileMap.put(softwareInformationPath, softwareInformationFile);
         when(csarInfo.getCsar()).thenReturn(csarFileMap);

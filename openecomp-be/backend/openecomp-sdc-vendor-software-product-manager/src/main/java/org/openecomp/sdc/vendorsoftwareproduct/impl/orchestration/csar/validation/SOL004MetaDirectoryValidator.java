@@ -22,6 +22,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validati
 
 
 import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_PM_DICTIONARY;
+import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_SW_INFORMATION;
 import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_VES_EVENTS;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.CSAR_VERSION_1_0;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.CSAR_VERSION_1_1;
@@ -56,6 +57,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.impl.ToscaDefinitionImportHandler;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.be.config.NonManoArtifactType;
+import org.openecomp.sdc.be.csar.pnf.PnfSoftwareInformation;
+import org.openecomp.sdc.be.csar.pnf.SoftwareInformationArtifactYamlParser;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
@@ -86,10 +90,19 @@ class SOL004MetaDirectoryValidator implements Validator {
     private static final String MANIFEST_SOURCE = "Source";
     private static final String MANIFEST_NON_MANO_SOURCE = "Non-MANO Source";
     private final List<ErrorMessage> errorsByFile = new CopyOnWriteArrayList<>();
-    private final SecurityManager securityManager = SecurityManager.getInstance();
+    private final SecurityManager securityManager;
     private OnboardingPackageContentHandler contentHandler;
     private Set<String> folderList;
     private ToscaMetadata toscaMetadata;
+
+    public SOL004MetaDirectoryValidator() {
+        securityManager = SecurityManager.getInstance();
+    }
+
+    //for tests purpose
+    SOL004MetaDirectoryValidator(final SecurityManager securityManager) {
+        this.securityManager = securityManager;
+    }
 
     @Override
     public Map<String, List<ErrorMessage>> validateContent(final FileContentHandler fileContentHandler) {
@@ -369,8 +382,11 @@ class SOL004MetaDirectoryValidator implements Validator {
         nonManoArtifacts.forEach((nonManoType, files) -> {
             final List<String> internalNonManoFileList = filterSources(files);
             nonManoValidFilePaths.addAll(internalNonManoFileList);
-            if (ONAP_PM_DICTIONARY.getType().equals(nonManoType) || ONAP_VES_EVENTS.getType().equals(nonManoType)) {
+            final NonManoArtifactType nonManoArtifactType = NonManoArtifactType.parse(nonManoType).orElse(null);
+            if (nonManoArtifactType == ONAP_PM_DICTIONARY || nonManoArtifactType == ONAP_VES_EVENTS) {
                 internalNonManoFileList.forEach(this::validateYaml);
+            } else if (nonManoArtifactType == ONAP_SW_INFORMATION) {
+                validateSoftwareInformationNonManoArtifact(files);
             }
         });
 
@@ -380,6 +396,36 @@ class SOL004MetaDirectoryValidator implements Validator {
         allReferredFiles.addAll(sources);
         allReferredFiles.addAll(nonManoValidFilePaths);
         verifyFilesBeingReferred(allReferredFiles, packageFiles);
+    }
+
+    private void validateSoftwareInformationNonManoArtifact(final List<String> files) {
+        if (CollectionUtils.isEmpty(files)) {
+            reportError(ErrorLevel.ERROR, Messages.EMPTY_SW_INFORMATION_NON_MANO_ERROR.getErrorMessage());
+            return;
+        }
+        if (files.size() != 1) {
+            final String formattedFileList = files.stream()
+                .map(filePath -> String.format("'%s'", filePath))
+                .collect(Collectors.joining(", "));
+            reportError(ErrorLevel.ERROR,
+                Messages.UNIQUE_SW_INFORMATION_NON_MANO_ERROR.formatMessage(formattedFileList));
+            return;
+        }
+        final String swInformationFilePath = files.get(0);
+        //TODO use new method contentHandler.getFileContent() that returns a byte array when code is merged
+        final byte[] swInformationYaml = contentHandler.getFiles().get(swInformationFilePath);
+        final Optional<PnfSoftwareInformation> parsedYaml = SoftwareInformationArtifactYamlParser
+            .parse(swInformationYaml);
+        if(!parsedYaml.isPresent()) {
+            reportError(ErrorLevel.ERROR,
+                Messages.INVALID_SW_INFORMATION_NON_MANO_ERROR.formatMessage(swInformationFilePath));
+        } else {
+            final PnfSoftwareInformation pnfSoftwareInformation = parsedYaml.get();
+            if (!pnfSoftwareInformation.isValid()) {
+                reportError(ErrorLevel.ERROR,
+                    Messages.INCORRECT_SW_INFORMATION_NON_MANO_ERROR.formatMessage(swInformationFilePath));
+            }
+        }
     }
 
     /**
@@ -398,13 +444,16 @@ class SOL004MetaDirectoryValidator implements Validator {
             return;
         }
 
-        final InputStream fileContent = contentHandler.getFileContentAsStream(filePath);
-        if (fileContent == null) {
-            reportError(ErrorLevel.ERROR, Messages.EMPTY_YAML_FILE_1.formatMessage(filePath));
-            return;
-        }
-        try {
+        try (final InputStream fileContent = contentHandler.getFileContentAsStream(filePath)) {
+            if (fileContent == null) {
+                reportError(ErrorLevel.ERROR, Messages.EMPTY_YAML_FILE_1.formatMessage(filePath));
+                return;
+            }
             new Yaml().loadAll(fileContent).iterator().next();
+        } catch (final IOException e) {
+            final String errorMsg = Messages.FILE_LOAD_CONTENT_ERROR.formatMessage(filePath);
+            reportError(ErrorLevel.ERROR, errorMsg);
+            LOGGER.debug(errorMsg, e);
         } catch (final Exception e) {
             reportError(ErrorLevel.ERROR, Messages.INVALID_YAML_FORMAT_1.formatMessage(filePath, e.getMessage()));
         }

@@ -28,20 +28,22 @@ import static org.openecomp.core.converter.pnfd.model.PnfTransformationToken.TO_
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import org.junit.Test;
 import org.openecomp.core.converter.pnfd.model.ConversionDefinition;
 import org.openecomp.core.converter.pnfd.model.ConversionStrategyType;
-import org.openecomp.core.util.TestResourcesUtil;
 import org.openecomp.core.util.YamlTestUtil;
+import org.openecomp.sdc.be.test.util.TestResourcesHandler;
 
 public class ConversionDefinitionYamlParserTest {
 
     @Test
     public void shouldBuildDefinition() {
         final Map<String, Object> definitionYaml;
-        final String definitionYamlFilePath = "transformation/conversionDefinition/conversionDefinitionWithReplaceStrategy.yaml";
-        try (final InputStream resourceInputStream = TestResourcesUtil.getFileResourceAsStream(definitionYamlFilePath)) {
+        final Path definitionYamlFilePath = Paths.get("transformation", "conversionDefinition", "conversionDefinitionWithReplaceStrategy.yaml");
+        try (final InputStream resourceInputStream = TestResourcesHandler.getResourceAsStream(definitionYamlFilePath)) {
             definitionYaml = (Map<String, Object>) YamlTestUtil.read(resourceInputStream);
         } catch (final IOException e) {
             fail(String.format("Could not load %s", definitionYamlFilePath));

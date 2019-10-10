@@ -19,9 +19,16 @@
 
 package org.openecomp.sdc.be.config;
 
+import java.util.Arrays;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * Stores non mano artifact types.
  */
+@Getter
+@AllArgsConstructor
 public enum NonManoArtifactType {
     ONAP_VES_EVENTS("onap_ves_events"),
     ONAP_PM_DICTIONARY("onap_pm_dictionary"),
@@ -33,11 +40,9 @@ public enum NonManoArtifactType {
 
     private final String type;
 
-    NonManoArtifactType(final String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
+    public static Optional<NonManoArtifactType> parse(final String type) {
+        return Arrays.stream(values())
+            .filter(nonManoArtifactType -> nonManoArtifactType.getType().equals(type))
+            .findFirst();
     }
 }
