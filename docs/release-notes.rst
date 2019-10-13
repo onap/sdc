@@ -120,7 +120,7 @@ Quick Links:
 
 **Known Issues**
 
-	N/A
+-  [`SDC-2541 <https://jira.onap.org/browse/SDC-2541>`__\ ] - Custom WF not present in the CSAR package
 
 **Upgrade Notes**
 
