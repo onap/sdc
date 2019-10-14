@@ -22,6 +22,30 @@
       "revId": "d9e71064967361bb338da4dc017ed0a361c3b745",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3bf9d960_8b0817b4",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-10-14T02:48:03Z",
+      "side": 1,
+      "message": "isDisabled property is true for other conditions also. We want this link to be disabled only when desired service-category is selected.",
+      "parentUuid": "b8df710a_72889aee",
+      "range": {
+        "startLine": 25,
+        "startChar": 158,
+        "endLine": 25,
+        "endChar": 164
+      },
+      "revId": "d9e71064967361bb338da4dc017ed0a361c3b745",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
