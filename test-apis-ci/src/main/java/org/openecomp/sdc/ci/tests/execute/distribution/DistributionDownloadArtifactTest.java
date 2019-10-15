@@ -320,7 +320,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void downloadServiceArtifactSuccess() throws Exception {
 		// Create service
 		RestResponse serviceResponse = ServiceRestUtils.createService(serviceDetails, designerUser);

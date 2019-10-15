@@ -204,7 +204,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
     // TC1438232 - Import VF Artifacts - Informational Artifacts - Artifact Name To Long
     // TODO: make informational artifact name longer then 255
     // TODO: windows/linux not allowed it
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void importVfArtifactsInformationalArtifactsArtifactNameToLong() throws Exception {
         String folder = "US825779";
         ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
