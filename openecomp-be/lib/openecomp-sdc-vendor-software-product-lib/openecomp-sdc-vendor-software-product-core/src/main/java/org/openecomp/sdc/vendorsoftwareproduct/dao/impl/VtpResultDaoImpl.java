@@ -1,0 +1,114 @@
+/**
+ * Copyright (c) 2019 Vodafone Group
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
+
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.annotations.Accessor;
+import com.datastax.driver.mapping.annotations.Query;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import org.openecomp.core.dao.impl.CassandraBaseDao;
+import org.openecomp.core.nosqldb.api.NoSqlDb;
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VtpResultDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VtpResultsEntity;
+
+
+public class VtpResultDaoImpl extends CassandraBaseDao<VtpResultsEntity> implements VtpResultDao {
+
+    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
+    private static final Mapper<VtpResultsEntity> mapper = noSqlDb.getMappingManager().mapper(VtpResultsEntity.class);
+    private static final VTPResultsAccessor accessor =
+            noSqlDb.getMappingManager().createAccessor(VTPResultsAccessor.class);
+    private static final String ID = "id";
+    private static final String REQUEST_ID = "request_id";
+    private static final String ENDPOINT_NAME = "endpoint_name";
+
+    @Override
+    protected Mapper<VtpResultsEntity> getMapper() {
+        return mapper;
+    }
+
+    @Override
+    protected Object[] getKeys(VtpResultsEntity entity) {
+        return new Object[] {entity.getVspId(), entity.getVspVersion()};
+    }
+
+    @Override
+    public List<VtpResultsEntity> getVtpResult(String versionId, String vspId) {
+        ResultSet resultSet = accessor.getByVSPIdAndVSPVer(vspId, versionId);
+        if (resultSet != null) {
+            List<VtpResultsEntity> resultsEntities = new ArrayList<>();
+            List<Row> rows = resultSet.all();
+            if (rows == null || rows.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            for (Row row : rows) {
+                String id = row.getString(ID);
+                if (id != null) {
+                    VtpResultsEntity vtpResultsEntity = new VtpResultsEntity();
+                    vtpResultsEntity.setId(row.getString(ID));
+                    vtpResultsEntity.setVspId(vspId);
+                    vtpResultsEntity.setVspVersion(versionId);
+                    vtpResultsEntity.setRequestId(row.getString(REQUEST_ID));
+                    vtpResultsEntity.setEndPointName(row.getString(ENDPOINT_NAME));
+                    resultsEntities.add(vtpResultsEntity);
+                }
+            }
+            return resultsEntities;
+
+        }
+        return Collections.emptyList();
+
+    }
+
+    @Override
+    public void updateVtpResult(String id, String vspId, String vspVersionId, String requestId, String endPointName) {
+        accessor.create(id, vspId, vspVersionId, requestId, endPointName);
+    }
+
+    @Override
+    public void deleteVtpResult(String vspId, String vspVersionId) {
+        accessor.delete(vspId, vspVersionId);
+
+    }
+
+    @Override
+    public Collection<VtpResultsEntity> list(VtpResultsEntity entity) {
+        return Collections.emptyList();
+    }
+
+    @Accessor
+    interface VTPResultsAccessor {
+
+        @Query("SELECT  * FROM zusammen_dox.vtp_results WHERE  vsp_id=? AND vsp_version=? ALLOW FILTERING")
+        ResultSet getByVSPIdAndVSPVer(String vspId, String vspVersion);
+
+        @Query("Insert into  zusammen_dox.vtp_results(id, vsp_id, vsp_version, request_id, endpoint_name)"
+                       + " values(?, ?, ?, ?, ?)")
+        void create(String id, String vspId, String vspVersion, String requestId, String endpointName);
+
+        @Query("Delete from  zusammen_dox.vtp_results WHERE vsp_id=? AND vsp_version=?")
+        void delete(String vspId, String vspVersion);
+
+    }
+}
