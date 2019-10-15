@@ -376,7 +376,7 @@ public class ProductCrudTest extends ProductBaseTest {
 
 	// If user update "product name" we need to remove the old product name from
 	// "Tags" and add the new product name instead - will handled in mew US
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductAllFieldsByPM() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager1,
@@ -637,7 +637,7 @@ public class ProductCrudTest extends ProductBaseTest {
 
 	// If user update "product name" we need to remove the old product name from
 	// "Tags" and add the new product name instead - will handled in mew US
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductNameHasMinLength() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager2,
@@ -663,7 +663,7 @@ public class ProductCrudTest extends ProductBaseTest {
 	// If user update "product name" we need to remove the old product name from
 	// "Tags" and add the new product name instead - will handled in mew US
 	// DE193857 - Normalized Name is not removing special characters
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductNameMaxLength() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager1,
@@ -765,7 +765,7 @@ public class ProductCrudTest extends ProductBaseTest {
 	// DE193857 - Normalized Name is not removing special characters
 	// If user update "product name" we need to remove the old product name from
 	// "Tags" and add the new product name instead - will handled in mew US
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductNameAllowedCharacters() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager1,
@@ -811,7 +811,7 @@ public class ProductCrudTest extends ProductBaseTest {
 
 	// If user update "product name" we need to remove the old product name from
 	// "Tags" and add the new product name instead - will handled in mew US
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductNameRemoveSpaceFromBeginning() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager1,
@@ -840,7 +840,7 @@ public class ProductCrudTest extends ProductBaseTest {
 
 	// If user update "product name" we need to remove the old product name from
 	// "Tags" and add the new product name instead - will handled in mew US
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductNameRemoveSpaceFromEnd() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager1,
@@ -870,7 +870,7 @@ public class ProductCrudTest extends ProductBaseTest {
 	//// DE193857 - Normalized Name is not removing special characters
 	// If user update "product name" we need to remove the old product name from
 	//// "Tags" and add the new product name instead - will handled in mew US
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductNameRemoveExtraNonAlphanumericChars() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager1,
@@ -899,7 +899,7 @@ public class ProductCrudTest extends ProductBaseTest {
 
 	// If user update "product name" we need to remove the old product name from
 	// "Tags" and add the new product name instead - will handled in mew US
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductNameValidationStartWithNumber() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager1,
@@ -1232,7 +1232,7 @@ public class ProductCrudTest extends ProductBaseTest {
 				ComponentOperationEnum.UPDATE_COMPONENT);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductDescriptionValidCharacters01() throws Exception {
 		createProducrByPSAndCheckIn();
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product, productManager1,

@@ -396,7 +396,7 @@ public class ArtifactServletTest extends ComponentBaseTest {
 	}
 
 	// TODO
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateDeploymentArtifactToResourcseTest() throws Exception {
 
 		ArtifactReqDetails defaultArtifact = ElementFactory.getDefaultDeploymentArtifactForType("HEAT");

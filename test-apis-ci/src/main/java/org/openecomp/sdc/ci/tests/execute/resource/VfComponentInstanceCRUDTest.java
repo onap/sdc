@@ -91,7 +91,7 @@ public class VfComponentInstanceCRUDTest extends ComponentInstanceBaseTest {
 		getComponentAndValidateRIs(resourceDetailsVF_02, 1, 0);
 	}
 
-	@Test(enabled = false) // DE189419
+	@Test(enabled = true) // DE189419
 	public void createInstanceOfVfToItself() throws Exception {
 		RestResponse createAtomicResourceInstance = createAtomicInstanceForVF(resourceDetailsVF_02,
 				resourceDetailsVL_01, sdncDesignerDetails);

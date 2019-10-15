@@ -360,7 +360,7 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 
 	// ------------------------------Success---------------------------------
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void importToscaResourceVFResType() throws Exception {
 
 		String resourceType = ResourceTypeEnum.VF.toString();

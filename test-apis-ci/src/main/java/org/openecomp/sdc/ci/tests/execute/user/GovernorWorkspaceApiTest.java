@@ -279,7 +279,7 @@ public class GovernorWorkspaceApiTest extends ComponentBaseTest {
 		assertEquals(3, checkFollowed.size());
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void governorList_distributed() throws Exception {
 		certifyAllServices();
 

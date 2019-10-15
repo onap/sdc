@@ -415,7 +415,7 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 		getComponentAndValidateRIs(serviceDetails_01, 0, 0);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void createResourceInstance_ResourceInCheckoutStateTest() throws Exception {
 		LifecycleRestUtils.changeServiceState(serviceDetails_01, sdncDesignerDetails, "0.1",
 				LifeCycleStatesEnum.CHECKIN);
@@ -809,7 +809,7 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 
 	// this case is not relevant any more, it is tested as part of occurrences
 	// story
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void associateOnceAgainExistingRelationTest() throws Exception {
 		RestResponse createFirstVFInstResp = createCheckedinVFInstance(serviceDetails_01, resourceDetailsVF_01,
 				sdncDesignerDetails);
@@ -1497,7 +1497,7 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 		getComponentAndValidateRIs(serviceDetails_01, 4, 0);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void forAcceptanceUserStory() throws Exception {
 		RestResponse createVFInstResp = createVFInstance(serviceDetails_01, resourceDetailsVF_01, sdncDesignerDetails);
 		ResourceRestUtils.checkCreateResponse(createVFInstResp);

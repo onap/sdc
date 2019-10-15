@@ -600,7 +600,7 @@ public class CrudArt extends ComponentBaseTest {
 
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void addMuranoPkgArtifactToService() throws Exception, Exception {
 
 		String fileName = muranoFile;
@@ -873,7 +873,7 @@ public class CrudArt extends ComponentBaseTest {
 	// Tests--------------------------------------------------------
 
 	// Absolute
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void addHeatArtifactTwiceToService() throws Exception, Exception {
 
 		String fileName1 = heatSuccessFile;
@@ -907,7 +907,7 @@ public class CrudArt extends ComponentBaseTest {
 	}
 
 	// TODO Andrey Obsolete
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void addHeatArtifactInvalidHeatFormatToService() throws Exception, Exception {
 
 		String fileName = heatInvalidFormat;
@@ -931,7 +931,7 @@ public class CrudArt extends ComponentBaseTest {
 	}
 
 	// TODO Andrey Obsolete
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void addHeatArtifactInvalidYamlFormatToService() throws Exception, Exception {
 
 		String fileName = yamlInvalidFormat;

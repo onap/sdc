@@ -155,7 +155,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
         return importResponse;
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void importUIResource() throws IOException {
         String payload = "tosca_definitions_version: tosca_simple_yaml_1_0_0\r\n" + "node_types: \r\n"
                 + "  org.openecomp.resource.importResource4test:\r\n" + "    derived_from: tosca.nodes.Root\r\n"
@@ -188,7 +188,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
     }
 
     // TODO DE171337
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void importNewResource_suc() throws Exception {
 
         RestResponse importResponse = importNewResource(UserRoleEnum.ADMIN);
@@ -260,7 +260,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
     }
 
     // TODO DE171337
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void importNewResource_existInCheckout_updateVendorName_updateCategory() throws Exception {
 
         // import new resource
@@ -379,7 +379,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void importNewResource_nameSpace_vf() throws Exception {
         RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testVF",
                 UserRoleEnum.DESIGNER);
@@ -454,7 +454,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
     }
 
     // TODO DE171337
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void importNewResource_existInCheckOut() throws Exception {
 
         // import new resource
@@ -512,7 +512,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
     }
 
     // TODO DE171337
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void importNewResource_existIn_CheckIn_state() throws Exception {
 
         // import new resource

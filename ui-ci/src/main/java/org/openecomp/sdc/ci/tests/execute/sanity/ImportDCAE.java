@@ -289,7 +289,7 @@ public class ImportDCAE extends SetupCDTest {
     }
 
     // future removed from ui
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void addUpdateDeleteSimplePropertiesToDCAEAssetTest() throws Exception {
         createDCAEAsset();
 
@@ -313,7 +313,7 @@ public class ImportDCAE extends SetupCDTest {
     }
 
     // future removed from ui
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void DCAEAssetInstancesInputScreenTest() throws Exception {
         createDCAEAsset();
 
@@ -454,7 +454,7 @@ public class ImportDCAE extends SetupCDTest {
     }
 
     // future removed from ui
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void addPropertyInCompositionScreenDCAEAssetTest() throws Exception {
         createDCAEAsset();
 

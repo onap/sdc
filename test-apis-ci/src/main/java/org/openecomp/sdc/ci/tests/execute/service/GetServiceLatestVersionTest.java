@@ -460,7 +460,7 @@ public class GetServiceLatestVersionTest extends ComponentInstanceBaseTest {
     }
 
     // DE190818
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void getLatestVersionByNonAsdcUser() throws Exception {
         User nonAsdcUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
         nonAsdcUser.setUserId("gg750g");
@@ -471,7 +471,7 @@ public class GetServiceLatestVersionTest extends ComponentInstanceBaseTest {
     }
 
     // DE190818
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void getLatestVersionUserIdIsEmpty() throws Exception {
         User nonAsdcUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
         nonAsdcUser.setUserId("");

@@ -153,7 +153,7 @@ public class ManageEcompConsumerCredentials extends ComponentBaseTest {
 				sdncAdminUserDetails, STATUS_CODE_SUCSESS_CREATED);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void createEcompCredentialsUserAlreayExist() throws Exception {
 		// Create Consumer
 		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition,

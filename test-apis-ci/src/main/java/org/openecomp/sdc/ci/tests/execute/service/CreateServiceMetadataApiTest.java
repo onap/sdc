@@ -899,7 +899,7 @@ public class CreateServiceMetadataApiTest extends ComponentBaseTest {
 	}
 
 	@JsonIgnore
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void createServiceIsVNF_isNull() throws Exception {
 
 		// choose the user to create service
@@ -933,7 +933,7 @@ public class CreateServiceMetadataApiTest extends ComponentBaseTest {
 	}
 
 	@JsonIgnore
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void createServiceEmptyIsVNF() throws Exception {
 
 		User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
@@ -995,7 +995,7 @@ public class CreateServiceMetadataApiTest extends ComponentBaseTest {
 	}
 
 	@JsonIgnore
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void createServiceVersion_isVNFDoesNotExistInJson() throws Exception {
 
 		// choose the user to create service

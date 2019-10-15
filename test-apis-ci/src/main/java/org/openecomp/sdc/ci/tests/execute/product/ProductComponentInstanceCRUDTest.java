@@ -128,7 +128,7 @@ public class ProductComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
     }
 
     // DE189427
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void createServiceInstanceFromCheckedOutState() throws Exception {
         // can't create instance of checked-out component
         RestResponse restResponse = LifecycleRestUtils.changeServiceState(serviceDetails_01, sdncDesignerDetails, LifeCycleStatesEnum.CHECKOUT);
@@ -271,7 +271,7 @@ public class ProductComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
         assertEquals((expectedServiceInstancenormalizedName).toLowerCase(), actualComponentInstance.getNormalizedName());
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void createServiceInstanceToNonExistingProduct() throws Exception {
         RestResponse createServiceInstanceResp = createServiceInstance(productDetails_01, serviceDetails_01, sdncPmDetails1);
         ResourceRestUtils.checkCreateResponse(createServiceInstanceResp);
@@ -394,7 +394,7 @@ public class ProductComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
         assertEquals(newName.toLowerCase(), actualComponentInstance.getNormalizedName());
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void updateServiceInstanceNameRemoveSpacesFromBiginningAndEnd() throws Exception {
         ComponentInstanceReqDetails serviceInstanceReqDetails = ElementFactory.getComponentResourceInstance(serviceDetails_01);
         RestResponse createServiceInstanceResp = ComponentInstanceRestUtils.createComponentInstance(serviceInstanceReqDetails, sdncPmDetails1, productDetails_01.getUniqueId(), ComponentTypeEnum.PRODUCT);
@@ -670,7 +670,7 @@ public class ProductComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
         assertEquals(nameFromResponse, actualComponentInstance.getName());
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void updateServiceInstanceLocationNameIsEmpty() throws Exception {
         String expectedServiceInstanceName = serviceDetails_01.getName() + " 2";
         String expectedServiceInstancenormalizedName = serviceDetails_01.getName() + "2";

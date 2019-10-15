@@ -1454,7 +1454,7 @@ public class CreateUserApiTest extends ComponentBaseTest {
 		assertEquals("Check response code ", STATUS_CODE_NOT_FOUND, getUserResponse.getErrorCode().intValue());
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProjectManagerRole() throws Exception {
 		// Update user role from PRODUCT_STRATEGIST to PRODUCT_MANAGER
 		String httpCspUserId = "pm1000";
@@ -1496,7 +1496,7 @@ public class CreateUserApiTest extends ComponentBaseTest {
 				deleteProductManagerUser.getErrorCode().intValue());
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateProductStrategistRole() throws Exception {
 		// Update user role from PRODUCT_STRATEGIST to PRODUCT_MANAGER
 		String httpCspUserId = "pm1000";
@@ -1606,7 +1606,7 @@ public class CreateUserApiTest extends ComponentBaseTest {
 				deleteProductManagerUser.getErrorCode().intValue());
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void UpdateProductStrategistToNonExistingRole() throws Exception {
 		String httpCspUserId = "pm1000";
 		String userFirstName = "Prod";
@@ -1653,7 +1653,7 @@ public class CreateUserApiTest extends ComponentBaseTest {
 				deleteProductManagerUser.getErrorCode().intValue());
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void createUserWithNonExistingRole() throws Exception {
 		String httpCspUserId = "pm1000";
 		String userFirstName = "Prod";

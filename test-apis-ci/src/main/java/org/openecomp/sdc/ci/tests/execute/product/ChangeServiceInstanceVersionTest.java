@@ -529,7 +529,7 @@ public class ChangeServiceInstanceVersionTest extends ComponentInstanceBaseTest 
     }
 
     // DE191927
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void changeServiceInstanceVersionThenReCheckInProduct() throws Exception {
         // Adding service instance (serviceDetails_01) to product without saving
         // Req&Cap
@@ -915,7 +915,7 @@ public class ChangeServiceInstanceVersionTest extends ComponentInstanceBaseTest 
     }
 
     // DE191727
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void changeServiceInstanceVersionServiceIsInCheckOutState() throws Exception {
         // Adding service instance (serviceDetails_01) to product AND --->
         // saving Req&Cap
@@ -1014,7 +1014,7 @@ public class ChangeServiceInstanceVersionTest extends ComponentInstanceBaseTest 
     }
 
     // DE189392
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void changeServiceInstanceNonExistingProduct() throws Exception {
         // Adding service instance (serviceDetails_01) to product saving Req&Cap
         RestResponse createServiceInstanceResp = createServiceInstance(productDetails_01, serviceDetails_01,

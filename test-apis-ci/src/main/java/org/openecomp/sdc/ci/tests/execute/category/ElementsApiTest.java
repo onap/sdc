@@ -113,7 +113,7 @@ public class ElementsApiTest extends ComponentBaseTest {
 		assertEquals("Check response code after  + action" + action, expectedCode, response.getErrorCode().intValue());
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void getAllCategoriesSuccess() throws Exception {
 		Map<String, String> headersMap = new HashMap<String, String>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
@@ -124,7 +124,7 @@ public class ElementsApiTest extends ComponentBaseTest {
 		verifyErrorCode(response, action, expectedCode);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void getAllTagSuccess() throws Exception {
 		Map<String, String> headersMap = new HashMap<String, String>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");

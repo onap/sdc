@@ -2176,7 +2176,7 @@ public class CategoriesTests extends CategoriesBaseTest {
 		AuditValidationUtils.validateGetCategoryHirarchy(expectedCatrgoryAuditJavaObject, GET_CATEGORY_HIERARCHY);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void getAllResourceCategories_emptyList() throws Exception {
 		RestResponse getAllCategoriesRest = CategoryRestUtils.getAllCategories(sdncAdminUserDetails,
 				RESOURCE_COMPONENT_TYPE);
@@ -2199,7 +2199,7 @@ public class CategoriesTests extends CategoriesBaseTest {
 		AuditValidationUtils.validateGetCategoryHirarchy(expectedCatrgoryAuditJavaObject, GET_CATEGORY_HIERARCHY);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void getAllServiceCategories_emptyList() throws Exception {
 		RestResponse getAllCategoriesRest = CategoryRestUtils.getAllCategories(sdncAdminUserDetails,
 				SERVICE_COMPONENT_TYPE);
@@ -2211,7 +2211,7 @@ public class CategoriesTests extends CategoriesBaseTest {
 		checkAuditSuccess(SERVICE_COMPONENT_TYPE);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void getAllProductCategories_emptyList() throws Exception {
 		RestResponse getAllCategoriesRest = CategoryRestUtils.getAllCategories(sdncAdminUserDetails,
 				PRODUCT_COMPONENT_TYPE);

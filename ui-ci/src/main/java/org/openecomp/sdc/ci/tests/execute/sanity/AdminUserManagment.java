@@ -103,7 +103,7 @@ public class AdminUserManagment extends SetupCDTest {
 
     // design changed and now one letter user should exist
     //TC922253
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void createInvalidMacIdTest() {
 
         ExtentTestActions.log(Status.INFO, "Open bug 324032");

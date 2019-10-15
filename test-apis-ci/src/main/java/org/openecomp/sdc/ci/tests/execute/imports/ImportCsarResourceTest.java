@@ -348,7 +348,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.CSAR_INVALID_FORMAT.name(), variables, createResource.getResponse());
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void noNewLineAfterBLock0Test() throws Exception {
 		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());

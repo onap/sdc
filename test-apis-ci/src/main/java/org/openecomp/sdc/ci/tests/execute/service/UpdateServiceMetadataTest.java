@@ -525,7 +525,7 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	}
 
 	// TODO Irrelevant
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void missingProjectCodeTest1() throws Exception {
 		updatedServiceDetails.setProjectCode(StringUtils.EMPTY);
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
@@ -534,7 +534,7 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	}
 
 	// TODO Irrelevant
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void missingProjectCodeTest2() throws Exception {
 
 		updatedServiceDetails.setProjectCode(null);
@@ -1512,7 +1512,7 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	}
 
 	// TODO Irrelevant
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void projectCodeValidationTest4() throws Exception {
 		updatedServiceDetails.setProjectCode(multipleString(" ", 5) + "99999");
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);

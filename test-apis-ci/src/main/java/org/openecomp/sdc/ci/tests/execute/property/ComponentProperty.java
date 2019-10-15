@@ -656,7 +656,7 @@ public class ComponentProperty extends ComponentBaseTest {
 	}
 
 	// DE199964
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void updateListPropertyToNonExistingResource() throws Exception {
 		PropertyReqDetails propertyDetails = ElementFactory.getDefaultListProperty();
 		String PropertyDefaultValue = "[2,3]";
@@ -720,7 +720,7 @@ public class ComponentProperty extends ComponentBaseTest {
 		verifyResourcePropertyList(basicVFC, propertyDetails, "[2,3]");
 	}
 
-	@Test(enabled = false) // DE199732
+	@Test(enabled = true) // DE199732
 	public void updateResourcePropertyListNonSupportedEntrySchemaType() throws Exception {
 		PropertyReqDetails propertyDetails = ElementFactory.getDefaultListProperty();
 		String PropertyDefaultValue = "[2,3]";

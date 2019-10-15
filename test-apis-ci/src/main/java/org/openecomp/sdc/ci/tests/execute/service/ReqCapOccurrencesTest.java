@@ -617,7 +617,7 @@ public class ReqCapOccurrencesTest extends ComponentInstanceBaseTest {
 				resourceVF200, resourceVF100);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void aaaa() throws Exception, Exception {
 		RestResponse getResourseRestResponse;
 		// Add instance of VFC1 (Req MIN=1 MAX=2) to VF1000

@@ -734,7 +734,7 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		assertTrue(capabilitiesAfterAssociate.equals(capabilitiesBeforeAssociate));
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void associateToNotCheckedoutVf() throws Exception {
 		createTwoAtomicResourcesByType(ResourceTypeEnum.CP.toString(), ResourceTypeEnum.VL.toString());
 

@@ -298,7 +298,7 @@ public class GetResourceNotAbstractApiTest extends ComponentBaseTest {
 		return true;
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void getEmptyNonAbstractResourcesList() throws Exception {
 		// remove all the not abstract resources
 		Map<NormativeTypesEnum, Boolean> originalState = ImportGenericResourceCITest.removeAllNormativeTypeResources();

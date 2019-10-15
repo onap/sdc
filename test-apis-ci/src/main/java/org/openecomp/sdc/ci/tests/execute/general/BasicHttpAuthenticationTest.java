@@ -307,7 +307,7 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 		validateAuditAuthentication("", AUTH_FAILED_INVALID_AUTHENTICATION_HEADER, ComponentTypeEnum.SERVICE);
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void sendTwoAuthenticatedRequestsTest() throws Exception, Exception {
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(USER, PASSWORD);
 		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
@@ -320,7 +320,7 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 				secondRestResponse.getErrorCode().intValue());
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void sendAuthenticatedRequestTest_userValidation_1() throws Exception, Exception {
 
 		ConsumerDataDefinition consumer = new ConsumerDataDefinition();
@@ -355,7 +355,7 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	// Underscore {_}
 	// @Ignore("add manually user:password 24-!68:123456 to
 	// users-configuration.yaml in runtime")
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void sendAuthenticatedRequestTest_userValidation_2() throws Exception, Exception {
 		ConsumerDataDefinition consumer = new ConsumerDataDefinition();
 		consumer.setConsumerName("24-!68");
@@ -379,7 +379,7 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	// this is invalide becouse we do not use the : any more
 	// @Ignore("can't exectue, yaml file does not allow to enter more then one
 	// colon continuously (\":\") ")
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void sendAuthenticatedRequestTest_userValidation_3() throws Exception, Exception {
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader("a:", "123456");
 		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
@@ -395,7 +395,7 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	// [a-z0-9]
 	// @Ignore("add manually user:password 2468:123:456 to
 	// users-configuration.yaml in runtime")
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void sendAuthenticatedRequestTest_passwordValidation_1() throws Exception, Exception {
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader("A1", "123:456");
 		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
@@ -408,7 +408,7 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	// Before storing/comparing please convert upper case letter to lower.
 	// The "normalized" encrypted password should match the following format :
 	// [a-z0-9]
-	@Test(enabled = false)
+	@Test(enabled = true)
 	// @Ignore("add manually user:password 2468:Sq123a456B to
 	// users-configuration.yaml in runtime")
 	public void sendAuthenticatedRequestTest_passwordValidation_2() throws Exception, Exception {
