@@ -233,7 +233,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void getToscaModelSuccess() throws Exception {
 
 		Resource resource;
