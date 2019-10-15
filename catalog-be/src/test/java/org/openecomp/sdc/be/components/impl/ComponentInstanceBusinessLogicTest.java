@@ -20,7 +20,27 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
@@ -59,6 +79,7 @@ import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -86,27 +107,6 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 /**
  * The test suite designed for test functionality of ComponentInstanceBusinessLogic class
  */
@@ -119,6 +119,7 @@ public class ComponentInstanceBusinessLogicTest {
     private final static String ORIGIN_COMPONENT_ID = "originComponentId";
     private final static String COMPONENT_INST_ID = "componentInstId";
     private final static String TO_INSTANCE_ID = "toInstanceId";
+    private final static String TO_INSTANCE_NAME = "toInstanceName";
     private final static String COMPONENT_INSTANCE_ID = "componentInstanceId";
     private final static String FROM_INSTANCE_ID = "fromInstanceId";
     private final static String RELATION_ID = "relationId";
@@ -137,12 +138,15 @@ public class ComponentInstanceBusinessLogicTest {
     private final static String PROP_NAME = "propName";
     private final static String NON_EXIST_NAME = "nonExistName";
 
-    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-            "src/test/resources/config/catalog-be");
+    static ConfigurationSource configurationSource = new FSConfigurationSource(
+        ExternalConfiguration.getChangeListener(),
+        "src/test/resources/config/catalog-be");
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @InjectMocks
     private static ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    @Mock
+    private ComponentInstancePropInput componentInstancePropInput;
     @Mock
     ArtifactsBusinessLogic artifactsBusinessLogic;
     @Mock
@@ -179,7 +183,6 @@ public class ComponentInstanceBusinessLogicTest {
     private CapabilityDataDefinition capability;
     private RequirementDataDefinition requirement;
     private RequirementCapabilityRelDef relation;
-
 
     @Before
     public void init() {
@@ -220,7 +223,7 @@ public class ComponentInstanceBusinessLogicTest {
         assertFalse(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_5));
     }
 
-    private void getforwardingPathOnVersionChange(){
+    private void getforwardingPathOnVersionChange() {
         String containerComponentParam = "services";
         String containerComponentID = "121-cont";
         String componentInstanceID = "121-cont-1-comp";
@@ -249,22 +252,22 @@ public class ComponentInstanceBusinessLogicTest {
 
         //Mock for getting component
         when(toscaOperationFacade.getToscaElement(eq(containerComponentID), any(ComponentParametersView.class)))
-                .thenReturn(Either.left(component));
+            .thenReturn(Either.left(component));
         when(toscaOperationFacade.validateComponentExists(any(String.class))).thenReturn(Either.left(Boolean.TRUE));
         when(toscaOperationFacade.getToscaFullElement(eq(new_Comp_UID))).thenReturn(Either.left(component2));
 
         Either<Set<String>, ResponseFormat> resultOp = componentInstanceBusinessLogic
-                                                               .forwardingPathOnVersionChange(containerComponentParam,
-                                                                       containerComponentID, componentInstanceID,
-                                                                       newComponentInstance);
+            .forwardingPathOnVersionChange(containerComponentParam,
+                containerComponentID, componentInstanceID,
+                newComponentInstance);
         assertEquals(1, resultOp.left().value().size());
         assertEquals("FP-ID-1", resultOp.left().value().iterator().next());
 
     }
 
     @Test
-    public void testCreateOrUpdatePropertiesValues2(){
-        String containerComponentID="containerId";
+    public void testCreateOrUpdatePropertiesValues2() {
+        String containerComponentID = "containerId";
         String resourceInstanceId = "resourceId";
         String componentInstanceID = "componentInstance";
         List<ComponentInstanceProperty> properties = new ArrayList<>();
@@ -294,35 +297,40 @@ public class ComponentInstanceBusinessLogicTest {
         ComponentInstance ci = createComponentInstance("ci1");
         ci.setUniqueId("resourceId");
         component.setComponentInstances(Arrays.asList(ci, createComponentInstance("ci2"),
-                createComponentInstance(componentInstanceID)));
+            createComponentInstance(componentInstanceID)));
         HashMap<String, DataTypeDefinition> dataTypeDefinitionHashMap = new HashMap<>();
         DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
         dataTypeDefinition.setName("string");
         dataTypeDefinitionHashMap.put("string", dataTypeDefinition);
 
         //when(userValidations.validateUserExists(user.getUserId(), false)).thenReturn(user);
-        when(toscaOperationFacade.getToscaElement(containerComponentID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(component));
-        when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.getToscaElement(containerComponentID, JsonParseFlagEnum.ParseAll))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
+            .thenReturn(StorageOperationStatus.OK);
         when(dataTypeCache.getAll()).thenReturn(Either.left(types));
         when(propertyOperation.validateAndUpdatePropertyValue(property.getType(), "newVal", true, null, types))
-                .thenReturn(Either.left("newVal"));
+            .thenReturn(Either.left("newVal"));
         when(propertyOperation.validateAndUpdateRules("string", property.getRules(),
-                null, types, true)).thenReturn(ImmutablePair.of("string", null));
+            null, types, true)).thenReturn(ImmutablePair.of("string", null));
         when(toscaOperationFacade.updateComponentInstanceProperty(component, ci.getUniqueId(),
-                origProperty)).thenReturn(StorageOperationStatus.OK);
+            origProperty)).thenReturn(StorageOperationStatus.OK);
         origProperties.get(0).setValue("newVal");
-        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(component)).thenReturn(Either.left(component));
-        when (janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
-        when(graphLockOperation.unlockComponent(containerComponentID, NodeTypeEnum.ResourceInstance)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(component))
+            .thenReturn(Either.left(component));
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
+            .thenReturn(StorageOperationStatus.OK);
 
-        Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
+        Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = componentInstanceBusinessLogic
+            .createOrUpdatePropertiesValues(
                 ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
         assertThat(responseFormatEither.left().value()).isEqualTo(properties);
     }
 
     @Test
-    public void testCreateOrUpdatePropertiesValuesPropertyNotExists(){
-        String containerComponentID="containerId";
+    public void testCreateOrUpdatePropertiesValuesPropertyNotExists() {
+        String containerComponentID = "containerId";
         String resourceInstanceId = "resourceId";
         String componentInstanceID = "componentInstance";
         List<ComponentInstanceProperty> properties = new ArrayList<>();
@@ -347,32 +355,34 @@ public class ComponentInstanceBusinessLogicTest {
         ComponentInstance ci = createComponentInstance("ci1");
         ci.setUniqueId("resourceId");
         component.setComponentInstances(Arrays.asList(ci, createComponentInstance("ci2"),
-                createComponentInstance(componentInstanceID)));
+            createComponentInstance(componentInstanceID)));
         HashMap<String, DataTypeDefinition> dataTypeDefinitionHashMap = new HashMap<>();
         DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
         dataTypeDefinition.setName("string");
         dataTypeDefinitionHashMap.put("string", dataTypeDefinition);
 
         //when(userValidations.validateUserExists(user.getUserId(), false)).thenReturn(user);
-        when(toscaOperationFacade.getToscaElement(containerComponentID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(component));
-        when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.getToscaElement(containerComponentID, JsonParseFlagEnum.ParseAll))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
+            .thenReturn(StorageOperationStatus.OK);
         //when(dataTypeCache.getAll()).thenReturn(Either.left(types));
         //when (janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
-        when(graphLockOperation.unlockComponent(containerComponentID, NodeTypeEnum.ResourceInstance)).thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
+            .thenReturn(StorageOperationStatus.OK);
 
         try {
             componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
-                    ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
+                ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
         } catch (ComponentException e) {
             assertThat(e.getActionStatus()).isEqualTo(ActionStatus.PROPERTY_NOT_FOUND);
         }
 
     }
 
-
     @Test
-    public void testCreateOrUpdatePropertiesValuesValidationFailure(){
-        String containerComponentID="containerId";
+    public void testCreateOrUpdatePropertiesValuesValidationFailure() {
+        String containerComponentID = "containerId";
         String resourceInstanceId = "resourceId";
         String componentInstanceID = "componentInstance";
         List<ComponentInstanceProperty> properties = new ArrayList<>();
@@ -402,24 +412,27 @@ public class ComponentInstanceBusinessLogicTest {
         ComponentInstance ci = createComponentInstance("ci1");
         ci.setUniqueId("resourceId");
         component.setComponentInstances(Arrays.asList(ci, createComponentInstance("ci2"),
-                createComponentInstance(componentInstanceID)));
+            createComponentInstance(componentInstanceID)));
         HashMap<String, DataTypeDefinition> dataTypeDefinitionHashMap = new HashMap<>();
         DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
         dataTypeDefinition.setName("string");
         dataTypeDefinitionHashMap.put("string", dataTypeDefinition);
 
         //when(userValidations.validateUserExists(user.getUserId(), false)).thenReturn(user);
-        when(toscaOperationFacade.getToscaElement(containerComponentID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(component));
-        when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.getToscaElement(containerComponentID, JsonParseFlagEnum.ParseAll))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
+            .thenReturn(StorageOperationStatus.OK);
         when(dataTypeCache.getAll()).thenReturn(Either.left(types));
         when(propertyOperation.validateAndUpdatePropertyValue(property.getType(), "newVal", true, null, types))
-                .thenReturn(Either.right(false));
-        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.BAD_REQUEST)).thenReturn(ActionStatus.INVALID_CONTENT);
+            .thenReturn(Either.right(false));
+        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.BAD_REQUEST))
+            .thenReturn(ActionStatus.INVALID_CONTENT);
 
-        try{
+        try {
             componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
-                    ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
-        } catch(ComponentException e){
+                ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
+        } catch (ComponentException e) {
             assertThat(e.getActionStatus()).isEqualTo(ActionStatus.INVALID_CONTENT);
             return;
         }
@@ -427,8 +440,8 @@ public class ComponentInstanceBusinessLogicTest {
     }
 
     @Test
-    public void testCreateOrUpdatePropertiesValuesMissingFieldFailure(){
-        String containerComponentID="containerId";
+    public void testCreateOrUpdatePropertiesValuesMissingFieldFailure() {
+        String containerComponentID = "containerId";
         String resourceInstanceId = "resourceId";
         String componentInstanceID = "componentInstance";
         List<ComponentInstanceProperty> properties = new ArrayList<>();
@@ -453,7 +466,7 @@ public class ComponentInstanceBusinessLogicTest {
         ComponentInstance ci = createComponentInstance("ci1");
         ci.setUniqueId("resourceId");
         component.setComponentInstances(Arrays.asList(ci, createComponentInstance("ci2"),
-                createComponentInstance(componentInstanceID)));
+            createComponentInstance(componentInstanceID)));
 
         HashMap<String, DataTypeDefinition> dataTypeDefinitionHashMap = new HashMap<>();
         DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
@@ -461,13 +474,15 @@ public class ComponentInstanceBusinessLogicTest {
         dataTypeDefinitionHashMap.put("string", dataTypeDefinition);
 
         //when(userValidations.validateUserExists(user.getUserId(), false)).thenReturn(user);
-        when(toscaOperationFacade.getToscaElement(containerComponentID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(component));
-        when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.getToscaElement(containerComponentID, JsonParseFlagEnum.ParseAll))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
+            .thenReturn(StorageOperationStatus.OK);
 
-        try{
+        try {
             componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
-                    ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
-        } catch(ComponentException e){
+                ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
+        } catch (ComponentException e) {
             assertThat(e.getActionStatus()).isEqualTo(ActionStatus.MISSING_PROPERTY_NAME);
         }
     }
@@ -479,20 +494,22 @@ public class ComponentInstanceBusinessLogicTest {
         String containerComponentID = "Service-comp";
         String componentInstanceID = "NodeA1";
         Service component = new Service();
-        component.setComponentInstances(Arrays.asList(createComponentInstance("NodeA2"), createComponentInstance("NodeB2"),
-            createComponentInstance(componentInstanceID)));
+        component
+            .setComponentInstances(Arrays.asList(createComponentInstance("NodeA2"), createComponentInstance("NodeB2"),
+                createComponentInstance(componentInstanceID)));
 
         component.addForwardingPath(createPath("path1", componentInstanceID, "NodeB1", "1"));
         component.addForwardingPath(createPath("Path2", "NodeA2", "NodeB2", "2"));
         when(toscaOperationFacade.getToscaElement(eq(containerComponentID), any(ComponentParametersView.class)))
-                .thenReturn(Either.left(component));
+            .thenReturn(Either.left(component));
         when(toscaOperationFacade.getToscaElement(eq(containerComponentID))).thenReturn(Either.left(component));
         when(forwardingPathOperation.deleteForwardingPath(any(Service.class), anySet()))
-                .thenReturn(Either.left(new HashSet<>()));
+            .thenReturn(Either.left(new HashSet<>()));
         final ComponentInstance ci = new ComponentInstance();
         ci.setName(componentInstanceID);
-        ComponentInstance responseFormatEither = componentInstanceBusinessLogic.deleteForwardingPathsRelatedTobeDeletedComponentInstance(
-            containerComponentID, containerComponentType, ci);
+        ComponentInstance responseFormatEither = componentInstanceBusinessLogic
+            .deleteForwardingPathsRelatedTobeDeletedComponentInstance(
+                containerComponentID, containerComponentType, ci);
         assertThat(!responseFormatEither.isEmpty()).isEqualTo(true);
 
     }
@@ -508,14 +525,18 @@ public class ComponentInstanceBusinessLogicTest {
         Map<String, ArtifactDefinition> artifacts = new HashMap<>();
         ArtifactDefinition deploymentArtifact1 = getArtifact("deploymentArtifact1", ArtifactTypeEnum.HEAT.getType());
         artifacts.put(deploymentArtifact1.getArtifactLabel(), deploymentArtifact1);
-        ArtifactDefinition deploymentArtifact2 = getArtifact("deploymentArtifact2", ArtifactTypeEnum.HEAT_ENV.getType());
+        ArtifactDefinition deploymentArtifact2 = getArtifact("deploymentArtifact2",
+            ArtifactTypeEnum.HEAT_ENV.getType());
         artifacts.put(deploymentArtifact2.getArtifactLabel(), deploymentArtifact2);
-        ArtifactDefinition deploymentArtifact3 = getArtifact("deploymentArtifact3", ArtifactTypeEnum.HEAT_VOL.getType());
+        ArtifactDefinition deploymentArtifact3 = getArtifact("deploymentArtifact3",
+            ArtifactTypeEnum.HEAT_VOL.getType());
         artifacts.put(deploymentArtifact3.getArtifactLabel(), deploymentArtifact3);
         ArtifactDefinition heatEnvPlaceHolder = getArtifact("deploymentArtifact4", ArtifactTypeEnum.HEAT_ENV.getType());
-        ArtifactDefinition heatEnvPlaceHolder2 = getArtifact("deploymentArtifact5", ArtifactTypeEnum.HEAT_ENV.getType());
+        ArtifactDefinition heatEnvPlaceHolder2 = getArtifact("deploymentArtifact5",
+            ArtifactTypeEnum.HEAT_ENV.getType());
 
-        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getResourceDeploymentArtifacts = Either.left(artifacts);
+        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getResourceDeploymentArtifacts = Either
+            .left(artifacts);
 
         Map<String, ArtifactDefinition> finalDeploymentArtifacts = new HashMap<>();
         finalDeploymentArtifacts.put(deploymentArtifact1.getArtifactLabel(), deploymentArtifact1);
@@ -523,26 +544,28 @@ public class ComponentInstanceBusinessLogicTest {
         finalDeploymentArtifacts.put(heatEnvPlaceHolder.getArtifactLabel(), heatEnvPlaceHolder);
         finalDeploymentArtifacts.put(heatEnvPlaceHolder2.getArtifactLabel(), heatEnvPlaceHolder2);
 
-
         when(artifactsBusinessLogic.getArtifacts(componentInstance.getComponentUid(), NodeTypeEnum.Resource,
-                ArtifactGroupTypeEnum.DEPLOYMENT, null)).thenReturn(getResourceDeploymentArtifacts);
+            ArtifactGroupTypeEnum.DEPLOYMENT, null)).thenReturn(getResourceDeploymentArtifacts);
         when(artifactsBusinessLogic.createHeatEnvPlaceHolder(new ArrayList<>(),
-                deploymentArtifact1, ArtifactsBusinessLogic.HEAT_ENV_NAME, componentInstance.getUniqueId(),
-                NodeTypeEnum.ResourceInstance, componentInstance.getName(), user, containerComponent,
-                null)).thenReturn(heatEnvPlaceHolder);
+            deploymentArtifact1, ArtifactsBusinessLogic.HEAT_ENV_NAME, componentInstance.getUniqueId(),
+            NodeTypeEnum.ResourceInstance, componentInstance.getName(), user, containerComponent,
+            null)).thenReturn(heatEnvPlaceHolder);
         when(artifactsBusinessLogic.createHeatEnvPlaceHolder(new ArrayList<>(),
-                deploymentArtifact3, ArtifactsBusinessLogic.HEAT_ENV_NAME, componentInstance.getUniqueId(),
-                NodeTypeEnum.ResourceInstance, componentInstance.getName(), user, containerComponent,
-                null)).thenReturn(heatEnvPlaceHolder2);
+            deploymentArtifact3, ArtifactsBusinessLogic.HEAT_ENV_NAME, componentInstance.getUniqueId(),
+            NodeTypeEnum.ResourceInstance, componentInstance.getName(), user, containerComponent,
+            null)).thenReturn(heatEnvPlaceHolder2);
 
-
-        when(toscaOperationFacade.addDeploymentArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, finalDeploymentArtifacts)).thenReturn(StorageOperationStatus.OK);
-        when(toscaOperationFacade.addGroupInstancesToComponentInstance(containerComponent, componentInstance, null, new HashMap<>())).thenReturn(StorageOperationStatus.OK);
-        when(toscaOperationFacade.addInformationalArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, null)).thenReturn(StorageOperationStatus.OK);
-
+        when(toscaOperationFacade.addDeploymentArtifactsToInstance(containerComponent.getUniqueId(), componentInstance,
+            finalDeploymentArtifacts)).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade
+            .addGroupInstancesToComponentInstance(containerComponent, componentInstance, null, new HashMap<>()))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade
+            .addInformationalArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, null))
+            .thenReturn(StorageOperationStatus.OK);
 
         ActionStatus status = componentInstanceBusinessLogic.addComponentInstanceArtifacts(containerComponent,
-                componentInstance, originComponent, user, null);
+            componentInstance, originComponent, user, null);
 
         assertThat(status).isEqualTo(ActionStatus.OK);
 
@@ -551,7 +574,7 @@ public class ComponentInstanceBusinessLogicTest {
     private Component fillOriginComponent(Resource originComponent) {
         originComponent.setUniqueId("resourceId");
         originComponent.setUniqueId(ORIGIN_COMPONENT_ID);
-        originComponent.setComponentInstances(Lists.newArrayList(toInstance,fromInstance));
+        originComponent.setComponentInstances(Lists.newArrayList(toInstance, fromInstance));
         originComponent.setComponentType(ComponentTypeEnum.RESOURCE);
         originComponent.setState(LifecycleStateEnum.CERTIFIED);
         return originComponent;
@@ -578,15 +601,14 @@ public class ComponentInstanceBusinessLogicTest {
         forwardingPath.setDestinationPortNumber("port");
         forwardingPath.setUniqueId(uniqueId);
         ListDataDefinition<ForwardingPathElementDataDefinition> forwardingPathElementListDataDefinition =
-                new ListDataDefinition<>();
+            new ListDataDefinition<>();
         forwardingPathElementListDataDefinition
-                .add(new ForwardingPathElementDataDefinition(fromNode, toNode, "nodeAcpType", "nodeBcpType",
-                        "nodeDcpName", "nodeBcpName"));
+            .add(new ForwardingPathElementDataDefinition(fromNode, toNode, "nodeAcpType", "nodeBcpType",
+                "nodeDcpName", "nodeBcpName"));
         forwardingPath.setPathElements(forwardingPathElementListDataDefinition);
 
         return forwardingPath;
     }
-
 
     private Map<String, ForwardingPathDataDefinition> generateForwardingPath(String componentInstanceID) {
         ForwardingPathDataDefinition forwardingPath = new ForwardingPathDataDefinition("fpName");
@@ -597,31 +619,32 @@ public class ComponentInstanceBusinessLogicTest {
         ListDataDefinition<ForwardingPathElementDataDefinition> forwardingPathElementListDataDefinition =
             new ListDataDefinition<>();
         forwardingPathElementListDataDefinition
-                .add(new ForwardingPathElementDataDefinition(componentInstanceID, "nodeB", "nodeA_FORWARDER_CAPABILITY",
-                        "nodeBcpType", "nodeDcpName", "nodeBcpName"));
+            .add(new ForwardingPathElementDataDefinition(componentInstanceID, "nodeB", "nodeA_FORWARDER_CAPABILITY",
+                "nodeBcpType", "nodeDcpName", "nodeBcpName"));
         forwardingPath.setPathElements(forwardingPathElementListDataDefinition);
         Map<String, ForwardingPathDataDefinition> forwardingPaths = new HashMap<>();
         forwardingPaths.put("1122", forwardingPath);
         return forwardingPaths;
     }
 
-  @SuppressWarnings("unchecked")
-    private void getServiceRelationByIdSuccess(Component component){
+    @SuppressWarnings("unchecked")
+    private void getServiceRelationByIdSuccess(Component component) {
         Either<Component, StorageOperationStatus> getComponentRes = Either.left(component);
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
-                .thenReturn(getComponentRes);
+            .thenReturn(getComponentRes);
         Either<RequirementCapabilityRelDef, ResponseFormat> response = componentInstanceBusinessLogic
-                                                                               .getRelationById(COMPONENT_ID,
-                                                                                       RELATION_ID, USER_ID,
-                                                                                       component.getComponentType());
+            .getRelationById(COMPONENT_ID,
+                RELATION_ID, USER_ID,
+                component.getComponentType());
         assertTrue(response.isLeft());
     }
 
     private void getServiceRelationByIdUserValidationFailure(Component component) {
-        when(userValidations.validateUserExists(eq(USER_ID))).thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
+        when(userValidations.validateUserExists(eq(USER_ID)))
+            .thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
         try {
             componentInstanceBusinessLogic
-                    .getRelationById(COMPONENT_ID, RELATION_ID, USER_ID, component.getComponentType());
+                .getRelationById(COMPONENT_ID, RELATION_ID, USER_ID, component.getComponentType());
         } catch (ByActionStatusComponentException e) {
             assertSame(e.getActionStatus(), ActionStatus.USER_NOT_FOUND);
         }
@@ -631,19 +654,20 @@ public class ComponentInstanceBusinessLogicTest {
         Either<User, ActionStatus> eitherCreator = Either.left(user);
         Either<Component, StorageOperationStatus> getComponentRes = Either.right(StorageOperationStatus.NOT_FOUND);
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
-                .thenReturn(getComponentRes);
+            .thenReturn(getComponentRes);
 
         Either<RequirementCapabilityRelDef, ResponseFormat> response = componentInstanceBusinessLogic
-                                                                               .getRelationById(COMPONENT_ID,
-                                                                                       RELATION_ID, USER_ID,
-                                                                                       component.getComponentType());
+            .getRelationById(COMPONENT_ID,
+                RELATION_ID, USER_ID,
+                component.getComponentType());
         assertTrue(response.isRight());
     }
 
     private void stubMethods() {
         when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.GENERAL_ERROR),any(ComponentTypeEnum.class)))
-                .thenReturn(ActionStatus.GENERAL_ERROR);
+        when(componentsUtils
+            .convertFromStorageResponse(eq(StorageOperationStatus.GENERAL_ERROR), any(ComponentTypeEnum.class)))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
     }
 
     private void createComponents() {
@@ -664,7 +688,6 @@ public class ComponentInstanceBusinessLogicTest {
         resource.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
     }
 
-
     private void createService() {
         service = new Service();
         service.setUniqueId(COMPONENT_ID);
@@ -676,10 +699,10 @@ public class ComponentInstanceBusinessLogicTest {
         service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
     }
 
-
     private void createInstances() {
         toInstance = new ComponentInstance();
         toInstance.setUniqueId(TO_INSTANCE_ID);
+        toInstance.setName(TO_INSTANCE_NAME);
 
         fromInstance = new ComponentInstance();
         fromInstance.setUniqueId(FROM_INSTANCE_ID);
@@ -690,7 +713,11 @@ public class ComponentInstanceBusinessLogicTest {
         capability.setName(CAPABILITY_NAME);
 
         Map<String, List<CapabilityDefinition>> capabilities = new HashMap<>();
-        capabilities.put(capability.getName(), Lists.newArrayList(new CapabilityDefinition(capability)));
+        final CapabilityDefinition capabilityDefinition = new CapabilityDefinition(capability);
+        final ArrayList<ComponentInstanceProperty> properties = new ArrayList<>();
+        properties.add(componentInstancePropInput);
+        capabilityDefinition.setProperties(properties);
+        capabilities.put(capability.getName(), Lists.newArrayList(capabilityDefinition));
 
         requirement = new RequirementDataDefinition();
         requirement.setOwnerId(REQUIREMENT_OWNER_ID);
@@ -698,14 +725,12 @@ public class ComponentInstanceBusinessLogicTest {
         requirement.setName(REQUIREMENT_NAME);
         requirement.setRelationship(RELATIONSHIP_TYPE);
 
-
         Map<String, List<RequirementDefinition>> requirements = new HashMap<>();
         requirements.put(requirement.getCapability(), Lists.newArrayList(new RequirementDefinition(requirement)));
 
         toInstance.setCapabilities(capabilities);
         fromInstance.setRequirements(requirements);
     }
-
 
     private void createRelation() {
 
@@ -734,7 +759,6 @@ public class ComponentInstanceBusinessLogicTest {
         return componentInstanceBusinessLogic;
     }
 
-
     @Test
     public void testChangeServiceProxyVersion() {
         ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
@@ -744,8 +768,8 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         componentInstanceBusinessLogic = createTestSubject();
         result = componentInstanceBusinessLogic.changeServiceProxyVersion();
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testCreateServiceProxy() {
@@ -755,11 +779,8 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.createServiceProxy();
+        Assert.assertNotNull(result);
     }
-
-
-
-
 
     @Test
     public void testDeleteServiceProxy() {
@@ -770,8 +791,8 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.deleteServiceProxy();
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testGetComponentInstanceInputsByInputId() {
@@ -783,8 +804,8 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.getComponentInstanceInputsByInputId(component, inputId);
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testGetComponentInstancePropertiesByInputId() {
@@ -796,8 +817,8 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.getComponentInstancePropertiesByInputId(component, inputId);
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testGetRelationById() {
@@ -811,10 +832,11 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.getRelationById(componentId, relationId, userId, componentTypeEnum);
+        Assert.assertNotNull(result);
     }
 
-     @Test
-    public void testValidateParent()  {
+    @Test
+    public void testValidateParent() {
         ComponentInstanceBusinessLogic testSubject;
         createResource();
         String nodeTemplateId = "";
@@ -822,9 +844,9 @@ public class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateParent", new Object[] {resource, nodeTemplateId});
+        result = Deencapsulation.invoke(testSubject, "validateParent", new Object[]{resource, nodeTemplateId});
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testGetComponentType() {
@@ -833,9 +855,9 @@ public class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getComponentType", new Object[] {ComponentTypeEnum.class});
+        result = Deencapsulation.invoke(testSubject, "getComponentType", new Object[]{ComponentTypeEnum.class});
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testGetNewGroupName() {
@@ -848,9 +870,9 @@ public class ComponentInstanceBusinessLogicTest {
         // test 1
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "getNewGroupName",
-                new Object[] {oldPrefix, newNormailzedPrefix, qualifiedGroupInstanceName});
+            new Object[]{oldPrefix, newNormailzedPrefix, qualifiedGroupInstanceName});
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testUpdateComponentInstanceMetadata_3() {
@@ -862,7 +884,8 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation
-                         .invoke(testSubject, "updateComponentInstanceMetadata", new Object[] {toInstance, toInstance});
+            .invoke(testSubject, "updateComponentInstanceMetadata", new Object[]{toInstance, toInstance});
+        Assert.assertNotNull(result);
     }
 
     @Test
@@ -875,9 +898,8 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "findRelation",
-                new Object[] {relationId, requirementCapabilityRelations});
+            new Object[]{relationId, requirementCapabilityRelations});
     }
-
 
     @Test
     public void testCreateOrUpdatePropertiesValues() throws Exception {
@@ -890,28 +912,27 @@ public class ComponentInstanceBusinessLogicTest {
         String userId = user.getUserId();
         Either<List<ComponentInstanceProperty>, ResponseFormat> result;
 
-
         when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll))
-                .thenReturn(Either.left(resource));
+            .thenReturn(Either.left(resource));
 
         // test 1
         testSubject = createTestSubject();
         result = testSubject
-                         .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
-                                 userId);
+            .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
+                userId);
+        Assert.assertNotNull(result);
 
         componentTypeEnum = null;
         result = testSubject
-                         .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
-                                 userId);
+            .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
+                userId);
+        Assert.assertNotNull(result);
 
-        //        when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         result = testSubject
-                         .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
-                                 userId);
-
+            .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
+                userId);
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testUpdateCapabilityPropertyOnContainerComponent() throws Exception {
@@ -927,9 +948,8 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "updateCapabilityPropertyOnContainerComponent",
-                new Object[] {property, newValue, resource, toInstance, capabilityType, capabilityName});
+            new Object[]{property, newValue, resource, toInstance, capabilityType, capabilityName});
     }
-
 
     @Test
     public void testCreateOrUpdateInstanceInputValues() throws Exception {
@@ -943,26 +963,25 @@ public class ComponentInstanceBusinessLogicTest {
         Either<List<ComponentInstanceInput>, ResponseFormat> result;
 
         when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll))
-                .thenReturn(Either.left(resource));
+            .thenReturn(Either.left(resource));
 
         // test 1
         testSubject = createTestSubject();
         result = testSubject
-                         .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
-                                 userId);
+            .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
+                userId);
+        Assert.assertNotNull(result);
         componentTypeEnum = null;
         result = testSubject
-                         .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
-                                 userId);
+            .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
+                userId);
+        Assert.assertNotNull(result);
 
-
-        //        when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         result = testSubject
-                         .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
-                                 userId);
-
+            .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
+                userId);
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testCreateOrUpdateGroupInstancePropertyValue() throws Exception {
@@ -976,26 +995,26 @@ public class ComponentInstanceBusinessLogicTest {
         String userId = user.getUserId();
         Either<ComponentInstanceProperty, ResponseFormat> result;
 
-
         when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseMetadata))
-                .thenReturn(Either.left(resource));
+            .thenReturn(Either.left(resource));
 
         // test 1
         testSubject = createTestSubject();
         result = testSubject
-                         .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
-                                 groupInstanceId, property, userId);
+            .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
+                groupInstanceId, property, userId);
+        Assert.assertNotNull(result);
         componentTypeEnum = null;
         result = testSubject
-                         .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
-                                 groupInstanceId, property, userId);
+            .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
+                groupInstanceId, property, userId);
+        Assert.assertNotNull(result);
 
-        //        when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         result = testSubject
-                         .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
-                                 groupInstanceId, property, userId);
+            .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
+                groupInstanceId, property, userId);
+        Assert.assertNotNull(result);
     }
-
 
     @Test
     public void testDeletePropertyValue() throws Exception {
@@ -1009,19 +1028,21 @@ public class ComponentInstanceBusinessLogicTest {
         Either<ComponentInstanceProperty, ResponseFormat> result;
 
         when(toscaOperationFacade.getToscaElement(serviceId, JsonParseFlagEnum.ParseMetadata))
-                .thenReturn(Either.left(service));
+            .thenReturn(Either.left(service));
 
         // test 1
         testSubject = createTestSubject();
         result = testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId,
-                userId);
+            userId);
+        Assert.assertNotNull(result);
         componentTypeEnum = null;
         result = testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId,
-                userId);
+            userId);
+        Assert.assertNotNull(result);
 
-        //        when(toscaOperationFacade.getToscaElement(serviceId, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         result = testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId,
-                userId);
+            userId);
+        Assert.assertNotNull(result);
     }
 
     @Test
@@ -1032,6 +1053,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "getComponentParametersViewForForwardingPath");
+        Assert.assertNotNull(result);
     }
 
     @Test
@@ -1043,7 +1065,8 @@ public class ComponentInstanceBusinessLogicTest {
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getResourceInstanceById", new Object[] {resource, instanceId});
+        result = Deencapsulation.invoke(testSubject, "getResourceInstanceById", new Object[]{resource, instanceId});
+        Assert.assertNotNull(result);
     }
 
     @Test
@@ -1059,16 +1082,17 @@ public class ComponentInstanceBusinessLogicTest {
         String userId = user.getUserId();
         Either<List<ComponentInstanceProperty>, ResponseFormat> result;
 
-
         when(toscaOperationFacade.getToscaFullElement(containerComponentId))
-                .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         // test 1
         testSubject = createTestSubject();
         result = testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId,
-                componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
+            componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
+        Assert.assertNotNull(result);
         when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.left(resource));
         result = testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId,
-                componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
+            componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
+        Assert.assertNotNull(result);
     }
 
     @Test
@@ -1084,19 +1108,19 @@ public class ComponentInstanceBusinessLogicTest {
         Either<Component, StorageOperationStatus> leftServiceOp = Either.left(service);
         when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(leftServiceOp);
         when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
-                .thenReturn(leftServiceOp);
+            .thenReturn(leftServiceOp);
         when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
 
         result = componentInstanceBusinessLogic
-                         .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId,
-                                 USER_ID);
+            .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId,
+                USER_ID);
+        Assert.assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
-
         assertThat(result.isRight());
     }
 
@@ -1112,15 +1136,16 @@ public class ComponentInstanceBusinessLogicTest {
         Either<Component, StorageOperationStatus> leftServiceOp = Either.left(service);
         when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(leftServiceOp);
         when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
-                .thenReturn(leftServiceOp);
+            .thenReturn(leftServiceOp);
         when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         Either<Component, StorageOperationStatus> getComponentRes = Either.left(resource);
         result = componentInstanceBusinessLogic
-                .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId, USER_ID);
+            .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId, USER_ID);
+        Assert.assertNotNull(result);
         service.setLastUpdaterUserId(oldServiceLastUpdatedUserId);
         assertThat(result.isRight());
     }
@@ -1139,21 +1164,22 @@ public class ComponentInstanceBusinessLogicTest {
         Either<Component, StorageOperationStatus> leftServiceOp = Either.left(service);
         when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(leftServiceOp);
         when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
-                .thenReturn(leftServiceOp);
+            .thenReturn(leftServiceOp);
         when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         Either<Component, StorageOperationStatus> getComponentRes = Either.left(resource);
         ImmutablePair<Component, String> pair = new ImmutablePair<>(resource, TO_INSTANCE_ID);
         Either<ImmutablePair<Component, String>, StorageOperationStatus> result2 = Either.left(pair);
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getResourceDeploymentArtifacts = Either
-                .left(new HashMap<String, ArtifactDefinition>());
+            .left(new HashMap<String, ArtifactDefinition>());
         StorageOperationStatus artStatus = StorageOperationStatus.OK;
 
         result = componentInstanceBusinessLogic
-                         .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId,
-                                 USER_ID);
+            .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId,
+                USER_ID);
+        Assert.assertNotNull(result);
 
         service.setLastUpdaterUserId(oldServiceLastUpdatedUserId);
         resource.setLifecycleState(oldResourceLifeCycle);
@@ -1175,7 +1201,7 @@ public class ComponentInstanceBusinessLogicTest {
         service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 
         Map<String, List<ComponentInstanceProperty>> instAttrsMap =
-                new HashMap<String, List<ComponentInstanceProperty>>();
+            new HashMap<String, List<ComponentInstanceProperty>>();
         List<ComponentInstanceProperty> instAttrsList = new ArrayList<ComponentInstanceProperty>();
         ComponentInstanceProperty prop = new ComponentInstanceProperty();
         prop.setUniqueId(attribute.getUniqueId());
@@ -1185,20 +1211,21 @@ public class ComponentInstanceBusinessLogicTest {
 
         Either<Component, StorageOperationStatus> serviceEitherLeft = Either.left(service);
         when(toscaOperationFacade.getToscaElement(serviceComponentInstance.getUniqueId(), JsonParseFlagEnum.ParseAll))
-                .thenReturn(serviceEitherLeft);
+            .thenReturn(serviceEitherLeft);
         when(toscaOperationFacade.updateComponentInstanceAttribute(service, toInstance.getUniqueId(), attribute))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service))
-                .thenReturn(serviceEitherLeft);
+            .thenReturn(serviceEitherLeft);
 
         Either<ComponentInstanceProperty, ResponseFormat> result = Deencapsulation
-                                                                           .invoke(componentInstanceBusinessLogic,
-                                                                                   "createOrUpdateAttributeValueForCopyPaste",
-                                                                                   ComponentTypeEnum.SERVICE,
-                                                                                   serviceComponentInstance
-                                                                                           .getUniqueId(),
-                                                                                   toInstance.getUniqueId(), attribute,
-                                                                                   USER_ID);
+            .invoke(componentInstanceBusinessLogic,
+                "createOrUpdateAttributeValueForCopyPaste",
+                ComponentTypeEnum.SERVICE,
+                serviceComponentInstance
+                    .getUniqueId(),
+                toInstance.getUniqueId(), attribute,
+                USER_ID);
+        Assert.assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
         service.setLifecycleState(oldLifeCycleState);
@@ -1220,14 +1247,14 @@ public class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(getComponent);
         StorageOperationStatus status = StorageOperationStatus.OK;
         when(toscaOperationFacade.updateComponentInstanceProperty(service, componentInstanceId, property))
-                .thenReturn(status);
+            .thenReturn(status);
         Either<Component, StorageOperationStatus> updateContainerRes = Either.left(service);
         when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service))
-                .thenReturn(updateContainerRes);
+            .thenReturn(updateContainerRes);
 
         Either<String, ResponseFormat> result = Deencapsulation.invoke(componentInstanceBusinessLogic,
-                "updateComponentInstanceProperty", containerComponentId, componentInstanceId, property);
-
+            "updateComponentInstanceProperty", containerComponentId, componentInstanceId, property);
+        Assert.assertNotNull(result);
         assertTrue(result.isLeft());
     }
 
@@ -1245,7 +1272,7 @@ public class ComponentInstanceBusinessLogicTest {
         service.setInputs(newInputs);
 
         Either<String, ResponseFormat> result =
-                Deencapsulation.invoke(componentInstanceBusinessLogic, "getInputListDefaultValue", component, inputId);
+            Deencapsulation.invoke(componentInstanceBusinessLogic, "getInputListDefaultValue", component, inputId);
 
         service.setInputs(oldInputs);
 
@@ -1266,20 +1293,20 @@ public class ComponentInstanceBusinessLogicTest {
         deleteErrorIds.add(componentInstanceId);
         deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
         Either<Component, StorageOperationStatus> cont = Either.left(service);
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND),eq(null)))
-                .thenReturn(ActionStatus.GENERAL_ERROR);
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND), eq(null)))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class)))
-                .thenReturn(cont);
+            .thenReturn(cont);
 
-        try{
-        result = componentInstanceBusinessLogic
+        try {
+            result = componentInstanceBusinessLogic
                 .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
-                        userId);
-            }catch (ComponentException e){
-                assertEquals(e.getActionStatus().toString(), StorageOperationStatus.GENERAL_ERROR.toString());
-            }
-
-//        assertEquals(deleteErrorMap, result);
+                    userId);
+            Assert.assertNotNull(result);
+            assertEquals(deleteErrorMap, result);
+        } catch (ComponentException e) {
+            assertEquals(e.getActionStatus().toString(), StorageOperationStatus.GENERAL_ERROR.toString());
+        }
     }
 
     @Test
@@ -1298,16 +1325,17 @@ public class ComponentInstanceBusinessLogicTest {
 
         Either<Component, StorageOperationStatus> err = Either.right(StorageOperationStatus.GENERAL_ERROR);
         when(toscaOperationFacade.getToscaElement(eq(containerComponentId), any(ComponentParametersView.class)))
-                .thenReturn(err);
+            .thenReturn(err);
 
         try {
             result = componentInstanceBusinessLogic
-                    .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
-                            userId);
-        }catch (ComponentException e){
+                .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
+                    userId);
+            Assert.assertNotNull(result);
+            assertEquals(deleteErrorMap, result);
+        } catch (ComponentException e) {
             assertEquals(e.getActionStatus().toString(), StorageOperationStatus.GENERAL_ERROR.toString());
         }
-//        assertEquals(deleteErrorMap, result);
     }
 
     @Test
@@ -1329,20 +1357,21 @@ public class ComponentInstanceBusinessLogicTest {
 
         Either<Component, StorageOperationStatus> cont = Either.left(service);
         when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         ImmutablePair<Component, String> pair = new ImmutablePair<>(resource, TO_INSTANCE_ID);
         Either<ImmutablePair<Component, String>, StorageOperationStatus> result2 = Either.left(pair);
         when(toscaOperationFacade.deleteComponentInstanceFromTopologyTemplate(service, componentInstanceId))
-                .thenReturn(result2);
+            .thenReturn(result2);
         when(toscaOperationFacade.getToscaElement(eq(service.getUniqueId()), any(ComponentParametersView.class)))
-                .thenReturn(cont);
+            .thenReturn(cont);
         when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
         result = componentInstanceBusinessLogic
-                         .batchDeleteComponentInstance(containerComponentParam, containerComponentId,
-                                 componentInstanceIdList, userId);
+            .batchDeleteComponentInstance(containerComponentParam, containerComponentId,
+                componentInstanceIdList, userId);
+        Assert.assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
         service.setLifecycleState(oldLifeCycleState);
@@ -1375,28 +1404,29 @@ public class ComponentInstanceBusinessLogicTest {
 
         Either<Component, StorageOperationStatus> cont = Either.left(service);
         when(toscaOperationFacade.getToscaElement(eq(service.getUniqueId()), any(ComponentParametersView.class)))
-                .thenReturn(cont);
+            .thenReturn(cont);
         when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         Either<RequirementCapabilityRelDef, StorageOperationStatus> resultEither;
         resultEither = Either.right(StorageOperationStatus.OK);
-        when(componentsUtils.convertFromStorageResponseForResourceInstance(eq(StorageOperationStatus.OK),eq(true)))
-                .thenReturn(ActionStatus.GENERAL_ERROR);
+        when(componentsUtils.convertFromStorageResponseForResourceInstance(eq(StorageOperationStatus.OK), eq(true)))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
         when(toscaOperationFacade.dissociateResourceInstances(componentId, ref)).thenReturn(resultEither);
 
-    try{
-        result = componentInstanceBusinessLogic
-                         .batchDissociateRIFromRI(componentId, userId, requirementDefList, componentTypeEnum);
-    }catch (ComponentException e){
-        assertEquals(e.getActionStatus().toString(), StorageOperationStatus.GENERAL_ERROR.toString());
-    }
+        try {
+            result = componentInstanceBusinessLogic
+                .batchDissociateRIFromRI(componentId, userId, requirementDefList, componentTypeEnum);
+            Assert.assertNotNull(result);
+            assertEquals(new ArrayList<>(), result);
+        } catch (ComponentException e) {
+            assertEquals(e.getActionStatus().toString(), StorageOperationStatus.GENERAL_ERROR.toString());
+        }
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
         service.setLifecycleState(oldLifeCycleState);
 
-//        assertEquals(new ArrayList<>(), result);
     }
 
     @Test
@@ -1416,17 +1446,18 @@ public class ComponentInstanceBusinessLogicTest {
 
         Either<Component, StorageOperationStatus> cont = Either.left(service);
         when(toscaOperationFacade.getToscaElement(eq(service.getUniqueId()), any(ComponentParametersView.class)))
-                .thenReturn(cont);
+            .thenReturn(cont);
         when(graphLockOperation.unlockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Service)))
-                .thenReturn(StorageOperationStatus.OK);
+            .thenReturn(StorageOperationStatus.OK);
         Either<RequirementCapabilityRelDef, StorageOperationStatus> resultEither;
         resultEither = Either.left(ref);
         when(toscaOperationFacade.dissociateResourceInstances(componentId, ref)).thenReturn(resultEither);
 
         result = componentInstanceBusinessLogic
-                         .batchDissociateRIFromRI(componentId, userId, requirementDefList, componentTypeEnum);
+            .batchDissociateRIFromRI(componentId, userId, requirementDefList, componentTypeEnum);
+        Assert.assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
         service.setLifecycleState(oldLifeCycleState);
@@ -1437,7 +1468,7 @@ public class ComponentInstanceBusinessLogicTest {
     @Test
     public void testGetComponentInstancePropertyByPolicyId_success() {
         Optional<ComponentInstanceProperty> propertyCandidate =
-                getComponentInstanceProperty(PROP_NAME);
+            getComponentInstanceProperty(PROP_NAME);
 
         Assert.assertTrue(propertyCandidate.isPresent());
         Assert.assertEquals(propertyCandidate.get().getName(), PROP_NAME);
@@ -1446,7 +1477,7 @@ public class ComponentInstanceBusinessLogicTest {
     @Test
     public void testGetComponentInstancePropertyByPolicyId_failure() {
         Optional<ComponentInstanceProperty> propertyCandidate =
-                getComponentInstanceProperty(NON_EXIST_NAME);
+            getComponentInstanceProperty(NON_EXIST_NAME);
 
         Assert.assertEquals(propertyCandidate, Optional.empty());
     }
@@ -1459,7 +1490,7 @@ public class ComponentInstanceBusinessLogicTest {
         componentInstanceProperty.setGetPolicyValues(policyDefinition.getGetPolicyValues());
 
         service.setComponentInstancesProperties(
-                Collections.singletonMap(COMPONENT_INST_ID, Collections.singletonList(componentInstanceProperty)));
+            Collections.singletonMap(COMPONENT_INST_ID, Collections.singletonList(componentInstanceProperty)));
 
         return componentInstanceBusinessLogic.getComponentInstancePropertyByPolicyId(service, policyDefinition);
     }

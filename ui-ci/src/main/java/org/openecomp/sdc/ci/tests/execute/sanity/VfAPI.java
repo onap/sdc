@@ -340,7 +340,7 @@ public class VfAPI extends SetupCDTest {
 	}*/
 
     // future removed from ui
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void addUpdateDeleteSimplePropertiesToVfTest() throws Exception {
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
@@ -366,7 +366,7 @@ public class VfAPI extends SetupCDTest {
     }
 
     // future removed from ui
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void vfcInstancesInputScreenTest() throws Exception {
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
@@ -450,7 +450,7 @@ public class VfAPI extends SetupCDTest {
         VfVerificator.verifyToscaArtifactsInfo(vfMetaData, getUser());
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testDownload() throws Exception {
 //		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 //		ResourceUIUtils.createResource(vfMetaData, getUser());
@@ -542,7 +542,7 @@ public class VfAPI extends SetupCDTest {
     }
 
     // future removed from ui
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void addPropertyInCompositionScreenTest() throws Exception {
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());

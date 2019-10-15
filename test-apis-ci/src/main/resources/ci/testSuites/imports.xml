@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Imports" >
+<suite name="Imports">
   <test name="Imports">
     <classes>
-       <class name="org.openecomp.sdc.ci.tests.execute.imports.ImportGenericResourceCITest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.imports.ImportCsarResourceTest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.imports.ImportNewResourceCITest"/>
-      <class name="org.openecomp.sdc.ci.tests.execute.imports.ImportToscaResourceTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.imports.ImportGenericResourceCITest"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Imports -->
