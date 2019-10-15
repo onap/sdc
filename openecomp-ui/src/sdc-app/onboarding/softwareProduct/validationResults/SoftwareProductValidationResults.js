@@ -15,14 +15,26 @@
  */
 import { connect } from 'react-redux';
 import SoftwareProductValidationResultsView from './SoftwareProductValidationResultsView.jsx';
+import SoftwareProductValidationResultsViewActionHelper from './SoftwareProductValidationResultsViewActionHelper.js';
 
 export const mapStateToProps = ({ softwareProduct }) => {
+    let { softwareProductValidationResult } = softwareProduct;
     let { softwareProductValidation } = softwareProduct;
     return {
+        softwareProductValidationResult,
         softwareProductValidation
     };
 };
-
-export default connect(mapStateToProps, null, null, {
+export const mapActionsToProps = dispatch => {
+    return {
+        refreshValidationResults: (vspId, versionId) => {
+            SoftwareProductValidationResultsViewActionHelper.refreshValidationResults(
+                dispatch,
+                { vspId, versionId }
+            );
+        }
+    };
+};
+export default connect(mapStateToProps, mapActionsToProps, null, {
     withRef: true
 })(SoftwareProductValidationResultsView);
