@@ -49,6 +49,8 @@ import FeaturesActionHelper from 'sdc-app/features/FeaturesActionHelper.js';
 import { notificationActions } from 'nfvo-components/notification/NotificationsConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SoftwareProductValidationActionHelper from './softwareProduct/validation/SoftwareProductValidationActionHelper.js';
+import SoftwareProductValidationResultsViewActionHelper from './softwareProduct/validationResults/SoftwareProductValidationResultsViewActionHelper.js';
+
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 
 function setCurrentScreen(dispatch, screen, props = {}) {
@@ -446,11 +448,31 @@ const OnboardingActionHelper = {
         dispatch,
         { softwareProductId, version, status }
     ) {
-        setCurrentScreen(
-            dispatch,
-            enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_RESULTS,
-            { softwareProductId, version, status }
-        );
+        SoftwareProductValidationResultsViewActionHelper.fetchVspChecks(
+            dispatch
+        )
+            .then(() => {
+                SoftwareProductValidationResultsViewActionHelper.refreshValidationResults(
+                    dispatch,
+                    { vspId: softwareProductId, versionId: version.id }
+                ).then(() => {
+                    setCurrentScreen(
+                        dispatch,
+                        enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_RESULTS,
+                        { softwareProductId, version, status }
+                    );
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                    data: {
+                        title: 'ERROR',
+                        msg: error.responseJSON.message,
+                        cancelButtonText: i18n('OK')
+                    }
+                });
+            });
     },
 
     navigateToSoftwareProductDependencies(

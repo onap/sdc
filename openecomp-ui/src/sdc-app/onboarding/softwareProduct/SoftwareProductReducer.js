@@ -46,6 +46,7 @@ import SoftwareProductComponentsComputeFlavorListReducer from './components/comp
 import SoftwareProductComponentsComputeFlavorReducer from './components/compute/computeComponents/computeFlavor/ComputeFlavorReducer.js';
 import { createPlainDataReducer } from 'sdc-app/common/reducers/PlainDataReducer.js';
 import SoftwareProductDependenciesReducer from './dependencies/SoftwareProductDependenciesReducer.js';
+import SoftwareProductValidationResultsViewReducer from './validationResults/SoftwareProductValidationResultsViewReducer.js';
 import {
     createJSONSchemaReducer,
     createComposedJSONSchemaReducer
@@ -77,6 +78,9 @@ export default combineReducers({
     ),
     softwareProductValidation: createPlainDataReducer(
         SoftwareProductValidationReducer
+    ),
+    softwareProductValidationResult: createPlainDataReducer(
+        SoftwareProductValidationResultsViewReducer
     ),
     softwareProductProcesses: combineReducers({
         processesList: SoftwareProductProcessesListReducer,
