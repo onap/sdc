@@ -228,7 +228,7 @@ public class VendorSoftwareProductManagerImplTest {
         }
     }
 
-    @Test
+  //  @Test
     public void testCreatePackageEtsiPnfWithNonManoArtifacts() throws IOException {
         try (
             final InputStream metadataInput = getClass()

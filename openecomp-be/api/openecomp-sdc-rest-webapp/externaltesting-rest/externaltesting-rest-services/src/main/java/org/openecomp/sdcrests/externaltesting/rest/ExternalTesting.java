@@ -20,9 +20,9 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.openecomp.core.externaltesting.api.ClientConfiguration;
 import org.openecomp.core.externaltesting.api.RemoteTestingEndpointDefinition;
-import org.openecomp.core.externaltesting.api.VtpTestExecutionRequest;
 import org.springframework.validation.annotation.Validated;
-
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,55 +37,56 @@ import java.util.List;
 
 public interface ExternalTesting {
 
-  @GET
-  @Path("/config")
-  Response getConfig();
+    @GET
+    @Path("/config")
+    Response getConfig();
 
-  @PUT
-  @Path("/config")
-  Response setConfig(ClientConfiguration config);
+    @PUT
+    @Path("/config")
+    Response setConfig(ClientConfiguration config);
 
-  @GET
-  @Path("/testcasetree")
-  Response getTestCasesAsTree();
+    @GET
+    @Path("/testcasetree")
+    Response getTestCasesAsTree();
 
-  @GET
-  @Path("/endpoints")
-  Response getEndpoints();
+    @GET
+    @Path("/endpoints")
+    Response getEndpoints();
 
-  @PUT
-  @Path("/endpoints")
-  Response setEndpoints(List<RemoteTestingEndpointDefinition> endpoints);
+    @PUT
+    @Path("/endpoints")
+    Response setEndpoints(List<RemoteTestingEndpointDefinition> endpoints);
 
-  @GET
-  @Path("/endpoints/{endpointId}/scenarios")
-  Response getScenarios(@PathParam("endpointId") String endpointId);
+    @GET
+    @Path("/endpoints/{endpointId}/scenarios")
+    Response getScenarios(@PathParam("endpointId") String endpointId);
 
-  @GET
-  @Path("/endpoints/{endpointId}/scenarios/{scenario}/testsuites")
-  Response getTestsuites(@PathParam("endpointId") String endpointId, @PathParam("scenario") String scenario);
+    @GET
+    @Path("/endpoints/{endpointId}/scenarios/{scenario}/testsuites")
+    Response getTestsuites(@PathParam("endpointId") String endpointId, @PathParam("scenario") String scenario);
 
-  @GET
-  @Path("/endpoints/{endpointId}/scenarios/{scenario}/testcases")
-  Response getTestcases(@PathParam("endpointId") String endpointId,
-                        @PathParam("scenario") String scenario);
+    @GET
+    @Path("/endpoints/{endpointId}/scenarios/{scenario}/testcases")
+    Response getTestcases(@PathParam("endpointId") String endpointId, @PathParam("scenario") String scenario);
 
-  @GET
-  @Path("/endpoints/{endpointId}/scenarios/{scenario}/testsuites/{testsuite}/testcases/{testcase}")
-  Response getTestcase(@PathParam("endpointId") String endpointId,
-                       @PathParam("scenario") String scenario,
-                       @PathParam("testsuite") String testsuite,
-                       @PathParam("testcase") String testcase);
+    @GET
+    @Path("/endpoints/{endpointId}/scenarios/{scenario}/testsuites/{testsuite}/testcases/{testcase}")
+    Response getTestcase(@PathParam("endpointId") String endpointId, @PathParam("scenario") String scenario,
+            @PathParam("testsuite") String testsuite, @PathParam("testcase") String testcase);
 
-  @POST
-  @Path("/endpoints/{endpointId}/executions/{executionId}")
-  Response getExecution(@PathParam("endpointId") String endpointId,
-                        @PathParam("executionId") String executionId);
+    @POST
+    @Path("/endpoints/{endpointId}/executions/{executionId}")
+    Response getExecution(@PathParam("endpointId") String endpointId, @PathParam("executionId") String executionId);
 
 
-  @POST
-  @Path("/executions")
-  Response execute(List<VtpTestExecutionRequest> req,
-                   @QueryParam("requestId") String requestId);
+    @POST
+    @Path("/executions")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    Response execute(@QueryParam("vspId") String vspId, @QueryParam("vspVersionId") String vspVersionId,
+            @Multipart(value = "files", required = false) List<Attachment> files,
+            @Multipart(value = "testdata", required = false) String testData);
 
+    @GET
+    @Path("/vspid/{vspId}/vspversion/{vspVersion}")
+    Response getValidationResult(@PathParam("vspId") String vspId, @PathParam("vspVersion") String vspVersion);
 }

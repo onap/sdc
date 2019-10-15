@@ -34,6 +34,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFacto
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VtpResultDaoFactoryImpl;
+
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactory;
 
@@ -58,6 +60,7 @@ public class VspManagerFactoryImpl extends VspManagerFactory {
           .manualVspToscaManager(new ManualVspToscaManagerImpl())
           .uniqueValue(UniqueValueDaoFactory.getInstance().createInterface())
           .candidateService(CandidateServiceFactory.getInstance().createInterface())
+          .vtpResult(VtpResultDaoFactoryImpl.getInstance().createInterface())
           .build();
 
   @Override
