@@ -569,7 +569,7 @@ public class Service extends SetupCDTest {
     }
 
     // future removed from ui
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void inputsTest() throws Exception {
         String fileName = "service_input_test_VF2.csar";
 
