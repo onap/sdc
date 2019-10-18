@@ -21,11 +21,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
-import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class ComponentManagerFactory extends AbstractComponentFactory<ComponentManager> {
 
   public static ComponentManagerFactory getInstance() {
-    return AbstractFactory.getInstance(ComponentManagerFactory.class);
+    return getInstance(ComponentManagerFactory.class);
   }
 }

@@ -21,11 +21,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
-import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class ProcessManagerFactory extends AbstractComponentFactory<ProcessManager> {
 
   public static ProcessManagerFactory getInstance() {
-    return AbstractFactory.getInstance(ProcessManagerFactory.class);
+    return getInstance(ProcessManagerFactory.class);
   }
 }

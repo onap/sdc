@@ -31,31 +31,24 @@ import java.util.Map;
 
 public final class FactoriesConfigImpl implements FactoriesConfiguration {
 
+  private final Map factoryConfigurationMap = new HashMap();
 
-  private static final String FACTORY_CONFIG_FILE_NAME = "factoryConfiguration.json";
-  private static final Map FACTORY_MAP = new HashMap();
-  private static boolean initialized = false;
+  public FactoriesConfigImpl() {
+    init();
+  }
 
   @SuppressWarnings("unchecked")
   @Override
   public Map<String, String> getFactoriesMap() {
-    synchronized (this) {
-      if (!initialized) {
-        init();
-        initialized = true;
-      }
-    }
-    return FACTORY_MAP;
+    return factoryConfigurationMap;
   }
 
   private void init() {
-
-    List<URL> factoryConfigUrlList = FileUtils.getAllLocations(FACTORY_CONFIG_FILE_NAME);
-    for (URL factoryConfigUrl : factoryConfigUrlList) {
-
+    final List<URL> factoryConfigUrlList = FileUtils.getAllLocations("factoryConfiguration.json");
+    for (final URL factoryConfigUrl : factoryConfigUrlList) {
       try (InputStream stream = factoryConfigUrl.openStream()) {
-        FACTORY_MAP.putAll(JsonUtil.json2Object(stream, Map.class));
-      } catch (IOException e) {
+        factoryConfigurationMap.putAll(JsonUtil.json2Object(stream, Map.class));
+      } catch (final IOException e) {
         throw new SdcConfigurationException("Failed to initialize Factory from '" + factoryConfigUrl.getPath() +"'", e);
       }
     }

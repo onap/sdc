@@ -21,11 +21,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
-import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class NicManagerFactory extends AbstractComponentFactory<NicManager> {
 
   public static NicManagerFactory getInstance() {
-    return AbstractFactory.getInstance(NicManagerFactory.class);
+    return getInstance(NicManagerFactory.class);
   }
 }
