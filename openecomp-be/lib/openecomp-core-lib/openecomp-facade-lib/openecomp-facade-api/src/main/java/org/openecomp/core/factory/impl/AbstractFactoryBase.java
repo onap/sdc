@@ -16,7 +16,7 @@
 
 package org.openecomp.core.factory.impl;
 
-import static org.openecomp.core.utilities.CommonMethods.newInstance;
+import org.openecomp.core.utilities.CommonMethods;
 
 import java.util.Collection;
 import java.util.Map;
@@ -108,38 +108,27 @@ public abstract class AbstractFactoryBase {
               .build());
 
     }
-    // Pick up factory instance from cache
-    F factory = (F) FACTORY_MAP.get(factoryType.getName());
-    // Check for the first time access
-    if (factory == null) {
-      // Synchronize factory instantiation
-      synchronized (FACTORY_MAP) {
-        // Re-check the factory instance
-        factory = (F) FACTORY_MAP.get(factoryType.getName());
-        if (factory == null) {
-          // Get the implementation class name
-          String implName = REGISTRY.get(factoryType.getName());
+    // Check if the factory is already cached
+    if (FACTORY_MAP.get(factoryType.getName()) == null) {
+      //if not, create a new one and cache it
+      // Get the implementation class name
+      final String implName = REGISTRY.get(factoryType.getName());
 
-          if (StringUtils.isEmpty(implName)) {
-            throw new CoreException(
-                new ErrorCode.ErrorCodeBuilder().withId(E0001)
-                    .withMessage("Mandatory input factory implementation.")
-                    .withCategory(ErrorCategory.SYSTEM).build());
-          }
-
-          factory = newInstance(implName, factoryType);
-
-          factory.init();
-
-          // Cache the instantiated singleton
-          FACTORY_MAP.put(factoryType.getName(), factory);
-        }
+      if (StringUtils.isEmpty(implName)) {
+        throw new CoreException(
+            new ErrorCode.ErrorCodeBuilder().withId(E0001)
+                .withMessage("Mandatory input factory implementation.")
+                .withCategory(ErrorCategory.SYSTEM).build());
       }
+
+      F factory = CommonMethods.newInstance(implName, factoryType);
+      factory.init();
+      // Cache the instantiated singleton
+      FACTORY_MAP.putIfAbsent(factoryType.getName(), factory);
     }
 
-    return factory;
-
-  } // getInstance
+    return (F) FACTORY_MAP.get(factoryType.getName());
+  }
 
 
   /**
