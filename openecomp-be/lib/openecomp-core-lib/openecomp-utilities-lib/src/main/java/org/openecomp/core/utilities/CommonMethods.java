@@ -17,6 +17,7 @@
 package org.openecomp.core.utilities;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.UUID;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.core.utilities.exception.NewInstanceRuntimeException;
 
 /**
  * This class provides auxiliary static methods.
@@ -160,11 +162,12 @@ public class CommonMethods {
      * @param cls the cls
      * @return the t
      */
-    public static <T> T newInstance(Class<T> cls) {
+    public static <T> T newInstance(final Class<T> cls) {
         try {
-            return cls.newInstance();
-        } catch (InstantiationException | IllegalAccessException exception) {
-            throw new RuntimeException(exception);
+            return cls.getDeclaredConstructor().newInstance();
+        } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
+            throw new NewInstanceRuntimeException(String.format("Could not create instance for '%s'", cls.getName())
+                , ex);
         }
     }
 

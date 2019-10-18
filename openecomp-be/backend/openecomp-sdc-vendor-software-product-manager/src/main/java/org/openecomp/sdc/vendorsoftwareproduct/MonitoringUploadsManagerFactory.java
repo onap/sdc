@@ -21,12 +21,11 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
-import org.openecomp.core.factory.api.AbstractFactory;
 
 public abstract class MonitoringUploadsManagerFactory
     extends AbstractComponentFactory<MonitoringUploadsManager> {
 
   public static MonitoringUploadsManagerFactory getInstance() {
-    return AbstractFactory.getInstance(MonitoringUploadsManagerFactory.class);
+    return getInstance(MonitoringUploadsManagerFactory.class);
   }
 }

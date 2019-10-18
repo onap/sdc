@@ -20,23 +20,17 @@
 
 package org.openecomp.core.factory;
 
+import java.util.Map;
 import org.openecomp.core.factory.api.FactoriesConfiguration;
 import org.openecomp.core.utilities.CommonMethods;
 
-import java.util.Map;
-
 public final class FactoryConfig {
 
-  private static final FactoriesConfiguration INSTANCE;
+  private static final FactoriesConfiguration INSTANCE = CommonMethods.newInstance(
+      "org.openecomp.core.factory.FactoriesConfigImpl", FactoriesConfiguration.class);
 
-  static {
+  private FactoryConfig() {
 
-    try {
-      INSTANCE = CommonMethods.newInstance(
-          "org.openecomp.core.factory.FactoriesConfigImpl", FactoriesConfiguration.class);
-    } catch (Exception exception) {
-      throw exception;
-    }
   }
 
   public static Map<String, String> getFactoriesMap() {
