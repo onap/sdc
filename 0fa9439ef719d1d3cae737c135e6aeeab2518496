@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "449011f1_1b3dddd8",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T15:45:41Z",
+      "side": 1,
+      "message": "what it used for?",
+      "range": {
+        "startLine": 59,
+        "startChar": 21,
+        "endLine": 64,
+        "endChar": 21
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d704dbac_91c723e1",
         "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/main/java/org/openecomp/core/externaltesting/api/VtpTestExecutionOutput.java",
         "patchSetId": 1
