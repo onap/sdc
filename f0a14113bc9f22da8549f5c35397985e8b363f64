@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ca7f5b92_27eb7679",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-facade-lib/openecomp-facade-api/src/main/java/org/openecomp/core/factory/impl/FactoryManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-10-21T15:16:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9492b594_c3644df7",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 66
+      },
+      "revId": "f0a14113bc9f22da8549f5c35397985e8b363f64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4fea1e83_93bd438d",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-facade-lib/openecomp-facade-api/src/main/java/org/openecomp/core/factory/impl/FactoryManager.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2019-10-21T10:55:59Z",
       "side": 1,
       "message": "could be private",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 10
+      },
+      "revId": "f0a14113bc9f22da8549f5c35397985e8b363f64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24403b31_f1a7096e",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-facade-lib/openecomp-facade-api/src/main/java/org/openecomp/core/factory/impl/FactoryManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-10-21T15:16:32Z",
+      "side": 1,
+      "message": "I left some utillitary methods as before, public, if someone wants to add / remove programmatically a new factory registry",
+      "parentUuid": "4fea1e83_93bd438d",
       "range": {
         "startLine": 55,
         "startChar": 4,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fa8c556e_5b7fe56d",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-facade-lib/openecomp-facade-api/src/main/java/org/openecomp/core/factory/impl/FactoryManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-10-21T15:16:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "246cbec5_2304f825",
+      "range": {
+        "startLine": 92,
+        "startChar": 35,
+        "endLine": 92,
+        "endChar": 56
+      },
+      "revId": "f0a14113bc9f22da8549f5c35397985e8b363f64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d99dbdd4_779a0c7e",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-facade-lib/openecomp-facade-core/src/main/java/org/openecomp/core/factory/api/Registry.java",
         "patchSetId": 3
@@ -82,6 +154,30 @@
       "writtenOn": "2019-10-21T10:55:59Z",
       "side": 1,
       "message": "is it used anywhere ?",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 0
+      },
+      "revId": "f0a14113bc9f22da8549f5c35397985e8b363f64",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "971ffeaa_7e510045",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-facade-lib/openecomp-facade-core/src/main/java/org/openecomp/core/factory/api/Registry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-10-21T15:16:32Z",
+      "side": 1,
+      "message": "I don\u0027t think so, removed.",
+      "parentUuid": "d99dbdd4_779a0c7e",
       "range": {
         "startLine": 21,
         "startChar": 0,
