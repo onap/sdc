@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a89f7490_dc17b689",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/main/java/org/openecomp/sdcrests/externaltesting/rest/services/ExternalTestingImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T13:56:20Z",
+      "side": 1,
+      "message": "could be private",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 57,
+        "endChar": 10
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc35f1ca_89ef4978",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T13:56:20Z",
+      "side": 1,
+      "message": "any particular reason to disable this Test?",
+      "range": {
+        "startLine": 231,
+        "startChar": 0,
+        "endLine": 231,
+        "endChar": 11
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d704dbac_91c723e1",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api/src/main/java/org/openecomp/core/externaltesting/api/VtpTestExecutionOutput.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T13:56:20Z",
+      "side": 1,
+      "message": "replace with lombok @Getter / @Setter for more clear view.",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 5
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "084eac5b_46e36b90",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T13:56:20Z",
+      "side": 1,
+      "message": "unused private method",
+      "range": {
+        "startLine": 777,
+        "startChar": 17,
+        "endLine": 777,
+        "endChar": 36
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "218b821e_627f4306",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 808,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T13:56:20Z",
+      "side": 1,
+      "message": "unused private method",
+      "range": {
+        "startLine": 808,
+        "startChar": 17,
+        "endLine": 808,
+        "endChar": 40
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d243c49f_32853998",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VtpResultsEntity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T13:56:20Z",
+      "side": 1,
+      "message": "is it used anywhere?",
+      "range": {
+        "startLine": 49,
+        "startChar": 4,
+        "endLine": 63,
+        "endChar": 5
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d1692d0_b6f5df6d",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VtpResultsEntity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T13:56:20Z",
+      "side": 1,
+      "message": "replace with lombok @Getter / @Setter for more clear view.",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 5
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41b13b8f_2d8e510b",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/VtpResultDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-21T13:56:20Z",
+      "side": 1,
+      "message": "could be private",
+      "range": {
+        "startLine": 41,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 63
+      },
+      "revId": "0fa9439ef719d1d3cae737c135e6aeeab2518496",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
