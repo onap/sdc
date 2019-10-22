@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a92e08c_cd3dcc0e",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-10-22T17:19:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "29cb23e4_1a5e785a",
+      "range": {
+        "startLine": 13,
+        "startChar": 3,
+        "endLine": 70,
+        "endChar": 0
+      },
+      "revId": "e35337cd289a66e970cbf2a4968cb7ed51402e23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc2be45e_7c9db7ca",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/pom.xml",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "67d4417f_c71f8cbb",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-10-22T17:19:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc2be45e_7c9db7ca",
+      "range": {
+        "startLine": 58,
+        "startChar": 7,
+        "endLine": 107,
+        "endChar": 16
+      },
+      "revId": "e35337cd289a66e970cbf2a4968cb7ed51402e23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9f12c12f_4f9b98f3",
         "filename": "openecomp-be/pom.xml",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "e35337cd289a66e970cbf2a4968cb7ed51402e23",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3568f7a6_ebc6ab79",
+        "filename": "openecomp-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-10-22T17:19:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9f12c12f_4f9b98f3",
+      "range": {
+        "startLine": 34,
+        "startChar": 4,
+        "endLine": 35,
+        "endChar": 20
+      },
+      "revId": "e35337cd289a66e970cbf2a4968cb7ed51402e23",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
