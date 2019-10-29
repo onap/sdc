@@ -18,7 +18,6 @@ SDC_CERT_DIR="onap/cert"
 RELEASE=latest
 
 LOCAL=false
-RUNTESTS=false
 BE_DEBUG_PORT="--publish 4000:4000"
 FE_DEBUG_PORT="--publish 6000:6000"
 ONBOARD_DEBUG_PORT="--publish 4001:4001"
@@ -78,7 +77,6 @@ function cleanup {
 function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/BE/SDC/SDC-BE
     mkdir -p ${WORKSPACE}/data/logs/FE/SDC/SDC-FE
-
     mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/ExtentReport
     mkdir -p ${WORKSPACE}/data/logs/ONBOARD/SDC/ONBOARD-BE
     mkdir -p ${WORKSPACE}/data/logs/sdc-api-tests/target
@@ -86,8 +84,7 @@ function dir_perms {
     mkdir -p ${WORKSPACE}/data/logs/sdc-ui-tests/target
     mkdir -p ${WORKSPACE}/data/logs/docker_logs
     mkdir -p ${WORKSPACE}/data/logs/WS
-    echo "create dir"
-    echo "${WORKSPACE}/data/${SDC_CERT_DIR}"
+    echo "Creating dir '${WORKSPACE}/data/${SDC_CERT_DIR}'"
     mkdir -p ${WORKSPACE}/data/${SDC_CERT_DIR}
     chmod -R 777 ${WORKSPACE}/data/logs
 }
@@ -370,7 +367,7 @@ function sdc-BE {
     else
         ADDITIONAL_ARGUMENTS=${BE_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while BE is starting..."
     monitor_docker ${DOCKER_NAME}
@@ -385,7 +382,7 @@ function sdc-BE-init {
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-backend-init:${RELEASE}
     fi
-    docker run --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:/var/lib/jetty/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
+    docker run --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
     rc=$?
     docker_logs ${DOCKER_NAME}
     if [[ ${rc} != 0 ]]; then exit ${rc}; fi
@@ -404,7 +401,7 @@ function sdc-onboard-BE {
     else
         ADDITIONAL_ARGUMENTS=${ONBOARD_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env SDC_CERT_DIR="${SDC_CERT_DIR}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/${SDC_CERT_DIR}:/var/lib/jetty/onap/cert --volume ${WORKSPACE}/data/logs/ONBOARD:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8445:8445 --publish 8081:8081 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env SDC_CERT_DIR="${SDC_CERT_DIR}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/${SDC_CERT_DIR}:${JETTY_BASE}/onap/cert --volume ${WORKSPACE}/data/logs/ONBOARD:${JETTY_BASE}/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8445:8445 --publish 8081:8081 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while sdc-onboard-BE is starting..."
     monitor_docker ${DOCKER_NAME}
@@ -421,7 +418,7 @@ function sdc-FE {
     else
         ADDITIONAL_ARGUMENTS=${FE_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/FE/:/var/lib/jetty/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/environments/plugins-configuration.yaml:${JETTY_BASE}/config/catalog-fe/plugins-configuration.yaml --publish 9443:9443 --publish 8181:8181 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-frontend:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/FE/:${JETTY_BASE}/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/environments/plugins-configuration.yaml:${JETTY_BASE}/config/catalog-fe/plugins-configuration.yaml --publish 9443:9443 --publish 8181:8181 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-frontend:${RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while FE is starting....."
     monitor_docker ${DOCKER_NAME}
@@ -492,7 +489,7 @@ function sdc-sim {
                 --env JAVA_OPTIONS="${SIM_JAVA_OPTIONS}" \
                 --env ENVNAME="${DEP_ENV}" \
                 ${LOCAL_TIME_MOUNT_CMD} \
-                --volume ${WORKSPACE}/data/logs/WS/:/var/lib/jetty/logs \
+                --volume ${WORKSPACE}/data/logs/WS/:${JETTY_BASE}/logs \
                 --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments \
                 --publish 8285:8080 \
                 --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
