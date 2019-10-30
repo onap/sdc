@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "01d0a81e_9c652d08",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/Transformation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-30T15:57:07Z",
+      "side": 1,
+      "message": "add LOGGER to log exception.",
+      "range": {
+        "startLine": 94,
+        "startChar": 16,
+        "endLine": 94,
+        "endChar": 40
+      },
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0fa69b04_e3747925",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/TransformationBlock.java",
         "patchSetId": 2
@@ -70,6 +93,29 @@
     },
     {
       "key": {
+        "uuid": "21182df1_3fdcec33",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/AbstractPnfdTransformationEngine.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-30T15:57:07Z",
+      "side": 1,
+      "message": "reuse LOGGER-formating, instead of String.format",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 100
+      },
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ddade803_f4bdd8ce",
         "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/PnfdTransformationDescriptorReader.java",
         "patchSetId": 2
@@ -84,6 +130,52 @@
       "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5fbab577_2963931f",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/parser/NodeTypeYamlParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-30T15:57:07Z",
+      "side": 1,
+      "message": "unchecked cast warning,\nadd\n@SuppressWarnings(\"unchecked\")\nto suppress or fix it",
+      "range": {
+        "startLine": 50,
+        "startChar": 8,
+        "endLine": 61,
+        "endChar": 112
+      },
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12e749eb_2a2b23ec",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/parser/TransformationYamlParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-10-30T15:57:07Z",
+      "side": 1,
+      "message": "add exception to LOGGER.",
+      "range": {
+        "startLine": 185,
+        "startChar": 12,
+        "endLine": 185,
+        "endChar": 124
+      },
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
