@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0fa69b04_e3747925",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/TransformationBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "@lombok all argument constructor can replace this constructor",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d8cf6d80_0293ccb9",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/TransformationBlock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "Lombok @getter can replace this function",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "938156ea_6bd2492a",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/TransformationProperty.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "is there a reason not to use lombok default equal and hash function?\nhttps://projectlombok.org/features/EqualsAndHashCode",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f235e172_fa5b6aa3",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/AbstractPnfdTransformationEngine.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "passing around inputStream is a very dangerous.\nInputStream need to be in a try with resource block.\nOtherwise it will very hard to protect from resource leaks.",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddade803_f4bdd8ce",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/converter/impl/pnfd/PnfdTransformationDescriptorReader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "if any expcetion happens before the try block we will be left with an open stream.",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1ba75e5e_41d7669b",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/impl/AbstractToscaConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "Can remain private, why the change is needed?",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3f4ed42_8d537010",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/converter/impl/pnfd/PnfTransformationEngineParameterizedTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "Sonar remark\nunnecessary semicolon \u0027;\u0027",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7ae2e8b_24b5b149",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/converter/impl/pnfd/PnfTransformationEngineParameterizedTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "This is a question for discussion.\n\nWhy did you use currentThread Context loader and not\ngetClass().getResource()?\nThe get class also check on system resources.",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bfc6db67_3b6d3f5d",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/converter/impl/pnfd/PnfTransformationEngineTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-10-30T14:31:45Z",
+      "side": 1,
+      "message": "Sonar Remark.\nField can be converted to a local variable.",
+      "revId": "a532a807691772d855fe38e7cafd61e7a20caf6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
