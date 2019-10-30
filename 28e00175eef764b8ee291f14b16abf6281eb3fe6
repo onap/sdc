@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "31cee12b_53097e68",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/heat/HeatParameterType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2019-10-30T15:48:27Z",
+      "side": 1,
+      "message": "Hi Shiri Amichai, thank you for your comments. As HEAT does not support scalar unit type, I understand that the translation should be done from number to scalar.unit.size and the default size value to GB, as according to TOSCA spec, the scalar-unit type can be used to define scalar values along with a unit from the list of recognized units - http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.0/csprd01/TOSCA-Simple-Profile-YAML-v1.0-csprd01.html. If you agree with that I can proceed with the changes.",
+      "parentUuid": "ee3359a1_59e58459",
+      "revId": "28e00175eef764b8ee291f14b16abf6281eb3fe6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3602e58_29ee81b1",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/heat/nested/nestedundervolume/inputs/ocgapp_01_volume.env",
         "patchSetId": 1
