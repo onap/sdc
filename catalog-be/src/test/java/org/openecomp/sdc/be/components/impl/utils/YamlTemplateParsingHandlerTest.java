@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.be.components.impl.utils;
 
-import mockit.Deencapsulation;
-import org.apache.commons.collections.MapUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -35,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import mockit.Deencapsulation;
+import org.apache.commons.collections.MapUtils;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,19 +57,13 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.UploadArtifactInfo;
+import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.*;
 @RunWith(MockitoJUnitRunner.class)
 public class YamlTemplateParsingHandlerTest {
 
@@ -273,7 +268,7 @@ public class YamlTemplateParsingHandlerTest {
         return property;
     }
     @Test
-    public void testSetArtifacts() throws Exception {
+    public void testSetArtifacts() {
         UploadComponentInstanceInfo nodeTemplateInfo = new UploadComponentInstanceInfo();
         Map<String, Object> nodeTemplateJsonMap = new HashMap<>();
         Map<String, String> nodeMap = new HashMap<>();
@@ -281,11 +276,11 @@ public class YamlTemplateParsingHandlerTest {
         nodeMap.put("type","test_type");
         nodeTemplateJsonMap.put(ARTIFACTS.getElementName(), nodeMap);
         Deencapsulation.invoke(testSubject, "setArtifacts", nodeTemplateInfo, nodeTemplateJsonMap);
-        Assert.assertTrue(nodeTemplateInfo.getArtifacts() != null);
+        assertNotNull(nodeTemplateInfo.getArtifacts());
     }
 
     @Test
-    public void testCreateArtifactsModuleFromYaml() throws Exception {
+    public void testCreateArtifactsModuleFromYaml() {
         Map<String, Map<String, Map<String, String>>> nodeTemplateJsonMap = new HashMap<>();
         Map<String, Map<String,String>> map0 = new HashMap<>();
         Map<String, String> map1 = new HashMap<>();
@@ -297,12 +292,12 @@ public class YamlTemplateParsingHandlerTest {
         result = Deencapsulation.invoke(testSubject, "createArtifactsModuleFromYaml", nodeTemplateJsonMap);
         Assert.assertTrue(MapUtils.isNotEmpty(result));
         Assert.assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
-        Assert.assertTrue(result.get(ARTIFACTS.getElementName()).get("test_art").getFile().equals("test_file"));
-        Assert.assertTrue(result.get(ARTIFACTS.getElementName()).get("test_art").getType().equals("test_type"));
+        Assert.assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
+        Assert.assertEquals("test_type", result.get(ARTIFACTS.getElementName()).get("test_art").getType());
     }
 
     @Test
-    public void testAddModuleNodeTemplateArtifacts() throws Exception {
+    public void testAddModuleNodeTemplateArtifacts() {
         Map<String, Map<String, UploadArtifactInfo>> result = new HashMap<>();
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
@@ -310,31 +305,31 @@ public class YamlTemplateParsingHandlerTest {
         Deencapsulation.invoke(testSubject, "addModuleNodeTemplateArtifacts", result, map1, "test_art");
         Assert.assertTrue(MapUtils.isNotEmpty(result));
         Assert.assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
-        Assert.assertTrue(result.get(ARTIFACTS.getElementName()).get("test_art").getFile().equals("test_file"));
-        Assert.assertTrue(result.get(ARTIFACTS.getElementName()).get("test_art").getType().equals("test_type"));
+        Assert.assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
+        Assert.assertEquals("test_type", result.get(ARTIFACTS.getElementName()).get("test_art").getType());
     }
 
     @Test
-    public void testBuildModuleNodeTemplateArtifact() throws Exception {
+    public void testBuildModuleNodeTemplateArtifact() {
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         UploadArtifactInfo result;
         result = Deencapsulation.invoke(testSubject, "buildModuleNodeTemplateArtifact", map1);
-        Assert.assertTrue(result != null);
-        Assert.assertTrue(result.getFile().equals("test_file"));
-        Assert.assertTrue(result.getType().equals("test_type"));
+        assertNotNull(result);
+        Assert.assertEquals("test_file", result.getFile());
+        Assert.assertEquals("test_type", result.getType());
     }
 
     @Test
-    public void testFillArtifact() throws Exception {
+    public void testFillArtifact() {
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         UploadArtifactInfo result = new UploadArtifactInfo();
         Deencapsulation.invoke(testSubject, "fillArtifact", result, map1);
-        Assert.assertTrue(result != null);
-        Assert.assertTrue(result.getFile().equals("test_file"));
-        Assert.assertTrue(result.getType().equals("test_type"));
+        assertNotNull(result);
+        Assert.assertEquals("test_file", result.getFile());
+        Assert.assertEquals("test_type", result.getType());
     }
 }
