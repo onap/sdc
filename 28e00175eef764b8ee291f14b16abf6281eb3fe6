@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ee3359a1_59e58459",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/heat/HeatParameterType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-10-30T07:16:17Z",
+      "side": 1,
+      "message": "This file represent HEAT types, HEAT is not supporting\nscalar-unit.size,  scalar-unit.time and scalar-unit.frequency, they are TOSCA types.\nAccording to heat spec heat type can be ONLY one of the following \n\u003cstring | number | json | comma_delimited_list | boolean\u003e\nhttps://docs.openstack.org/heat/latest/template_guide/hot_spec.html#\nsee Parameters section\n\nYou can\u0027t change the heat file to be invalid\nThe translation which was done was from number to float\nif you want to represent it differently in TOSCA you can but it should be valid translation, the input is number.\nPlease note that the size in heat OS::Cinder::Volume is define in GB, according to heat spec - https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Cinder::Volume\nso if you change the translation to tosca scalar-unit.size, the units should be aligned.\nWe define it in TOSCA as MB so this is why we added (*1024) to heat size in order to get TOSCA size\nMaybe the default value in the TOSCA type can be changed to GB and then the (*1024) can be removed, I don\u0027t remember why it was set to be MB",
+      "revId": "28e00175eef764b8ee291f14b16abf6281eb3fe6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3602e58_29ee81b1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/heat/nested/nestedundervolume/inputs/ocgapp_01_volume.env",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-10-30T07:16:17Z",
+      "side": 1,
+      "message": "heat size if in GB",
+      "range": {
+        "startLine": 4,
+        "startChar": 28,
+        "endLine": 4,
+        "endChar": 30
+      },
+      "revId": "28e00175eef764b8ee291f14b16abf6281eb3fe6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "55ff4269_28bb1f7b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/heat/nested/nestedundervolume/inputs/ocgapp_01_volume.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-10-30T07:16:17Z",
+      "side": 1,
+      "message": "invalid heat type",
+      "range": {
+        "startLine": 9,
+        "startChar": 10,
+        "endLine": 9,
+        "endChar": 26
+      },
+      "revId": "28e00175eef764b8ee291f14b16abf6281eb3fe6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
