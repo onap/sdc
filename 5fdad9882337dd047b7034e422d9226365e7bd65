@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "72858bde_6fdd8f0c",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/api/ArtifactTypeEnum.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2019-10-30T11:41:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a58220b3_7a5a2877",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 0
+      },
+      "revId": "5fdad9882337dd047b7034e422d9226365e7bd65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "565d00be_030b4a65",
         "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/datatypes/enums/ArtifactTypeEnum.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-10-30T09:54:52Z",
       "side": 1,
       "message": "could be replaced with lombok annotations.",
+      "range": {
+        "startLine": 43,
+        "startChar": 1,
+        "endLine": 51,
+        "endChar": 2
+      },
+      "revId": "5fdad9882337dd047b7034e422d9226365e7bd65",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ecb761c_561f535b",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/datatypes/enums/ArtifactTypeEnum.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2019-10-30T11:41:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "565d00be_030b4a65",
       "range": {
         "startLine": 43,
         "startChar": 1,
