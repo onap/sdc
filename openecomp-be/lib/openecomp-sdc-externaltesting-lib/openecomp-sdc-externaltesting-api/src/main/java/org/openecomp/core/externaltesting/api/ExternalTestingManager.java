@@ -18,6 +18,7 @@ package org.openecomp.core.externaltesting.api;
 
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExternalTestingManager {
 
@@ -35,6 +36,7 @@ public interface ExternalTestingManager {
   /**
    * Build a tree of all test cases for the client including all
    * defined endpoints, scenarios, and test suites.
+   *
    * @return test case tree.
    */
   TestTreeNode getTestCasesAsTree();
@@ -63,6 +65,7 @@ public interface ExternalTestingManager {
 
   /**
    * Get a list of test cases.
+   *
    * @param endpoint endpoint to contact (e.g. VTP)
    * @param scenario test scenario to get tests for
    * @return list of test cases.
@@ -71,9 +74,10 @@ public interface ExternalTestingManager {
 
   /**
    * Get the details about a particular test case.
-   * @param endpoint endpoint to contact (e.g. VTP)
-   * @param scenario test scenario to get tests for
-   * @param testSuite suite to get tests for
+   *
+   * @param endpoint     endpoint to contact (e.g. VTP)
+   * @param scenario     test scenario to get tests for
+   * @param testSuite    suite to get tests for
    * @param testCaseName test case name to query.
    * @return details about the test case.
    */
@@ -82,18 +86,44 @@ public interface ExternalTestingManager {
   /**
    * Execute a collection of tests where the manager must distribute
    * the tests to the appropriate endpoint and correlate the responses.
-   * @param requests collection of request items.
-   * @param requestId optional request ID provided from client.
+   *
+   * @param requests     collection of request items.
+   * @param requestId    optional request ID provided from client.
+   * @param vspVersionId vsp version id
+   * @param requestId    request id
+   * @param fileMap      file map
    * @return response from endpoint (don't bother to parse).
    */
-  List<VtpTestExecutionResponse> execute(List<VtpTestExecutionRequest> requests, String requestId);
+
+  List<VtpTestExecutionResponse> execute(List<VtpTestExecutionRequest> requests, String vspId, String vspVersionId,
+          String requestId, Map<String, byte[]> fileMap);
+
 
   /**
    * Return a previous results.
-   * @param endpoint endpoint to query
+   *
+   * @param endpoint    endpoint to query
    * @param executionId execution to query.
    * @return response from endpoint.
    */
   VtpTestExecutionResponse getExecution(String endpoint, String executionId);
 
+  /**
+   * Get ExceutionIds by requestId
+   *
+   * @param endpoint
+   * @param requestId
+   * @return response from endpoint
+   */
+  List<VtpTestExecutionOutput> getExecutionIds(String endpoint, String requestId);
+
+  /**
+   * To update VTP result in DB
+   *  @param tests
+   * @param vspId
+   * @param vspVersionId
+   * @param requestId
+   */
+
+  void updateVtpResultInDB(List<VtpTestExecutionRequest> tests, String vspId, String vspVersionId, String requestId);
 }
