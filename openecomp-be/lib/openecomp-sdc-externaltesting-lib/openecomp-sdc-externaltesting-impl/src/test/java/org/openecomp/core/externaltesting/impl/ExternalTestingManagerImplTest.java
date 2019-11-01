@@ -98,20 +98,22 @@ public class ExternalTestingManagerImplTest {
     // read mock data for API calls.
 
     File scenarioFile = new File("src/test/data/scenarios.json");
-    TypeReference<List<VtpNameDescriptionPair>> typ = new TypeReference<List<VtpNameDescriptionPair>>(){};
+    TypeReference<List<VtpNameDescriptionPair>> typ = new TypeReference<List<VtpNameDescriptionPair>>() { };
     List<VtpNameDescriptionPair> scenarios = mapper.readValue(scenarioFile, typ);
 
     File testSuitesFile = new File("src/test/data/testsuites.json");
-    List<VtpNameDescriptionPair> testSuites = mapper.readValue(testSuitesFile, new TypeReference<List<VtpNameDescriptionPair>>(){});
+    List<VtpNameDescriptionPair> testSuites =
+            mapper.readValue(testSuitesFile, new TypeReference<List<VtpNameDescriptionPair>>() { });
 
     File testCasesFile = new File("src/test/data/testcases.json");
-    List<VtpTestCase> testCases = mapper.readValue(testCasesFile, new TypeReference<List<VtpTestCase>>(){});
+    List<VtpTestCase> testCases = mapper.readValue(testCasesFile, new TypeReference<List<VtpTestCase>>() { });
 
     File testCaseFile = new File("src/test/data/testcase-sriov.json");
     VtpTestCase testCase = mapper.readValue(testCaseFile, VtpTestCase.class);
 
     File runResultFile = new File("src/test/data/runresult.json");
-    List<VtpTestExecutionResponse> runResults = mapper.readValue(runResultFile, new TypeReference<List<VtpTestExecutionResponse>>(){});
+    List<VtpTestExecutionResponse> runResults =
+            mapper.readValue(runResultFile, new TypeReference<List<VtpTestExecutionResponse>>() { });
 
     File priorExecutionFile = new File("src/test/data/priorexecution.json");
     VtpTestExecutionResponse priorExecution = mapper.readValue(priorExecutionFile, VtpTestExecutionResponse.class);
@@ -119,9 +121,11 @@ public class ExternalTestingManagerImplTest {
     // create an error response as well
     String notFound = FileUtils.readFileToString(new File("src/test/data/notfound.json"), "UTF-8");
 
-    ParameterizedTypeReference<List<VtpNameDescriptionPair>> listOfPairType = new ParameterizedTypeReference<List<VtpNameDescriptionPair>>() {};
-    ParameterizedTypeReference<List<VtpTestCase>> listOfCasesType = new ParameterizedTypeReference<List<VtpTestCase>>() {};
-    ParameterizedTypeReference<VtpTestCase> caseType = new ParameterizedTypeReference<VtpTestCase>() {};
+    ParameterizedTypeReference<List<VtpNameDescriptionPair>> listOfPairType =
+            new ParameterizedTypeReference<List<VtpNameDescriptionPair>>() { };
+    ParameterizedTypeReference<List<VtpTestCase>> listOfCasesType =
+            new ParameterizedTypeReference<List<VtpTestCase>>() { };
+    ParameterizedTypeReference<VtpTestCase> caseType = new ParameterizedTypeReference<VtpTestCase>() { };
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.parseMediaType("application/problem+json"));
@@ -132,127 +136,75 @@ public class ExternalTestingManagerImplTest {
     List<Version> versionList = new ArrayList<>();
     versionList.add(new Version(UUID.randomUUID().toString()));
 
-    Mockito
-        .when(candidateManager.get(
-            ArgumentMatchers.contains("csar"),
-            ArgumentMatchers.any()))
-        .thenReturn(Optional.of(Pair.of("Processed.zip", csar)));
+    Mockito.when(candidateManager.get(ArgumentMatchers.contains("csar"), ArgumentMatchers.any()))
+            .thenReturn(Optional.of(Pair.of("Processed.zip", csar)));
 
-    Mockito
-        .when(candidateManager.get(
-            ArgumentMatchers.contains("heat"),
-            ArgumentMatchers.any()))
-        .thenReturn(Optional.empty());
+    Mockito.when(candidateManager.get(ArgumentMatchers.contains("heat"), ArgumentMatchers.any()))
+            .thenReturn(Optional.empty());
 
-    Mockito
-        .when(vendorSoftwareProductManager.get(
-            ArgumentMatchers.contains("heat"),
-            ArgumentMatchers.any()))
-        .thenReturn(Optional.of(Pair.of("Processed.zip", heat)));
+    Mockito.when(vendorSoftwareProductManager.get(ArgumentMatchers.contains("heat"), ArgumentMatchers.any()))
+            .thenReturn(Optional.of(Pair.of("Processed.zip", heat)));
 
 
+    Mockito.when(vendorSoftwareProductManager.get(ArgumentMatchers.contains("missing"), ArgumentMatchers.any()))
+            .thenReturn(Optional.empty());
 
-    Mockito
-        .when(vendorSoftwareProductManager.get(
-            ArgumentMatchers.contains("missing"),
-            ArgumentMatchers.any()))
-        .thenReturn(Optional.empty());
-
-    Mockito
-        .when(candidateManager.get(
-            ArgumentMatchers.contains("missing"),
-            ArgumentMatchers.any()))
-        .thenReturn(Optional.empty());
+    Mockito.when(candidateManager.get(ArgumentMatchers.contains("missing"), ArgumentMatchers.any()))
+            .thenReturn(Optional.empty());
 
 
-    Mockito
-        .when(versioningManager.list(
-            ArgumentMatchers.contains("missing")))
-        .thenReturn(versionList);
+    Mockito.when(versioningManager.list(ArgumentMatchers.contains("missing"))).thenReturn(versionList);
 
 
+    Mockito.when(restTemplate.exchange(ArgumentMatchers.endsWith("/scenarios"), ArgumentMatchers.eq(HttpMethod.GET),
+            ArgumentMatchers.any(), ArgumentMatchers.eq(listOfPairType)))
+            .thenReturn(new ResponseEntity(scenarios, HttpStatus.OK));
 
+    Mockito.when(restTemplate
+                         .exchange(ArgumentMatchers.endsWith("/testsuites"), ArgumentMatchers.eq(HttpMethod.GET),
+                                 ArgumentMatchers.any(), ArgumentMatchers.eq(listOfPairType)))
+            .thenReturn(new ResponseEntity(testSuites, HttpStatus.OK));
 
+    Mockito.when(restTemplate.exchange(ArgumentMatchers.endsWith("/testcases"), ArgumentMatchers.eq(HttpMethod.GET),
+            ArgumentMatchers.any(), ArgumentMatchers.eq(listOfCasesType)))
+            .thenReturn(new ResponseEntity(testCases, HttpStatus.OK));
 
-
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.endsWith("/scenarios"),
-            ArgumentMatchers.eq(HttpMethod.GET),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(listOfPairType)))
-        .thenReturn(new ResponseEntity(scenarios, HttpStatus.OK));
-
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.endsWith("/testsuites"),
-            ArgumentMatchers.eq(HttpMethod.GET),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(listOfPairType)))
-        .thenReturn(new ResponseEntity(testSuites, HttpStatus.OK));
-
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.endsWith("/testcases"),
-            ArgumentMatchers.eq(HttpMethod.GET),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(listOfCasesType)))
-        .thenReturn(new ResponseEntity(testCases, HttpStatus.OK));
-
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.endsWith("/sriov"),
-            ArgumentMatchers.eq(HttpMethod.GET),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(caseType)))
-        .thenReturn(new ResponseEntity(testCase, HttpStatus.OK));
+    Mockito.when(restTemplate.exchange(ArgumentMatchers.endsWith("/sriov"), ArgumentMatchers.eq(HttpMethod.GET),
+            ArgumentMatchers.any(), ArgumentMatchers.eq(caseType)))
+            .thenReturn(new ResponseEntity(testCase, HttpStatus.OK));
 
 
     // POST for execution
 
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.contains("executions"),
-            ArgumentMatchers.eq(HttpMethod.POST),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(new ParameterizedTypeReference<List<VtpTestExecutionResponse>>() {})))
-        .thenReturn(new ResponseEntity(runResults, HttpStatus.OK));
+    Mockito.when(restTemplate
+                         .exchange(ArgumentMatchers.contains("executions"), ArgumentMatchers.eq(HttpMethod.POST),
+                                 ArgumentMatchers.any(), ArgumentMatchers
+                                                                 .eq(new ParameterizedTypeReference<List<VtpTestExecutionResponse>>() { })))
+            .thenReturn(new ResponseEntity(runResults, HttpStatus.OK));
 
 
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.contains("/executions/"),
-            ArgumentMatchers.eq(HttpMethod.GET),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(new ParameterizedTypeReference<VtpTestExecutionResponse>() {})))
-        .thenReturn(new ResponseEntity(priorExecution, HttpStatus.OK));
+    Mockito.when(restTemplate
+                         .exchange(ArgumentMatchers.contains("/executions/"), ArgumentMatchers.eq(HttpMethod.GET),
+                                 ArgumentMatchers.any(), ArgumentMatchers
+                                                                 .eq(new ParameterizedTypeReference<VtpTestExecutionResponse>() { })))
+            .thenReturn(new ResponseEntity(priorExecution, HttpStatus.OK));
 
 
-    HttpStatusCodeException missingException = new HttpServerErrorException(HttpStatus.NOT_FOUND, "Not Found", headers, notFound.getBytes(), Charset.defaultCharset());
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.endsWith("/missing"),
-            ArgumentMatchers.eq(HttpMethod.GET),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(caseType)))
-        .thenThrow(missingException);
+    HttpStatusCodeException missingException =
+            new HttpServerErrorException(HttpStatus.NOT_FOUND, "Not Found", headers, notFound.getBytes(),
+                    Charset.defaultCharset());
+    Mockito.when(restTemplate.exchange(ArgumentMatchers.endsWith("/missing"), ArgumentMatchers.eq(HttpMethod.GET),
+            ArgumentMatchers.any(), ArgumentMatchers.eq(caseType))).thenThrow(missingException);
 
 
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.endsWith("/sitedown"),
-            ArgumentMatchers.eq(HttpMethod.GET),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(caseType)))
-        .thenThrow(new ResourceAccessException("Remote site is down"));
+    Mockito.when(restTemplate.exchange(ArgumentMatchers.endsWith("/sitedown"), ArgumentMatchers.eq(HttpMethod.GET),
+            ArgumentMatchers.any(), ArgumentMatchers.eq(caseType)))
+            .thenThrow(new ResourceAccessException("Remote site is down"));
 
-    Mockito
-        .when(restTemplate.exchange(
-            ArgumentMatchers.endsWith("throwexception"),
-            ArgumentMatchers.eq(HttpMethod.POST),
-            ArgumentMatchers.any(),
-            ArgumentMatchers.eq(new ParameterizedTypeReference<List<VtpTestExecutionResponse>>() {})))
-        .thenThrow(missingException);
+    Mockito.when(restTemplate.exchange(ArgumentMatchers.endsWith("throwexception"),
+            ArgumentMatchers.eq(HttpMethod.POST), ArgumentMatchers.any(),
+            ArgumentMatchers.eq(new ParameterizedTypeReference<List<VtpTestExecutionResponse>>() { })))
+            .thenThrow(missingException);
 
 
     return mgr;
@@ -283,8 +235,7 @@ public class ExternalTestingManagerImplTest {
     try {
       m.getTestCase("repository", "scen", "suite", "sitedown");
       Assert.fail("not expected to retrieve sitedown test case");
-    }
-    catch (ExternalTestingException e) {
+    } catch (ExternalTestingException e) {
       // expecting this exception.
       Assert.assertNotNull(e.getDetail());
       Assert.assertNotEquals(0, e.getHttpStatus());
@@ -295,8 +246,7 @@ public class ExternalTestingManagerImplTest {
     try {
       m.getTestCase("repository", "scen", "suite", "missing");
       Assert.fail("not expected to retrieve missing test case");
-    }
-    catch (ExternalTestingException e) {
+    } catch (ExternalTestingException e) {
       // expecting this exception.
       Assert.assertNotNull(e.getDetail());
       Assert.assertNotEquals(0, e.getHttpStatus());
@@ -315,7 +265,7 @@ public class ExternalTestingManagerImplTest {
     requests.add(req);
 
     // send a request with the endpoint defined.
-    List<VtpTestExecutionResponse> responses = m.execute(requests, "rid");
+    List<VtpTestExecutionResponse> responses = m.execute(requests, "vspId", "vspVersionId", "rid", null);
     Assert.assertEquals(1, responses.size());
 
     // send a request for a prior execution.
@@ -344,9 +294,8 @@ public class ExternalTestingManagerImplTest {
 
     // send a request with the endpoint defined.
     try {
-      m.execute(requests, "throwexception");
-    }
-    catch (ExternalTestingException e) {
+      m.execute(requests, "vspId", "vspVersionId", "throwexception", null);
+    } catch (ExternalTestingException e) {
       // expected.
     }
   }
@@ -365,7 +314,7 @@ public class ExternalTestingManagerImplTest {
     lst.add(new RemoteTestingEndpointDefinition());
     lst.get(0).setEnabled(true);
     m.setEndpoints(lst);
-    Assert.assertEquals(1,m.getEndpoints().size());
+    Assert.assertEquals(1, m.getEndpoints().size());
   }
 
   @Test
@@ -377,8 +326,7 @@ public class ExternalTestingManagerImplTest {
     try {
       m.getEndpoints();
       Assert.assertTrue("should have exception here", true);
-    }
-    catch (ExternalTestingException e) {
+    } catch (ExternalTestingException e) {
       // eat the exception cause this is what should happen.
     }
   }
@@ -399,7 +347,8 @@ public class ExternalTestingManagerImplTest {
     r3.setScenario("scenario3");
     r3.setEndpoint("repository");
 
-    List<VtpTestExecutionResponse> results = m.execute(Arrays.asList(r1,r2,r3), "rid");
+    List<VtpTestExecutionResponse> results =
+            m.execute(Arrays.asList(r1, r2, r3), "vspId", "vspVersionId", "rid", null);
     Assert.assertEquals("three in two out merged", 2, results.size());
   }
 
@@ -410,30 +359,20 @@ public class ExternalTestingManagerImplTest {
     r1.setScenario("scenario1");
     r1.setEndpoint("vtp");
     r1.setParameters(new HashMap<>());
-    r1.getParameters().put(ExternalTestingManagerImpl.VSP_ID, "something.with.csar.content");
-    r1.getParameters().put(ExternalTestingManagerImpl.VSP_VERSION, UUID.randomUUID().toString());
 
-    LinkedMultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
-    m.attachArchiveContent(r1, body);
-
+    LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+    m.attachArchiveContent(r1, body, "something.with.csar.content", UUID.randomUUID().toString());
     r1.setParameters(new HashMap<>());
-    r1.getParameters().put(ExternalTestingManagerImpl.VSP_ID, "something.with.heat.content");
-    r1.getParameters().put(ExternalTestingManagerImpl.VSP_VERSION, UUID.randomUUID().toString());
-
-    LinkedMultiValueMap<String,Object> body2 = new LinkedMultiValueMap<>();
-    m.attachArchiveContent(r1, body2);
+    LinkedMultiValueMap<String, Object> body2 = new LinkedMultiValueMap<>();
+    m.attachArchiveContent(r1, body2, "something.with.heat.content", UUID.randomUUID().toString());
 
     // now, let's handle a missing archive.
     r1.setParameters(new HashMap<>());
-    r1.getParameters().put(ExternalTestingManagerImpl.VSP_ID, "something.with.missing.content");
-    r1.getParameters().put(ExternalTestingManagerImpl.VSP_VERSION, UUID.randomUUID().toString());
-
-    LinkedMultiValueMap<String,Object> body3 = new LinkedMultiValueMap<>();
+    LinkedMultiValueMap<String, Object> body3 = new LinkedMultiValueMap<>();
     try {
-      m.attachArchiveContent(r1, body3);
+      m.attachArchiveContent(r1, body3, "something.with.missing.content", UUID.randomUUID().toString());
       Assert.fail("expected to receive an exception here");
-    }
-    catch (ExternalTestingException ex) {
+    } catch (ExternalTestingException ex) {
       Assert.assertEquals(500, ex.getHttpStatus());
     }
 

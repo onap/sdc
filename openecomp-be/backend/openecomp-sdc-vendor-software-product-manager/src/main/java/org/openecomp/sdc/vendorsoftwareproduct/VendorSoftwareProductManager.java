@@ -36,40 +36,40 @@ import java.util.Optional;
 
 public interface VendorSoftwareProductManager {
 
-  VspDetails createVsp(VspDetails vspDetails);
+    VspDetails createVsp(VspDetails vspDetails);
 
-  void updateVsp(VspDetails vspDetails);
+    void updateVsp(VspDetails vspDetails);
 
-  VspDetails getVsp(String vspId, Version version);
+    VspDetails getVsp(String vspId, Version version);
 
-  void deleteVsp(String vspId, Version version);
+    void deleteVsp(String vspId, Version version);
 
-  ValidationResponse validate(VspDetails vspDetails) throws IOException;
+    ValidationResponse validate(VspDetails vspDetails) throws IOException;
 
-  Map<String, List<ErrorMessage>> compile(String vspId, Version version);
-
-
-  QuestionnaireResponse getVspQuestionnaire(String vspId, Version version);
-
-  void updateVspQuestionnaire(String vspId, Version version, String questionnaireData);
+    Map<String, List<ErrorMessage>> compile(String vspId, Version version);
 
 
-  byte[] getOrchestrationTemplateFile(String vspId, Version version);
+    QuestionnaireResponse getVspQuestionnaire(String vspId, Version version);
 
-  OrchestrationTemplateEntity getOrchestrationTemplateInfo(String vspId, Version version);
-
-  Optional<FilesDataStructure> getOrchestrationTemplateStructure(String vspId, Version version);
-
-  PackageInfo createPackage(String vspId, Version version) throws IOException;
-
-  List<PackageInfo> listPackages(String category, String subCategory);
+    void updateVspQuestionnaire(String vspId, Version version, String questionnaireData);
 
 
-  File getTranslatedFile(String vspId, Version version);
+    byte[] getOrchestrationTemplateFile(String vspId, Version version);
 
-  File getInformationArtifact(String vspId, Version version);
+    OrchestrationTemplateEntity getOrchestrationTemplateInfo(String vspId, Version version);
 
-  public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException;
+    Optional<FilesDataStructure> getOrchestrationTemplateStructure(String vspId, Version version);
 
-  Collection<ComputeEntity> getComputeByVsp(String vspId, Version version);
+    PackageInfo createPackage(String vspId, Version version) throws IOException;
+
+    List<PackageInfo> listPackages(String category, String subCategory);
+
+
+    File getTranslatedFile(String vspId, Version version);
+
+    File getInformationArtifact(String vspId, Version version);
+
+    public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException;
+
+    Collection<ComputeEntity> getComputeByVsp(String vspId, Version version);
 }
