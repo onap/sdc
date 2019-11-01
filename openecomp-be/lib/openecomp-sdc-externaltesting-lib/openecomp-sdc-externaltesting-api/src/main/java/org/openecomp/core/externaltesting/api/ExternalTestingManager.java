@@ -18,82 +18,104 @@ package org.openecomp.core.externaltesting.api;
 
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExternalTestingManager {
 
-  /**
-   * Return the configuration of this feature that we want to
-   * expose to the client.  Treated as a JSON blob for flexibility.
-   */
-  ClientConfiguration getConfig();
+    /**
+     * Return the configuration of this feature that we want to
+     * expose to the client.  Treated as a JSON blob for flexibility.
+     */
+    ClientConfiguration getConfig();
 
-  /**
-   * For testing purposes, set the client configuration.
-   */
-  ClientConfiguration setConfig(ClientConfiguration config);
+    /**
+     * For testing purposes, set the client configuration.
+     */
+    ClientConfiguration setConfig(ClientConfiguration config);
 
-  /**
-   * Build a tree of all test cases for the client including all
-   * defined endpoints, scenarios, and test suites.
-   * @return test case tree.
-   */
-  TestTreeNode getTestCasesAsTree();
+    /**
+     * Build a tree of all test cases for the client including all
+     * defined endpoints, scenarios, and test suites.
+     *
+     * @return test case tree.
+     */
+    TestTreeNode getTestCasesAsTree();
 
-  /**
-   * Get a list of testing endpoints.
-   */
-  List<RemoteTestingEndpointDefinition> getEndpoints();
+    /**
+     * Get a list of testing endpoints.
+     */
+    List<RemoteTestingEndpointDefinition> getEndpoints();
 
 
-  /**
-   * For functional testing purposes, allow the endpoint configuration
-   * to be provisioned to the BE.
-   */
-  List<RemoteTestingEndpointDefinition> setEndpoints(List<RemoteTestingEndpointDefinition> endpoints);
+    /**
+     * For functional testing purposes, allow the endpoint configuration
+     * to be provisioned to the BE.
+     */
+    List<RemoteTestingEndpointDefinition> setEndpoints(List<RemoteTestingEndpointDefinition> endpoints);
 
-  /**
-   * Get a list of scenarios from and endpoint.
-   */
-  List<VtpNameDescriptionPair> getScenarios(String endpoint);
+    /**
+     * Get a list of scenarios from and endpoint.
+     */
+    List<VtpNameDescriptionPair> getScenarios(String endpoint);
 
-  /**
-   * Get a list of test suites given the endpoint and scenario.
-   */
-  List<VtpNameDescriptionPair> getTestSuites(String endpoint, String scenario);
+    /**
+     * Get a list of test suites given the endpoint and scenario.
+     */
+    List<VtpNameDescriptionPair> getTestSuites(String endpoint, String scenario);
 
-  /**
-   * Get a list of test cases.
-   * @param endpoint endpoint to contact (e.g. VTP)
-   * @param scenario test scenario to get tests for
-   * @return list of test cases.
-   */
-  List<VtpTestCase> getTestCases(String endpoint, String scenario);
+    /**
+     * Get a list of test cases.
+     *
+     * @param endpoint endpoint to contact (e.g. VTP)
+     * @param scenario test scenario to get tests for
+     * @return list of test cases.
+     */
+    List<VtpTestCase> getTestCases(String endpoint, String scenario);
 
-  /**
-   * Get the details about a particular test case.
-   * @param endpoint endpoint to contact (e.g. VTP)
-   * @param scenario test scenario to get tests for
-   * @param testSuite suite to get tests for
-   * @param testCaseName test case name to query.
-   * @return details about the test case.
-   */
-  VtpTestCase getTestCase(String endpoint, String scenario, String testSuite, String testCaseName);
+    /**
+     * Get the details about a particular test case.
+     *
+     * @param endpoint     endpoint to contact (e.g. VTP)
+     * @param scenario     test scenario to get tests for
+     * @param testSuite    suite to get tests for
+     * @param testCaseName test case name to query.
+     * @return details about the test case.
+     */
+    VtpTestCase getTestCase(String endpoint, String scenario, String testSuite, String testCaseName);
 
-  /**
-   * Execute a collection of tests where the manager must distribute
-   * the tests to the appropriate endpoint and correlate the responses.
-   * @param requests collection of request items.
-   * @param requestId optional request ID provided from client.
-   * @return response from endpoint (don't bother to parse).
-   */
-  List<VtpTestExecutionResponse> execute(List<VtpTestExecutionRequest> requests, String requestId);
+    /**
+     * Execute a collection of tests where the manager must distribute
+     * the tests to the appropriate endpoint and correlate the responses.
+     *
+     * @param requests     collection of request items.
+     * @param requestId    optional request ID provided from client.
+     * @param vspVersionId vsp version id
+     * @param requestId    request id
+     * @param fileMap      file map
+     * @return response from endpoint (don't bother to parse).
+     */
 
-  /**
-   * Return a previous results.
-   * @param endpoint endpoint to query
-   * @param executionId execution to query.
-   * @return response from endpoint.
-   */
-  VtpTestExecutionResponse getExecution(String endpoint, String executionId);
+    List<VtpTestExecutionResponse> execute(List<VtpTestExecutionRequest> requests, String vspId, String vspVersionId,
+            String requestId, Map<String, byte[]> fileMap);
+
+
+    /**
+     * Return a previous results.
+     *
+     * @param endpoint    endpoint to query
+     * @param executionId execution to query.
+     * @return response from endpoint.
+     */
+    VtpTestExecutionResponse getExecution(String endpoint, String executionId);
+
+    /**
+     * Get ExceutionIds by requestId
+     *
+     * @param endpoint
+     * @param requestId
+     * @return response from endpoint
+     */
+    List<VtpTestExecutionOutput> getExecutionIds(String endpoint, String requestId);
+
 
 }
