@@ -22,6 +22,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VtpResultsEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
@@ -72,4 +73,10 @@ public interface VendorSoftwareProductManager {
   public Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException;
 
   Collection<ComputeEntity> getComputeByVsp(String vspId, Version version);
+
+  List<VtpResultsEntity> getVTPResultId(String vspId, String version);
+
+  void updateVtpResult(String id, String vspId, String vspVersionId, String requestId, String endPointName);
+
+  void deleteVtpResult(String vspId, String vspVersionId);
 }
