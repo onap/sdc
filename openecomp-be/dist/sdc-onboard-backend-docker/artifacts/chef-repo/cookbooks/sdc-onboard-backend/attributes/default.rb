@@ -21,5 +21,5 @@ default['cassandra']['socket_connect_timeout'] = 20000
 default['cassandra']['janusgraph_connection_timeout'] = 10000
 
 #ExternalTesting
-default['EXTTEST']['ep1_config'] = "vtp,VTP,true,http://192.168.50.5:8702/onapapi/vnfsdk-marketplace,c.*"
+default['EXTTEST']['ep1_config'] = "vtp,VTP,true,http://192.168.50.5:8702/onapapi/vnfsdk-marketplace,onap.*"
 default['EXTTEST']['ep2_config'] = "repository,Repository,false,,.*"

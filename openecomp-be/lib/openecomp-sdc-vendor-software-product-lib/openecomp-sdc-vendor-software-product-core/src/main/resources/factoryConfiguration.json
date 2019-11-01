@@ -1,3 +1,4 @@
 {
-  "org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VspMergeDaoFactoryImpl"
+  "org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VspMergeDaoFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.dao.VtpResultDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VtpResultDaoFactoryImpl"
 }

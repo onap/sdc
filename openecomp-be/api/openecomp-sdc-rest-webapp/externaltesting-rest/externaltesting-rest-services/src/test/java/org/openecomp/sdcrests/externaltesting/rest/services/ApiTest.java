@@ -16,10 +16,15 @@
 
 package org.openecomp.sdcrests.externaltesting.rest.services;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.openecomp.core.externaltesting.api.*;
 import org.openecomp.core.externaltesting.errors.ExternalTestingException;
 
@@ -27,7 +32,14 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({VspManagerFactory.class})
 public class ApiTest {
 
   private static final String EP = "ep";
@@ -37,9 +49,26 @@ public class ApiTest {
   private static final String TC = "tc";
   private static final String EXPECTED = "Expected";
 
-
   @Mock
   private ExternalTestingManager testingManager;
+  @Mock
+  private VspManagerFactory vspManagerFactory;
+  @Mock
+  VendorSoftwareProductManager vendorSoftwareProductManager;
+
+  @Before
+  public void setUp() {
+    try {
+      initMocks(this);
+      mockStatic(VspManagerFactory.class);
+      when(VspManagerFactory.getInstance()).thenReturn(vspManagerFactory);
+      when(vspManagerFactory.createInterface()).thenReturn(vendorSoftwareProductManager);
+      when(vspManagerFactory.getInstance().createInterface()).thenReturn(vendorSoftwareProductManager);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
 
   /**
    * At the API level, test that the code does not throw
@@ -47,7 +76,7 @@ public class ApiTest {
    */
   @Test
   public void testApi() {
-    MockitoAnnotations.initMocks(this);
+
 
     ExternalTestingImpl testing = new ExternalTestingImpl(testingManager);
     Assert.assertNotNull(testing.getConfig());
@@ -60,8 +89,8 @@ public class ApiTest {
     Assert.assertNotNull(testing.getTestCasesAsTree());
 
     List<VtpTestExecutionRequest> requests =
-        Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
-    Assert.assertNotNull(testing.execute(requests, "requestId"));
+            Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
+    Assert.assertNotNull(testing.execute("vspId", "vspVersionId", null, "[]"));
 
 
     ClientConfiguration cc = new ClientConfiguration();
@@ -72,6 +101,7 @@ public class ApiTest {
   }
 
   class ApiTestExternalTestingManager implements ExternalTestingManager {
+
     @Override
     public ClientConfiguration getConfig() {
       throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
@@ -118,12 +148,25 @@ public class ApiTest {
     }
 
     @Override
-    public List<VtpTestExecutionResponse> execute(List<VtpTestExecutionRequest> requests, String requestId) {
+    public List<VtpTestExecutionResponse> execute(List<VtpTestExecutionRequest> requests, String vspId,
+            String vspVersionId, String requestId, Map<String, byte[]> fileMap) {
+
       throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
     }
 
     @Override
     public VtpTestExecutionResponse getExecution(String endpoint, String executionId) {
+      throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
+    }
+
+    @Override
+    public List<VtpTestExecutionOutput> getExecutionIds(String endpoint, String requestId) {
+      throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
+    }
+
+    @Override
+    public void updateVtpResultInDB(List<VtpTestExecutionRequest> tests, String vspId, String vspVersionId,
+            String requestId) {
       throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
     }
   }
@@ -133,7 +176,7 @@ public class ApiTest {
    */
   @Test()
   public void testConfigExceptions() {
-    MockitoAnnotations.initMocks(this);
+    initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
@@ -150,7 +193,7 @@ public class ApiTest {
    */
   @Test()
   public void testEndpointExceptions() {
-    MockitoAnnotations.initMocks(this);
+    initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
@@ -167,15 +210,11 @@ public class ApiTest {
    */
   @Test()
   public void testExecutionExceptions() {
-    MockitoAnnotations.initMocks(this);
+    initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
-
-    List<VtpTestExecutionRequest> requests =
-        Arrays.asList(new VtpTestExecutionRequest(), new VtpTestExecutionRequest());
-
-    Response invokeResponse = testingF.execute(requests, null);
+    Response invokeResponse = testingF.execute("vspId", "versionId", null, "[]");
     Assert.assertEquals(500, invokeResponse.getStatus());
 
     Response getResponse = testingF.getExecution(EP, EXEC);
@@ -189,7 +228,7 @@ public class ApiTest {
    */
   @Test()
   public void testScenarioExceptions() {
-    MockitoAnnotations.initMocks(this);
+    initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
@@ -204,7 +243,7 @@ public class ApiTest {
    */
   @Test()
   public void testTestCaseExceptions() {
-    MockitoAnnotations.initMocks(this);
+    initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
@@ -219,7 +258,7 @@ public class ApiTest {
    */
   @Test()
   public void testTestCasesExceptions() {
-    MockitoAnnotations.initMocks(this);
+    initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
@@ -234,7 +273,7 @@ public class ApiTest {
    */
   @Test()
   public void testTestSuitesExceptions() {
-    MockitoAnnotations.initMocks(this);
+    initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
@@ -249,7 +288,7 @@ public class ApiTest {
    */
   @Test()
   public void testTreeExceptions() {
-    MockitoAnnotations.initMocks(this);
+    initMocks(this);
 
     ExternalTestingManager m = new ApiTestExternalTestingManager();
     ExternalTestingImpl testingF = new ExternalTestingImpl(m);
