@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "625c7cca_f9e856ca",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/AbstractValidationsServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-11-03T06:49:57Z",
+      "side": 1,
+      "message": "A Sonar Blocker was created by this commit.\nPlease fix it.\n\nhttps://sonar.onap.org/project/issues?createdAt\u003d2019-10-31T22%3A14%3A07%2B0000\u0026id\u003dorg.openecomp.sdc%3Asdc-main%3Amaster\u0026open\u003dAW4j6U3Wlnf4Fh929QR9\u0026severities\u003dBLOCKER",
+      "revId": "bf5eeb23a769a2e2b75f432b74f10fdbcfd2f161",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
