@@ -18,6 +18,7 @@ package org.openecomp.sdc.logging.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
 
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class MetricsDataTest {
         final String targetEntity = "Metrics-Target-Entity";
         final String targetVirtualEntity = "Metrics-Target-Virtual-Entity";
 
-        MetricsData data = MetricsData.builder().startTime(start).endTime(end).statusCode(StatusCode.COMPLETE)
+        MetricsData data = MetricsData.builder().startTime(start).endTime(end).statusCode(COMPLETE)
                                       .responseCode(responseCode).responseDescription(responseDescription)
                                       .clientIpAddress(ipAddress).targetEntity(targetEntity)
                                       .targetVirtualEntity(targetVirtualEntity).build();
@@ -50,7 +51,7 @@ public class MetricsDataTest {
         assertEquals(start, data.getStartTime());
         assertEquals(responseCode, data.getResponseCode());
         assertEquals(responseDescription, data.getResponseDescription());
-        assertEquals(StatusCode.COMPLETE, data.getStatusCode());
+        assertEquals(COMPLETE, data.getStatusCode());
         assertEquals(targetEntity, data.getTargetEntity());
         assertEquals(targetVirtualEntity, data.getTargetVirtualEntity());
 

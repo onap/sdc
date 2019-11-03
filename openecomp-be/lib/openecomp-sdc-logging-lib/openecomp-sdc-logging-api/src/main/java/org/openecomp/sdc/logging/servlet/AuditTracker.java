@@ -22,6 +22,8 @@ import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
+
 /**
  * Tracks and logs audit information when a request is being processed. An instance of this class cannot be reused, and
  * the pre- and post-request methods must be called only once.
@@ -62,6 +64,10 @@ public class AuditTracker implements Tracker {
 
         this.started = System.currentTimeMillis();
         this.clientIpAddress = request.getRemoteAddr();
+        AuditData auditData = AuditData.builder().startTime(started).endTime(started).statusCode(COMPLETE)
+                .clientIpAddress(clientIpAddress)
+                .build();
+        logger.auditEntry(auditData);
     }
 
     @Override
@@ -80,6 +86,6 @@ public class AuditTracker implements Tracker {
                                       .responseCode(Integer.toString(result.getStatus()))
                                       .responseDescription(result.getStatusPhrase()).clientIpAddress(clientIpAddress)
                                       .build();
-        logger.audit(auditData);
+        logger.auditExit(auditData);
     }
 }

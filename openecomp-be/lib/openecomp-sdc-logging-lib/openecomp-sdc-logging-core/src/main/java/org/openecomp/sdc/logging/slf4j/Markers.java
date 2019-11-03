@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -41,7 +42,9 @@ import org.slf4j.MarkerFactory;
  */
 public class Markers {
 
-    public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT");
+    public static final Marker ENTRY = MarkerFactory.getMarker(ONAPLogConstants.Markers.ENTRY.getName());
+    public static final Marker EXIT = MarkerFactory.getMarker(ONAPLogConstants.Markers.EXIT.getName());
+
     public static final Marker METRICS = MarkerFactory.getMarker("METRICS");
 
     private Markers() {

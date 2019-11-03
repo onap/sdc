@@ -54,8 +54,9 @@ public class ContextTracker implements Tracker {
         String requestId = requestIdHeaders.getAny(request::getHeader).orElse(UUID.randomUUID().toString());
         ContextData.ContextDataBuilder contextBuilder =
                 ContextData.builder().serviceName(serviceName).requestId(requestId);
+        String partnerName = partnerNameHeaders.getAny(request::getHeader).orElse("UNKNOWN");
+        contextBuilder.partnerName(partnerName);
 
-        partnerNameHeaders.getAny(request::getHeader).ifPresent(contextBuilder::partnerName);
         LoggingContext.put(contextBuilder.build());
     }
 

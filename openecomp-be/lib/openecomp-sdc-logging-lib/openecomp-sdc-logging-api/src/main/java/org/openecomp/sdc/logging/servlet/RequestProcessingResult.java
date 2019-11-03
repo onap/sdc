@@ -16,7 +16,7 @@
 
 package org.openecomp.sdc.logging.servlet;
 
-import org.openecomp.sdc.logging.api.StatusCode;
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 
 /**
  * Interpretation of request processing results.
@@ -38,7 +38,7 @@ public interface RequestProcessingResult {
      *
      * @return on of pre-defined status codes
      */
-    StatusCode getStatusCode();
+    ResponseStatus getStatusCode();
 
     /**
      * Human-friendly description of the numeric status.

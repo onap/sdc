@@ -114,11 +114,11 @@ class SLF4JLoggerWrapper implements Logger {
 
     @Override
     public boolean isAuditEnabled() {
-        return logger.isInfoEnabled(Markers.AUDIT);
+        return logger.isInfoEnabled(Markers.EXIT);
     }
 
     @Override
-    public void audit(AuditData data) {
+    public void auditEntry(AuditData data) {
 
         if (data == null) {
             return; // not failing if null
@@ -126,7 +126,23 @@ class SLF4JLoggerWrapper implements Logger {
 
         try {
             putAuditOnMdc(data);
-            logger.info(Markers.AUDIT, "");
+            logger.info(Markers.ENTRY, "");
+        } finally {
+            clearAuditFromMdc();
+        }
+    }
+
+
+    @Override
+    public void auditExit(AuditData data) {
+
+        if (data == null) {
+            return; // not failing if null
+        }
+
+        try {
+            putAuditOnMdc(data);
+            logger.info(Markers.EXIT, "");
         } finally {
             clearAuditFromMdc();
         }

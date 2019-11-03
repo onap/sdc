@@ -95,7 +95,7 @@ public class EventTypeDiscriminator extends AbstractDiscriminator<ILoggingEvent>
             final Marker marker = event.getMarker();
             if (marker != null) {
 
-                if (marker.contains(Markers.AUDIT)) {
+                if (marker.contains(Markers.ENTRY) ||  marker.contains(Markers.EXIT)){
                     return AUDIT;
                 }
 

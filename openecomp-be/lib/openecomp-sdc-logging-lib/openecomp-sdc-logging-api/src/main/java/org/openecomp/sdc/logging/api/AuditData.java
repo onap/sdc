@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.logging.api;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
+
 /**
  * Builder to populate <i>audit</i> data. This includes only data known to an application, and not otherwise available
  * to the logging framework. As opposed, for example, to local runtime, host address, etc.
@@ -29,7 +31,7 @@ public class AuditData {
 
     private final long startTime;
     private final long endTime;
-    private final StatusCode statusCode;
+    private final ResponseStatus statusCode;
     private final String responseCode;
     private final String responseDescription;
     private final String clientIpAddress;
@@ -66,7 +68,7 @@ public class AuditData {
      *
      * @return protocol and application agnostic status code
      */
-    public StatusCode getStatusCode() {
+    public ResponseStatus getStatusCode() {
         return statusCode;
     }
 
@@ -115,7 +117,7 @@ public class AuditData {
 
         private long startTime;
         private long endTime;
-        private StatusCode statusCode;
+        private ResponseStatus statusCode;
         private String responseCode;
         private String responseDescription;
         private String clientIpAddress;
@@ -151,7 +153,7 @@ public class AuditData {
          * @param statusCode invocation status success/failure
          * @return this builder for fluent API
          */
-        public AuditDataBuilder statusCode(final StatusCode statusCode) {
+        public AuditDataBuilder statusCode(final ResponseStatus statusCode) {
             this.statusCode = statusCode;
             return this;
         }

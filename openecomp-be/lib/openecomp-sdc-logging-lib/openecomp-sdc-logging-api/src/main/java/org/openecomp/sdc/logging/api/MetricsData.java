@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.logging.api;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
+
 /**
  * Builder to populate <i>metrics</i> data. This includes only data known to an application, and not otherwise available
  * to the logging framework.
@@ -29,7 +31,7 @@ public class MetricsData {
 
     private final long startTime;
     private final long endTime;
-    private final StatusCode statusCode;
+    private final ResponseStatus statusCode;
     private final String responseCode;
     private final String responseDescription;
     private final String clientIpAddress;
@@ -70,7 +72,7 @@ public class MetricsData {
      *
      * @return protocol and application agnostic status code
      */
-    public StatusCode getStatusCode() {
+    public ResponseStatus getStatusCode() {
         return statusCode;
     }
 
@@ -137,7 +139,7 @@ public class MetricsData {
 
         private long startTime;
         private long endTime;
-        private StatusCode statusCode;
+        private ResponseStatus statusCode;
         private String responseCode;
         private String responseDescription;
         private String clientIpAddress;
@@ -175,7 +177,7 @@ public class MetricsData {
          * @param statusCode invocation status success/failure
          * @return this builder for fluent API
          */
-        public MetricsDataBuilder statusCode(final StatusCode statusCode) {
+        public MetricsDataBuilder statusCode(final ResponseStatus statusCode) {
             this.statusCode = statusCode;
             return this;
         }

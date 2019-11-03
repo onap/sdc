@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
+
 /**
  * MDC fields that represent context data.
  *
@@ -24,11 +26,11 @@ package org.openecomp.sdc.logging.slf4j;
  */
 enum ContextField implements MDCField {
 
-    REQUEST_ID("RequestId"),
-    SERVICE_NAME("ServiceName"),
-    PARTNER_NAME("PartnerName"),
-    INSTANCE_ID("InstanceId"),
-    SERVER("Server"),
+    REQUEST_ID(ONAPLogConstants.MDCs.REQUEST_ID),
+    SERVICE_NAME(ONAPLogConstants.MDCs.SERVICE_NAME),
+    PARTNER_NAME(ONAPLogConstants.MDCs.PARTNER_NAME),
+    INSTANCE_ID(ONAPLogConstants.MDCs.INSTANCE_UUID),
+    SERVER(ONAPLogConstants.MDCs.SERVER_FQDN),
     SERVER_IP_ADDRESS("ServerIpAddress");
 
     private final String key;

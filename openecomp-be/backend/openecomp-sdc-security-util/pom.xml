@@ -88,6 +88,12 @@
             <version>1.7.4</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.onap.logging-analytics</groupId>
+            <artifactId>logging-slf4j</artifactId>
+            <version>1.4.0</version>
+        </dependency>
     </dependencies>
 
 </project>

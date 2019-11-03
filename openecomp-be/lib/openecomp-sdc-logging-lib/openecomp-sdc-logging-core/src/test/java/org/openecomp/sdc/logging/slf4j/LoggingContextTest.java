@@ -147,7 +147,7 @@ public class LoggingContextTest {
         String random = UUID.randomUUID().toString();
         ContextData context = ContextData.builder().serviceName(random).build();
         LoggingContext.put(context);
-        assertEquals(context, LoggingContext.get());
+        assertEquals(context.getServiceName(), LoggingContext.get().getServiceName());
     }
 
     @Test
@@ -156,7 +156,7 @@ public class LoggingContextTest {
         String random = UUID.randomUUID().toString();
         ContextData context = ContextData.builder().requestId(random).build();
         LoggingContext.put(context);
-        assertEquals(context, LoggingContext.get());
+        assertEquals(context.getRequestId(), LoggingContext.get().getRequestId());
     }
 
     @Test
@@ -165,7 +165,7 @@ public class LoggingContextTest {
         String random = UUID.randomUUID().toString();
         ContextData context = ContextData.builder().partnerName(random).build();
         LoggingContext.put(context);
-        assertEquals(context, LoggingContext.get());
+        assertEquals(context.getPartnerName(), LoggingContext.get().getPartnerName());
     }
 
 }
