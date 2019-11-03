@@ -18,7 +18,12 @@
 
     <properties>
         <docker.image.name>sdc-onboard-cassandra-init</docker.image.name>
+        <docker.namespace>onap</docker.namespace>
+        <docker.password>docker</docker.password>
+        <docker.username>docker</docker.username>
+        <docker.registry>nexus3.onap.org:10001</docker.registry>
     </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -57,15 +62,15 @@
                     <registry>nexus3.onap.org:10001</registry>
                     <authConfig>
                         <pull>
-                            <username>docker</username>
-                            <password>docker</password>
+                            <username>${docker.username}</username>
+                            <password>${docker.password}</password>
                         </pull>
                     </authConfig>
                     <images>
 
                         <!-- Build backend image -->
                         <image>
-                            <name>onap/${docker.image.name}</name>
+                            <name>${docker.namespace}/${docker.image.name}</name>
                             <alias>${docker.image.name}</alias>
                             <build>
                                 <cleanup>try</cleanup>
@@ -87,7 +92,7 @@
                         </goals>
                         <configuration>
                             <removeAll>true</removeAll>
-                            <image>onap/${docker.image.name}</image>
+                            <image>${docker.namespace}/${docker.image.name}</image>
                         </configuration>
                     </execution>
 
@@ -106,7 +111,7 @@
                             <goal>push</goal>
                         </goals>
                         <configuration>
-                            <image>onap/${docker.image.name}</image>
+                            <image>${docker.namespace}/${docker.image.name}</image>
                         </configuration>
                     </execution>
                 </executions>
