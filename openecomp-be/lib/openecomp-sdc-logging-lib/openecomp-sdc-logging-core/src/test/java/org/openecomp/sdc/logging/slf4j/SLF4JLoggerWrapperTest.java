@@ -19,6 +19,7 @@ package org.openecomp.sdc.logging.slf4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -28,7 +29,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.MetricsData;
-import org.openecomp.sdc.logging.api.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
@@ -44,7 +44,7 @@ public class SLF4JLoggerWrapperTest {
 
     @Test
     public void auditDoesNotFailWhenInputNull() {
-        new SLF4JLoggerWrapper(this.getClass()).audit(null);
+        new SLF4JLoggerWrapper(this.getClass()).auditExit(null);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class SLF4JLoggerWrapperTest {
     public void auditBeginTimeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         long start = System.currentTimeMillis();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().startTime(start).build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().startTime(start).build());
         assertNotNull(spy.mdc().get(AuditField.BEGIN_TIMESTAMP.asKey()));
     }
 
@@ -72,7 +72,7 @@ public class SLF4JLoggerWrapperTest {
     public void auditEndTimeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         long end = System.currentTimeMillis();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().endTime(end).build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().endTime(end).build());
         assertNotNull(spy.mdc().get(AuditField.END_TIMESTAMP.asKey()));
     }
 
@@ -88,7 +88,7 @@ public class SLF4JLoggerWrapperTest {
     public void auditElapsedTimeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
         long start = System.currentTimeMillis();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder()
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder()
                                                    .startTime(start).endTime(start + 777).build());
         assertEquals("777", spy.mdc().get(AuditField.ELAPSED_TIME.asKey()));
     }
@@ -105,21 +105,21 @@ public class SLF4JLoggerWrapperTest {
     @Test
     public void auditStatusCodeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().statusCode(StatusCode.COMPLETE).build());
-        assertEquals(StatusCode.COMPLETE.name(), spy.mdc().get(AuditField.STATUS_CODE.asKey()));
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().statusCode(COMPLETE).build());
+        assertEquals(COMPLETE.name(), spy.mdc().get(AuditField.STATUS_CODE.asKey()));
     }
 
     @Test
     public void metricsStatusCodeAvailableWhenPassed() {
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().statusCode(StatusCode.COMPLETE).build());
-        assertEquals(StatusCode.COMPLETE.name(), spy.mdc().get(MetricsField.STATUS_CODE.asKey()));
+        new SLF4JLoggerWrapper(spy).metrics(MetricsData.builder().statusCode(COMPLETE).build());
+        assertEquals(COMPLETE.name(), spy.mdc().get(MetricsField.STATUS_CODE.asKey()));
     }
 
     @Test
     public void auditStatusCodeEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().build());
         assertNull(spy.mdc().get(AuditField.STATUS_CODE.asKey()));
     }
 
@@ -134,7 +134,7 @@ public class SLF4JLoggerWrapperTest {
     public void auditResponseCodeAvailableWhenPassed() {
         final String responseCode = "AuditSpyResponse";
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().responseCode(responseCode).build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().responseCode(responseCode).build());
         assertEquals(responseCode, spy.mdc().get(AuditField.RESPONSE_CODE.asKey()));
     }
 
@@ -149,7 +149,7 @@ public class SLF4JLoggerWrapperTest {
     @Test
     public void auditResponseCodeEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().build());
         assertNull(spy.mdc().get(AuditField.RESPONSE_CODE.asKey()));
     }
 
@@ -164,7 +164,7 @@ public class SLF4JLoggerWrapperTest {
     public void auditResponseDescriptionAvailableWhenPassed() {
         final String responseDescription = "AuditSpyDescription";
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().responseDescription(responseDescription).build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().responseDescription(responseDescription).build());
         assertEquals(responseDescription, spy.mdc().get(AuditField.RESPONSE_DESCRIPTION.asKey()));
     }
 
@@ -179,7 +179,7 @@ public class SLF4JLoggerWrapperTest {
     @Test
     public void auditResponseDescriptionEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().build());
         assertNull(spy.mdc().get(AuditField.RESPONSE_DESCRIPTION.asKey()));
     }
 
@@ -194,7 +194,7 @@ public class SLF4JLoggerWrapperTest {
     public void auditClientIpAddressAvailableWhenPassed() {
         final String ipAddress = "10.56.20.20";
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().clientIpAddress(ipAddress).build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().clientIpAddress(ipAddress).build());
         assertEquals(ipAddress, spy.mdc().get(AuditField.CLIENT_IP_ADDRESS.asKey()));
     }
 
@@ -209,7 +209,7 @@ public class SLF4JLoggerWrapperTest {
     @Test
     public void auditClientIpAddressEmptyWhenNotPassed() {
         SpyLogger spy = createSpy();
-        new SLF4JLoggerWrapper(spy).audit(AuditData.builder().build());
+        new SLF4JLoggerWrapper(spy).auditExit(AuditData.builder().build());
         assertNull(spy.mdc().get(AuditField.CLIENT_IP_ADDRESS.asKey()));
     }
 
@@ -294,7 +294,7 @@ public class SLF4JLoggerWrapperTest {
         }
 
         private boolean isAuditMethod(Method method, Object[] args) {
-            return isSpecialLogMethod(method, args, Markers.AUDIT);
+            return isSpecialLogMethod(method, args, Markers.EXIT);
         }
 
         private boolean isSpecialLogMethod(Method method, Object[] args, Marker marker) {

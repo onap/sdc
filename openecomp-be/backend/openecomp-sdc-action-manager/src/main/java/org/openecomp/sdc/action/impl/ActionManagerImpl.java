@@ -89,12 +89,7 @@ import org.openecomp.sdc.action.dao.types.ActionEntity;
 import org.openecomp.sdc.action.errors.ActionErrorConstants;
 import org.openecomp.sdc.action.errors.ActionException;
 import org.openecomp.sdc.action.logging.StatusCode;
-import org.openecomp.sdc.action.types.Action;
-import org.openecomp.sdc.action.types.ActionArtifact;
-import org.openecomp.sdc.action.types.ActionArtifactProtection;
-import org.openecomp.sdc.action.types.ActionStatus;
-import org.openecomp.sdc.action.types.ActionSubOperation;
-import org.openecomp.sdc.action.types.OpenEcompComponent;
+import org.openecomp.sdc.action.types.*;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -110,6 +105,15 @@ import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.slf4j.MDC;
+
+import java.util.*;
+
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.ERROR;
+import static org.openecomp.sdc.action.ActionConstants.*;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.*;
+import static org.openecomp.sdc.action.util.ActionUtil.*;
+import static org.openecomp.sdc.versioning.dao.types.Version.VERSION_STRING_VIOLATION_MSG;
 
 /**
  * Manager Implementation for {@link ActionManager Action Library Operations}
@@ -272,7 +276,7 @@ public class ActionManagerImpl implements ActionManager {
                     "entering deleteAction with actionInvariantUuId = " + actionInvariantUuId + " and user = " + user);
             actionLogPreProcessor(ActionSubOperation.DELETE_ACTION, TARGET_ENTITY_API);
             versioningManager.delete(ACTION_VERSIONABLE_TYPE, actionInvariantUuId, user);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
             actionDao.deleteAction(actionInvariantUuId);
         } catch (CoreException ce) {
@@ -295,12 +299,12 @@ public class ActionManagerImpl implements ActionManager {
         try {
             actionLogPreProcessor(ActionSubOperation.VALIDATE_ACTION_UNIQUE_NAME, TARGET_ENTITY_API);
             uniqueValueUtil.validateUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
         } catch (CoreException exception) {
             String errorDesc = String.format(ACTION_ENTITY_UNIQUE_VALUE_MSG, ActionConstants.UniqueValues.ACTION_NAME,
                     action.getName());
             log.error(errorDesc, exception);
-            actionLogPostProcessor(StatusCode.ERROR, ACTION_ENTITY_UNIQUE_VALUE_ERROR, errorDesc, false);
+            actionLogPostProcessor(ERROR, ACTION_ENTITY_UNIQUE_VALUE_ERROR, errorDesc, false);
             throw new ActionException(ACTION_ENTITY_UNIQUE_VALUE_ERROR, errorDesc);
         } finally {
             log.metrics("");
@@ -312,7 +316,7 @@ public class ActionManagerImpl implements ActionManager {
 
         actionLogPreProcessor(ActionSubOperation.CREATE_ACTION_VERSION, TARGET_ENTITY_API);
         Version version = versioningManager.create(ACTION_VERSIONABLE_TYPE, action.getActionInvariantUuId(), user);
-        actionLogPostProcessor(StatusCode.COMPLETE);
+        actionLogPostProcessor(COMPLETE);
         log.metrics("");
 
         action.setVersion(version.toString());
@@ -322,7 +326,7 @@ public class ActionManagerImpl implements ActionManager {
 
         actionLogPreProcessor(ActionSubOperation.CREATE_ACTION_UNIQUE_VALUE, TARGET_ENTITY_API);
         uniqueValueUtil.createUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
-        actionLogPostProcessor(StatusCode.COMPLETE);
+        actionLogPostProcessor(COMPLETE);
         log.metrics("");
 
         return action;
@@ -346,7 +350,7 @@ public class ActionManagerImpl implements ActionManager {
             actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_API);
             VersionInfo versionInfo = versioningManager.getEntityVersionInfo(ACTION_VERSIONABLE_TYPE, invariantUuId,
                     user, VersionableEntityAction.Write);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
 
             Version activeVersion = versionInfo.getActiveVersion();
@@ -382,7 +386,7 @@ public class ActionManagerImpl implements ActionManager {
             log.debug("entering checkout for Action with invariantUUID= " + invariantUuId + BY_USER + user);
             actionLogPreProcessor(ActionSubOperation.CHECKOUT_ACTION, TARGET_ENTITY_API);
             version = versioningManager.checkout(ACTION_VERSIONABLE_TYPE, invariantUuId, user);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
 
             actionEntity = updateUniqueIdForVersion(invariantUuId, version, ActionStatus.Locked.name(), user);
@@ -393,7 +397,7 @@ public class ActionManagerImpl implements ActionManager {
                 actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
                 VersionInfoEntity versionInfoEntity = versionInfoDao
                         .get(new VersionInfoEntity(ACTION_VERSIONABLE_TYPE, invariantUuId));
-                actionLogPostProcessor(StatusCode.COMPLETE);
+                actionLogPostProcessor(COMPLETE);
                 log.metrics("");
                 String checkoutUser = versionInfoEntity.getCandidate()
                         .getUser();
@@ -427,7 +431,7 @@ public class ActionManagerImpl implements ActionManager {
             // Get list of uploaded artifacts in this checked out version
             VersionInfoEntity versionInfoEntity = versionInfoDao
                     .get(new VersionInfoEntity(ACTION_VERSIONABLE_TYPE, invariantUuId));
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
             if (versionInfoEntity == null) {
                 throw new CoreException(new EntityNotExistErrorBuilder(ACTION_VERSIONABLE_TYPE, invariantUuId).build());
@@ -443,27 +447,27 @@ public class ActionManagerImpl implements ActionManager {
             actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_VERSION, TARGET_ENTITY_DB);
             Action action = actionDao.get(new ActionEntity(invariantUuId, activeVersion))
                     .toDto();
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
 
             // Perform undo checkout on the action
             actionLogPreProcessor(ActionSubOperation.UNDO_CHECKOUT_ACTION, TARGET_ENTITY_API);
             version = versioningManager.undoCheckout(ACTION_VERSIONABLE_TYPE, invariantUuId, user);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
 
             if (version.equals(new Version(0, 0))) {
                 actionLogPreProcessor(ActionSubOperation.DELETE_UNIQUEVALUE, TARGET_ENTITY_API);
                 UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
                 uniqueValueUtil.deleteUniqueValue(ActionConstants.UniqueValues.ACTION_NAME, action.getName());
-                actionLogPostProcessor(StatusCode.COMPLETE);
+                actionLogPostProcessor(COMPLETE);
                 log.metrics("");
 
                 actionLogPreProcessor(ActionSubOperation.DELETE_ACTIONVERSION, TARGET_ENTITY_DB);
                 // Added for the case where Create->Undo_Checkout->Checkout
                 // should not get the action
                 versionInfoDao.delete(new VersionInfoEntity(ACTION_VERSIONABLE_TYPE, invariantUuId));
-                actionLogPostProcessor(StatusCode.COMPLETE);
+                actionLogPostProcessor(COMPLETE);
                 log.metrics("");
             }
 
@@ -476,7 +480,7 @@ public class ActionManagerImpl implements ActionManager {
                             getEffectiveVersion(activeVersion.toString()));
                     actionLogPreProcessor(ActionSubOperation.DELETE_ARTIFACT, TARGET_ENTITY_DB);
                     actionArtifactDao.delete(artifactDeleteEntity);
-                    actionLogPostProcessor(StatusCode.COMPLETE);
+                    actionLogPostProcessor(COMPLETE);
                     log.metrics("");
                 }
             }
@@ -503,7 +507,7 @@ public class ActionManagerImpl implements ActionManager {
             log.debug("entering checkin for Action with invariantUUID= " + invariantUuId + BY_USER + user);
             actionLogPreProcessor(ActionSubOperation.CHECKIN_ACTION, TARGET_ENTITY_API);
             version = versioningManager.checkin(ACTION_VERSIONABLE_TYPE, invariantUuId, user, null);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
             actionEntity = updateStatusForVersion(invariantUuId, version, ActionStatus.Available.name(), user);
         } catch (CoreException exception) {
@@ -530,7 +534,7 @@ public class ActionManagerImpl implements ActionManager {
             log.debug("entering submit for Action with invariantUUID= " + invariantUuId + BY_USER + user);
             actionLogPreProcessor(ActionSubOperation.SUBMIT_ACTION, TARGET_ENTITY_API);
             version = versioningManager.submit(ACTION_VERSIONABLE_TYPE, invariantUuId, user, null);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
             actionEntity = updateUniqueIdForVersion(invariantUuId, version, ActionStatus.Final.name(), user);
         } catch (CoreException exception) {
@@ -601,13 +605,13 @@ public class ActionManagerImpl implements ActionManager {
             actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_DB);
             VersionInfo versionInfo = versioningManager.getEntityVersionInfo(ACTION_VERSIONABLE_TYPE,
                     actionInvariantUuId, user, VersionableEntityAction.Write);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
             Version activeVersion = versionInfo.getActiveVersion();
             actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_ACTIONINVID, TARGET_ENTITY_DB);
             Action action = actionDao.get(new ActionEntity(actionInvariantUuId, activeVersion))
                     .toDto();
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
             String artifactUuId = generateActionArtifactUuId(action, artifact.getArtifactName());
             // Check for Unique document name
@@ -675,7 +679,7 @@ public class ActionManagerImpl implements ActionManager {
             actionEntity.setData(data);
             actionLogPreProcessor(ActionSubOperation.UPDATE_ACTION, TARGET_ENTITY_DB);
             actionDao.update(actionEntity);
-            actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
+            actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
             // delete Artifact if it's upload and delete action on same checkout
             // version
@@ -688,7 +692,7 @@ public class ActionManagerImpl implements ActionManager {
                     actionLogPreProcessor(ActionSubOperation.DELETE_ACTION_ARTIFACT, TARGET_ENTITY_DB);
                     actionArtifactDao.delete(artifactDeleteEntity);
                 }
-                actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
+                actionLogPostProcessor(COMPLETE, null, "", false);
                 log.metrics("");
             }
 
@@ -716,13 +720,13 @@ public class ActionManagerImpl implements ActionManager {
             actionLogPreProcessor(ActionSubOperation.GET_ACTION_VERSION, TARGET_ENTITY_API);
             VersionInfo versionInfo = versioningManager.getEntityVersionInfo(ACTION_VERSIONABLE_TYPE,
                     actionInvariantUuId, user, VersionableEntityAction.Write);
-            actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
+            actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
             Version activeVersion = versionInfo.getActiveVersion();
             actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_ACTIONINVID, TARGET_ENTITY_DB);
             Action action = actionDao.get(new ActionEntity(actionInvariantUuId, activeVersion))
                     .toDto();
-            actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
+            actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
             List<ActionArtifact> actionArtifacts = action.getArtifacts();
             ActionArtifact artifactMetadataByUuId = getArtifactMetadataFromAction(actionArtifacts,
@@ -903,7 +907,7 @@ public class ActionManagerImpl implements ActionManager {
         actionLogPreProcessor(ActionSubOperation.GET_VERSIONINFO_FOR_ALL_ACTIONS, TARGET_ENTITY_API);
         Map<String, VersionInfo> actionVersionMap = versioningManager.listEntitiesVersionInfo(ACTION_VERSIONABLE_TYPE,
                 "", VersionableEntityAction.Read);
-        actionLogPostProcessor(StatusCode.COMPLETE);
+        actionLogPostProcessor(COMPLETE);
         log.metrics("");
         for (Action action : actions) {
             if (action.getStatus() == ActionStatus.Deleted) {
@@ -1071,7 +1075,7 @@ public class ActionManagerImpl implements ActionManager {
             actionLogPreProcessor(ActionSubOperation.GET_ACTIONENTITY_BY_VERSION, TARGET_ENTITY_DB);
             entity = actionDao
                     .get(new ActionEntity(invariantUuId != null ? invariantUuId.toUpperCase() : null, version));
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
         }
         log.debug("exit getActionsEntityByVersion with invariantUuId= " + invariantUuId + AND_VERSION + version);
@@ -1128,7 +1132,7 @@ public class ActionManagerImpl implements ActionManager {
             actionEntity.setTimestamp(getCurrentTimeStampUtc());
             actionLogPreProcessor(ActionSubOperation.UPDATE_ACTION, TARGET_ENTITY_DB);
             actionDao.update(actionEntity);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
         }
 
@@ -1164,7 +1168,7 @@ public class ActionManagerImpl implements ActionManager {
             actionEntity.setTimestamp(getCurrentTimeStampUtc());
             actionLogPreProcessor(ActionSubOperation.UPDATE_ACTION, TARGET_ENTITY_DB);
             actionDao.update(actionEntity);
-            actionLogPostProcessor(StatusCode.COMPLETE);
+            actionLogPostProcessor(COMPLETE);
             log.metrics("");
         }
         log.debug("exit updateStatusForVersion with invariantUuId= " + invariantUuId + AND_VERSION + version

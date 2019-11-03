@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.securityutil.filters;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.securityutil.AuthenticationCookieUtils;
 import org.openecomp.sdc.securityutil.CipherUtilException;
 import org.openecomp.sdc.securityutil.ISessionValidationFilterConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -45,6 +49,19 @@ public abstract class SessionValidationFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(SessionValidationFilter.class.getName());
     private ISessionValidationFilterConfiguration filterConfiguration;
     private List<String> excludedUrls;
+
+    private static final String REQUEST_ID = ONAPLogConstants.MDCs.REQUEST_ID;
+    private static final String ONAP_REQUEST_ID_HEADER = ONAPLogConstants.Headers.REQUEST_ID;
+    private static final String REQUEST_ID_HEADER = "X-RequestID";
+    private static final String TRANSACTION_ID_HEADER = "X-TransactionId";
+    private static final String ECOMP_REQUEST_ID_HEADER = "X-ECOMP-RequestID";
+
+    private static final String PARTNER_NAME = ONAPLogConstants.MDCs.PARTNER_NAME;
+    private static final String USER_ID_HEADER = "USER_ID";
+    private static final String ONAP_PARTNER_NAME_HEADER = ONAPLogConstants.Headers.PARTNER_NAME;
+    private static final String USER_AGENT_HEADER = "User-Agent";
+    private static final String UNKNOWN = "UNKNOWN";
+
 
     public abstract ISessionValidationFilterConfiguration getFilterConfiguration();
     protected abstract Cookie addRoleToCookie(Cookie updatedCookie);
@@ -61,51 +78,45 @@ public abstract class SessionValidationFilter implements Filter {
         final HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         final HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
-        long starTime = System.nanoTime();
+        long startTime = System.nanoTime();
+        fillMDCFromHeaders(httpRequest);
         log.debug("SessionValidationFilter: Validation started, received request with URL {}", httpRequest.getRequestURL());
 
         // request preprocessing
-        boolean isContinueProcessing = preProcessingRequest(servletRequest, servletResponse, filterChain, httpRequest, httpResponse);
+        boolean isContinueProcessing = preProcessingRequest(servletRequest, servletResponse, filterChain, httpRequest, httpResponse, startTime);
         List<Cookie> cookies = null;
+        Cookie extractedCookie = null;
 
         // request processing
         if (isContinueProcessing) {
             cookies = extractAuthenticationCookies(httpRequest.getCookies());
-            isContinueProcessing = processRequest(httpRequest, httpResponse, cookies.get(0));
+            extractedCookie = cookies.get(0);
+            isContinueProcessing = processRequest(httpRequest, httpResponse, extractedCookie);
         }
 
         // response processing
         if(isContinueProcessing){
             log.debug("SessionValidationFilter: Cookie from request {} is valid, passing request to session extension ...", httpRequest.getRequestURL());
-            Cookie updatedCookie = processResponse(cookies.get(cookies.size()-1));
-
+            Cookie updatedCookie = processResponse(extractedCookie);
             cleanResponceFromLeftoverCookies(httpResponse, cookies);
-
-            // Use responce wrapper if servlet remove Cookie header from responce
-//            OutputStream out = httpResponse.getOutputStream();
-//            ResponceWrapper responceWrapper = new ResponceWrapper(httpResponse);
-
             log.debug("SessionValidationFilter: request {} passed all validations, passing request to endpoint ...", httpRequest.getRequestURL());
             httpResponse.addCookie(updatedCookie);
+            long durationSec = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime);
+            long durationMil = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+            log.debug("SessionValidationFilter: Validation ended, running time for URL {} is: {} seconds {} miliseconds", httpRequest.getPathInfo(), durationSec, durationMil);
             filterChain.doFilter(servletRequest, httpResponse);
-
-            // Use responce wrapper if servlet remove Cookie header from responce
-//            responceWrapper.addCookie(updatedCookie);
-//            httpResponse.setContentLength(responceWrapper.getData().length);
-//            out.write(responceWrapper.getData());
-//            out.close();
         }
-        long durationSec = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - starTime);
-        long durationMil = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - starTime);
-        log.debug("SessionValidationFilter: Validation ended, running time for URL {} is: {} seconds {} miliseconds", httpRequest.getPathInfo(), durationSec, durationMil);
     }
 
 
-    private boolean preProcessingRequest(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException, ServletException {
+    private boolean preProcessingRequest(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain, HttpServletRequest httpRequest, HttpServletResponse httpResponse, long startTime) throws IOException, ServletException {
 
         boolean isPreProcessingSucceeded = true;
         if (isUrlFromWhiteList(httpRequest)) {
             log.debug("SessionValidationFilter: URL {} excluded from access validation , passing request to endpoint ... ", httpRequest.getRequestURL());
+            long durationSec = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime);
+            long durationMil = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+            log.debug("SessionValidationFilter: Validation ended, running time for URL {} is: {} seconds {} miliseconds", httpRequest.getPathInfo(), durationSec, durationMil);
             filterChain.doFilter(servletRequest, servletResponse);
             isPreProcessingSucceeded = false;
 
@@ -206,6 +217,43 @@ public abstract class SessionValidationFilter implements Filter {
             httpResponse.addCookie(cleanCookie);
         }
     }
+
+    public static void fillMDCFromHeaders(HttpServletRequest httpServletRequest) {
+        fillRequestIdFromHeader(httpServletRequest);
+        fillPartnerNameFromHeader(httpServletRequest);
+
+    }
+
+    private static void fillRequestIdFromHeader(HttpServletRequest httpServletRequest){
+        if (MDC.get(REQUEST_ID) == null) {
+            if (StringUtils.isNotEmpty(httpServletRequest.getHeader(ONAP_REQUEST_ID_HEADER))) {
+                MDC.put(REQUEST_ID, httpServletRequest.getHeader(ONAP_REQUEST_ID_HEADER));
+            } else if (StringUtils.isNotEmpty(httpServletRequest.getHeader(REQUEST_ID_HEADER))) {
+                MDC.put(REQUEST_ID, httpServletRequest.getHeader(REQUEST_ID_HEADER));
+            } else if (StringUtils.isNotEmpty(httpServletRequest.getHeader(TRANSACTION_ID_HEADER))) {
+                MDC.put(REQUEST_ID, httpServletRequest.getHeader(TRANSACTION_ID_HEADER));
+            } else if (StringUtils.isNotEmpty(httpServletRequest.getHeader(ECOMP_REQUEST_ID_HEADER))) {
+                MDC.put(REQUEST_ID, httpServletRequest.getHeader(ECOMP_REQUEST_ID_HEADER));
+            } else {
+                MDC.put(REQUEST_ID, UUID.randomUUID().toString());
+            }
+        }
+    }
+
+    private static void fillPartnerNameFromHeader(HttpServletRequest httpServletRequest){
+        if (MDC.get(PARTNER_NAME) == null) {
+            if (StringUtils.isNotEmpty(httpServletRequest.getHeader(USER_ID_HEADER))) {
+                MDC.put(PARTNER_NAME, httpServletRequest.getHeader(USER_ID_HEADER));
+            } else if (StringUtils.isNotEmpty(httpServletRequest.getHeader(ONAP_PARTNER_NAME_HEADER))) {
+                MDC.put(PARTNER_NAME, httpServletRequest.getHeader(ONAP_PARTNER_NAME_HEADER));
+            } else if (StringUtils.isNotEmpty(httpServletRequest.getHeader(USER_AGENT_HEADER))) {
+                MDC.put(PARTNER_NAME, httpServletRequest.getHeader(USER_AGENT_HEADER));
+            }  else {
+                MDC.put(PARTNER_NAME, UNKNOWN);
+            }
+        }
+    }
+
 
     @Override
     public void destroy() {

@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.action.util;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import org.openecomp.sdc.action.logging.CategoryLogLevel;
-import org.openecomp.sdc.action.logging.StatusCode;
 import org.openecomp.sdc.action.types.ActionLogResponseCode;
 import org.openecomp.sdc.action.types.ActionSubOperation;
 import org.slf4j.MDC;
@@ -93,15 +93,15 @@ public class ActionUtil {
    *
    * @param statusCode Response code for the current operation
    */
-  public static void actionLogPostProcessor(StatusCode statusCode) {
+  public static void actionLogPostProcessor(ResponseStatus statusCode) {
     actionLogPostProcessor(statusCode, false);
   }
 
-  public static void actionLogPostProcessor(StatusCode statusCode, boolean isServiceMetricLog) {
+  public static void actionLogPostProcessor(ResponseStatus statusCode, boolean isServiceMetricLog) {
     actionLogPostProcessor(statusCode, null, isServiceMetricLog);
   }
 
-  public static void actionLogPostProcessor(StatusCode statusCode, String responseCode,
+  public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
                                             boolean isServiceMetricLog) {
     actionLogPostProcessor(statusCode, responseCode, null, isServiceMetricLog);
   }
@@ -114,7 +114,7 @@ public class ActionUtil {
    * @param responseDescription the response description
    * @param isServiceMetricLog  the is service metric log
    */
-  public static void actionLogPostProcessor(StatusCode statusCode, String responseCode,
+  public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
                                             String responseDescription,
                                             boolean isServiceMetricLog) {
     MDC.put(STATUS_CODE, statusCode.name());

@@ -17,6 +17,8 @@
 package org.openecomp.sdc.tosca.services;
 
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
+
 public class ToscaConstants {
 
     //TOSCA Requirement Ids

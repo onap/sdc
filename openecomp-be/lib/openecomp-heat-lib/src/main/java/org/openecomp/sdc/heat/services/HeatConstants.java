@@ -16,6 +16,9 @@
 
 package org.openecomp.sdc.heat.services;
 
+import org.onap.logging.ref.slf4j.ONAPLogAdapter;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
+
 public class HeatConstants {
     public static final String GET_ATTR_FROM_RESOURCE_GROUP_PREFIX = "resource.";
     public static final String RESOURCE_GROUP_INDEX_VAR_DEFAULT_VALUE = "%index%";
