@@ -71,7 +71,7 @@ public class LoggerFactoryTest {
         logger.warn("");
         logger.info("");
         logger.debug("");
-        logger.audit(null);
+        logger.auditExit(null);
         logger.metrics(MetricsData.builder().build());
     }
 }

@@ -18,6 +18,7 @@ package org.openecomp.sdc.logging.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
 
 import org.junit.Test;
 
@@ -38,7 +39,7 @@ public class AuditDataTest {
         final String responseDescription = "Response-Description";
         final String ipAddress = "DUMMY.IP.ADDRESS";
 
-        AuditData data = AuditData.builder().startTime(start).endTime(end).statusCode(StatusCode.COMPLETE)
+        AuditData data = AuditData.builder().startTime(start).endTime(end).statusCode(COMPLETE)
                                   .responseCode(responseCode).responseDescription(responseDescription)
                                   .clientIpAddress(ipAddress).build();
 
@@ -47,7 +48,7 @@ public class AuditDataTest {
         assertEquals(start, data.getStartTime());
         assertEquals(responseCode, data.getResponseCode());
         assertEquals(responseDescription, data.getResponseDescription());
-        assertEquals(StatusCode.COMPLETE, data.getStatusCode());
+        assertEquals(COMPLETE, data.getStatusCode());
     }
 
     @Test

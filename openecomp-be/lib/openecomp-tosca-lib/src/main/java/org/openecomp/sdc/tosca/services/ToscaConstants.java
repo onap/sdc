@@ -17,6 +17,7 @@
 package org.openecomp.sdc.tosca.services;
 
 
+
 public class ToscaConstants {
 
     //TOSCA Requirement Ids

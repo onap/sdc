@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
+
 /**
  * DC fields that represent metrics data.
  *
@@ -24,15 +26,15 @@ package org.openecomp.sdc.logging.slf4j;
  */
 public enum MetricsField implements MDCField {
 
-    BEGIN_TIMESTAMP("BeginTimestamp"),
+    BEGIN_TIMESTAMP(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP),
     END_TIMESTAMP("EndTimestamp"),
     ELAPSED_TIME("ElapsedTime"),
-    STATUS_CODE("StatusCode"),
-    RESPONSE_CODE("ResponseCode"),
-    RESPONSE_DESCRIPTION("ResponseDescription"),
-    CLIENT_IP_ADDRESS("ClientIpAddress"),
+    STATUS_CODE(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE),
+    RESPONSE_CODE(ONAPLogConstants.MDCs.RESPONSE_CODE),
+    RESPONSE_DESCRIPTION(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION),
+    CLIENT_IP_ADDRESS(ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS),
     TARGET_VIRTUAL_ENTITY("TargetVirtualEntity"),
-    TARGET_ENTITY("TargetEntity");
+    TARGET_ENTITY(ONAPLogConstants.MDCs.TARGET_ENTITY);
 
     private final String key;
 

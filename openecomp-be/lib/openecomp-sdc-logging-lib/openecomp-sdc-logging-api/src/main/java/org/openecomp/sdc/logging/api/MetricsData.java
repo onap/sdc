@@ -16,6 +16,9 @@
 
 package org.openecomp.sdc.logging.api;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
+import lombok.Getter;
+
 /**
  * Builder to populate <i>metrics</i> data. This includes only data known to an application, and not otherwise available
  * to the logging framework.
@@ -23,13 +26,14 @@ package org.openecomp.sdc.logging.api;
  * @author evitaliy
  * @since 26 Mar 2018
  */
+@Getter
 public class MetricsData {
 
     // don't inherit from AuditData because it has a very different meaning
 
     private final long startTime;
     private final long endTime;
-    private final StatusCode statusCode;
+    private final ResponseStatus statusCode;
     private final String responseCode;
     private final String responseDescription;
     private final String clientIpAddress;
@@ -45,78 +49,6 @@ public class MetricsData {
         this.clientIpAddress = builder.clientIpAddress;
         this.targetEntity = builder.targetEntity;
         this.targetVirtualEntity = builder.targetVirtualEntity;
-    }
-
-    /**
-     * Begin timestamp of an API invocation.
-     *
-     * @return timestamp
-     */
-    public long getStartTime() {
-        return startTime;
-    }
-
-    /**
-     * End timestamp of an API invocation.
-     *
-     * @return timestamp
-     */
-    public long getEndTime() {
-        return endTime;
-    }
-
-    /**
-     * Result status of an API invocation.
-     *
-     * @return protocol and application agnostic status code
-     */
-    public StatusCode getStatusCode() {
-        return statusCode;
-    }
-
-    /**
-     * Application/protocol specific response status of an API invocation.
-     *
-     * @return response code
-     */
-    public String getResponseCode() {
-        return responseCode;
-    }
-
-    /**
-     * Application/protocol specific response in a human-friendly way.
-     *
-     * @return human-friendly response description
-     */
-    public String getResponseDescription() {
-        return responseDescription;
-    }
-
-    /**
-     * IP address of the invoking client when available.
-     *
-     * @return IP address
-     */
-    public String getClientIpAddress() {
-        return clientIpAddress;
-    }
-
-    /**
-     * External entity invoked by the local system.
-     *
-     * @return identifier of an external entity (system, component, sub-component)
-     */
-    public String getTargetEntity() {
-        return targetEntity;
-    }
-
-    /**
-     * External API invoked by the local system.
-     *
-     * @return name of an external API
-     */
-    public String getTargetVirtualEntity() {
-        return targetVirtualEntity;
     }
 
     @Override
@@ -137,7 +69,7 @@ public class MetricsData {
 
         private long startTime;
         private long endTime;
-        private StatusCode statusCode;
+        private ResponseStatus statusCode;
         private String responseCode;
         private String responseDescription;
         private String clientIpAddress;
@@ -175,7 +107,7 @@ public class MetricsData {
          * @param statusCode invocation status success/failure
          * @return this builder for fluent API
          */
-        public MetricsDataBuilder statusCode(final StatusCode statusCode) {
+        public MetricsDataBuilder statusCode(final ResponseStatus statusCode) {
             this.statusCode = statusCode;
             return this;
         }

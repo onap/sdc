@@ -192,15 +192,15 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
         }else if (network instanceof List){
           role = getNetworkRole((String)((List) network).get(0));
         }
-        if (role != null && uniqueResourcePortNetworkRole.containsKey(role)) {
+        if (role != null && (uniqueResourcePortNetworkRole.containsKey(role))) {
           globalValidationContext.addMessage(
                   fileName,
                   ErrorLevel.WARNING,
                   ErrorMessagesFormatBuilder.getErrorWithParameters(
                           ERROR_CODE_NNS12, Messages.RESOURCE_CONNECTED_TO_TWO_EXTERNAL_NETWORKS_WITH_SAME_ROLE
-                                  .getErrorMessage(), resourceId, role));
+                                  .getErrorMessage(), role, resourceId));
         } else {
-          uniqueResourcePortNetworkRole.put(role, portResourceId);
+          uniqueResourcePortNetworkRole.put(role, resourceId);
         }
       }
     }

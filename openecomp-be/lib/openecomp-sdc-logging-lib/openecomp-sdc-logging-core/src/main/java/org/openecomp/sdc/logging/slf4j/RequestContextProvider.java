@@ -40,9 +40,9 @@ class RequestContextProvider implements ContextProvider {
 
     static ContextData to(Map<ContextField, String> values) {
         return ContextData.builder()
-                          .requestId(values.get(ContextField.REQUEST_ID))
-                          .serviceName(values.get(ContextField.SERVICE_NAME))
-                          .partnerName(values.get(ContextField.PARTNER_NAME)).build();
+                .requestId(values.get(ContextField.REQUEST_ID))
+                .serviceName(values.get(ContextField.SERVICE_NAME))
+                .partnerName(values.get(ContextField.PARTNER_NAME)).build();
     }
 
     @Override
@@ -58,7 +58,6 @@ class RequestContextProvider implements ContextProvider {
     }
 
     private void putIfNotNull(Map<ContextField, String> values, ContextField field, String value) {
-
         if (value != null) {
             values.put(field, value);
         }

@@ -86,7 +86,7 @@ public class ExecutionRequestTest {
     Assert.assertTrue(UUID.fromString(rsp.getExecutionId()).getLeastSignificantBits() != 0);
     Assert.assertEquals("parameters", 6, rsp.getParameters().size());
     Assert.assertNotNull(rsp.getResults());
-    Assert.assertEquals("COMPLETED", rsp.getStatus());
+    Assert.assertEquals("COMPLETE", rsp.getStatus());
     Assert.assertNotNull(rsp.getStartTime());
     Assert.assertNotNull(rsp.getEndTime());
 

@@ -15,7 +15,7 @@
   "results": {
     "this is": "a fake result"
   },
-  "status": "COMPLETED",
+  "status": "COMPLETE",
   "startTime": "2019-03-08T21:43:10.527",
   "endTime": "2019-03-08T21:43:10.617"
 }

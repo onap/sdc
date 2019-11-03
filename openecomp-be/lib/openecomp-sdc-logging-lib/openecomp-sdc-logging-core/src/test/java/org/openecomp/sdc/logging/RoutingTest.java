@@ -113,7 +113,7 @@ public class RoutingTest {
     @Test
     public void testAudit() {
         String msg = "This is a test audit";
-        logger.info(Markers.AUDIT, msg);
+        logger.info(Markers.EXIT, msg);
         TestAppender appender = result.get(AUDIT);
         Assert.assertTrue(appender.contains(
                 (event) -> Level.INFO.equals(event.getLevel()) && msg.equals(event.getFormattedMessage())));

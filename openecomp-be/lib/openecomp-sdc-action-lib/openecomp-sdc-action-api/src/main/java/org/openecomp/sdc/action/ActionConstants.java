@@ -21,6 +21,8 @@
 package org.openecomp.sdc.action;
 
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
+
 public class ActionConstants {
 
   //
@@ -73,21 +75,21 @@ public class ActionConstants {
   public static final String ARTIFACT_METADATA_ATTR_UUID = "ARTIFACT_UUID";
   public static final String ARTIFACT_METADATA_ATTR_NAME = "ARTIFACT_NAME";
 
-  public static final String REQUEST_ID = "uuid";
+  public static final String REQUEST_ID = ONAPLogConstants.MDCs.REQUEST_ID;
   public static final String SERVICE_INSTANCE_ID = "serviceInstanceID";
-  public static final String PARTNER_NAME = "userId";
-  public static final String SERVICE_NAME = "ServiceName";
-  public static final String INSTANCE_UUID = "InstanceUUID";
+  public static final String PARTNER_NAME = ONAPLogConstants.MDCs.PARTNER_NAME;
+  public static final String SERVICE_NAME = ONAPLogConstants.MDCs.SERVICE_NAME;
+  public static final String INSTANCE_UUID = ONAPLogConstants.MDCs.INSTANCE_UUID;
   public static final String REMOTE_HOST = "RemoteHost";
-  public static final String CLIENT_IP = "ClientIP";
+  public static final String CLIENT_IP = ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS;
   public static final String CATEGORY_LOG_LEVEL = "level";
-  public static final String STATUS_CODE = "StatusCode";
-  public static final String RESPONSE_CODE = "ResponseCode";
-  public static final String RESPONSE_DESCRIPTION = "ResponseDescription";
+  public static final String STATUS_CODE = ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE;
+  public static final String RESPONSE_CODE = ONAPLogConstants.MDCs.RESPONSE_CODE;
+  public static final String RESPONSE_DESCRIPTION = ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION;
   public static final String ELAPSED_TIME = "ElapsedTime";
-  public static final String BEGIN_TIMESTAMP = "BeginTimestamp";
-  public static final String TARGET_SERVICE_NAME = "TargetServiceName";
-  public static final String TARGET_ENTITY = "TargetEntity";
+  public static final String BEGIN_TIMESTAMP = ONAPLogConstants.MDCs.ENTRY_TIMESTAMP;
+  public static final String TARGET_SERVICE_NAME = ONAPLogConstants.MDCs.TARGET_SERVICE_NAME;
+  public static final String TARGET_ENTITY = ONAPLogConstants.MDCs.TARGET_ENTITY;
   public static final String TARGET_ENTITY_API = "API";
   public static final String TARGET_ENTITY_DB = "DB";
   public static final String END_TIMESTAMP = "EndTimestamp";

@@ -16,6 +16,9 @@
 
 package org.openecomp.sdc.logging.api;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
+import lombok.Getter;
+
 /**
  * Builder to populate <i>audit</i> data. This includes only data known to an application, and not otherwise available
  * to the logging framework. As opposed, for example, to local runtime, host address, etc.
@@ -23,13 +26,14 @@ package org.openecomp.sdc.logging.api;
  * @author KATYR, evitaliy
  * @since February 15, 2018
  */
+@Getter
 public class AuditData {
 
     // don't inherit from MetricsData because it has a very different meaning
 
     private final long startTime;
     private final long endTime;
-    private final StatusCode statusCode;
+    private final ResponseStatus statusCode;
     private final String responseCode;
     private final String responseDescription;
     private final String clientIpAddress;
@@ -41,60 +45,6 @@ public class AuditData {
         this.responseCode = builder.responseCode;
         this.responseDescription = builder.responseDescription;
         this.clientIpAddress = builder.clientIpAddress;
-    }
-
-    /**
-     * Begin timestamp of an API invocation.
-     *
-     * @return timestamp
-     */
-    public long getStartTime() {
-        return startTime;
-    }
-
-    /**
-     * End timestamp of an API invocation.
-     *
-     * @return timestamp
-     */
-    public long getEndTime() {
-        return endTime;
-    }
-
-    /**
-     * Result status of an API invocation.
-     *
-     * @return protocol and application agnostic status code
-     */
-    public StatusCode getStatusCode() {
-        return statusCode;
-    }
-
-    /**
-     * Application/protocol specific response status of an API invocation.
-     *
-     * @return response code
-     */
-    public String getResponseCode() {
-        return responseCode;
-    }
-
-    /**
-     * Application/protocol specific response in a human-friendly way.
-     *
-     * @return human-friendly response description
-     */
-    public String getResponseDescription() {
-        return responseDescription;
-    }
-
-    /**
-     * IP address of the invoking client when available.
-     *
-     * @return IP address
-     */
-    public String getClientIpAddress() {
-        return clientIpAddress;
     }
 
     @Override
@@ -115,7 +65,7 @@ public class AuditData {
 
         private long startTime;
         private long endTime;
-        private StatusCode statusCode;
+        private ResponseStatus statusCode;
         private String responseCode;
         private String responseDescription;
         private String clientIpAddress;
@@ -151,7 +101,7 @@ public class AuditData {
          * @param statusCode invocation status success/failure
          * @return this builder for fluent API
          */
-        public AuditDataBuilder statusCode(final StatusCode statusCode) {
+        public AuditDataBuilder statusCode(final ResponseStatus statusCode) {
             this.statusCode = statusCode;
             return this;
         }

@@ -118,7 +118,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-            "WARNING: [NNS12]: A resource is connected twice to the same network role, Network Role [FSB2], Resource ID [Internal1]");
+            "WARNING: [NNS12]: A resource is connected twice to the same network role, Network Role [Internal1], Resource ID [FSB2]");
   }
 
   @Test

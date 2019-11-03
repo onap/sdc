@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.heat.services;
 
+
 public class HeatConstants {
     public static final String GET_ATTR_FROM_RESOURCE_GROUP_PREFIX = "resource.";
     public static final String RESOURCE_GROUP_INDEX_VAR_DEFAULT_VALUE = "%index%";
