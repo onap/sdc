@@ -22,13 +22,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.logging.api.StatusCode.COMPLETE;
-import static org.openecomp.sdc.logging.api.StatusCode.ERROR;
 import static org.openecomp.sdc.logging.servlet.spring.LoggingInterceptor.LOGGING_TRACKER_KEY;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Test;
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import org.openecomp.sdc.logging.servlet.HttpHeader;
 import org.openecomp.sdc.logging.servlet.RequestProcessingResult;
 import org.openecomp.sdc.logging.servlet.Tracker;
@@ -80,7 +79,7 @@ public class LoggingInterceptorTest {
         final int status = 101;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(ERROR, result.getStatusCode());
+        assertEquals(ResponseStatus.ERROR, result.getStatusCode());
     }
 
     @Test
@@ -88,7 +87,7 @@ public class LoggingInterceptorTest {
         final int status = 404;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(ERROR, result.getStatusCode());
+        assertEquals(ResponseStatus.ERROR, result.getStatusCode());
     }
 
     @Test
@@ -96,7 +95,7 @@ public class LoggingInterceptorTest {
         final int status = 503;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(ERROR, result.getStatusCode());
+        assertEquals(ResponseStatus.ERROR, result.getStatusCode());
     }
 
     @Test
@@ -104,7 +103,7 @@ public class LoggingInterceptorTest {
         final int status = 204;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(COMPLETE, result.getStatusCode());
+        assertEquals(ResponseStatus.COMPLETE, result.getStatusCode());
     }
 
     @Test
@@ -112,7 +111,7 @@ public class LoggingInterceptorTest {
         final int status = 307;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(COMPLETE, result.getStatusCode());
+        assertEquals(ResponseStatus.COMPLETE, result.getStatusCode());
     }
 
     @Test
@@ -120,7 +119,7 @@ public class LoggingInterceptorTest {
         final int status = 133;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(ERROR, result.getStatusCode());
+        assertEquals(ResponseStatus.ERROR, result.getStatusCode());
     }
 
     @Test
@@ -128,7 +127,7 @@ public class LoggingInterceptorTest {
         final int status = 485;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(ERROR, result.getStatusCode());
+        assertEquals(ResponseStatus.ERROR, result.getStatusCode());
     }
 
     @Test
@@ -136,7 +135,7 @@ public class LoggingInterceptorTest {
         final int status = 547;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(ERROR, result.getStatusCode());
+        assertEquals(ResponseStatus.ERROR, result.getStatusCode());
     }
 
     @Test
@@ -144,7 +143,7 @@ public class LoggingInterceptorTest {
         final int status = 277;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(COMPLETE, result.getStatusCode());
+        assertEquals(ResponseStatus.COMPLETE, result.getStatusCode());
     }
 
     @Test
@@ -152,6 +151,6 @@ public class LoggingInterceptorTest {
         final int status = 364;
         LoggingInterceptor.ServletResponseResult result = new LoggingInterceptor.ServletResponseResult(status);
         assertEquals(status, result.getStatus());
-        assertEquals(COMPLETE, result.getStatusCode());
+        assertEquals(ResponseStatus.COMPLETE, result.getStatusCode());
     }
 }

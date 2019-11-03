@@ -40,6 +40,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.onap.logging-analytics</groupId>
+            <artifactId>logging-slf4j</artifactId>
+            <version>${onap.logging.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-core</artifactId>
             <version>${togglz.version}</version>

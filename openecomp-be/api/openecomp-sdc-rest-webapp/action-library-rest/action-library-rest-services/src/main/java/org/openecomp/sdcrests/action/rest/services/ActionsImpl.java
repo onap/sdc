@@ -22,6 +22,8 @@
 
 package org.openecomp.sdcrests.action.rest.services;
 
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.ERROR;
 import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_NAME;
 import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_SUPPORTED_COMPONENTS;
 import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_SUPPORTED_MODELS;
@@ -113,7 +115,6 @@ import org.openecomp.sdc.action.ActionManager;
 import org.openecomp.sdc.action.errors.ActionErrorConstants;
 import org.openecomp.sdc.action.errors.ActionException;
 import org.openecomp.sdc.action.logging.CategoryLogLevel;
-import org.openecomp.sdc.action.logging.StatusCode;
 import org.openecomp.sdc.action.types.Action;
 import org.openecomp.sdc.action.types.ActionArtifact;
 import org.openecomp.sdc.action.types.ActionArtifactProtection;
@@ -216,16 +217,16 @@ public class ActionsImpl implements Actions {
         responseList = getActionsByInvId(servletRequest, invariantID);
       } else {
         Response response = getActionByUUID(servletRequest, invariantID, actionUUID);
-        actionLogPostProcessor(StatusCode.COMPLETE, true);
+        actionLogPostProcessor(COMPLETE, true);
         return response;
       }
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error("");
@@ -233,7 +234,7 @@ public class ActionsImpl implements Actions {
     }
 
     LOGGER.debug(" exit getActionsByActionInvariantUuId ");
-    actionLogPostProcessor(StatusCode.COMPLETE, true);
+    actionLogPostProcessor(COMPLETE, true);
     return Response.ok(responseList).build();
   }
 
@@ -296,15 +297,15 @@ public class ActionsImpl implements Actions {
       response.setActionList(null);
       response.setComponentList(openEcompComponents);
       LOGGER.debug(" exit getEcompComponents ");
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
       return Response.ok(response).build();
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error("");
@@ -323,7 +324,7 @@ public class ActionsImpl implements Actions {
       if (StringUtils.isEmpty(servletRequest.getQueryString())) {
         response = getAllActions(servletRequest);
         LOGGER.debug(" exit getFilteredActions ");
-        actionLogPostProcessor(StatusCode.COMPLETE, true);
+        actionLogPostProcessor(COMPLETE, true);
         return response;
       }
       validateNoOfFilterParamsExactly1(noOfFilterParams);
@@ -342,15 +343,15 @@ public class ActionsImpl implements Actions {
       }
 
       LOGGER.debug(" exit getFilteredActions ");
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
       return response;
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error("");
@@ -409,16 +410,16 @@ public class ActionsImpl implements Actions {
       } else {
         checkAndThrowError(errorMap);
       }
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
       LOGGER.debug(" exit API createAction with ActionInvariantUUID= " + MDC.get(SERVICE_INSTANCE_ID));
       return Response.ok(actionResponseDTO).build();
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
@@ -448,14 +449,14 @@ public class ActionsImpl implements Actions {
       } else {
         checkAndThrowError(errorMap);
       }
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
@@ -477,15 +478,15 @@ public class ActionsImpl implements Actions {
         checkAndThrowError(errorMap);
       }
 
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
       return Response.ok(new ActionResponseDto()).build();
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
@@ -539,14 +540,14 @@ public class ActionsImpl implements Actions {
       ActionResponseDto actionResponseDTO = new ActionResponseDto();
       new MapActionToActionResponseDto().doMapping(action, actionResponseDTO);
       response = Response.ok(actionResponseDTO).build();
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
@@ -576,16 +577,16 @@ public class ActionsImpl implements Actions {
       response =
           uploadArtifactInternal(actionInvariantUUID, artifactName, artifactLabel, artifactCategory,
               artifactDescription, artifactProtection, checksum, artifactToUpload, servletRequest);
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
       LOGGER.debug("exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID +
           "artifactName= " + artifactName);
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
@@ -681,14 +682,14 @@ public class ActionsImpl implements Actions {
           " entering downloadArtifact with actionUUID= " + actionUUID + " and artifactUUID= " +
               artifactUUID);
       response = downloadArtifactInternal(actionUUID, artifactUUID, servletRequest);
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
@@ -729,14 +730,14 @@ public class ActionsImpl implements Actions {
       response = deleteArtifactInternal(actionInvariantUUID, artifactUUID, servletRequest);
       LOGGER.debug(" exit deleteArtifact with actionInvariantUuId= " + actionInvariantUUID +
           " and artifactUUID= " + artifactUUID);
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
@@ -780,14 +781,14 @@ public class ActionsImpl implements Actions {
           updateArtifactInternal(actionInvariantUUID, artifactUUID, artifactName, artifactLabel,
               artifactCategory, artifactDescription, artifactProtection, checksum, artifactToUpdate,
               servletRequest);
-      actionLogPostProcessor(StatusCode.COMPLETE, true);
+      actionLogPostProcessor(COMPLETE, true);
     } catch (ActionException exception) {
-      actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
+      actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
       LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
-      actionLogPostProcessor(StatusCode.ERROR, true);
+      actionLogPostProcessor(ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       LOGGER.error(exception.getMessage());
@@ -1187,7 +1188,7 @@ public class ActionsImpl implements Actions {
     MDC.put(PARTNER_NAME, servletRequest.getRemoteUser());
     MDC.put(INSTANCE_UUID, MDC_ASDC_INSTANCE_UUID);
     MDC.put(SERVICE_METRIC_BEGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-    MDC.put(STATUS_CODE, StatusCode.COMPLETE.name());
+    MDC.put(STATUS_CODE, COMPLETE.name());
     MDC.put(SERVICE_NAME, requestType.name());
     MDC.put(CLIENT_IP, MDC.get(REMOTE_HOST));
     MDC.put(SERVICE_INSTANCE_ID, actionInvariantId);

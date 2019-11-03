@@ -32,7 +32,6 @@ import org.openecomp.sdc.action.dao.ActionArtifactDao;
 import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
 import org.openecomp.sdc.action.errors.ActionException;
 import org.openecomp.sdc.action.logging.CategoryLogLevel;
-import org.openecomp.sdc.action.logging.StatusCode;
 import org.openecomp.sdc.action.types.ActionArtifact;
 import org.openecomp.sdc.action.types.ActionSubOperation;
 import org.openecomp.sdc.action.util.ActionUtil;
@@ -42,6 +41,8 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import java.util.Collection;
 import java.util.List;
 
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.ERROR;
 import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY_DB;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.*;
 
@@ -77,7 +78,7 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
     try {
       ActionUtil.actionLogPreProcessor(ActionSubOperation.CREATE_ACTION_ARTIFACT, TARGET_ENTITY_DB);
       this.create(data.toEntity());
-      ActionUtil.actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
+      ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
       log.metrics("");
     } catch (NoHostAvailableException noHostAvailableException) {
       logGenericException(noHostAvailableException);
@@ -96,7 +97,7 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
           .actionLogPreProcessor(ActionSubOperation.GET_ARTIFACT_BY_ARTIFACTUUID, TARGET_ENTITY_DB);
       Result<ActionArtifactEntity> result = null;
       result = accessor.getArtifactByUuId(effectiveVersion, artifactUuId);
-      ActionUtil.actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
+      ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
       log.metrics("");
       List<ActionArtifactEntity> artifactEntities = result.all();
       if (artifactEntities != null && !artifactEntities.isEmpty()) {
@@ -118,7 +119,7 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
     try {
       ActionUtil.actionLogPreProcessor(ActionSubOperation.UPDATE_ACTION_ARTIFACT, TARGET_ENTITY_DB);
       this.update(data.toEntity());
-      ActionUtil.actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
+      ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
       log.metrics("");
     } catch (NoHostAvailableException noHostAvailableException) {
       logGenericException(noHostAvailableException);
@@ -129,7 +130,7 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
   }
 
   private void logGenericException(Exception exception) {
-    ActionUtil.actionLogPostProcessor(StatusCode.ERROR, ACTION_QUERY_FAILURE_CODE,
+    ActionUtil.actionLogPostProcessor(ERROR, ACTION_QUERY_FAILURE_CODE,
         ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG, false);
     log.metrics("");
     ActionUtil.actionErrorLogProcessor(CategoryLogLevel.FATAL, ACTION_QUERY_FAILURE_CODE,

@@ -43,7 +43,9 @@ public interface Logger {
 
     boolean isAuditEnabled();
 
-    void audit(AuditData data);
+    void auditEntry(AuditData data);
+
+    void auditExit(AuditData data);
 
     boolean isDebugEnabled();
 

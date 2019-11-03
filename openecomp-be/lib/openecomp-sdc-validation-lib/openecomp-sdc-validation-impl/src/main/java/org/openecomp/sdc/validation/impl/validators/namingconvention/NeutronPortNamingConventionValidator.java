@@ -99,7 +99,7 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
                                             GlobalValidationContext globalContext) {
     String[] regexList =
             new String[]{"[^_]+_[^_]+_ips", "[^_]+_[^_]+_v6_ips", "[^_]+_[^_]+_ip_(\\d+)",
-                    "[^_]+_[^_]+_v6_ip_(\\d+)"};
+                    "[^_]+_[^_]+_v6_ip_(\\d+)", "[^_]+_[^_]+_[^_]+_ips", "[^_]+_[^_]+_[^_]+_v6+_ips"};
 
     if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
       return;
@@ -128,13 +128,9 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
 
         String fixedIpsName = ValidationUtil
                 .getWantedNameFromPropertyValueGetParam(fixedIpsEntry.getValue());
-          if (nonNull(fixedIpsName) && !ValidationUtil
-                  .evalPattern(fixedIpsName, regexList)) {
-            globalContext.addMessage(
-                    fileName,
-                    ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
-                            ERROR_CODE_NNP1,
-                            Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
+
+          if (nonNull(fixedIpsName) && !ValidationUtil.evalPattern(fixedIpsName, regexList)) {
+            globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_NNP1, Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
                             "Port", "Fixed_IPS", fixedIpsName, resourceEntry.getKey()));
           }
 

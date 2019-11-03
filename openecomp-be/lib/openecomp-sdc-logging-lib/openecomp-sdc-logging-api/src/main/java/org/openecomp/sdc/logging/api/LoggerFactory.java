@@ -83,7 +83,12 @@ public class LoggerFactory {
             }
 
             @Override
-            public void audit(AuditData data) {
+            public void auditEntry(AuditData data) {
+                // no-op
+            }
+
+            @Override
+            public void auditExit(AuditData data) {
                 // no-op
             }
 

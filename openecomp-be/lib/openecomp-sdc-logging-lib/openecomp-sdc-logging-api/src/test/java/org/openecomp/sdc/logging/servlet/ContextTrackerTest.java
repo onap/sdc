@@ -119,7 +119,7 @@ public class ContextTrackerTest {
     }
 
     @Test
-    public void partnerNameAbsentWhenNotGiven() {
+    public void partnerNameIsUnknownWhenNotGiven() {
 
         mockStatic(LoggingContext.class);
 
@@ -131,7 +131,7 @@ public class ContextTrackerTest {
 
         LoggingContext.put(contextDataCaptor.capture());
 
-        assertNull(contextDataCaptor.getValue().getPartnerName());
+        assertEquals(contextDataCaptor.getValue().getPartnerName(), "UNKNOWN");
     }
 
     @Test

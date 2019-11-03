@@ -320,7 +320,7 @@ public class ExternalTestingManagerImplTest {
 
     // send a request for a prior execution.
     VtpTestExecutionResponse execRsp = m.getExecution("repository", "execId");
-    Assert.assertEquals("COMPLETED", execRsp.getStatus());
+    Assert.assertEquals("COMPLETE", execRsp.getStatus());
   }
 
   @Test
