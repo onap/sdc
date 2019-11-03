@@ -18,8 +18,7 @@ package org.openecomp.sdc.logging.servlet.jaxrs;
 
 import static javax.ws.rs.core.Response.Status.Family.REDIRECTION;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
-import static org.openecomp.sdc.logging.api.StatusCode.COMPLETE;
-import static org.openecomp.sdc.logging.api.StatusCode.ERROR;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.*;
 import static org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter.LOGGING_TRACKER_KEY;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -27,9 +26,10 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.api.StatusCode;
 import org.openecomp.sdc.logging.servlet.RequestProcessingResult;
 import org.openecomp.sdc.logging.servlet.Tracker;
 
@@ -82,7 +82,7 @@ public class LoggingResponseFilter implements ContainerResponseFilter {
         }
 
         @Override
-        public StatusCode getStatusCode() {
+        public ResponseStatus getStatusCode() {
             Response.Status.Family family = statusInfo.getFamily();
             return family.equals(SUCCESSFUL) || family.equals(REDIRECTION) ? COMPLETE : ERROR;
         }

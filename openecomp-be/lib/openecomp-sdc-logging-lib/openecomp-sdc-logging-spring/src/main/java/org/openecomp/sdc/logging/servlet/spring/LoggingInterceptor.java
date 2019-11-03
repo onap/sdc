@@ -16,17 +16,17 @@
 
 package org.openecomp.sdc.logging.servlet.spring;
 
-import static org.openecomp.sdc.logging.api.StatusCode.COMPLETE;
-import static org.openecomp.sdc.logging.api.StatusCode.ERROR;
+import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.*;
 import static org.springframework.http.HttpStatus.Series.REDIRECTION;
 import static org.springframework.http.HttpStatus.Series.SUCCESSFUL;
 
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.logging.api.StatusCode;
 import org.openecomp.sdc.logging.servlet.AuditTracker;
 import org.openecomp.sdc.logging.servlet.CombinedTracker;
 import org.openecomp.sdc.logging.servlet.ContextTracker;
@@ -120,7 +120,7 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
         }
 
         @Override
-        public StatusCode getStatusCode() {
+        public ResponseStatus getStatusCode() {
             return statusInfo.getStatusCode();
         }
 
@@ -154,7 +154,7 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
             return reasonPhrase;
         }
 
-        private StatusCode getStatusCode() {
+        private ResponseStatus getStatusCode() {
             return series.equals(SUCCESSFUL) || series.equals(REDIRECTION) ? COMPLETE : ERROR;
         }
     }

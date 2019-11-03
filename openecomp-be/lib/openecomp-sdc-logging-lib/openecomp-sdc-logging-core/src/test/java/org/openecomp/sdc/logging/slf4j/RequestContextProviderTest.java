@@ -16,15 +16,13 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import org.junit.Test;
 import org.openecomp.sdc.logging.api.ContextData;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit-test retrieving values from client-provided request data.

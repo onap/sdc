@@ -16,6 +16,8 @@
 
 package org.openecomp.sdc.logging.slf4j;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
+
 /**
  * MDC fields that represent audit data.
  *
@@ -24,13 +26,13 @@ package org.openecomp.sdc.logging.slf4j;
  */
 enum AuditField implements MDCField {
 
-    BEGIN_TIMESTAMP("BeginTimestamp"),
+    BEGIN_TIMESTAMP(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP),
     END_TIMESTAMP("EndTimestamp"),
     ELAPSED_TIME("ElapsedTime"),
-    STATUS_CODE("StatusCode"),
-    RESPONSE_CODE("ResponseCode"),
-    RESPONSE_DESCRIPTION("ResponseDescription"),
-    CLIENT_IP_ADDRESS("ClientIpAddress");
+    STATUS_CODE(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE),
+    RESPONSE_CODE(ONAPLogConstants.MDCs.RESPONSE_CODE),
+    RESPONSE_DESCRIPTION(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION),
+    CLIENT_IP_ADDRESS(ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS);
 
     private final String key;
 

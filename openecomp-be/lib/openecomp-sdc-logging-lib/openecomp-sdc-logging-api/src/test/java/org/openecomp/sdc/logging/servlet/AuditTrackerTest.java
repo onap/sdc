@@ -27,9 +27,9 @@ import static org.mockito.Mockito.when;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus;
 import org.openecomp.sdc.logging.api.AuditData;
 import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.StatusCode;
 
 /**
  * Test initialization and of audit tracker and log invocation.
@@ -73,7 +73,7 @@ public class AuditTrackerTest {
         tracker.preRequest(mock(HttpServletRequest.class));
         tracker.postRequest(mock(RequestProcessingResult.class));
 
-        verify(logger, never()).audit(any(AuditData.class));
+        verify(logger, never()).auditExit(any(AuditData.class));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class AuditTrackerTest {
         tracker.postRequest(mock(RequestProcessingResult.class));
 
         ArgumentCaptor<AuditData> auditDataCaptor = ArgumentCaptor.forClass(AuditData.class);
-        verify(logger).audit(auditDataCaptor.capture());
+        verify(logger).auditExit(auditDataCaptor.capture());
         assertTrue(auditDataCaptor.getValue().getEndTime() > 0);
     }
 
@@ -104,7 +104,7 @@ public class AuditTrackerTest {
         tracker.postRequest(result);
 
         ArgumentCaptor<AuditData> auditDataCaptor = ArgumentCaptor.forClass(AuditData.class);
-        verify(logger).audit(auditDataCaptor.capture());
+        verify(logger).auditExit(auditDataCaptor.capture());
 
         AuditData capturedAuditData = auditDataCaptor.getValue();
         assertEquals(Integer.toString(result.getStatus()), capturedAuditData.getResponseCode());
@@ -127,7 +127,7 @@ public class AuditTrackerTest {
         tracker.postRequest(mock(RequestProcessingResult.class));
 
         ArgumentCaptor<AuditData> auditDataCaptor = ArgumentCaptor.forClass(AuditData.class);
-        verify(logger).audit(auditDataCaptor.capture());
+        verify(logger).auditExit(auditDataCaptor.capture());
 
         AuditData capturedAuditData = auditDataCaptor.getValue();
         assertEquals(address, capturedAuditData.getClientIpAddress());
@@ -141,8 +141,8 @@ public class AuditTrackerTest {
         }
 
         @Override
-        public StatusCode getStatusCode() {
-            return StatusCode.ERROR;
+        public ResponseStatus getStatusCode() {
+            return ResponseStatus.ERROR;
         }
 
         @Override

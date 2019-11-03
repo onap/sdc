@@ -14,7 +14,7 @@
   "results": {
     "hello": "world"
   },
-  "status": "COMPLETED",
+  "status": "COMPLETE",
   "startTime": 1550780567585,
   "endTime": 1550780567585
 }
