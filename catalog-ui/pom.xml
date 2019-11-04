@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<artifactId>catalog-ui</artifactId>
     <packaging>pom</packaging>
 
@@ -102,17 +102,6 @@
                     </execution>
 
                     <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <!-- Optional configuration which provides for running any npm command -->
-                        <configuration>
-                            <arguments>install --registry ${npm.registry}</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
                         <id>npm run build</id>
                         <goals>
                             <goal>npm</goal>
@@ -156,4 +145,3 @@
 		</plugins>
 	</build>
 </project>
-
