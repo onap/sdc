@@ -46,6 +46,7 @@
                                     <includes>
                                         <include>init_keyspaces.cql</include>
                                         <include>init_schemas.cql</include>
+                                        <include>alter_tables.cql</include>
                                     </includes>
                                 </resource>
                             </resources>
