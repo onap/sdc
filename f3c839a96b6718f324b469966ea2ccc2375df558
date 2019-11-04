@@ -16,6 +16,24 @@
       "revId": "f3c839a96b6718f324b469966ea2ccc2375df558",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a95389e_1bac43d2",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-api/src/main/java/org/openecomp/core/converter/pnfd/model/TransformationProperty.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2019-11-04T09:32:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cdc20a66_f89e3913",
+      "revId": "f3c839a96b6718f324b469966ea2ccc2375df558",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
