@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "12d30bb5_e791bd21",
+        "filename": "openecomp-be/backend/openecomp-sdc-action-manager/src/main/java/org/openecomp/sdc/action/impl/ActionManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-04T11:16:27Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 51
+      },
+      "revId": "0a245d561e3c6b0f39bfc328b4213e438ef4743a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe743d2c_3a143900",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/HeatConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-04T11:16:27Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 0
+      },
+      "revId": "0a245d561e3c6b0f39bfc328b4213e438ef4743a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffb87498_25aedaf7",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/AuditData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-04T11:16:27Z",
+      "side": 1,
+      "message": "replace with Lombok Getter",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 100,
+        "endChar": 5
+      },
+      "revId": "0a245d561e3c6b0f39bfc328b4213e438ef4743a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c9d309a_e40285c6",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/MetricsData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-04T11:16:27Z",
+      "side": 1,
+      "message": "replace with Lombok Getter",
+      "range": {
+        "startLine": 52,
+        "startChar": 4,
+        "endLine": 122,
+        "endChar": 5
+      },
+      "revId": "0a245d561e3c6b0f39bfc328b4213e438ef4743a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "80d1fcd4_213b16a4",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/NeutronPortNamingConventionValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-04T11:16:27Z",
+      "side": 1,
+      "message": "needless, can be removed",
+      "range": {
+        "startLine": 101,
+        "startChar": 12,
+        "endLine": 101,
+        "endChar": 24
+      },
+      "revId": "0a245d561e3c6b0f39bfc328b4213e438ef4743a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33993b6b_166b6086",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-04T11:16:27Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 51
+      },
+      "revId": "0a245d561e3c6b0f39bfc328b4213e438ef4743a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
