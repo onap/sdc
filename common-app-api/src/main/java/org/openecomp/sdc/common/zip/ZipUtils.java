@@ -75,8 +75,8 @@ public class ZipUtils {
         String canonicalPath = null;
         try {
             canonicalPath = file.getCanonicalPath();
-        } catch (final IOException ignored) {
-            //ignored
+        } catch (final IOException ex) {
+            LOGGER.debug("Could not get canonical path of file '{}'", file.getPath(), ex);
         }
         if (canonicalPath != null && !canonicalPath.equals(file.getAbsolutePath())) {
             throw new ZipSlipException(filePath.toString());
@@ -170,30 +170,37 @@ public class ZipUtils {
         final Map<String, byte[]> filePathAndByteMap = new HashMap<>();
 
         try (final ZipInputStream inputZipStream = ZipUtils.getInputStreamFromBytes(zipFileBytes)) {
-            byte[] fileByteContent;
-            String currentEntryName;
             ZipEntry zipEntry;
             while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-                checkForZipSlipInRead(zipEntry);
-                currentEntryName = zipEntry.getName();
-                fileByteContent = getBytes(inputZipStream);
-                if (zipEntry.isDirectory()) {
-                    if (hasToIncludeDirectories) {
-                        filePathAndByteMap.put(normalizeFolder(currentEntryName), null);
-                    }
-                } else {
-                    if (hasToIncludeDirectories) {
-                        final Path parentFolderPath = Paths.get(zipEntry.getName()).getParent();
-                        if (parentFolderPath != null) {
-                            filePathAndByteMap.putIfAbsent(normalizeFolder(parentFolderPath.toString()), null);
-                        }
-                    }
-                    filePathAndByteMap.put(currentEntryName, fileByteContent);
-                }
+                filePathAndByteMap
+                    .putAll(processZipEntryInRead(zipEntry, getBytes(inputZipStream), hasToIncludeDirectories));
             }
         } catch (final IOException e) {
             LOGGER.warn("Could not close the zip input stream", e);
         }
+
+        return filePathAndByteMap;
+    }
+
+    private static Map<String, byte[]> processZipEntryInRead(final ZipEntry zipEntry,
+                                                             final byte[] inputStreamBytes,
+                                                             final boolean hasToIncludeDirectories) throws ZipException {
+        final Map<String, byte[]> filePathAndByteMap = new HashMap<>();
+        checkForZipSlipInRead(zipEntry);
+        if (zipEntry.isDirectory()) {
+            if (hasToIncludeDirectories) {
+                filePathAndByteMap.put(normalizeFolder(zipEntry.getName()), null);
+            }
+            return filePathAndByteMap;
+        }
+
+        if (hasToIncludeDirectories) {
+            final Path parentFolderPath = Paths.get(zipEntry.getName()).getParent();
+            if (parentFolderPath != null) {
+                filePathAndByteMap.putIfAbsent(normalizeFolder(parentFolderPath.toString()), null);
+            }
+        }
+        filePathAndByteMap.put(zipEntry.getName(), inputStreamBytes);
 
         return filePathAndByteMap;
     }
