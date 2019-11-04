@@ -28,7 +28,6 @@ import com.google.gson.JsonSyntaxException;
 import fj.data.Either;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -232,15 +231,11 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         fillToscaTemplateFromZip(yamlStringWrapper, ymlName, file);
     }
 
-    private static void fillToscaTemplateFromZip(Wrapper<String> yamlStringWrapper, String payloadName, File file) {
-        Map<String, byte[]> unzippedFolder = null;
-        try {
-            unzippedFolder = ZipUtils.readZip(file, false);
-        } catch (final ZipException e) {
-            log.info("Failed to unzip file", e);
-        }
-        byte[] yamlFileInBytes = unzippedFolder.get(payloadName);
-        String yamlAsString = new String(yamlFileInBytes, StandardCharsets.UTF_8);
+    private static void fillToscaTemplateFromZip(final Wrapper<String> yamlStringWrapper, final String payloadName,
+                                                 final File file) throws ZipException {
+        final Map<String, byte[]> unzippedFolder = ZipUtils.readZip(file, false);
+        final byte[] yamlFileInBytes = unzippedFolder.get(payloadName);
+        final String yamlAsString = new String(yamlFileInBytes, StandardCharsets.UTF_8);
         log.debug("received yaml: {}", yamlAsString);
         yamlStringWrapper.setInnerElement(yamlAsString);
     }
@@ -521,7 +516,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     protected void fillPayload(Wrapper<Response> responseWrapper, Wrapper<UploadResourceInfo> uploadResourceInfoWrapper, Wrapper<String> yamlStringWrapper, User user, String resourceInfoJsonString, ResourceAuthorityTypeEnum resourceAuthorityEnum,
-            File file) throws FileNotFoundException {
+            File file) throws ZipException {
 
         if (responseWrapper.isEmpty()) {
             if (resourceAuthorityEnum.isBackEndImport()) {
@@ -562,8 +557,11 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     }
 
-    protected void specificResourceAuthorityValidations(Wrapper<Response> responseWrapper, Wrapper<UploadResourceInfo> uploadResourceInfoWrapper, Wrapper<String> yamlStringWrapper, User user, HttpServletRequest request, String resourceInfoJsonString,
-            ResourceAuthorityTypeEnum resourceAuthorityEnum) throws FileNotFoundException {
+    protected void specificResourceAuthorityValidations(final Wrapper<Response> responseWrapper,
+                                                        final Wrapper<UploadResourceInfo> uploadResourceInfoWrapper,
+                                                        final Wrapper<String> yamlStringWrapper, final User user,
+                                                        final HttpServletRequest request, final String resourceInfoJsonString,
+                                                        final ResourceAuthorityTypeEnum resourceAuthorityEnum) {
 
         if (responseWrapper.isEmpty()) {
             // UI Only Validation

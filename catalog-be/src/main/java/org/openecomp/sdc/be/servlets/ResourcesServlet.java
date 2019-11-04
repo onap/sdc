@@ -47,6 +47,7 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,7 +65,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -138,7 +138,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                 responseWrapper.setInnerElement(response);
             }
             return responseWrapper.getInnerElement();
-        } catch (IOException e) {
+        } catch (final IOException | ZipException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Resource");
             log.debug("create resource failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -159,8 +159,9 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         return isUIImport;
     }
 
-    private void performUIImport(Wrapper<Response> responseWrapper, String data, final HttpServletRequest request, String userId, String resourceUniqueId) throws FileNotFoundException {
-
+    private void performUIImport(final Wrapper<Response> responseWrapper, final String data,
+                                 final HttpServletRequest request, final String userId,
+                                 final String resourceUniqueId) throws ZipException {
         Wrapper<User> userWrapper = new Wrapper<>();
         Wrapper<UploadResourceInfo> uploadResourceInfoWrapper = new Wrapper<>();
         Wrapper<String> yamlStringWrapper = new Wrapper<>();
@@ -509,7 +510,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                 responseWrapper.setInnerElement(response);
             }
             return responseWrapper.getInnerElement();
-        } catch (IOException e) {
+        } catch (final IOException | ZipException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Resource");
             log.debug("update resource failed with exception", e);
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
