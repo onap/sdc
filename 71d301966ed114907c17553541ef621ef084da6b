@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6382060e_d281e378",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/NeutronPortNamingConventionValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 6152
+      },
+      "writtenOn": "2019-11-04T12:59:17Z",
+      "side": 1,
+      "message": "The new regex also accepts pattern that starts with 3 words before _ips and therefore is not needless (correct me if i\u0027m wrong)",
+      "revId": "71d301966ed114907c17553541ef621ef084da6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
