@@ -16,6 +16,24 @@
       "revId": "71d301966ed114907c17553541ef621ef084da6b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6cadf568_e4d80c0e",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/NeutronPortNamingConventionValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-04T13:44:42Z",
+      "side": 1,
+      "message": "this is just suggestion to replace with\nfinal String[] regexList \u003d {\"[^_]+_[^_]+_ips\", \"[^_]+_[^_]+_v6_ips\", \"[^_]+_[^_]+_ip_(\\\\d+)\", \"[^_]+_[^_]+_v6_ip_(\\\\d+)\"};\n\nwithout creating new String[].",
+      "parentUuid": "6382060e_d281e378",
+      "revId": "71d301966ed114907c17553541ef621ef084da6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
