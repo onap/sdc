@@ -30,14 +30,21 @@ export const mapActionsToProps = dispatch => {
             SoftwareProductValidationActionHelper.onErrorThrown(dispatch, msg);
         },
 
-        onTestSubmit: (softwareProductId, version, status, tests) => {
+        onTestSubmit: (
+            softwareProductId,
+            version,
+            status,
+            tests,
+            requestId
+        ) => {
             SoftwareProductValidationActionHelper.navigateToSoftwareProductValidationResults(
                 dispatch,
                 {
                     softwareProductId,
                     version,
                     status,
-                    tests
+                    tests,
+                    requestId
                 }
             );
         },

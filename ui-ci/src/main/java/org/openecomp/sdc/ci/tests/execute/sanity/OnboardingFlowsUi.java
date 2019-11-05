@@ -80,6 +80,20 @@ import org.testng.annotations.Test;
 public class OnboardingFlowsUi extends SetupCDTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OnboardingFlowsUi.class);
+    private static final String NO_TESTS_ARE_AVAILABLE = "No Tests are Available";
+    private static final String NEXT_BUTTON_IS_ENABLED_IT_SHOULD_HAVE_BEEN_ENABLED =
+            "Next Button is enabled, it should have been enabled";
+    private static final String NEXT_BUTTON_IS_DISABLED_IT_SHOULD_HAVE_BEEN_ENABLED =
+            "Next Button is disabled, it should have been enabled";
+    private static final String RESULTS_ARE_NOT_AVAILABLE = "Results are not available";
+    private static final String THE_TESTS_ARE_ALREADY_SELECTED_THE_LIST_SHOULD_INITIALLY_BE_EMPTY =
+            "The tests are already selected, the list should initially be empty";
+    private static final String THE_SELECTED_TESTS_ARE_NOT_POPULATED_IN_THE_LIST =
+            "The selected tests are not populated in the list";
+    private static final String THE_SELECTED_TESTS_ARE_NOT_DELETED_FROM_THE_LIST =
+            "The selected tests are not deleted from the list";
+    private static final String NEXT_BUTTON_IS_ENABLED_IT_SHOULD_HAVE_BEEN_DISABLED =
+            "Next Button is enabled, it should have been disabled";
 
     protected static String filePath = FileHandling.getVnfRepositoryPath();
     private Boolean makeDistributionValue;
@@ -142,10 +156,11 @@ public class OnboardingFlowsUi extends SetupCDTest {
             checkVspValidationLinksVisibility();
 
             VspValidationPage.navigateToVspValidationPageUsingNavbar();
-            assertTrue("Next Button is enabled, it should have been disabled", VspValidationPage.checkNextButtonDisabled());
+            assertTrue(NEXT_BUTTON_IS_ENABLED_IT_SHOULD_HAVE_BEEN_DISABLED,
+                    VspValidationPage.checkNextButtonDisabled());
             VspValidationResultsPage.navigateToVspValidationResultsPageUsingNavbar();
             GeneralUIUtils.ultimateWait();
-            assertNotNull(GeneralUIUtils.findByText("No Validation Checks Performed"));
+            assertNotNull(GeneralUIUtils.findByText("No Test Performed"));
         } else {
             goToVspScreen(true, vspName);
 
@@ -191,28 +206,28 @@ public class OnboardingFlowsUi extends SetupCDTest {
             goToVspScreen(true, vspName);
         }
         VspValidationPage.navigateToVspValidationPageUsingNavbar();
-        assertTrue("Next Button is enabled, it should have been disabled", VspValidationPage.checkNextButtonDisabled());
+        assertTrue(NEXT_BUTTON_IS_ENABLED_IT_SHOULD_HAVE_BEEN_DISABLED, VspValidationPage.checkNextButtonDisabled());
 
         if (VspValidationPage.checkCertificationQueryExists()) {
             VspValidationPage.clickCertificationQueryAll();
             GeneralUIUtils.ultimateWait();
-            assertTrue("Next Button is disabled, it should have been enabled", !VspValidationPage.checkNextButtonDisabled());
+            assertTrue(NEXT_BUTTON_IS_DISABLED_IT_SHOULD_HAVE_BEEN_ENABLED,
+                    !VspValidationPage.checkNextButtonDisabled());
             VspValidationPage.clickOnNextButton();
             GeneralUIUtils.ultimateWait();
             VspValidationPage.clickOnSubmitButton();
             GeneralUIUtils.waitForLoader();
-            assertTrue("Results are not available", VspValidationResultsPage.checkResultsExist());
+            assertTrue(RESULTS_ARE_NOT_AVAILABLE, VspValidationResultsPage.checkResultsExist());
         } else {
             assertNotNull(GeneralUIUtils.findByText("No Certifications Query are Available"));
         }
 
     }
 
-    @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Single_VNF")
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Single_Vsp_Test_Csar")
     public void onapOnboardVSPComplianceCheckFlow(String filePath, String vnfFile) throws Exception {
         setLog(vnfFile);
         String vspName = createNewVSP(filePath, vnfFile);
-        final String complianceNotAvailableLabel = "No Compliance Checks are Available";
         if (!OnboardingUiUtils.getVspValidationCongiguration()) {
             //change config to true to test the feature
             changeVspValidationConfig(true, vspName, OnboardingUiUtils.getVspValidationCongiguration());
@@ -221,19 +236,20 @@ public class OnboardingFlowsUi extends SetupCDTest {
         }
 
         VspValidationPage.navigateToVspValidationPageUsingNavbar();
-        assertTrue("Next Button is enabled, it should have been enabled", VspValidationPage.checkNextButtonDisabled());
+        assertTrue(NEXT_BUTTON_IS_ENABLED_IT_SHOULD_HAVE_BEEN_ENABLED, VspValidationPage.checkNextButtonDisabled());
         if (VspValidationPage.checkComplianceCheckExists()) {
             VspValidationPage.clickComplianceChecksAll();
             GeneralUIUtils.ultimateWait();
-            assertFalse("Next Button is disabled, it should have been enabled",
-                VspValidationPage.checkNextButtonDisabled());
+            assertFalse(NEXT_BUTTON_IS_DISABLED_IT_SHOULD_HAVE_BEEN_ENABLED,
+                    VspValidationPage.checkNextButtonDisabled());
             VspValidationPage.clickOnNextButton();
             GeneralUIUtils.ultimateWait();
+            VspValidationPage.loadVSPFile(filePath, vnfFile);
             VspValidationPage.clickOnSubmitButton();
             GeneralUIUtils.ultimateWait();
-            assertTrue("Results are not available", VspValidationResultsPage.checkResultsExist());
+            assertTrue(RESULTS_ARE_NOT_AVAILABLE, VspValidationResultsPage.checkResultsExist());
         } else {
-            assertNotNull(GeneralUIUtils.findByText(complianceNotAvailableLabel));
+            assertNotNull(GeneralUIUtils.findByText(NO_TESTS_ARE_AVAILABLE));
         }
 
     }
@@ -250,19 +266,20 @@ public class OnboardingFlowsUi extends SetupCDTest {
         }
 
         VspValidationPage.navigateToVspValidationPageUsingNavbar();
-        assertTrue("Next Button is enabled, it should have been enabled", VspValidationPage.checkNextButtonDisabled());
+        assertTrue(NEXT_BUTTON_IS_ENABLED_IT_SHOULD_HAVE_BEEN_ENABLED, VspValidationPage.checkNextButtonDisabled());
         if (VspValidationPage.checkComplianceCheckExists()) {
-            assertFalse("The tests are already selected, the list should initially be empty",
-                VspValidationPage.checkSelectedComplianceCheckExists());
+            assertFalse(THE_TESTS_ARE_ALREADY_SELECTED_THE_LIST_SHOULD_INITIALLY_BE_EMPTY,
+                    VspValidationPage.checkSelectedComplianceCheckExists());
             VspValidationPage.clickComplianceChecksAll();
             GeneralUIUtils.ultimateWait();
-            assertTrue("The selected tests are not populated in the list", VspValidationPage.checkSelectedComplianceCheckExists());
+            assertTrue(THE_SELECTED_TESTS_ARE_NOT_POPULATED_IN_THE_LIST,
+                    VspValidationPage.checkSelectedComplianceCheckExists());
             VspValidationPage.clickComplianceChecksAll();
             GeneralUIUtils.ultimateWait();
-            assertFalse("The selected tests are not deleted from the list",
-                VspValidationPage.checkSelectedComplianceCheckExists());
+            assertFalse(THE_SELECTED_TESTS_ARE_NOT_DELETED_FROM_THE_LIST,
+                    VspValidationPage.checkSelectedComplianceCheckExists());
         } else {
-            assertNotNull(GeneralUIUtils.findByText("No Compliance Checks are Available"));
+            assertNotNull(GeneralUIUtils.findByText(NO_TESTS_ARE_AVAILABLE));
         }
 
     }
@@ -279,19 +296,19 @@ public class OnboardingFlowsUi extends SetupCDTest {
         }
 
         VspValidationPage.navigateToVspValidationPageUsingNavbar();
-        assertTrue("Next Button is enabled, it should have been enabled", VspValidationPage.checkNextButtonDisabled());
+        assertTrue(NEXT_BUTTON_IS_ENABLED_IT_SHOULD_HAVE_BEEN_ENABLED, VspValidationPage.checkNextButtonDisabled());
         if (VspValidationPage.checkCertificationQueryExists()) {
-            assertFalse("The tests are already selected, the list should initially be empty",
+            assertFalse(THE_TESTS_ARE_ALREADY_SELECTED_THE_LIST_SHOULD_INITIALLY_BE_EMPTY,
                 VspValidationPage.checkSelectedCertificationQueryExists());
             VspValidationPage.clickCertificationQueryAll();
             GeneralUIUtils.ultimateWait();
-            assertTrue("The selected tests are not populated in the list", VspValidationPage.checkSelectedCertificationQueryExists());
+            assertTrue(THE_SELECTED_TESTS_ARE_NOT_POPULATED_IN_THE_LIST, VspValidationPage.checkSelectedCertificationQueryExists());
             VspValidationPage.clickCertificationQueryAll();
             GeneralUIUtils.ultimateWait();
-            assertFalse("The selected tests are not deleted from the list",
+            assertFalse(THE_SELECTED_TESTS_ARE_NOT_DELETED_FROM_THE_LIST,
                 VspValidationPage.checkSelectedCertificationQueryExists());
         } else {
-            assertNotNull(GeneralUIUtils.findByText("No Compliance Checks are Available"));
+            assertNotNull(GeneralUIUtils.findByText(NO_TESTS_ARE_AVAILABLE));
         }
 
     }

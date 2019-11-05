@@ -105,7 +105,16 @@ class Input extends React.Component {
                             data-test-id={this.props['data-test-id']}
                         />
                     )}
-
+                    {type === 'file' && (
+                        <FormControl
+                            bsClass={'form-control input-options-other'}
+                            onChange={e => this.onChangeFile(e)}
+                            disabled={isReadOnlyMode || Boolean(disabled)}
+                            type={type}
+                            data-test-id={this.props['data-test-id']}
+                            inputRef={input => (this.input = input)}
+                        />
+                    )}
                     {type === 'textarea' && (
                         <FormControl
                             className="form-control input-options-other"
@@ -218,6 +227,11 @@ class Input extends React.Component {
             }
         }
         onChange(value);
+    }
+
+    onChangeFile(e) {
+        let { onChange } = this.props;
+        onChange(e.target.files[0]);
     }
 
     onChangeCheckBox(e) {

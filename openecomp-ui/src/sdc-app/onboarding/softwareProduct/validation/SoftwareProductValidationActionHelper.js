@@ -15,18 +15,40 @@
  */
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
-import getValue from 'nfvo-utils/getValue.js';
 import { actionTypes } from './SoftwareProductValidationConstants.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-function postVSPCertificationChecks(tests) {
+function createCertificationFormData(tests) {
+    var formData = new FormData();
+    var testData = [];
+    for (var test of tests) {
+        if (test.files) {
+            for (var file of test.files) {
+                formData.append('files', file.file, file.name);
+            }
+        }
+        delete test.files;
+        testData.push(test);
+    }
+    formData.append('testdata', JSON.stringify(testData));
+
+    return formData;
+}
+function postVSPCertificationChecks(
+    tests,
+    version,
+    softwareProductId,
+    requestId
+) {
     const restPrefix = Configuration.get('restPrefix');
+    var id = version.id;
+    var formData = createCertificationFormData(tests);
     return RestAPIUtil.post(
-        `${restPrefix}/v1.0/externaltesting/executions`,
-        getValue(tests)
+        `${restPrefix}/v1.0/externaltesting/executions?vspId=${softwareProductId}&vspVersionId=${id}&requestId=${requestId}`,
+        formData
     );
 }
 
@@ -35,41 +57,59 @@ function fetchVspChecks() {
     return RestAPIUtil.fetch(`${restPrefix}/v1.0/externaltesting/testcasetree`);
 }
 
+function extractEndPoint(tests) {
+    return [...new Set(tests.map(test => test.endpoint))];
+}
 const SoftwareProductValidationActionHelper = {
     navigateToSoftwareProductValidationResults(
         dispatch,
-        { softwareProductId, version, status, tests }
+        { softwareProductId, version, status, tests, requestId }
     ) {
-        postVSPCertificationChecks(tests)
-            .then(response => {
-                dispatch({
-                    type: actionTypes.POST_VSP_TESTS,
-                    vspTestResults: response
+        return new Promise((resolve, reject) => {
+            postVSPCertificationChecks(
+                tests,
+                version,
+                softwareProductId,
+                requestId
+            )
+                .then(response => {
+                    var testResultKeys = {};
+                    testResultKeys.endPoints = extractEndPoint(tests);
+                    testResultKeys.requestId = requestId;
+                    dispatch({
+                        type: actionTypes.POST_VSP_TESTS,
+                        vspTestResults: response,
+                        testResultKeys: testResultKeys
+                    });
+                    ScreensHelper.loadScreen(dispatch, {
+                        screen:
+                            enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_RESULTS,
+                        screenType: screenTypes.SOFTWARE_PRODUCT,
+                        props: {
+                            softwareProductId,
+                            version,
+                            status
+                        }
+                    });
+                    resolve(response);
+                })
+                .catch(error => {
+                    let errMessage =
+                        error.message || error.responseJSON.message;
+                    let title = error.responseJSON
+                        ? error.responseJSON.status
+                        : i18n('Error');
+                    dispatch({
+                        type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                        data: {
+                            title: title,
+                            msg: errMessage,
+                            cancelButtonText: i18n('OK')
+                        }
+                    });
+                    reject(error);
                 });
-                ScreensHelper.loadScreen(dispatch, {
-                    screen: enums.SCREEN.SOFTWARE_PRODUCT_VALIDATION_RESULTS,
-                    screenType: screenTypes.SOFTWARE_PRODUCT,
-                    props: {
-                        softwareProductId,
-                        version,
-                        status
-                    }
-                });
-            })
-            .catch(error => {
-                let errMessage = error.message || error.responseJSON.message;
-                let title = error.responseJSON
-                    ? error.responseJSON.status
-                    : i18n('Error');
-                dispatch({
-                    type: modalActionTypes.GLOBAL_MODAL_ERROR,
-                    data: {
-                        title: title,
-                        msg: errMessage,
-                        cancelButtonText: i18n('OK')
-                    }
-                });
-            });
+        });
     },
 
     fetchVspChecks(dispatch) {

@@ -20,7 +20,8 @@ export default (state = {}, action) => {
         case actionTypes.POST_VSP_TESTS:
             return {
                 ...state,
-                vspTestResults: action.vspTestResults
+                vspTestResults: action.vspTestResults,
+                testResultKeys: action.testResultKeys
             };
         case actionTypes.FETCH_VSP_CHECKS:
             return {
