@@ -112,5 +112,9 @@ describe('SoftwareProductValidation Mapper and View Classes', () => {
         );
         expect(inputForm).toBeTruthy();
         TestUtils.Simulate.submit(inputForm);
+        let result = TestUtils.scryRenderedDOMComponentsWithTag(vspValidationInputView, 'input');
+        expect(result).toBeTruthy();
+        expect(result.length).toBeTruthy();
+        TestUtils.Simulate.change(result[0]);
     });
 });

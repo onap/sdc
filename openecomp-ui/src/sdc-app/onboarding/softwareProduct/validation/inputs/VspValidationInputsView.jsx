@@ -15,7 +15,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import UUID from 'uuid-js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { Button } from 'onap-ui-react';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
@@ -35,22 +35,58 @@ class VspInputs extends React.Component {
 
     changeInputs(e, check, parameterName) {
         let { testsRequest, generalInfo, setTestsRequest } = this.props;
-        testsRequest[check].parameters[parameterName] = e;
+        if (e instanceof File) {
+            var timestamp = new Date().getTime();
+            var fileExtension = (
+                e.name.match(/[^\\\/]\.([^.\\\/]+)$/) || [null]
+            ).pop();
+            var fileName = timestamp + '.' + fileExtension;
+            testsRequest[check].parameters[parameterName] =
+                'file://' + fileName;
+
+            testsRequest[check].files = testsRequest[check].files
+                ? testsRequest[check].files
+                : [];
+            testsRequest[check].files.push({ file: e, name: fileName });
+        } else {
+            testsRequest[check].parameters[parameterName] = e;
+        }
+
         generalInfo[check][parameterName] = { isValid: true, errorText: '' };
         setTestsRequest(testsRequest, generalInfo);
     }
 
-    renderInputs(check) {
+    filterField(parameter) {
+        if (
+            parameter.name === 'host-username' ||
+            parameter.name === 'vsp' ||
+            parameter.name === 'vsp-zip' ||
+            parameter.name === 'host-password' ||
+            parameter.name === 'host-url'
+        ) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    renderInputs(check, indexKey) {
         let { vspTestsMap, testsRequest, generalInfo } = this.props;
         return (
-            <div className="div-clear-both">
+            <div key={indexKey} className="div-clear-both">
                 <GridSection
                     title={i18n('{title} Inputs :', {
-                        title: vspTestsMap[check].title
+                        title: vspTestsMap[check].title.split(/\r?\n/)[0]
                     })}>
                     {vspTestsMap[check].parameters.map((parameter, index) => {
+                        parameter.metadata = parameter.metadata
+                            ? parameter.metadata
+                            : {};
+
                         if (
-                            parameter.type === 'text' &&
+                            this.filterField(parameter) &&
+                            (parameter.type === 'text' ||
+                                parameter.type === 'string' ||
+                                parameter.type === 'json') &&
                             !parameter.metadata.hidden
                         ) {
                             return (
@@ -112,6 +148,34 @@ class VspInputs extends React.Component {
                                     </Input>
                                 </GridItem>
                             );
+                        } else if (
+                            this.filterField(parameter) &&
+                            parameter.type === 'binary'
+                        ) {
+                            return (
+                                <GridItem key={index}>
+                                    <Input
+                                        label={parameter.description}
+                                        type="file"
+                                        isRequired={!parameter.isOptional}
+                                        isValid={
+                                            generalInfo[check][parameter.name]
+                                                .isValid
+                                        }
+                                        errorText={
+                                            generalInfo[check][parameter.name]
+                                                .errorText
+                                        }
+                                        onChange={e => {
+                                            this.changeInputs(
+                                                e.target ? e.target.value : e,
+                                                check,
+                                                parameter.name
+                                            );
+                                        }}
+                                    />
+                                </GridItem>
+                            );
                         }
                     })}
                 </GridSection>
@@ -127,18 +191,18 @@ class VspInputs extends React.Component {
         } = this.props;
         return (
             <div>
-                {complianceChecked.map(complianceCheck => {
+                {complianceChecked.map((complianceCheck, index) => {
                     if (vspTestsMap[complianceCheck].parameters.length === 0) {
                         return <div />;
                     } else {
-                        return this.renderInputs(complianceCheck);
+                        return this.renderInputs(complianceCheck, index);
                     }
                 })}
-                {certificationChecked.map(certificateCheck => {
+                {certificationChecked.map((certificateCheck, index) => {
                     if (vspTestsMap[certificateCheck].parameters.length === 0) {
                         return <div />;
                     } else {
-                        return this.renderInputs(certificateCheck);
+                        return this.renderInputs(certificateCheck, index);
                     }
                 })}
             </div>
@@ -179,7 +243,8 @@ class VspValidationInputs extends Component {
                     let isParameterValid = true;
                     let errorText = '';
                     if (
-                        parameter.type === 'text' &&
+                        (parameter.type === 'text' ||
+                            parameter.type === 'string') &&
                         parameter.metadata.choices
                     ) {
                         if (
@@ -189,7 +254,11 @@ class VspValidationInputs extends Component {
                             isParameterValid = false;
                             errorText = i18n('Field is required');
                         }
-                    } else if (parameter.type === 'text') {
+                    } else if (
+                        parameter.type === 'text' ||
+                        parameter.type === 'string' ||
+                        parameter.type === 'json'
+                    ) {
                         if (
                             !parameter.isOptional &&
                             !requestParameters[parameterName]
@@ -244,13 +313,22 @@ class VspValidationInputs extends Component {
         } = this.props;
 
         Object.keys(softwareProductValidation.testsRequest).forEach(key => {
-            tests.push(softwareProductValidation.testsRequest[key]);
+            var testReq = softwareProductValidation.testsRequest[key];
+            this.removeParameterFromTest(testReq);
+            tests.push(testReq);
         });
         if (this.validateInputs()) {
-            onTestSubmit(softwareProductId, version, status, tests);
+            var requestId = UUID.create()
+                .toString()
+                .split('-')[0];
+            onTestSubmit(softwareProductId, version, status, tests, requestId);
         }
     }
-
+    removeParameterFromTest(testReq) {
+        delete testReq.parameters['host-username'];
+        delete testReq.parameters['host-password'];
+        delete testReq.parameters['host-url'];
+    }
     prepareDataForVspInputs() {
         let { setTestsRequest } = this.props;
         let {
