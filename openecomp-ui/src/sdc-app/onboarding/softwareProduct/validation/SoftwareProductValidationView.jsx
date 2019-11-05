@@ -15,7 +15,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import Configuration from 'sdc-app/config/Configuration.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import { Button } from 'onap-ui-react';
 import { Tab, Tabs } from 'onap-ui-react';
@@ -74,7 +74,9 @@ class SoftwareProductValidation extends Component {
     buildChildElements(setItem, testScenario) {
         let parentElement = {};
         parentElement.value = setItem.name;
-        parentElement.label = setItem.description;
+        parentElement.label = setItem.description
+            ? setItem.description
+            : setItem.name;
         parentElement.children = [];
         if (setItem.children !== undefined) {
             setItem.children.forEach(element => {
@@ -89,11 +91,13 @@ class SoftwareProductValidation extends Component {
         }
         if (setItem.tests !== undefined) {
             setItem.tests.forEach(element => {
-                parentElement.children.push({
-                    value: element.testCaseName,
-                    label: element.description
-                });
-                this.setMapAndGeneralData(element, testScenario);
+                if (element.inputs) {
+                    parentElement.children.push({
+                        value: element.testCaseName,
+                        label: element.testCaseName
+                    });
+                    this.setMapAndGeneralData(element, testScenario);
+                }
             });
         }
         return parentElement;
@@ -115,6 +119,8 @@ class SoftwareProductValidation extends Component {
                 parentNode.children.push({
                     value: element.testCaseName,
                     label: element.description
+                        ? element.description
+                        : element.testCaseName
                 });
                 this.setMapAndGeneralData(element, scenario);
             });
@@ -129,10 +135,11 @@ class SoftwareProductValidation extends Component {
         let certificationList = [];
         let { setVspTestsMap } = this.props;
         if (Object.keys(res).length !== 0 && res.children) {
+            let allTestScenario = Configuration.get('allTestScenario');
             res.children.forEach(element => {
                 if (element.name === 'certification') {
                     certificationData = element;
-                } else if (element.name === 'compliance') {
+                } else if (element.name === allTestScenario) {
                     complianceData = element;
                 }
             });

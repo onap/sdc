@@ -11,5 +11,6 @@
     "defaultDebugWebsocketPort": "9000",
     "defaultWebsocketPath": "notification-api/ws/notificationHandler",
     "defaultNotificationsWorkerUpdateMillisecond": 10000,
-    "showBrowseVNF": true
+    "showBrowseVNF": true,
+    "allTestScenario": "onap-dublin"
 }
