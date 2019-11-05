@@ -18,7 +18,8 @@ import { Factory } from 'rosie';
 export const VSPComplianceCheckedFactory = new Factory().attrs({
     complianceChecked: [
         'compliance.compliancetests.sriov',
-        'compliance.compliancetests.computeflavors'
+        'compliance.compliancetests.computeflavors',
+        'vnf-validation'
     ]
 });
 
@@ -73,6 +74,20 @@ export const VSPGeneralInfoFactory = new Factory().attrs({
                 isValid: true,
                 errorText: ''
             }
+        },
+        'vnf-validation': {
+            'vspId': {
+                isValid: true,
+                errorText: ''
+            },
+            'host-password': {
+                isValid: true,
+                errorText: ''
+            },
+            'vsp-csar': {
+                isValid: true,
+                errorText: ''
+            }
         }
     }
 });
@@ -112,10 +127,43 @@ export const VSPTestsRequestFactory = new Factory().attrs({
             testCaseName: 'certification.certificationtests.certquery',
             testSuiteName: 'certificationtests',
             endpoint: 'repository'
+        },
+        'vnf-validation': {
+            parameters: {
+                'vspId': 'abc',
+                'host-password': '123',
+                'vsp-csar': 'vsp.csar',
+            },
+              testCaseName: 'vnf-validation',
+              testSuiteName: 'vnf-validation',
+              scenario: 'onap-dublin',
+              endpoint: 'vtp'
         }
     }
 });
+export const VSPTestRequestFactory = new Factory().attrs({
+    vspTestRequest:  [
+      {
+        'parameters': {
+          'config-json': '/opt/oclip/conf/vnf-tosca-provision.json',
+          'vsp': '',
+          'vnf-csar': 'file://1574080373688.csar',
+          'ns-csar': '',
+          'vnfm-driver': 'gvnfmdriver ',
+          'onap-objects': '{}',
+          'mode': 'provision ',
+          'vnf-name': 'ABC',
+          'vnf-vendor-name': 'ABC',
+          'timeout': '60000'
+        },
+        'scenario': 'onap-dublin',
+        'testCaseName': 'vnf-tosca-provision',
+        'testSuiteName': 'vnf-validation',
+        'endpoint': 'vtp'
+      }
+     ]
 
+   });
 export const VSPTestsMapFactory = new Factory().attrs({
     vspTestsMap: {
         'compliance.compliancetests.sriov': {
@@ -288,7 +336,42 @@ export const VSPTestsMapFactory = new Factory().attrs({
             testCaseName: 'certification.certificationtests.certquery',
             testSuiteName: 'certificationtests',
             scenario: 'certification'
-        }
+        },
+        'vnf-validation': {
+                      title: 'vnf-validation',
+                      parameters: [
+                          {
+                              name: 'vspId',
+                              description: 'VSP ID',
+                              type: 'text',
+                              defaultValue: '$vspid',
+                              isOptional: true,
+                              metadata: {
+                                  maxLength: 36,
+                                  minLength: 1,
+                                  disabled: true
+                              }
+                          },
+                          {
+                              name: 'vsp-csar',
+                              description: 'Vsp Csar',
+                              type: 'binary',
+                              defaultValue: '',
+                              isOptional: true
+                          },
+                          {
+                                name: 'host-password',
+                                description: 'host-password',
+                                type: 'binary',
+                                defaultValue: '',
+                                isOptional: true
+                          }
+                      ],
+                      endpoint: 'vtp',
+                      testCaseName: 'vnf-validation',
+                      testSuiteName: 'vnf-validation',
+                      scenario: 'onap-dublin'
+                  }
     }
 });
 
@@ -493,6 +576,89 @@ export const VSPChecksFactory = new Factory().attrs({
                     ]
                 }
             ]
+        },
+        {
+          'name': 'onap-dublin',
+          'children': [
+            {
+              'name': 'vnf-validation',
+              'tests': [
+                {
+                  'scenario': 'onap-dublin',
+                  'testCaseName': 'vnf-tosca-provision',
+                  'testSuiteName': 'vnf-validation',
+                  'description': 'ONAP TOSCA VNF validation',
+                  'author': 'ONAP VTP Team kanagaraj.manickam@huawei.com',
+                  'inputs': [
+                    {
+                      'name': 'config-json',
+                      'description': 'Configuration file path',
+                      'type': 'string',
+                      'defaultValue': '$s{env:OPEN_CLI_HOME}/conf/vnf-tosca-provision.json',
+                      'isOptional': false
+                    },
+                    {
+                      'name': 'vsp',
+                      'description': 'Path to the ONAP vendor service product (VSP) for the VNF to provision',
+                      'type': 'binary',
+                      'isOptional': false
+                    },
+                    {
+                      'name': 'vnf-csar',
+                      'description': 'Path to the TOSCA CSAR for the VNF to provision',
+                      'type': 'binary',
+                      'isOptional': false
+                    },
+                    {
+                      'name': 'ns-csar',
+                      'description': 'Path to the TOSCA CSAR for the NS service to provision',
+                      'type': 'binary',
+                      'isOptional': true
+                    },
+                    {
+                      'name': 'vnfm-driver',
+                      'description': 'VNFM driver to use. One of gvnfmdriver or hwvnfmdriver',
+                      'type': 'string',
+                      'isOptional': false
+                    },
+                    {
+                      'name': 'onap-objects',
+                      'description': 'Existing ONAP object ids to use instead of creating them while running this task',
+                      'type': 'json',
+                      'isOptional': true
+                    },
+                    {
+                      'name': 'mode',
+                      'description': 'setup or standup or cleanup or provision or validate',
+                      'type': 'string',
+                      'defaultValue': 'checkup',
+                      'isOptional': true
+                    },
+                    {
+                      'name': 'vnf-name',
+                      'description': 'VNF Name',
+                      'type': 'string',
+                      'isOptional': false
+                    },
+                    {
+                      'name': 'vnf-vendor-name',
+                      'description': 'VNF Vendor Name',
+                      'type': 'string',
+                      'isOptional': false
+                    },
+                    {
+                      'name': 'timeout',
+                      'description': 'timeout for command to complete the given task in milliseconds',
+                      'type': 'string',
+                      'defaultValue': '60000',
+                      'isOptional': true
+                    }
+                  ],
+                  'endpoint': 'vtp'
+                }
+              ]
+            }
+          ]
         }
     ]
 });

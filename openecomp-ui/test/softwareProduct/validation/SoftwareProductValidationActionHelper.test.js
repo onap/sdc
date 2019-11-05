@@ -30,6 +30,7 @@ import { VSPTestsRequestFactory } from 'test-utils/factories/softwareProduct/Sof
 import { VSPGeneralInfoFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 import { VSPTestResultsSuccessFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationResultsFactory.js';
 import { mapActionsToProps } from 'sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidation.js';
+import { VSPTestRequestFactory } from 'test-utils/factories/softwareProduct/SoftwareProductValidationFactory.js';
 
 describe('Software Product Validation Action Helper Tests', function() {
     const store = storeCreator();
@@ -47,6 +48,7 @@ describe('Software Product Validation Action Helper Tests', function() {
     const vspTestResults = VSPTestResultsSuccessFactory.build();
     let restPrefix = Configuration.get('restPrefix');
     let onClose = () => {};
+    const vspTestRequest = VSPTestRequestFactory.build();
 
     const modal = {
         type: 'error',
@@ -91,28 +93,38 @@ describe('Software Product Validation Action Helper Tests', function() {
             });
     });
 
-    // it('Software Products Validation Action Helper : post test', () => {
-    //     mockRest.addHandler('post', ({ options, data, baseUrl }) => {
-    //         expect(baseUrl).toEqual(
-    //             `${restPrefix}/v1.0/externaltesting/executions`
-    //         );
-    //         //expect(data).toEqual(testsRequest);
-    //         expect(options).toEqual(undefined);
-    //         return { vspTestResults: vspTestResults };
-    //     });
-    //     const version = {
-    //         id: 12345,
-    //         name: 1
-    //     };
-    //     const softwareProductId = '1234';
-    //     const status = 'draft';
-    //     mapActionsToProps(store.dispatch).onTestSubmit(
-    //         softwareProductId,
-    //         version,
-    //         status,
-    //         testsRequest
-    //     );
-    // });
+    it('Software Products Validation Action Helper : post test', () => {
+         let expectedStore = cloneAndSet(
+            store.getState(),
+            'softwareProduct.softwareProductValidation.vspTestResults',
+            vspTestResults.vspTestResults
+        );
+        const version = {
+            id: 12345,
+             name: 1
+         };
+         const softwareProductId = '1234';
+         const status = 'success';
+         mockRest.addHandler('post', ({ options, data, baseUrl }) => {
+            expect(baseUrl).toEqual(
+                  `${restPrefix}/v1.0/externaltesting/executions?vspId=${softwareProductId}&vspVersionId=${version.id}`
+              );
+             return    vspTestResults.vspTestResults  ;
+         });
+          SoftwareProductValidationActionHelper.navigateToSoftwareProductValidationResults(
+              store.dispatch,{
+              softwareProductId: softwareProductId,
+              version: version,
+              status: status,
+              tests :vspTestRequest.vspTestRequest}
+          ).then(() => {
+             expect(store.getState()).toEqual(expectedStore);
+            })
+            .catch((e) => {
+                console.log('Executions test returned Error');
+            });
+
+       });
 
     it('Software Products Validation Action Helper : setCertificationChecked', () => {
         let expectedStore = cloneAndSet(

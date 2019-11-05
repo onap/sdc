@@ -18,3 +18,21 @@
   width: 900px;
   max-width: 900px;
 }
+.vcp-validation-refresh-btn {
+  float: right;
+  border: 1px solid $dark-gray;
+  width: 98px;
+  height: 32px;
+  border-radius: 2px;
+  padding-top: 6px;
+  padding-left: 10px;
+  margin-left: 9px;
+  margin-right: 10px;
+  .__versionControllerSync {
+    height: 12px;
+  }
+  &:hover:not(.disabled) {
+    cursor: pointer;
+    background-color: $tlv-light-gray;
+}
+}

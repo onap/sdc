@@ -206,10 +206,14 @@ class ComplianceTests extends React.Component {
         let { complianceNodes, setComplianceChecked } = this.props;
         return (
             <div className="validation-setup-checkbox-tree-section">
-                <GridSection title={i18n('Compliance Checks')}>
+                <GridSection title={i18n('Available Tests')}>
                     <GridItem colSpan={2}>
                         <div className="validation-view-title">
-                            {complianceNodes[0] ? complianceNodes[0].value : ''}
+                            {complianceNodes[0] && complianceNodes[0].value ? (
+                                complianceNodes[0].value
+                            ) : (
+                                <br />
+                            )}
                         </div>
                         <div
                             className="validation-setup-available-tests-section"
@@ -237,9 +241,7 @@ class ComplianceTests extends React.Component {
                                 />
                             )}
                             {complianceNodes.length === 0 && (
-                                <div>
-                                    {i18n('No Compliance Checks are Available')}
-                                </div>
+                                <div>{i18n('No Tests are Available')}</div>
                             )}
                         </div>
                     </GridItem>
@@ -247,7 +249,7 @@ class ComplianceTests extends React.Component {
                         {complianceNodes.length > 0 && (
                             <div>
                                 <div className="validation-view-title">
-                                    {i18n('Selected Compliance Tests')}
+                                    {i18n('Selected Tests')}
                                 </div>
                                 <div>
                                     <select

@@ -17,6 +17,7 @@
 package org.openecomp.sdc.ci.tests.pages;
 
 import com.aventstack.extentreports.Status;
+import java.io.File;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
@@ -52,41 +53,59 @@ public class VspValidationPage extends GeneralPageElements {
     public static void clickOnSubmitButton() throws Exception {
         clickOnElementUsingTestId(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_PROCEED_TO_RESULTS_BUTTON);
     }
+    public static void loadVSPFile(String path, String filename) {
+        WebElement browseWebElement = null;
 
+        List<WebElement> checkboxes = GeneralUIUtils.findElementsByXpath("//div[@class='validation-input-wrapper']//input");
+        boolean hasValue = checkboxes != null && !checkboxes.isEmpty();
+        if(hasValue){
+            browseWebElement = checkboxes.get(0) ;
+            browseWebElement.sendKeys(path + File.separator + filename);
+            GeneralUIUtils.ultimateWait();
+        }
+        else {
+            assertTrue("File Not Found", hasValue);
+        }
+
+    }
     public static boolean checkNextButtonDisabled() throws Exception {
         return GeneralUIUtils.isElementDisabled(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_PROCEED_TO_INPUTS_BUTTON.getValue());
     }
 
     public static void clickCertificationQueryAll() throws Exception {
         List<WebElement> checkboxes = GeneralUIUtils.findElementsByXpath("//div[@data-test-id='vsp-validation-certifications-query-checkbox-tree']//label//span[@class='rct-checkbox']");
-        if (checkboxes.size() > 0) {
+        if (!checkboxes.isEmpty()) {
             checkboxes.get(0).click();
         } else {
-            assertTrue("Checkbox Not Found", checkboxes.size() > 0);
+            assertTrue("Checkbox Not Found",  !checkboxes.isEmpty());
         }
     }
 
     public static void clickComplianceChecksAll() throws Exception {
-        List<WebElement> checkboxes = GeneralUIUtils.findElementsByXpath("//div[@data-test-id='vsp-validation-compliance-checks-checkbox-tree']//label//span[@class='rct-checkbox']");
-        if (checkboxes.size() > 0) {
+        List<WebElement> vnfComplianceCheckboxes = GeneralUIUtils.findElementsByXpath("//div[@data-test-id='vsp-validation-compliance-checks-checkbox-tree']//span[@class='rct-text' and .//label//text()='vnf-compliance']//button");
+        if(!vnfComplianceCheckboxes.isEmpty())
+            vnfComplianceCheckboxes.get(vnfComplianceCheckboxes.size() - 1).click();
+        else
+            assertTrue("Checkbox Not Found", !vnfComplianceCheckboxes.isEmpty());
+        List<WebElement> checkboxes = GeneralUIUtils.findElementsByXpath("//div[@data-test-id='vsp-validation-compliance-checks-checkbox-tree']//label//span[@class='rct-title' and text()='csar-validate']");
+        if(!checkboxes.isEmpty())
             checkboxes.get(checkboxes.size() - 1).click();
-        } else {
-            assertTrue("Checkbox Not Found", checkboxes.size() > 0);
-        }
+        else
+            assertTrue("Checkbox Not Found", !checkboxes.isEmpty());
     }
 
     public static boolean checkCertificationQueryExists() throws Exception {
         WebElement parentDiv = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_CERTIFICATION_CHECKBOX_TREE.getValue());
         List<WebElement> checkboxTreeDivs = getChildElements(parentDiv);
         List<WebElement> orderedList = getChildElements(checkboxTreeDivs.get(0));
-        return (orderedList.size() > 0);
+        return (!orderedList.isEmpty());
     }
 
     public static boolean checkComplianceCheckExists() throws Exception {
         WebElement parentDiv = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.VspValidationPage.VSP_VALIDATION_PAGE_COMPLIANCE_CHECKBOX_TREE.getValue());
         List<WebElement> checkboxTreeDivs = getChildElements(parentDiv);
         List<WebElement> orderedList = getChildElements(checkboxTreeDivs.get(0));
-        return (orderedList.size() > 0);
+        return (!orderedList.isEmpty());
     }
 
     public static boolean checkSelectedComplianceCheckExists() throws Exception {
