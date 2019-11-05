@@ -645,15 +645,18 @@
   "Certifications Query": "Certifications Query",
   "No Certifications Query are Available": "No Certifications Query are Available",
   "Selected Certifications Query": "Selected Certifications Query",
-  "Compliance Checks": "Compliance Checks",
-  "No Compliance Checks are Available": "No Compliance Checks are Available",
-  "Selected Compliance Tests": "Selected Compliance Tests",
+  "Available Tests": "Available Tests",
+  "No Tests are Available": "No Tests are Available",
+  "Selected Tests": "Selected Tests",
   "Value Should Be Minimum of {minLength} characters and a Maximum of {maxLength} characters": "Value Should Be Minimum of {minLength} characters and a Maximum of {maxLength} characters",
   "{title} Inputs :": "{title} Inputs :",
   "Scenario: {scenario} | Title: {title} | Test Case: {testCaseName} | Status: {status}": "Scenario: {scenario} | Title: {title} | Test Case: {testCaseName} | Status: {status}",
   "{title} results are not available": "{title} results are not available",
   "Test Results": "Test Results",
-  "No Validation Checks Performed": "No Validation Checks Performed",
-  "Unknown": "Unknown"
+  "No Test Performed": "No Test Performed",
+  "Unknown": "Unknown",
+  "No Test Result Available": "No Test Result Available",
+  "Test is In-progress": "Test is In-progress",
+  "has passed all checks": "has passed all checks"
 
 }

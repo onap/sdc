@@ -15,7 +15,14 @@
  */
 import { Factory } from 'rosie';
 
+export const VSPTestResultKeysFactory = new Factory().attrs({
+     testResultKeys: {
+            requestId: "1",
+            endPoints: ["vtp"]
+        }
+})
 export const VSPTestResultsFailureFactory = new Factory().attrs({
+
     vspTestResults: [
         {
             scenario: 'certification',
@@ -107,137 +114,150 @@ export const VSPTestResultsFailureFactory = new Factory().attrs({
 
 export const VSPTestResultsSuccessFactory = new Factory().attrs({
     vspTestResults: [
-        {
-            scenario: 'certification',
-            description: 'Other Certifications',
-            testCaseName: 'certification.certificationtests.certquery',
-            testSuiteName: 'certificationtests',
-            executionId: 'ebaa5f21-ed68-4098-97a9-775ac8800f09-1550575025614',
-            parameters: {
-                vspId: 'uuidval',
-                vspVersion: 'ver',
-                other: 'values'
-            },
-            results: {
-                testResults: {
-                    complianceTests: [
-                        {
-                            testName: 'Compute Flavors',
-                            testResult: 'Pass',
-                            notes:
-                                'Diagnostic: test performed against GSMA NFVI Abstraction and Profiling Version 0.1 profiles.'
-                        },
-                        {
-                            testName: 'SR-IOV',
-                            testResult: 'Fail',
-                            notes:
-                                'Diagnostic: SR-IOV found in VNF Template. User advice: VNF binary and VNF Template must be modified to not require SR-IOV.'
-                        },
-                        {
-                            testName: 'Heat',
-                            testResult: 'Pass',
-                            notes: ''
-                        },
-                        {
-                            testName: 'TOSCA',
-                            testResult: 'Pass',
-                            notes:
-                                'Diagnostic: test performed for ETSI GS NFV-SOL001v0.10.0.'
-                        }
-                    ],
-                    validationTests: [
-                        {
-                            testName: 'OpenStack',
-                            testResult: 'Pass',
-                            notes:
-                                'Diagnostic: test performed for OpenStack Rocky.'
-                        },
-                        {
-                            testName: 'VMware',
-                            testResult: 'Fail',
-                            notes:
-                                'Diagnostic: VMware compatible template not found. User advice: add a VMware compatible template to the VSP.'
-                        },
-                        {
-                            testName: 'Kubernetes',
-                            testResult: 'Fail',
-                            notes:
-                                'Diagnostic: Kubernetes compatible template not found. User advice: add a Kubernetes compatible template, such as Helm Chart, to the VSP.'
-                        }
-                    ],
-                    performanceTests: [
-                        {
-                            testName: 'Max Throughput',
-                            testResult: 'Pass',
-                            notes: ''
-                        },
-                        {
-                            testName: 'Latency',
-                            testResult: 'Fail',
-                            notes:
-                                'Diagnostic: maximum latency threshold of 20ms signalling response time exceededUser advice: consider increasing VDU compute resource.'
-                        }
-                    ]
-                }
-            },
-
-            status: 'COMPLETED',
-            startTime: '2019-02-19T11:17:05.670',
-            endTime: '2019-02-19T11:17:05.683'
+      {
+        "scenario": "onap-dublin",
+        "testCaseName": "vsp-package",
+        "testSuiteName": "sdc.onboarding",
+        "executionId": "onap-dublin",
+        "parameters": {
+          "vsp-id": "0cf7923588df4877989d8c01243e1e69",
+          "host-password": "demo123456!",
+          "vsp-version": "b19f1f74b5874127bb7778a84eadd99b",
+          "host-url": "http://192.168.209.129:30280",
+          "host-username": "cs0008"
         },
-        {
-            scenario: 'compliance',
-            testCaseName: 'compliance.compliancetests.sriov',
-            description: 'Allow_SR-IOV',
-            testSuiteName: 'compliancetests',
-            executionId: 'ebaa5f21-ed68-4098-97a9-775ac8800f09-1550575025614',
-            parameters: {
-                vspId: 'uuidval',
-                vspVersion: 'ver',
-                other: 'values'
-            },
-            results: {
-                errors: [
-                    {
-                        attribute: '',
-                        reason: 'Record Not Found',
-                        advice:
-                            'User must query with (vspId, vspVersion) values for a certifications record that is present in the Repository',
-                        code: 40
-                    },
-                    {
-                        attribute: '',
-                        reason: 'Record Not Found',
-                        advice:
-                            'User must query with (vspId, vspVersion) values for a certifications record that is present in the Repository',
-                        code: 40
-                    }
-                ]
-            },
-            status: 'FAILED',
-            startTime: '2019-02-19T11:17:05.670',
-            endTime: '2019-02-19T11:17:05.683'
+        "results": [
+          {}
+        ],
+        "status": "completed",
+        "startTime": "2019-09-24T08:35:09.000",
+        "endTime": "2019-09-24T08:35:10.000"
+      },
+      {
+        "scenario": "onap-dublin",
+        "testCaseName": "customer-create",
+        "testSuiteName": "aai",
+        "executionId": "onap-dublin",
+        "parameters": {
+          "host-password": "AAI",
+          "subscriber-name": "ovp-uygCLjl9",
+          "customer-name": "ovp-uygCLjl9",
+          "host-url": "https://192.168.209.129:30233",
+          "host-username": "AAI"
         },
-        {
-            scenario: 'compliance',
-            testCaseName: ' compliance.compliancetests.computeflavours',
-            description: 'Allow  SR-IOV ',
-            testSuiteName: 'compliancetests',
-            executionId: 'ebaa5f21-ed68-4098-97a9-775ac8800f09-1550575025614',
-            parameters: {
-                vspId: 'uuidval',
-                vspVersion: 'ver',
-                other: 'values'
-            },
-            results: {},
-            status: 'COMPLETED',
-            startTime: '2019-02-19T11:17:05.670',
-            endTime: '2019-02-19T11:17:05.683'
+        "results": [
+          {}
+        ],
+        "status": "in-progress",
+        "startTime": "2019-09-24T08:34:33.000",
+        "endTime": "2019-09-24T08:34:33.000"
+      },
+      {
+        "scenario": "onap-dublin",
+        "testCaseName": "vnf-tosca-provision",
+        "testSuiteName": "vnf-validation",
+        "executionId": "uygCLjl9-1569314036837",
+        "parameters": {
+          "mode": "validate",
+          "vsp": "/tmp/data/vtp-tmp-files/1569313993969.csar",
+          "vnfm-driver": "gvnfmdriver",
+          "config-json": "/opt/oclip/conf/vnf-tosca-provision.json",
+          "vnf-vendor-name": "VM",
+          "ns-csar": "/tmp/data/vtp-tmp-files/1569314002901.csar",
+          "onap-objects": "{}",
+          "timeout": "600000",
+          "vnf-name": "SWITCH",
+          "vnf-csar": "/tmp/data/vtp-tmp-files/1569313997224.csar"
         },
-        {
-            code: '500',
-            message: 'VTP Test(s) could not be completed',
-            httpStatus: 500
-        }
+        "results": {
+          "error": "1::0x6001::Command vnf-tosca-provision failed to execute, "
+        },
+        "status": "failed",
+        "startTime": "2019-09-24T08:33:56.000",
+        "endTime": "2019-09-24T08:35:13.000"
+      },
+      {
+        "scenario": "onap-dublin",
+        "testCaseName": "vlm-submit",
+        "testSuiteName": "sdc.onboarding",
+        "executionId": "onap-dublin",
+        "parameters": {
+          "vlm-version": "115d4d29994a41a38c2ed2bf75c93f5d",
+          "vlm-id": "7fbb14e88d9e45c48021e96f35970419",
+          "host-password": "demo123456!",
+          "host-url": "http://192.168.209.129:30280",
+          "host-username": "cs0008"
+        },
+        "results": [
+          {}
+        ],
+        "status": "completed",
+        "startTime": "2019-09-24T08:34:13.000",
+        "endTime": "2019-09-24T08:34:13.000"
+      },
+      {
+        "scenario": "onap-dublin",
+        "testCaseName": "vsp-validate",
+        "testSuiteName": "sdc.onboarding",
+        "executionId": "onap-dublin",
+        "parameters": {
+          "vsp-id": "0cf7923588df4877989d8c01243e1e69",
+          "host-password": "demo123456!",
+          "vsp-version": "b19f1f74b5874127bb7778a84eadd99b",
+          "host-url": "http://192.168.209.129:30280",
+          "host-username": "cs0008"
+        },
+        "results": {
+          "errors": {},
+          "status": "Success"
+        },
+        "status": "completed",
+        "startTime": "2019-09-24T08:34:58.000",
+        "endTime": "2019-09-24T08:34:59.000"
+      },
+      {
+        "scenario": "onap-dublin",
+        "testCaseName": "vlm-feature-group-create",
+        "testSuiteName": "sdc.onboarding",
+        "executionId": "onap-dublin",
+        "parameters": {
+          "vlm-entitle-pool-id": "fa33494286004b4ebec6703da43f92a5",
+          "vlm-id": "7fbb14e88d9e45c48021e96f35970419",
+          "vlm-version": "115d4d29994a41a38c2ed2bf75c93f5d",
+          "part-number": "1000VM00",
+          "host-password": "demo123456!",
+          "vlm-key-group-id": "ea95efa4ccb149d49640166972a4e8f8",
+          "name": "VM-uygCLjl9 Feature group",
+          "host-url": "http://192.168.209.129:30280",
+          "host-username": "cs0008"
+        },
+        "results": {
+          "id": "4dc4f39e28ea488b946aedb0f74c436a"
+        },
+        "status": "completed",
+        "startTime": "2019-09-24T08:34:08.000",
+        "endTime": "2019-09-24T08:34:08.000"
+      } ,
+      {
+        "scenario": "onap-dublin",
+        "testCaseName": "subscription-list",
+        "testSuiteName": "aai",
+        "executionId": "onap-dublin",
+        "parameters": {
+          "host-password": "AAI",
+          "customer-name": "ovp-uygCLjl9",
+          "host-url": "https://192.168.209.129:30233",
+          "host-username": "AAI"
+        },
+        "results": [
+          {
+            "resource-version": "1569314083390",
+            "service-type": "tosca_vnf_validation-uygCLjl9"
+          }
+        ],
+        "status": "completed",
+        "startTime": "2019-09-24T08:34:45.000",
+        "endTime": "2019-09-24T08:34:46.000"
+      }
     ]
 });

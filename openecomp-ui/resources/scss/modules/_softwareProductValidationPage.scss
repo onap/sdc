@@ -77,4 +77,13 @@
   .validation-setup-checkbox-tree-section label {
     margin-bottom: 0px;
   }
+  .validation-form-content .grid-col-1 {
+    flex-basis: 30%;
+  }
+  .form-group input[type=file] {
+    border: 1px solid #d2d2d2;
+    height: 30px;
+    padding-top: 3px;
+    width: 100%
+  }
 }
