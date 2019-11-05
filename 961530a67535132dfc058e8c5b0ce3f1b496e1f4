@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c58f1f6_6040926c",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-05T09:41:12Z",
+      "side": 1,
+      "message": "unused import, remove it",
+      "revId": "961530a67535132dfc058e8c5b0ce3f1b496e1f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "033e4ca7_79a16a2a",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-05T09:41:12Z",
+      "side": 1,
+      "message": "unused import, remove it",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 31
+      },
+      "revId": "961530a67535132dfc058e8c5b0ce3f1b496e1f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "316ee3bf_66d74a9b",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-05T09:41:12Z",
+      "side": 1,
+      "message": "unused import, remove it",
+      "range": {
+        "startLine": 58,
+        "startChar": 31,
+        "endLine": 60,
+        "endChar": 37
+      },
+      "revId": "961530a67535132dfc058e8c5b0ce3f1b496e1f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acac25f9_27b5e887",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-05T09:41:12Z",
+      "side": 1,
+      "message": "needless, remove it",
+      "range": {
+        "startLine": 474,
+        "startChar": 4,
+        "endLine": 474,
+        "endChar": 10
+      },
+      "revId": "961530a67535132dfc058e8c5b0ce3f1b496e1f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff6a8039_8c56d60b",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/VtpResultDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-05T09:41:12Z",
+      "side": 1,
+      "message": "please reformat the code",
+      "revId": "961530a67535132dfc058e8c5b0ce3f1b496e1f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
