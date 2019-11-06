@@ -92,7 +92,8 @@
         <dependency>
             <groupId>org.onap.logging-analytics</groupId>
             <artifactId>logging-slf4j</artifactId>
-            <version>1.4.0</version>
+            <version>1.6.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
