@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2fd3f468_1f79b99e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/main/java/org/openecomp/sdcrests/externaltesting/rest/services/ExternalTestingImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-11-06T11:24:09Z",
+      "side": 1,
+      "message": "Should reflect execution results, and not hardcode an OK value",
+      "range": {
+        "startLine": 179,
+        "startChar": 0,
+        "endLine": 179,
+        "endChar": 60
+      },
+      "revId": "17a76332de3f8a5409746160e87d2436358298a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4928352_bbab9b50",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-11-06T11:24:09Z",
+      "side": 1,
+      "message": "This IP won\u0027t exist in every environment (even tough this code is in Dublin)\nCan you refer to these settings documentation? what are the values separated by comma represents exactly? How can this feature be toggled off? (Another Dublin requirement)",
+      "range": {
+        "startLine": 24,
+        "startChar": 56,
+        "endLine": 24,
+        "endChar": 68
+      },
+      "revId": "17a76332de3f8a5409746160e87d2436358298a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
