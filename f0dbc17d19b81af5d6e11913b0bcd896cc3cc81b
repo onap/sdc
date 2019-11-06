@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "daff79fb_a11d1d1e",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-06T16:00:50Z",
+      "side": 1,
+      "message": "duplicated",
+      "range": {
+        "startLine": 92,
+        "startChar": 7,
+        "endLine": 102,
+        "endChar": 21
+      },
+      "revId": "f0dbc17d19b81af5d6e11913b0bcd896cc3cc81b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
