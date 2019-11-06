@@ -125,7 +125,7 @@
         <build.tools.version>${project.version}</build.tools.version>
         <togglz.version>2.4.1.Final</togglz.version>
         <bouncycastle.version>1.61</bouncycastle.version>
-        <onap.logging.version>1.5.0</onap.logging.version>
+        <onap.logging.version>1.6.1</onap.logging.version>
     </properties>
 
     <dependencyManagement>

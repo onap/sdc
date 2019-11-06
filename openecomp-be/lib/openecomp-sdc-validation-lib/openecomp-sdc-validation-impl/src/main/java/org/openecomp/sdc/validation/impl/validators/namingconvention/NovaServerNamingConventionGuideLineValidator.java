@@ -81,7 +81,6 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
   private void validateHeatNovaResource(String fileName, String envFileName,
                                         HeatOrchestrationTemplate heatOrchestrationTemplate,
                                         GlobalValidationContext globalContext) {
-    Map<String, String> uniqueResourcePortNetworkRole = new HashMap<>();
     //if no resources exist return
     if (MapUtils.isEmpty(heatOrchestrationTemplate.getResources())) {
       return;
@@ -94,7 +93,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
             .filter(entry -> entry.getValue().getType()
                     .equals(HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource()))
             .forEach( entry -> validateNovaServerResourceType(entry.getKey(), fileName, envFileName,
-                    entry, uniqueResourcePortNetworkRole, heatOrchestrationTemplate, globalContext));
+                    entry, new HashMap<String, String>(), heatOrchestrationTemplate, globalContext));
   }
 
   private void validateNovaServerResourceType(String resourceId, String fileName,
@@ -192,7 +191,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
         }else if (network instanceof List){
           role = getNetworkRole((String)((List) network).get(0));
         }
-        if (role != null && (uniqueResourcePortNetworkRole.containsKey(role))) {
+        if (role != null && uniqueResourcePortNetworkRole.containsKey(role)) {
           globalValidationContext.addMessage(
                   fileName,
                   ErrorLevel.WARNING,
