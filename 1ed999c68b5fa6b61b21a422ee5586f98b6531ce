@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aee2539d_2f9c738c",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_PNF/Generic_PNF.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 6062
+      },
+      "writtenOn": "2019-11-07T20:51:01Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "05402d55_d8efedef",
+      "range": {
+        "startLine": 29,
+        "startChar": 8,
+        "endLine": 29,
+        "endChar": 15
+      },
+      "revId": "1ed999c68b5fa6b61b21a422ee5586f98b6531ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5960112a_b1600b82",
         "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_Service/Generic_Service.yml",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "e9d73318_bb3cd47d",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_Service/Generic_Service.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 6062
+      },
+      "writtenOn": "2019-11-07T20:51:01Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "5960112a_b1600b82",
+      "range": {
+        "startLine": 17,
+        "startChar": 8,
+        "endLine": 17,
+        "endChar": 15
+      },
+      "revId": "1ed999c68b5fa6b61b21a422ee5586f98b6531ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2a2fa3ec_0904ac99",
         "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_VF/Generic_VF.yml",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2019-11-07T16:57:42Z",
       "side": 1,
       "message": "typo?",
+      "range": {
+        "startLine": 43,
+        "startChar": 8,
+        "endLine": 43,
+        "endChar": 15
+      },
+      "revId": "1ed999c68b5fa6b61b21a422ee5586f98b6531ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f63403ce_a507dc01",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/Generic_VF/Generic_VF.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 6062
+      },
+      "writtenOn": "2019-11-07T20:51:01Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "2a2fa3ec_0904ac99",
       "range": {
         "startLine": 43,
         "startChar": 8,
