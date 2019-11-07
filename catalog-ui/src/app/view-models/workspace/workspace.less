@@ -93,6 +93,9 @@
             border-bottom: 1px solid @main_color_o;
             display: flex;
             justify-content: space-between;
+            white-space: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
 
             .version-container {
 
@@ -101,11 +104,12 @@
             .progress-container {
                 flex-grow: 4;
                 z-index: 1;
+                display: inline-block;
 
                 .general-view-top-progress {
                     width: 30%;
                     margin: 0 auto;
-                    min-width: 200px;
+                    min-width: 150px;
                 }
             }
 
@@ -115,6 +119,7 @@
                 top: 20px;
                 .sprite-new;
                 .asdc-warning;
+                display: inline-block;
             }
 
             .sdc-workspace-top-bar-buttons {
@@ -139,6 +144,7 @@
                     vertical-align: middle;
                     margin-right: 20px;
                 }
+                display: inline-block;
 
             }
 
@@ -150,6 +156,7 @@
                 font-family: @font-opensans-bold;
                 color: @main_color_m;
                 font-size:12px;
+                display: inline-block;
             }
 
             .lifecycle-state {
@@ -160,6 +167,7 @@
                 font-family: @font-opensans-bold;
                 color: @main_color_m;
                 font-size:12px;
+                display: inline-block;
 
                 .lifecycle-state-icon {
                     .sprite-new;
@@ -178,6 +186,7 @@
                 background-color: transparent;
                 border: none;
                 margin-top: 6px;
+                display: inline-block;
             }
         }
         .tab-title{
