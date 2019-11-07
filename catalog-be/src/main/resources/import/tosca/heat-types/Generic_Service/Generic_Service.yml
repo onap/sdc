@@ -2,3 +2,22 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 node_types:
   org.openecomp.resource.abstract.nodes.service: 
     derived_from: tosca.nodes.Root
+    properties:
+      cds_model_name: 
+        type: string
+      cds_model_version: 
+        type: string
+      skip_post_instantiation_configuration:
+        type: boolean
+        default: true
+        constraints:
+        - valid_values: [true,false]
+      controller_actor:
+        type: string
+        default: SO-REF-DATA
+        constraints:
+        - valid_values: 
+          - SO-REF-DATA
+          - CDS
+          - SDNC
+          - APPC
