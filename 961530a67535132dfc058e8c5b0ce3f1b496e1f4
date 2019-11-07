@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "6d7d4c8c_ba12d217",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-11-07T08:03:58Z",
+      "side": 1,
+      "message": "Fixed",
+      "parentUuid": "78837a92_78194e02",
+      "revId": "961530a67535132dfc058e8c5b0ce3f1b496e1f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "033e4ca7_79a16a2a",
         "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
         "patchSetId": 1
