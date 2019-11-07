@@ -24,3 +24,12 @@ node_types:
         default: true
         constraints:
         - valid_values: [true,false]
+      controller_actor:
+        type: string
+        defualt: SO-REF-DATA
+        constraints:
+        - valid_values: 
+          - SO-REF-DATA
+          - CDS
+          - SDNC
+          - APPC
