@@ -21,6 +21,7 @@ package org.openecomp.core.converter.impl.pnfd.parser;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.openecomp.core.converter.pnfd.model.PnfTransformationToken.QUERY;
@@ -28,7 +29,9 @@ import static org.openecomp.core.converter.pnfd.model.PnfTransformationToken.TO_
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.Test;
 import org.openecomp.core.converter.pnfd.model.ConversionDefinition;
 import org.openecomp.core.converter.pnfd.model.ConversionStrategyType;
@@ -49,6 +52,11 @@ public class ConversionDefinitionYamlParserTest {
         }
         final ConversionDefinition conversionDefinition = ConversionDefinitionYamlParser.parse(definitionYaml).orElse(null);
         assertConversionDefinition(definitionYaml, conversionDefinition);
+    }
+
+    @Test
+    public void shouldReturnEmpty() {
+        assertEquals(Optional.empty(), ConversionDefinitionYamlParser.parse(new HashMap<>()));
     }
 
     private void assertConversionDefinition(final Map<String, Object> definitionYaml,

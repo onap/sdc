@@ -181,8 +181,9 @@ public class TransformationYamlParser {
     private static Optional<String> parseStringAttribute(final String attribute, final Map<String, Object> transformationYaml) {
         try {
             return Optional.of((String) transformationYaml.get(attribute));
-        } catch (final Exception ignore) {
-            LOGGER.warn("Could not parse the String '{}' in transformation '{}'", attribute, transformationYaml.toString());
+        } catch (final Exception e) {
+            LOGGER.warn("Could not parse the String '{}' in transformation '{}'",
+                attribute, transformationYaml.toString(), e);
             return Optional.empty();
         }
     }

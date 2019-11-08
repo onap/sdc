@@ -27,6 +27,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
  * Represents a transformation from the PNFD transformation descriptor.
@@ -34,6 +36,8 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @Setter
 public class Transformation {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Transformation.class);
 
     private String name;
     private String description;
@@ -90,7 +94,8 @@ public class Transformation {
             try {
                 T value = clazz.cast(transformationProperty.get().getValue());
                 return Optional.of(value);
-            } catch (final ClassCastException ignored) {
+            } catch (final ClassCastException e) {
+                LOGGER.warn("Could not get property value.", e);
                 return Optional.empty();
             }
         }
