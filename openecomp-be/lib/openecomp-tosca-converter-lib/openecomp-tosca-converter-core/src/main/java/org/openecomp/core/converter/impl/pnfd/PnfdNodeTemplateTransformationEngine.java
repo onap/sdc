@@ -81,6 +81,9 @@ public class PnfdNodeTemplateTransformationEngine extends AbstractPnfdTransforma
      */
     @Override
     protected void executeTransformations() {
+        if (transformationDescription == null) {
+            return;
+        }
         final Set<Transformation> transformationSet = transformationDescription.getTransformationSet();
         if (CollectionUtils.isEmpty(transformationSet)) {
             return;
