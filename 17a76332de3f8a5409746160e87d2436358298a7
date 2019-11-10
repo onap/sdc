@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "4468ea32_0ff3b113",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/main/java/org/openecomp/sdcrests/externaltesting/rest/services/ExternalTestingImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-11-10T17:02:41Z",
+      "side": 1,
+      "message": "\u003e Hi Ofir,\n \u003e \n \u003e In previous version of VTP server, it return a test result which\n \u003e was used to display in UI.\n \u003e In new version VTP server does not return any response and gives\n \u003e timeout exception. So it is coded as void return and hardcode OK is\n \u003e required to send back to UI.\n \u003e \n \u003e Thanks\n\nHow come VTP doesn\u0027t return any response but a timeout?\nVTP is ONAP too so let\u0027s ask the team to change that - possible in another Jira ticket",
+      "parentUuid": "dbf51041_46f492eb",
+      "range": {
+        "startLine": 179,
+        "startChar": 0,
+        "endLine": 179,
+        "endChar": 60
+      },
+      "revId": "17a76332de3f8a5409746160e87d2436358298a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4928352_bbab9b50",
         "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb",
         "patchSetId": 4
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "Hi Ofir,\n\nIt was coded by other developer, so I can\u0027t comment on it. Setting information can be found in \nSDC \u003e docs \u003e configuration.rst and search \"externaltesting-configuration.yaml\" in the file.\nPlease let me know if more information is required.  \n\nThanks",
       "parentUuid": "a4928352_bbab9b50",
+      "range": {
+        "startLine": 24,
+        "startChar": 56,
+        "endLine": 24,
+        "endChar": 68
+      },
+      "revId": "17a76332de3f8a5409746160e87d2436358298a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ed357a8c_817de7a0",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-11-10T17:02:41Z",
+      "side": 1,
+      "message": "\u003e Hi Ofir,\n \u003e \n \u003e It was coded by other developer, so I can\u0027t comment on it. Setting\n \u003e information can be found in\n \u003e SDC \u003e docs \u003e configuration.rst and search \"externaltesting-configuration.yaml\"\n \u003e in the file.\n \u003e Please let me know if more information is required.\n \u003e \n \u003e Thanks\n\nHi\nThat\u0027s the problem with having a general Vodafone user - now we don\u0027t know who contributed that.\nSince it\u0027s Vodafone user and also a feature that comes from Vodafone please do check with your team and remove this hardcoded IP address. You can use the default vnfsdk hostname (check with VNFSDK PTL if necessary).\nThanks",
+      "parentUuid": "3fa72d2a_0905e8cd",
       "range": {
         "startLine": 24,
         "startChar": 56,
