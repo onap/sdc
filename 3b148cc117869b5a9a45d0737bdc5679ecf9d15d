@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2307aff2_0c759467",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2019-11-11T11:27:20Z",
+      "side": 1,
+      "message": "Failed to add the copied property...",
+      "range": {
+        "startLine": 284,
+        "startChar": 16,
+        "endLine": 284,
+        "endChar": 43
+      },
+      "revId": "3b148cc117869b5a9a45d0737bdc5679ecf9d15d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6153a42e_2fc25e70",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/exceptions/BusinessLogicException.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2019-11-11T11:27:20Z",
+      "side": 1,
+      "message": "Could be replaced by @AllArgsConstructor",
+      "range": {
+        "startLine": 30,
+        "startChar": 3,
+        "endLine": 32,
+        "endChar": 5
+      },
+      "revId": "3b148cc117869b5a9a45d0737bdc5679ecf9d15d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
