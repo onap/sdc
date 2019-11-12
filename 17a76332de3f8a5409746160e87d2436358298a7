@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "ec562b47_c6c0f930",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/main/java/org/openecomp/sdcrests/externaltesting/rest/services/ExternalTestingImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-11-12T07:19:39Z",
+      "side": 1,
+      "message": "As  discussed in weekly meeting on 11/11/2019, according to VTP PTL - \nHttp status 200 and 504 is valid and should be handled in SDC code as \nvalid response from VTP server. So we have coded accordingly in SDC \njava backend to handle this http status and returning hard code OK value to UI.",
+      "parentUuid": "4468ea32_0ff3b113",
+      "range": {
+        "startLine": 179,
+        "startChar": 0,
+        "endLine": 179,
+        "endChar": 60
+      },
+      "revId": "17a76332de3f8a5409746160e87d2436358298a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4928352_bbab9b50",
         "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb",
         "patchSetId": 4
