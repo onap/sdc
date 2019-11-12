@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "21bc2837_d5072a60",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/heat/HeatParameterType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2871
+      },
+      "writtenOn": "2019-11-12T13:09:00Z",
+      "side": 1,
+      "message": "Correct",
+      "parentUuid": "31cee12b_53097e68",
+      "revId": "28e00175eef764b8ee291f14b16abf6281eb3fe6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3602e58_29ee81b1",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/heat/nested/nestedundervolume/inputs/ocgapp_01_volume.env",
         "patchSetId": 1
