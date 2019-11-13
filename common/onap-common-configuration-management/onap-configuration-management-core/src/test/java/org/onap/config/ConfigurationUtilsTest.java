@@ -26,8 +26,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,11 +58,13 @@ import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.junit.Test;
+import org.onap.config.util.TestUtil;
 import org.onap.config.api.Hint;
 import org.onap.config.impl.ConfigurationRepository;
 
 public class ConfigurationUtilsTest {
 
+    public static final String TMP_DIR_PREFIX = "sdc-testing-";
     private static final String TEST_NAME_SPACE = "testNameSpaceOne";
     private static final String TEST_COMPOSITE_NAMESPACE = "testCOmpositeConfig";
 
@@ -131,6 +137,53 @@ public class ConfigurationUtilsTest {
 
         ConfigurationUtils.getCompatibleCollectionForAbstractDef(Collection.class);
 
+    }
+
+    @Test
+    public void testGetAllFilesRecursiveIncludeAll() throws IOException {
+        Path tmpRoot = TestUtil.createTestDirsStructure(TMP_DIR_PREFIX);
+        Collection<File> allFiles = ConfigurationUtils.getAllFiles(tmpRoot.toFile(), true, false);
+        assertEquals(7, allFiles.size());
+        TestUtil.deleteTestDirsStrucuture(tmpRoot);
+    }
+
+    @Test
+    public void testGetAllFilesRecursiveIncludeDirsOnly() throws IOException {
+        Path tmpRoot = TestUtil.createTestDirsStructure(TMP_DIR_PREFIX);
+        Collection<File> allFiles = ConfigurationUtils.getAllFiles(tmpRoot.toFile(), true, true);
+        assertEquals(3, allFiles.size());
+        TestUtil.deleteTestDirsStrucuture(tmpRoot);
+    }
+
+    @Test
+    public void testGetAllFilesNonRecursiveIncludeAll() throws IOException {
+        Path tmpRoot = TestUtil.createTestDirsStructure(TMP_DIR_PREFIX);
+        Collection<File> allFiles = ConfigurationUtils.getAllFiles(tmpRoot.toFile(), false, false);
+        assertEquals(2, allFiles.size());
+        TestUtil.deleteTestDirsStrucuture(tmpRoot);
+    }
+
+    @Test
+    public void testGetAllFilesNonRecursiveIncludeDirsOnly() throws IOException {
+        Path tmpRoot = TestUtil.createTestDirsStructure(TMP_DIR_PREFIX);
+        Collection<File> allFiles = ConfigurationUtils.getAllFiles(tmpRoot.toFile(), false, true);
+        assertEquals(1, allFiles.size());
+        TestUtil.deleteTestDirsStrucuture(tmpRoot);
+    }
+
+    @Test
+    public void testGetAllFilesEmptyDir() throws IOException {
+        Path tmpRoot = TestUtil.createEmptyTmpDir(TMP_DIR_PREFIX);
+        Collection<File> allFiles = ConfigurationUtils.getAllFiles(tmpRoot.toFile(), true, true);
+        assertEquals(0, allFiles.size());
+        TestUtil.deleteTestDirsStrucuture(tmpRoot);
+    }
+
+    @Test
+    public void testGetAllFilesNonExistentDir() throws IOException {
+        Path nonExistentDir = Paths.get("/tmp/nonexistentdir");
+        Collection<File> allFiles = ConfigurationUtils.getAllFiles(nonExistentDir.toFile(), false, true);
+        assertEquals(0, allFiles.size());
     }
 
     @Test
