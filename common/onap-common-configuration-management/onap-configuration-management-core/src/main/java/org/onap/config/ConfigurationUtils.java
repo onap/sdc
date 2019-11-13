@@ -205,7 +205,7 @@ public class ConfigurationUtils {
                 try {
                     return Enum.valueOf(ConfigurationMode.class, modeName);
                 } catch (Exception exception) {
-                    //do nothing
+                    LOGGER.debug("Configuration mode for merge strategy '{}' not found", modeName, exception);
                 }
             }
         }
@@ -231,7 +231,7 @@ public class ConfigurationUtils {
                     throw new ConfigurationException(CONFIGURATION_TYPE_NOT_SUPPORTED + configType);
             }
         } catch (ConfigurationException exception) {
-            exception.printStackTrace();
+            LOGGER.error("Error reading configuration at {}.", url.toString(), exception);
         }
 
         return Optional.empty();
@@ -263,7 +263,7 @@ public class ConfigurationUtils {
         try {
             configurationMode = ConfigurationMode.valueOf(configMode);
         } catch (Exception exception) {
-            LOGGER.error("Could not find convert {} into configuration mode", configMode);
+            LOGGER.error("Could not find convert {} into configuration mode.", configMode, exception);
         }
         return Optional.ofNullable(configurationMode);
     }
@@ -457,7 +457,7 @@ public class ConfigurationUtils {
                 return IOUtils.toString(new URL(path), Charset.defaultCharset());
             }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOGGER.error("Error while getting '{}' content", path, exception);
         }
         return null;
     }
@@ -468,7 +468,7 @@ public class ConfigurationUtils {
                 return new String(Files.readAllBytes(path));
             }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOGGER.error("Error while getting '{}' content", path.toString(), exception);
         }
         return null;
     }
