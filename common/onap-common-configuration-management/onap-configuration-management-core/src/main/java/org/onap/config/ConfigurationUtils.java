@@ -26,14 +26,15 @@ import static org.onap.config.api.Hint.NODE_SPECIFIC;
 
 import com.virtlink.commons.configuration2.jackson.JsonConfiguration;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,20 +109,35 @@ public class ConfigurationUtils {
     }
 
     public static Collection<File> getAllFiles(File file, boolean recursive, boolean onlyDirectory) {
-
         ArrayList<File> collection = new ArrayList<>();
-        if (file.isDirectory() && file.exists()) {
-            File[] files = file.listFiles();
-            for (File innerFile : Objects.requireNonNull(files)) {
-                if (innerFile.isFile() && !onlyDirectory) {
-                    collection.add(innerFile);
-                } else if (innerFile.isDirectory()) {
-                    collection.add(innerFile);
-                    if (recursive) {
-                        collection.addAll(getAllFiles(innerFile, true, onlyDirectory));
+        Path rootPath = file.toPath();
+        try {
+            Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    super.preVisitDirectory(dir,attrs);
+                    if (rootPath.equals(dir)) {
+                        return FileVisitResult.CONTINUE;
                     }
+                    collection.add(dir.toFile());
+                    return recursive? FileVisitResult.CONTINUE : FileVisitResult.SKIP_SUBTREE;
                 }
-            }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    super.visitFile(file, attrs);
+                    if (!onlyDirectory) {
+                        collection.add(file.toFile());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            LOGGER.error(
+                    "Failed to walk through directories starting from: {}. Error is: {}",
+                    file.toString(),
+                    e.getMessage()
+            );
         }
         return collection;
     }
