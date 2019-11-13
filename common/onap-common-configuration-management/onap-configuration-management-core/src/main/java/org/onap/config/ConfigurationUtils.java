@@ -89,6 +89,10 @@ public class ConfigurationUtils {
 
     private static final Map<Class, Class> ARRAY_CLASS_MAP;
 
+    private static final String CONFIG_REGEX_TPL_OPT_1 = "CONFIG(-\\w*){0,1}(-(%s|%s|%s)){0,1}\\.(%s|%s|%s|%s)$";
+
+    private static final String CONFIG_REGEX_TPL_OPT_2 = "CONFIG(.)*\\.(%s|%s|%s|%s)$";
+
     static {
         Map<Class, Class> arrayTypes = new HashMap<>();
         arrayTypes.put(Byte.class, Byte[].class);
@@ -148,12 +152,25 @@ public class ConfigurationUtils {
         file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
         file = file.substring(file.lastIndexOf('/') + 1);
         return file.matches(
-                "CONFIG(-\\w*){0,1}(-" + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE + "|"
-                        + ConfigurationMode.UNION + ")){0,1}" + "\\.(" + ConfigurationType.PROPERTIES.name() + "|"
-                        + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON.name() + "|"
-                        + ConfigurationType.YAML.name() + ")$") || file.matches(
-                "CONFIG(.)*\\.(" + ConfigurationType.PROPERTIES.name() + "|" + ConfigurationType.XML.name() + "|"
-                        + ConfigurationType.JSON.name() + "|" + ConfigurationType.YAML.name() + ")$");
+                String.format(
+                        CONFIG_REGEX_TPL_OPT_1,
+                        ConfigurationMode.OVERRIDE,
+                        ConfigurationMode.MERGE,
+                        ConfigurationMode.UNION,
+                        ConfigurationType.PROPERTIES.name(),
+                        ConfigurationType.XML.name(),
+                        ConfigurationType.JSON.name(),
+                        ConfigurationType.YAML.name()
+                )
+        ) || file.matches(
+                String.format(
+                        CONFIG_REGEX_TPL_OPT_2,
+                        ConfigurationType.PROPERTIES.name(),
+                        ConfigurationType.XML.name(),
+                        ConfigurationType.JSON.name(),
+                        ConfigurationType.YAML.name()
+                )
+        );
     }
 
     public static boolean isConfig(File file) {
@@ -188,12 +205,18 @@ public class ConfigurationUtils {
 
         file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
         file = file.substring(file.lastIndexOf('/') + 1);
-
         Pattern pattern = Pattern.compile(
-                "CONFIG(-\\w*){0,1}(-" + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE + "|"
-                        + ConfigurationMode.UNION + ")){0,1}" + "\\.(" + ConfigurationType.PROPERTIES.name() + "|"
-                        + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON.name() + "|"
-                        + ConfigurationType.YAML.name() + ")$");
+                String.format(
+                        CONFIG_REGEX_TPL_OPT_1,
+                        ConfigurationMode.OVERRIDE,
+                        ConfigurationMode.MERGE,
+                        ConfigurationMode.UNION,
+                        ConfigurationType.PROPERTIES.name(),
+                        ConfigurationType.XML.name(),
+                        ConfigurationType.JSON.name(),
+                        ConfigurationType.YAML.name()
+                )
+        );
         Matcher matcher = pattern.matcher(file);
         boolean b1 = matcher.matches();
         if (b1) {
@@ -571,10 +594,17 @@ public class ConfigurationUtils {
         file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
         file = file.substring(file.lastIndexOf('/') + 1);
         Pattern pattern = Pattern.compile(
-                "CONFIG(-\\w*){0,1}(-" + "(" + ConfigurationMode.OVERRIDE + "|" + ConfigurationMode.MERGE + "|"
-                        + ConfigurationMode.UNION + ")){0,1}" + "\\.(" + ConfigurationType.PROPERTIES.name() + "|"
-                        + ConfigurationType.XML.name() + "|" + ConfigurationType.JSON.name() + "|"
-                        + ConfigurationType.YAML.name() + ")$");
+                String.format(
+                        CONFIG_REGEX_TPL_OPT_1,
+                        ConfigurationMode.OVERRIDE,
+                        ConfigurationMode.MERGE,
+                        ConfigurationMode.UNION,
+                        ConfigurationType.PROPERTIES.name(),
+                        ConfigurationType.XML.name(),
+                        ConfigurationType.JSON.name(),
+                        ConfigurationType.YAML.name()
+                )
+        );
         Matcher matcher = pattern.matcher(file);
         boolean b1 = matcher.matches();
         if (b1) {
