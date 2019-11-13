@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d407ebaa_a7c92ba9",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-13T16:58:58Z",
+      "side": 1,
+      "message": "include exception to LOG",
+      "range": {
+        "startLine": 208,
+        "startChar": 19,
+        "endLine": 208,
+        "endChar": 99
+      },
+      "revId": "a376677fed77dec89f6c108d8f19ffd583fd2b66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c750a77b_7caca3c8",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-13T16:58:58Z",
+      "side": 1,
+      "message": "include exception to LOG",
+      "range": {
+        "startLine": 234,
+        "startChar": 11,
+        "endLine": 234,
+        "endChar": 84
+      },
+      "revId": "a376677fed77dec89f6c108d8f19ffd583fd2b66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b8714c8_27c31946",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-13T16:58:58Z",
+      "side": 1,
+      "message": "include exception to LOG",
+      "range": {
+        "startLine": 266,
+        "startChar": 12,
+        "endLine": 269,
+        "endChar": 42
+      },
+      "revId": "a376677fed77dec89f6c108d8f19ffd583fd2b66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e83f6e55_6a71d260",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-13T16:58:58Z",
+      "side": 1,
+      "message": "include exception to LOG",
+      "range": {
+        "startLine": 464,
+        "startChar": 12,
+        "endLine": 464,
+        "endChar": 94
+      },
+      "revId": "a376677fed77dec89f6c108d8f19ffd583fd2b66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d79ad3a6_97f274c9",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-13T16:58:58Z",
+      "side": 1,
+      "message": "include exception to LOG",
+      "range": {
+        "startLine": 475,
+        "startChar": 12,
+        "endLine": 475,
+        "endChar": 105
+      },
+      "revId": "a376677fed77dec89f6c108d8f19ffd583fd2b66",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
