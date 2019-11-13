@@ -22,6 +22,30 @@
       "revId": "096edccacfdfc46c45576be765d0cb2fbdf26e5f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d3b1246a_0e107b9d",
+        "filename": "sdc-os-chef/sdc-cassandra/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-11-13T14:06:38Z",
+      "side": 1,
+      "message": "https://jira.onap.org/browse/SDC-2655",
+      "parentUuid": "167e4965_b8306483",
+      "range": {
+        "startLine": 1,
+        "startChar": 35,
+        "endLine": 1,
+        "endChar": 43
+      },
+      "revId": "096edccacfdfc46c45576be765d0cb2fbdf26e5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
