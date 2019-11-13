@@ -2,6 +2,98 @@
   "comments": [
     {
       "key": {
+        "uuid": "107f28b9_59cea665",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/templates/default/create_cassandra_user.sh.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-13T15:08:21Z",
+      "side": 1,
+      "message": "Isn\u0027t it better to expose this as a configuration?",
+      "range": {
+        "startLine": 15,
+        "startChar": 36,
+        "endLine": 15,
+        "endChar": 43
+      },
+      "revId": "096edccacfdfc46c45576be765d0cb2fbdf26e5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61400cee_6e542d80",
+        "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-13T15:08:21Z",
+      "side": 1,
+      "message": "Isn\u0027t it better to expose this as a configuration?",
+      "range": {
+        "startLine": 20,
+        "startChar": 19,
+        "endLine": 20,
+        "endChar": 26
+      },
+      "revId": "096edccacfdfc46c45576be765d0cb2fbdf26e5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6669bfe_971dca07",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-13T15:08:21Z",
+      "side": 1,
+      "message": "shouldn\u0027t be the same as ${CS_PORT}?",
+      "range": {
+        "startLine": 313,
+        "startChar": 482,
+        "endLine": 313,
+        "endChar": 486
+      },
+      "revId": "096edccacfdfc46c45576be765d0cb2fbdf26e5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d6be374_ca8356cc",
+        "filename": "sdc-os-chef/scripts/docker_run.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-13T15:08:21Z",
+      "side": 1,
+      "message": "I think this variable should be defined at the top of the file, in the constant region, with a default value, e.g.:\n\nCS_PORT\u003d\"${CS_PORT:-9042}\"\n\nOtherwise it is required to set it before calling the docker_run script.\n\nAlso, shouldn\u0027t it be the same as published in the function sdc-cs with \"--publish 9042:9042\"?",
+      "range": {
+        "startLine": 343,
+        "startChar": 108,
+        "endLine": 343,
+        "endChar": 115
+      },
+      "revId": "096edccacfdfc46c45576be765d0cb2fbdf26e5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "167e4965_b8306483",
         "filename": "sdc-os-chef/sdc-cassandra/Dockerfile",
         "patchSetId": 1
