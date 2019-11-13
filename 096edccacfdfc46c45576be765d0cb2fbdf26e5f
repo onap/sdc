@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "167e4965_b8306483",
+        "filename": "sdc-os-chef/sdc-cassandra/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-11-13T12:48:48Z",
+      "side": 1,
+      "message": "We mustn\u0027t use snapshot versions when releasing.\nPlease add a task in Jira so we don\u0027t forget",
+      "range": {
+        "startLine": 1,
+        "startChar": 35,
+        "endLine": 1,
+        "endChar": 43
+      },
+      "revId": "096edccacfdfc46c45576be765d0cb2fbdf26e5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

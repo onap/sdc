@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4c682597_7821d626",
+        "filename": "sdc-os-chef/kubernetes/sdc/templates/deployments/sdc-cs.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-11-13T12:48:48Z",
+      "side": 0,
+      "message": "Should be removed in OOM too",
+      "range": {
+        "startLine": 49,
+        "startChar": 10,
+        "endLine": 49,
+        "endChar": 23
+      },
+      "revId": "fe011966a2400fa8ffdf4b9e51a482f7ced77b30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
