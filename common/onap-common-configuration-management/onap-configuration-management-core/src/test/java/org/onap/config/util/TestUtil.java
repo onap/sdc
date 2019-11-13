@@ -19,6 +19,12 @@ package org.onap.config.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
@@ -103,5 +109,57 @@ public class TestUtil {
     public static String getenv(String name) {
         String value = System.getenv(name);
         return value == null ? "" : value;
+    }
+
+    /**
+     * Creates temporary directories structure with files inside every directory
+     *
+     * @param tmpDirPrefix
+     * @return
+     * @throws IOException
+     */
+    public static Path createTestDirsStructure(String tmpDirPrefix) throws IOException {
+        Path tmpPath = Files.createTempDirectory(tmpDirPrefix);
+        Path dir0 = Paths.get(tmpPath.toString(), "dir0", "dir1", "dir2");
+        Files.createDirectories(dir0);
+        Path[] files= {
+                Paths.get(tmpPath.toString(), "file001"),
+                Paths.get(tmpPath.toString(), "dir0", "file002"),
+                Paths.get(tmpPath.toString(), "dir0", "dir1", "file003"),
+                Paths.get(tmpPath.toString(), "dir0", "dir1", "dir2", "file004"),
+        };
+        for (Path file : files ) {
+            Files.createFile(file);
+        }
+        return tmpPath;
+    }
+
+    public static Path createEmptyTmpDir(String prefix) throws IOException {
+        return Files.createTempDirectory(prefix);
+    }
+
+    /**
+     * Delete all tmp directories and files created for testing
+     *
+     * @param rootPath
+     */
+    public static void deleteTestDirsStrucuture(Path rootPath) {
+        try {
+            Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
