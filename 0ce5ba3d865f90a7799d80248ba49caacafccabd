@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71608014_2789cb01",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-13T16:57:44Z",
+      "side": 1,
+      "message": "include exception to LOG",
+      "range": {
+        "startLine": 136,
+        "startChar": 12,
+        "endLine": 139,
+        "endChar": 34
+      },
+      "revId": "0ce5ba3d865f90a7799d80248ba49caacafccabd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
