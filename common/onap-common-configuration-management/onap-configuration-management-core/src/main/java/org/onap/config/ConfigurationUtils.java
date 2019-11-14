@@ -361,63 +361,24 @@ public class ConfigurationUtils {
     }
 
     public static Object getPrimitiveArray(Collection collection, Class clazz) {
-        if (clazz == int.class) {
-            int[] array = new int[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (int) objArray[i];
-            }
-            return array;
+        switch (clazz.getName()) {
+            case "int":
+                return getIntsPrimitiveArray(collection);
+            case "byte":
+                return getBytesPrimitiveArray(collection);
+            case "short":
+                return getShortsPrimitiveArray(collection);
+            case "long":
+                return getLongsPrimitiveArray(collection);
+            case "float":
+                return getFloatsPrimitiveArray(collection);
+            case "double":
+                return getDoublesPrimitiveArray(collection);
+            case "boolean":
+                return getBooleansPrimitiveArray(collection);
+            default:
+                return null;
         }
-        if (clazz == byte.class) {
-            byte[] array = new byte[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (byte) objArray[i];
-            }
-            return array;
-        }
-        if (clazz == short.class) {
-            short[] array = new short[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (short) objArray[i];
-            }
-            return array;
-        }
-        if (clazz == long.class) {
-            long[] array = new long[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (long) objArray[i];
-            }
-            return array;
-        }
-        if (clazz == float.class) {
-            float[] array = new float[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (float) objArray[i];
-            }
-            return array;
-        }
-        if (clazz == double.class) {
-            double[] array = new double[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (double) objArray[i];
-            }
-            return array;
-        }
-        if (clazz == boolean.class) {
-            boolean[] array = new boolean[collection.size()];
-            Object[] objArray = collection.toArray();
-            for (int i = 0; i < collection.size(); i++) {
-                array[i] = (boolean) objArray[i];
-            }
-            return array;
-        }
-        return null;
     }
 
     public static String getCollectionString(String input) {
@@ -664,5 +625,77 @@ public class ConfigurationUtils {
 
     public static boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
+    }
+
+    // private methods section starts here
+
+    private static int[] getIntsPrimitiveArray(Collection collection) {
+        int collectionSize = collection.size();
+        int[] array = new int[collectionSize];
+        Object[] objArray = collection.toArray();
+        for (int i = 0; i < collectionSize; i++) {
+            array[i] = (int) objArray[i];
+        }
+        return array;
+    }
+
+    private static byte[] getBytesPrimitiveArray(Collection collection) {
+        int collectionSize = collection.size();
+        byte[] array = new byte[collectionSize];
+        Object[] objArray = collection.toArray();
+        for (int i = 0; i < collectionSize; i++) {
+            array[i] = (byte) objArray[i];
+        }
+        return array;
+    }
+
+    private static short[] getShortsPrimitiveArray(Collection collection) {
+        int collectionSize = collection.size();
+        short[] array = new short[collectionSize];
+        Object[] objArray = collection.toArray();
+        for (int i = 0; i < collectionSize; i++) {
+            array[i] = (short) objArray[i];
+        }
+        return array;
+    }
+
+    private static long[] getLongsPrimitiveArray(Collection collection) {
+        int collectionSize = collection.size();
+        long[] array = new long[collectionSize];
+        Object[] objArray = collection.toArray();
+        for (int i = 0; i < collectionSize; i++) {
+            array[i] = (long) objArray[i];
+        }
+        return array;
+    }
+
+    private static float[] getFloatsPrimitiveArray(Collection collection) {
+        int collectionSize = collection.size();
+        float[] array = new float[collectionSize];
+        Object[] objArray = collection.toArray();
+        for (int i = 0; i < collectionSize; i++) {
+            array[i] = (float) objArray[i];
+        }
+        return array;
+    }
+
+    private static double[] getDoublesPrimitiveArray(Collection collection) {
+        int collectionSize = collection.size();
+        double[] array = new double[collectionSize];
+        Object[] objArray = collection.toArray();
+        for (int i = 0; i < collectionSize; i++) {
+            array[i] = (double) objArray[i];
+        }
+        return array;
+    }
+
+    private static boolean[] getBooleansPrimitiveArray(Collection collection) {
+        int collectionSize = collection.size();
+        boolean[] array = new boolean[collectionSize];
+        Object[] objArray = collection.toArray();
+        for (int i = 0; i < collectionSize; i++) {
+            array[i] = (boolean) objArray[i];
+        }
+        return array;
     }
 }
