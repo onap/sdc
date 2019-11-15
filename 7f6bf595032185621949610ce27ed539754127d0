@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dcbff183_62b04d8b",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 74,
+        "startChar": 13,
+        "endLine": 74,
+        "endChar": 30
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d48a6d3c_ad0c4794",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "could be private",
+      "range": {
+        "startLine": 76,
+        "startChar": 4,
+        "endLine": 76,
+        "endChar": 10
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2de51318_9bfd5023",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "use isEmpty instead",
+      "range": {
+        "startLine": 60,
+        "startChar": 33,
+        "endLine": 60,
+        "endChar": 54
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca60b56d_8aaa52f3",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "potential NPE, fix it",
+      "range": {
+        "startLine": 64,
+        "startChar": 41,
+        "endLine": 64,
+        "endChar": 51
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d39acc20_3854359d",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "use isEmpty instead",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 63
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0350eee5_54468e66",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "potential NPE, fix it",
+      "range": {
+        "startLine": 65,
+        "startChar": 8,
+        "endLine": 65,
+        "endChar": 24
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c728331_04a9b9d1",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "use isEmpty instead",
+      "range": {
+        "startLine": 78,
+        "startChar": 44,
+        "endLine": 78,
+        "endChar": 68
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54c6677f_73231956",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "use isEmpty instead",
+      "range": {
+        "startLine": 87,
+        "startChar": 45,
+        "endLine": 87,
+        "endChar": 81
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8499643e_aaaaff80",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "use isEmpty instead",
+      "range": {
+        "startLine": 92,
+        "startChar": 45,
+        "endLine": 92,
+        "endChar": 68
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7930b73_916e6aac",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:55:34Z",
+      "side": 1,
+      "message": "use isEmpty instead",
+      "range": {
+        "startLine": 99,
+        "startChar": 15,
+        "endLine": 99,
+        "endChar": 40
+      },
+      "revId": "7f6bf595032185621949610ce27ed539754127d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
