@@ -20,99 +20,43 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
+import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.addScreenshot;
+import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.addTag;
+import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.log;
+
 import com.aventstack.extentreports.Status;
+import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentManager.suiteNameXml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 
-import java.io.IOException;
+public class ReportAfterTestManager {
 
-public class ReportAfterTestManager extends ExtentTestActions {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportAfterTestManager.class);
     private static String testName;
     private static Throwable throwable;
-    private static int status;
+    private static String exceptionMsgFormat = "%s - The following exception occurred:";
 
-    private static void logSuccessAfterTest() {
-        final Status logStatus = Status.PASS;
-        addTag(logStatus, "Success");
-        try {
-            String message = "Finished the test with the following screenshot : ";
-            addScreenshotToReport(logStatus, testName, message);
-        } catch (Exception e) {
-            log(logStatus, "SUCCESS - The following exepction occured : " + e.getMessage());
-        }
+    private ReportAfterTestManager() {
+
     }
 
-    private static void logFailAfterTest() {
-        addTag(Status.FAIL, "Failure");
-        try {
-            log(Status.ERROR, "ERROR - The following exepction occured : ");
-            log(Status.ERROR, throwable);
-            String message = "Failure is described in the following screenshot : ";
-            addScreenshotToReport(Status.FAIL, testName, message);
-        } catch (Exception e) {
-            log(Status.ERROR, "ERROR - The following exepction occured : " + e.getMessage());
-        }
-    }
-
-    private static void logSkipAfterTest() {
-        final Status logStatus = Status.SKIP;
-        addTag(logStatus, "Skipped");
-        try {
-            log(logStatus, "SKIP - The following exepction occured : ");
-            log(logStatus, throwable);
-            String message = "Skip is described in the following screenshot : ";
-            addScreenshotToReport(logStatus, testName, message);
-        } catch (Exception e) {
-            log(logStatus, "SKIP - The following exepction occured : " + e.getMessage());
-        }
-    }
-
-    private static void logFatalAfterTest() {
-        final Status logStatus = Status.FATAL;
-        addTag(logStatus, "Fatal");
-        try {
-            log(logStatus, "FATAL - The following exepction occured : ");
-            log(logStatus, throwable);
-            String message = "Fatal is described in the following screenshot : ";
-            addScreenshotToReport(logStatus, testName, message);
-        } catch (Exception e) {
-            log(logStatus, "FATAL - The following exepction occured : " + e.getMessage());
-        }
-    }
-
-    private static String addScreenshotToReport(Status logStatus, String testName, String message) throws IOException {
-
-        String addedValueFromDataProvider = WindowTestManager.getWindowMap().getAddedValueFromDataProvider();
-        if (addedValueFromDataProvider != null) {
-            addedValueFromDataProvider = addedValueFromDataProvider.replace(":", "-");
-            testName = testName + "...." + addedValueFromDataProvider;
-        }
-
-        return addScreenshot(logStatus, testName, message);
-    }
-
-    public static void report(ITestResult result, ITestContext context) {
-
+    public static void report(final ITestResult result, final ITestContext context) {
         testName = result.getName();
         throwable = result.getThrowable();
-        status = result.getStatus();
 
-        String suiteName = ExtentManager.getSuiteName(context);
+        final String suiteName = ExtentManager.getSuiteName(context);
 
-        switch (status) {
+        switch (result.getStatus()) {
             case ITestResult.SUCCESS:
                 logSuccessAfterTest();
                 break;
 
             case ITestResult.FAILURE:
-
-                if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) {
-                    logFatalAfterTest();
-                } else {
-                    logFailAfterTest();
-                }
+                logFailure(suiteName);
                 break;
 
             case ITestResult.SKIP:
@@ -123,6 +67,56 @@ public class ReportAfterTestManager extends ExtentTestActions {
                 break;
         }
 
+    }
+
+    private static void logSuccessAfterTest() {
+        addTag(Status.PASS, "Success");
+        takeScreenshot(Status.PASS);
+    }
+
+    private static void logFailAfterTest() {
+        addTag(Status.FAIL, "Failure");
+        log(Status.ERROR, String.format(exceptionMsgFormat, Status.ERROR));
+        log(Status.ERROR, throwable);
+        takeScreenshot(Status.FAIL);
+    }
+
+    private static void logSkipAfterTest() {
+        addTag(Status.SKIP, "Skipped");
+        log(Status.SKIP, String.format(exceptionMsgFormat, Status.SKIP));
+        log(Status.SKIP, throwable);
+        takeScreenshot(Status.SKIP);
+    }
+
+    private static void logFatalAfterTest() {
+        addTag(Status.FATAL, "Fatal");
+        log(Status.FATAL, String.format(exceptionMsgFormat, Status.FATAL));
+        log(Status.FATAL, throwable);
+        takeScreenshot(Status.FATAL);
+    }
+
+    private static void takeScreenshot(final Status status) {
+        String adjustedTestName = testName;
+        String infoFromDataProvider = WindowTestManager.getWindowMap().getAddedValueFromDataProvider();
+        if (StringUtils.isNotEmpty(infoFromDataProvider)) {
+            infoFromDataProvider = infoFromDataProvider.replace(":", "-");
+            adjustedTestName = String.format("%s | %s", testName, infoFromDataProvider);
+        }
+        try {
+            addScreenshot(status, adjustedTestName, "Finished the test with the following screenshot:");
+        } catch (final IOException e) {
+            final String warnMsg = "Could not take screenshot of the final screen";
+            LOGGER.warn(warnMsg, e);
+            log(Status.WARNING, String.format("%s: %s", warnMsg, e.getMessage()));
+        }
+    }
+
+    private static void logFailure(final String suiteName) {
+        if (suiteNameXml.TESTNG_FAILED_XML_NAME.getValue().equals(suiteName)) {
+            logFatalAfterTest();
+        } else {
+            logFailAfterTest();
+        }
     }
 
 }

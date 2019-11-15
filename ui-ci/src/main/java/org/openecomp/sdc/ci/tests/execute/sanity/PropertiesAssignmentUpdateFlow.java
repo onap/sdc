@@ -27,7 +27,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -69,9 +69,6 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 import static org.testng.Assert.assertTrue;
-
-//import com.sun.xml.internal.bind.v2.TODO;
-
 
 public class PropertiesAssignmentUpdateFlow extends SetupCDTest {
 
@@ -238,9 +235,10 @@ public class PropertiesAssignmentUpdateFlow extends SetupCDTest {
         //Import VSP, create VF - v0.1
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 
@@ -320,9 +318,10 @@ public class PropertiesAssignmentUpdateFlow extends SetupCDTest {
         //Import VSP, create VF - v0.1
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 
@@ -393,9 +392,10 @@ public class PropertiesAssignmentUpdateFlow extends SetupCDTest {
         //Import VSP, create VF - v0.1
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 
@@ -603,9 +603,10 @@ public class PropertiesAssignmentUpdateFlow extends SetupCDTest {
         //Import VSP, create VF - v0.1
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 

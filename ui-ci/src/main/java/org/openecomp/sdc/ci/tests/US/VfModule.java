@@ -22,8 +22,8 @@ package org.openecomp.sdc.ci.tests.US;
 
 import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.data.providers.OnboardingDataProviders;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
@@ -81,15 +81,16 @@ public class VfModule extends SetupCDTest {
 //		String vnfFile = "LDSA.zip";
 //		String vnfFile = "FDNT.zip";
         List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
-        List<String> newRandomFileNamesFromFolder = OnbordingDataProviders.getRandomElements(1, fileNamesFromFolder);
+        List<String> newRandomFileNamesFromFolder = OnboardingDataProviders.getRandomElements(1, fileNamesFromFolder);
         String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
         String vnfFile = newRandomFileNamesFromFolder.get(0);
         getExtendTest().log(Status.INFO, String.format("Going to onboard the VNF %s......", vnfFile));
         System.out.println(String.format("Going to onboard the VNF %s......", vnfFile));
 
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(), amdocsLicenseMembers);
+        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(),
+            vendorLicenseModel);
         String vspName = createVendorSoftwareProduct.getName();
         //
         DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.getVspId());
@@ -129,7 +130,7 @@ public class VfModule extends SetupCDTest {
 
         // create service
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
         CompositionPage.searchForElement(vspName);

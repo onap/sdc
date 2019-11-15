@@ -20,7 +20,13 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import com.aventstack.extentreports.Status;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -40,6 +46,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.CompositionPage;
 import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
@@ -62,17 +69,16 @@ import org.openecomp.sdc.ci.tests.verificator.VfModuleVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-
 public class Vf extends SetupCDTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Vf.class);
 
     private String filePath;
 
@@ -420,21 +426,23 @@ public class Vf extends SetupCDTest {
     }
 
     @Test
-    public void changeInstanceNameInVfTest() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-        ResourceUIUtils.createVF(vfMetaData, getUser());
-
-        ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
-        CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
-        CanvasElement computeElement = vfCanvasManager.createElementOnCanvas(LeftPanelCanvasItems.COMPUTE);
-
-        String updatedInstanceName = "updatedName";
-        vfCanvasManager.updateElementNameInCanvas(computeElement, updatedInstanceName);
-
-        String actualSelectedInstanceName = CompositionPage.getSelectedInstanceName();
-        AssertJUnit.assertTrue(updatedInstanceName.equals(actualSelectedInstanceName));
+    public void changeInstanceNameInVfTest() {
+        final ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        final String updatedInstanceName = "updatedName";
+        try {
+            ResourceUIUtils.createVF(vfMetaData, getUser());
+            ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
+            final CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
+            final CanvasElement computeElement = vfCanvasManager.createElementOnCanvas(LeftPanelCanvasItems.COMPUTE);
+            vfCanvasManager.updateElementNameInCanvas(computeElement, updatedInstanceName);
+        } catch (final Exception e) {
+            final String errorMsg = "An unexpected error has occurred during the changeInstanceNameInVfTest";
+            takeScreenshot("ChangeInstanceNameInVf" + vfMetaData.getToscaResourceName(), errorMsg);
+            LOGGER.error(errorMsg, e);
+            fail(errorMsg);
+        }
+        assertEquals(CompositionPage.getSelectedInstanceName(), updatedInstanceName);
     }
-
 
     @Test
     public void submitVfForTestingWithNonCertifiedAsset() throws Exception {
@@ -535,6 +543,13 @@ public class Vf extends SetupCDTest {
         AssertJUnit.assertEquals(expectedHeaderAndRowSize, rows.size());
     }
 
+    private void takeScreenshot(final String screenshotName, final String errorMsg) {
+        try {
+            ExtentTestActions.addScreenshot(Status.ERROR, screenshotName, errorMsg);
+        } catch (final IOException e) {
+            LOGGER.warn("Could not take screenshot", e);
+        }
+    }
 
     @Override
     protected UserRoleEnum getRole() {

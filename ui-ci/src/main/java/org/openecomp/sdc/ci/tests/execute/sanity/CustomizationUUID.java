@@ -82,7 +82,7 @@ public class CustomizationUUID extends SetupCDTest {
 
         List customizationUUIDs = new ArrayList<String>();
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
@@ -125,7 +125,7 @@ public class CustomizationUUID extends SetupCDTest {
 
         List customizationUUIDs = new ArrayList<>();
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -181,7 +181,7 @@ public class CustomizationUUID extends SetupCDTest {
 
         List customizationUUIDs = new ArrayList<>();
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -221,7 +221,7 @@ public class CustomizationUUID extends SetupCDTest {
 
         List customizationUUIDs = new ArrayList<>();
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();

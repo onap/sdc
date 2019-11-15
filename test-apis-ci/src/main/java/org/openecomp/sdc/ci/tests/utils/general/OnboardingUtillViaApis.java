@@ -28,7 +28,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
@@ -52,8 +52,9 @@ public class OnboardingUtillViaApis {
 
 	public static VendorSoftwareProductObject createVspViaApis(ResourceReqDetails resourceReqDetails, String filepath, String vnfFile, User user) throws Exception {
 
-		AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
-		return VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
+		VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
+		return VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user,
+            vendorLicenseModel);
 	}
 	
 	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails) throws Exception {

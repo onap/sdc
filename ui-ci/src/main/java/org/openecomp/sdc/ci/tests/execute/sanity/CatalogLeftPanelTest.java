@@ -183,7 +183,7 @@ public class CatalogLeftPanelTest extends SetupCDTest {
     public void lastUpdatedService() throws Exception {
         // create service
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.clickCheckinButton(serviceMetadata.getName());
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);

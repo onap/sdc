@@ -22,44 +22,48 @@ package org.openecomp.sdc.ci.tests.execute.setup;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import org.openecomp.sdc.ci.tests.api.SomeInterface;
-
 import java.util.HashMap;
+import org.openecomp.sdc.ci.tests.api.SomeInterface;
 
 public class ExtentTestManager implements SomeInterface {
 
-    private static HashMap<Long, ExtentTest> extentTestMap = new HashMap<Long, ExtentTest>();
-    private static ExtentReports extent = ExtentManager.getReporter();
+    private final HashMap<Long, ExtentTest> extentTestByThreadIdMap = new HashMap<>();
+    private final ExtentReports extent = ExtentManager.getReporter();
+    private static final ExtentTestManager INSTANCE = new ExtentTestManager();
 
-    public ExtentTestManager() {
+    private ExtentTestManager() {
 
+    }
+
+    public static ExtentTestManager getInstance() {
+        return INSTANCE;
     }
 
     @Override
     public synchronized ExtentTest getTest() {
-        return extentTestMap.get(Thread.currentThread().getId());
+        return extentTestByThreadIdMap.get(Thread.currentThread().getId());
     }
 
-    public static synchronized void endTest() {
+    public synchronized void endTest() {
         extent.flush();
     }
 
-    public static synchronized ExtentTest startTest(String testName) {
+    public synchronized ExtentTest startTest(final String testName) {
         return startTest(testName, "");
     }
 
-    public static synchronized ExtentTest startTest(String testName, String desc) {
-        ExtentTest test = extent.createTest(testName, desc);
-        extentTestMap.put(Thread.currentThread().getId(), test);
+    public synchronized ExtentTest startTest(final String testName, final String desc) {
+        final ExtentTest test = extent.createTest(testName, desc);
+        extentTestByThreadIdMap.put(Thread.currentThread().getId(), test);
 
         return test;
     }
 
-    public static synchronized <T> void assignCategory(Class<T> clazz) {
+    public synchronized <T> void assignCategory(Class<T> clazz) {
         String[] parts = clazz.getName().split("\\.");
         String lastOne1 = parts[parts.length - 1];
         String lastOne2 = parts[parts.length - 2];
-        extentTestMap.get(Thread.currentThread().getId()).assignCategory(lastOne2 + "-" + lastOne1);
+        extentTestByThreadIdMap.get(Thread.currentThread().getId()).assignCategory(lastOne2 + "-" + lastOne1);
     }
 }
 

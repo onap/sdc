@@ -7,7 +7,7 @@
   <test name="vspValidationAllFlows">
     <classes>
 
-        <class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUI">
+        <class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUi">
             <methods>
                 <include name="onapOnboardVSPValidationsSanityFlow"/>
                 <include name="onapOnboardVSPValidationsConfigurationChangeCheck"/>

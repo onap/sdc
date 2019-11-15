@@ -230,7 +230,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 
         // 4. Create service.
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         // 5. Click on composition.
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();

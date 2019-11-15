@@ -105,7 +105,7 @@ public class Service extends SetupCDTest {
     @Test
     public void createService() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class Service extends SetupCDTest {
     public void updateService() throws Exception {
         // Create Service
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         // Update Service
         ServiceGeneralPage.deleteOldTags(serviceMetadata);
@@ -133,7 +133,7 @@ public class Service extends SetupCDTest {
         serviceMetadata.setContactId("cs6543");
         serviceMetadata.getTags().addAll(Arrays.asList("updatedTag", "oneMoreUpdatedTag", "lastOne UpdatedTag"));
         ServiceUIUtils.setServiceCategory(serviceMetadata, ServiceCategoriesEnum.VOIP);
-        ServiceUIUtils.fillServiceGeneralPage(serviceMetadata, getUser());
+        ServiceUIUtils.fillServiceGeneralPage(serviceMetadata);
         GeneralPageElements.clickCreateButton();
 
         ServiceVerificator.verifyServiceUpdatedInUI(serviceMetadata);
@@ -144,7 +144,7 @@ public class Service extends SetupCDTest {
 
         // create service
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         // Delete service
         //GeneralUIUtils.HighlightMyElement(GeneralUIUtils.getWebButton("delete_version"));
@@ -159,7 +159,7 @@ public class Service extends SetupCDTest {
     @Test
     public void checkoutServiceTest() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 
@@ -203,7 +203,7 @@ public class Service extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
         CompositionPage.searchForElement(atomicResourceMetaData.getName());
@@ -230,7 +230,7 @@ public class Service extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
         CompositionPage.searchForElement(resourceMetaData.getName());
@@ -242,7 +242,7 @@ public class Service extends SetupCDTest {
     @Test
     public void addDeploymentArtifactInCompositionScreenTest() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
         ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL, "OTHER");
@@ -265,7 +265,7 @@ public class Service extends SetupCDTest {
         List<String> artifactFileNames = new ArrayList<>();
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
         ArtifactInfo artifactInfo = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, descriptionText, ARTIFACT_LABEL, "OTHER");
@@ -302,7 +302,7 @@ public class Service extends SetupCDTest {
                 descriptionText = DESCRIPTION,
                 url = "http://kuku.com";
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
         new ArtifactInfo(filePath, fileName, descriptionText, ARTIFACT_LABEL, "OTHER");
@@ -326,7 +326,7 @@ public class Service extends SetupCDTest {
                 descriptionTextEdit = "kuku2";
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getServiceLeftMenu().moveToManagmentWorkflow();
         ServiceGeneralPage.fillAndAddNewWorkflow(descriptionText, descriptionText);
@@ -339,7 +339,7 @@ public class Service extends SetupCDTest {
     @Test
     public void deleteChangeVersionTest() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 
@@ -372,7 +372,7 @@ public class Service extends SetupCDTest {
     public void compositionScreenRightSideButtonsTest() throws Exception {
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 
@@ -529,7 +529,7 @@ public class Service extends SetupCDTest {
         //TODO Andrey should click on certify button
         ResourceGeneralPage.clickCertifyButton(atomicResourceMetaData.getName());
 
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -551,7 +551,7 @@ public class Service extends SetupCDTest {
     @Test
     public void isDisabledAndReadOnlyInCheckin() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
         GeneralPageElements.clickCheckinButton(serviceMetadata.getName());
         GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
 
@@ -578,7 +578,7 @@ public class Service extends SetupCDTest {
         GeneralPageElements.clickCheckinButton(resourceMetaData.getName());
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         String selectedInstanceName = addResourceToServiceInCanvas(resourceMetaData);
 
@@ -625,7 +625,7 @@ public class Service extends SetupCDTest {
 
         ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
         addResourceToServiceInCanvas(resourceMetaData);
         GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
         DeploymentArtifactPage.getLeftMenu().moveToDeploymentViewScreen();
@@ -657,7 +657,7 @@ public class Service extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         addResourceToServiceInCanvas(resourceMetaData);
 
@@ -680,7 +680,7 @@ public class Service extends SetupCDTest {
 		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         addResourceToServiceInCanvas(resourceMetaData);
 

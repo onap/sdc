@@ -52,7 +52,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
     @Test
     public void createServiceWithoutRIAndArtifacts() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
         //TODO Andrey should click on certify button
         ResourceGeneralPage.clickSubmitForTestingButton(serviceMetadata.getName());
     }
@@ -63,7 +63,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
     @Test
     public void createServiceWithVlAndWithoutArtfiacts() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -100,7 +100,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
 		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
         CanvasElement resourceInstance = canvasManager.createElementOnCanvas(resourceMetaData.getName());

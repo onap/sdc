@@ -229,9 +229,9 @@ public class CreatePath extends SetupCDTest {
         //governor
         reloginWithNewRole(UserRoleEnum.GOVERNOR);
         GeneralUIUtils.findComponentAndClick(serviceMetadata1.getName());
-        GovernorOperationPage.approveSerivce(serviceMetadata1.getName());
+        GovernorOperationPage.approveService(serviceMetadata1.getName());
         GeneralUIUtils.findComponentAndClick(serviceMetadata2.getName());
-        GovernorOperationPage.approveSerivce(serviceMetadata2.getName());
+        GovernorOperationPage.approveService(serviceMetadata2.getName());
 
         //create service for complex service
         reloginWithNewRole(UserRoleEnum.DESIGNER);

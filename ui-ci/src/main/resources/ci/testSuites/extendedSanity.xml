@@ -7,7 +7,7 @@
     <classes>
     	
     	<class name="org.openecomp.sdc.ci.tests.execute.sanity.ToscaValidationTest"/>
-   		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUI">
+   		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUi">
    			  <methods>
 				<exclude name="onboardVNFTestSanity"/>
 				<exclude name="onboardVNFShotFlow"/>

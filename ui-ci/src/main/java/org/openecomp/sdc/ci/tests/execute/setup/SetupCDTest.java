@@ -27,12 +27,11 @@ import com.aventstack.extentreports.Status;
 import net.lightbody.bmp.core.har.Har;
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.api.SomeInterface;
 import org.openecomp.sdc.ci.tests.config.UserCredentialsFromFile;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.UserCredentials;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUI;
+import org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUi;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentManager.suiteNameXml;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.run.StartTest;
@@ -46,6 +45,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.ITestContext;
@@ -66,45 +66,43 @@ import java.util.UUID;
 
 public abstract class SetupCDTest extends DriverFactory {
 
-    //	private static final String RE_RUN = "ReRun - ";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SetupCDTest.class);
+
     private static final String RE_RUN = "<html><font color=\"red\">ReRun - </font></html>";
     private static final String WEB_SEAL_PASSWORD = "123123a";
     protected static final String HEAT_FILE_YAML_NAME_PREFIX = "Heat-File";
     protected static final String HEAT_FILE_YAML_NAME_SUFFIX = ".yaml";
     private static final int BASIC_SLEEP_DURATION = 1000;
 
-    public SetupCDTest() {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        lc.getLogger("org.apache").setLevel(Level.INFO);
-    }
-
     /**************** CONSTANTS ****************/
     private static final String CREDENTIALS_FILE = "credentials.yaml";
+
     private static final String REPORT_FILE_NAME = "SDC_UI_Extent_Report.html";
     private static final String REPORT_FOLDER = "." + File.separator + "ExtentReport" + File.separator;
     private static final String SCREENSHOT_FOLDER = REPORT_FOLDER + "screenshots" + File.separator;
     private static final String HAR_FILES_FOLDER_NAME = "har_files";
     private static final String HAR_FILES_FOLDER = REPORT_FOLDER + HAR_FILES_FOLDER_NAME + File.separator;
 
-
     private static final String SHORT_CSV_REPORT_FILE_NAME = "ShortReport.csv";
-    private static final int NUM_OF_ATTEMPTS_TO_REFTRESH = 2;
 
+    private static final int NUM_OF_ATTEMPTS_TO_REFTRESH = 2;
 
     /**************** PRIVATES ****************/
     private static String url;
+
     private static boolean uiSimulator;
     private static boolean localEnv = true;
     private static OnboardCSVReport csvReport;
     private final UserCredentialsFromFile credentialsIns = UserCredentialsFromFile.getInstance();
-
     private static ITestContext myContext;
 
+    public SetupCDTest() {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        lc.getLogger("org.apache").setLevel(Level.INFO);
+    }
 
-    /**************** METHODS ****************/
     public static ExtentTest getExtendTest() {
-        SomeInterface testManager = new ExtentTestManager();
-        return testManager.getTest();
+        return ExtentTestManager.getInstance().getTest();
     }
 
     public static WindowTest getWindowTest() {
@@ -162,12 +160,12 @@ public abstract class SetupCDTest extends DriverFactory {
             System.out.println("ExtentReport instance started from BeforeMethod...");
             String suiteName = ExtentManager.getSuiteName(context);
             if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) {
-                ExtentTestManager.startTest(RE_RUN + method.getName());
+                ExtentTestManager.getInstance().startTest(RE_RUN + method.getName());
             } else {
-                ExtentTestManager.startTest(method.getName());
+                ExtentTestManager.getInstance().startTest(method.getName());
             }
 
-            ExtentTestManager.assignCategory(this.getClass());
+            ExtentTestManager.getInstance().assignCategory(this.getClass());
             setBrowserBeforeTest(getRole());
         } else {
             System.out.println("ExtentReport instance started from Test...");
@@ -186,8 +184,7 @@ public abstract class SetupCDTest extends DriverFactory {
 
     /**************** AFTER ****************/
     @AfterMethod(alwaysRun = true)
-    public void quitAfterTest(ITestResult result, ITestContext context) throws Exception {
-
+    public void quitAfterTest(final ITestResult result, final ITestContext context) throws Exception {
         try {
             ReportAfterTestManager.report(result, context);
             GeneralUIUtils.closeErrorMessage();
@@ -197,35 +194,36 @@ public abstract class SetupCDTest extends DriverFactory {
                     addTrafficFileToReport(result);
                 }
 
-                if (result.getInstanceName().equals(OnboardingFlowsUI.class.getName()) && result.getStatus() == ITestResult.FAILURE) {
-                    System.out.println("Onboarding test failed, closign browser....");
-                    getExtendTest().log(Status.INFO, "Onboarding test failed, closing browser....");
+                if (result.getInstanceName().equals(OnboardingFlowsUi.class.getName()) && result.getStatus() == ITestResult.FAILURE) {
+                    final String msg = "Onboarding test failed, closing browser";
+                    LOGGER.info(msg);
+                    getExtendTest().log(Status.INFO, msg);
                     quitDriver();
                 } else if (!getUser().getRole().toLowerCase().equals(UserRoleEnum.ADMIN.name().toLowerCase())) {
                     boolean navigateToHomePageSuccess = HomePage.navigateToHomePage();
                     if (!navigateToHomePageSuccess) {
-                        System.out.println("Navigating to homepage failed, reopening driver....");
-                        getExtendTest().log(Status.INFO, "Navigating to homepage failed, reopening driver....");
+                        final String msg = "Navigating to homepage failed, reopening driver";
+                        LOGGER.info(msg);
+                        getExtendTest().log(Status.INFO, msg);
                         quitDriver();
                     }
                 }
 
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (final Exception e) {
+                LOGGER.error("An unexpected error has occurred", e);
                 getExtendTest().log(Status.ERROR, "Exception:" + e.toString());
             }
 
 
-            ExtentTestManager.endTest();
-            String suiteName = ExtentManager.getSuiteName(context);
+            ExtentTestManager.getInstance().endTest();
+            final String suiteName = ExtentManager.getSuiteName(context);
 //			write result to csv file
-            if ((!suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) && (result.getStatus() == ITestResult.SKIP)) {
+            if ((!suiteNameXml.TESTNG_FAILED_XML_NAME.getValue().equals(suiteName)) && (result.getStatus() == ITestResult.SKIP)) {
                 addResultToCSV(result, context);
             }
-            if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue()) && !(result.getStatus() == ITestResult.SUCCESS)) {
+            if (suiteNameXml.TESTNG_FAILED_XML_NAME.getValue().equals(suiteName) && !(result.getStatus() == ITestResult.SUCCESS)) {
                 addResultToCSV(result, context);
             }
-//	    	ExtentManager.closeReporter();
             FileHandling.cleanCurrentDownloadDir();
         }
 
@@ -240,11 +238,11 @@ public abstract class SetupCDTest extends DriverFactory {
     }
 
     private void generateReport4Jenkins(ITestContext context) {
-        String suiteName = ExtentManager.getSuiteName(context);
-        JSONObject obj = new JSONObject();
-        String success = Integer.toString(context.getPassedTests().size());
-        String failed = Integer.toString(context.getFailedTests().size());
-        String total = Integer.toString(context.getFailedTests().size() + context.getPassedTests().size());
+        final String suiteName = ExtentManager.getSuiteName(context);
+        final JSONObject obj = new JSONObject();
+        final String success = Integer.toString(context.getPassedTests().size());
+        final String failed = Integer.toString(context.getFailedTests().size());
+        final String total = Integer.toString(context.getFailedTests().size() + context.getPassedTests().size());
         obj.put("projectName", "SDC-ONAP-UI-Automation-" + suiteName);
         obj.put("projectVersion", AutomationUtils.getOSVersion());
         obj.put("platform", "Linux");
@@ -253,17 +251,13 @@ public abstract class SetupCDTest extends DriverFactory {
         obj.put("failed", failed);
 
         try (FileWriter file = new FileWriter(getReportFolder() + "jenkinsResults.json")) {
-
             file.write(obj.toJSONString());
             file.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (final IOException e) {
+            LOGGER.debug("An error has occurred while writing 'jenkinsResults.json' file", e);
         }
 
-        System.out.print(obj);
-
-
+        LOGGER.debug(obj.toJSONString());
     }
 
 
@@ -299,23 +293,20 @@ public abstract class SetupCDTest extends DriverFactory {
     }
 
 
-    private static void navigateToUrl(String url) throws Exception {
+    private static void navigateToUrl(final String url) {
         try {
-            System.out.println("Deleting cookies...");
+            LOGGER.info("Deleting cookies");
             deleteCookies();
-
-            System.out.println("Navigating to URL : " + url);
+            LOGGER.info("Navigating to URL : " + url);
             getDriver().navigate().to(url);
             GeneralUIUtils.waitForLoader();
-
-            System.out.println("Zooming out...");
+            LOGGER.info("Zooming out");
             GeneralUIUtils.windowZoomOutUltimate();
-
         } catch (Exception e) {
-            String msg = "Browser is unreachable";
-            System.out.println(msg);
-            getExtendTest().log(Status.ERROR, msg);
-            Assert.fail(msg);
+            final String errorMsg = String.format("Could not navigate to '%s'", url);
+            LOGGER.error(errorMsg, e);
+            getExtendTest().log(Status.ERROR, errorMsg);
+            Assert.fail(errorMsg);
         }
     }
 
@@ -415,12 +406,16 @@ public abstract class SetupCDTest extends DriverFactory {
         passwordTextbox.sendKeys(userId.getPassword());
     }
 
-    private void loginWithUser(UserRoleEnum role) {
+    private void loginWithUser(final UserRoleEnum role) {
         try {
-            getExtendTest().log(Status.INFO, String.format("Login as user %s", role.name().toUpperCase()));
+            final String msg = String
+                .format("Login as user '%s', role '%s'", role.getUserId(), role.getUserRole());
+            getExtendTest().log(Status.INFO, msg);
+            LOGGER.info(msg);
             loginToSystem(role);
+            LOGGER.debug("Going to home page");
             goToHomePage(role);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         } finally {
             getWindowTest().setPreviousRole(getWindowTest().getUser().getRole());
@@ -441,21 +436,17 @@ public abstract class SetupCDTest extends DriverFactory {
         return getWindowTest().getUser();
     }
 
-    private void setBrowserBeforeTest(UserRoleEnum role) {
-        System.out.println(String.format("Setup before test as %s.", role.toString().toUpperCase()));
-        try {
-            System.out.println("Previous role is : " + getWindowTest().getPreviousRole() + " ; Current role is : " + role.name());
-            if (!getWindowTest().getPreviousRole().toLowerCase().equals(role.name().toLowerCase())) {
-                System.out.println("Roles are different, navigate and login");
-                navigateAndLogin(role);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void setBrowserBeforeTest(final UserRoleEnum role) {
+        LOGGER.info(String.format("Setup before test for role '%s'", role.name()));
+        if (!getWindowTest().getPreviousRole().equalsIgnoreCase(role.name())) {
+            LOGGER.info(String.format("Logging in with new role '%s'. Previous role was: '%s'.", role.name(),
+                getWindowTest().getPreviousRole()));
+            navigateAndLogin(role);
         }
     }
 
-    private void navigateAndLogin(UserRoleEnum role) throws Exception {
-        getWindowTest().setRefreshAttempts(getWindowTest().getRefreshAttempts() != 0 ? getWindowTest().getRefreshAttempts() : 0);
+    private void navigateAndLogin(final UserRoleEnum role) {
+        getWindowTest().setRefreshAttempts(getWindowTest().getRefreshAttempts());
         setUser(role);
         navigateToUrl(url);
         loginWithUser(role);
@@ -471,8 +462,7 @@ public abstract class SetupCDTest extends DriverFactory {
         return user;
     }
 
-    protected void reloginWithNewRole(UserRoleEnum role) throws Exception {
-        System.out.println(String.format("Setup before relogin as %s", role.toString().toUpperCase()));
+    protected void reloginWithNewRole(final UserRoleEnum role) {
         navigateAndLogin(role);
     }
 
@@ -500,15 +490,15 @@ public abstract class SetupCDTest extends DriverFactory {
     public void setLog(String fromDataProvider) {
 
         String suiteName = ExtentManager.getSuiteName(myContext);
-        if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) {
-            ExtentTestManager.startTest(RE_RUN + Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
+        if (suiteNameXml.TESTNG_FAILED_XML_NAME.getValue().equals(suiteName)) {
+            ExtentTestManager.getInstance().startTest(RE_RUN + Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
         } else {
-            ExtentTestManager.startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
+            ExtentTestManager.getInstance().startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
         }
 
 
         getWindowTest().setAddedValueFromDataProvider(fromDataProvider);
-        ExtentTestManager.assignCategory(this.getClass());
+        ExtentTestManager.getInstance().assignCategory(this.getClass());
         setBrowserBeforeTest(getRole());
     }
 

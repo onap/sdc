@@ -32,7 +32,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
-import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
+import org.openecomp.sdc.ci.tests.data.providers.OnboardingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
@@ -72,13 +72,13 @@ public class Onboard extends ComponentBaseTest {
 	}
 	
 
-	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "VNF_List")
 	public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception {
 		setLog(vnfFile);
 		runOnboardToDistributionFlow(filePath, vnfFile, ResourceTypeEnum.VF);
 	}
 
-	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "PNF_List")
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "PNF_List")
 	public void onboardPNFFlow(String filePath, String pnfFile) throws Exception {
 		setLog(pnfFile);
 		runOnboardToDistributionFlow(filePath, pnfFile, ResourceTypeEnum.PNF);

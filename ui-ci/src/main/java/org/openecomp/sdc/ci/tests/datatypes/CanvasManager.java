@@ -385,7 +385,7 @@ public final class CanvasManager {
     }
 
     private void addFirstReqOrCap() {
-        GeneralUIUtils.getWebElementsListByClassName(DataTestIdEnum.LinkMenuItems.LINK_ITEM_CAP_Or_REQ.getValue()).get(0).click();
+        GeneralUIUtils.getWebElementsListByClassName(DataTestIdEnum.LinkMenuItems.LINK_ITEM_CAP_OR_REQ.getValue()).get(0).click();
     }
 
     private void linkMenuClickOnNextButton() throws Exception {

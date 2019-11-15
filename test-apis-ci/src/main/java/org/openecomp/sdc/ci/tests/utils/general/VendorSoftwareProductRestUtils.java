@@ -61,10 +61,11 @@ import static org.testng.AssertJUnit.assertEquals;
 
 public class VendorSoftwareProductRestUtils {
 
-    public static VendorSoftwareProductObject createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers, Map<CvfcTypeEnum, String> cvfcArtifacts)
+    public static VendorSoftwareProductObject createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, VendorLicenseModel vendorLicenseModel, Map<CvfcTypeEnum, String> cvfcArtifacts)
             throws Exception {
 
-        VendorSoftwareProductObject vendorSoftwareProductObject = createVSP(resourceReqDetails, heatFileName, filepath, user, amdocsLicenseMembers);
+        VendorSoftwareProductObject vendorSoftwareProductObject = createVSP(resourceReqDetails, heatFileName, filepath, user,
+            vendorLicenseModel);
         if(cvfcArtifacts != null && ! cvfcArtifacts.isEmpty()){
             addCvfcArtifacts(cvfcArtifacts, user, vendorSoftwareProductObject);
         }
@@ -72,11 +73,11 @@ public class VendorSoftwareProductRestUtils {
         return vendorSoftwareProductObject;
     }
 
-    public static VendorSoftwareProductObject createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers)
+    public static VendorSoftwareProductObject createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, VendorLicenseModel vendorLicenseModel)
             throws Exception {
 
         Map<CvfcTypeEnum, String> cvfcArtifacts = new HashMap<>();
-        return createVendorSoftwareProduct(resourceReqDetails, heatFileName, filepath, user, amdocsLicenseMembers, cvfcArtifacts);
+        return createVendorSoftwareProduct(resourceReqDetails, heatFileName, filepath, user, vendorLicenseModel, cvfcArtifacts);
     }
 
     /**
@@ -100,24 +101,26 @@ public class VendorSoftwareProductRestUtils {
 
     }
 
-    public static VendorSoftwareProductObject createAndFillVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filePath, User user, AmdocsLicenseMembers amdocsLicenseMembers, Map<CvfcTypeEnum, String> cvfcArtifacts)
+    public static VendorSoftwareProductObject createAndFillVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filePath, User user, VendorLicenseModel vendorLicenseModel, Map<CvfcTypeEnum, String> cvfcArtifacts)
             throws Exception {
 
-        VendorSoftwareProductObject createVendorSoftwareProduct = createVendorSoftwareProduct(resourceReqDetails, heatFileName, filePath, user, amdocsLicenseMembers, cvfcArtifacts);
+        VendorSoftwareProductObject createVendorSoftwareProduct = createVendorSoftwareProduct(resourceReqDetails, heatFileName, filePath, user,
+            vendorLicenseModel, cvfcArtifacts);
         VendorSoftwareProductObject vendorSoftwareProductObject = fillVendorSoftwareProductObjectWithMetaData(heatFileName, createVendorSoftwareProduct);
         return vendorSoftwareProductObject;
 
     }
 
 
-    public static VendorSoftwareProductObject createVSP(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers) throws Exception {
+    public static VendorSoftwareProductObject createVSP(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, VendorLicenseModel vendorLicenseModel) throws Exception {
         String vspName = handleFilename(heatFileName);
 
         if(ComponentBaseTest.getExtendTest() != null){
             ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor software product");
         }
 
-        Pair<RestResponse, VendorSoftwareProductObject> createNewVspPair = createNewVendorSoftwareProduct(resourceReqDetails, vspName, amdocsLicenseMembers, user);
+        Pair<RestResponse, VendorSoftwareProductObject> createNewVspPair = createNewVendorSoftwareProduct(resourceReqDetails, vspName,
+            vendorLicenseModel, user);
         assertEquals("did not succeed to create new VSP", 200,createNewVspPair.left.getErrorCode().intValue());
 
         RestResponse uploadHeatPackage = uploadHeatPackage(filepath, heatFileName,  createNewVspPair.right, user);
@@ -320,13 +323,14 @@ public class VendorSoftwareProductRestUtils {
         return response;
     }
 
-    public static Pair<RestResponse, VendorSoftwareProductObject> createNewVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String vspName, AmdocsLicenseMembers amdocsLicenseMembers, User user) throws Exception {
+    public static Pair<RestResponse, VendorSoftwareProductObject> createNewVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String vspName, VendorLicenseModel vendorLicenseModel, User user) throws Exception {
 
         Config config = Utils.getConfig();
         String url = String.format(Urls.CREATE_VENDOR_SOFTWARE_PRODUCT, config.getOnboardingBeHost(), config.getOnboardingBePort());
         String userId = user.getUserId();
         VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
-        LicensingData licensingData = new LicensingData(amdocsLicenseMembers.getVendorLicenseAgreementId(), Arrays.asList(amdocsLicenseMembers.getFeatureGroupId()));
+        LicensingData licensingData = new LicensingData(
+            vendorLicenseModel.getVendorLicenseAgreementId(), Arrays.asList(vendorLicenseModel.getFeatureGroupId()));
         ResourceCategoryEnum resourceCategoryEnum = ResourceCategoryEnum.findEnumNameByValues(resourceReqDetails.getCategories().get(0).getName(), resourceReqDetails.getCategories().get(0).getSubcategories().get(0).getName());
 
         vendorSoftwareProductObject.setName(vspName);
@@ -334,11 +338,11 @@ public class VendorSoftwareProductRestUtils {
         vendorSoftwareProductObject.setCategory(resourceCategoryEnum.getCategoryUniqeId());
         vendorSoftwareProductObject.setSubCategory(resourceCategoryEnum.getSubCategoryUniqeId());
         vendorSoftwareProductObject.setOnboardingMethod("NetworkPackage");
-        vendorSoftwareProductObject.setVendorName(amdocsLicenseMembers.getVendorLicenseName());
-        vendorSoftwareProductObject.setVendorId(amdocsLicenseMembers.getVendorId());
+        vendorSoftwareProductObject.setVendorName(vendorLicenseModel.getVendorLicenseName());
+        vendorSoftwareProductObject.setVendorId(vendorLicenseModel.getVendorId());
         vendorSoftwareProductObject.setIcon("icon");
         vendorSoftwareProductObject.setLicensingData(licensingData);
-        vendorSoftwareProductObject.setLicensingVersion(amdocsLicenseMembers.getVersion());
+        vendorSoftwareProductObject.setLicensingVersion(vendorLicenseModel.getVersion());
 
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
         HttpRequest http = new HttpRequest();
@@ -512,16 +516,17 @@ public class VendorSoftwareProductRestUtils {
         return response;
     }
 
-    public static VendorSoftwareProductObject updateVSPWithNewVLMParameters(VendorSoftwareProductObject vendorSoftwareProductObject, AmdocsLicenseMembers amdocsLicenseMembers, User user) throws Exception {
+    public static VendorSoftwareProductObject updateVSPWithNewVLMParameters(VendorSoftwareProductObject vendorSoftwareProductObject, VendorLicenseModel vendorLicenseModel, User user) throws Exception {
 
         RestResponse createMethod = creationMethodVendorSoftwareProduct(vendorSoftwareProductObject, user);
         assertEquals("did not succeed to checkout new VSP", 200, createMethod.getErrorCode().intValue());
 //        vendorSoftwareProductObject.setComponentId(ResponseParser.getValueFromJsonResponse(createMethod.getResponse(), "id"));
 
-        String licensingVersion = amdocsLicenseMembers.getVersion();
-        LicensingData licensingData = new LicensingData(amdocsLicenseMembers.getVendorLicenseAgreementId(), Arrays.asList(amdocsLicenseMembers.getFeatureGroupId()));
-        vendorSoftwareProductObject.setVendorId(amdocsLicenseMembers.getVendorId());
-        vendorSoftwareProductObject.setVendorName(amdocsLicenseMembers.getVendorLicenseName());
+        String licensingVersion = vendorLicenseModel.getVersion();
+        LicensingData licensingData = new LicensingData(
+            vendorLicenseModel.getVendorLicenseAgreementId(), Arrays.asList(vendorLicenseModel.getFeatureGroupId()));
+        vendorSoftwareProductObject.setVendorId(vendorLicenseModel.getVendorId());
+        vendorSoftwareProductObject.setVendorName(vendorLicenseModel.getVendorLicenseName());
         vendorSoftwareProductObject.setLicensingVersion(licensingVersion);
         vendorSoftwareProductObject.setLicensingData(licensingData);
 
@@ -710,7 +715,9 @@ public class VendorSoftwareProductRestUtils {
         return vendorSoftwareProductObject;
     }
 
-    public static void updateVendorSoftwareProductToNextVersion(VendorSoftwareProductObject vendorSoftwareProductObject, User user, String filepath, String heatFileName) throws Throwable {
+    public static void updateVendorSoftwareProductToNextVersion(VendorSoftwareProductObject vendorSoftwareProductObject,
+                                                                User user, String filepath,
+                                                                String heatFileName) throws Exception {
 
         RestResponse createMethod = creationMethodVendorSoftwareProduct(vendorSoftwareProductObject, user);
         assertEquals("did not succeed to createMethod for new VSP", 200, createMethod.getErrorCode().intValue());
