@@ -22,7 +22,7 @@ package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
@@ -58,7 +58,7 @@ public class OnboardingUiUtils {
         boolean vspFound = HomePage.searchForVSP(vspName);
 
         if (vspFound) {
-            List<WebElement> elementsFromTable = HomePage.getElemenetsFromTable();
+            List<WebElement> elementsFromTable = GeneralPageElements.getElementsFromTable();
             elementsFromTable.get(1).click();
             GeneralUIUtils.waitForLoader();
 
@@ -135,7 +135,7 @@ public class OnboardingUiUtils {
         importUpdateVSP(vsp, false, false);
     }
 
-    public static void updateVnfAndValidate(String filePath, VendorSoftwareProductObject vsp, String updatedVnfFile, User user) throws Throwable {
+    public static void updateVnfAndValidate(String filePath, VendorSoftwareProductObject vsp, String updatedVnfFile, User user) throws Exception {
         ExtentTestActions.log(Status.INFO, String.format("Going to update the VNF with %s......", updatedVnfFile));
         System.out.println(String.format("Going to update the VNF with %s......", updatedVnfFile));
 
@@ -147,11 +147,9 @@ public class OnboardingUiUtils {
     }
 
     public static VendorSoftwareProductObject createVSP(ResourceReqDetails resourceReqDetails, String vnfFile, String filepath, User user) throws Exception {
-        ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
-        System.out.println(String.format("Going to onboard the VNF %s", vnfFile));
-
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
-        return VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
+        ExtentTestActions.log(Status.INFO, String.format("Creating VSP from package '%s'", vnfFile));
+        final VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
+        return VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filepath, user, vendorLicenseModel);
     }
 
 
@@ -159,8 +157,9 @@ public class OnboardingUiUtils {
         ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
         System.out.println(String.format("Going to onboard the VNF %s", vnfFile));
 
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
-        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
+        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user,
+            vendorLicenseModel);
         String vspName = createVendorSoftwareProduct.getName();
 
         DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.getVspId());

@@ -23,8 +23,9 @@ package org.openecomp.sdc.ci.tests.utilities;
 import com.aventstack.extentreports.Status;
 import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.exception.GeneralUiRuntimeException;
 import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
-import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -50,11 +51,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest.getExtendTest;
 import static org.testng.AssertJUnit.assertTrue;
 
 
 public final class GeneralUIUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeneralUIUtils.class);
 
     private static final String DATA_TESTS_ID = "//*[@data-tests-id='%1$s' or @data-test-id='%1$s']";
     private static final String COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW = "color: yellow; border: 4px solid yellow;";
@@ -66,24 +72,19 @@ public final class GeneralUIUtils {
     private static final int NAP_PERIOD = 100;
     private static final int DURATION_FORMATIN = 60;
 
+    private GeneralUIUtils () {
+
+    }
+
     public static int getTimeOut() {
         return TIME_OUT;
     }
 
-    /**************** DRIVER ****************/
-
     public static WebDriver getDriver() {
-        try {
-            return DriverFactory.getDriver();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return DriverFactory.getDriver();
     }
 
-    /****************************************/
-
-    public static List<WebElement> getElemenetsFromTable(By by) {
+    public static List<WebElement> getElementsByLocator(By by) {
         return getDriver().findElements(by);
     }
 
@@ -115,9 +116,10 @@ public final class GeneralUIUtils {
         return getWebElementByTestID(dataTestId, TIME_OUT);
     }
 
-    public static WebElement getWebElementByTestID(String dataTestId, int timeout) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeout);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
+    public static WebElement getWebElementByTestID(final String dataTestId, final int timeout) {
+        final WebDriverWait wait = new WebDriverWait(getDriver(), timeout);
+        return wait
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
     }
 
     public static boolean isWebElementExistByTestId(String dataTestId) {
@@ -224,16 +226,25 @@ public final class GeneralUIUtils {
     }
 
     public static void clickOnElementByTestId(String dataTestId) {
+        LOGGER.debug("Clicking on the element by test id " + dataTestId);
         clickOnElementByTestIdWithoutWait(dataTestId);
+        LOGGER.debug("Waiting after clicking element by test id " + dataTestId);
+        ultimateWait();
+        LOGGER.debug(String.format("Waiting after clicking element by test id '%s' finished", dataTestId));
+    }
+
+    public static void clickOnElementChildByTestId(String dataTestId) {
+        clickOnElementChildByTestIdWithoutWait(dataTestId);
         ultimateWait();
     }
 
-    public static void clickOnElementByTestIdWithoutWait(String dataTestId) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId)))).click();
+    public static void clickOnElementByTestIdWithoutWait(final String dataTestId) {
+        final WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
+        wait
+            .until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId)))).click();
     }
 
-    public static void clickOnElementByInputTestIdWithoutWait(String dataTestId) {
+    public static void clickOnElementChildByTestIdWithoutWait(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId) + "//*"))).click();
     }
@@ -308,31 +319,15 @@ public final class GeneralUIUtils {
     }
 
     public static void waitForLoader(int timeOut) {
+        final String loaderClass = "tlv-loader";
         final int sleepDuration = 500;
         sleep(sleepDuration);
-        waitForElementInVisibilityBy(By.className("tlv-loader"), timeOut);
+        LOGGER.debug("Waiting {}s for '.{}'", timeOut, loaderClass);
+        waitForElementInVisibilityBy(By.className(loaderClass), timeOut);
     }
 
-    public static void findComponentAndClick(String resourceName) throws Exception {
-        SetupCDTest.getExtendTest().log(Status.INFO, "Searching for " + resourceName + " in homepage");
-        WebElement searchTextbox = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue());
-        try {
-            searchTextbox.clear();
-            searchTextbox.sendKeys(resourceName);
-            ultimateWait();
-        } catch (Exception e) {
-            SetupCDTest.getExtendTest().log(Status.INFO, "Can't interact with search bar");
-            e.printStackTrace();
-        }
-
-        try {
-            SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on the %s component from home screen", resourceName));
-            clickOnElementByTestId(resourceName);
-            getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.LIFECYCLE_STATE.getValue());
-        } catch (Exception e) {
-            SetupCDTest.getExtendTest().log(Status.INFO, "Can't click on component named " + resourceName);
-            e.printStackTrace();
-        }
+    public static void findComponentAndClick(final String resourceName) {
+        HomePage.findComponentAndClick(resourceName);
     }
 
     public static void windowZoomOut() {
@@ -356,18 +351,19 @@ public final class GeneralUIUtils {
     public static void sleep(int duration) {
         try {
             Thread.sleep(duration);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new GeneralUiRuntimeException("The thread was interrupted during a sleep", e);
         }
     }
 
-    public static void moveToStep(DataTestIdEnum.StepsEnum stepName) {
-        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Going to %s page ", stepName.toString()));
+    public static void moveToStep(final DataTestIdEnum.StepsEnum stepName) {
+        getExtendTest().log(Status.INFO, String.format("Going to %s page ", stepName.toString()));
         moveToStep(stepName.getValue());
     }
 
-    public static void moveToStep(String dataTestId) {
-        clickOnElementByTestId(dataTestId);
+    public static void moveToStep(final String dataTestId) {
+        clickOnElementChildByTestId(dataTestId);
     }
 
 
@@ -436,7 +432,6 @@ public final class GeneralUIUtils {
             ultimateWait();
             WebElement area = getWebElementByTestID(areaId);
             JavascriptExecutor javascript = (JavascriptExecutor) getDriver();
-            //highlightMyElement(area);
             Object executeScript = javascript.executeScript("arguments[0].click();", area, COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW);
             waitForLoader(timeout);
             ultimateWait();
@@ -450,7 +445,6 @@ public final class GeneralUIUtils {
 
     public static WebElement clickOnAreaJS(WebElement areaId) throws InterruptedException {
         JavascriptExecutor javascript = (JavascriptExecutor) getDriver();
-        //highlightMyElement(area);
         javascript.executeScript("arguments[0].click();", areaId, COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW);
         return areaId;
     }
@@ -479,10 +473,12 @@ public final class GeneralUIUtils {
     }
 
     public static void waitForAngular() {
+        LOGGER.debug("Waiting for angular");
         final int webDriverWaitingTime = 90;
         WebDriverWait wait = new WebDriverWait(getDriver(), webDriverWaitingTime, NAP_PERIOD);
         wait.until(AdditionalConditions.pageLoadWait());
         wait.until(AdditionalConditions.angularHasFinishedProcessing());
+        LOGGER.debug("Waiting for angular finished");
     }
 
     public static Object getAllElementAttributes(WebElement element) {
@@ -523,7 +519,7 @@ public final class GeneralUIUtils {
         long estimateTime = System.nanoTime();
         long duration = TimeUnit.NANOSECONDS.toSeconds(estimateTime - startTime);
         if (duration > TIME_OUT) {
-            SetupCDTest.getExtendTest().log(Status.WARNING, String.format("Delays on page, %d seconds", duration));
+            getExtendTest().log(Status.WARNING, String.format("Delays on page, %d seconds", duration));
         }
     }
 
@@ -604,7 +600,9 @@ public final class GeneralUIUtils {
 
     public static void waitForBackLoader(int timeOut) {
         sleep(NAP_PERIOD);
-        waitForElementInVisibilityBy(By.className("tlv-loader-back"), timeOut);
+        final String backLoaderClass = "tlv-loader-back";
+        LOGGER.debug("Waiting {}s for '.{}'", timeOut, backLoaderClass);
+        waitForElementInVisibilityBy(By.className(backLoaderClass), timeOut);
     }
 
     public static void addStringtoClipboard(String text) {
@@ -669,23 +667,23 @@ public final class GeneralUIUtils {
     }
 
     public static void clickOnBrowserBackButton() throws Exception {
-        SetupCDTest.getExtendTest().log(Status.INFO, "Going to press on back browser button.");
+        getExtendTest().log(Status.INFO, "Going to press on back browser button.");
         getDriver().navigate().back();
         ultimateWait();
     }
 
     public static String copyCurrentURL() throws Exception {
-        SetupCDTest.getExtendTest().log(Status.INFO, "Copying current URL");
+        getExtendTest().log(Status.INFO, "Copying current URL");
         return getDriver().getCurrentUrl();
     }
 
     public static void navigateToURL(String url) throws Exception {
-        SetupCDTest.getExtendTest().log(Status.INFO, "Navigating to URL " + url);
+        getExtendTest().log(Status.INFO, "Navigating to URL " + url);
         getDriver().navigate().to(url);
     }
 
     public static void refreshWebpage() throws Exception {
-        SetupCDTest.getExtendTest().log(Status.INFO, "Refreshing Webpage");
+        getExtendTest().log(Status.INFO, "Refreshing Webpage");
         getDriver().navigate().refresh();
         ultimateWait();
     }

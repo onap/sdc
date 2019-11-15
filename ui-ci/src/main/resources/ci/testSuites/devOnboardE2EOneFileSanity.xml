@@ -4,7 +4,7 @@
   <test name="uitests">
     <classes>
     	<!--onboard-->
-   		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUI">
+   		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUi">
    			  <methods>
 				<include name="onboardVNFTestSanityOneFile"/>
 			  </methods>

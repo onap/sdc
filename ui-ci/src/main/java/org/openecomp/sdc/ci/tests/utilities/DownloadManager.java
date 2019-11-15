@@ -24,6 +24,7 @@ import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openqa.selenium.WebElement;
 
@@ -50,8 +51,8 @@ public class DownloadManager {
         boolean vspFound = HomePage.searchForVSP(vspName);
         if (vspFound) {
             ExtentTestActions.log(Status.INFO, String.format("Going to downloading VSP %s", vspName));
-            List<WebElement> elemenetsFromTable = HomePage.getElemenetsFromTable();
-            elemenetsFromTable.get(1).click();
+            final List<WebElement> elementsFromTable = GeneralPageElements.getElementsFromTable();
+            elementsFromTable.get(1).click();
             GeneralUIUtils.waitForLoader();
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.DOWNLOAD_CSAR.getValue());
             ExtentTestActions.log(Status.INFO, "Succeeded to downloaded CSAR file named " + vspName + " into folder " + SetupCDTest.getWindowTest().getDownloadDirectory());

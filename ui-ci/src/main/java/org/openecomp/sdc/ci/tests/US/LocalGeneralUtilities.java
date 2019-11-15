@@ -24,7 +24,7 @@ import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
@@ -77,8 +77,9 @@ public class LocalGeneralUtilities {
     }
 
     public static String simpleOnBoarding(ResourceReqDetails resourceReqDetails, String fileName, String filePath, User user) throws Exception {
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(user);
-        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user, amdocsLicenseMembers);
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
+        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user,
+            vendorLicenseModel);
         String vspName = createVendorSoftwareProduct.getName();
         HomePage.showVspRepository();
         OnboardingUiUtils.importVSP(createVendorSoftwareProduct);

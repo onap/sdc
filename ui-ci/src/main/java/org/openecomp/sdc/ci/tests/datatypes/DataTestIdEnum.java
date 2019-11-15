@@ -21,12 +21,19 @@
 package org.openecomp.sdc.ci.tests.datatypes;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.openecomp.sdc.ci.tests.pages.TopSearchComponent;
 
 public final class DataTestIdEnum {
+
     private DataTestIdEnum() {
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum Dashboard {
         IMPORT_AREA("importButtonsArea"),
         ADD_AREA("AddButtonsArea"),
@@ -40,17 +47,11 @@ public final class DataTestIdEnum {
         BUTTON_ADD_PNF("createPNFButton"),
         BUTTON_ADD_CR("createCRButton");
 
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        Dashboard(String value) {
-            this.value = value;
-        }
+        private final String value;
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum LifeCyleChangeButtons {
         CREATE("create/save"),
         CHECK_IN("check_in"),
@@ -60,17 +61,12 @@ public final class DataTestIdEnum {
         CERTIFY("certify"),
         CHECKOUT("check_out");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        LifeCyleChangeButtons(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum DistributionChangeButtons {
         APPROVE("approve"),
         REJECT("reject"),
@@ -79,17 +75,12 @@ public final class DataTestIdEnum {
         APPROVE_MESSAGE("checkindialog"),
         RE_DISTRIBUTE("redistribute");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        DistributionChangeButtons(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum InformationalArtifactsPlaceholders {
         CLOUD_QUESTIONNAIRE("Cloud Questionnaire (completed)"),
         FEATURES("Features"),
@@ -99,17 +90,12 @@ public final class DataTestIdEnum {
         HEAT_TEMPLATE_FROM_VENDOR("HEAT Template from Vendor"),
         CAPACITY("Capacity");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        InformationalArtifactsPlaceholders(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ModalItems {
         BROWSE_BUTTON("browseButton"),
         ADD("Add"),
@@ -127,17 +113,12 @@ public final class DataTestIdEnum {
         UPGRADE_SERVICES_CLOSE("upgradeVspModal-button-close"),
         ACCEPT_TESTING_MESSAGE("checkindialog");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        ModalItems(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum LeftPanelCanvasItems {
         BLOCK_STORAGE("BlockStorage"),
         CINDER_VOLUME("CinderVolume"),
@@ -151,39 +132,23 @@ public final class DataTestIdEnum {
         CONTRAIL_PORT("ContrailPort"),
         CONTRAIL_VIRTUAL_NETWORK("ContrailVirtualNetwork");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        LeftPanelCanvasItems(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum LinkMenuItems {
-        // CANCEL_BUTTON("link-menu-button-cancel"),
-        // CONNECT_BUTTON("link-menu-button-connect"),
-        // LINK_ITEM_CAP("link-item-capabilities"),
-        // LINK_ITEM_REQ("link-item-requirements"),
-        // LINK_MENU("link-menu-open");
-        LINK_ITEM_CAP_Or_REQ("req-or-cap-item"),
-        // REQ_CAP_SELECT_DATA_TESTS_ID("SelectType");
+        LINK_ITEM_CAP_OR_REQ("req-or-cap-item"),
         REQ_CAP_SELECT_DATA_TESTS_ID("value-select");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        LinkMenuItems(String value) {
-            this.value = value;
-        }
     }
 
 
+    @AllArgsConstructor
+    @Getter
     public enum GeneralCanvasItems {
         CANVAS("canvas"),
         CANVAS_RIGHT_PANEL("w-sdc-designer-sidebar-head"),
@@ -191,17 +156,12 @@ public final class DataTestIdEnum {
         UPDATE_INSTANCE_NAME("e-sdc-small-icon-update"),
         INSTANCE_NAME_FIELD("instanceName");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        GeneralCanvasItems(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ResourceMetadataEnum {
         RESOURCE_NAME("name"),
         DESCRIPTION("description"),
@@ -213,17 +173,13 @@ public final class DataTestIdEnum {
         ICON(" iconBox"),
         TAGS_TABLE("i-sdc-tag-text"),
         SELECT_VSP("filename");
-        private String value;
 
-        public String getValue() {
-            return value;
-        }
+        private final String value;
 
-        ResourceMetadataEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum GeneralElementsEnum {
         CREATE_BUTTON("create/save"),
         CHECKIN_BUTTON("check_in"),
@@ -236,21 +192,15 @@ public final class DataTestIdEnum {
         OK("OK"),
         UPDATE_SERVICES_BUTTON("open-upgrade-vsp-popup"),
         UPLOAD_FILE_INPUT("browseButton"),
-        // RESTORE_BUTTON("restore"),
         RESTORE_BUTTON("restore-component-button"),
-        // ARCHIVE_BUTTON("archive");
         ARCHIVE_BUTTON("archive-component-button");
-        private String value;
 
-        public String getValue() {
-            return value;
-        }
+        private final String value;
 
-        GeneralElementsEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ArtifactPageEnum {
         ADD_DEPLOYMENT_ARTIFACT("add-deployment-artifact-button"),
         ADD_INFORMATIONAL_ARTIFACT("add-information-artifact-button"),
@@ -273,19 +223,14 @@ public final class DataTestIdEnum {
         UPLOAD_HEAT_ENV_PARAMETERS("uplaodEnv_"),
         VERSION_ENV("artifactEnvVersion_"),
         ADD_OTHER_ARTIFACT_BUTTON("//button[@class='add-button ng-scope']");
-        private String value;
 
-        public String getValue() {
-            return value;
-        }
+        private final String value;
 
-        ArtifactPageEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum PropertiesPageEnum {
-
         ADD_NEW_PROPERTY("addGrey"),
         EDIT_PROPERTY("edit_"),
         DELETE_PROPERTY("delete_"),
@@ -299,19 +244,14 @@ public final class DataTestIdEnum {
         PROPERTY_ROW("propertyRow"),
         SAVE("Save"),
         POPUP_FORM("sdc-edit-property-container");
-        private String value;
 
-        public String getValue() {
-            return value;
-        }
+        private final String value;
 
-        PropertiesPageEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum PropertiesPopupEnum {
-
         PROPERTY_NAME("propertyName"),
         PROPERTY_VALUE("defaultvalue"),
         PROPERTY_BOOLEAN_VALUE("booleantype"),
@@ -325,39 +265,29 @@ public final class DataTestIdEnum {
         DONE("Done"),
         PROPERTY_RADIO_BUTTON_CONTAINER("propertyRadioButton_"),
         RADIO_BUTTON_CLASS("tlv-radio-label");
-        private String value;
 
-        public String getValue() {
-            return value;
-        }
+        private final String value;
 
-        PropertiesPopupEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum AdminPageTabs {
         USER_MANAGEMENT("usermanagmenttab"),
         CATEGORY_MANAGEMENT("categorymanagmenttab");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        AdminPageTabs(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum UserManagementEnum {
-
         SEARCH_BOX("searchbox"),
         NEW_USER_FIELD("newuserId"),
         ROLE_SELECT("selectrole"),
         CREATE_BUTTON("creategreen"),
-        CLASS__USER_MANAGEMENT_TABLE("sdc-user-management-table"),
+        CLASS_USER_MANAGEMENT_TABLE("sdc-user-management-table"),
         ROW_TABLE("row_"),
         FIRST_NAME("firstName_"),
         LAST_NAME("lastName__"),
@@ -370,20 +300,13 @@ public final class DataTestIdEnum {
         SAVE_USER("save_"),
         DELETE_USER("delete_");
 
+        private final String value;
 
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        UserManagementEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum CategoryManagement {
-
         SERVICE_CATEGORY_HEADER("servicecategoryheader"),
         RESOURCE_CATEGORY_HEADER("resourcecategoryheader"),
         SERVICE_CATEGORY_LIST("servicecategory"),
@@ -392,63 +315,46 @@ public final class DataTestIdEnum {
         NEW_SUB_CATEGORY_BUTTON("newsubcategory"),
         NEW_CATEGORY_NAME("i-sdc-form-input");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        CategoryManagement(String value) {
-            this.value = value;
-        }
     }
 
 
+    @AllArgsConstructor
+    @Getter
     public enum MainMenuButtons {
         HOME_BUTTON("main-menu-button-home"),
         CATALOG_BUTTON("main-menu-button-catalog"),
         ONBOARD_BUTTON("main-menu-button-onboard"),
-        SEARCH_BOX("main-menu-input-search"),
+        SEARCH_BOX(TopSearchComponent.SEARCH_INPUT_TEST_ID),
         REPOSITORY_ICON("repository-icon");
-        private String value;
 
-        public String getValue() {
-            return value;
-        }
+        private final String value;
 
-        MainMenuButtons(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum CatalogSwitchButtons {
         CATALOG_SWITCH_BUTTON("catalog-selector-button"), // get possible catalog types(active/archive)
         CATALOG_ACTIVE_ITEMS("catalog-selector-0"), // select active catalog
         CATALOG_ARCHIVE("catalog-selector-1"); // select archive catalog
-        private String value;
 
-        public String getValue() {
-            return value;
-        }
+        private final String value;
 
-        CatalogSwitchButtons(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum MainMenuButtonsFromInsideFrame {
         HOME_BUTTON("breadcrumbs-button-0");
-        private String value;
 
-        public String getValue() {
-            return value;
-        }
+        private final String value;
 
-        MainMenuButtonsFromInsideFrame(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum MenuOptionsEnum {
         EDIT("Edit"),
         CHECK_IN("Check in"),
@@ -460,17 +366,12 @@ public final class DataTestIdEnum {
         START_TEST("Start test"),
         DISTREBUTE("Distribute");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        MenuOptionsEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum StepsEnum {
         GENERAL("GeneralLeftSideMenu"),
         ICON("Iconstep"),
@@ -487,17 +388,12 @@ public final class DataTestIdEnum {
         HIERARCHY("Hierarchy"),
         PROPERTIES_ASSIGNMENT("Properties AssignmentLeftSideMenu");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        StepsEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ArtifactPopup {
 
         BROWSE("browseButton"),
@@ -511,17 +407,12 @@ public final class DataTestIdEnum {
         URL("input[class^='i-sdc-form-input']"),
         MODAL_WINDOW("sdc-add-artifact");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        ArtifactPopup(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ServiceMetadataEnum {
         SERVICE_NAME("name"),
         DESCRIPTION("description"),
@@ -532,17 +423,12 @@ public final class DataTestIdEnum {
         ICON(" iconBox"),
         INSTANTIATION_TYPE("selectInstantiationType");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        ServiceMetadataEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ProductMetadataEnum {
         PRODUCT_NAME("name"),
         FULL_NAME("fullName"),
@@ -552,17 +438,12 @@ public final class DataTestIdEnum {
         ATT_CONTACT("attContact"),
         ICON(" iconBox");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        ProductMetadataEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum DashboardCardEnum {
         ASSET_TYPE("asset-type"), LIFECYCLE_STATE("span[class^='w-sdc-dashboard-card-info-lifecycleState']"),
         INFO_NAME("div.sdc-tile-info-line"),
@@ -571,17 +452,12 @@ public final class DataTestIdEnum {
         INFO_TITLE_XPATH("//div[contains(@class,'sdc-tile-info-line title')]"),
         ASSET_TYPE_CSS("span[data-tests-id='asset-type']");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        DashboardCardEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum CatalogPageLeftPanelCategoryCheckbox {
         GENERIC_CHECKBOX("span[data-tests-id='checkbox-resourcenewcategory.generic']"),
         NETWORK_L2_3("span[data-tests-id='checkbox-resourcenewcategory.networkl2-3']"),
@@ -590,39 +466,29 @@ public final class DataTestIdEnum {
         APPLICATION_L4_PLUS("span[data-tests-id='checkbox-resourcenewcategory.applicationl4+']"),
         DCAE("span[data-tests-id='checkbox-resourcenewcategory.dcaecomponent']");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        CatalogPageLeftPanelCategoryCheckbox(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum CatalogPageLeftPanelFilterTitle {
         TYPE("span[data-tests-id='typeFilterTitle']"),
         CATEGORIES("span[data-tests-id='categoriesFilterTitle']"),
         STATUS("span[data-tests-id='statusFilterTitle']");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        CatalogPageLeftPanelFilterTitle(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum CatalogPageLeftPanelSubCategoryCheckbox {
         COMMON_NETWORK_RESOURCES("span[data-tests-id='checkbox-resourcenewcategory.networkl4+.commonnetworkresources']"),
         ROUTER("span[data-tests-id='checkbox-resourcenewcategory.networkl2-3.router']"),
         WAN_CONNECTORS("span[data-tests-id='checkbox-resourcenewcategory.networkl2-3.wanconnectors']"),
         LAN_CONNECTORS("span[data-tests-id='checkbox-resourcenewcategory.networkl2-3.lanconnectors']"),
-        INFRASTRUCTERE_NETWORKl2_3("span[data-tests-id='checkbox-resourcenewcategory.networkl2-3.infrastructure']"),
+        INFRASTRUCTURE_NETWORK_L2_3("span[data-tests-id='checkbox-resourcenewcategory.networkl2-3.infrastructure']"),
         GATEWAY("span[data-tests-id='checkbox-resourcenewcategory.networkl2-3.gateway']"),
         NETWORK_ELEMENTS("span[data-tests-id='checkbox-resourcenewcategory.generic.networkelements']"),
         ABSTRACT("span[data-tests-id='checkbox-resourcenewcategory.generic.abstract']"),
@@ -647,58 +513,43 @@ public final class DataTestIdEnum {
         UTILITY("span[data-tests-id='checkbox-resourcenewcategory.dcaecomponent.utility']"),
         ANALYTICS("span[data-tests-id='checkbox-resourcenewcategory.dcaecomponent.analytics']");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        CatalogPageLeftPanelSubCategoryCheckbox(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum CompositionScreenEnum {
-
-        CHANGE_VERSION("changeVersion", Arrays.asList()),
-        DEPLOYMENT_ARTIFACT_TAB("deployment-artifact-tab", Arrays.asList("Deployment Artifacts")),
-        ADD_ARTIFACT("add_Artifact_Button", Arrays.asList()),
-        SEARCH_ASSET("searchAsset", Arrays.asList()),
-        PROPERTIES_AND_ATTRIBUTES_TAB("properties-and-attributes-tab", Arrays.asList()),
-        MENU_INPUTS("sub-menu-button-inputs", Arrays.asList()),
-        MENU_ONBOARD("sub-menu-button-onboard", Arrays.asList()),
-        MENU_HOME("sub-menu-button-home", Arrays.asList()),
-        MENU_PROPERTIES_ASSIGNMENT("sub-menu-button-properties assignment", Arrays.asList()),
-        MENU_TRIANGLE_DROPDOWN("triangle-dropdown", Arrays.asList()),
-        ARTIFACTS_LIST("artifactName", Arrays.asList()),
-        INFORMATION_ARTIFACTS("button[tooltip-content='Information Artifacts']", Arrays.asList("Informational Artifacts")),
-        API("button[tooltip-content='API']", Arrays.asList("API Artifacts")),
+        CHANGE_VERSION("changeVersion", Collections.emptyList()),
+        DEPLOYMENT_ARTIFACT_TAB("deployment-artifact-tab", Collections.singletonList("Deployment Artifacts")),
+        ADD_ARTIFACT("add_Artifact_Button", Collections.emptyList()),
+        SEARCH_ASSET("searchAsset", Collections.emptyList()),
+        PROPERTIES_AND_ATTRIBUTES_TAB("properties-and-attributes-tab", Collections.emptyList()),
+        MENU_INPUTS("sub-menu-button-inputs", Collections.emptyList()),
+        MENU_ONBOARD("sub-menu-button-onboard", Collections.emptyList()),
+        MENU_HOME("sub-menu-button-home", Collections.emptyList()),
+        MENU_PROPERTIES_ASSIGNMENT("sub-menu-button-properties assignment", Collections.emptyList()),
+        MENU_TRIANGLE_DROPDOWN("triangle-dropdown", Collections.emptyList()),
+        ARTIFACTS_LIST("artifactName", Collections.emptyList()),
+        INFORMATION_ARTIFACTS("button[tooltip-content='Information Artifacts']",
+            Collections.singletonList("Informational Artifacts")),
+        API("button[tooltip-content='API']", Collections.singletonList("API Artifacts")),
         INFORMATION("button[tooltip-content='Information']", Arrays.asList("General Info", "Additional Information", "Tags")),
-        COMPOSITION("button[tooltip-content='Composition']", Arrays.asList("Composition")),
-        INPUTS("button[tooltip-content='Inputs']", Arrays.asList("")),
-        REQUIREMENTS_AND_CAPABILITIES("button[tooltip-content='Requirements and Capabilities']", Arrays.asList()),
-        INFORMATION_TAB("information-tab", Arrays.asList()),
-        CUSTOMIZATION_UUID("rightTab_customizationModuleUUID", Arrays.asList());
+        COMPOSITION("button[tooltip-content='Composition']", Collections.singletonList("Composition")),
+        INPUTS("button[tooltip-content='Inputs']", Collections.singletonList("")),
+        REQUIREMENTS_AND_CAPABILITIES("button[tooltip-content='Requirements and Capabilities']",
+            Collections.emptyList()),
+        INFORMATION_TAB("information-tab", Collections.emptyList()),
+        CUSTOMIZATION_UUID("rightTab_customizationModuleUUID", Collections.emptyList());
 
-        private String value;
-        private List<String> title;
+        private final String value;
+        private final List<String> title;
 
-        public String getValue() {
-            return value;
-        }
-
-        public List<String> getTitle() {
-            return title;
-        }
-
-        CompositionScreenEnum(String value, List<String> title) {
-            this.value = value;
-            this.title = title;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ToscaArtifactsScreenEnum {
-
         TOSCA_MODEL("download-Tosca Model"),
         TOSCA_TEMPLATE("download-Tosca Template"),
         ARTIFACT_VERSION("version-"),
@@ -708,17 +559,12 @@ public final class DataTestIdEnum {
         DOWNLOAD_ARTIFACT("download-"),
         DOWNLOAD_CSAR("download-Tosca Model");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        ToscaArtifactsScreenEnum(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum InformationalArtifactsService {
         AFFINITY_RULES("artifact_Display_Name-Affinity Rules"),
         CONTROL_LOOP_FUNCTIONS("artifact_Display_Name-Control Loop Functions"),
@@ -734,19 +580,13 @@ public final class DataTestIdEnum {
         SUMMARY_OF_IMPACTS_TO_ECOMP("artifact_Display_Name-Summary of impacts to ECOMP elements,OSSs, BSSs"),
         TD_CERTIFICATION_TEST_RESULTS("artifact_Display_Name-TD Certification Test Results");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        InformationalArtifactsService(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum APIArtifactsService {
-
         CONFIGURATION("artifact_Display_Name-Configuration"),
         INSTANTIATION("artifact_Display_Name-Instantiation"),
         LOGGING("artifact_Display_Name-Logging"),
@@ -754,17 +594,12 @@ public final class DataTestIdEnum {
         REPORTING("artifact_Display_Name-Reporting"),
         TESTING("artifact_Display_Name-Testing");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        APIArtifactsService(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum DeploymentArtifactCompositionRightMenu {
         ARTIFACT_NAME("artifactName-"),
         ARTIFACT_DISPLAY_NAME("artifact_Display_Name-"),
@@ -775,18 +610,12 @@ public final class DataTestIdEnum {
         ARTIFACT_ITEM("artifact-item-"),
         ARTIFACT_ENV("heat_env_");
 
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        DeploymentArtifactCompositionRightMenu(String value) {
-            this.value = value;
-        }
+        private final String value;
 
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum InputsScreenService {
         ADD_SELECTED_INPUTS_BTN("add-inputs-to-service-button"),
         VF_INSTANCE_ROWS("expand-collapse[expanded-selector^='.vf-instance-list.']"),
@@ -802,18 +631,12 @@ public final class DataTestIdEnum {
         RESOURCE_INSTANCE_PROPERTY_CHECKBOX("propertyCheckbox_"),
         SERVICE_INPUTS_DELETE_BUTTON("deleteInput_");
 
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        InputsScreenService(String value) {
-            this.value = value;
-        }
+        private final String value;
 
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum DeploymentScreen {
         MODULES("span[class^='expand-collapse-title-text']"),
         MEMBERS("div[class^='expand-collapse-sub-title']"),
@@ -837,19 +660,13 @@ public final class DataTestIdEnum {
         CANCEL("popover-close-button"),
         X_BUTTON("popover-x-button");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        DeploymentScreen(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum PropertiesAssignmentScreen {
-
         PROPERTIES_TAB("Properties"),
         INPUTS_TAB("Inputs"),
         COMPOSITION_TAB("Composition"),
@@ -884,52 +701,35 @@ public final class DataTestIdEnum {
         FILTER_SET_BUTTON("filter-set-button"),
         PROPERTY_NAME_COLUMN("property-name");
 
-
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        PropertiesAssignmentScreen(String value) {
-            this.value = value;
-        }
+        private final String value;
 
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ImportVfRepository {
         SEARCH("onboarding-search"),
         IMPORT_VSP("import-csar"),
         DOWNLOAD_CSAR("download-csar"),
         UPDATE_VSP("update-csar");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        ImportVfRepository(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum EnvParameterView {
         SEARCH_ENV_PARAM_NAME("search-env-param-name"),
         ENV_CURRENT_VALUE("value-field-of-"), //value-field-of-oam_volume_name_0 - parameter name
         ENV_DEFAULT_VALUE("default-value-of-"); // default-value-of-vnf_name
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        EnvParameterView(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ComplexServiceAmdocs {
         CREATE_BUTTON("Create"),
         DELETE_COMPONENT("deleteInstance"),
@@ -961,18 +761,13 @@ public final class DataTestIdEnum {
         SUBMIT_NEW_VSP_VERSION_DESCRIPTION("form-submit-button"),
         EXTEND_BUTTON("extendPathlnk");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        ComplexServiceAmdocs(String value) {
-            this.value = value;
-        }
     }
 
 
+    @AllArgsConstructor
+    @Getter
     public enum PortMirroring {
         COLLECTOR_NODE("collector_node"),
         EQUIP_MODEL("equip_model"),
@@ -980,17 +775,12 @@ public final class DataTestIdEnum {
         PMC_NAME_IN_PALLETE("Port Mirroring Configuration"),
         PMCP_NAME_IN_PALLETE("Port Mirroring Configuration By Policy");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        PortMirroring(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum CompositionRightPanelGeneralInfo {
         TYPE("rightTab_componentType"),
         RESOURCE_TYPE("rightTab_resourceType"),
@@ -998,19 +788,13 @@ public final class DataTestIdEnum {
         CATEGORY("rightTab_category"),
         SUB_CATEGORY("rightTab_subCategory");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        CompositionRightPanelGeneralInfo(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum CompositionRightPanel {
-
         COMPONENT_TITLE("selectedCompTitle"),
         REQS_AND_CAPS_TAB("requirements-and-capabilities"),
         EDIT_PENCIL("editPencil"),
@@ -1018,19 +802,13 @@ public final class DataTestIdEnum {
         DELETE_ITEM("deleteInstance"),
         REQS_AND_CAPS_TAB_XPATH("//button[@tooltip-content='Requirements and Capabilities']");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        CompositionRightPanel(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum VspValidationPage {
-
         VSP_VALIDATION_PAGE_NAVBAR("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION"),
         VSP_VALIDATION_PAGE_BREADCRUMBS("sub-menu-button-validation"),
         VSP_VALIDATION_PAGE_PROCEED_TO_INPUTS_BUTTON("go-to-vsp-validation-inputs"),
@@ -1040,31 +818,18 @@ public final class DataTestIdEnum {
         VSP_VALIDATION_PAGE_COMPLIANCE_CHECKBOX_TREE("vsp-validation-compliance-checks-checkbox-tree"),
         VSP_VALIDATION_PAGE_CERTIFICATION_CHECKBOX_TREE("vsp-validation-certifications-query-checkbox-tree");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        VspValidationPage(String value) {
-            this.value = value;
-        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum VspValidationResultsPage {
-
         VSP_VALIDATION_RESULTS_PAGE_NAVBAR("navbar-group-item-SOFTWARE_PRODUCT_VALIDATION_RESULTS"),
         VSP_VALIDATION_RESULTS_PAGE_BREADCRUMBS("sub-menu-button-validation results");
 
-        private String value;
+        private final String value;
 
-        public String getValue() {
-            return value;
-        }
-
-        VspValidationResultsPage(String value) {
-            this.value = value;
-        }
     }
 
 }

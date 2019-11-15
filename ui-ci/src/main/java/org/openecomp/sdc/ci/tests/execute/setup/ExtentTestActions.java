@@ -35,7 +35,11 @@ import java.util.UUID;
 
 public class ExtentTestActions {
 
-    private static SomeInterface testManager = new ExtentTestManager();
+    private static final SomeInterface testManager = ExtentTestManager.getInstance();
+
+    private ExtentTestActions() {
+
+    }
 
     public static void log(Status logStatus, Markup mark) {
         ExtentTest test = testManager.getTest();
@@ -80,20 +84,15 @@ public class ExtentTestActions {
         }
     }
 
-    public static String addScreenshot(Status logStatus, String screenshotName, String message) throws IOException {
-        String imageFilePath = null;
-        String uuid = UUID.randomUUID().toString();
-        String[] stringArray = uuid.split("-");
-        screenshotName = screenshotName + "-" + stringArray[stringArray.length - 1];
-        try {
-            File imageFile = GeneralUIUtils.takeScreenshot(screenshotName, SetupCDTest.getScreenshotFolder());
-            imageFilePath = new File(SetupCDTest.getReportFolder()).toURI().relativize(imageFile.toURI()).getPath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        ExtentTest test = testManager.getTest();
-        test.log(logStatus, message, MediaEntityBuilder.createScreenCaptureFromPath(imageFilePath).build());
+    public static String addScreenshot(final Status logStatus, String screenshotName,
+                                       final String message) throws IOException {
+        final String[] splitUuid = UUID.randomUUID().toString().split("-");
+        screenshotName = screenshotName + "-" + splitUuid[splitUuid.length - 1];
+        final File imageFile = GeneralUIUtils.takeScreenshot(screenshotName, SetupCDTest.getScreenshotFolder());
+        final String imageFilePath = new File(SetupCDTest.getReportFolder()).toURI().relativize(imageFile.toURI())
+            .getPath();
+        testManager.getTest()
+            .log(logStatus, message, MediaEntityBuilder.createScreenCaptureFromPath(imageFilePath).build());
         return imageFilePath;
     }
 

@@ -21,7 +21,8 @@
 package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
-import org.junit.rules.TestName;
+import java.util.ArrayList;
+import java.util.List;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -29,20 +30,15 @@ import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
+import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServiceUIUtils {
 
-    protected static WebDriver driver;
+    private ServiceUIUtils() {
 
-    public ServiceUIUtils(TestName name, String className) {
-        super();
     }
 
     private static void defineTagsList2(List<String> serviceTags) {
@@ -55,20 +51,20 @@ public class ServiceUIUtils {
         }
     }
 
-    public static void fillServiceGeneralPage(ServiceReqDetails service, User user) throws Exception {
-        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Fill in metadata values in general page"));
+    public static void fillServiceGeneralPage(final ServiceReqDetails service) {
+        SetupCDTest.getExtendTest().log(Status.INFO, "Fill in metadata values in general page");
         ServiceGeneralPage.defineName(service.getName());
-        ServiceGeneralPage.defineDescription(service.getDescription());
-        ServiceGeneralPage.defineCategory(service.getCategories().get(0).getName());
+        ResourceGeneralPage.defineDescription(service.getDescription());
+        ResourceGeneralPage.defineCategory(service.getCategories().get(0).getName());
         ServiceGeneralPage.defineProjectCode(service.getProjectCode());
         defineTagsList2(service.getTags());
-        ServiceGeneralPage.defineContactId(service.getContactId());
+        ResourceGeneralPage.defineContactId(service.getContactId());
         GeneralUIUtils.clickSomewhereOnPage();
     }
 
-    public static void createService(ServiceReqDetails service, User user) throws Exception {
+    public static void createService(ServiceReqDetails service) {
         clickAddService();
-        fillServiceGeneralPage(service, user);
+        fillServiceGeneralPage(service);
         GeneralPageElements.clickCreateButton();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("The service %s was created", service.getName()));
     }

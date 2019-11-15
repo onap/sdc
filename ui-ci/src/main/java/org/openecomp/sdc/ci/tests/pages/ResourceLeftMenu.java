@@ -25,11 +25,11 @@ import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 
 public class ResourceLeftMenu implements ComponentLeftMenu {
 
-    public void moveToGeneralScreen() throws Exception {
+    public void moveToGeneralScreen() {
         GeneralUIUtils.moveToStep(StepsEnum.GENERAL);
     }
 
-    public void moveToIconScreen() throws Exception {
+    public void moveToIconScreen() {
         GeneralUIUtils.moveToStep(StepsEnum.ICON);
     }
 
@@ -41,19 +41,19 @@ public class ResourceLeftMenu implements ComponentLeftMenu {
         GeneralUIUtils.moveToStep(StepsEnum.INFORMATION_ARTIFACT);
     }
 
-    public void moveToPropertiesScreen() throws Exception {
+    public void moveToPropertiesScreen() {
         GeneralUIUtils.moveToStep(StepsEnum.PROPERTIES);
     }
 
-    public void moveToCompositionScreen() throws Exception {
+    public void moveToCompositionScreen() {
         GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
     }
 
-    public void moveToActivityLogScreen() throws Exception {
+    public void moveToActivityLogScreen() {
         GeneralUIUtils.moveToStep(StepsEnum.ACTIVITY_LOG);
     }
 
-    public void moveToDeploymentViewScreen() throws Exception {
+    public void moveToDeploymentViewScreen() {
         GeneralUIUtils.moveToStep(StepsEnum.DEPLOYMENT_VIEW);
     }
 

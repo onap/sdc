@@ -74,7 +74,7 @@ public class extendNode_TemplatePropertiesWithDefaultValues extends SetupCDTest 
 
         if (ComponentTypeEnum.SERVICE == componentTypeEnum) {
             ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-            ServiceUIUtils.createService(serviceMetadata, getUser());
+            ServiceUIUtils.createService(serviceMetadata);
         } else {
             ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
             ResourceUIUtils.createVF(resourceMetaData, getUser());
@@ -157,7 +157,7 @@ public class extendNode_TemplatePropertiesWithDefaultValues extends SetupCDTest 
 
         if (ComponentTypeEnum.SERVICE == componentTypeEnum) {
             ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-            ServiceUIUtils.createService(serviceMetadata, getUser());
+            ServiceUIUtils.createService(serviceMetadata);
         } else {
             ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
             ResourceUIUtils.createVF(resourceMetaData, getUser());

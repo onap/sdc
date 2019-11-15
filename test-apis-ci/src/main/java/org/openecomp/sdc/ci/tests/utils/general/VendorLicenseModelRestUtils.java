@@ -26,7 +26,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
@@ -39,22 +39,23 @@ import static org.testng.AssertJUnit.assertEquals;
 
 public class VendorLicenseModelRestUtils {
 
-    public static void updateVendorLicense(AmdocsLicenseMembers amdocsLicenseMembers, User user, Boolean isVlmUpdated) throws Exception {
+    public static void updateVendorLicense(VendorLicenseModel vendorLicenseModel, User user, Boolean isVlmUpdated) throws Exception {
 
 //		create major method
-        RestResponse creationMethodVendorLicense = creationMethodVendorLicense(amdocsLicenseMembers, user);
+        RestResponse creationMethodVendorLicense = creationMethodVendorLicense(vendorLicenseModel, user);
         assertEquals("did not succeed to create method for vendor license", 200, creationMethodVendorLicense.getErrorCode().intValue());
-        amdocsLicenseMembers.setVersion(ResponseParser.getValueFromJsonResponse(creationMethodVendorLicense.getResponse(), "id"));
+        vendorLicenseModel
+            .setVersion(ResponseParser.getValueFromJsonResponse(creationMethodVendorLicense.getResponse(), "id"));
 
         if(isVlmUpdated) {
 //		TODO update vlm do nothing
 //		commit
-            RestResponse commitVendorLicense = commitVendorLicense(amdocsLicenseMembers, user);
+            RestResponse commitVendorLicense = commitVendorLicense(vendorLicenseModel, user);
             assertEquals("did not succeed to commit vendor license", 200, commitVendorLicense.getErrorCode().intValue());
         }
 
 //		submit
-        RestResponse submitVendorLicense = submitVendorLicense(amdocsLicenseMembers, user);
+        RestResponse submitVendorLicense = submitVendorLicense(vendorLicenseModel, user);
         assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
 
         if(ComponentBaseTest.getExtendTest() != null){
@@ -80,9 +81,9 @@ public class VendorLicenseModelRestUtils {
         return (restResponse.getErrorCode()==200);
     }
 
-    public static AmdocsLicenseMembers createVendorLicense(User user) throws Exception {
+    public static VendorLicenseModel createVendorLicense(User user) throws Exception {
 
-        AmdocsLicenseMembers amdocsLicenseMembers;
+        VendorLicenseModel vendorLicenseModel;
 //		ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor license");
         String vendorLicenseName = "ciLicense" + OnboardingUtils.getShortUUID();
         RestResponse vendorLicenseResponse = createVendorLicenseModels_1(vendorLicenseName, user);
@@ -109,15 +110,15 @@ public class VendorLicenseModelRestUtils {
 //		RestResponse checkinVendorLicense = OnboardingUtils.checkinVendorLicense(vendorId, user, versionId);
 //		assertEquals("did not succeed to checkin vendor license", 200, checkinVendorLicense.getErrorCode().intValue());
 
-        amdocsLicenseMembers = new AmdocsLicenseMembers(vendorId, vendorLicenseName, vendorLicenseAgreementId, featureGroupId);
-        amdocsLicenseMembers.setVersion(versionId); // Once object created and submitted, his initial version is 1.0
+        vendorLicenseModel = new VendorLicenseModel(vendorId, vendorLicenseName, vendorLicenseAgreementId, featureGroupId);
+        vendorLicenseModel.setVersion(versionId); // Once object created and submitted, his initial version is 1.0
 
-        RestResponse submitVendorLicense = submitVendorLicense(amdocsLicenseMembers, user);
+        RestResponse submitVendorLicense = submitVendorLicense(vendorLicenseModel, user);
         assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
 
 //		ComponentBaseTest.getExtendTest().log(Status.INFO, "Succeeded in creating the vendor license");
 
-        return amdocsLicenseMembers;
+        return vendorLicenseModel;
     }
 
     private static RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user, String componentVersion) throws Exception {
@@ -142,25 +143,27 @@ public class VendorLicenseModelRestUtils {
         return response;
     }
 
-    public static RestResponse submitVendorLicense(AmdocsLicenseMembers amdocsLicenseMembers, User user) throws Exception {
-        return actionOnComponent(amdocsLicenseMembers.getVendorId(), "{\"action\":\"Submit\"}", "vendor-license-models", user, amdocsLicenseMembers.getVersion());
+    public static RestResponse submitVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
+        return actionOnComponent(vendorLicenseModel.getVendorId(), "{\"action\":\"Submit\"}", "vendor-license-models", user, vendorLicenseModel
+            .getVersion());
     }
 
     /**
-     * @param amdocsLicenseMembers
+     * @param vendorLicenseModel
      * @param user
      * @return
      * checkOut exist VLM method
      * @throws Exception
      */
-    public static RestResponse creationMethodVendorLicense(AmdocsLicenseMembers amdocsLicenseMembers, User user) throws Exception {
+    public static RestResponse creationMethodVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
         String messageBody = "{\"description\":\"2.0\",\"creationMethod\":\"major\"}";
-        return createMethodVendorLicense(amdocsLicenseMembers.getVendorId(), messageBody, "items", user, amdocsLicenseMembers.getVersion());
+        return createMethodVendorLicense(vendorLicenseModel.getVendorId(), messageBody, "items", user, vendorLicenseModel
+            .getVersion());
     }
 
-    public static RestResponse commitVendorLicense(AmdocsLicenseMembers amdocsLicenseMembers, User user) throws Exception {
+    public static RestResponse commitVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
         String messageBody = "{\"action\":\"Commit\",\"commitRequest\":{\"message\":\"commit\"}}";
-        return actionOnComponent(amdocsLicenseMembers.getVendorId(), messageBody, "items", user, amdocsLicenseMembers.getVersion());
+        return actionOnComponent(vendorLicenseModel.getVendorId(), messageBody, "items", user, vendorLicenseModel.getVersion());
     }
 
     public static RestResponse createVendorLicenseModels_1(String name, User user) throws Exception {

@@ -28,7 +28,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
@@ -87,9 +87,10 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
         String vnfFile = "FDNT.zip";
         String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(),
+            vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
         VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());

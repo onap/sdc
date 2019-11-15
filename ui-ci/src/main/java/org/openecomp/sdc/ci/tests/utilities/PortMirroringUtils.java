@@ -29,7 +29,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
 import org.openecomp.sdc.ci.tests.datatypes.ConnectionWizardPopUpObject;
@@ -71,11 +71,13 @@ public class PortMirroringUtils {
     public static ServiceContainer createServiceFromHeatFile(String filePath, String vnfFile) throws Throwable {
 //1. Import VSP v1.0
         User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
-        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", amdocsLicenseMembers.getVendorLicenseName()));
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
+            .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails1, amdocsLicenseMembers);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails1,
+            vendorLicenseModel);
 //        VendorSoftwareProductObject vendorSoftwareProductObject = OnboardViaApis.fillVendorSoftwareProductObjectWithMetaData(vnfFile, createVendorSoftwareProduct);
 //2. Create VF, certify - v1.0 is created
         resourceReqDetails = org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
@@ -93,7 +95,7 @@ public class PortMirroringUtils {
         service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Certify the Service"));
 
-        return new ServiceContainer(service, resource, vendorSoftwareProductObject, amdocsLicenseMembers);
+        return new ServiceContainer(service, resource, vendorSoftwareProductObject, vendorLicenseModel);
     }
 
     public static Resource generatePNFAndUpdateInput(String resourceName, String vendorModelNumber, User user) throws Exception {

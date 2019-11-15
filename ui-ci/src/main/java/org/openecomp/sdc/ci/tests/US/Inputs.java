@@ -68,7 +68,7 @@ public class Inputs extends SetupCDTest {
     @Test
     public void deletingAnInputThatWasDeclaredFromComplexProperty() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -126,7 +126,7 @@ public class Inputs extends SetupCDTest {
     @Test
     public void deleteInputsWhoComeFromCpVlProperties() throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();

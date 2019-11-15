@@ -158,7 +158,7 @@ public class Categories extends SetupCDTest {
         List<CategoryDefinition> categories = serviceMetadata.getCategories();
         categories.get(0).setName(newserviceCategory);
 
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
 
     }
 

@@ -28,7 +28,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
@@ -95,9 +95,10 @@ public class OnboardViaApis {
     public void updateVSPFullScenario(String filepath, String vnfFile) throws Exception {
         //CREATE DATA REQUIRED FOR TEST
         boolean skipReport = true;
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, sdncDesignerDetails1, amdocsLicenseMembers);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, sdncDesignerDetails1,
+            vendorLicenseModel);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
@@ -108,11 +109,12 @@ public class OnboardViaApis {
         service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         // TEST START
 
-        VendorLicenseModelRestUtils.updateVendorLicense(amdocsLicenseMembers, sdncDesignerDetails1, false);
-        VendorLicenseModelRestUtils.validateVlmExist(amdocsLicenseMembers.getVendorId(), amdocsLicenseMembers.getVersion(), sdncDesignerDetails1);
+        VendorLicenseModelRestUtils.updateVendorLicense(vendorLicenseModel, sdncDesignerDetails1, false);
+        VendorLicenseModelRestUtils.validateVlmExist(vendorLicenseModel.getVendorId(), vendorLicenseModel.getVersion(), sdncDesignerDetails1);
 
         // Update the VSP With the VLM new version and submit the VSP
-        vendorSoftwareProductObject = VendorSoftwareProductRestUtils.updateVSPWithNewVLMParameters(vendorSoftwareProductObject, amdocsLicenseMembers, sdncDesignerDetails1);
+        vendorSoftwareProductObject = VendorSoftwareProductRestUtils.updateVSPWithNewVLMParameters(vendorSoftwareProductObject,
+            vendorLicenseModel, sdncDesignerDetails1);
         VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
         Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
         assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);

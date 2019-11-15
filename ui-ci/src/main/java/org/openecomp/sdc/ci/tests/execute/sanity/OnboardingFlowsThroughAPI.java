@@ -27,8 +27,8 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.data.providers.OnboardingDataProviders;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
@@ -83,9 +83,10 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         cvfcArtifacts.put(CvfcTypeEnum.VES_EVENTS, vesArtifactFileLocation);
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
 
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, cvfcArtifacts);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, cvfcArtifacts);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
         List<ComponentInstance> componentInstances = resource.getComponentInstances();
@@ -119,16 +120,17 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
     @Test
     public void VlmReuse() throws Exception {
         List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
-        List<String> newRandomFileNamesFromFolder = OnbordingDataProviders.getRandomElements(2, fileNamesFromFolder);
+        List<String> newRandomFileNamesFromFolder = OnboardingDataProviders.getRandomElements(2, fileNamesFromFolder);
         String filePath = FileHandling.getVnfRepositoryPath();
         String vnfFile = newRandomFileNamesFromFolder.get(0);
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
 //		setLog(vnfFile);
         getExtendTest().log(Status.INFO, "Create Vendor License");
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         getExtendTest().log(Status.INFO, "Create Vendor Software Product: " + resourceReqDetails.getName());
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         getExtendTest().log(Status.INFO, "Create Resource: " + resourceReqDetails.getName());
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -152,8 +154,9 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
 //		update
         vnfFile = newRandomFileNamesFromFolder.get(1);
         getExtendTest().log(Status.INFO, "Going to update VLM with new file " + vnfFile);
-        VendorLicenseModelRestUtils.updateVendorLicense(amdocsLicenseMembers, sdncDesignerDetails, false);
-        vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorLicenseModelRestUtils.updateVendorLicense(vendorLicenseModel, sdncDesignerDetails, false);
+        vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
         getExtendTest().log(Status.INFO, "Create new VSP: " + vendorSoftwareProductObject.getName());
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         getExtendTest().log(Status.INFO, "Create new resource: " + resourceReqDetails.getName());
@@ -181,13 +184,14 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
     @Test
     public void updateVfiVersionOnServiceLevel() throws Throwable {
         List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
-        List<String> newRandomFileNamesFromFolder = OnbordingDataProviders.getRandomElements(2, fileNamesFromFolder);
+        List<String> newRandomFileNamesFromFolder = OnboardingDataProviders.getRandomElements(2, fileNamesFromFolder);
         String filePath = FileHandling.getVnfRepositoryPath();
         String vnfFile = newRandomFileNamesFromFolder.get(0);
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
         resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
@@ -243,16 +247,17 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         // External Defect: 430425
 //		Import VSP v1.0
         List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
-        List<String> newRandomFileNamesFromFolder = OnbordingDataProviders.getRandomElements(1, fileNamesFromFolder);
+        List<String> newRandomFileNamesFromFolder = OnboardingDataProviders.getRandomElements(1, fileNamesFromFolder);
         String filePath = FileHandling.getVnfRepositoryPath();
         String vnfFile = newRandomFileNamesFromFolder.get(0);
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
-        getExtendTest().log(Status.INFO, "Create Vendor License Model " + amdocsLicenseMembers.getVendorLicenseName());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        getExtendTest().log(Status.INFO, "Create Vendor License Model " + vendorLicenseModel.getVendorLicenseName());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         getExtendTest().log(Status.INFO, "Create Vendor Software Product " + resourceReqDetails.getName());
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
 
 //		Create VF, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
@@ -265,7 +270,8 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         getExtendTest().log(Status.INFO, "Update VSP to version 2.0");
         String origVspName = vendorSoftwareProductObject.getName();
         vendorSoftwareProductObject.setName("Upd" + ElementFactory.generateUUIDforSufix());
-        vendorSoftwareProductObject = VendorSoftwareProductRestUtils.updateVSPWithNewVLMParameters(vendorSoftwareProductObject, amdocsLicenseMembers, sdncDesignerDetails1);
+        vendorSoftwareProductObject = VendorSoftwareProductRestUtils.updateVSPWithNewVLMParameters(vendorSoftwareProductObject,
+            vendorLicenseModel, sdncDesignerDetails1);
         VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
 
         //Validate that VF cannot be found by the updated VSP name
@@ -294,16 +300,17 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         // Test Case: 745821
 //		1. Import VSP v1.0
         List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
-        List<String> newRandomFileNamesFromFolder = OnbordingDataProviders.getRandomElements(1, fileNamesFromFolder);
+        List<String> newRandomFileNamesFromFolder = OnboardingDataProviders.getRandomElements(1, fileNamesFromFolder);
         String filePath = FileHandling.getVnfRepositoryPath();
         String vnfFile = newRandomFileNamesFromFolder.get(0);
         getExtendTest().log(Status.INFO, "Going to upload VNF " + vnfFile);
         User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
-        getExtendTest().log(Status.INFO, "Create Vendor License Model " + amdocsLicenseMembers.getVendorLicenseName());
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        getExtendTest().log(Status.INFO, "Create Vendor License Model " + vendorLicenseModel.getVendorLicenseName());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         getExtendTest().log(Status.INFO, "Create Vendor Software Product " + resourceReqDetails.getName());
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
 //		2. Create VF, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         getExtendTest().log(Status.INFO, "Create VF " + resourceReqDetails.getName());
@@ -358,11 +365,13 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
 //		1. Import VSP v1.0
         String filePath = org.openecomp.sdc.ci.tests.utilities.FileHandling.getUpdateVSPVnfRepositoryPath();
         User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
-        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", amdocsLicenseMembers.getVendorLicenseName()));
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
+            .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile1));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, sdncDesignerDetails,
+            vendorLicenseModel, null);
 //		2. Create VF, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -418,11 +427,13 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
 //		1. Import VSP v1.0
         //String filePath = FileHandling.getVnfRepositoryPath();
         User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
-        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", amdocsLicenseMembers.getVendorLicenseName()));
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
+            .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails1, amdocsLicenseMembers);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails1,
+            vendorLicenseModel);
 //		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardViaApis.fillVendorSoftwareProductObjectWithMetaData(vnfFile, createVendorSoftwareProduct);
 //		2. Create VF, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
@@ -451,11 +462,13 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         String filePath = FileHandling.getVnfRepositoryPath();
         String vnfFile1 = "1-VF-vCSCF-StateDB-new-update_v3.0.zip";
         User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
-        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", amdocsLicenseMembers.getVendorLicenseName()));
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
+            .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile1));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, sdncDesignerDetails1, amdocsLicenseMembers);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, sdncDesignerDetails1,
+            vendorLicenseModel);
 //			VendorSoftwareProductObject vendorSoftwareProductObject = OnboardViaApis.fillVendorSoftwareProductObjectWithMetaData(vnfFile1, createVendorSoftwareProduct);
 //			2. Create VF, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);

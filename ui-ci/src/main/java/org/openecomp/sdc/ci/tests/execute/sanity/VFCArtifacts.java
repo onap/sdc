@@ -23,7 +23,7 @@ package org.openecomp.sdc.ci.tests.execute.sanity;
 import com.aventstack.extentreports.Status;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
@@ -218,8 +218,9 @@ public class VFCArtifacts extends SetupCDTest {
         String vnfFile = "2016-043_vsaegw_fdnt_30_1607_e2e.zip";
         String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(),
+            vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
 //		VendorSoftwareProductObject resourceMeta = createVSP.right;
@@ -252,8 +253,9 @@ public class VFCArtifacts extends SetupCDTest {
         String snmpPollFile = "vprobes-vLB.zip";
         String updatedSnmpPollFile = "vprobes-vLBAgent.zip";
 
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(),
+            vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
         String vspid = createVSP.getVspId();
@@ -291,8 +293,9 @@ public class VFCArtifacts extends SetupCDTest {
         String snmpFile = "vprobes-vLB.zip";
         String updatedSnmpFile = "vprobes-vLB-Modified.zip";
 
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(),
+            vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
         String vspid = createVSP.getVspId();

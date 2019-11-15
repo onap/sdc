@@ -54,7 +54,7 @@ public class Service_Tests_UI extends SetupCDTest {
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
         ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
-        ServiceUIUtils.createService(servicemetadata, getUser());
+        ServiceUIUtils.createService(servicemetadata);
         GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
         CanvasManager service_CanvasManager = CanvasManager.getCanvasManager();
         CompositionPage.searchForElement(vendorSoftwareProductObject.getName());
@@ -74,7 +74,7 @@ public class Service_Tests_UI extends SetupCDTest {
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
         ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
-        ServiceUIUtils.createService(servicemetadata, getUser());
+        ServiceUIUtils.createService(servicemetadata);
         GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
         CanvasManager service_CanvasManager = CanvasManager.getCanvasManager();
         CompositionPage.searchForElement(vendorSoftwareProductObject.getName());

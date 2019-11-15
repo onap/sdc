@@ -24,6 +24,7 @@ import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.proxy.CaptureType;
 import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.exception.WebDriverThreadRuntimeException;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
@@ -39,10 +40,12 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
-
-//import org.openqa.selenium.firefox.FirefoxOptions; // Selenium 3.4.0 change
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebDriverThread {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(SetupCDTest.class);
 
     static final String AUTOMATION_DOWNLOAD_DIR = "automationDownloadDir";
     private WebDriver webdriver;
@@ -54,7 +57,7 @@ public class WebDriverThread {
         webdriver.manage().window().maximize();
     }
 
-    public WebDriver getDriver() throws Exception {
+    public WebDriver getDriver() {
         return webdriver;
     }
 
@@ -66,49 +69,45 @@ public class WebDriverThread {
     }
 
 
-    private void initDriver(Config config) {
-        try {
-            boolean remoteTesting = config.isRemoteTesting();
-            if (!remoteTesting) {
-                boolean mobProxyStatus = config.getUseBrowserMobProxy();
-                if (mobProxyStatus) {
-                    setWebDriverWithMobProxy();
-                } else {
+    private void initDriver(final Config config) {
+        if (config.isRemoteTesting()) {
+            LOGGER.info("Opening REMOTE browser");
+            final String remoteEnvIP = config.getRemoteTestingMachineIP();
+            final String remoteEnvPort = config.getRemoteTestingMachinePort();
 
-                    System.out.println("Opening LOCAL browser");
-                    DesiredCapabilities cap = new DesiredCapabilities();
+            final DesiredCapabilities cap = DesiredCapabilities.firefox();
+            cap.setPlatform(Platform.ANY);
+            cap.setBrowserName("firefox");
 
-                    cap = DesiredCapabilities.firefox();
-                    cap.setBrowserName("firefox");
-                    cap.setCapability(FirefoxDriver.PROFILE, initFirefoxProfile());
-                    //unexpected model dialog fix.
-                    cap.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.ACCEPT);
-
-                    firefoxProfile.setPreference("network.proxy.type", 2);
-                    firefoxProfile.setPreference("network.proxy.autoconfig_url", "http://autoproxy.sbc.com/autoproxy.cgi");
-                    firefoxProfile.setPreference("network.proxy.no_proxies_on", "localhost");
-
-                    webdriver = new FirefoxDriver(cap);
-                }
-            } else {
-                System.out.println("Opening REMOTE browser");
-                String remoteEnvIP = config.getRemoteTestingMachineIP();
-                String remoteEnvPort = config.getRemoteTestingMachinePort();
-
-                DesiredCapabilities cap = new DesiredCapabilities();
-                cap = DesiredCapabilities.firefox();
-                cap.setPlatform(Platform.ANY);
-                cap.setBrowserName("firefox");
-
-                String remoteNodeUrl = String.format(SELENIUM_NODE_URL, remoteEnvIP, remoteEnvPort);
-                RemoteWebDriver remoteWebDriver = new RemoteWebDriver(new URL(remoteNodeUrl), cap);
-                remoteWebDriver.setFileDetector(new LocalFileDetector());
-                webdriver = remoteWebDriver;
+            final String remoteUrlString = String.format(SELENIUM_NODE_URL, remoteEnvIP, remoteEnvPort);
+            final URL remoteUrl;
+            try {
+                remoteUrl = new URL(remoteUrlString);
+            } catch (MalformedURLException e) {
+                throw new WebDriverThreadRuntimeException(String.format("Malformed URL '%s'", remoteUrlString), e);
+            }
+            final RemoteWebDriver remoteWebDriver = new RemoteWebDriver(remoteUrl, cap);
+            remoteWebDriver.setFileDetector(new LocalFileDetector());
+            webdriver = remoteWebDriver;
+        } else {
+            if (config.getUseBrowserMobProxy()) {
+                setWebDriverWithMobProxy();
+                return;
             }
 
+            LOGGER.info("Opening LOCAL browser");
 
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            final DesiredCapabilities cap = DesiredCapabilities.firefox();
+            cap.setBrowserName("firefox");
+            cap.setCapability(FirefoxDriver.PROFILE, initFirefoxProfile());
+            //unexpected model dialog fix.
+            cap.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.ACCEPT);
+
+            firefoxProfile.setPreference("network.proxy.type", 2);
+            firefoxProfile.setPreference("network.proxy.autoconfig_url", "http://autoproxy.sbc.com/autoproxy.cgi");
+            firefoxProfile.setPreference("network.proxy.no_proxies_on", "localhost");
+
+            webdriver = new FirefoxDriver(cap);
         }
     }
 

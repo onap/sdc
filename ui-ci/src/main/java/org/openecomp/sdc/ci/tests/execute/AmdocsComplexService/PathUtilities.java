@@ -39,6 +39,7 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.CompositionPage;
+import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
@@ -72,7 +73,7 @@ public class PathUtilities {
 
     public static ServiceReqDetails createService(User user) throws Exception {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, user);
+        ServiceUIUtils.createService(serviceMetadata);
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
         GeneralUIUtils.ultimateWait();
         return serviceMetadata;
@@ -201,7 +202,7 @@ public class PathUtilities {
     public static void updateVF(String vspName, VendorSoftwareProductObject vendorSoftwareProduct) throws Exception {
         boolean vspFound = HomePage.searchForVSP(vspName);
         if (vspFound) {
-            List<WebElement> elementsFromTable = HomePage.getElemenetsFromTable();
+            final List<WebElement> elementsFromTable = GeneralPageElements.getElementsFromTable();
             elementsFromTable.get(1).click();
             GeneralUIUtils.waitForLoader();
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.UPDATE_VSP.getValue());

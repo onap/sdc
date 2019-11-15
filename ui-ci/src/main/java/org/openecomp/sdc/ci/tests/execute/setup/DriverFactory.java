@@ -83,7 +83,7 @@ public class DriverFactory {
         };
     }
 
-    public static WebDriver getDriver() throws Exception {
+    public static WebDriver getDriver() {
         return driverThread.get().getDriver();
     }
 

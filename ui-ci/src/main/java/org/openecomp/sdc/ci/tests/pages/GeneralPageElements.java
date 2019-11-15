@@ -40,7 +40,7 @@ public class GeneralPageElements {
     private static final int WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER = 10;
 
     protected GeneralPageElements() {
-        super();
+
     }
 
     public static ResourceLeftMenu getLeftMenu() {
@@ -229,13 +229,13 @@ public class GeneralPageElements {
         GeneralUIUtils.ultimateWait();
     }
 
-    public static List<WebElement> getElemenetsFromTable() {
+    public static List<WebElement> getElementsFromTable() {
         GeneralUIUtils.ultimateWait();
-        return GeneralUIUtils.getElemenetsFromTable(By.className("flex-container"));
+        return GeneralUIUtils.getElementsByLocator(By.className("flex-container"));
     }
 
     public static boolean checkElementsCountInTable(int expectedElementsCount) {
-        return checkElementsCountInTable(expectedElementsCount, () -> getElemenetsFromTable());
+        return checkElementsCountInTable(expectedElementsCount, () -> getElementsFromTable());
     }
 
 

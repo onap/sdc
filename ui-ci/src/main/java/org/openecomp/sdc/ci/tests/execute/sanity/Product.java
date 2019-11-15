@@ -48,7 +48,7 @@ public class Product extends SetupCDTest {
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
         ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
 
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
         GeneralPageElements.clickSubmitForTestingButton(serviceMetadata.getName());
         reloginWithNewRole(UserRoleEnum.TESTER);
         GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());

@@ -27,7 +27,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
@@ -69,11 +69,13 @@ public class ArchiveRestoreTest extends SetupCDTest {
 
 //      1. Import VSP v1.0
         String filePath = org.openecomp.sdc.ci.tests.utilities.FileHandling.getUpdateVSPVnfRepositoryPath();
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
-        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", amdocsLicenseMembers.getVendorLicenseName()));
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
+        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
+            .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile1));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
+            vendorLicenseModel, null);
 //		2. Create VF from VSP, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -117,11 +119,13 @@ public class ArchiveRestoreTest extends SetupCDTest {
 
 //      1. Import VSP v1.0
         String filePath = org.openecomp.sdc.ci.tests.utilities.FileHandling.getUpdateVSPVnfRepositoryPath();
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
-        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", amdocsLicenseMembers.getVendorLicenseName()));
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
+        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
+            .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile1));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
+            vendorLicenseModel, null);
 //		2. Create VF from VSP, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
@@ -163,11 +167,13 @@ public class ArchiveRestoreTest extends SetupCDTest {
         String vnfFile1 = "1-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0.zip";
 //      1. Import VSP v1.0
         String filePath = org.openecomp.sdc.ci.tests.utilities.FileHandling.getUpdateVSPVnfRepositoryPath();
-        AmdocsLicenseMembers amdocsLicenseMembers = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
-        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", amdocsLicenseMembers.getVendorLicenseName()));
+        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
+        getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
+            .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile1));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails, amdocsLicenseMembers, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
+            vendorLicenseModel, null);
 //		2. Create VF from VSP, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         getExtendTest().log(Status.INFO, String.format("Creating Virtual Function (VF): %s v1.0", resourceReqDetails.getName()));
@@ -185,7 +191,7 @@ public class ArchiveRestoreTest extends SetupCDTest {
 
         reloginWithNewRole(UserRoleEnum.GOVERNOR);
         GeneralUIUtils.findComponentAndClick(service.getName());
-        GovernorOperationPage.approveSerivce(service.getName());
+        GovernorOperationPage.approveService(service.getName());
 //		4. archive VF(1.0)
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         GeneralPageElements.clickArchivedButtonFromCatalog(resource.getName());

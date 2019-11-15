@@ -378,7 +378,7 @@ public class PNF extends SetupCDTest {
 
         /*reloginWithNewRole(UserRoleEnum.DESIGNER);*/
         ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ServiceUIUtils.createService(serviceMetadata, getUser());
+        ServiceUIUtils.createService(serviceMetadata);
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
         CompositionPage.searchForElement(pnfName);
@@ -394,7 +394,7 @@ public class PNF extends SetupCDTest {
 
         reloginWithNewRole(UserRoleEnum.GOVERNOR);
         GeneralUIUtils.findComponentAndClick(serviceName);
-        GovernorOperationPage.approveSerivce(serviceName);
+        GovernorOperationPage.approveService(serviceName);
 
         reloginWithNewRole(UserRoleEnum.OPS);
         GeneralUIUtils.findComponentAndClick(serviceName);

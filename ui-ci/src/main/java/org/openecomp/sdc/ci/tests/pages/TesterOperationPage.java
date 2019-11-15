@@ -28,7 +28,7 @@ import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 public class TesterOperationPage {
 
     private TesterOperationPage() {
-        super();
+
     }
 
     public static void certifyComponent(String componentName) throws Exception {
@@ -37,7 +37,7 @@ public class TesterOperationPage {
     }
 
     public static void clickAcceptCertificationButton(String componentName) throws Exception {
-        ExtentTestActions.log(Status.INFO, "Accepting certifiction of " + componentName);
+        ExtentTestActions.log(Status.INFO, "Accepting certification of " + componentName);
         String actionDuration = GeneralUIUtils.getActionDuration(() ->
         {
             try {
@@ -46,7 +46,7 @@ public class TesterOperationPage {
                 e.printStackTrace();
             }
         });
-        ExtentTestActions.log(Status.INFO, componentName + " is certifed", actionDuration);
+        ExtentTestActions.log(Status.INFO, componentName + " is certified", actionDuration);
 
     }
 
@@ -66,10 +66,8 @@ public class TesterOperationPage {
     private static void clickAcceptCertificationButtonWithoutDuration(String componentName) throws Exception {
         try {
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.LifeCyleChangeButtons.ACCEPT.getValue());
-            //GeneralUIUtils.ultimateWait();
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ModalItems.ACCEPT_TESTING_MESSAGE.getValue()).sendKeys(componentName + " tested successfuly");
             GeneralPageElements.clickOKButton();
-            //GeneralUIUtils.sleep(2000);
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue());
         } catch (Exception e) {
             throw new Exception("Accepting certification of " + componentName + " failed");
@@ -79,10 +77,7 @@ public class TesterOperationPage {
     private static void clickStartTestingButtonWithoutDuration() throws Exception {
         try {
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.LifeCyleChangeButtons.START_TESTING.getValue());
-            //GeneralUIUtils.ultimateWait();
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.LifeCyleChangeButtons.ACCEPT.getValue());
-            //GeneralUIUtils.ultimateWait();
-            //GeneralUIUtils.sleep(1000);
         } catch (Exception e) {
             throw new Exception("Start testing failed");
         }
