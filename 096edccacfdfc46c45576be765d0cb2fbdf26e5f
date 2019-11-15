@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "984269d3_18f10fb1",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/auditing/AuditingGenericEvent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-15T13:33:15Z",
+      "side": 1,
+      "message": "default constructor can be removed",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 5
+      },
+      "revId": "096edccacfdfc46c45576be765d0cb2fbdf26e5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "61400cee_6e542d80",
         "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
         "patchSetId": 1
