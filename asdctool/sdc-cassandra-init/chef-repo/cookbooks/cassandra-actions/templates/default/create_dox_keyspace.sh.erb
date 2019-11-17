@@ -12,10 +12,10 @@ echo "run create_dox_keyspace.cql"
 echo -e "$KEYSPACE\n$KEYSPACE1" > /tmp/create_dox_keyspace.cql
 
 chmod 755 /tmp/create_dox_keyspace.cql
-cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT -f /tmp/create_dox_keyspace.cql > /dev/null 2>&1
+cqlsh --cqlversion '3.4.4'  -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT -f /tmp/create_dox_keyspace.cql > /dev/null 2>&1
 
 
-res=`echo "select keyspace_name from system.schema_keyspaces ;" | cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT |grep -c dox 2>/dev/null`
+res=`echo "select keyspace_name from system.schema_keyspaces ;" | cqlsh --cqlversion '3.4.4'  -u $CASSANDRA_USER -p $CASSANDRA_PASS $CASSANDRA_IP $CASSANDRA_PORT |grep -c dox 2>/dev/null`
 
 if [ $res -gt 0 ]; then
         echo "`date` --- dox keyspace was created "

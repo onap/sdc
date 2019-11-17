@@ -1,8 +1,7 @@
 #!/bin/bash
 
 CASSANDRA_IP=<%= @cassandra_ip %>
-#Port for Cassandra Thrift to listen for clients on
-CASSANDRA_PORT=9160
+CASSANDRA_PORT=<%= @cassandra_port %>
 CS_PASSWORD=<%= @cassandra_pwd %>
 SDC_USER=<%= @sdc_usr %>
 SDC_PASSWORD=<%= @sdc_pwd %>
@@ -13,7 +12,7 @@ retry_num=1
 is_up=0
 while [ $is_up -eq 0 -a $retry_num -le 100 ]; do
 
-   echo "exit" | cqlsh -u cassandra -p $CS_PASSWORD $CASSANDRA_IP $CASSANDRA_PORT  > /dev/null 2>&1
+   echo "exit" | cqlsh --cqlversion '3.4.4'  -u cassandra -p $CS_PASSWORD $CASSANDRA_IP $CASSANDRA_PORT  > /dev/null 2>&1
    res1=$?
 
    if [ $res1 -eq 0 ]; then
@@ -26,10 +25,10 @@ while [ $is_up -eq 0 -a $retry_num -le 100 ]; do
    let "retry_num++"
 done
 
-cassandra_user_exist=`echo "list users;" | cqlsh -u cassandra -p $CS_PASSWORD $CASSANDRA_IP $CASSANDRA_PORT | grep -c $SDC_USER`
+cassandra_user_exist=`echo "list users;" | cqlsh --cqlversion '3.4.4'  -u cassandra -p $CS_PASSWORD $CASSANDRA_IP $CASSANDRA_PORT | grep -c $SDC_USER`
         if [ $cassandra_user_exist -eq 1 ] ; then
                 echo "cassandra user $SDC_USER already exist"
         else
                 echo "Going to create $SDC_USER"
-                echo "create user $SDC_USER with password '$SDC_PASSWORD' nosuperuser;" | cqlsh -u cassandra -p $CS_PASSWORD $CASSANDRA_IP $CASSANDRA_PORT
+                echo "create user $SDC_USER with password '$SDC_PASSWORD' nosuperuser;" | cqlsh  --cqlversion '3.4.4' -u cassandra -p $CS_PASSWORD $CASSANDRA_IP $CASSANDRA_PORT
         fi

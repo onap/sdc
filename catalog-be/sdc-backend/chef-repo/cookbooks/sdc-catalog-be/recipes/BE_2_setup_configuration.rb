@@ -19,6 +19,7 @@ template "janusgraph.properties" do
    mode "0755"
    variables({
       :cassandra_ip             => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
+      :cassandra_prt            => node['cassandra'][:cassandra_port],
       :cassandra_pwd            => node['cassandra'][:cassandra_password],
       :cassandra_usr            => node['cassandra'][:cassandra_user],
       :rep_factor               => replication_factor,
