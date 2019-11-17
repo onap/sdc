@@ -70,7 +70,7 @@ neo4j:
     host: neo4jhost
     port: 7474
     user: neo4j
-    password: "12345"
+    password: "Pass"
 
 cassandraConfig:
     cassandraHosts: ['localhost']
@@ -78,10 +78,10 @@ cassandraConfig:
     reconnectTimeout : 30000
     authenticate: false
     username: koko
-    password: bobo
+    password: "Pass"
     ssl: false
     truststorePath : /path/path
-    truststorePassword : 123123
+    truststorePassword : "Pass"
     keySpaces:
         - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
         - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
@@ -570,16 +570,16 @@ dcae:
     healthCheckUri: "/dcae/healthCheck"
 
 switchoverDetector:
-    gBeFqdn: AIO-BE.ecomp.idns.cip.com
-    gFeFqdn: AIO-FE.ecomp.idns.cip.com
+    gBeFqdn: Onap
+    gFeFqdn: Onap
     beVip: 0.0.0.0
     feVip: 0.0.0.0
     beResolveAttempts: 3
     feResolveAttempts: 3
     enabled: false
     interval: 60
-    changePriorityUser: ecompasdc
-    changePriorityPassword: ecompasdc123
+    changePriorityUser: Onap.Sdc
+    changePriorityPassword: "Pass"
     publishNetworkUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/update_network?user=root"
     publishNetworkBody: '{"note":"publish network"}'
     groups:
@@ -652,7 +652,7 @@ environmentContext:
        - General_Non-Revenue
 
 dmaapConsumerConfiguration:
-    hosts: olsd004.wnsnet.attws.com:3905
+    hosts: Demo.onap.org
     consumerGroup: asdc
     consumerId: mama
     timeoutMs: 15000
@@ -662,7 +662,7 @@ dmaapConsumerConfiguration:
     latitude: 32.109333
     longitude: 34.855499
     version: 1.0
-    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.att.com/events
+    serviceName: dmaap.onap.org/events
     environment: TEST
     partner: BOT_R
     routeOffer: MR1
@@ -676,8 +676,8 @@ dmaapConsumerConfiguration:
     dme2preferredRouterFilePath: DME2preferredRouter.txt 
     timeLimitForNotificationHandleMs: 0
     credential:
-        username: m09875@sdc.att.com
-        password: hmXYcznAljMSisdy8zgcag==
+        username: Onap_demo
+        password: Pass
         
 dmeConfiguration:
     dme2Search: DME2SEARCH

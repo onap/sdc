@@ -1,15 +1,6 @@
 outputFolder: target
 reportName: index.html
 catalogBeHost: 192.168.33.10
-#Automate
-#catalogBeHost: 135.63.125.67
-#catalogFeHost: 135.63.125.63
-#IFT
-#catalogBeHost: 135.21.143.248
-#catalogFeHost: 135.21.125.96
-#QA-SCRUM1
-#catalogBeHost: 135.21.125.97
-#catalogFeHost: 135.21.125.89
 esHost: eshost
 disributionClientHost: disClient
 catalogFePort: 8181
