@@ -24,6 +24,7 @@ import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
@@ -105,7 +106,8 @@ public class SdcSchemaFilesData {
 			this.payload = ByteBuffer.wrap(payload.clone());
 		}
 	}
-	
+
+	@Transient
 	public byte[] getPayloadAsArray() {
 		return payload != null ? payload.array() : null;
 	}
