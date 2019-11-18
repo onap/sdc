@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "340d2678_9f8d2b25",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/ScalarUnitValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2019-11-18T16:10:27Z",
+      "side": 1,
+      "message": "Hi Ojas, I have changed the regex to allow spaces between the scalar value and the unit value. \n\nThis regex is used to check if the String structure matches with the Tosca Scalar Unit Types structure. There is another method that validates if the given String has a Recognized Tosca unit.",
+      "parentUuid": "284a78d8_4bad5988",
+      "revId": "14b49d7434bd91310387c600c06a57338383bcec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d6c5c337_a023b2dc",
         "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/DefinedHeatParameterTypes.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-11-18T11:34:30Z",
       "side": 1,
       "message": "May be this method can be used in the validato. Looks more in line with the spec.",
+      "revId": "14b49d7434bd91310387c600c06a57338383bcec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b4c5c28_6b3e4b25",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/DefinedHeatParameterTypes.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2019-11-18T16:10:27Z",
+      "side": 1,
+      "message": "I have moved it to the ScalarUnitValidator class.",
+      "parentUuid": "d6c5c337_a023b2dc",
       "revId": "14b49d7434bd91310387c600c06a57338383bcec",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
