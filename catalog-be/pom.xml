@@ -302,7 +302,7 @@
       <version>${guava.version}</version>
       <scope>compile</scope>
     </dependency>
-
+ 
     <dependency>
       <groupId>org.janusgraph</groupId>
       <artifactId>janusgraph-core</artifactId>
@@ -330,13 +330,24 @@
 
     <dependency>
       <groupId>org.janusgraph</groupId>
-      <artifactId>janusgraph-cassandra</artifactId>
+      <artifactId>janusgraph-cql</artifactId>
       <version>${janusgraph.version}</version>
-      <scope>compile</scope>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-collections</artifactId>
+          <groupId>commons-collections</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>groovy</artifactId>
+          <groupId>org.codehaus.groovy</groupId>
         </exclusion>
         <exclusion>
           <groupId>io.netty</groupId>

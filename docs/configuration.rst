@@ -1130,7 +1130,7 @@ BE-janusgraph.properties
     storage.hostname=<%= @CASSANDRA_IP %>
 
     # JanusGraph storage port
-    storage.port=9160
+    storage.port=9042
 
     # JanusGraph storage username
     storage.username=<%= @CASSANDRA_USR %>
