@@ -32,6 +32,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.datastax.driver.mapping.annotations.Transient;
+
 /**
  * Extending this class enforces the objects of implementing classes to have a
  * timestamp, so that like in logstash, we can derive the index name for those
@@ -48,10 +50,12 @@ public class ESTimeBasedEvent {
     private static final int TIMESTAMP_HOURS_END = 13;
     private static final int TIMESTAMP_MINUTES_START = 14;
     private static final int TIMESTAMP_MINUTES_END = 16;
-
+    @Transient
     protected SimpleDateFormat simpleDateFormat;
     protected static String dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS z";
+    @Transient
     protected String timestamp;
+    @Transient
     protected Map<String, Object> fields = new HashMap<>();
 
     public ESTimeBasedEvent() {

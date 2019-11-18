@@ -1,4 +1,4 @@
-FROM onap/base_sdc-cassandra:1.4.1
+FROM onap/base_sdc-cassandra:1.5.0-SNAPSHOT-latest
 
 COPY chef-solo /root/chef-solo/
 
