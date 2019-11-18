@@ -21,20 +21,20 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
 import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
-
+import com.datastax.driver.mapping.annotations.Transient;
 import java.util.Date;
 
 public class AuditingGenericEvent extends ESTimeBasedEvent {
+    @Transient
     protected String requestId;
+    @Transient
     protected String serviceInstanceId;
+    @Transient
     protected String action;
+    @Transient
     protected String status;
-
+    @Transient
     protected String desc;
-
-    public AuditingGenericEvent() {
-        super();
-    }
 
     public String getRequestId() {
         return requestId;

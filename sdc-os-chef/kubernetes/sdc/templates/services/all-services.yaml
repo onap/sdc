@@ -29,8 +29,6 @@ spec:
   ports:
   - name: sdc-cs-port-9042
     port: 9042
-  - name: sdc-cs-port-9160
-    port: 9160
   selector:
     app: sdc-cs
   clusterIP: None

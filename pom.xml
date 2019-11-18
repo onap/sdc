@@ -72,10 +72,11 @@ Modifications copyright (c) 2018-2019 Nokia
     <catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
     <jetty.version>9.4.18.v20190429</jetty.version>
 
-    <!-- JSON and YAML Parsing -->
-    <jackson.version>2.9.9</jackson.version>
-    <jackson-annotations.version>2.9.9</jackson-annotations.version>
-    <jackson.mapper.version>1.9.13</jackson.mapper.version>
+        <!-- JSON and YAML Parsing -->
+        <jackson.version>2.9.9</jackson.version>
+        <jackson-annotations.version>2.9.9</jackson-annotations.version>
+        <jackson.mapper.version>1.9.13</jackson.mapper.version>
+        <clearspring.version>2.1.1</clearspring.version>
 
     <!-- Yaml for properties -->
     <snakeyaml.version>1.14</snakeyaml.version>
@@ -136,12 +137,12 @@ Modifications copyright (c) 2018-2019 Nokia
     <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
     <sonar.branch>${project.version}</sonar.branch>
 
-    <!--cassandra -->
-    <cassandra.driver.version>3.0.0</cassandra.driver.version>
-    <libthrift.version>0.12.0</libthrift.version>
-    <!-- maven central (Nexus) -->
-    <nexus.id.release>nexus</nexus.id.release>
-    <nexus.id.snapshot>nexus</nexus.id.snapshot>
+        <!--cassandra -->
+        <cassandra.driver.version>3.6.0</cassandra.driver.version>
+        <libthrift.version>0.12.0</libthrift.version>
+        <!-- maven central (Nexus) -->
+        <nexus.id.release>nexus</nexus.id.release>
+        <nexus.id.snapshot>nexus</nexus.id.snapshot>
 
     <!--nexus-->
     <npm.registry>https://nexus3.onap.org/repository/npm.public/</npm.registry>
