@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.resources.data;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
 
 import java.nio.ByteBuffer;
 
@@ -68,6 +69,7 @@ public class ESArtifactData {
 
 	}
 
+	@Transient
 	public byte[] getDataAsArray() {
 		// return data;
 		if (data != null) {

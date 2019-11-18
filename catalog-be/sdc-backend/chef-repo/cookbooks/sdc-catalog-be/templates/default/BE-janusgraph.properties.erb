@@ -1,20 +1,20 @@
-storage.backend=cassandra
+storage.backend=cql
 storage.hostname=<%= @cassandra_ip %>
-storage.port=9160
+storage.port=<%= @cassandra_prt %>
 storage.username=<%= @cassandra_usr %>
 storage.password=<%= @cassandra_pwd %>
 storage.connection-timeout=<%= @janusgraph_connection_timeout %>
-storage.cassandra.keyspace=sdctitan
+storage.cql.keyspace=sdctitan
 
-storage.cassandra.ssl.enabled=<%= @cassandra_ssl_enabled %>
-storage.cassandra.ssl.truststore.location=/var/lib/jetty/etc/truststore
-storage.cassandra.ssl.truststore.password=<%= @cassandra_truststore_password %>
+storage.cql.ssl.enabled=<%= @cassandra_ssl_enabled %>
+storage.cql.ssl.truststore.location=<%= @cassandra_truststore_path %>
+storage.cql.ssl.truststore.password=<%= @cassandra_truststore_password %>
 
-storage.cassandra.read-consistency-level=LOCAL_QUORUM
-storage.cassandra.write-consistency-level=LOCAL_QUORUM
-storage.cassandra.replication-strategy-class=org.apache.cassandra.locator.NetworkTopologyStrategy
-storage.cassandra.replication-strategy-options=<%= @DC_NAME_WITH_REP %>
-storage.cassandra.astyanax.local-datacenter=<%= @DC_NAME %>
+storage.cql.read-consistency-level=LOCAL_QUORUM
+storage.cql.write-consistency-level=LOCAL_QUORUM
+storage.cql.replication-strategy-class=NetworkTopologyStrategy
+storage.cql.replication-strategy-options=<%= @DC_NAME_WITH_REP %>
+storage.cql.local-datacenter=<%= @DC_NAME %>
 
 
 cache.db-cache = false
