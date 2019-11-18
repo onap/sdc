@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "284a78d8_4bad5988",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/ScalarUnitValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2019-11-18T11:34:30Z",
+      "side": 1,
+      "message": "According to Tosca Spec 3.2.6.2\nWhitespace: any number of spaces (including zero or none) SHALL be allowed between the scalar value and the unit value.\n\nThe pattern matching accounts for only 1 space. \n\nAlso, the matcher class [a-z][A-Z]{1,3} would pass even for a string which might not fall under the \"Recognized units\" for scalar type (3.2.6.4.1, 3.2.6.5.1 and 3.2.6.6.1). \ne.g 10 abc",
+      "revId": "14b49d7434bd91310387c600c06a57338383bcec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6c5c337_a023b2dc",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/DefinedHeatParameterTypes.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2019-11-18T11:34:30Z",
+      "side": 1,
+      "message": "May be this method can be used in the validato. Looks more in line with the spec.",
+      "revId": "14b49d7434bd91310387c600c06a57338383bcec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
