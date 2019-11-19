@@ -16,6 +16,9 @@
 
 package org.onap.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,6 +34,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 public class NonConfigResource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NonConfigResource.class);
 
     static final String NODE_CONFIG_LOCATION = "node.config.location";
     static final String CONFIG_LOCATION = "config.location";
@@ -73,7 +77,7 @@ public class NonConfigResource {
                            .findFirst().orElse(null);
 
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOGGER.error("Failed to locate resource '{}'.", resource, exception);
             return null;
         }
     }
