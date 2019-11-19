@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "8821a879_ef757e5e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1375,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-19T14:37:11Z",
+      "side": 1,
+      "message": "Checking for file presence added.",
+      "parentUuid": "6d1ff5c6_094b3f2f",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6e05ae8d_5a6cefa6",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogicTest.java",
         "patchSetId": 6
@@ -104,6 +122,24 @@
       "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "888baf66_fdd31e48",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-19T14:37:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "83668d52_570edc58",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
