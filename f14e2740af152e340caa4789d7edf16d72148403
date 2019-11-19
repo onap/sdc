@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "eba2ab52_c5c1d1f1",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-11-19T15:44:11Z",
+      "side": 1,
+      "message": "Fixed in https://gerrit.onap.org/r/c/sdc/+/98600",
+      "parentUuid": "3367f6c1_84e2613d",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 40
+      },
+      "revId": "f14e2740af152e340caa4789d7edf16d72148403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7421adaa_a105a4a6",
         "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "218eb009_75cd5dc5",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-11-19T15:44:11Z",
+      "side": 1,
+      "message": "Yep, make sense, fixed.",
+      "parentUuid": "7421adaa_a105a4a6",
+      "range": {
+        "startLine": 140,
+        "startChar": 76,
+        "endLine": 140,
+        "endChar": 84
+      },
+      "revId": "f14e2740af152e340caa4789d7edf16d72148403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "265150a0_179e72c9",
         "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "f14e2740af152e340caa4789d7edf16d72148403",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4b0d6b9_ab766021",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-11-19T15:44:11Z",
+      "side": 1,
+      "message": "Yep, make sense, fixed.",
+      "parentUuid": "265150a0_179e72c9",
+      "range": {
+        "startLine": 148,
+        "startChar": 76,
+        "endLine": 148,
+        "endChar": 84
+      },
+      "revId": "f14e2740af152e340caa4789d7edf16d72148403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
