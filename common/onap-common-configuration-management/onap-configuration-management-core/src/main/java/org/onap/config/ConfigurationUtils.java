@@ -19,52 +19,10 @@
 
 package org.onap.config;
 
-import static java.util.Optional.ofNullable;
-import static org.onap.config.api.Hint.EXTERNAL_LOOKUP;
-import static org.onap.config.api.Hint.LATEST_LOOKUP;
-import static org.onap.config.api.Hint.NODE_SPECIFIC;
-
 import com.virtlink.commons.configuration2.jackson.JsonConfiguration;
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.TransferQueue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import net.sf.corn.cps.CPScanner;
 import net.sf.corn.cps.ResourceFilter;
-import org.apache.commons.configuration2.CompositeConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.*;
 import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
@@ -80,6 +38,24 @@ import org.onap.config.type.ConfigurationMode;
 import org.onap.config.type.ConfigurationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
+import static org.onap.config.api.Hint.*;
 
 public class ConfigurationUtils {
 
@@ -141,7 +117,7 @@ public class ConfigurationUtils {
         }
 
         return list.stream().filter(o -> o != null && !o.toString().trim().isEmpty())
-                                         .map(o -> o.toString().trim()).collect(Collectors.joining(","));
+                .map(o -> o.toString().trim()).collect(Collectors.joining(","));
     }
 
     public static boolean isConfig(URL url) {
@@ -179,12 +155,12 @@ public class ConfigurationUtils {
 
     private static Optional<String> readNamespace(Configuration config) {
         return ofNullable(config).flatMap(configuration -> ofNullable(configuration.getString(Constants.NAMESPACE_KEY)))
-                       .map(String::toUpperCase);
+                .map(String::toUpperCase);
     }
 
     private static Optional<String> readMergeStrategy(Configuration config) {
         return ofNullable(config).flatMap(configuration -> ofNullable(configuration.getString(Constants.MODE_KEY)))
-                       .map(String::toUpperCase);
+                .map(String::toUpperCase);
     }
 
     public static ConfigurationMode getMergeStrategy(File file) {
@@ -313,7 +289,7 @@ public class ConfigurationUtils {
 
     public static boolean isWrapperClass(Class clazz) {
         return clazz == String.class || clazz == Boolean.class || clazz == Character.class
-                       || Number.class.isAssignableFrom(clazz);
+                || Number.class.isAssignableFrom(clazz);
     }
 
     public static Class getArrayClass(Class clazz) {
@@ -329,7 +305,7 @@ public class ConfigurationUtils {
         ConfigurationType configType = ConfigurationUtils.getConfigType(file);
         builder = getFileBasedConfigurationBuilder(configType);
         builder.configure(new Parameters().fileBased().setFile(file)
-                                  .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
+                .setListDelimiterHandler(new DefaultListDelimiterHandler(',')));
         return builder;
     }
 
@@ -612,7 +588,7 @@ public class ConfigurationUtils {
                 String moduleName = matcher.group(1).substring(1);
                 return moduleName.equalsIgnoreCase(ConfigurationMode.OVERRIDE.name()) || moduleName.equalsIgnoreCase(
                         ConfigurationMode.UNION.name()) || moduleName.equalsIgnoreCase(ConfigurationMode.MERGE.name())
-                               ? Constants.DEFAULT_NAMESPACE : moduleName;
+                        ? Constants.DEFAULT_NAMESPACE : moduleName;
             } else {
                 return Constants.DEFAULT_NAMESPACE;
             }
@@ -632,21 +608,15 @@ public class ConfigurationUtils {
     }
 
     public static Object getProperty(Configuration config, String key, int processingHints) {
-
-        if (!isDirectLookup(processingHints) && (config instanceof CompositeConfiguration)) {
-
+        if (!isDirectLookup(processingHints) && isNodeSpecific(processingHints) && (config instanceof CompositeConfiguration)) {
             CompositeConfiguration conf = (CompositeConfiguration) config;
             for (int i = 0; i < conf.getNumberOfConfigurations(); i++) {
-
-                if (isNodeSpecific(processingHints)) {
-                    Object obj = conf.getConfiguration(i).getProperty(key);
-                    if (obj != null) {
-                        return obj;
-                    }
+                Object obj = conf.getConfiguration(i).getProperty(key);
+                if (obj != null) {
+                    return obj;
                 }
             }
         }
-
         return config.getProperty(key);
     }
 
