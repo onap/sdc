@@ -31,6 +31,9 @@ public class AuthenticationCookieUtils {
 
     private static final Logger log = LoggerFactory.getLogger(SessionValidationFilter.class.getName());
 
+    private AuthenticationCookieUtils() {
+    }
+
     /**
      * Update given cookie session time value to current time
      *
@@ -58,6 +61,7 @@ public class AuthenticationCookieUtils {
      */
     public static Cookie createUpdatedCookie(Cookie cookie, String encryptedCookie, ISessionValidationCookieConfiguration cookieConfiguration) {
         Cookie updatedCookie = new Cookie(cookie.getName(), encryptedCookie );
+        updatedCookie.setSecure(true);
         updatedCookie.setPath(cookieConfiguration.getCookiePath());
         updatedCookie.setDomain(cookieConfiguration.getCookieDomain());
         updatedCookie.setHttpOnly(cookieConfiguration.isCookieHttpOnly());
@@ -116,12 +120,11 @@ public class AuthenticationCookieUtils {
      * @param filterConfiguration
      * @return
      */
-    public static boolean isSessionIdle(long sessionTimeValue, long currentTime, ISessionValidationFilterConfiguration filterConfiguration) {
+    private static boolean isSessionIdle(long sessionTimeValue, long currentTime, ISessionValidationFilterConfiguration filterConfiguration) {
         long currentIdleTime = currentTime - sessionTimeValue;
         long maxIdleTime = filterConfiguration.getSessionIdleTimeOut();
         log.debug("SessionValidationFilter: Checking if session idle: session time: {}, current idle time: {}, max idle time: {}", currentTime, currentIdleTime, maxIdleTime);
         return currentIdleTime >= maxIdleTime;
     }
-
 
 }
