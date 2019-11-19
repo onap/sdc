@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "48975daa_859dd391",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-19T16:37:54Z",
+      "side": 1,
+      "message": "\u003e Fixed in https://gerrit.onap.org/r/c/sdc/+/98600\n\nAny particular reason for have two commit for same file with same Issue-ID: SDC-2660,\nwould be better to merge them in one commit and list all changes/fixes in \"commit message\"",
+      "parentUuid": "eba2ab52_c5c1d1f1",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 40
+      },
+      "revId": "f14e2740af152e340caa4789d7edf16d72148403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7421adaa_a105a4a6",
         "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
         "patchSetId": 1
