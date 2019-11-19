@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21a68013_1a947a1c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 4767
+      },
+      "writtenOn": "2019-11-19T10:56:51Z",
+      "side": 1,
+      "message": "Is there any other place in flow where this enhancement can be done? rather than this class (maybe some place where only PNF is going through)",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d870687f_1ecba425",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1375,
+      "author": {
+        "id": 4767
+      },
+      "writtenOn": "2019-11-19T10:56:51Z",
+      "side": 1,
+      "message": "Do we always want to remove this file? Won\u0027t it be needed for futural use or check?",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e05ae8d_5a6cefa6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 4767
+      },
+      "writtenOn": "2019-11-19T10:56:51Z",
+      "side": 1,
+      "message": "What about tests for use cases where resource does not contain the file, path is corrupted or a bad structure of data in file (negative cases)",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
