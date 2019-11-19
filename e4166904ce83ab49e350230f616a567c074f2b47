@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "0efc2264_7efa576a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-19T14:53:00Z",
+      "side": 1,
+      "message": "I\u0027ve added a comment in the Jira ticket to illustrate what I mean.",
+      "parentUuid": "e743e81f_61fd0b5b",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d870687f_1ecba425",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 6
