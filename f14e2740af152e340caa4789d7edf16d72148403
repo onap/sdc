@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3367f6c1_84e2613d",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-19T15:18:09Z",
+      "side": 1,
+      "message": "replace with LOGGER",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 40
+      },
+      "revId": "f14e2740af152e340caa4789d7edf16d72148403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7421adaa_a105a4a6",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-19T15:18:09Z",
+      "side": 1,
+      "message": "unnecessary toString()",
+      "range": {
+        "startLine": 140,
+        "startChar": 76,
+        "endLine": 140,
+        "endChar": 84
+      },
+      "revId": "f14e2740af152e340caa4789d7edf16d72148403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "265150a0_179e72c9",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/NonConfigResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-19T15:18:09Z",
+      "side": 1,
+      "message": "unnecessary toString()",
+      "range": {
+        "startLine": 148,
+        "startChar": 76,
+        "endLine": 148,
+        "endChar": 84
+      },
+      "revId": "f14e2740af152e340caa4789d7edf16d72148403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
