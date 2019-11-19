@@ -49,9 +49,18 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.apache.commons.configuration2.BaseConfiguration;
+import org.apache.commons.configuration2.CompositeConfiguration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.junit.Test;
+import org.onap.config.api.Hint;
+import org.onap.config.impl.ConfigurationRepository;
 
 public class ConfigurationUtilsTest {
+
+    private static final String TEST_NAME_SPACE = "testNameSpaceOne";
+    private static final String TEST_COMPOSITE_NAMESPACE = "testCOmpositeConfig";
 
     @Test
     public void testCommaList() {
@@ -122,5 +131,54 @@ public class ConfigurationUtilsTest {
 
         ConfigurationUtils.getCompatibleCollectionForAbstractDef(Collection.class);
 
+    }
+
+    @Test
+    public void testGetConfigPropertyBaseConfig() throws Exception {
+        ConfigurationRepository repo = populateTestBaseConfig();
+        Configuration config = repo.getConfigurationFor(Constants.DEFAULT_TENANT, TEST_NAME_SPACE);
+        assertEquals(TEST_NAME_SPACE, ConfigurationUtils.getProperty(config, Constants.NAMESPACE_KEY, Hint.DEFAULT.value()));
+    }
+
+    @Test
+    public void testGetCompositeConfigPropertyDefaultHints() throws Exception {
+        ConfigurationRepository repo = populateTestCompositeConfig();
+        Configuration config = repo.getConfigurationFor(Constants.DEFAULT_TENANT, TEST_COMPOSITE_NAMESPACE);
+        assertEquals(TEST_NAME_SPACE, ConfigurationUtils.getProperty(config, Constants.NAMESPACE_KEY, Hint.DEFAULT.value()));
+    }
+
+    @Test
+    public void testGetCompositeConfigPropertyNodeSpecificHints() throws Exception {
+        ConfigurationRepository repo = populateTestCompositeConfig();
+        Configuration config = repo.getConfigurationFor(Constants.DEFAULT_TENANT, TEST_COMPOSITE_NAMESPACE);
+        assertEquals(TEST_NAME_SPACE, ConfigurationUtils.getProperty(config, Constants.NAMESPACE_KEY, Hint.NODE_SPECIFIC.value()));
+    }
+
+    private ConfigurationRepository populateTestBaseConfig() {
+        BaseConfiguration inputConfig = new PropertiesConfiguration();
+        inputConfig.setProperty(Constants.NAMESPACE_KEY, TEST_NAME_SPACE);
+        ConfigurationRepository repo = ConfigurationRepository.lookup();
+
+        repo.populateConfiguration(
+                Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + TEST_NAME_SPACE, inputConfig);
+
+        return repo;
+    }
+
+    private ConfigurationRepository populateTestCompositeConfig() {
+        CompositeConfiguration inputCompositeConfig = new CompositeConfiguration();
+        Configuration inputConfig1= new BaseConfiguration();
+        Configuration inputConfig2= new BaseConfiguration();
+        inputConfig1.setProperty(Constants.NAMESPACE_KEY, TEST_NAME_SPACE);
+        inputCompositeConfig.addConfiguration(inputConfig1);
+        inputCompositeConfig.addConfigurationFirst(inputConfig2);
+
+        ConfigurationRepository repo = ConfigurationRepository.lookup();
+        repo.populateConfiguration(
+                Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + TEST_COMPOSITE_NAMESPACE,
+                inputCompositeConfig
+        );
+
+        return repo;
     }
 }
