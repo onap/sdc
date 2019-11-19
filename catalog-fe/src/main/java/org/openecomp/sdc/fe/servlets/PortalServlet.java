@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.fe.servlets;
 
+import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.openecomp.sdc.common.impl.MutableHttpServletRequest;
 import org.openecomp.sdc.fe.Constants;
@@ -59,6 +60,7 @@ public class PortalServlet extends HttpServlet {
      */
     @GET
     @Path("/portal")
+    @Override
     public void doGet(@Context final HttpServletRequest request, @Context final HttpServletResponse response) {
         try {
             addRequestHeadersUsingWebseal(request, response);
@@ -190,7 +192,9 @@ public class PortalServlet extends HttpServlet {
             String currHeader = headers[i];
             String headerValue = request.getHeader(currHeader);
             if (headerValue != null) {
-                response.addCookie(new Cookie(currHeader, headerValue));
+                final Cookie cookie = new Cookie(currHeader, headerValue);
+                cookie.setSecure(true);
+                response.addCookie(cookie);
             }
         }
     }
@@ -273,7 +277,7 @@ public class PortalServlet extends HttpServlet {
         return newHeaderIsSet;
     }
 
-    private static String getUserIdFromCookie(HttpServletRequest request) throws Exception {
+    private static String getUserIdFromCookie(HttpServletRequest request) throws CipherUtilException {
         String userId = "";
         Cookie[] cookies = request.getCookies();
         Cookie userIdcookie = null;
