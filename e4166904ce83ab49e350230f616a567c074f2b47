@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e743e81f_61fd0b5b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-19T11:17:15Z",
+      "side": 1,
+      "message": "I\u0027ve tried to find a better place to add it, but couldn\u0027t. Do you have any suggestions?\n\nIn my opinion, this properties should always be present for any resource as they are the properties that comes from the generic resource. When you use the GUI to add a property to the resource (SELF), they are added in the same place of the tosca descriptor where the other generic properties are, but only the added property is shown in the GUI.\nI forced only for PNF because I don\u0027t know the behavior/structure of the others.",
+      "parentUuid": "21a68013_1a947a1c",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d870687f_1ecba425",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 6
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "6d1ff5c6_094b3f2f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1375,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-19T11:17:15Z",
+      "side": 1,
+      "message": "Just when the file is present, I will add a checking for that.\nThis file will just represent properties to be added to the resource so, after reading and adding those properties to the resource, it is not needed anymore.",
+      "parentUuid": "d870687f_1ecba425",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6e05ae8d_5a6cefa6",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogicTest.java",
         "patchSetId": 6
@@ -47,6 +83,24 @@
       "writtenOn": "2019-11-19T10:56:51Z",
       "side": 1,
       "message": "What about tests for use cases where resource does not contain the file, path is corrupted or a bad structure of data in file (negative cases)",
+      "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83668d52_570edc58",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/SoftwareInformationBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-19T11:17:15Z",
+      "side": 1,
+      "message": "I will add those cases.",
+      "parentUuid": "6e05ae8d_5a6cefa6",
       "revId": "e4166904ce83ab49e350230f616a567c074f2b47",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
