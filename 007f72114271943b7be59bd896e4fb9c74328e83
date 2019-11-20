@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "29b3f11d_6e2fbab6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T10:17:52Z",
+      "side": 1,
+      "message": "merge IFs",
+      "range": {
+        "startLine": 223,
+        "startChar": 11,
+        "endLine": 224,
+        "endChar": 20
+      },
+      "revId": "007f72114271943b7be59bd896e4fb9c74328e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f3ed7d4_15817c86",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T10:17:52Z",
+      "side": 1,
+      "message": "Immediately return instead of creating variable",
+      "range": {
+        "startLine": 238,
+        "startChar": 5,
+        "endLine": 239,
+        "endChar": 21
+      },
+      "revId": "007f72114271943b7be59bd896e4fb9c74328e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5b9bfab_0cea3589",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T10:17:52Z",
+      "side": 1,
+      "message": "Immediately return instead of creating variable",
+      "range": {
+        "startLine": 247,
+        "startChar": 5,
+        "endLine": 249,
+        "endChar": 21
+      },
+      "revId": "007f72114271943b7be59bd896e4fb9c74328e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fba134ad_7d059405",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T10:17:52Z",
+      "side": 1,
+      "message": "Immediately return instead of creating variable.",
+      "range": {
+        "startLine": 255,
+        "startChar": 4,
+        "endLine": 257,
+        "endChar": 20
+      },
+      "revId": "007f72114271943b7be59bd896e4fb9c74328e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7a0e355_60ae415b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/auditing/impl/externalapi/AuditCreateServiceExternalApiEventFactoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T10:17:52Z",
+      "side": 1,
+      "message": "missing any Assert.",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 45,
+        "endChar": 5
+      },
+      "revId": "007f72114271943b7be59bd896e4fb9c74328e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d21fbb1c_c5a49f08",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServletTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T10:17:52Z",
+      "side": 1,
+      "message": "should be private",
+      "range": {
+        "startLine": 76,
+        "startChar": 4,
+        "endLine": 95,
+        "endChar": 115
+      },
+      "revId": "007f72114271943b7be59bd896e4fb9c74328e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
