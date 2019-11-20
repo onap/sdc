@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "4742b300_d0316385",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "Is there any specific reason for moving all those methods? In the first patch your changes were clear, now they are obfuscated. \nPlease, revert to the original code.",
+      "range": {
+        "startLine": 178,
+        "startChar": 16,
+        "endLine": 178,
+        "endChar": 36
+      },
+      "revId": "16e16944b4b2f7cb1b21178fe471fb44541de50f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5b46ad4f_409c521d",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 2
