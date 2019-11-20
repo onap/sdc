@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0aab062b_5ec4cbe9",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "Any particular reason to use a fixed file here instead of the file the test is using provided by the parameter \"String vnfFile\"?",
+      "range": {
+        "startLine": 350,
+        "startChar": 52,
+        "endLine": 350,
+        "endChar": 64
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d72d0f58_4290ddc0",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "remove unused attribution/move declaration for inside the if(hasValue){",
+      "range": {
+        "startLine": 57,
+        "startChar": 8,
+        "endLine": 57,
+        "endChar": 43
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7300bfa_de2ce49e",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "Could replace for org.apache.commons.collections.CollectionUtils.isNotEmpty(checkboxes)",
+      "range": {
+        "startLine": 60,
+        "startChar": 8,
+        "endLine": 61,
+        "endChar": 21
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "675288ca_fa972696",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "WebElement browseWebElement",
+      "range": {
+        "startLine": 62,
+        "startChar": 12,
+        "endLine": 62,
+        "endChar": 28
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "920950de_9df5401f",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "use \"org.junit.Assert.fail\" instead of \"assertTrue\" for an always false value.\nPlease, improve the fail message. What file was not found? Where?",
+      "range": {
+        "startLine": 67,
+        "startChar": 12,
+        "endLine": 67,
+        "endChar": 51
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "391cbce4_df158cf5",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "use \"org.junit.Assert.fail\" instead of \"assertTrue\" for an always false value.\nPlease, improve the fail message.",
+      "range": {
+        "startLine": 80,
+        "startChar": 12,
+        "endLine": 80,
+        "endChar": 69
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "780c815c_60fcf542",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "Use google style for if, always with {, eg.: if (condition) { [...] } else { [...] }\nhttps://google.github.io/styleguide/javaguide.html#s4.1.1-braces-always-used\nPlease, check other if declarations also.",
+      "range": {
+        "startLine": 86,
+        "startChar": 8,
+        "endLine": 86,
+        "endChar": 46
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64a77177_229d5fd6",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "Assert.fail, improve message",
+      "range": {
+        "startLine": 89,
+        "startChar": 12,
+        "endLine": 89,
+        "endChar": 81
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c457af99_55c7ff26",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-20T15:12:15Z",
+      "side": 1,
+      "message": "Assert.fail, improve message",
+      "range": {
+        "startLine": 94,
+        "startChar": 12,
+        "endLine": 94,
+        "endChar": 68
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
