@@ -117,7 +117,7 @@ public class RequestsClient extends HttpServlet {
 		// logger.debug("Send POST http request, url: {}", url);
 		// logger.debug("Response Code: {}", responseCode);
 
-		StringBuffer response = new StringBuffer();
+		StringBuilder response = new StringBuilder();
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;

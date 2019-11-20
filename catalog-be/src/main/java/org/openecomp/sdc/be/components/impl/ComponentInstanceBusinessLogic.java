@@ -1828,7 +1828,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                                                         String newValue, Component containerComponent, ComponentInstance foundResourceInstance,
                                                                         String capabilityType, String capabilityName) {
         String componentInstanceUniqueId = foundResourceInstance.getUniqueId();
-        StringBuffer sb = new StringBuffer(componentInstanceUniqueId);
+        StringBuilder sb = new StringBuilder(componentInstanceUniqueId);
         sb.append(ModelConverter.CAP_PROP_DELIM).append(property.getOwnerId()).append(ModelConverter.CAP_PROP_DELIM)
                 .append(capabilityType).append(ModelConverter.CAP_PROP_DELIM).append(capabilityName);
         String capKey = sb.toString();
@@ -1858,7 +1858,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         } else {
             propOwner = foundResourceInstance.getSourceModelUid();
         }
-        StringBuffer sb = new StringBuffer(componentInstanceUniqueId);
+        StringBuilder sb = new StringBuilder(componentInstanceUniqueId);
 
         sb.append(ModelConverter.CAP_PROP_DELIM).append(propOwner).append(ModelConverter.CAP_PROP_DELIM)
                 .append(capabilityType).append(ModelConverter.CAP_PROP_DELIM).append(capabilityName);

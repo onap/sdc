@@ -631,7 +631,7 @@ public class CreateServiceMetadataApiTest extends ComponentBaseTest {
 
 		// fill new service details
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
-		StringBuffer tagBuffer = new StringBuffer();
+		StringBuilder tagBuffer = new StringBuilder();
 		for (int i = 0; i < 1025; i++) {
 			tagBuffer.append("a");
 		}
