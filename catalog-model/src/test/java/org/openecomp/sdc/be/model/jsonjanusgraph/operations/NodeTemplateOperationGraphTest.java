@@ -211,7 +211,7 @@ public class NodeTemplateOperationGraphTest extends ModelTestBase{
     }
     
     private String buildInstanceId(int originIndex, int insIndex) {
-        StringBuffer sb = new StringBuffer("instanceId_");
+        StringBuilder sb = new StringBuilder("instanceId_");
         sb.append(originIndex).append("-").append(insIndex);
         return  sb.toString();
     }

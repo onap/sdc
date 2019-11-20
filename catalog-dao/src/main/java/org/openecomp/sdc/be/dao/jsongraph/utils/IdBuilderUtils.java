@@ -28,7 +28,7 @@ public class IdBuilderUtils {
 	private static String DOT = ".";
 	
 	public static String generateChildId(String componentId, VertexTypeEnum type){
-		StringBuffer sb = new StringBuffer(componentId);
+		StringBuilder sb = new StringBuilder(componentId);
 		sb.append(DOT).append(type.getName());
 		return sb.toString();
 	}

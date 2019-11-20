@@ -383,7 +383,7 @@ public class ValidationUtils {
 
     public static String normaliseComponentName(String name) {
         String[] split = splitComponentName(name);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String splitElement : split) {
             sb.append(splitElement);
         }
@@ -393,7 +393,7 @@ public class ValidationUtils {
 
     public static String normalizeComponentInstanceName(String name) {
         String[] split = splitComponentInstanceName(name);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String splitElement : split) {
             sb.append(splitElement);
         }
@@ -415,7 +415,7 @@ public class ValidationUtils {
 
     public static String convertToSystemName(String name) {
         String[] split = splitComponentName(name);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String splitElement : split) {
             String capitalize = WordUtils.capitalize(splitElement);
             sb.append(capitalize);
@@ -531,7 +531,7 @@ public class ValidationUtils {
 
     public static String normaliseProductName(String name) {
         String[] split = splitComponentName(PRODUCT_NAME_DELIMETER_PATTERN, name);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String splitElement : split) {
             sb.append(splitElement);
         }

@@ -774,7 +774,7 @@ public final class AtomicOperationUtils {
 		// Get the CSARs path
 		String realFilePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "CI" + File.separator + "csars" ;
 		if (filePath != null && filePath.length > 0) {
-			StringBuffer result = new StringBuffer();
+			StringBuilder result = new StringBuilder();
 			for(String currStr: filePath){
 				result.append(currStr);
 			}
