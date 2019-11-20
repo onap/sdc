@@ -1246,16 +1246,16 @@ public class JanusGraphGenericDao {
 
 	public JanusGraphOperationStatus lockElement(String id, NodeTypeEnum type) {
 
-		StringBuffer lockId = new StringBuffer(LOCK_NODE_PREFIX);
+		StringBuilder lockId = new StringBuilder(LOCK_NODE_PREFIX);
 		lockId.append(type.getName()).append("_").append(id);
 		return lockNode(lockId.toString());
 	}
 
 	public JanusGraphOperationStatus lockElement(GraphNode node) {
 
-		StringBuffer lockId = createLockElementId(node);
+		String lockId = createLockElementId(node);
 
-		return lockNode(lockId.toString());
+		return lockNode(lockId);
 	}
 
 	private JanusGraphOperationStatus lockNode(String lockId) {
@@ -1416,12 +1416,12 @@ public class JanusGraphGenericDao {
 	 * @return
 	 */
 	public JanusGraphOperationStatus releaseElement(GraphNode node) {
-		StringBuffer lockId = createLockElementId(node);
+		String lockId = createLockElementId(node);
 
 		return unlockNode(lockId);
 	}
 
-	private JanusGraphOperationStatus unlockNode(StringBuffer lockId) {
+	private JanusGraphOperationStatus unlockNode(String lockId) {
 		GraphNodeLock lockNode = new GraphNodeLock(lockId.toString());
 
 		Either<GraphNodeLock, JanusGraphOperationStatus> lockNodeNew = deleteNode(lockNode, GraphNodeLock.class);
@@ -1437,15 +1437,15 @@ public class JanusGraphGenericDao {
 	}
 
 	public JanusGraphOperationStatus releaseElement(String id, NodeTypeEnum type) {
-		StringBuffer lockId = new StringBuffer(LOCK_NODE_PREFIX);
+		StringBuilder lockId = new StringBuilder(LOCK_NODE_PREFIX);
 		lockId.append(type.getName()).append("_").append(id);
-		return unlockNode(lockId);
+		return unlockNode(lockId.toString());
 	}
 
-	private StringBuffer createLockElementId(GraphNode node) {
-		StringBuffer lockId = new StringBuffer(LOCK_NODE_PREFIX);
+	private String createLockElementId(GraphNode node) {
+		StringBuilder lockId = new StringBuilder(LOCK_NODE_PREFIX);
 		lockId.append(node.getLabel()).append("_").append(node.getUniqueId());
-		return lockId;
+		return lockId.toString();
 	}
 
 	public <T extends GraphNode> Either<ImmutablePair<T, GraphEdge>, JanusGraphOperationStatus> getChild(String key, String uniqueId, GraphEdgeLabels edgeType, NodeTypeEnum nodeTypeEnum, Class<T> clazz) {

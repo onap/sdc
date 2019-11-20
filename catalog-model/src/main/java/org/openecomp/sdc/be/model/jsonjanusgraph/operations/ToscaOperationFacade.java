@@ -1365,7 +1365,7 @@ public class ToscaOperationFacade {
             propOwner = fetchedCIOptional.get().getSourceModelUid();
         }
         StorageOperationStatus status;
-        StringBuffer sb = new StringBuffer(componentInstanceId);
+        StringBuilder sb = new StringBuilder(componentInstanceId);
         sb.append(ModelConverter.CAP_PROP_DELIM).append(propOwner).append(ModelConverter.CAP_PROP_DELIM)
                 .append(capabilityDefinition.getType()).append(ModelConverter.CAP_PROP_DELIM).append(capabilityDefinition.getName());
         String capKey = sb.toString();

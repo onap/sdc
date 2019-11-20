@@ -179,7 +179,7 @@ public class BaseRestUtils extends BaseValidationUtils {
 			int statusCode = response.getStatusLine().getStatusCode();
 
 			postResponse.setErrorCode(statusCode);
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
 				String inputLine;

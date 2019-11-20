@@ -475,7 +475,7 @@ public class CommonUtilsTest {
 	@Test
 	public void yamlValidTest() {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("key: \"!@;/?:&=+$,_.~*'()[]\"");
 		byte[] payload = sb.toString().getBytes();
 

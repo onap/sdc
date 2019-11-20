@@ -153,7 +153,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			String resourceYaml = null;
 			byte[] buffer = new byte[1024];
 			ZipEntry nextEntry = zip.getNextEntry();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int len;
 
 			while ((len = zip.read(buffer)) > 0) {
@@ -203,7 +203,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			String resourceYaml = null;
 			byte[] buffer = new byte[1024];
 			ZipEntry nextEntry = zip.getNextEntry();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int len;
 
 			while ((len = zip.read(buffer)) > 0) {
@@ -311,7 +311,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			String resourceYaml = null;
 			byte[] buffer = new byte[1024];
 			ZipEntry nextEntry = zip.getNextEntry();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int len;
 
 			while ((len = zip.read(buffer)) > 0) {

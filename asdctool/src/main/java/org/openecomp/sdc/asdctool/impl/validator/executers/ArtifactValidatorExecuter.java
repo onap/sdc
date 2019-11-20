@@ -134,7 +134,7 @@ public class ArtifactValidatorExecuter{
 			try {
 				// "service name, service id, state, version
 				for(Component component: components ){
-					StringBuffer sb = new StringBuffer(component.getName());
+					StringBuilder sb = new StringBuilder(component.getName());
 					sb.append(",").append(component.getUniqueId()).append(",").append(component.getInvariantUUID()).append(",").append(component.getLifecycleState()).append(",").append(component.getVersion());
 					
 					sb.append("\n");
