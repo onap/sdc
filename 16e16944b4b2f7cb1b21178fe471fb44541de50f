@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b46ad4f_409c521d",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T11:10:33Z",
+      "side": 1,
+      "message": "unresolved",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 68
+      },
+      "revId": "16e16944b4b2f7cb1b21178fe471fb44541de50f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "014cfac8_6803c27f",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T11:10:33Z",
+      "side": 1,
+      "message": "use isEmpty() instead",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 36
+      },
+      "revId": "16e16944b4b2f7cb1b21178fe471fb44541de50f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a3039390_466a2251",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T11:10:33Z",
+      "side": 1,
+      "message": "use isEmpty() instead",
+      "range": {
+        "startLine": 86,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 46
+      },
+      "revId": "16e16944b4b2f7cb1b21178fe471fb44541de50f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3578c46_4508d420",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-20T11:10:33Z",
+      "side": 1,
+      "message": "use isEmpty() instead",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 33
+      },
+      "revId": "16e16944b4b2f7cb1b21178fe471fb44541de50f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
