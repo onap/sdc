@@ -165,6 +165,30 @@
       "revId": "17a76332de3f8a5409746160e87d2436358298a7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "206e9e5e_130dc126",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-11-20T11:11:14Z",
+      "side": 1,
+      "message": "We have created new Jira ticket and have assigned to the developer (from iconectiv.com). \nTicket number - SDC-2662.\nHe will fix it separately because it was committed on previous release. So please do not include this bug  with this commit.",
+      "parentUuid": "ed357a8c_817de7a0",
+      "range": {
+        "startLine": 24,
+        "startChar": 56,
+        "endLine": 24,
+        "endChar": 68
+      },
+      "revId": "17a76332de3f8a5409746160e87d2436358298a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
