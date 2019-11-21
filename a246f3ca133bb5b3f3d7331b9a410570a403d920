@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e668757_87f4c62f",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-11-21T15:36:00Z",
+      "side": 1,
+      "message": "No wildcard imports are allowed:\nhttps://wiki.onap.org/display/DW/Java+code+style",
+      "range": {
+        "startLine": 25,
+        "startChar": 41,
+        "endLine": 25,
+        "endChar": 42
+      },
+      "revId": "a246f3ca133bb5b3f3d7331b9a410570a403d920",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
