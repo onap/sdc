@@ -17,13 +17,13 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.flow.exception;
 
-public class GeneralUiRuntimeException extends RuntimeException {
+public class MissingParameterRuntimeException extends UiTestFlowRuntimeException {
 
-    private static final long serialVersionUID = 6680034824105090870L;
+    private static final long serialVersionUID = 2892540400978635575L;
 
-    public GeneralUiRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
+    public MissingParameterRuntimeException(final String parameterName) {
+        super(String.format("Missing parameter expected %s", parameterName));
     }
 }

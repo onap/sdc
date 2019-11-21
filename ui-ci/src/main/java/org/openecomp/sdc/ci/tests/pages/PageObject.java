@@ -17,13 +17,18 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.pages;
 
-public class GeneralUiRuntimeException extends RuntimeException {
+/**
+ * Represents represents a page or component in a html page
+ */
+@FunctionalInterface
+public interface PageObject {
 
-    private static final long serialVersionUID = 6680034824105090870L;
+    /**
+     * Checks if the Page Object is loaded on the browser. Any problem during the checking should throw
+     * a custom RuntimeException.
+     */
+    void isLoaded();
 
-    public GeneralUiRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
-    }
 }

@@ -7,27 +7,23 @@
 
   <test name="uiSanity">
     <classes>
-
       <class name="org.openecomp.sdc.ci.tests.execute.sanity.Vf">
         <methods>
           <include name="changeInstanceNameInVfTest"/>
         </methods>
       </class>
-
       <class name="org.openecomp.sdc.ci.tests.execute.sanity.Service">
         <methods>
           <include name="updateService"/>
         </methods>
       </class>
-
-
       <class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlowsUi">
         <methods>
           <include name="onapOnboardVNFflow"/>
           <include name="onapOnboardVSPValidationsSanityFlow"/>
+          <include name="onboardPNFSoftwareInformationFlow"/>
         </methods>
       </class>
-
     </classes>
   </test>
 </suite>
