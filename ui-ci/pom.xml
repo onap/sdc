@@ -170,6 +170,20 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
@@ -287,9 +301,9 @@
 									<directory>${project.basedir}/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/testSuites</directory>
 									<followSymlinks>false</followSymlinks>
 								</fileset>
-								<!-- VNF files -->
+								<!-- Package files -->
 								<fileset>
-									<directory>${project.basedir}/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files/VNFs</directory>
+									<directory>${project.basedir}/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files</directory>
 									<followSymlinks>false</followSymlinks>
 								</fileset>
 							</filesets>
@@ -396,12 +410,14 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files/VNFs</outputDirectory>
+									<outputDirectory>sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files</outputDirectory>
 									<resources>
 										<resource>
-											<directory>${project.parent.basedir}/test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/Files/VNFs</directory>
+											<directory>${project.parent.basedir}/test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/Files</directory>
+											<filtering>false</filtering>
 											<includes>
-												<include>*</include>
+												<include>VNFs/*</include>
+												<include>PNFs/*</include>
 											</includes>
 										</resource>
 									</resources>
