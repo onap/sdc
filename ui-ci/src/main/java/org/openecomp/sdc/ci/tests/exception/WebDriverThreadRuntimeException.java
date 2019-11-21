@@ -19,6 +19,7 @@
 
 package org.openecomp.sdc.ci.tests.exception;
 
+@SuppressWarnings("serial")
 public class WebDriverThreadRuntimeException extends RuntimeException {
 
     public WebDriverThreadRuntimeException(final String s, final Throwable throwable) {

@@ -19,6 +19,7 @@
 
 package org.openecomp.sdc.ci.tests.exception;
 
+@SuppressWarnings("serial")
 public class PropertiesAssignmentPageException extends Exception {
 
     public PropertiesAssignmentPageException(final String s, final Throwable throwable) {

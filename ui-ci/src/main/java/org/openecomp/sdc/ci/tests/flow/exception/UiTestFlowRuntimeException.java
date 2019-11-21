@@ -17,12 +17,13 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.flow.exception;
 
-@SuppressWarnings("serial")
-public class GeneralUiRuntimeException extends RuntimeException {
+public class UiTestFlowRuntimeException extends RuntimeException {
 
-    public GeneralUiRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
+    private static final long serialVersionUID = 6262244955552414956L;
+
+    public UiTestFlowRuntimeException(String s) {
+        super(s);
     }
 }
