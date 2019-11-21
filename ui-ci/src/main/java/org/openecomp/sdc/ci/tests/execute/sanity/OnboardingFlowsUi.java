@@ -26,6 +26,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
 
+import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import java.io.File;
 import java.util.Arrays;
@@ -45,17 +46,25 @@ import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ArtifactsCorrelationManager;
+import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.ci.tests.flow.CheckSoftwareVersionPropertyFlow;
+import org.openecomp.sdc.ci.tests.flow.CreateResourceFlow;
+import org.openecomp.sdc.ci.tests.flow.CreateVspFlow;
+import org.openecomp.sdc.ci.tests.flow.ImportVspFlow;
+import org.openecomp.sdc.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.openecomp.sdc.ci.tests.pages.CompositionPage;
 import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
 import org.openecomp.sdc.ci.tests.pages.GovernorOperationPage;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.pages.HomePage.PageElement;
 import org.openecomp.sdc.ci.tests.pages.OpsOperationPage;
+import org.openecomp.sdc.ci.tests.pages.ResourceCreatePage;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
 import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
+import org.openecomp.sdc.ci.tests.pages.TopNavComponent;
 import org.openecomp.sdc.ci.tests.pages.VspValidationPage;
 import org.openecomp.sdc.ci.tests.pages.VspValidationResultsPage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
@@ -68,6 +77,7 @@ import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
 import org.openecomp.sdc.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,6 +177,14 @@ public class OnboardingFlowsUi extends SetupCDTest {
             //check links are not available
             checkVspValidationLinksInvisibility();
         }
+    }
+
+    @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "softwareInformationPnf")
+    public void onboardPNFSoftwareInformationFlow(final String rootFolder, final String pnfFile,
+                                                  final List<String> softwareVersionList) {
+        setLog(pnfFile);
+        final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
+        runOnboardPnfSoftwareVersion(resourceName, rootFolder, pnfFile, softwareVersionList);
     }
 
     @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Single_VNF")
@@ -354,6 +372,38 @@ public class OnboardingFlowsUi extends SetupCDTest {
     private String createNewVSP(String filePath, String vnfFile) throws Exception {
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         return OnboardingUiUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser()).getName();
+    }
+
+    public void runOnboardPnfSoftwareVersion(final String resourceName, final String rootFolder,
+                                             final String pnfFile, final List<String> softwareVersionList) {
+        final ExtentTest extendTest = getExtendTest();
+
+        final String swVersionsToString = String.join(", ", softwareVersionList);
+
+        extendTest.log(Status.INFO,
+            String.format("Creating VSP '%s' by onboarding package '%s' with software version '%s'",
+                resourceName, pnfFile, swVersionsToString)
+        );
+        final WebDriver webDriver = DriverFactory.getDriver();
+        final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, pnfFile, rootFolder);
+        createVspFlow.run(new TopNavComponent(webDriver));
+
+        final ImportVspFlow importVspFlow = new ImportVspFlow(webDriver, resourceName);
+        final ResourceCreatePage resourceCreatePage =
+            (ResourceCreatePage) importVspFlow.run()
+                .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+
+        final CreateResourceFlow createResourceFlow = new CreateResourceFlow(webDriver, resourceName);
+        createResourceFlow.run(resourceCreatePage);
+
+        final CheckSoftwareVersionPropertyFlow checkSoftwareVersionPropertyFlow =
+            new CheckSoftwareVersionPropertyFlow(webDriver, softwareVersionList);
+        checkSoftwareVersionPropertyFlow.run();
+
+        extendTest.log(Status.INFO,
+            String.format("Successfully onboarded the package '%s' with software version '%s'",
+                pnfFile, swVersionsToString)
+        );
     }
 
     private void runOnboardToDistributionFlow(ResourceReqDetails resourceReqDetails, ServiceReqDetails serviceMetadata, String filePath, String vnfFile) throws Exception {

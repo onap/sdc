@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ElementFactory {
+public final class ElementFactory {
 
 	private static final String CI_SERVICE = "ciService";
 	private static final String CI_RES = "ciRes";
@@ -58,6 +58,10 @@ public class ElementFactory {
 	private static final String RESOURCE_INSTANCE_POS_X = "20";
 	private static final String RESOURCE_INSTANCE_POS_Y = "20";
 	private static final String RESOURCE_INSTANCE_DESCRIPTION = "description";
+
+	private ElementFactory() {
+
+	}
 	
 	// *** Getters ***
 	
@@ -133,7 +137,7 @@ public class ElementFactory {
 	}
 
 	public static ResourceReqDetails getDefaultResource(String resourceName, NormativeTypesEnum derived, ResourceCategoryEnum category, String contactId) {
-		resourceName = (resourceName + generateUUIDforSufix());
+		resourceName = addRandomSuffixToName(resourceName);
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
 		ArrayList<String> resourceTags = new ArrayList<>();
 		resourceTags.add(resourceName);
@@ -156,7 +160,7 @@ public class ElementFactory {
 	}
 
 	public static ResourceReqDetails getDefaultResource(String resourceName, Resource derived, ResourceCategoryEnum category, String contactId) {
-		resourceName = (resourceName + generateUUIDforSufix());
+		resourceName = addRandomSuffixToName(resourceName);
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
 		ArrayList<String> resourceTags = new ArrayList<>();
 		resourceTags.add(resourceName);
@@ -171,6 +175,10 @@ public class ElementFactory {
 
 		return resourceDetails;
 
+	}
+
+	public static String addRandomSuffixToName(final String name) {
+		return name + generateUUIDforSufix();
 	}
 
 	public static ResourceReqDetails getDefaultResourceByType(String resourceName, NormativeTypesEnum derived, ResourceCategoryEnum category, String contactId, ResourceTypeEnum resourceType) {
@@ -1028,10 +1036,8 @@ public class ElementFactory {
 	}
 
 	public static String generateUUIDforSufix() {
-
-		String uniqueSufix = UUID.randomUUID().toString();
-		String[] split = uniqueSufix.split("-");
-		return uniqueSufix = split[4];
+		final String uniqueSuffix = UUID.randomUUID().toString();
+		return uniqueSuffix.split("-")[4];
 	}
 
 	private static String normalizeArtifactLabel(String label) {
