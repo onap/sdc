@@ -17,13 +17,13 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.flow.exception;
 
-public class GeneralUiRuntimeException extends RuntimeException {
+public class UiTestFlowRuntimeException extends RuntimeException {
 
-    private static final long serialVersionUID = 6680034824105090870L;
+    private static final long serialVersionUID = 6262244955552414956L;
 
-    public GeneralUiRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
+    public UiTestFlowRuntimeException(String s) {
+        super(s);
     }
 }
