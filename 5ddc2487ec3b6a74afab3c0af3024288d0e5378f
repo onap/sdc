@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3eeb5f31_00a9bacc",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "\"Fixed file name is used because method\u0027s parameter file is in zip but the test case \nis for Csar file.\":\nSorry, still not clear. If the test case is for a csar file, why it\u0027s running with zip? Why not provide a correct datasource, or put a if branch to check if the package a csar, or maybe create another test for it?",
+      "parentUuid": "0aab062b_5ec4cbe9",
+      "range": {
+        "startLine": 350,
+        "startChar": 52,
+        "endLine": 350,
+        "endChar": 64
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d72d0f58_4290ddc0",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d011d263_97d29d2f",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d72d0f58_4290ddc0",
+      "range": {
+        "startLine": 57,
+        "startChar": 8,
+        "endLine": 57,
+        "endChar": 43
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "a4a8d05b_d74e90ca",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7300bfa_de2ce49e",
+      "range": {
+        "startLine": 60,
+        "startChar": 8,
+        "endLine": 61,
+        "endChar": 21
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "675288ca_fa972696",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 3
@@ -91,6 +163,30 @@
       "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e4cec44_2fd03b9d",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "675288ca_fa972696",
+      "range": {
+        "startLine": 62,
+        "startChar": 12,
+        "endLine": 62,
+        "endChar": 28
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "19cdd797_d53116a4",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "920950de_9df5401f",
+      "range": {
+        "startLine": 67,
+        "startChar": 12,
+        "endLine": 67,
+        "endChar": 51
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "391cbce4_df158cf5",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 3
@@ -137,6 +257,30 @@
       "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89d1928b_3116d809",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "391cbce4_df158cf5",
+      "range": {
+        "startLine": 80,
+        "startChar": 12,
+        "endLine": 80,
+        "endChar": 69
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "a5d3b5f6_6729b9d2",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "780c815c_60fcf542",
+      "range": {
+        "startLine": 86,
+        "startChar": 8,
+        "endLine": 86,
+        "endChar": 46
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64a77177_229d5fd6",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 3
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "f94c1100_7b5c07fb",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64a77177_229d5fd6",
+      "range": {
+        "startLine": 89,
+        "startChar": 12,
+        "endLine": 89,
+        "endChar": 81
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c457af99_55c7ff26",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 3
@@ -206,6 +398,30 @@
       "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ba790f3_67761296",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-21T16:07:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c457af99_55c7ff26",
+      "range": {
+        "startLine": 94,
+        "startChar": 12,
+        "endLine": 94,
+        "endChar": 68
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
