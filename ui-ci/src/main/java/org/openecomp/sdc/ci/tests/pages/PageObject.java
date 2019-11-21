@@ -17,14 +17,18 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.pages;
 
-public class WebDriverThreadRuntimeException extends RuntimeException {
+/**
+ * Represents represents a page or component in a html page
+ */
+@FunctionalInterface
+public interface PageObject {
 
-    private static final long serialVersionUID = 398294027968414581L;
-
-    public WebDriverThreadRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
-    }
+    /**
+     * Checks if the Page Object is loaded on the browser. Any problem during the checking should throw
+     * a custom RuntimeException.
+     */
+    void isLoaded();
 
 }

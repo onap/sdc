@@ -21,6 +21,8 @@ package org.openecomp.sdc.ci.tests.exception;
 
 public class GeneralUiRuntimeException extends RuntimeException {
 
+    private static final long serialVersionUID = 6680034824105090870L;
+
     public GeneralUiRuntimeException(final String s, final Throwable throwable) {
         super(s, throwable);
     }

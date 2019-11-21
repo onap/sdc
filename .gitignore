@@ -189,7 +189,6 @@ catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-co
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
 
 test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/testSuites/*
-ui-ci/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/testSuites/*
  
 sdnc-tests-new-frame-work/test-output/*
 sdnc-tests-new-frame-work/test-output/**
@@ -259,8 +258,6 @@ utils/DmaapPublisher/logs/*
 
 
 /openecomp-ui/yarn.lock
-
-/ui-ci/sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files/VNFs/*
 
 /openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/init_keyspaces.cql
 /openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/init_schemas.cql

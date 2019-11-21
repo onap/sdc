@@ -21,6 +21,8 @@ package org.openecomp.sdc.ci.tests.exception;
 
 public class HomePageRuntimeException extends RuntimeException {
 
+    private static final long serialVersionUID = 6629270749449961454L;
+
     public HomePageRuntimeException(final String s, final Throwable throwable) {
         super(s, throwable);
     }

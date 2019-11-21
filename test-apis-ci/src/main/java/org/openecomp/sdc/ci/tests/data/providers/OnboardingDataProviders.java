@@ -22,8 +22,10 @@ package org.openecomp.sdc.ci.tests.data.providers;
 import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
@@ -32,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
 
-public class OnboardingDataProviders {
+public final class OnboardingDataProviders {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OnboardingDataProviders.class);
     private static final String VNF_FILE_PATH = FileHandling.getXnfRepositoryPath(XnfTypeEnum.VNF);
@@ -74,6 +76,27 @@ public class OnboardingDataProviders {
         newList.add(fileNamesFromFolder.get(0));
         LOGGER.debug(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
         return provideData(newList, VNF_FILE_PATH);
+    }
+
+    @DataProvider(name = "softwareInformationPnf", parallel = true)
+    private static Object[][] softwareInformationPnf() {
+        final List<String> pnfPackageFileNameList = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.PNF);
+        if (CollectionUtils.isEmpty(pnfPackageFileNameList)) {
+            fail("Could not create softwareInformationPnf datasource");
+        }
+        final String pnfPackage = "sample-pnf-1.0.1-SNAPSHOT.csar";
+        final Optional<String> softwareInformationPnfPackage = pnfPackageFileNameList.stream()
+            .filter(pnfPackage::equals).findFirst();
+        if (!softwareInformationPnfPackage.isPresent()) {
+            fail(String.format("Could not create softwareInformationPnf datasource, the package '%s' was not found",
+                pnfPackage));
+        }
+
+        final String folderPath = FileHandling.getXnfRepositoryPath(XnfTypeEnum.PNF);
+        final Object[][] parametersArray = new Object[1][];
+        parametersArray[0] = new Object[]{folderPath, softwareInformationPnfPackage.get(),
+            Arrays.asList("5gDUv18.05.201", "5gDUv18.06.205")};
+        return parametersArray;
     }
 
     private static Object[][] provideData(final List<String> fileNamesFromFolder, final String folderPath) {

@@ -21,6 +21,8 @@ package org.openecomp.sdc.ci.tests.exception;
 
 public class PropertiesAssignmentPageException extends Exception {
 
+    private static final long serialVersionUID = -6260931566292886858L;
+
     public PropertiesAssignmentPageException(final String s, final Throwable throwable) {
         super(s, throwable);
     }

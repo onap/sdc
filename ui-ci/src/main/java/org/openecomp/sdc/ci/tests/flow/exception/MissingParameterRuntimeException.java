@@ -17,14 +17,13 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.flow.exception;
 
-public class WebDriverThreadRuntimeException extends RuntimeException {
+public class MissingParameterRuntimeException extends UiTestFlowRuntimeException {
 
-    private static final long serialVersionUID = 398294027968414581L;
+    private static final long serialVersionUID = 2892540400978635575L;
 
-    public WebDriverThreadRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
+    public MissingParameterRuntimeException(final String parameterName) {
+        super(String.format("Missing parameter expected %s", parameterName));
     }
-
 }
