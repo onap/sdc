@@ -1,0 +1,3 @@
+# the order of providers intentionally follows pattern "wrong - correct"
+org.onap.config.api.impl.NonExistentProvider
+org.onap.config.api.impl.ConfigurationManagerTestImpl

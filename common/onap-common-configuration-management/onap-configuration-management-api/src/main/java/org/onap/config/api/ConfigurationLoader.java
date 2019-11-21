@@ -17,6 +17,7 @@
 package org.onap.config.api;
 
 import java.util.Iterator;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 /**
@@ -34,8 +35,12 @@ class ConfigurationLoader {
 
         ServiceLoader<ConfigurationManager> loader = ServiceLoader.load(ConfigurationManager.class);
         Iterator<ConfigurationManager> configManagers = loader.iterator();
-        if (configManagers.hasNext()) {
-            return configManagers.next();
+        while (configManagers.hasNext()) {
+            try {
+                return configManagers.next();
+            } catch (ServiceConfigurationError e) {
+                // this provider loading has failed, let's try next one
+            }
         }
 
         throw new IllegalStateException("No binding found for configuration service");
