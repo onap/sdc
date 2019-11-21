@@ -19,6 +19,7 @@
 
 package org.openecomp.sdc.ci.tests.exception;
 
+@SuppressWarnings("serial")
 public class HomePageRuntimeException extends RuntimeException {
 
     public HomePageRuntimeException(final String s, final Throwable throwable) {

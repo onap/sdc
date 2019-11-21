@@ -1,2 +1,4 @@
 /bin/
 test-output/
+sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/Files
+sdc-ui-tests/chef-repo/cookbooks/sdc-ui-tests/files/default/testSuites

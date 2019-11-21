@@ -17,12 +17,12 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.flow.exception;
 
 @SuppressWarnings("serial")
-public class GeneralUiRuntimeException extends RuntimeException {
+public class MissingParameterRuntimeException extends UiTestFlowRuntimeException {
 
-    public GeneralUiRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
+    public MissingParameterRuntimeException(final String parameterName) {
+        super(String.format("Missing parameter expected %s", parameterName));
     }
 }

@@ -26,16 +26,20 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import java.util.Optional;
 import org.openecomp.sdc.ci.tests.api.SomeInterface;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ExtentTestActions {
+public final class ExtentTestActions {
 
     private static final SomeInterface testManager = ExtentTestManager.getInstance();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtentTestActions.class);
 
     private ExtentTestActions() {
 
@@ -82,6 +86,17 @@ public class ExtentTestActions {
         if (m != null) {
             log(logStatus, m);
         }
+    }
+
+    public static Optional<String> takeScreenshot(final Status logStatus, final String screenshotName,
+                                                  final String message) {
+        try {
+            return Optional.of(addScreenshot(logStatus, screenshotName, message));
+        } catch (final IOException e) {
+            LOGGER.warn("Could not take screenshot", e);
+        }
+
+        return Optional.empty();
     }
 
     public static String addScreenshot(final Status logStatus, String screenshotName,

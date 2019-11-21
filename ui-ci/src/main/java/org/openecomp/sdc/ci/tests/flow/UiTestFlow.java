@@ -17,12 +17,22 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.flow;
 
-@SuppressWarnings("serial")
-public class GeneralUiRuntimeException extends RuntimeException {
+import java.util.Optional;
+import org.openecomp.sdc.ci.tests.pages.PageObject;
 
-    public GeneralUiRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
-    }
+/**
+ * Represents a UI test flow
+ */
+@FunctionalInterface
+public interface UiTestFlow {
+
+    /**
+     * Runs the flow
+     * @param pageObjects any required page object for the flow
+     * @return an optional page object representing the page that the flow has ended
+     */
+    Optional<PageObject> run(final PageObject... pageObjects);
+
 }

@@ -17,12 +17,12 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.ci.tests.exception;
+package org.openecomp.sdc.ci.tests.flow.exception;
 
 @SuppressWarnings("serial")
-public class GeneralUiRuntimeException extends RuntimeException {
+public class UiTestFlowRuntimeException extends RuntimeException {
 
-    public GeneralUiRuntimeException(final String s, final Throwable throwable) {
-        super(s, throwable);
+    public UiTestFlowRuntimeException(final String s) {
+        super(s);
     }
 }
