@@ -129,8 +129,10 @@
         &:last-child {
             border-right:#d2d2d2 solid 1px;
         }
+
+        // Column: Property Name
         &.col1 {
-            flex: 1 0 210px;
+            flex: 1 0 190px;
             max-width:300px;
             display: flex;            
             @media @smaller-screen { flex: 0 0 25%;}
@@ -149,20 +151,31 @@
                 flex: 0 0 auto;
             }
         }
+
+        // Column: Type
         &.col2 {
             flex: 0 0 150px;
             max-width:150px;
             @media @smaller-screen { flex: 0 0 20%;}
         }
 
+        // Column: ES
         &.col3 {
             flex:0 0 120px;
             max-width:120px;
             @media @smaller-screen { flex: 0 0 15%;}
         }
 
+        // Column: Required in Runtime
+        &.col4 {
+            flex:0 0 100px;
+            max-width: 100px;
+            @media @smaller-screen { flex: 0 0 15%;}
+        }
+
+        // Column: Value
         &.valueCol {
-            flex: 2 0 300px;
+            flex: 2 0 250px;
             display: flex;
             @media @smaller-screen { flex: 1 0 40%;}
         }

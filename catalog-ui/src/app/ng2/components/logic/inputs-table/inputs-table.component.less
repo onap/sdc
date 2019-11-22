@@ -101,9 +101,11 @@
         &:last-child {
             border-right:#d2d2d2 solid 1px;
         }
+
+        // Column: Property Name
         &.col1 {
             flex: 1 0 130px;
-            max-width:130px;
+            max-width: 250px;
 
             justify-content: space-between;
 
@@ -118,16 +120,26 @@
                 flex: 0 0 auto;
             }
         }
+
+        // Column: Type
         &.col2 {
             flex: 0 0 140px;
-            max-width:140px;
+            max-width: 140px;
         }
 
+        // Column: From Instance
         &.col3 {
-            flex:0 0 120px;
-            max-width:120px;
+            flex: 0 0 120px;
+            max-width: 120px;
         }
 
+        // Column: Required in Runtime
+        &.col4 {
+            flex: 0 0 100px;
+            max-width: 100px;
+        }
+
+        // Column: Value
         &.valueCol {
              .value-input {
                 flex: 1;

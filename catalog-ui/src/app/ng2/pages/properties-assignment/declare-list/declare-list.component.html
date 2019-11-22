@@ -56,6 +56,14 @@
                     [ngModelOptions]="{ debounce: 200 }">
         </div>
         
+        <!-- Required -->
+        <div class="i-sdc-form-item">
+            <label class="i-sdc-form-label">
+                    <checkbox [(checked)]="propertyModel.required"></checkbox>
+                    Required in Runtime
+            </label>
+        </div>
+
         <!-- Properties -->
         <div class="i-sdc-form-item">
             <label class="i-sdc-form-label">Properties</label>

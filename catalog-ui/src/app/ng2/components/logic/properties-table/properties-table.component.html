@@ -27,10 +27,17 @@
             <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
         </div>
-        <div class="table-cell col3" (click)="sort('schema.property.type')" *ngIf="!hidePropertyType">ES
+        <div class="table-cell col3" (click)="sort('schema.property.type')" *ngIf="!hidePropertyType">EntrySchema
             <span *ngIf="sortBy === 'schema.property.type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
         </div>
+
+        <div class="table-cell col4" (click)="sort('required')">
+            <span tooltip="Required in Runtime" tooltipDelay="400">Req. in RT</span>
+            <span *ngIf="sortBy === 'required'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
+            </span>
+        </div>
+
         <div class="table-cell valueCol">Value</div>
     </div>
     <div class="table-body" [ngClass]="{'view-mode': readonly}">
@@ -70,6 +77,11 @@
                 <div class="table-cell col3" *ngIf="!hidePropertyType">
                     <div *ngIf="property.schema && property.schema.property && property.schema.property.type" class="inner-cell-div" tooltip="{{property.schema.property.type | contentAfterLastDot}}">
                         <span>{{property.schema.property.type | contentAfterLastDot}}</span>
+                    </div>
+                </div>
+                <div class="table-cell col4">
+                    <div class="inner-cell-div">
+                        <span>{{property.required}}</span>
                     </div>
                 </div>
                 <div class="table-cell valueCol">

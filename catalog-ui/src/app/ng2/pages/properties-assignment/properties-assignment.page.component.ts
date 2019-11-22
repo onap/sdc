@@ -600,16 +600,17 @@ export class PropertiesAssignmentComponent {
                         let typelist: any = PROPERTY_TYPES.LIST;
                         let uniID: any = insId;
                         let boolfalse: any = false;
+                        let required: any = content.propertyModel.required;
                         let schem :any = {
                             "empty": boolfalse,
                             "property": {
                                 "type": content.propertyModel.simpleType,
-                                "required": boolfalse
+                                "required": required
                             }
                         }
                         let schemaProp :any = {
                             "type": content.propertyModel.simpleType,
-                            "required": boolfalse
+                            "required": required
                         }
 
                         reglistInput.description = content.propertyModel.description;
@@ -618,7 +619,7 @@ export class PropertiesAssignmentComponent {
                         reglistInput.schemaType = content.propertyModel.simpleType;
                         reglistInput.instanceUniqueId = uniID;
                         reglistInput.uniqueId = uniID;
-                        reglistInput.required =boolfalse;
+                        reglistInput.required = required;
                         reglistInput.schema = schem;
                         reglistInput.schemaProperty = schemaProp;
 
