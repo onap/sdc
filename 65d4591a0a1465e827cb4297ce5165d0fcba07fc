@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71fa6335_f9b06aea",
+        "filename": "catalog-ui/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-25T15:29:10Z",
+      "side": 1,
+      "message": "I\u0027d suggest upgrade all (node and npm), ether use recommended version (according https://nodejs.org/en/download/releases/)",
+      "range": {
+        "startLine": 87,
+        "startChar": 39,
+        "endLine": 90,
+        "endChar": 58
+      },
+      "revId": "65d4591a0a1465e827cb4297ce5165d0fcba07fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
