@@ -87,7 +87,7 @@
                         <configuration>
                             <!-- See https://nodejs.org/en/download/ for latest node and npm (lts) versions -->
                             <nodeVersion>v6.9.5</nodeVersion>
-                            <npmVersion>3.10.10</npmVersion>
+                            <npmVersion>6.1.0</npmVersion>
                         </configuration>
                     </execution>
 
