@@ -153,7 +153,7 @@ public final class ResourceUIUtils {
         createVF(resource, user);
     }
 
-    public static void createVF(ResourceReqDetails resource, User user) throws Exception {
+    public static void createVF(ResourceReqDetails resource, User user) {
         ExtentTestActions.log(Status.INFO, "Going to create a new VF.");
         createResource(resource, user, DataTestIdEnum.Dashboard.BUTTON_ADD_VF);
     }

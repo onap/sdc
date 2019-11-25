@@ -414,7 +414,7 @@ public final class GeneralUIUtils {
         return true;
     }
 
-    public static String getActionDuration(Runnable func) throws Exception {
+    public static String getActionDuration(Runnable func) {
         long startTime = System.nanoTime();
         func.run();
         long estimateTime = System.nanoTime();

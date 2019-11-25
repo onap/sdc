@@ -271,7 +271,7 @@ public final class CanvasManager {
         return null;
     }
 
-    public CanvasElement createElementOnCanvas(String elementName) throws Exception {
+    public CanvasElement createElementOnCanvas(String elementName) {
         String actionDuration = GeneralUIUtils.getActionDuration(() -> {
             try {
                 canvasElement = createElementOnCanvasWithoutDuration(elementName);
@@ -310,7 +310,7 @@ public final class CanvasManager {
         return null;
     }
 
-    public CanvasElement createElementOnCanvas(LeftPanelCanvasItems canvasItem) throws Exception {
+    public CanvasElement createElementOnCanvas(LeftPanelCanvasItems canvasItem) {
         return createElementOnCanvas(canvasItem.getValue());
     }
 
