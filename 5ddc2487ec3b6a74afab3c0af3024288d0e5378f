@@ -145,6 +145,30 @@
     },
     {
       "key": {
+        "uuid": "2bc3258d_52db4e65",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-25T15:43:06Z",
+      "side": 1,
+      "message": "Sorry, but I don\u0027t agree to have a filename in the Testng groups annotation.\nAs we discussed during the meeting, we can have a data source that will bring you the file you need.",
+      "parentUuid": "c07e21d5_0cc8c2ac",
+      "range": {
+        "startLine": 350,
+        "startChar": 52,
+        "endLine": 350,
+        "endChar": 64
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d72d0f58_4290ddc0",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 3
