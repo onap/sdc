@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "e58ecd2e_70d30f70",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-11-25T14:43:05Z",
+      "side": 1,
+      "message": "I see no problem in creating a new datasource.\n\nIf you now need a pair of package files to run the test, I would recommend to create a new datasource in the \"OnboardingDataProviders\" that can provide the correct input for the test, and change the test parameters.",
+      "parentUuid": "11d9a9cd_34fe69ab",
+      "range": {
+        "startLine": 350,
+        "startChar": 52,
+        "endLine": 350,
+        "endChar": 64
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d72d0f58_4290ddc0",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 3
