@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "627e32d0_070a9d1c",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/OnboardingFlowsUI.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-11-25T10:11:00Z",
+      "side": 1,
+      "message": "DataSource with custom file is not available in \"OnboardingDataProviders\" class and looks very generic having \"VNF_List\" method which provides all file or \"Single_VNF\" which provides harcoded \nfirst index of files list. \nIs it allowed to create a new datasouce for the method only ? like datasource \"Resource_Type_List\" in \"CatalogLeftPanelTestWithTime\" class itself.",
+      "parentUuid": "3eeb5f31_00a9bacc",
+      "range": {
+        "startLine": 350,
+        "startChar": 52,
+        "endLine": 350,
+        "endChar": 64
+      },
+      "revId": "5ddc2487ec3b6a74afab3c0af3024288d0e5378f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d72d0f58_4290ddc0",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/VspValidationPage.java",
         "patchSetId": 3
