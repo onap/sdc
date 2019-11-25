@@ -25,10 +25,14 @@ import static org.openecomp.sdc.ci.tests.pages.HomePage.PageElement.REPOSITORY_I
 
 import com.aventstack.extentreports.Status;
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.exception.HomePageRuntimeException;
+import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.utilities.DownloadManager;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
@@ -173,6 +177,17 @@ public class HomePage {
             final String errorMsg = String.format("Could not click on home tab component '%s' ", resourceName);
             getExtendTest().log(Status.ERROR, e.getMessage());
             throw new HomePageRuntimeException(errorMsg, e);
+        }
+        final String datetimeString =
+            new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(Calendar.getInstance().getTime());
+        try {
+            ExtentTestActions
+                .addScreenshot(Status.INFO,
+                    String.format("after-click-resource-%s-%s", resourceName, datetimeString),
+                    String.format("Clicked on resource '%s'", resourceName)
+                );
+        } catch (final IOException e) {
+            LOGGER.warn("Could take screenshot after resource {} click", resourceName, e);
         }
         try {
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.LIFECYCLE_STATE.getValue());

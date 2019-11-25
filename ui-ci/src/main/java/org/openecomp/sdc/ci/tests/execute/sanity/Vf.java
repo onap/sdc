@@ -428,19 +428,12 @@ public class Vf extends SetupCDTest {
     @Test
     public void changeInstanceNameInVfTest() {
         final ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceUIUtils.createVF(vfMetaData, getUser());
+        ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
+        final CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
+        final CanvasElement computeElement = vfCanvasManager.createElementOnCanvas(LeftPanelCanvasItems.COMPUTE);
         final String updatedInstanceName = "updatedName";
-        try {
-            ResourceUIUtils.createVF(vfMetaData, getUser());
-            ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
-            final CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
-            final CanvasElement computeElement = vfCanvasManager.createElementOnCanvas(LeftPanelCanvasItems.COMPUTE);
-            vfCanvasManager.updateElementNameInCanvas(computeElement, updatedInstanceName);
-        } catch (final Exception e) {
-            final String errorMsg = "An unexpected error has occurred during the changeInstanceNameInVfTest";
-            takeScreenshot("ChangeInstanceNameInVf" + vfMetaData.getToscaResourceName(), errorMsg);
-            LOGGER.error(errorMsg, e);
-            fail(errorMsg);
-        }
+        vfCanvasManager.updateElementNameInCanvas(computeElement, updatedInstanceName);
         assertEquals(CompositionPage.getSelectedInstanceName(), updatedInstanceName);
     }
 

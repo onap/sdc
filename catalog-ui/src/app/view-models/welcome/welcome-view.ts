@@ -49,12 +49,13 @@ export class WelcomeViewModel {
     }
 
     private initScope = ():void => {
+        let timeout = window.setTimeout(():void => {
+            this.$state.go("dashboard", {});
+        }, 4000);
         this.$scope.onCloseButtonClick = ():void => {
+            window.clearTimeout(timeout);
             this.$state.go("dashboard", {});
-        };
-        window.setTimeout(():void => {
-            this.$state.go("dashboard", {});
-        },4000);
+        }
     };
 
     private init = ():void => {
