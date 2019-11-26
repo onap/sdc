@@ -61,8 +61,10 @@ Modifications copyright (c) 2018-2019 Nokia
     <commons-beanutils>1.9.3</commons-beanutils>
     <commons-configuration>2.3</commons-configuration>
     <apache-poi.version>4.1.0</apache-poi.version>
+        <onap.logging.version>1.6.1</onap.logging.version>
 
     <commons.collections.version>4.1</commons.collections.version>
+        <ws.rs.version>2.0.1</ws.rs.version>
 
     <!-- Elastic Search mapper (reference the elastic search version actually). -->
     <elastic-search.version>2.4.0</elastic-search.version>
@@ -535,6 +537,7 @@ Modifications copyright (c) 2018-2019 Nokia
       </activation>
       <modules>
         <module>onboarding</module>
+                <module>common-app-logging</module>
         <module>security-utils</module>
         <module>common-app-api</module>
         <module>common-be</module>
@@ -559,6 +562,7 @@ Modifications copyright (c) 2018-2019 Nokia
       </activation>
       <modules>
         <module>security-utils</module>
+                <module>common-app-logging</module>
         <module>common-app-api</module>
         <module>common-be</module>
         <module>catalog-dao</module>
