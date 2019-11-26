@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7714fa9_d379b5c0",
+        "filename": "catalog-fe/src/test/java/org/openecomp/sdc/fe/servlets/ConfigServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T16:53:34Z",
+      "side": 1,
+      "message": "unnecessary, can be removed",
+      "range": {
+        "startLine": 69,
+        "startChar": 28,
+        "endLine": 69,
+        "endChar": 56
+      },
+      "revId": "173877a8e4f5f1a083a315e72fe9720c0b0ed674",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07c2d2d6_76e6aec3",
+        "filename": "catalog-fe/src/test/java/org/openecomp/sdc/fe/servlets/ConfigServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T16:53:34Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 67
+      },
+      "revId": "173877a8e4f5f1a083a315e72fe9720c0b0ed674",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1224116d_4d5b8cbf",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/fe/config/WorkspaceConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T16:53:34Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 5
+      },
+      "revId": "173877a8e4f5f1a083a315e72fe9720c0b0ed674",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6765d8d5_c1b2244f",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/fe/config/WorkspaceConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T16:53:34Z",
+      "side": 1,
+      "message": "should be private",
+      "range": {
+        "startLine": 41,
+        "startChar": 8,
+        "endLine": 46,
+        "endChar": 40
+      },
+      "revId": "173877a8e4f5f1a083a315e72fe9720c0b0ed674",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0acf6354_4182af5b",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/fe/config/WorkspaceConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T16:53:34Z",
+      "side": 1,
+      "message": "replace with lombok GETTER / SETTER",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 5
+      },
+      "revId": "173877a8e4f5f1a083a315e72fe9720c0b0ed674",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0c5828f_02cf65cf",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/fe/config/ConfigurationManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T16:53:34Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 52
+      },
+      "revId": "173877a8e4f5f1a083a315e72fe9720c0b0ed674",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65db9696_af27fefb",
+        "filename": "common-app-api/src/test/java/org/openecomp/sdc/fe/config/WorkspaceConfigurationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T16:53:34Z",
+      "side": 1,
+      "message": "unnecessary, remove it",
+      "range": {
+        "startLine": 47,
+        "startChar": 35,
+        "endLine": 47,
+        "endChar": 63
+      },
+      "revId": "173877a8e4f5f1a083a315e72fe9720c0b0ed674",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
