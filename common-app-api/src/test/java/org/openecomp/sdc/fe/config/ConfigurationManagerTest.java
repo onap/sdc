@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.fe.config;
 
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -49,6 +50,7 @@ public class ConfigurationManagerTest {
     private class TestPluginsConfiguration extends PluginsConfiguration {}
     private class TestRestConfigurationInfo extends RestConfigurationInfo {}
     private class TestEcompErrorConfiguration extends EcompErrorConfiguration {}
+    private class TestWorkspaceConfiguration extends WorkspaceConfiguration {}
 
     @Test
     public void validateConfigurationManageIsConstructWithAllConfiguration() {
@@ -64,6 +66,9 @@ public class ConfigurationManagerTest {
         when(configurationSource.
                 getAndWatchConfiguration(eq(EcompErrorConfiguration.class),any(ConfigurationListener.class))
         ).thenReturn(new TestEcompErrorConfiguration());
+        when(configurationSource.
+                getAndWatchConfiguration(eq(WorkspaceConfiguration.class),any(ConfigurationListener.class))
+        ).thenReturn(new TestWorkspaceConfiguration());
 
         configurationManager = new ConfigurationManager(configurationSource);
 
@@ -71,6 +76,7 @@ public class ConfigurationManagerTest {
         assertEquals(configurationManager.getPluginsConfiguration().getClass(), TestPluginsConfiguration.class);
         assertEquals(configurationManager.getRestClientConfiguration().getClass(), TestRestConfigurationInfo.class);
         assertEquals(configurationManager.getEcompErrorConfiguration().getClass(), TestEcompErrorConfiguration.class);
+        assertEquals(configurationManager.getWorkspaceConfiguration().getClass(), TestWorkspaceConfiguration.class);
     }
 
     @Test
