@@ -23,6 +23,10 @@ package org.openecomp.sdc.fe.servlets;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
 import org.openecomp.sdc.fe.impl.PluginStatusBL;
+import org.openecomp.sdc.fe.config.ConfigurationManager;
+import org.openecomp.sdc.fe.config.WorkspaceConfiguration;
+import org.openecomp.sdc.exception.NotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +48,37 @@ import javax.ws.rs.core.Response.Status;
 public class ConfigServlet extends LoggingServlet {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigServlet.class.getName());
+
+    @GET
+    @Path("/ui/workspace")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUIWorkspaceConfiguration(@Context final HttpServletRequest request) {
+
+        try {
+            logFeRequest(request);
+
+            ServletContext context = request.getSession().getServletContext();
+
+            ConfigurationManager configurationManager = (ConfigurationManager) context
+                    .getAttribute(Constants.CONFIGURATION_MANAGER_ATTR);
+
+            WorkspaceConfiguration configuration = configurationManager.getWorkspaceConfiguration();
+            if (configuration == null) {
+                throw new NotFoundException(WorkspaceConfiguration.class.getSimpleName());
+            }
+            LOGGER.info("The value returned from getConfig is {}", configuration);
+            String result = gson.toJson(configuration);
+            Response response = Response.status(Status.OK).entity(result).build();
+            logFeResponse(request, response);
+
+            return response;
+        } catch (Exception e) {
+            FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
+            LOGGER.error("Unexpected FE response logging error :", e);
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
+        }
+
+    }
 
 
     @GET

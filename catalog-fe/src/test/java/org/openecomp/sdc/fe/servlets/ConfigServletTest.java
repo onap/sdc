@@ -20,11 +20,17 @@
 
 package org.openecomp.sdc.fe.servlets;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.impl.PluginStatusBL;
 
 import javax.servlet.ServletContext;
@@ -51,13 +57,32 @@ public class ConfigServletTest {
     private ServletContext mockedContext;
     @Mock
     private PluginStatusBL pluginStatusBL;
+    @Mock
+    private ConfigurationManager configManager;
 
     @Before
     public void setUp() {
         initMocks(this);
+        String appConfigDir = "src/test/resources/config/catalog-fe";
+        ConfigurationSource configurationSource =
+                new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        configManager = new org.openecomp.sdc.fe.config.ConfigurationManager(configurationSource);
         configServlet = new ConfigServlet();
     }
 
+    @Test
+    public void validateWorkspaceConfiguration() {
+
+        final String expectedEntity = "testWorkspaceConfiguration";
+        prepareMocks();
+
+        Response response = configServlet.getUIWorkspaceConfiguration(httpServletRequest);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String expected = gson.toJson(configManager.getWorkspaceConfiguration());
+        assertEquals(expected, response.getEntity().toString());
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+    }
     @Test
     public void validateGetPluginsConfigurationReturnsCorrectConfiguration() {
 
@@ -120,6 +145,7 @@ public class ConfigServletTest {
     private void prepareMocks() {
         when(httpServletRequest.getSession()).thenReturn(httpSession);
         when(httpSession.getServletContext()).thenReturn(mockedContext);
+        when(mockedContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configManager);
         when(mockedContext.getAttribute(Constants.PLUGIN_BL_COMPONENT)).thenReturn(pluginStatusBL);
     }
 
