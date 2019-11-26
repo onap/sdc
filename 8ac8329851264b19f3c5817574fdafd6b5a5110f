@@ -1,0 +1,809 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91210d35_d17e3d08",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/api/ILogConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "replace with ENUM",
+      "range": {
+        "startLine": 3,
+        "startChar": 7,
+        "endLine": 3,
+        "endChar": 16
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac5d98e6_b423ea2f",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/ErrorLogOptionalData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "redundant, remove it.",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 5
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddbeb96a_7608dda4",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/ErrorLogOptionalData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "move into Builder",
+      "range": {
+        "startLine": 14,
+        "startChar": 3,
+        "endLine": 16,
+        "endChar": 5
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "080bfe1f_7d51d130",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/ErrorLogOptionalData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "move into Builder",
+      "range": {
+        "startLine": 22,
+        "startChar": 4,
+        "endLine": 24,
+        "endChar": 5
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7906bbcc_bc4c3f2a",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LogFieldsMdcHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "could be private",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 31
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6d48ccc_26812c3c",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LogFieldsMdcHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "use Integer.toString instead",
+      "range": {
+        "startLine": 190,
+        "startChar": 46,
+        "endLine": 190,
+        "endChar": 75
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4f3b8d5_d36a1acd",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LogFieldsMdcHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 335,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 0
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a50b8d6_b07ee3c1",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LogFieldsMdcHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 427,
+        "startChar": 0,
+        "endLine": 431,
+        "endChar": 5
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7465eb13_f86ecef5",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerAudit.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "should be broader (List)",
+      "range": {
+        "startLine": 19,
+        "startChar": 19,
+        "endLine": 19,
+        "endChar": 28
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "032d2719_4947833a",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerAudit.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 33,
+        "startChar": 37,
+        "endLine": 33,
+        "endChar": 51
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9dbe661e_69bb9427",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerAudit.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "should be broader (List)",
+      "range": {
+        "startLine": 33,
+        "startChar": 19,
+        "endLine": 33,
+        "endChar": 28
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f03ca66_c8186751",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerDebug.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "should be broader (List)",
+      "range": {
+        "startLine": 16,
+        "startChar": 19,
+        "endLine": 16,
+        "endChar": 28
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82b8d352_9c0a1152",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerError.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "should be broader (List)",
+      "range": {
+        "startLine": 20,
+        "startChar": 19,
+        "endLine": 20,
+        "endChar": 28
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "281a928e_a02a13be",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerError.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "missing default case",
+      "range": {
+        "startLine": 130,
+        "startChar": 8,
+        "endLine": 140,
+        "endChar": 30
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb147634_0fe8ee0b",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "Classes should not be compared by name\nuse Class.isAssignableFrom instead",
+      "range": {
+        "startLine": 15,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 9
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98828cd4_399d36b1",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerMetric.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "should be broader (List)",
+      "range": {
+        "startLine": 20,
+        "startChar": 19,
+        "endLine": 20,
+        "endChar": 28
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02e1a338_9c798c71",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerMetric.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 34,
+        "startChar": 37,
+        "endLine": 34,
+        "endChar": 51
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c3c61fc_15279a33",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/elements/LoggerSupportability.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "should be broader (List)",
+      "range": {
+        "startLine": 36,
+        "startChar": 17,
+        "endLine": 36,
+        "endChar": 26
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76f5d978_0f47ce1c",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/enums/ConstantsLogging.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "Utility classes should not have public constructors",
+      "range": {
+        "startLine": 3,
+        "startChar": 19,
+        "endLine": 3,
+        "endChar": 35
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e7d2cef_b0af0b51",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/utils/EcompLogErrorCode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "reformat",
+      "range": {
+        "startLine": 6,
+        "startChar": 3,
+        "endLine": 9,
+        "endChar": 0
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6a58a45_182c12a2",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/utils/EcompLogErrorCode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "unused? remove it.",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 22
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8bee608_5459dbb5",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/utils/EcompLogErrorCode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 13,
+        "startChar": 4,
+        "endLine": 16,
+        "endChar": 5
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6f845fc_555b5a6d",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/utils/EcompLogErrorCode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "replace with lombok GETTER / SETTER for cleaner code",
+      "range": {
+        "startLine": 22,
+        "startChar": 3,
+        "endLine": 36,
+        "endChar": 5
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79667f8f_cc6188d4",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/utils/LoggingThreadLocalsHolder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "missing private constructor",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 38
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e37d82f_f48da282",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/wrappers/LoggerSdcUtilBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "replace with default case",
+      "range": {
+        "startLine": 81,
+        "startChar": 7,
+        "endLine": 84,
+        "endChar": 5
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7de9a60e_e0c69718",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/wrappers/LoggerSdcUtilBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "replace with default case",
+      "range": {
+        "startLine": 96,
+        "startChar": 8,
+        "endLine": 99,
+        "endChar": 5
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "862e277a_7cdca766",
+        "filename": "common-app-logging/src/main/java/org/openecomp/sdc/common/log/wrappers/LoggerSdcUtilBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "simplify",
+      "range": {
+        "startLine": 190,
+        "startChar": 8,
+        "endLine": 193,
+        "endChar": 21
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8821a9b_52bfe6b8",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/elements/LoggerAsdcUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "could be static",
+      "range": {
+        "startLine": 36,
+        "startChar": 3,
+        "endLine": 42,
+        "endChar": 52
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efae7b95_10f53768",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/elements/LoggerAsdcUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "Overriding methods should do more than simply call the same method in the super class, \nremove it",
+      "range": {
+        "startLine": 50,
+        "startChar": 7,
+        "endLine": 52,
+        "endChar": 9
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57796f4f_83f5126d",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/elements/LoggerAsdcUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "Overriding methods should do more than simply call the same method in the super class, \nremove it",
+      "range": {
+        "startLine": 123,
+        "startChar": 12,
+        "endLine": 125,
+        "endChar": 13
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ce11997_74638b04",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/elements/LoggerMetricTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 51
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad183353_99757335",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/wrappers/LoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 104
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7c6da3c_a3bb48fc",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/wrappers/LoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "unused, remove it",
+      "range": {
+        "startLine": 250,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 129
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c1c31e9_279002c6",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/wrappers/LoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "rename it bcz of line 42",
+      "range": {
+        "startLine": 293,
+        "startChar": 0,
+        "endLine": 293,
+        "endChar": 41
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0daa7021_87700638",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/wrappers/LoggerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-26T11:47:37Z",
+      "side": 1,
+      "message": "rename it bcz of line 42",
+      "range": {
+        "startLine": 339,
+        "startChar": 21,
+        "endLine": 339,
+        "endChar": 28
+      },
+      "revId": "8ac8329851264b19f3c5817574fdafd6b5a5110f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
