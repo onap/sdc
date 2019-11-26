@@ -1,211 +1,213 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>onboarding-fe</artifactId>
-    <name>onboarding-ui-war</name>
-    <packaging>war</packaging>
+  <artifactId>onboarding-fe</artifactId>
+  <name>onboarding-ui-war</name>
+  <packaging>war</packaging>
 
-    <parent>
-        <groupId>org.openecomp.sdc</groupId>
-        <artifactId>sdc-onboarding</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
-        <relativePath>../onboarding</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>sdc-onboarding</artifactId>
+    <version>1.6.0-SNAPSHOT</version>
+    <relativePath>../onboarding</relativePath>
+  </parent>
 
-    <properties>
-        <maven.war.plugin.version>3.0.0</maven.war.plugin.version>
-        <app.context.path>onboarding</app.context.path>
-        <jest.command />
-    </properties>
+  <properties>
+    <maven.war.plugin.version>3.0.0</maven.war.plugin.version>
+    <app.context.path>onboarding</app.context.path>
+    <jest.command/>
+  </properties>
 
-    <!-- ============================================= -->
-    <!-- Profile for windows to run jest one by the other due to current defect in node-graceful-js creating race condition -->
-    <!-- https://github.com/isaacs/node-graceful-fs/pull/119 -->
-    <!-- ============================================= -->
-    <profiles>
-        <profile>
-            <id>jest-windows-profile</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>
-            <properties>
-                <jest.command>--runInBand</jest.command>
-            </properties>
-        </profile>
-    </profiles>
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.6.1</version>
-                <executions>
-                    <execution>
-                        <id>clean.dist.folder</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>${basedir}/dist</directory>
-                                </fileset>
-                                <fileset>
-                                    <directory>${basedir}/coverage</directory>
-                                </fileset>
-                                <fileset>
-                                    <directory>${basedir}/../dox-sequence-diagram-ui/dist
-                                    </directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>clean.nodemodules.folder</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${skipUICleanup}</skip>
-                            <filesets>
-                                <fileset>
-                                    <directory>${basedir}/node_modules</directory>
-                                </fileset>
-                                <fileset>
-                                    <directory>${basedir}/../dox-sequence-diagram-ui/node_modules
-                                    </directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+  <!-- ============================================= -->
+  <!-- Profile for windows to run jest one by the other due to current defect in node-graceful-js creating race condition -->
+  <!-- https://github.com/isaacs/node-graceful-fs/pull/119 -->
+  <!-- ============================================= -->
+  <profiles>
+    <profile>
+      <id>jest-windows-profile</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <jest.command>--runInBand</jest.command>
+      </properties>
+    </profile>
+  </profiles>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.6.1</version>
+        <executions>
+          <execution>
+            <id>clean.dist.folder</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>${basedir}/dist</directory>
+                </fileset>
+                <fileset>
+                  <directory>${basedir}/coverage</directory>
+                </fileset>
+                <fileset>
+                  <directory>${basedir}/../dox-sequence-diagram-ui/dist
+                  </directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+          <execution>
+            <id>clean.nodemodules.folder</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <configuration>
+              <skip>${skipUICleanup}</skip>
+              <filesets>
+                <fileset>
+                  <directory>${basedir}/node_modules</directory>
+                </fileset>
+                <fileset>
+                  <directory>${basedir}/../dox-sequence-diagram-ui/node_modules
+                  </directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- ============================================= -->
-            <!-- Build the UI module node code -->
-            <!-- ============================================= -->
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.6</version>
+      <!-- ============================================= -->
+      <!-- Build the UI module node code -->
+      <!-- ============================================= -->
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.6</version>
 
-                <configuration>
-                    <installDirectory>${project.parent.parent.basedir}</installDirectory>
-                </configuration>
+        <configuration>
+          <installDirectory>${project.parent.parent.basedir}</installDirectory>
+        </configuration>
 
-                <executions>
+        <executions>
 
-                    <execution>
-                        <id>install node and yarn</id>
-                        <goals>
-                            <goal>install-node-and-yarn</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v9.4.0</nodeVersion>
-                            <yarnVersion>v1.7.0</yarnVersion>
-                        </configuration>
-                    </execution>
+          <execution>
+            <id>install node and yarn</id>
+            <goals>
+              <goal>install-node-and-yarn</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>v12.13.1</nodeVersion>
+              <yarnVersion>v1.19.2</yarnVersion>
+            </configuration>
+          </execution>
 
-                    <execution>
-                        <id>yarn install in dox-sequence-diagram-ui</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
-                            </workingDirectory>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>yarn build in dox-sequence-diagram-ui</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
-                            </workingDirectory>
-                             <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                            <arguments>build</arguments>
-                        </configuration>
-                    </execution>
+          <execution>
+            <id>yarn install in dox-sequence-diagram-ui</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
+              </workingDirectory>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn build in dox-sequence-diagram-ui</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
+              </workingDirectory>
+              <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
+              <arguments>build</arguments>
+            </configuration>
+          </execution>
 
-                    <execution>
-                        <id>yarn install</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
+          <execution>
+            <id>yarn install</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
 
-                    <execution>
-                        <id>yarn build</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                            <arguments>build --version=${project.version} --env.version=${project.version} --env.language=en</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>ui test</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
-                            <arguments>test-build ${jest.command}</arguments>
-                            <skip>${skipTests}</skip>
-                        </configuration>
-                        <!-- for some reason does not fail on test phase -->
-                        <phase>test</phase>
-                    </execution>
-                </executions>
-            </plugin>
+          <execution>
+            <id>yarn build</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
+              <arguments>build --version=${project.version} --env.version=${project.version}
+                --env.language=en
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>ui test</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <configuration>
+              <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
+              <arguments>test-build ${jest.command}</arguments>
+              <skip>${skipTests}</skip>
+            </configuration>
+            <!-- for some reason does not fail on test phase -->
+            <phase>test</phase>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>${maven.war.plugin.version}</version>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <directory>${basedir}/dist</directory>
-                            <includes>
-                                <include>*.html</include>
-                                <include>*.js</include>
-                            </includes>
-                        </resource>
-                        <resource>
-                            <directory>${basedir}/src</directory>
-                            <includes>
-                                <include>**/*.json</include>
-                            </includes>
-                        </resource>
-                        <resource>
-                            <directory>${basedir}/external-resources/healthcheck/</directory>
-                            <targetPath>v1.0</targetPath>
-                            <filtering>true</filtering>
-                            <includes>
-                                <include>healthcheck</include>
-                            </includes>
-                        </resource>
-                        <resource>
-                            <directory>${basedir}/webapp-onboarding</directory>
-                            <filtering>true</filtering>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${maven.war.plugin.version}</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>${basedir}/dist</directory>
+              <includes>
+                <include>*.html</include>
+                <include>*.js</include>
+              </includes>
+            </resource>
+            <resource>
+              <directory>${basedir}/src</directory>
+              <includes>
+                <include>**/*.json</include>
+              </includes>
+            </resource>
+            <resource>
+              <directory>${basedir}/external-resources/healthcheck/</directory>
+              <targetPath>v1.0</targetPath>
+              <filtering>true</filtering>
+              <includes>
+                <include>healthcheck</include>
+              </includes>
+            </resource>
+            <resource>
+              <directory>${basedir}/webapp-onboarding</directory>
+              <filtering>true</filtering>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
