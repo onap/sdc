@@ -1423,6 +1423,91 @@ FE-plugins-configuration.yaml
    # how long we will wait for the plugin to respond before cutting it.
    connectionTimeout: 1000
 
+FE-workspace-configuration.yaml
+*****************************
+::
+
+# this file contains the different configurable UI workspace items that can be set according to resource and service type.
+# the workspaceMenuConfiguration entry defines the workspace menus that are displayed according to type/subtype of the component in the workspace
+# in addition, they can also be disabled for specific roles. the key is the resource type or service type and it will return the list of the menu
+# items that will be displayed.
+#
+# each key had a list of menu items with the following data:
+#   - text: display text,
+#   - state: the state for the screen
+#   - action: action associated
+#   - index: optional - an integer that will be used to decide on the order of appearance
+# following are 2 example
+    workspaceMenuConfiguration:
+      VFC:
+      - text: General
+        action: onMenuItemPressed
+        state: workspace.general
+      - text: Deployment Artifact
+        action: onMenuItemPressed
+        state: workspace.deployment_artifacts
+      - text: Information Artifact
+        action: onMenuItemPressed
+        state: workspace.information_artifacts
+      - text: TOSCA Artifacts
+        action: onMenuItemPressed
+        state: workspace.tosca_artifacts
+      - text: Properties
+        action: onMenuItemPressed
+        state: workspace.properties
+      - text: Attributes
+        action: onMenuItemPressed
+        state: workspace.attributes
+      - text: Req. & Capabilities
+        action: onMenuItemPressed
+        state: workspace.reqAndCap
+      - text: Activity Log
+        action: onMenuItemPressed
+        state: workspace.activity_log
+      SERVICE:
+      - text: General
+        action: onMenuItemPressed
+        state: workspace.general
+      - text: TOSCA Artifacts
+        action: onMenuItemPressed
+        state: workspace.tosca_artifacts
+      - text: Composition
+        action: onMenuItemPressed
+        state: workspace.composition.details
+      - text: Operation
+        action: onMenuItemPressed
+        state: workspace.interface_operation
+      - text: Activity Log
+        action: onMenuItemPressed
+        state: workspace.activity_log
+      - text: Management Workflow
+        action: onMenuItemPressed
+        state: workspace.management_workflow
+      - text: 'Network Call Flow '
+        action: onMenuItemPressed
+        state: workspace.network_call_flow
+      - text: Distribution
+        action: onMenuItemPressed
+        state: workspace.distribution
+        disabledRoles:
+        - ADMIN
+        - TESTER
+        - GOVERNOR
+        - DESIGNER
+      - text: Deployment
+        action: onMenuItemPressed
+        state: workspace.deployment
+      - text: Properties Assignment
+        action: onMenuItemPressed
+        state: workspace.properties_assignment
+      - text: Outputs
+        action: onMenuItemPressed
+        state: workspace.outputs_assignment
+      - text: Req. & Capabilities
+        action: onMenuItemPressed
+        state: workspace.reqAndCapEditable
+
+
 Onboarding configuration
 ------------------------
 

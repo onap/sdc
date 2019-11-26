@@ -14,6 +14,15 @@ template "catalog-fe-config" do
    })
 end
 
+cookbook_file "#{ENV['JETTY_BASE']}/config/catalog-fe/workspace-configuration.yaml" do
+  source "FE-workspace-configuration.yaml"
+  mode 0755
+  owner "jetty"
+  group "jetty"
+end
+
+
+
 template "onboarding-fe-config" do
     path "#{ENV['JETTY_BASE']}/config/onboarding-fe/onboarding_configuration.yaml"
     source "FE-onboarding-configuration.yaml.erb"
