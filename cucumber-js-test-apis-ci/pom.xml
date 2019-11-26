@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.openecomp.sdc</groupId>
@@ -8,7 +10,6 @@
   </parent>
   <artifactId>cucumber-bdd</artifactId>
   <name>cucumber-bdd</name>
-  <groupId>org.openecomp.sdc</groupId>
   <version>1.6.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <build>
@@ -83,8 +84,8 @@
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <nodeVersion>v10.15.3</nodeVersion>
-              <npmVersion>6.4.1</npmVersion>
+              <nodeVersion>v12.13.1</nodeVersion>
+              <npmVersion>6.12.1</npmVersion>
             </configuration>
           </execution>
           <execution>
@@ -200,7 +201,8 @@
                   <goal>copy-resources</goal>
                 </goals>
                 <configuration>
-                  <outputDirectory>${project.build.directory}/docker_assembly/cucumber</outputDirectory>
+                  <outputDirectory>${project.build.directory}/docker_assembly/cucumber
+                  </outputDirectory>
                   <resources>
                     <resource>
                       <directory>${basedir}</directory>
@@ -243,7 +245,9 @@
                     <dockerFileDir>${project.build.directory}/docker_assembly</dockerFileDir>
                     <tags>
                       <tag>${docker.tag}</tag>
-                      <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                      <tag>
+                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                      </tag>
                     </tags>
                   </build>
                 </image>
@@ -258,7 +262,7 @@
                 </goals>
                 <configuration>
                   <removeAll>true</removeAll>
-                  <image>onap/cucumber-sdc-api-tests</image>
+                  <images>onap/cucumber-sdc-api-tests</images>
                 </configuration>
               </execution>
               <execution>
@@ -275,7 +279,7 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <image>onap/cucumber-sdc-api-tests</image>
+                  <images>onap/cucumber-sdc-api-tests</images>
                 </configuration>
               </execution>
             </executions>
