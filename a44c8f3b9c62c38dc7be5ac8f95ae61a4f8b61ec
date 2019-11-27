@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0ac0c5d8_cba63657",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-api/src/test/java/org/onap/config/api/ConfigurationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-27T14:47:09Z",
+      "side": 1,
+      "message": "I\u0027d suggest to use Mockito and \"when-thenReturn\" approach instead of implementing class to test and overriding methods.",
+      "range": {
+        "startLine": 31,
+        "startChar": 13,
+        "endLine": 31,
+        "endChar": 57
+      },
+      "revId": "a44c8f3b9c62c38dc7be5ac8f95ae61a4f8b61ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
