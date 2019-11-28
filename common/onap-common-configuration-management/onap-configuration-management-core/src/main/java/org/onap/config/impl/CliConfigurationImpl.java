@@ -36,8 +36,12 @@ import org.onap.config.ConfigurationUtils;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.api.Hint;
 import org.onap.config.type.ConfigurationQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CliConfigurationImpl extends ConfigurationImpl implements ConfigurationManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CliConfigurationImpl.class);
 
     private static final List<String> KEYS_TO_FILTER = Arrays.asList(NAMESPACE_KEY, MODE_KEY, LOAD_ORDER_KEY);
 
@@ -66,7 +70,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
             return ConfigurationUtils.getCommaSeparatedList(value);
 
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOGGER.warn("Error occurred while processing query: {}", queryData, exception);
         }
 
         return null;
@@ -96,7 +100,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
             }
 
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOGGER.warn("Error occurred while processing input: {}", input, exception);
         }
 
         return toReturn;
@@ -110,16 +114,18 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
 
         Map<String, String> map = new HashMap<>();
 
-        try {
+        if (query != null) {
+            try {
 
-            Collection<String> keys = getKeys(query.getTenant(), query.getNamespace());
-            for (String key : keys) {
-                map.put(key, getConfigurationValue(query.key(key)));
+                Collection<String> keys = getKeys(query.getTenant(), query.getNamespace());
+                for (String key : keys) {
+                    map.put(key, getConfigurationValue(query.key(key)));
+                }
+
+            } catch (Exception exception) {
+                LOGGER.warn("Error occurred while processing query: {}", query, exception);
+                return null;
             }
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return null;
         }
 
         return map;
@@ -141,7 +147,11 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
             }
 
         } catch (Exception exception) {
-            //do nothing
+            LOGGER.warn("Error occurred while searching for in-memory keys for namespace: '{}' and tenant: '{}'",
+                    namespace,
+                    tenant,
+                    exception
+            );
         }
 
         return keys;

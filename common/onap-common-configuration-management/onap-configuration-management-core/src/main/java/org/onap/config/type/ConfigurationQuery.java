@@ -95,4 +95,17 @@ public class ConfigurationQuery {
     public boolean isLatest() {
         return latest;
     }
+
+    @Override
+    public String toString() {
+        return "ConfigurationQuery{" +
+                "tenant='" + tenant + '\'' +
+                ", namespace='" + namespace + '\'' +
+                ", key='" + key + '\'' +
+                ", fallback=" + fallback +
+                ", externalLookup=" + externalLookup +
+                ", latest=" + latest +
+                ", nodeSpecific=" + nodeSpecific +
+                '}';
+    }
 }

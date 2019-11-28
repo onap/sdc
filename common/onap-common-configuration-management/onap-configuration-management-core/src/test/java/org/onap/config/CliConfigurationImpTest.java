@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 
 import org.junit.Test;
+import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.impl.CliConfigurationImpl;
 import org.onap.config.util.ConfigTestConstant;
@@ -49,6 +50,12 @@ public class CliConfigurationImpTest {
         validateCliMapConfig(outputMap);
         assertTrue(testServiceImpl.isEnable());
         assertEquals("org.junit.Test", testServiceImpl.getImplementationClass());
+    }
+
+    @Test
+    public void listConfigurationNullQueryShouldntFailWithNPETest () {
+        ConfigurationManager conf = new CliConfigurationImpl();
+        conf.listConfiguration(null);
     }
 
     private void validateCliMapConfig(Map outputMap) {
