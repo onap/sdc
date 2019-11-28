@@ -1382,6 +1382,10 @@ FE-plugins-configuration.yaml
    # definition of the plugins that exist in sdc
    # we have a pre-defined list of plugins that are connected to the system.
    # the plugins define where they are shown, to whom and on what elements
+   # in addition, the catalog can proxy to the plugin as well if the following 2 keys are set:
+   #     pluginFeProxyUrl - the pattern of the url that should be proxied after the sdc1/feProxy/plugin prefix
+   #     pluginProxyRedirectPath - the redirect path to the plugin (full url including protool/host and port)
+
    pluginsList:
         # the DCAE-DS is the SDC monitoring design studio this entry defines there use as part of the service level context
       - pluginId: DCAED
@@ -1414,6 +1418,8 @@ FE-plugins-configuration.yaml
       - pluginId: WORKFLOW
         pluginDiscoveryUrl: <%= @workflow_discovery_url %>
         pluginSourceUrl: <%= @workflow_source_url %>
+        pluginFeProxyUrl: <%= @workflow_fe_proxy_url %>
+        pluginProxyRedirectPath: <%= @workflow_redirect_path %>
         pluginStateUrl: "workflowDesigner"
         pluginDisplayOptions:
            tab:

@@ -46,9 +46,8 @@ public class FeProxyServlet extends SSLProxyServlet {
     private static final String URL = "%s://%s%s%s";
     private static final String ONBOARDING_CONTEXT = "/onboarding-api";
     private static final String DCAED_CONTEXT = "/dcae-api";
-    private static final String WORKFLOW_CONTEXT = "/wf";
     private static final String SDC1_FE_PROXY = "/sdc1/feProxy";
-    private static final String PLUGIN_ID_WORKFLOW = "WORKFLOW";
+    private static final String SDC1_PLUGIN_REDIRECT = SDC1_FE_PROXY + "/plugin";
 
     private static final Logger LOGGER = Logger.getLogger(FeProxyServlet.class);
     private static final int EXPIRE_DURATION = 10;
@@ -154,6 +153,24 @@ public class FeProxyServlet extends SSLProxyServlet {
     }
 
 
+    /****
+     * scan all the plugins from the configuration against the URL and the redicert path
+     * @param request
+     * @return
+     */
+    private Plugin getPluginProxyForRequest(HttpServletRequest request) {
+        return getPluginConfiguration(request).getPluginsList()
+                .stream()
+                .filter(plugin -> {
+                    if (plugin.getPluginProxyRedirectPath() != null && !plugin.getPluginProxyRedirectPath().isEmpty()) {
+                        return request.getRequestURI().contains(SDC1_PLUGIN_REDIRECT + plugin.getPluginProxyRedirectPath());
+                    } else {
+                        return false;
+                    }
+                })
+                .findFirst().orElse(null);
+    }
+
     private String getModifiedUrl(HttpServletRequest request) throws MalformedURLException {
         Configuration config = getConfiguration(request);
         if (config == null) {
@@ -161,50 +178,77 @@ public class FeProxyServlet extends SSLProxyServlet {
             throw new RuntimeException("failed to read FE configuration");
         }
         String uri = request.getRequestURI();
-        String protocol;
-        String host;
-        String port;
+
+        // the modify logic is as follows:
+        // - proxy ONBOARDING to the onboarding context. this is not a plugin and hardcoded
+        // - proxy DCAE to the correct context. also - not a plugin but hardcoded
+        // - proxy to the plugin according to configuration if the path is found in the plugin patterns
+        // - proxy to the catalog backend if no other proxy was found
+
         if (uri.contains(ONBOARDING_CONTEXT)) {
             uri = uri.replace(SDC1_FE_PROXY + ONBOARDING_CONTEXT, ONBOARDING_CONTEXT);
-            protocol = config.getOnboarding().getProtocolBe();
-            host = config.getOnboarding().getHostBe();
-            port = config.getOnboarding().getPortBe().toString();
-        } else if (uri.contains(DCAED_CONTEXT)) {
+            return getModifiedUrlString(
+                    request,
+                    uri,
+                    config.getOnboarding().getHostBe(),
+                    config.getOnboarding().getPortBe().toString(),
+                    config.getOnboarding().getProtocolBe());
+        }
+        if (uri.contains(DCAED_CONTEXT)) {
             uri = uri.replace(SDC1_FE_PROXY + DCAED_CONTEXT, DCAED_CONTEXT);
-            protocol = config.getBeProtocol();
-            host = config.getBeHost();
-            if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
-                port = config.getBeHttpPort().toString();
-            } else {
-                port = config.getBeSslPort().toString();
-            }
-        } else if (uri.contains(WORKFLOW_CONTEXT)) {
-            String workflowPluginURL = getPluginConfiguration(request).getPluginsList()
-                    .stream()
-                    .filter(plugin -> plugin.getPluginId().equalsIgnoreCase(PLUGIN_ID_WORKFLOW))
-                    .map(Plugin::getPluginDiscoveryUrl)
-                    .findFirst().orElse(null);
+            return getModifiedUrlString(
+                    request,
+                    uri,
+                    config.getBeHost(),
+                    getCatalogBePort(config),
+                    config.getBeProtocol());
+        }
 
-            java.net.URL workflowURL = new URL(workflowPluginURL);
-            protocol = workflowURL.getProtocol();
-            host = workflowURL.getHost();
-            port = String.valueOf(workflowURL.getPort());
-            uri = uri.replace(SDC1_FE_PROXY + WORKFLOW_CONTEXT, workflowURL.getPath() + WORKFLOW_CONTEXT);
-        } else {
-            uri = uri.replace(SDC1_FE_PROXY, "/sdc2");
-            protocol = config.getBeProtocol();
-            host = config.getBeHost();
-            if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
-                port = config.getBeHttpPort().toString();
-            } else {
-                port = config.getBeSslPort().toString();
+        if (uri.contains(SDC1_PLUGIN_REDIRECT)) {
+            Plugin proxyPlugin = getPluginProxyForRequest(request);
+            if (proxyPlugin != null) {
+                String proxyUrlStr = (proxyPlugin.getPluginFeProxyUrl() != null) ? proxyPlugin.getPluginFeProxyUrl() : proxyPlugin.getPluginSourceUrl();
+                URL proxyUrl = new URL(proxyUrlStr);
+                uri = uri.replace(SDC1_PLUGIN_REDIRECT + proxyPlugin.getPluginProxyRedirectPath(), proxyUrl.getPath());
+                return getModifiedUrlString(request, uri, proxyUrl);
             }
         }
 
+        Plugin proxyPlugin = getPluginProxyForRequest(request);
+        if (proxyPlugin != null) {
+            String proxyUrlStr = (proxyPlugin.getPluginFeProxyUrl() != null) ? proxyPlugin.getPluginFeProxyUrl() : proxyPlugin.getPluginSourceUrl();
+            URL proxyUrl = new URL(proxyUrlStr);
+            uri = uri.replace(SDC1_FE_PROXY + proxyPlugin.getPluginProxyRedirectPath(), proxyUrl.getPath());
+            return getModifiedUrlString(request, uri, proxyUrl);
+        }
+
+        uri = uri.replace(SDC1_FE_PROXY, "/sdc2");
+        return getModifiedUrlString(
+                request,
+                uri,
+                config.getBeHost(),
+                getCatalogBePort(config),
+                config.getBeProtocol());
+    }
+
+
+    private String getCatalogBePort(Configuration config) {
+        if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
+            return config.getBeHttpPort().toString();
+        } else {
+            return config.getBeSslPort().toString();
+        }
+    }
+
+    private String getModifiedUrlString(HttpServletRequest request, String uri, URL url) {
+        String queryString = getQueryString(request);
+        return String.format(URL, url.getProtocol(), url.getAuthority(), uri, queryString);
+    }
+
+    private String getModifiedUrlString(HttpServletRequest request, String uri, String host, String port, String protocol) {
         String authority = getAuthority(host, port);
         String queryString = getQueryString(request);
         return String.format(URL, protocol, authority, uri, queryString);
-
     }
 
     private PluginsConfiguration getPluginConfiguration(HttpServletRequest request) {
