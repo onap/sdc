@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eafdb994_89c594ac",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/test/java/org/onap/config/CliConfigurationImpTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-28T15:26:39Z",
+      "side": 1,
+      "message": "this will produce NPE in org.onap.config.impl.CliConfigurationImpl.getInput:93\ntoReturn \u003d Class.forName(input.get(\"ImplClass\").toString()).newInstance();\n\nand also missing any Assert",
+      "range": {
+        "startLine": 55,
+        "startChar": 3,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "1df6ae79cdb3be70bddec5d0fbff04bff0604ebb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
