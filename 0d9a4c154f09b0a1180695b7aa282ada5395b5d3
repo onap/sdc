@@ -16,6 +16,29 @@
       "revId": "0d9a4c154f09b0a1180695b7aa282ada5395b5d3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "091ef21c_240e4862",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/fe/config/PluginsConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-28T10:14:48Z",
+      "side": 1,
+      "message": "same comment here.",
+      "range": {
+        "startLine": 74,
+        "startChar": 4,
+        "endLine": 77,
+        "endChar": 5
+      },
+      "revId": "0d9a4c154f09b0a1180695b7aa282ada5395b5d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
