@@ -19,8 +19,10 @@ package org.onap.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.impl.CliConfigurationImpl;
@@ -49,6 +51,30 @@ public class CliConfigurationImpTest {
         validateCliMapConfig(outputMap);
         assertTrue(testServiceImpl.isEnable());
         assertEquals("org.junit.Test", testServiceImpl.getImplementationClass());
+    }
+
+    @Test
+    public void listConfigurationNullQueryShouldntFailWithNPETest() {
+        ConfigurationManager conf = new CliConfigurationImpl();
+        Assert.assertEquals(0, conf.listConfiguration(null).size());
+    }
+
+    @Test
+    public void listConfigurationEmptyQueryTest() {
+        ConfigurationManager conf = new CliConfigurationImpl();
+        Assert.assertEquals(0, conf.listConfiguration(new HashMap<>()).size());
+    }
+
+    @Test
+    public void getConfigurationValueNullQueryShouldntFailWithNPETest() {
+        ConfigurationManager conf = new CliConfigurationImpl();
+        Assert.assertNull (conf.getConfigurationValue(null));
+    }
+
+    @Test
+    public void getConfigurationValueEmptyQueryTest() {
+        ConfigurationManager conf = new CliConfigurationImpl();
+        Assert.assertNull (conf.getConfigurationValue(new HashMap<>()));
     }
 
     private void validateCliMapConfig(Map outputMap) {
