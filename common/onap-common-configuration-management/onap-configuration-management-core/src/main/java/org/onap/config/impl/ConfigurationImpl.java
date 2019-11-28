@@ -39,8 +39,12 @@ import org.onap.config.Constants;
 import org.onap.config.NonConfigResource;
 import org.onap.config.api.Config;
 import org.onap.config.api.Hint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurationImpl implements org.onap.config.api.Configuration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationImpl.class);
 
     private static final String KEY_CANNOT_BE_NULL = "Key can't be null.";
 
@@ -51,7 +55,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         try {
             init();
         } catch (ConfigurationException e) {
-            throw new IllegalStateException("Failed to initialize configuration");
+            throw new IllegalStateException("Failed to initialize configuration", e);
         }
     }
 
@@ -214,7 +218,14 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warn(
+                    "Couldn't populate map fot tenant: {}, namespace: {}, key: {}, type: {}",
+                    tenantId,
+                    namespace,
+                    key,
+                    clazz.getSimpleName(),
+                    e
+            );
         }
         return map;
     }
@@ -262,7 +273,13 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 map.put(k, value);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warn(
+                    "Couldn't generate map fot tenant: {}, namespace: {}, key: {}",
+                    tenantId,
+                    namespace,
+                    key,
+                    e
+            );
         }
         return parentMap;
     }
@@ -336,7 +353,14 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                                 + "class decorated with @org.openecomp.config.api.Config are allowed as argument.");
             }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOGGER.warn(
+                    "Failed to get internal value fot tenant: {}, namespace: {}, key: {}, type: {}",
+                    tenant,
+                    namespace,
+                    key,
+                    clazz.getSimpleName(),
+                    exception
+            );
         }
         return null;
     }
@@ -422,6 +446,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         try {
             return clazz.getDeclaredConstructor(classes);
         } catch (Exception exception) {
+            LOGGER.warn("Failed to get {} constructor.", clazz.getSimpleName(), exception);
             return null;
         }
     }
@@ -546,7 +571,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                     collection.add(type1);
                 }
             } catch (RuntimeException re) {
-                // do nothing
+                LOGGER.warn("Failed to convert {}", commaSeparatedValues, re);
             }
         }
         return collection;
