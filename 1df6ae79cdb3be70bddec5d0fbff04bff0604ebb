@@ -46,6 +46,30 @@
       "revId": "1df6ae79cdb3be70bddec5d0fbff04bff0604ebb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef4427f4_7afe4644",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/test/java/org/onap/config/CliConfigurationImpTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2019-11-28T16:18:46Z",
+      "side": 1,
+      "message": "Sorry, but my real Q is \"Why you changed this particular method to catch NPE, and did not change all others?\"\nEx.\ngetConfigurationValue:60 (if queryData is NULL)\ngetHints:81 (if queryData is NULL)\netc.\nI\u0027m not suggesting to change them, \"why specifically this one?\"\n\nAlso, you added NPE-check for public method currently used ONLY in test, what is a point?",
+      "parentUuid": "2f71b699_02640036",
+      "range": {
+        "startLine": 55,
+        "startChar": 3,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "1df6ae79cdb3be70bddec5d0fbff04bff0604ebb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
