@@ -32,13 +32,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.api.Hint;
 import org.onap.config.type.ConfigurationQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CliConfigurationImpl extends ConfigurationImpl implements ConfigurationManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CliConfigurationImpl.class);
     private static final List<String> KEYS_TO_FILTER = Arrays.asList(NAMESPACE_KEY, MODE_KEY, LOAD_ORDER_KEY);
 
     public CliConfigurationImpl() {
@@ -50,55 +54,49 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
     }
 
     private String getConfigurationValue(ConfigurationQuery queryData) {
-
-        try {
-
-            Hint[] hints = getHints(queryData);
-
-            String[] value;
-            if (queryData.isFallback()) {
-                value = get(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class, hints);
-            } else {
-                value = getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
-                                hints);
+        if (queryData != null) {
+            try {
+                Hint[] hints = getHints(queryData);
+                String[] value;
+                if (queryData.isFallback()) {
+                    value = get(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class, hints);
+                } else {
+                    value = getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
+                            hints);
+                }
+                return ConfigurationUtils.getCommaSeparatedList(value);
+            } catch (Exception exception) {
+                LOGGER.warn("Error occurred while processing query: {}", queryData, exception);
             }
-
-            return ConfigurationUtils.getCommaSeparatedList(value);
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
-
         return null;
     }
 
     private Hint[] getHints(ConfigurationQuery query) {
         List<Hint> hints = new ArrayList<>(Hint.values().length);
-        hints.add(query.isLatest() ? Hint.LATEST_LOOKUP : Hint.DEFAULT);
-        hints.add(query.isExternalLookup() ? Hint.EXTERNAL_LOOKUP : Hint.DEFAULT);
-        hints.add(query.isNodeSpecific() ? Hint.NODE_SPECIFIC : Hint.DEFAULT);
+        if (query != null) {
+            hints.add(query.isLatest() ? Hint.LATEST_LOOKUP : Hint.DEFAULT);
+            hints.add(query.isExternalLookup() ? Hint.EXTERNAL_LOOKUP : Hint.DEFAULT);
+            hints.add(query.isNodeSpecific() ? Hint.NODE_SPECIFIC : Hint.DEFAULT);
+        }
         return hints.toArray(new Hint[0]);
     }
 
     private Object getInput(Map<String, Object> input) {
-
         Object toReturn = null;
-
-        try {
-
-            toReturn = Class.forName(input.get("ImplClass").toString()).newInstance();
-
-            Method[] methods = toReturn.getClass().getMethods();
-            for (Method method : methods) {
-                if (input.containsKey(method.getName())) {
-                    method.invoke(toReturn, input.get(method.getName()));
+        if (input != null) {
+            try {
+                toReturn = Class.forName(input.get("ImplClass").toString()).newInstance();
+                Method[] methods = toReturn.getClass().getMethods();
+                for (Method method : methods) {
+                    if (input.containsKey(method.getName())) {
+                        method.invoke(toReturn, input.get(method.getName()));
+                    }
                 }
+            } catch (Exception exception) {
+                LOGGER.warn("Error occurred while processing input: {}", input, exception);
             }
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
-
         return toReturn;
     }
 
@@ -107,43 +105,37 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
     }
 
     private Map<String, String> listConfiguration(ConfigurationQuery query) {
-
         Map<String, String> map = new HashMap<>();
-
-        try {
-
-            Collection<String> keys = getKeys(query.getTenant(), query.getNamespace());
-            for (String key : keys) {
-                map.put(key, getConfigurationValue(query.key(key)));
+        if (query != null) {
+            try {
+                Collection<String> keys = getKeys(query.getTenant(), query.getNamespace());
+                for (String key : keys) {
+                    map.put(key, getConfigurationValue(query.key(key)));
+                }
+            } catch (Exception exception) {
+                LOGGER.warn("Error occurred while processing query: {}", query, exception);
             }
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return null;
         }
-
         return map;
     }
 
     private ArrayList<String> getInMemoryKeys(String tenant, String namespace) {
-
         ArrayList<String> keys = new ArrayList<>();
-
         try {
-
             Iterator<String> iter = ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace).getKeys();
             while (iter.hasNext()) {
-
                 String key = iter.next();
                 if (!KEYS_TO_FILTER.contains(key)) {
                     keys.add(key);
                 }
             }
-
         } catch (Exception exception) {
-            //do nothing
+            LOGGER.warn("Error occurred while searching for in-memory keys for namespace: '{}' and tenant: '{}'",
+                    namespace,
+                    tenant,
+                    exception
+            );
         }
-
         return keys;
     }
 
