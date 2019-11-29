@@ -94,6 +94,30 @@
       "revId": "1df6ae79cdb3be70bddec5d0fbff04bff0604ebb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d057c68_1a1831c2",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/test/java/org/onap/config/CliConfigurationImpTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-11-29T11:03:10Z",
+      "side": 1,
+      "message": "UPD: if getHints:81 failed with NPE it will be caught by getConfigurationValue(ConfigurationQuery queryData) on L72, so it\u0027s safe to leave it as is.",
+      "parentUuid": "8a6018a5_3660234c",
+      "range": {
+        "startLine": 55,
+        "startChar": 3,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "1df6ae79cdb3be70bddec5d0fbff04bff0604ebb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
