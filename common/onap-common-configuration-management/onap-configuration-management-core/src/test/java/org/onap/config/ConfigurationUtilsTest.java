@@ -20,6 +20,7 @@
 package org.onap.config;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
@@ -30,13 +31,16 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +72,18 @@ public class ConfigurationUtilsTest {
     private static final String TEST_NAME_SPACE = "testNameSpaceOne";
     private static final String TEST_COMPOSITE_NAMESPACE = "testCOmpositeConfig";
 
+    public Collection<Object[]>primitivesTypesDataProvider() {
+        List<Object[]> params = new ArrayList<>();
+        params.add(new Class<?>[]{byte.class});
+        params.add(new Class<?>[]{double.class});
+        params.add(new Class<?>[]{float.class});
+        params.add(new Class<?>[]{int.class});
+        params.add(new Class<?>[]{long.class});
+        params.add(new Class<?>[]{short.class});
+        params.add(new Class<?>[]{boolean.class});
+        return params;
+    }
+
     @Test
     public void testCommaList() {
         List<?> list = Arrays.asList("1", "2", 3);
@@ -77,7 +93,7 @@ public class ConfigurationUtilsTest {
 
     @Test
     public void testCommaListWithNullAndEmptyStrings() {
-        List list = Arrays.asList(null, "", " ");
+        List<String> list = Arrays.asList(null, "", " ");
         String commaSeparatedList = ConfigurationUtils.getCommaSeparatedList(list);
         assertTrue(commaSeparatedList.isEmpty());
     }
@@ -101,12 +117,12 @@ public class ConfigurationUtilsTest {
     @Test
     public void testCastingArray() {
         int arraySize = 2;
-        final Class[] primitiveType = new Class[]{boolean.class, byte.class,
+        final Class<?>[] primitiveType = new Class[]{boolean.class, byte.class,
                 double.class, float.class, int.class, long.class, short.class};
 
-        for (Class clazz: primitiveType) {
-            Class expectedResultClass = Array.newInstance(clazz, 0).getClass();
-            List defaultCollection = IntStream.range(0, arraySize).mapToObj(i ->
+        for (Class<?> clazz : primitiveType) {
+            Class<?> expectedResultClass = Array.newInstance(clazz, 0).getClass();
+            List<?> defaultCollection = IntStream.range(0, arraySize).mapToObj(i ->
                     ConfigurationUtils.getDefaultFor(clazz)).collect(toList());
 
             Object resultArray = ConfigurationUtils.getPrimitiveArray(defaultCollection, clazz);
@@ -119,7 +135,7 @@ public class ConfigurationUtilsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetCompatibleCollection() {
-        final Map<Class, Class> testClasses = Stream.of(new Class[][] {
+        final Map<Class<?>, Class<?>> testClasses = Stream.of(new Class<?>[][]{
                 {BlockingQueue.class, LinkedBlockingQueue.class},
                 {TransferQueue.class, LinkedTransferQueue.class},
                 {Deque.class, ArrayDeque.class},
@@ -130,13 +146,61 @@ public class ConfigurationUtilsTest {
         }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
         testClasses.forEach((entryClass, expResultClass) -> {
-                Class resultClass = ConfigurationUtils.getCompatibleCollectionForAbstractDef(entryClass).getClass();
-                assertEquals(expResultClass, resultClass);
-            }
+                    Class<?> resultClass = ConfigurationUtils.getCompatibleCollectionForAbstractDef(entryClass).getClass();
+                    assertEquals(expResultClass, resultClass);
+                }
         );
 
         ConfigurationUtils.getCompatibleCollectionForAbstractDef(Collection.class);
 
+    }
+
+    @Test
+    public void testGetPrimitivesArrayZeroLenght() {
+            assertArrayEquals(new int[0], (int[]) ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), int.class));
+            assertArrayEquals(new byte[0], (byte[]) ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), byte.class));
+            assertArrayEquals(new short[0], (short[]) ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), short.class));
+            assertArrayEquals(new long[0], (long[]) ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), long.class));
+            assertArrayEquals(new double[0], (double[]) ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), double.class), 0);
+            assertArrayEquals(new float[0], (float[]) ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), float.class), 0);
+            assertArrayEquals(new boolean[0], (boolean[]) ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), boolean.class));
+            assertArrayEquals(new char[0], (char[]) ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), char.class));
+            assertNull(ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), Integer.class));
+    }
+
+    @Test
+    public void testGetWrappersArrayZeroLenght() {
+        assertArrayEquals(new Integer[0], (Integer[]) ConfigurationUtils.getWrappersArray(Collections.emptyList(), Integer.class));
+        assertArrayEquals(new Byte[0], (Byte[]) ConfigurationUtils.getWrappersArray(Collections.emptyList(), Byte.class));
+        assertArrayEquals(new Short[0], (Short[]) ConfigurationUtils.getWrappersArray(Collections.emptyList(), Short.class));
+        assertArrayEquals(new Long[0], (Long[]) ConfigurationUtils.getWrappersArray(Collections.emptyList(), Long.class));
+        assertArrayEquals(new Double[0], (Double[]) ConfigurationUtils.getWrappersArray(Collections.emptyList(), Double.class));
+        assertArrayEquals(new Float[0], (Float[]) ConfigurationUtils.getWrappersArray(Collections.emptyList(), Float.class));
+        assertArrayEquals(new Boolean[0], (Boolean[]) ConfigurationUtils.getWrappersArray(Collections.emptyList(), Boolean.class));
+        assertArrayEquals(new Character[0], (Character[]) ConfigurationUtils.getWrappersArray(Collections.emptyList(), Character.class));
+        assertNull(ConfigurationUtils.getWrappersArray(Collections.emptyList(), boolean.class));
+    }
+
+    @Test
+    public void testPrimitivesArrayNonZeroLength() {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        assertArrayEquals(new int[]{1, 2, 3, 4, 5}, (int[]) ConfigurationUtils.getPrimitiveArray(list, int.class));
+    }
+
+    @Test
+    public void testWrappersArrayNonZeroLength() {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        assertArrayEquals(new Integer[]{1, 2, 3, 4, 5}, (Integer[]) ConfigurationUtils.getWrappersArray(list, Integer.class));
     }
 
     @Test
@@ -207,6 +271,46 @@ public class ConfigurationUtilsTest {
         assertEquals(TEST_NAME_SPACE, ConfigurationUtils.getProperty(config, Constants.NAMESPACE_KEY, Hint.NODE_SPECIFIC.value()));
     }
 
+    @Test
+    public void testIsAMap() {
+        assertTrue(ConfigurationUtils.isAMap(HashMap.class));
+        assertFalse(ConfigurationUtils.isAMap(ArrayList.class));
+    }
+
+    @Test
+    public void testIsACollection() {
+        assertTrue(ConfigurationUtils.isACollection(ArrayList.class));
+        assertFalse(ConfigurationUtils.isACollection(HashMap.class));
+    }
+
+    @Test
+    public void testIsAPrimitiveOrWrapper() {
+        assertTrue(ConfigurationUtils.isAPrimitiveOrWrapper(int.class));
+        assertTrue(ConfigurationUtils.isAPrimitiveOrWrapper(Integer.class));
+        assertFalse(ConfigurationUtils.isAPrimitiveOrWrapper(HashMap.class));
+    }
+
+    @Test
+    public void testIsAPrimitivesArray() {
+        assertTrue(ConfigurationUtils.isAPrimitivesArray(int[].class));
+        assertFalse(ConfigurationUtils.isAPrimitivesArray(Integer[].class));
+        assertFalse(ConfigurationUtils.isAPrimitivesArray(HashMap[].class));
+    }
+
+    @Test
+    public void testIsAWrapperArray() {
+        assertTrue(ConfigurationUtils.isAWrappersArray(Integer[].class));
+        assertFalse(ConfigurationUtils.isAWrappersArray(int[].class));
+        assertFalse(ConfigurationUtils.isAWrappersArray(HashMap[].class));
+    }
+
+    @Test
+    public void testIsAPrimitivesOrWrapperArray() {
+        assertTrue(ConfigurationUtils.isAPrimitivesOrWrappersArray(int[].class));
+        assertTrue(ConfigurationUtils.isAPrimitivesOrWrappersArray(Integer[].class));
+        assertFalse(ConfigurationUtils.isAPrimitivesOrWrappersArray(HashMap[].class));
+    }
+
     private ConfigurationRepository populateTestBaseConfig() {
         BaseConfiguration inputConfig = new PropertiesConfiguration();
         inputConfig.setProperty(Constants.NAMESPACE_KEY, TEST_NAME_SPACE);
@@ -220,8 +324,8 @@ public class ConfigurationUtilsTest {
 
     private ConfigurationRepository populateTestCompositeConfig() {
         CompositeConfiguration inputCompositeConfig = new CompositeConfiguration();
-        Configuration inputConfig1= new BaseConfiguration();
-        Configuration inputConfig2= new BaseConfiguration();
+        Configuration inputConfig1 = new BaseConfiguration();
+        Configuration inputConfig2 = new BaseConfiguration();
         inputConfig1.setProperty(Constants.NAMESPACE_KEY, TEST_NAME_SPACE);
         inputCompositeConfig.addConfiguration(inputConfig1);
         inputCompositeConfig.addConfigurationFirst(inputConfig2);
