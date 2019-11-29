@@ -27,12 +27,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
@@ -47,116 +51,21 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationImpl.class);
 
     private static final String KEY_CANNOT_BE_NULL = "Key can't be null.";
-
     private static final NonConfigResource NON_CONFIG_RESOURCE = new NonConfigResource();
+    private static final Map<String, AggregateConfiguration> MODULE_CONFIG_STORE = new HashMap<>();
 
     static {
-
-        try {
-            init();
-        } catch (ConfigurationException e) {
-            throw new IllegalStateException("Failed to initialize configuration", e);
+        if (!loadClassPathConfigurationsAndResources()
+                || !loadAdditionalConfigurationsAndResources()
+                || !loadTenantConfigurations()) {
+            throw new IllegalStateException("Failed to initialize configuration");
         }
-    }
-
-    private static void init() throws ConfigurationException {
-
-        Map<String, AggregateConfiguration> moduleConfigStore = new HashMap<>();
-        List<URL> classpathResources = ConfigurationUtils.getAllClassPathResources();
-        Predicate<URL> predicate = ConfigurationUtils::isConfig;
-        for (URL url : classpathResources) {
-            if (predicate.test(url)) {
-                String moduleName = ConfigurationUtils.getConfigurationRepositoryKey(url);
-                AggregateConfiguration moduleConfig = moduleConfigStore.get(moduleName);
-                if (moduleConfig == null) {
-                    moduleConfig = new AggregateConfiguration();
-                    moduleConfigStore.put(moduleName, moduleConfig);
-                }
-                moduleConfig.addConfig(url);
-            } else {
-                NON_CONFIG_RESOURCE.add(url);
-            }
-        }
-        String configLocation = System.getProperty("config.location");
-        if (!isBlank(configLocation)) {
-            File root = new File(configLocation);
-            Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
-            Predicate<File> filePredicate = ConfigurationUtils::isConfig;
-            for (File file : filesystemResources) {
-                if (filePredicate.test(file)) {
-                    String moduleName = ConfigurationUtils.getConfigurationRepositoryKey(file);
-                    AggregateConfiguration moduleConfig = moduleConfigStore.get(moduleName);
-                    if (moduleConfig == null) {
-                        moduleConfig = new AggregateConfiguration();
-                        moduleConfigStore.put(moduleName, moduleConfig);
-                    }
-                    moduleConfig.addConfig(file);
-                } else {
-                    NON_CONFIG_RESOURCE.add(file);
-                }
-            }
-        }
-        String tenantConfigLocation = System.getProperty("tenant.config.location");
-        if (!isBlank(tenantConfigLocation)) {
-            File root = new File(tenantConfigLocation);
-            Collection<File> tenantsRoot = ConfigurationUtils.getAllFiles(root, false, true);
-            Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
-            Predicate<File> filePredicate = ConfigurationUtils::isConfig;
-            for (File file : filesystemResources) {
-                if (filePredicate.test(file)) {
-                    String moduleName = ConfigurationUtils.getNamespace(file);
-                    for (File tenantFileRoot : tenantsRoot) {
-                        if (file.getAbsolutePath().startsWith(tenantFileRoot.getAbsolutePath())) {
-                            moduleName = ConfigurationUtils.getConfigurationRepositoryKey(
-                                    (tenantFileRoot.getName().toUpperCase() + Constants.TENANT_NAMESPACE_SEPARATOR
-                                             + moduleName).split(Constants.TENANT_NAMESPACE_SEPARATOR));
-                        }
-                    }
-                    AggregateConfiguration moduleConfig = moduleConfigStore.get(moduleName);
-                    if (moduleConfig == null) {
-                        moduleConfig = new AggregateConfiguration();
-                        moduleConfigStore.put(moduleName, moduleConfig);
-                    }
-                    moduleConfig.addConfig(file);
-                }
-            }
-        }
-
-        populateFinalConfigurationIncrementally(moduleConfigStore);
-        String nodeConfigLocation = System.getProperty("node.config.location");
-        if (!isBlank(nodeConfigLocation)) {
-            File root = new File(nodeConfigLocation);
-            Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
-            Predicate<File> filePredicate = ConfigurationUtils::isConfig;
-            for (File file : filesystemResources) {
-                if (filePredicate.test(file)) {
-                    ConfigurationRepository.lookup().populateOverrideConfiguration(
-                            ConfigurationUtils.getConfigurationRepositoryKey(
-                                    ConfigurationUtils.getNamespace(file).split(Constants.TENANT_NAMESPACE_SEPARATOR)),
-                            file);
-                }
-            }
-        }
-    }
-
-    private static void populateFinalConfigurationIncrementally(Map<String, AggregateConfiguration> configs) {
-
-        if (configs.get(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE) != null) {
-            ConfigurationRepository.lookup().populateConfiguration(
-                    Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE,
-                    configs.remove(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE)
-                            .getFinalConfiguration());
-        }
-
-        Set<String> modules = configs.keySet();
-        for (String module : modules) {
-            ConfigurationRepository.lookup().populateConfiguration(module, configs.get(module).getFinalConfiguration());
-        }
+        populateFinalConfigurationIncrementally(MODULE_CONFIG_STORE);
+        loadNodeSpecificConfigurations();
     }
 
     @Override
     public <T> T get(String tenant, String namespace, String key, Class<T> clazz, Hint... hints) {
-
         String[] tenantNamespaceArray;
         if (tenant == null && namespace != null) {
             tenantNamespaceArray = namespace.split(Constants.TENANT_NAMESPACE_SEPARATOR);
@@ -166,57 +75,46 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             }
         }
 
-        tenant = ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase()
-                         : Constants.DEFAULT_TENANT;
-        namespace = ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase()
-                            : Constants.DEFAULT_NAMESPACE;
+        tenant = ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase() : Constants.DEFAULT_TENANT;
+        namespace = ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase() : Constants.DEFAULT_NAMESPACE;
+        hints = hints == null || hints.length == 0 ? new Hint[]{Hint.EXTERNAL_LOOKUP, Hint.NODE_SPECIFIC} : hints;
         T returnValue;
-        returnValue = (T) getInternal(tenant, namespace, key, clazz.isPrimitive() ? getWrapperClass(clazz) : clazz,
-                hints == null || hints.length == 0 ? new Hint[] {Hint.EXTERNAL_LOOKUP, Hint.NODE_SPECIFIC} : hints);
+        returnValue = getInternal(tenant, namespace, key, clazz, hints);
         if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue))
-                    && !Constants.DEFAULT_TENANT.equals(tenant)) {
-            returnValue = (T) getInternal(Constants.DEFAULT_TENANT, namespace, key,
-                    clazz.isPrimitive() ? getWrapperClass(clazz) : clazz,
-                    hints == null || hints.length == 0 ? new Hint[] {Hint.EXTERNAL_LOOKUP, Hint.NODE_SPECIFIC} : hints);
+                && !Constants.DEFAULT_TENANT.equals(tenant)) {
+            returnValue = getInternal(Constants.DEFAULT_TENANT, namespace, key, clazz, hints);
         }
         if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue))
-                    && !Constants.DEFAULT_NAMESPACE.equals(namespace)) {
-            returnValue = (T) getInternal(tenant, Constants.DEFAULT_NAMESPACE, key,
-                    clazz.isPrimitive() ? getWrapperClass(clazz) : clazz,
-                    hints == null || hints.length == 0 ? new Hint[] {Hint.EXTERNAL_LOOKUP, Hint.NODE_SPECIFIC} : hints);
+                && !Constants.DEFAULT_NAMESPACE.equals(namespace)) {
+            returnValue = getInternal(tenant, Constants.DEFAULT_NAMESPACE, key, clazz, hints);
         }
         if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue))
-                    && !Constants.DEFAULT_NAMESPACE.equals(namespace) && !Constants.DEFAULT_TENANT.equals(tenant)) {
-            returnValue = (T) getInternal(Constants.DEFAULT_TENANT, Constants.DEFAULT_NAMESPACE, key,
-                    clazz.isPrimitive() ? getWrapperClass(clazz) : clazz,
-                    hints == null || hints.length == 0 ? new Hint[] {Hint.EXTERNAL_LOOKUP, Hint.NODE_SPECIFIC} : hints);
+                && !Constants.DEFAULT_NAMESPACE.equals(namespace) && !Constants.DEFAULT_TENANT.equals(tenant)) {
+            returnValue = getInternal(Constants.DEFAULT_TENANT, Constants.DEFAULT_NAMESPACE, key, clazz, hints);
         }
-        if (returnValue == null && clazz.isPrimitive()) {
-            return (T) ConfigurationUtils.getDefaultFor(clazz);
-        } else {
-            return returnValue;
+        if (returnValue == null && ConfigurationUtils.isAPrimitive(clazz)) {
+            returnValue = (T) ConfigurationUtils.getDefaultFor(clazz);
         }
+        return returnValue;
     }
 
     @Override
     public <T> Map<String, T> populateMap(String tenantId, String namespace, String key, Class<T> clazz) {
-
-        tenantId = calculateTenant(tenantId);
-        namespace = calculateNamespace(namespace);
+        final String calculatedTenantId = calculateTenant(tenantId);
+        final String calculatedNamespace = calculateNamespace(namespace);
         Map<String, T> map = new HashMap<>();
         Iterator<String> keys;
         try {
-            keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys(key);
-            while (keys.hasNext()) {
-                String k = keys.next();
+            keys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys(key);
+            keys.forEachRemaining(k -> {
                 if (k.startsWith(key + ".")) {
                     k = k.substring(key.length() + 1);
                     String subkey = k.substring(0, k.indexOf('.'));
                     if (!map.containsKey(subkey)) {
-                        map.put(subkey, get(tenantId, namespace, key + "." + subkey, clazz));
+                        map.put(subkey, get(calculatedTenantId, calculatedNamespace, key + "." + subkey, clazz));
                     }
                 }
-            }
+            });
         } catch (Exception e) {
             LOGGER.warn(
                     "Couldn't populate map fot tenant: {}, namespace: {}, key: {}, type: {}",
@@ -231,47 +129,23 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     }
 
     @Override
-    public Map generateMap(String tenantId, String namespace, String key) {
-
-        tenantId = calculateTenant(tenantId);
-        namespace = calculateNamespace(namespace);
-
-        Map map;
-        Map parentMap = new HashMap<>();
-        Iterator<String> keys;
+    public Map<Object, Object> generateMap(String tenantId, String namespace, String key) {
+        final String calculatedTenantId = calculateTenant(tenantId);
+        final String calculatedNamespace = calculateNamespace(namespace);
+        Map<Object, Object> parentMap = new HashMap<>();
+        Iterator<String> configKeys;
         try {
             if (isBlank(key)) {
-                keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys();
+                configKeys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys();
             } else {
-                keys = ConfigurationRepository.lookup().getConfigurationFor(tenantId, namespace).getKeys(key);
+                configKeys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys(key);
             }
-            while (keys.hasNext()) {
-                map = parentMap;
-                String k = keys.next();
-
-                if (!isBlank(key) && !k.startsWith(key + ".")) {
-                    continue;
+            configKeys.forEachRemaining(subKey -> {
+                if (!isBlank(key) && !subKey.startsWith(key + ".")) {
+                    configKeys.remove();
                 }
-                String value = getAsString(tenantId, namespace, k);
-                if (!isBlank(key) && k.startsWith(key + ".")) {
-                    k = k.substring(key.trim().length() + 1);
-                }
-
-                while (k.contains(".")) {
-                    if (k.contains(".")) {
-                        String subkey = k.substring(0, k.indexOf('.'));
-                        k = k.substring(k.indexOf('.') + 1);
-                        if (!map.containsKey(subkey)) {
-                            Map tmp = new HashMap();
-                            map.put(subkey, tmp);
-                            map = tmp;
-                        } else {
-                            map = (Map) map.get(subkey);
-                        }
-                    }
-                }
-                map.put(k, value);
-            }
+                parseConfigSubKeys(subKey, key, calculatedTenantId, calculatedNamespace, parentMap);
+            });
         } catch (Exception e) {
             LOGGER.warn(
                     "Couldn't generate map fot tenant: {}, namespace: {}, key: {}",
@@ -282,6 +156,159 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             );
         }
         return parentMap;
+    }
+
+    private static boolean loadClassPathConfigurationsAndResources() {
+        List<URL> classpathResources = ConfigurationUtils.getAllClassPathResources();
+        Predicate<URL> predicate = ConfigurationUtils::isConfig;
+        Map<Boolean, List<URL>> resources = classpathResources.stream().collect(Collectors.partitioningBy(predicate));
+        List<URL> configResources = resources.get(true);
+        List<URL> nonConfigResources = resources.get(false);
+        AtomicReference<Boolean> successFlagHolder = new AtomicReference<>(true);
+
+        configResources.forEach(url -> successFlagHolder.set(setUpdateModuleConfigStore(url)));
+
+        nonConfigResources.forEach(NON_CONFIG_RESOURCE::add);
+
+        return successFlagHolder.get();
+    }
+
+    private static boolean loadAdditionalConfigurationsAndResources() {
+        String configLocation = System.getProperty("config.location");
+        AtomicReference<Boolean> successFlagHolder = new AtomicReference<>(true);
+        if (!isBlank(configLocation)) {
+            File root = new File(configLocation);
+            Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
+            Predicate<File> filePredicate = ConfigurationUtils::isConfig;
+            Map<Boolean, List<File>> resources = filesystemResources.stream().collect(Collectors.partitioningBy(filePredicate));
+            List<File> configResources = resources.get(true);
+            List<File> nonConfigResources = resources.get(false);
+
+            configResources.forEach(file -> successFlagHolder.set(setUpdateModuleConfigStore(file)));
+
+            nonConfigResources.forEach(NON_CONFIG_RESOURCE::add);
+        }
+        return successFlagHolder.get();
+    }
+
+    private static boolean loadTenantConfigurations() {
+        String tenantConfigLocation = System.getProperty("tenant.config.location");
+        AtomicReference<Boolean> successFlagHolder = new AtomicReference<>(true);
+        if (!isBlank(tenantConfigLocation)) {
+            File root = new File(tenantConfigLocation);
+            Collection<File> tenantsRoot = ConfigurationUtils.getAllFiles(root, false, true);
+            Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
+
+            Map<Boolean, List<File>> resources = filesystemResources.stream().collect(Collectors.partitioningBy(ConfigurationUtils::isConfig));
+            Collection<File> tenantResources = resources.get(true);
+
+            tenantResources.forEach(configFile -> {
+                AtomicReference<String> moduleNameHolder = new AtomicReference<>(ConfigurationUtils.getNamespace(configFile));
+                Predicate<File> startsWithRootPredicate = tenantRoot -> configFile.getAbsolutePath().startsWith(tenantRoot.getAbsolutePath());
+                Collection<File> matchesTenantRoot = tenantsRoot.stream().filter(startsWithRootPredicate).collect(Collectors.toCollection(ArrayList::new));
+                AtomicReference<String[]> altResource = new AtomicReference<>();
+                matchesTenantRoot.forEach(file -> altResource.set(
+                        (file.getName().toUpperCase() + Constants.TENANT_NAMESPACE_SEPARATOR + moduleNameHolder.get())
+                                .split(Constants.TENANT_NAMESPACE_SEPARATOR)
+                        )
+                );
+                successFlagHolder.set(setUpdateModuleConfigStore(configFile, altResource.get()));
+            });
+        }
+        return successFlagHolder.get();
+    }
+
+    private static void loadNodeSpecificConfigurations() {
+        String nodeConfigLocation = System.getProperty("node.config.location");
+        if (!isBlank(nodeConfigLocation)) {
+            File root = new File(nodeConfigLocation);
+            Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
+            filesystemResources.stream().filter(ConfigurationUtils::isConfig).forEach(
+                    file -> ConfigurationRepository.lookup().populateOverrideConfiguration(
+                            ConfigurationUtils.getConfigurationRepositoryKey(
+                                    ConfigurationUtils.getNamespace(file).split(Constants.TENANT_NAMESPACE_SEPARATOR)), file)
+            );
+        }
+    }
+
+    private static void populateFinalConfigurationIncrementally(Map<String, AggregateConfiguration> configs) {
+        if (configs.get(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE) != null) {
+            ConfigurationRepository.lookup().populateConfiguration(
+                    Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE,
+                    configs.remove(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE)
+                            .getFinalConfiguration());
+        }
+        Set<String> modules = configs.keySet();
+        modules.forEach(
+                m -> ConfigurationRepository.lookup().populateConfiguration(m, configs.get(m).getFinalConfiguration())
+        );
+    }
+
+    private static <T> boolean setUpdateModuleConfigStore(T resource, String... namedResources) {
+        boolean success = true;
+        String moduleName;
+        try {
+            if (namedResources == null || namedResources.length == 0) {
+                moduleName = getConfigurationRepositoryKeyWrapper(resource);
+            } else {
+                moduleName = getConfigurationRepositoryKeyWrapper(namedResources);
+            }
+            moduleAddConfigWrapper(moduleName, resource);
+        } catch (Exception e) {
+            success = false;
+            LOGGER.error("Error occurred while processing config resource {}", resource, e);
+        }
+        return success;
+    }
+
+    private static <T> String getConfigurationRepositoryKeyWrapper(T resource) throws ConfigurationException {
+        switch (resource.getClass().getSimpleName()) {
+            case "URL":
+                return ConfigurationUtils.getConfigurationRepositoryKey((URL) resource);
+            case "File":
+                return ConfigurationUtils.getConfigurationRepositoryKey((File) resource);
+            case "String[]":
+                return ConfigurationUtils.getConfigurationRepositoryKey((String[]) resource);
+            default:
+                throw new ConfigurationException("Unsupported resource type.");
+        }
+    }
+
+    private static <T> void moduleAddConfigWrapper(String moduleName, T resource) throws ConfigurationException {
+        AggregateConfiguration moduleConfig = MODULE_CONFIG_STORE.get(moduleName);
+        if (moduleConfig == null) {
+            moduleConfig = new AggregateConfiguration();
+            MODULE_CONFIG_STORE.put(moduleName, moduleConfig);
+        }
+        switch (resource.getClass().getSimpleName()) {
+            case "URL":
+                moduleConfig.addConfig((URL) resource);
+                break;
+            case "File":
+                moduleConfig.addConfig((File) resource);
+                break;
+            default:
+                throw new ConfigurationException("Unsupported resource type.");
+        }
+    }
+
+    private void parseConfigSubKeys(String subKey, String keyPrefix, String tenantId, String namespace, Map<Object, Object> targetMap) {
+        String value = getAsString(tenantId, namespace, subKey);
+        if (!isBlank(keyPrefix) && subKey.startsWith(keyPrefix + ".")) {
+            subKey = subKey.substring(keyPrefix.trim().length() + 1);
+        }
+        while (subKey.contains(".")) {
+            String subSubKey = subKey.substring(0, subKey.indexOf('.'));
+            subKey = subKey.substring(subKey.indexOf('.') + 1);
+            if (!targetMap.containsKey(subSubKey)) {
+                Map<Object, Object> subMap = new HashMap<>();
+                targetMap.put(subSubKey, subMap);
+                targetMap = subMap;
+            } else {
+                targetMap = (Map<Object, Object>) targetMap.get(subSubKey);
+            }
+        }
+        targetMap.put(subKey, value);
     }
 
     protected <T> T getInternal(String tenant, String namespace, String key, Class<T> clazz, Hint... hints) {
@@ -303,50 +330,16 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             throw new IllegalArgumentException("clazz is null.");
         }
 
-        if (clazz.isPrimitive()) {
+        if (ConfigurationUtils.isAPrimitive(clazz)) {
             clazz = getWrapperClass(clazz);
         }
         try {
-            if (ConfigurationUtils.isWrapperClass(clazz) || clazz.isPrimitive()) {
-                Object obj = ConfigurationUtils.getProperty(
-                        ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
-                if (obj != null) {
-                    if (ConfigurationUtils.isCollection(obj.toString())) {
-                        obj = ConfigurationUtils.getCollectionString(obj.toString());
-                    }
-                    String value = obj.toString().split(",")[0];
-                    value = ConfigurationUtils.processVariablesIfPresent(tenant, namespace, value);
-                    return (T) getValue(value, clazz.isPrimitive() ? getWrapperClass(clazz) : clazz, processingHints);
-                } else {
-                    return null;
-                }
-            } else if (clazz.isArray() && (clazz.getComponentType().isPrimitive() || ConfigurationUtils.isWrapperClass(
-                    clazz.getComponentType()))) {
-                Object obj = ConfigurationUtils.getProperty(
-                        ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
-                if (obj != null) {
-                    Class componentClass = clazz.getComponentType();
-                    if (clazz.getComponentType().isPrimitive()) {
-                        componentClass = getWrapperClass(clazz.getComponentType());
-                    }
-                    String collString = ConfigurationUtils.getCollectionString(obj.toString());
-                    ArrayList<String> tempCollection = new ArrayList<>();
-                    for (String itemValue : collString.split(",")) {
-                        tempCollection.add(ConfigurationUtils.processVariablesIfPresent(tenant, namespace, itemValue));
-                    }
-                    Collection<T> collection =
-                            convert(ConfigurationUtils.getCollectionString(Arrays.toString(tempCollection.toArray())),
-                                    componentClass, processingHints);
-                    if (clazz.getComponentType().isPrimitive()) {
-                        return (T) ConfigurationUtils.getPrimitiveArray(collection, clazz.getComponentType());
-                    } else {
-                        return (T) collection.toArray(getZeroLengthArrayFor(getWrapperClass(clazz.getComponentType())));
-                    }
-                } else {
-                    return null;
-                }
+            if (ConfigurationUtils.isWrapperClass(clazz)) {
+                return getWrapperTypeValue(tenant, namespace, key, clazz, processingHints);
+            } else if (ConfigurationUtils.isAPrimitivesOrWrappersArray(clazz)) {
+                return getArrayTypeValue(tenant, namespace, key, clazz, processingHints);
             } else if (clazz.isAnnotationPresent(Config.class)) {
-                return read(tenant, namespace, clazz, isBlank(key) ? "" : (key + "."), hints);
+                return getAnnotatedTypeValue(tenant, namespace, clazz, isBlank(key) ? "" : (key + "."), hints);
             } else {
                 throw new IllegalArgumentException(
                         "Only primitive classes, wrapper classes, corresponding array classes and any "
@@ -363,6 +356,51 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             );
         }
         return null;
+    }
+
+    private <T> T getWrapperTypeValue(String tenant, String namespace, String key, Class<T> clazz, int processingHints) throws Exception {
+        Object obj = ConfigurationUtils.getProperty(
+                ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
+        if (obj != null) {
+            if (ConfigurationUtils.isCollection(obj.toString())) {
+                obj = ConfigurationUtils.getCollectionString(obj.toString());
+            }
+            String value = ConfigurationUtils.processVariablesIfPresent(
+                    tenant,
+                    namespace,
+                    obj.toString().split(",")[0]
+            );
+            return (T) getTypeValue(value, clazz, processingHints);
+        }
+        return null;
+    }
+
+    private <T> T getArrayTypeValue(String tenant, String namespace, String key, Class<T> clazz, int processingHints) throws Exception {
+        Object obj = ConfigurationUtils.getProperty(
+                ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
+        if (obj != null) {
+            Class componentType = clazz.getComponentType();
+            if (ConfigurationUtils.isAPrimitivesArray(clazz)) {
+                componentType = getWrapperClass(componentType);
+            }
+            String collString = ConfigurationUtils.getCollectionString(obj.toString());
+            ArrayList<String> tempCollection = new ArrayList<>();
+            for (String itemValue : collString.split(",")) {
+                tempCollection.add(ConfigurationUtils.processVariablesIfPresent(tenant, namespace, itemValue));
+            }
+            Collection<T> collection = convert(
+                    ConfigurationUtils.getCollectionString(Arrays.toString(tempCollection.toArray())),
+                    (Class<T>) componentType,
+                    processingHints
+            );
+            if (ConfigurationUtils.isAPrimitivesArray(clazz)) {
+                return (T) ConfigurationUtils.getPrimitiveArray(collection, componentType);
+            } else {
+                return (T) collection.toArray(getZeroLengthArrayFor(getWrapperClass(componentType)));
+            }
+        } else {
+            return null;
+        }
     }
 
     private static String calculateNamespace(String namespace) {
@@ -383,7 +421,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         return tenant.toUpperCase();
     }
 
-    private <T> T read(String tenant, String namespace, Class<T> clazz, String keyPrefix, Hint... hints)
+    private <T> T getAnnotatedTypeValue(String tenant, String namespace, Class<T> clazz, String keyPrefix, Hint... hints)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
         Config confAnnotation = clazz.getAnnotation(Config.class);
@@ -396,53 +434,72 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             Config fieldConfAnnotation = field.getAnnotation(Config.class);
+            Class<?> fieldType = field.getType();
             if (fieldConfAnnotation != null) {
-                if (field.getType().isPrimitive() || ConfigurationUtils.isWrapperClass(field.getType()) || (
-                        field.getType().isArray() && (field.getType().getComponentType().isPrimitive()
-                                                              || ConfigurationUtils.isWrapperClass(
-                                field.getType().getComponentType())))
-                            || field.getType().getAnnotation(Config.class) != null) {
-                    field.set(objToReturn,
-                            get(tenant, namespace, keyPrefix + fieldConfAnnotation.key(), field.getType(), hints));
-                } else if (Collection.class.isAssignableFrom(field.getType())) {
-                    Object obj = get(tenant, namespace, keyPrefix + fieldConfAnnotation.key(),
-                            ConfigurationUtils.getArrayClass(ConfigurationUtils.getCollectionGenericType(field)),
-                            hints);
-                    if (obj != null) {
-                        List list = Arrays.asList((Object[]) obj);
-                        Class clazzToInstantiate;
-                        if (field.getType().isInterface()) {
-                            clazzToInstantiate = ConfigurationUtils.getConcreteCollection(field.getType()).getClass();
-                        } else if (Modifier.isAbstract(field.getType().getModifiers())) {
-                            clazzToInstantiate =
-                                    ConfigurationUtils.getCompatibleCollectionForAbstractDef(field.getType())
-                                            .getClass();
-                        } else {
-                            clazzToInstantiate = field.getType();
-                        }
-                        Constructor construct = getConstructorWithArguments(clazzToInstantiate, Collection.class);
-
-                        if (construct != null) {
-                            construct.setAccessible(true);
-                            field.set(objToReturn, construct.newInstance(list));
-                        } else {
-                            construct = getConstructorWithArguments(clazzToInstantiate, Integer.class,
-                                    Boolean.class, Collection.class);
-                            if (construct != null) {
-                                construct.setAccessible(true);
-                                field.set(objToReturn, construct.newInstance(list.size(), true, list));
-                            }
-                        }
-                    }
-                } else if (Map.class.isAssignableFrom(field.getType())) {
-                    field.set(objToReturn, generateMap(tenant, namespace, keyPrefix + fieldConfAnnotation.key()));
+                if (ConfigurationUtils.isAPrimitiveOrWrapper(fieldType) ||
+                        ConfigurationUtils.isAPrimitivesOrWrappersArray(fieldType)) {
+                    setPrimitiveField(field, objToReturn, tenant, namespace, keyPrefix, hints);
+                }
+                if (ConfigurationUtils.isACollection(fieldType)) {
+                    setCollectionField(field, objToReturn, tenant, namespace, keyPrefix, hints);
+                }
+                if (ConfigurationUtils.isAMap(fieldType)) {
+                    setMapField(field, objToReturn, tenant, namespace, keyPrefix);
                 }
             }
         }
         return objToReturn;
     }
 
-    private Constructor getConstructorWithArguments(Class clazz, Class... classes) {
+    private void setPrimitiveField(Field field, Object objToReturn, String tenant, String namespace, String keyPrefix, Hint[] hints)
+            throws IllegalAccessException {
+        String fieldConfAnnotationKey = field.getAnnotation(Config.class).key();
+        Class<?> fieldType = field.getType();
+        field.set(objToReturn, get(tenant, namespace, keyPrefix + fieldConfAnnotationKey, fieldType, hints));
+    }
+
+    private void setMapField(Field field, Object objToReturn, String tenant, String namespace, String keyPrefix)
+            throws IllegalAccessException {
+        String fieldConfAnnotationKey = field.getAnnotation(Config.class).key();
+        field.set(objToReturn, generateMap(tenant, namespace, keyPrefix + fieldConfAnnotationKey));
+    }
+
+    private void setCollectionField(Field field, Object objToReturn, String tenant, String namespace, String keyPrefix, Hint[] hints)
+            throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        String fieldConfAnnotationKey = field.getAnnotation(Config.class).key();
+        Class<?> fieldType = field.getType();
+        Object obj = get(tenant, namespace, keyPrefix + fieldConfAnnotationKey,
+                ConfigurationUtils.getArrayClass(ConfigurationUtils.getCollectionGenericType(field)),
+                hints);
+        if (obj != null) {
+            List<Object> list = Arrays.asList((Object[]) obj);
+            Class clazzToInstantiate;
+            if (fieldType.isInterface()) {
+                clazzToInstantiate = ConfigurationUtils.getConcreteCollection(fieldType).getClass();
+            } else if (Modifier.isAbstract(fieldType.getModifiers())) {
+                clazzToInstantiate =
+                        ConfigurationUtils.getCompatibleCollectionForAbstractDef(fieldType)
+                                .getClass();
+            } else {
+                clazzToInstantiate = fieldType;
+            }
+            Constructor construct = getConstructorWithArguments(clazzToInstantiate, Collection.class);
+
+            if (construct != null) {
+                construct.setAccessible(true);
+                field.set(objToReturn, construct.newInstance(list));
+            } else {
+                construct = getConstructorWithArguments(clazzToInstantiate, Integer.class,
+                        Boolean.class, Collection.class);
+                if (construct != null) {
+                    construct.setAccessible(true);
+                    field.set(objToReturn, construct.newInstance(list.size(), true, list));
+                }
+            }
+        }
+    }
+
+    private Constructor getConstructorWithArguments(Class<?> clazz, Class<?>... classes) {
         try {
             return clazz.getDeclaredConstructor(classes);
         } catch (Exception exception) {
@@ -451,7 +508,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         }
     }
 
-    private Class getWrapperClass(Class clazz) {
+    private Class getWrapperClass(Class<?> clazz) {
         if (byte.class == clazz) {
             return Byte.class;
         } else if (short.class == clazz) {
@@ -472,101 +529,82 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         return clazz;
     }
 
-    private <T> T getValue(Object obj, Class<T> clazz, int processingHint) {
-
+    private <T> T getTypeValue(Object obj, Class<T> clazz, int processingHint) {
         if (obj == null || obj.toString().trim().length() == 0) {
             return null;
         } else {
             obj = obj.toString().trim();
         }
-
         if (String.class.equals(clazz)) {
-            if (obj.toString().startsWith("@") && ConfigurationUtils.isExternalLookup(processingHint)) {
-                String contents = ConfigurationUtils.getFileContents(
-                        NON_CONFIG_RESOURCE.locate(obj.toString().substring(1).trim()));
-                if (contents == null) {
-                    contents = ConfigurationUtils.getFileContents(obj.toString().substring(1).trim());
-                }
-                if (contents != null) {
-                    obj = contents;
-                }
-            }
-            return (T) obj.toString();
-        } else if (Number.class.isAssignableFrom(clazz)) {
-            Double doubleValue = Double.valueOf(obj.toString());
-            switch (clazz.getName()) {
-                case "java.lang.Byte":
-                    Byte byteVal = doubleValue.byteValue();
-                    return (T) byteVal;
-                case "java.lang.Short":
-                    Short shortVal = doubleValue.shortValue();
-                    return (T) shortVal;
-                case "java.lang.Integer":
-                    Integer intVal = doubleValue.intValue();
-                    return (T) intVal;
-                case "java.lang.Long":
-                    Long longVal = doubleValue.longValue();
-                    return (T) longVal;
-                case "java.lang.Float":
-                    Float floatVal = doubleValue.floatValue();
-                    return (T) floatVal;
-                case "java.lang.Double":
-                    return (T) doubleValue;
-                default:
-            }
-        } else if (Boolean.class.equals(clazz)) {
+            return getValueForStringType(obj, processingHint);
+        }
+        if (Number.class.isAssignableFrom(clazz)) {
+            return getValueForNumbersType(obj, clazz);
+        }
+        if (Boolean.class.equals(clazz)) {
             return (T) Boolean.valueOf(obj.toString());
-        } else if (Character.class.equals(clazz)) {
+        }
+        if (Character.class.equals(clazz)) {
             return (T) Character.valueOf(obj.toString().charAt(0));
         }
         return null;
     }
 
-    private <T> T[] getZeroLengthArrayFor(Class<T> clazz) {
-        Object obj = null;
-        if (clazz == int.class) {
-            obj = new int[] {};
-        } else if (clazz == byte.class) {
-            obj = new byte[] {};
-        } else if (clazz == short.class) {
-            obj = new short[] {};
-        } else if (clazz == long.class) {
-            obj = new long[] {};
-        } else if (clazz == float.class) {
-            obj = new float[] {};
-        } else if (clazz == double.class) {
-            obj = new double[] {};
-        } else if (clazz == boolean.class) {
-            obj = new boolean[] {};
-        } else if (clazz == char.class) {
-            obj = new char[] {};
-        } else if (clazz == Byte.class) {
-            obj = new Byte[] {};
-        } else if (clazz == Short.class) {
-            obj = new Short[] {};
-        } else if (clazz == Integer.class) {
-            obj = new Integer[] {};
-        } else if (clazz == Long.class) {
-            obj = new Long[] {};
-        } else if (clazz == Float.class) {
-            obj = new Float[] {};
-        } else if (clazz == Double.class) {
-            obj = new Double[] {};
-        } else if (clazz == Boolean.class) {
-            obj = new Boolean[] {};
-        } else if (clazz == Character.class) {
-            obj = new Character[] {};
-        } else if (clazz == String.class) {
-            obj = new String[] {};
+    private <T> T getValueForStringType(Object obj, int processingHint) {
+        if (obj.toString().startsWith("@") && ConfigurationUtils.isExternalLookup(processingHint)) {
+            String subString = obj.toString().substring(1).trim();
+            String contents = ConfigurationUtils.getFileContents(
+                    NON_CONFIG_RESOURCE.locate(subString));
+            if (contents == null) {
+                contents = ConfigurationUtils.getFileContents(subString);
+            }
+            if (contents != null) {
+                obj = contents;
+            }
         }
-        return (T[]) obj;
+        return (T) obj.toString();
+    }
+
+    private <T> T getValueForNumbersType(Object obj, Class<T> clazz) {
+        Double doubleValue = Double.valueOf(obj.toString());
+        switch (clazz.getName()) {
+            case "java.lang.Byte":
+                Byte byteVal = doubleValue.byteValue();
+                return (T) byteVal;
+            case "java.lang.Short":
+                Short shortVal = doubleValue.shortValue();
+                return (T) shortVal;
+            case "java.lang.Integer":
+                Integer intVal = doubleValue.intValue();
+                return (T) intVal;
+            case "java.lang.Long":
+                Long longVal = doubleValue.longValue();
+                return (T) longVal;
+            case "java.lang.Float":
+                Float floatVal = doubleValue.floatValue();
+                return (T) floatVal;
+            case "java.lang.Double":
+                return (T) doubleValue;
+            default:
+                return null;
+        }
+    }
+
+    private <T> T[] getZeroLengthArrayFor(Class<T> clazz) {
+        Object objToReturn = null;
+        if (ConfigurationUtils.isAPrimitive(clazz)) {
+            objToReturn = ConfigurationUtils.getPrimitiveArray(Collections.emptyList(), clazz);
+        } else if (ConfigurationUtils.isWrapperClass(clazz)) {
+            objToReturn = ConfigurationUtils.getWrappersArray(Collections.emptyList(), clazz);
+        }
+        return (T[]) objToReturn;
     }
 
     private <T> Collection<T> convert(String commaSeparatedValues, Class<T> clazz, int processingHints) {
         ArrayList<T> collection = new ArrayList<>();
         for (String value : commaSeparatedValues.split(",")) {
             try {
-                T type1 = getValue(value, clazz, processingHints);
+                T type1 = getTypeValue(value, clazz, processingHints);
                 if (type1 != null) {
                     collection.add(type1);
                 }
