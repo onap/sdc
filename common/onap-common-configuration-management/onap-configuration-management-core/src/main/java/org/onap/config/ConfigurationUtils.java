@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -77,6 +78,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TransferQueue;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -92,14 +94,14 @@ public class ConfigurationUtils {
 
     private static final String CONFIGURATION_TYPE_NOT_SUPPORTED = "Configuration type not supported:";
 
-    private static final Map<Class, Class> ARRAY_CLASS_MAP;
+    private static final Map<Class<?>, Class<?>> ARRAY_CLASS_MAP;
 
     private static final String CONFIG_REGEX_TPL_OPT_1 = "CONFIG(-\\w*){0,1}(-(%s|%s|%s)){0,1}\\.(%s|%s|%s|%s)$";
 
     private static final String CONFIG_REGEX_TPL_OPT_2 = "CONFIG(.)*\\.(%s|%s|%s|%s)$";
 
     static {
-        Map<Class, Class> arrayTypes = new HashMap<>();
+        Map<Class<?>, Class<?>> arrayTypes = new HashMap<>();
         arrayTypes.put(Byte.class, Byte[].class);
         arrayTypes.put(Short.class, Short[].class);
         arrayTypes.put(Integer.class, Integer[].class);
@@ -307,7 +309,7 @@ public class ConfigurationUtils {
         return Optional.ofNullable(configurationMode);
     }
 
-    public static Class getCollectionGenericType(Field field) {
+    public static Class<?> getCollectionGenericType(Field field) {
         Type type = field.getGenericType();
 
         if (type instanceof ParameterizedType) {
@@ -327,12 +329,74 @@ public class ConfigurationUtils {
         return String[].class;
     }
 
-    public static boolean isWrapperClass(Class clazz) {
-        return clazz == String.class || clazz == Boolean.class || clazz == Character.class
-                || Number.class.isAssignableFrom(clazz);
+    public static boolean isWrapperClass(Class<?> clazz) {
+        Predicate<Class<?>> predicateWrapper = type -> type == String.class || type == Boolean.class || type == Character.class
+                || Number.class.isAssignableFrom(type);
+        return isA(predicateWrapper, clazz);
     }
 
-    public static Class getArrayClass(Class clazz) {
+    public static boolean isAPrimitive(Class<?> clazz) {
+        return isA(Class::isPrimitive, clazz);
+    }
+
+    /**
+     * Check if clazz implementing Map iface
+     */
+    public static boolean isAMap(Class<?> clazz) {
+        Predicate<Class<?>> predicateMap = Map.class::isAssignableFrom;
+        return isA(predicateMap, clazz);
+    }
+
+    /**
+     * Check if clazz implementing Collection iface
+     */
+    public static boolean isACollection(Class<?> clazz) {
+        Predicate<Class<?>> predicateCollection = Collection.class::isAssignableFrom;
+        return isA(predicateCollection, clazz);
+    }
+
+    /**
+     * Check if clazz is a primitive or primitive wrapper
+     */
+    public static boolean isAPrimitiveOrWrapper(Class<?> clazz) {
+        Predicate<Class<?>> predicatePrimitive = Class::isPrimitive;
+        Predicate<Class<?>> predicateWrapper = ConfigurationUtils::isWrapperClass;
+        return isA(predicatePrimitive.or(predicateWrapper), clazz);
+    }
+
+    /**
+     * Check if clazz is array of primitives or array of primitives wrappers
+     */
+    public static boolean isAPrimitivesOrWrappersArray(Class<?> clazz) {
+        Predicate<Class<?>> predicatePrimitivesOrWrappersArray =
+                type -> ConfigurationUtils.isAWrappersArray(type) || ConfigurationUtils.isAPrimitivesArray(type);
+        return isA(predicatePrimitivesOrWrappersArray, clazz);
+
+    }
+
+    /**
+     * Check is clazz is array of primitives
+     */
+    public static boolean isAPrimitivesArray(Class<?> clazz) {
+        Predicate<Class<?>> predicateArray = Class::isArray;
+        Predicate<Class<?>> predicateComponentPrimitive = type -> type.getComponentType().isPrimitive();
+        return isA(predicateArray.and(predicateComponentPrimitive), clazz);
+    }
+
+    /**
+     * Check is clazz is array of primitives wrappers
+     */
+    public static boolean isAWrappersArray(Class<?> clazz) {
+        Predicate<Class<?>> predicateArray = Class::isArray;
+        Predicate<Class<?>> predicateComponentWrapper = type -> isWrapperClass(type.getComponentType());
+        return isA(predicateArray.and(predicateComponentWrapper), clazz);
+    }
+
+    private static boolean isA(Predicate<Class<?>> predicate, Class<?> clazz) {
+        return predicate.test(clazz);
+    }
+
+    public static Class<?> getArrayClass(Class<?> clazz) {
         return ARRAY_CLASS_MAP.getOrDefault(clazz, null);
     }
 
@@ -399,7 +463,7 @@ public class ConfigurationUtils {
         return objToReturn;
     }
 
-    public static Object getPrimitiveArray(Collection collection, Class clazz) {
+    public static Object getPrimitiveArray(Collection<?> collection, Class<?> clazz) {
         switch (clazz.getName()) {
             case "int":
                 return getIntsPrimitiveArray(collection);
@@ -415,9 +479,22 @@ public class ConfigurationUtils {
                 return getDoublesPrimitiveArray(collection);
             case "boolean":
                 return getBooleansPrimitiveArray(collection);
+            case "char":
+                return getCharsPrimitiveArray(collection);
             default:
                 return null;
         }
+    }
+
+    public static Object getWrappersArray(Collection<?> collection, Class<?> clazz) {
+        Object array = null;
+        if (isWrapperClass(clazz)){
+            int collectionSize = collection.size();
+            array = Array.newInstance(clazz, collection.size());
+            Object[] objArray = collection.toArray();
+            System.arraycopy(objArray, 0, array, 0, collectionSize);
+        }
+        return array;
     }
 
     public static String getCollectionString(String input) {
@@ -473,7 +550,7 @@ public class ConfigurationUtils {
         return null;
     }
 
-    public static Object getDefaultFor(Class clazz) {
+    public static Object getDefaultFor(Class<?> clazz) {
         if (byte.class == clazz) {
             return new Byte("0");
         } else if (short.class == clazz) {
@@ -492,7 +569,7 @@ public class ConfigurationUtils {
         return (char) 0;
     }
 
-    public static Collection getCompatibleCollectionForAbstractDef(Class clazz) {
+    public static Collection getCompatibleCollectionForAbstractDef(Class<?> clazz) {
         if (TransferQueue.class.isAssignableFrom(clazz)) {
             return getConcreteCollection(TransferQueue.class);
         }
@@ -518,7 +595,7 @@ public class ConfigurationUtils {
                 + "assignable from TransferQueue, BlockingQueue, Deque, Queue, SortedSet, Set, List class");
     }
 
-    public static Collection getConcreteCollection(Class clazz) {
+    public static Collection getConcreteCollection(Class<?> clazz) {
         switch (clazz.getName()) {
             case "java.util.Collection":
             case "java.util.List":
@@ -639,8 +716,8 @@ public class ConfigurationUtils {
         return (hints & EXTERNAL_LOOKUP.value()) == EXTERNAL_LOOKUP.value();
     }
 
-    public static boolean isZeroLengthArray(Class clazz, Object obj) {
-        if (clazz.isArray() && clazz.getComponentType().isPrimitive()) {
+    public static boolean isZeroLengthArray(Class<?> clazz, Object obj) {
+        if (isAPrimitivesArray(clazz)) {
             if (clazz.getComponentType() == int.class) {
                 return ((int[]) obj).length == 0;
             } else if (clazz.getComponentType() == byte.class) {
@@ -669,7 +746,7 @@ public class ConfigurationUtils {
 
     // private methods section starts here
 
-    private static int[] getIntsPrimitiveArray(Collection collection) {
+    private static int[] getIntsPrimitiveArray(Collection<?> collection) {
         int collectionSize = collection.size();
         int[] array = new int[collectionSize];
         Object[] objArray = collection.toArray();
@@ -679,7 +756,7 @@ public class ConfigurationUtils {
         return array;
     }
 
-    private static byte[] getBytesPrimitiveArray(Collection collection) {
+    private static byte[] getBytesPrimitiveArray(Collection<?> collection) {
         int collectionSize = collection.size();
         byte[] array = new byte[collectionSize];
         Object[] objArray = collection.toArray();
@@ -689,7 +766,7 @@ public class ConfigurationUtils {
         return array;
     }
 
-    private static short[] getShortsPrimitiveArray(Collection collection) {
+    private static short[] getShortsPrimitiveArray(Collection<?> collection) {
         int collectionSize = collection.size();
         short[] array = new short[collectionSize];
         Object[] objArray = collection.toArray();
@@ -699,7 +776,7 @@ public class ConfigurationUtils {
         return array;
     }
 
-    private static long[] getLongsPrimitiveArray(Collection collection) {
+    private static long[] getLongsPrimitiveArray(Collection<?> collection) {
         int collectionSize = collection.size();
         long[] array = new long[collectionSize];
         Object[] objArray = collection.toArray();
@@ -709,7 +786,7 @@ public class ConfigurationUtils {
         return array;
     }
 
-    private static float[] getFloatsPrimitiveArray(Collection collection) {
+    private static float[] getFloatsPrimitiveArray(Collection<?> collection) {
         int collectionSize = collection.size();
         float[] array = new float[collectionSize];
         Object[] objArray = collection.toArray();
@@ -719,7 +796,7 @@ public class ConfigurationUtils {
         return array;
     }
 
-    private static double[] getDoublesPrimitiveArray(Collection collection) {
+    private static double[] getDoublesPrimitiveArray(Collection<?> collection) {
         int collectionSize = collection.size();
         double[] array = new double[collectionSize];
         Object[] objArray = collection.toArray();
@@ -729,7 +806,7 @@ public class ConfigurationUtils {
         return array;
     }
 
-    private static boolean[] getBooleansPrimitiveArray(Collection collection) {
+    private static boolean[] getBooleansPrimitiveArray(Collection<?> collection) {
         int collectionSize = collection.size();
         boolean[] array = new boolean[collectionSize];
         Object[] objArray = collection.toArray();
@@ -738,4 +815,15 @@ public class ConfigurationUtils {
         }
         return array;
     }
+
+    private static char[] getCharsPrimitiveArray(Collection<?> collection) {
+        int collectionSize = collection.size();
+        char[] array = new char[collectionSize];
+        Object[] objArray = collection.toArray();
+        for (int i = 0; i < collectionSize; i++) {
+            array[i] = (char) objArray[i];
+        }
+        return array;
+    }
+
 }
