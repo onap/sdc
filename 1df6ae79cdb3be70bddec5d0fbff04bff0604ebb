@@ -70,6 +70,30 @@
       "revId": "1df6ae79cdb3be70bddec5d0fbff04bff0604ebb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a6018a5_3660234c",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/test/java/org/onap/config/CliConfigurationImpTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-11-29T10:12:23Z",
+      "side": 1,
+      "message": "Well, I just followed warnings from sonar and this particular method is the first one in calls chain prone to NPE, but actually getHints() doesn\u0027t process NPE too and also has to be fixed. Others catch NPE. The current usage of listConfiguration() was out of my concerns.",
+      "parentUuid": "ef4427f4_7afe4644",
+      "range": {
+        "startLine": 55,
+        "startChar": 3,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "1df6ae79cdb3be70bddec5d0fbff04bff0604ebb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
