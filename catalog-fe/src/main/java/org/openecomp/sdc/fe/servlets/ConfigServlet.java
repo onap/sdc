@@ -48,6 +48,8 @@ import javax.ws.rs.core.Response.Status;
 public class ConfigServlet extends LoggingServlet {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigServlet.class.getName());
+    public static final String UNEXPECTED_FE_RESPONSE_LOGGING_ERROR = "Unexpected FE response logging error :";
+    public static final String ERROR_FE_RESPONSE = "FE Response";
 
     @GET
     @Path("/ui/workspace")
@@ -73,8 +75,8 @@ public class ConfigServlet extends LoggingServlet {
 
             return response;
         } catch (Exception e) {
-            FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
-            LOGGER.error("Unexpected FE response logging error :", e);
+            FeEcompErrorManager.getInstance().logFeHttpLoggingError(ERROR_FE_RESPONSE);
+            LOGGER.error(UNEXPECTED_FE_RESPONSE_LOGGING_ERROR, e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
         }
 
@@ -101,8 +103,8 @@ public class ConfigServlet extends LoggingServlet {
 
             return response;
         } catch (Exception e) {
-            FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
-            LOGGER.error("Unexpected FE response logging error :", e);
+            FeEcompErrorManager.getInstance().logFeHttpLoggingError( ERROR_FE_RESPONSE);
+            LOGGER.error(UNEXPECTED_FE_RESPONSE_LOGGING_ERROR, e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
         }
 
@@ -133,8 +135,8 @@ public class ConfigServlet extends LoggingServlet {
 
             return response;
         } catch (Exception e) {
-            FeEcompErrorManager.getInstance().logFeHttpLoggingError("FE Response");
-            LOGGER.error("Unexpected FE response logging error :", e);
+            FeEcompErrorManager.getInstance().logFeHttpLoggingError(ERROR_FE_RESPONSE);
+            LOGGER.error(UNEXPECTED_FE_RESPONSE_LOGGING_ERROR, e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
         }
     }
