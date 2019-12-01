@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dbc4dbca_ce0d81be",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/auditing/impl/externalapi/AuditCreateServiceExternalApiEventFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-01T13:29:08Z",
+      "side": 1,
+      "message": "Here for example should be Telstra",
+      "range": {
+        "startLine": 5,
+        "startChar": 22,
+        "endLine": 5,
+        "endChar": 24
+      },
+      "revId": "fc79903eb90dc44055a5892dc195b31064b66801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "41988e3d_2e145ca1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/impl/ComponentsUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-01T13:29:08Z",
+      "side": 1,
+      "message": "If possible please add Asserts (we have some tests that miss asserts, there\u0027s a going effort to fix that)",
+      "range": {
+        "startLine": 432,
+        "startChar": 2,
+        "endLine": 432,
+        "endChar": 13
+      },
+      "revId": "fc79903eb90dc44055a5892dc195b31064b66801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
