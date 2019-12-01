@@ -25,6 +25,121 @@
     },
     {
       "key": {
+        "uuid": "376d2220_ec521f2c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-01T13:57:23Z",
+      "side": 1,
+      "message": "Wildcards are not allowed, please review ONAP code style: https://wiki.onap.org/display/DW/Java+code+style",
+      "range": {
+        "startLine": 40,
+        "startChar": 44,
+        "endLine": 40,
+        "endChar": 45
+      },
+      "revId": "fc79903eb90dc44055a5892dc195b31064b66801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e8b3f07b_dd38f635",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-01T13:57:23Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 56,
+        "startChar": 34,
+        "endLine": 56,
+        "endChar": 35
+      },
+      "revId": "fc79903eb90dc44055a5892dc195b31064b66801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28e2c006_da86b3b8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-01T13:57:23Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 76,
+        "startChar": 19,
+        "endLine": 76,
+        "endChar": 20
+      },
+      "revId": "fc79903eb90dc44055a5892dc195b31064b66801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a84d205_2049a6d6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-01T13:57:23Z",
+      "side": 1,
+      "message": "either CREATE_SERVICE or null (like resource code below)",
+      "range": {
+        "startLine": 233,
+        "startChar": 27,
+        "endLine": 233,
+        "endChar": 42
+      },
+      "revId": "fc79903eb90dc44055a5892dc195b31064b66801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9de3ba2f_bcb575a6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-01T13:57:23Z",
+      "side": 1,
+      "message": "Is there a reason why not following the same logic for services too?\n\nMake sure service name is not empty, check that category is the 3rd part new category.\nWhat it derives from by default? Does it have a system name? Please share json example of the service created so we review the output.",
+      "range": {
+        "startLine": 281,
+        "startChar": 15,
+        "endLine": 295,
+        "endChar": 17
+      },
+      "revId": "fc79903eb90dc44055a5892dc195b31064b66801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "41988e3d_2e145ca1",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/impl/ComponentsUtilsTest.java",
         "patchSetId": 2
