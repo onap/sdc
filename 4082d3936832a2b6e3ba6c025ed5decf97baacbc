@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f24e89a_b492f56b",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/Vf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-02T09:18:44Z",
+      "side": 0,
+      "message": "Why removing it though? We\u0027d need a snapshot of what happened",
+      "range": {
+        "startLine": 438,
+        "startChar": 24,
+        "endLine": 441,
+        "endChar": 36
+      },
+      "revId": "4082d3936832a2b6e3ba6c025ed5decf97baacbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
