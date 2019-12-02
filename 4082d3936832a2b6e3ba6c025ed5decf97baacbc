@@ -22,6 +22,30 @@
       "revId": "4082d3936832a2b6e3ba6c025ed5decf97baacbc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3101704a_1c0ab4c5",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/execute/sanity/Vf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-12-02T10:39:55Z",
+      "side": 0,
+      "message": "I had introduced this handling in the past commit, but I was getting two screenshots of the same thing, as if something fails there is a routine that takes the screenshot already. Also this was picking up assertion failures, which was not desired\nThis method \"updateElementNameInCanvas\" was signed as \"throws Exception\" which is also a bad practice.",
+      "parentUuid": "9f24e89a_b492f56b",
+      "range": {
+        "startLine": 438,
+        "startChar": 24,
+        "endLine": 441,
+        "endChar": 36
+      },
+      "revId": "4082d3936832a2b6e3ba6c025ed5decf97baacbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
