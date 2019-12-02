@@ -2295,6 +2295,107 @@ onap.datatypes.monitoring.filters:
       entry_schema:
         type: string
 
+### Data types used by Policy PM Subscription Handler for closed loop ###
+
+onap.datatypes.monitoring.subscription:
+  derived_from: tosca.datatypes.Root
+  properties:
+    subscriptionName:
+      type: string
+      description: Name of the subscription
+      required: true
+    administrativeState:
+      type: string
+      description: Setting a subscription to UNLOCKED will apply the subscription to the NF instances immediately. Whereas if it is set to LOCKED, it will not be applied until it is later activated.
+      required: true
+      constraints:
+        - valid_values:
+            - LOCKED
+            - UNLOCKED
+    fileBasedGP:
+      type: integer
+      description: The frequency at which measurements are produced.
+      required: true
+    fileLocation:
+      type: string
+      description: Location of report output period file.
+      required: true
+    nfFilter:
+      type: map
+      description: The network function filter will be used to filter the list of network functions stored in A&AI
+      required: true
+      entry_schema: onap.datatypes.monitoring.nfFilter
+    measurementGroup:
+      type: map
+      description: List of measurement types and managed object distinguished names
+      required: true
+      entry_schema: onap.datatypes.monitoring.MeasurementGroup
+
+onap.datatypes.monitoring.nfFilter:
+  derived_from: tosca.datatypes.Root
+  properties:
+    nfNames:
+      type: list
+      description: List of network functions
+      required: true
+      default: []
+      entry_schema: string
+    swVersions:
+      type: list
+      description: List of software versions
+      default: []
+      entry_schema: string
+
+onap.datatypes.monitoring.MeasurementGroup:
+  derived_from: tosca.datatypes.Root
+  properties:
+    measurementTypes:
+      type: list
+      description: List of measurement types
+      required: true
+      default: []
+      entry_schema: onap.datatypes.monitoring.measurementTypes
+    managedObjectDNsBasic:
+      type: list
+      description: List of managed object distinguished names.
+      required: true
+      default: []
+      entry_schema: onap.datatypes.monitoring.managedObjectDNSBasics
+
+onap.datatypes.monitoring.measurementTypes:
+  derived_from: tosca.datatypes.Root
+  properties:
+    measurementType:
+      type: map
+      description: Measurement type object
+      required: true
+      entry_schema: onap.dataypes.monitoring.measurementType
+
+onap.datatypes.monitoring.measurementType:
+  derived_from: tosca.datatypes.Root
+  properties:
+    measurementType:
+      type: string
+      description: Measurement type string
+      required: true
+
+onap.datatypes.monitoring.managedObjectDNsBasics:
+  derived_from: tosca.datatypes.Root
+  properties:
+    managedObjectDNsBasic:
+      type: map
+      description: Managed object distinguished name object
+      required: true
+      entry_schema: onap.dataypes.monitoring.managedObjectDNsBasic
+
+onap.datatypes.monitoring.managedObjectDNsBasic:
+  derived_from: tosca.datatypes.Root
+  properties:
+    DN:
+      type: string
+      description: Managed object distinguished name string
+      required: true
+
 ### Data types used by Policy TCA model for closed loop ###
 
 onap.datatypes.monitoring.metricsPerEventName:
