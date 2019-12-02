@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65788b22_12c22e86",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-02T15:16:34Z",
+      "side": 1,
+      "message": "Leave the second line blank,\nAlso better to start with a verb (Fix, Add, Change instead of Fixed, Added, Changed)\n\nPlease do read the guidelines: https://wiki.onap.org/display/DW/Commit+Messages",
+      "revId": "5a5252db595716f61be4c7e44ef90f32a4834156",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e33e3ebd_cbb30ab5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/auditing/impl/externalapi/AuditCreateServiceExternalApiEventFactoryTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-02T15:16:34Z",
+      "side": 1,
+      "message": "Should also be Telstra (that\u0027s correct for every new file from anyone on Telstra team)",
+      "range": {
+        "startLine": 5,
+        "startChar": 22,
+        "endLine": 5,
+        "endChar": 27
+      },
+      "revId": "5a5252db595716f61be4c7e44ef90f32a4834156",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
