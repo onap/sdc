@@ -59,6 +59,10 @@
     "displayName": "PM Mapper",
     "icon": "policy-dcae-pm-mapper"
   },
+  "onap.policies.monitoring.dcae-pm-subscription-handler": {
+    "displayName": "PM Subscription Handler",
+    "icon": "policy-dcae-pm-subscription-handler"
+  },
   "onap.policies.monitoring.dcae-restconfcollector": {
     "displayName": "Restconf Collector",
     "icon": "policy-dcae-restconfcollector"
