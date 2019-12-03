@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f8672cf1_ac5ffb51",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2370,
+      "author": {
+        "id": 4745
+      },
+      "writtenOn": "2019-12-03T10:49:56Z",
+      "side": 1,
+      "message": "array of meas types",
+      "revId": "4bf1d0b2f5bdce70ffa49247536a63231f6fc0e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dce64023_302930e6",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2387,
+      "author": {
+        "id": 4745
+      },
+      "writtenOn": "2019-12-03T10:49:56Z",
+      "side": 1,
+      "message": "description should be \"array of DNs\" or something like that",
+      "revId": "4bf1d0b2f5bdce70ffa49247536a63231f6fc0e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
