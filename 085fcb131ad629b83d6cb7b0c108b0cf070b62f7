@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8281a238_c69dfee3",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-12-04T14:21:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4e486eb6_34ccd476",
+      "revId": "085fcb131ad629b83d6cb7b0c108b0cf070b62f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4aae9f84_3b154d75",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "085fcb131ad629b83d6cb7b0c108b0cf070b62f7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67407501_ef0fab6e",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2019-12-04T14:21:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4aae9f84_3b154d75",
+      "revId": "085fcb131ad629b83d6cb7b0c108b0cf070b62f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
