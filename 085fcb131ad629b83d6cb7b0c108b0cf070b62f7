@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4e486eb6_34ccd476",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-12-04T11:24:22Z",
+      "side": 1,
+      "message": "Sonar remark .assertTrue() can be simplified to \u0027assertEqual()\u0027",
+      "revId": "085fcb131ad629b83d6cb7b0c108b0cf070b62f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4aae9f84_3b154d75",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-12-04T11:24:22Z",
+      "side": 1,
+      "message": "Sonar remark .assertTrue() can be simplified to \u0027assertEqual()\u0027",
+      "revId": "085fcb131ad629b83d6cb7b0c108b0cf070b62f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
