@@ -30,6 +30,7 @@
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,13 +49,17 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
@@ -97,6 +102,9 @@ public class ToscaOperationFacadeTest {
     private static final String PROPERTY1_TYPE = "string";
     private static final String PROPERTY2_NAME = "prop2";
     private static final String PROPERTY2_TYPE = "integer";
+    private static final String ICON_NAME = "icon";
+    private static final String SERVICE_MODEL_NAME = "Test_Service";
+    private static final String SERVICE_PROXY_INSTANCE0_NAME = "testservice_proxy0";
 
     @InjectMocks
     private ToscaOperationFacade testInstance;
@@ -628,6 +636,48 @@ public class ToscaOperationFacadeTest {
         List<ComponentInstanceProperty> resultProps = result.left().value().get(COMPONENT_ID);
         assertTrue(resultProps.stream().anyMatch(e -> e.getName().equals(PROPERTY1_NAME)));
         assertTrue(resultProps.stream().anyMatch(e -> e.getName().equals(PROPERTY2_NAME)));
+    }
+
+    @Test
+    public void testAddComponentInstanceToTopologyTemplate() {
+        Component containerComponent = new Service();
+        Component originalComponent = new Service();
+        ComponentInstance componentInstance = new ComponentInstance();
+        ComponentInstance existingComponentInstance = new ComponentInstance();
+        User user = new User();
+
+        containerComponent.setComponentType(ComponentTypeEnum.SERVICE);
+
+        originalComponent.setComponentType(ComponentTypeEnum.SERVICE);
+        originalComponent.setIcon(ICON_NAME);
+
+        componentInstance.setOriginType(OriginTypeEnum.ServiceProxy);
+        componentInstance.setSourceModelName(SERVICE_MODEL_NAME);
+
+        List<ComponentInstance> existingInstances = new ArrayList<>();
+        existingComponentInstance.setNormalizedName(SERVICE_PROXY_INSTANCE0_NAME);
+        existingInstances.add(existingComponentInstance);
+        containerComponent.setComponentInstances(existingInstances);
+
+        when(nodeTemplateOperationMock
+            .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(user)))
+            .thenReturn(Either.left(new ImmutablePair<>(new TopologyTemplate(), COMPONENT_ID)));
+        TopologyTemplate topologyTemplate = new TopologyTemplate();
+        // preset COMPONENT_TYPE field for internal ModelConverter call
+        topologyTemplate.setMetadataValue(JsonPresentationFields.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+        when(topologyTemplateOperationMock.getToscaElement(containerComponent.getUniqueId()))
+            .thenReturn(Either.left(topologyTemplate));
+
+        Either<ImmutablePair<Component, String>, StorageOperationStatus> result =
+            testInstance.addComponentInstanceToTopologyTemplate(
+                containerComponent, originalComponent, componentInstance, false, user);
+
+        assertTrue(result.isLeft());
+        assertEquals(componentInstance.getIcon(), ICON_NAME);
+        assertEquals(result.left().value().getRight(), COMPONENT_ID);
+        // the instance counter must be 1 because the service proxy instance with suffix 0 already exists.
+        verify(nodeTemplateOperationMock, times(1))
+            .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(user));
     }
 
     private Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponentWithStatus(StorageOperationStatus status) {
