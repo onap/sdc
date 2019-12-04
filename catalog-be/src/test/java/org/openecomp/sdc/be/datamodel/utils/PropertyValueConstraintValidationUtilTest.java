@@ -286,6 +286,142 @@ public class PropertyValueConstraintValidationUtilTest {
 		Assert.assertTrue(responseEither.isRight());
 	}
 
+	@Test
+	public void bandwidthTypeValueSuccessTest(){
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
+
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
+		propertyDefinition.setValue("{\"bandwidth_type\":\"guaranteed\"}");
+		propertyDefinition.setName("bandwidth_type");
+
+		Either<Boolean, ResponseFormat> responseEither =
+				propertyValueConstraintValidationUtil.validatePropertyConstraints(
+						Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+
+		Assert.assertTrue(responseEither.isLeft());
+	}
+
+	@Test
+	public void bandwidthTypeValueFailTest(){
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
+
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
+		propertyDefinition.setValue("{\"bandwidth_type\":\"incorrectValue\"}");
+		propertyDefinition.setName("bandwidth_type");
+
+		Either<Boolean, ResponseFormat> responseEither =
+				propertyValueConstraintValidationUtil.validatePropertyConstraints(
+						Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+
+		Assert.assertTrue(responseEither.isRight());
+	}
+
+	@Test
+	public void bandwidthDownstreamValueSuccessTest(){
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
+
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
+		propertyDefinition.setValue("{\"downstream\":\"128\"}");
+		propertyDefinition.setName("downstream");
+
+		Either<Boolean, ResponseFormat> responseEither =
+				propertyValueConstraintValidationUtil.validatePropertyConstraints(
+						Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+
+		Assert.assertTrue(responseEither.isLeft());
+	}
+
+	@Test
+	public void bandwidthDownstreamValueFailTest(){
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
+
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
+		propertyDefinition.setValue("{\"downstream\":\"incorrectValue\"}");
+		propertyDefinition.setName("downstream");
+
+		Either<Boolean, ResponseFormat> responseEither =
+				propertyValueConstraintValidationUtil.validatePropertyConstraints(
+						Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+
+		Assert.assertTrue(responseEither.isRight());
+	}
+
+	@Test
+	public void bandwidthUpstreamValueSuccessTest(){
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
+
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
+		propertyDefinition.setValue("{\"upstream\":\"128\"}");
+		propertyDefinition.setName("upstream");
+
+		Either<Boolean, ResponseFormat> responseEither =
+				propertyValueConstraintValidationUtil.validatePropertyConstraints(
+						Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+
+		Assert.assertTrue(responseEither.isLeft());
+	}
+
+	@Test
+	public void bandwidthUpstreamValueFailTest(){
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
+
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
+		propertyDefinition.setValue("{\"upstream\":\"incorrectValue\"}");
+		propertyDefinition.setName("upstream");
+
+		Either<Boolean, ResponseFormat> responseEither =
+				propertyValueConstraintValidationUtil.validatePropertyConstraints(
+						Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+
+		Assert.assertTrue(responseEither.isRight());
+	}
+
+	@Test
+	public void bandwidthUnitsValueSuccessTest(){
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
+
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
+		propertyDefinition.setValue("{\"units\":\"M\"}");
+		propertyDefinition.setName("units");
+
+		Either<Boolean, ResponseFormat> responseEither =
+				propertyValueConstraintValidationUtil.validatePropertyConstraints(
+						Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+
+		Assert.assertTrue(responseEither.isLeft());
+	}
+
+	@Test
+	public void bandwidthUnitsValueFailTest(){
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
+		Mockito.when(applicationDataTypeCache.getAll()).thenReturn(either);
+
+		PropertyDefinition propertyDefinition = new PropertyDefinition();
+		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
+		propertyDefinition.setValue("{\"units\":\"incorrectValue\"}");
+		propertyDefinition.setName("units");
+
+		Either<Boolean, ResponseFormat> responseEither =
+				propertyValueConstraintValidationUtil.validatePropertyConstraints(
+						Collections.singletonList(propertyDefinition), applicationDataTypeCache);
+
+		Assert.assertTrue(responseEither.isRight());
+	}
+
 	private void createDataTypeMap() {
 		Type constraintType = new TypeToken<PropertyConstraint>() {}.getType();
 		Type typeOfHashMap = new TypeToken<Map<String, DataTypeDefinition>>() { }.getType();
@@ -335,3 +471,4 @@ public class PropertyValueConstraintValidationUtilTest {
 	}
 
 }
+

@@ -401,5 +401,357 @@
     "creationTime": 1550136564094,
     "modificationTime": 1550136564094,
     "toscaPresentation": {}
+  },
+  "onap.datatypes.partner.access_details": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "onap.datatypes.partner.access_details.addressId",
+        "type": "string",
+        "description": "id of the site",
+        "required": true,
+        "definition": false,
+        "password": false,
+        "name": "addressId",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "standard",
+              "stable"
+            ]
+          }
+        ],
+        "uniqueId": "onap.datatypes.partner.access_details.dsl_stability_profile",
+        "type": "string",
+        "description": "profile of stability",
+        "required": false,
+        "definition": false,
+        "defaultValue": "standard",
+        "password": false,
+        "name": "dsl_stability_profile",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "onap.datatypes.partner.access_details.partner_priorty_assist",
+        "type": "boolean",
+        "description": "assistance flag",
+        "required": false,
+        "definition": true,
+        "defaultValue": true,
+        "password": false,
+        "name": "partner_priorty_assist",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "onap.datatypes.partner.access_details.battery_backup",
+        "type": "boolean",
+        "description": "backup requirement flag",
+        "required": false,
+        "definition": true,
+        "defaultValue": true,
+        "password": false,
+        "name": "battery_backup",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "onap.datatypes.partner.access_details.central_splitter",
+        "type": "boolean",
+        "description": "applicable to FTTN service",
+        "required": false,
+        "definition": true,
+        "defaultValue": true,
+        "password": false,
+        "name": "central_splitter",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "Standard",
+              "Enhanced"
+            ]
+          }
+        ],
+        "uniqueId": "onap.datatypes.partner.access_details.service_restoration_sla",
+        "type": "string",
+        "description": "This is the service restoration SLA from an partner perspective.",
+        "required": false,
+        "definition": false,
+        "defaultValue": "Standard",
+        "password": false,
+        "name": "service_restoration_sla",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ]
+  },
+  "onap.datatypes.partner.bandwidth": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "standard",
+              "guaranteed"
+            ]
+          }
+        ],
+        "uniqueId": "onap.datatypes.partner.bandwidth.bandwidth_type",
+        "type": "string",
+        "description": "type of bandwidth",
+        "required": true,
+        "definition": false,
+        "defaultValue": "standard",
+        "password": false,
+        "name": "bandwidth_type",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "128",
+              "512",
+              "1",
+              "2",
+              "5",
+              "10",
+              "20",
+              "25",
+              "30",
+              "40",
+              "50",
+              "100",
+              "250",
+              "500",
+              "1000"
+            ]
+          }
+        ],
+        "uniqueId": "onap.datatypes.partner.bandwidth.downstream",
+        "type": "string",
+        "description": "down speed",
+        "required": true,
+        "definition": true,
+        "password": false,
+        "name": "downstream",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "128",
+              "512",
+              "1",
+              "2",
+              "5",
+              "10",
+              "20",
+              "25",
+              "30",
+              "40",
+              "50",
+              "100",
+              "250",
+              "500",
+              "1000"
+            ]
+          }
+        ],
+        "uniqueId": "onap.datatypes.partner.bandwidth.upstream",
+        "type": "string",
+        "description": "up speed",
+        "required": true,
+        "definition": true,
+        "password": false,
+        "name": "upstream",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "k",
+              "M"
+            ]
+          }
+        ],
+        "uniqueId": "onap.datatypes.partner.bandwidth.units",
+        "type": "string",
+        "description": "unit of speed",
+        "required": true,
+        "definition": true,
+        "password": false,
+        "name": "units",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "onap.datatypes.partner.bandwidth.service_alias",
+        "type": "string",
+        "description": "16 digit id",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "service_alias",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ]
+  },
+  "onap.datatypes.partner.service_details": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "onap.datatypes.partner.service_details.bandwidth",
+        "type": "onap.datatypes.partner.bandwidth",
+        "description": "bandwidth details for access",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "bandwidth",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "CONSUMER",
+              "WHOLESALE",
+              "BUSINESS"
+            ]
+          }
+        ],
+        "uniqueId": "onap.datatypes.partner.service_details.line_of_business",
+        "type": "string",
+        "description": "LOB",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "line_of_business",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "onap.datatypes.partner.service_details.access_details",
+        "type": "onap.datatypes.partner.access_details",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "access_details",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ]
+  },
+  "onap.datatypes.partner.sppartner_details": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "onap.datatypes.partner.sppartner_details.partner_url",
+        "type": "string",
+        "description": "Partner URL to access and provision the service",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "partner_url",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "onap.datatypes.partner.sppartner_details.uuid",
+        "type": "string",
+        "description": "UUID of the service definition defined in the partner catalog",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "uuid",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "onap.datatypes.partner.sppartner_details.auth_user",
+        "type": "string",
+        "description": "Authentication  details to access the Service URL",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "auth_user",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "onap.datatypes.partner.sppartner_details.auth_password",
+        "type": "string",
+        "description": "Authentication  details to access the Service URL",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "auth_password",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ]
   }
 }

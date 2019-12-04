@@ -2549,3 +2549,152 @@ onap.datatypes.monitoring.rcc_event_details:
       description: The user specific data
       required: false
 
+##### Partner service domain datatypes ######
+
+onap.datatypes.partner.access_details:
+  derived_from: tosca.datatypes.Root
+  properties:
+    addressId:
+      type: string
+      description: id of the site
+      required: true
+    dsl_stability_profile:
+      type: string
+      description: profile of stability
+      required: false
+      default: standard
+      constraints:
+        - valid_values:
+            - standard
+            - stable
+    partner_priorty_assist:
+      type: boolean
+      description: assistance flag
+      required: false
+      default: true
+    battery_backup:
+      type: boolean
+      description: backup requirement flag
+      required: false
+      default: true
+    central_splitter:
+      type: boolean
+      description: applicable to FTTN service
+      required: false
+      default: true
+    service_restoration_sla:
+      type: string
+      description: This is the service restoration SLA from an partner perspective.
+      required: false
+      default: Standard
+      constraints:
+        - valid_values:
+            - Standard
+            - Enhanced
+
+onap.datatypes.partner.bandwidth:
+  derived_from: tosca.datatypes.Root
+  properties:
+    bandwidth_type:
+      type: string
+      description: type of bandwidth
+      required: true
+      default: standard
+      constraints:
+        - valid_values:
+            - standard
+            - guaranteed
+    downstream:
+      type: string
+      description: down speed
+      required: true
+      constraints:
+        - valid_values:
+            - 128
+            - 512
+            - 1
+            - 2
+            - 5
+            - 10
+            - 20
+            - 25
+            - 30
+            - 40
+            - 50
+            - 100
+            - 250
+            - 500
+            - 1000
+    upstream:
+      type: string
+      description: up speed
+      required: false
+      constraints:
+        - valid_values:
+            - 128
+            - 512
+            - 1
+            - 2
+            - 5
+            - 10
+            - 20
+            - 25
+            - 30
+            - 40
+            - 50
+            - 100
+            - 250
+            - 500
+            - 1000
+    units:
+      type: string
+      description: unit of speed
+      required: true
+      constraints:
+        - valid_values:
+            - k
+            - M
+    service_alias:
+      type: string
+      description: 16 digit id
+      required: false
+
+onap.datatypes.partner.service_details:
+  derived_from: tosca.datatypes.Root
+  properties:
+    bandwidth:
+      type: onap.datatypes.partner.bandwidth
+      description: bandwidth details for access
+      required: false
+    line_of_business:
+      type: string
+      description: LOB
+      required: false
+      constraints:
+        - valid_values:
+            - CONSUMER
+            - WHOLESALE
+            - BUSINESS
+    access_details:
+      type: onap.datatypes.partner.access_details
+      required: false
+
+onap.datatypes.partner.sppartner_details:
+  derived_from: tosca.datatypes.Root
+  properties:
+    partner_url:
+      type: string
+      description: Partner URL to access and provision the service
+      required: false
+    uuid:
+      type: string
+      description: UUID of the service definition defined in the partner catalog
+      required: false
+    auth_user:
+      type: string
+      description: Authentication  details to access the Service URL
+      required: false
+    auth_password:
+      type: string
+      description: Authentication  details to access the Service URL
+      required: false
