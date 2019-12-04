@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "58486825_fff2c89c",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 2325,
+      "author": {
+        "id": 5038
+      },
+      "writtenOn": "2019-12-04T14:09:37Z",
+      "side": 1,
+      "message": "See comment on line 2345",
+      "parentUuid": "20ac6129_d9e8ef21",
+      "range": {
+        "startLine": 2325,
+        "startChar": 86,
+        "endLine": 2325,
+        "endChar": 101
+      },
+      "revId": "e5317b06db881d4d82958222438e7515d9535f28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5e380c2e_7f1afcb0",
         "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2019-12-04T10:54:01Z",
       "side": 1,
       "message": "Do we need to cater for a scenario where these are empty?\nie. Fail to create the sub at all.",
+      "range": {
+        "startLine": 2332,
+        "startChar": 4,
+        "endLine": 2332,
+        "endChar": 21
+      },
+      "revId": "e5317b06db881d4d82958222438e7515d9535f28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84cad8f1_fc36ad8c",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 2332,
+      "author": {
+        "id": 5038
+      },
+      "writtenOn": "2019-12-04T14:09:37Z",
+      "side": 1,
+      "message": "Yes we will have to handle this, so if the list of measurements is empty, we won\u0027t really have to do anything, but the subscription could be edited in policy later and measurements added, in that case we will have to apply the subscription.",
+      "parentUuid": "5e380c2e_7f1afcb0",
       "range": {
         "startLine": 2332,
         "startChar": 4,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "5c4fd4f8_75187d4b",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 2343,
+      "author": {
+        "id": 5038
+      },
+      "writtenOn": "2019-12-04T14:09:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d0e0a9e_bf0e20f7",
+      "range": {
+        "startLine": 2343,
+        "startChar": 19,
+        "endLine": 2343,
+        "endChar": 44
+      },
+      "revId": "e5317b06db881d4d82958222438e7515d9535f28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a4e4192_e95188ae",
         "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
         "patchSetId": 4
@@ -82,6 +154,30 @@
       "writtenOn": "2019-12-04T10:54:01Z",
       "side": 1,
       "message": "Does this answer my comment at line 2325?",
+      "range": {
+        "startLine": 2345,
+        "startChar": 6,
+        "endLine": 2345,
+        "endChar": 17
+      },
+      "revId": "e5317b06db881d4d82958222438e7515d9535f28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d069f681_5edef30b",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 2345,
+      "author": {
+        "id": 5038
+      },
+      "writtenOn": "2019-12-04T14:09:37Z",
+      "side": 1,
+      "message": "Yes, so the nfNames field is required, however, the array can be empty, if that\u0027s the case we will use the invariantId",
+      "parentUuid": "1a4e4192_e95188ae",
       "range": {
         "startLine": 2345,
         "startChar": 6,
