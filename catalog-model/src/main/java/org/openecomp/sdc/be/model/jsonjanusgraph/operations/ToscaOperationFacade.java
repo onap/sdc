@@ -778,7 +778,7 @@ public class ToscaOperationFacade {
         if (StringUtils.isEmpty(componentInstance.getIcon())) {
             componentInstance.setIcon(origComponent.getIcon());
         }
-        String nameToFindForCounter = componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy ? componentInstance.getSourceModelName() + PROXY_SUFFIX : origComponent.getName();
+        String nameToFindForCounter = componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy ? ValidationUtils.normaliseComponentName(componentInstance.getSourceModelName()) + PROXY_SUFFIX : origComponent.getName();
         String nextComponentInstanceCounter = getNextComponentInstanceCounter(containerComponent, nameToFindForCounter);
         Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addResult = nodeTemplateOperation.addComponentInstanceToTopologyTemplate(ModelConverter.convertToToscaElement(containerComponent),
                 ModelConverter.convertToToscaElement(origComponent), nextComponentInstanceCounter, componentInstance, allowDeleted, user);
