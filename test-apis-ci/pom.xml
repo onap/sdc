@@ -600,7 +600,9 @@
                     <dockerFileDir>${project.basedir}/sdc-api-tests</dockerFileDir>
                     <tags>
                       <tag>${docker.tag}</tag>
-                      <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                      <tag>
+                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                      </tag>
                     </tags>
                   </build>
                 </image>
@@ -615,9 +617,7 @@
                 </goals>
                 <configuration>
                   <removeAll>true</removeAll>
-                  <images>
-                    <image>onap/sdc-api-tests</image>
-                  </images>
+                  <image>onap/sdc-api-tests</image>
                 </configuration>
               </execution>
 
@@ -636,9 +636,7 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <images>
-                    <image>onap/sdc-api-tests</image>
-                  </images>
+                  <image>onap/sdc-api-tests</image>
                 </configuration>
               </execution>
             </executions>
