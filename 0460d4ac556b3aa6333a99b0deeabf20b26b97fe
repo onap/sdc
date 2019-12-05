@@ -22,6 +22,30 @@
       "revId": "0460d4ac556b3aa6333a99b0deeabf20b26b97fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16ef047b_763e2034",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/impl/ConfigurationImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 575,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-12-05T09:49:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9246654d_fc5315b3",
+      "range": {
+        "startLine": 573,
+        "startChar": 11,
+        "endLine": 575,
+        "endChar": 13
+      },
+      "revId": "0460d4ac556b3aa6333a99b0deeabf20b26b97fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
