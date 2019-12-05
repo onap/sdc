@@ -260,9 +260,7 @@
                 </goals>
                 <configuration>
                   <removeAll>true</removeAll>
-                  <images>
-                    <image>onap/cucumber-sdc-api-tests</image>
-                  </images>
+                  <image>onap/cucumber-sdc-api-tests</image>
                 </configuration>
               </execution>
               <execution>
@@ -279,9 +277,7 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <images>
-                    <image>onap/cucumber-sdc-api-tests</image>
-                  </images>
+                  <image>onap/cucumber-sdc-api-tests</image>
                 </configuration>
               </execution>
             </executions>
