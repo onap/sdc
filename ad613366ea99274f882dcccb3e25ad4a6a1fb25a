@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e94499ce_c1865104",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-05T10:58:34Z",
+      "side": 1,
+      "message": "Wildcard imports aren\u0027t allowed",
+      "range": {
+        "startLine": 52,
+        "startChar": 44,
+        "endLine": 52,
+        "endChar": 45
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d385dc6a_8f490343",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ExternalCategoryTypeEnum.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-05T10:58:34Z",
+      "side": 1,
+      "message": "Why having it in a comment?",
+      "range": {
+        "startLine": 26,
+        "startChar": 51,
+        "endLine": 26,
+        "endChar": 81
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
