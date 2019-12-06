@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4120883c_6c9c5877",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e94499ce_c1865104",
+      "range": {
+        "startLine": 52,
+        "startChar": 44,
+        "endLine": 52,
+        "endChar": 45
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "94564a81_40a7fbe7",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4d03540_2baea934",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94564a81_40a7fbe7",
+      "range": {
+        "startLine": 252,
+        "startChar": 64,
+        "endLine": 252,
+        "endChar": 73
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +142,54 @@
     },
     {
       "key": {
+        "uuid": "1002b036_e068c1b7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b2338c0c_011c9c62",
+      "range": {
+        "startLine": 258,
+        "startChar": 48,
+        "endLine": 258,
+        "endChar": 55
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f64efa6c_b5d718a3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80d623e1_8a622693",
+      "range": {
+        "startLine": 258,
+        "startChar": 129,
+        "endLine": 258,
+        "endChar": 136
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1155040d_e18997ff",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
         "patchSetId": 4
@@ -114,6 +210,30 @@
       "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cde012d7_05cb6b20",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1155040d_e18997ff",
+      "range": {
+        "startLine": 259,
+        "startChar": 70,
+        "endLine": 259,
+        "endChar": 77
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +283,54 @@
     },
     {
       "key": {
+        "uuid": "24705b0d_f0b0b834",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6fb167cd_bdbded2b",
+      "range": {
+        "startLine": 265,
+        "startChar": 78,
+        "endLine": 265,
+        "endChar": 85
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b8aa723_28c4c85f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5114888c_348038ea",
+      "range": {
+        "startLine": 265,
+        "startChar": 20,
+        "endLine": 265,
+        "endChar": 27
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b136fd3f_1bc998db",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
         "patchSetId": 4
@@ -183,6 +351,30 @@
       "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "707f1707_e7d25e84",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b136fd3f_1bc998db",
+      "range": {
+        "startLine": 266,
+        "startChar": 54,
+        "endLine": 266,
+        "endChar": 61
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "54a2cb26_0c251ef1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/auditing/impl/externalapi/AuditCreateServiceExternalApiEventFactoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c0478850_958ba048",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 39
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d385dc6a_8f490343",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ExternalCategoryTypeEnum.java",
         "patchSetId": 4
@@ -220,6 +436,30 @@
       "writtenOn": "2019-12-05T10:58:34Z",
       "side": 1,
       "message": "Why having it in a comment?",
+      "range": {
+        "startLine": 26,
+        "startChar": 51,
+        "endLine": 26,
+        "endChar": 81
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5bd301fb_9f864d8d",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ExternalCategoryTypeEnum.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d385dc6a_8f490343",
       "range": {
         "startLine": 26,
         "startChar": 51,
@@ -255,6 +495,30 @@
     },
     {
       "key": {
+        "uuid": "19371e2b_41bf6742",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ExternalCategoryTypeEnum.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75c07aef_d520ba11",
+      "range": {
+        "startLine": 70,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 72
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b6a6be1f_a164e0a0",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ExternalCategoryTypeEnum.java",
         "patchSetId": 4
@@ -275,6 +539,30 @@
       "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02adc038_6503df6c",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ExternalCategoryTypeEnum.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5595
+      },
+      "writtenOn": "2019-12-06T00:24:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b6a6be1f_a164e0a0",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 72
+      },
+      "revId": "ad613366ea99274f882dcccb3e25ad4a6a1fb25a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
