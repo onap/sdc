@@ -89,7 +89,7 @@
                                         name="category"
                                         data-ng-class="{'view-mode': isViewMode()}"
                                         data-ng-change="onCategoryChange()"
-                                        data-ng-disabled="component.isAlreadyCertified() || (component.isCsarComponent() && component.selectedCategory && component.selectedCategory!=='')"
+                                        data-ng-disabled="component.isAlreadyCertified() || (component.isCsarComponent() && component.selectedCategory && component.selectedCategory!=='') || isHiddenCategorySelected"
                                         data-ng-model="componentCategories.selectedCategory"
                                         data-tests-id="selectGeneralCategory"
                                 >

@@ -65,6 +65,7 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     browseFileLabel:string;
     componentCategories:componentCategories;
     instantiationTypes:Array<instantiationType>;
+    isHiddenCategorySelected: boolean;
 
     save():Promise<any>;
     revert():void;
@@ -344,6 +345,39 @@ export class GeneralViewModel {
         this.$scope.updateMenuComponentName(this.$scope.component.name);
     };
 
+    //Find if a category is applicable for External API or not
+    private isHiddenCategory = (category: string) => {
+        let items: Array<any> = new Array<any>();
+        items = this.$scope.sdcMenu.component_workspace_menu_option[this.$scope.component.getComponentSubType()];
+        for(var key in items) {
+            if ((items[key].hiddenCategories && items[key].hiddenCategories.indexOf(category) > -1)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    private filteredCategories = () => {
+        let tempCategories: Array<IMainCategory> = new Array<IMainCategory>();
+        this.$scope.categories.forEach((category) => {
+            if (!this.isHiddenCategory(category.name)
+                && this.$scope.isCreateMode()
+            ) {
+                tempCategories.push(category);
+            } else if ((ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState)
+                && !this.isHiddenCategory(this.$scope.component.selectedCategory)
+                && !this.isHiddenCategory(category.name)
+            ) {
+                tempCategories.push(category);
+            } else if ((ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState)
+                && this.isHiddenCategory(this.$scope.component.selectedCategory)) {
+                tempCategories.push(category);
+            }
+        });
+
+        return tempCategories;
+    };    
+   
     private initScopeMethods = ():void => {
 
         this.$scope.initCategoreis = ():void => {
@@ -353,6 +387,14 @@ export class GeneralViewModel {
             }
             if (this.$scope.componentType === ComponentType.SERVICE) {
                 this.$scope.categories = this.cacheService.get('serviceCategories');
+
+                //Remove categories from dropdown applicable for External API
+                if (this.$scope.isCreateMode() || (ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState)) {
+                    this.$scope.categories = this.filteredCategories();
+                    //Flag to disbale category if service is created through External API
+                    this.$scope.isHiddenCategorySelected = this.isHiddenCategory(this.$scope.component.selectedCategory);
+                }
+                
             }
         };
 
@@ -582,3 +624,4 @@ export class GeneralViewModel {
     };
 
 }
+
