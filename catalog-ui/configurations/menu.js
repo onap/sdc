@@ -498,7 +498,7 @@ const SDC_MENU_CONFIG = {
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
         ],
         "SERVICE": [
-            {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general"},
+            {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general", "hiddenCategories":["Partner Domain Service"]},
             {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details", "disabledCategories":["Partner Domain Service"]},
             {"text": "Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
