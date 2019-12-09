@@ -85,7 +85,7 @@ public class SdncTransactionTest {
             janusGraphGenericDao);
 
         doBasicJanusGraphAction(transactionId, tx, false, true);
-        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
+        assertSame(TransactionStatusEnum.OPEN, tx.getStatus());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class SdncTransactionTest {
             janusGraphGenericDao);
 
         doESAddArtifactAction(transactionId, tx, true, true);
-        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
+        assertSame(TransactionStatusEnum.OPEN, tx.getStatus());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class SdncTransactionTest {
         TransactionSdncImpl tx = new TransactionSdncImpl(transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT, esCatalogDao,
             janusGraphGenericDao);
         doFinishTransaction(transactionId, tx, true);
-        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
+        assertSame(TransactionStatusEnum.CLOSED, tx.getStatus());
     }
 
     @Test
@@ -115,9 +115,9 @@ public class SdncTransactionTest {
         doFinishTransaction(transactionId, tx, true);
 
         TransactionCodeEnum finishTransaction = tx.finishTransaction();
-        assertSame(finishTransaction, TransactionCodeEnum.TRANSACTION_CLOSED);
+        assertSame(TransactionCodeEnum.TRANSACTION_CLOSED, finishTransaction);
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.COMMIT_ON_CLOSED_TRANSACTION, transactionId, TransactionStatusEnum.CLOSED.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
+        assertSame(TransactionStatusEnum.CLOSED, tx.getStatus());
 
     }
 
@@ -129,7 +129,7 @@ public class SdncTransactionTest {
         doBasicJanusGraphAction(transactionId, tx, true, true);
         Either<TestResponse, TransactionCodeEnum> doBasicJanusGraphAction = doBasicJanusGraphAction(transactionId, tx, true, false);
         assertTrue(doBasicJanusGraphAction.isRight());
-        assertNotSame(tx.getStatus(), TransactionStatusEnum.OPEN);
+        assertNotSame(TransactionStatusEnum.OPEN, tx.getStatus());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DOUBLE_FINISH_FLAG_ACTION, transactionId, DBTypeEnum.JANUSGRAPH
             .name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
     }
@@ -143,18 +143,18 @@ public class SdncTransactionTest {
 
         Either<DBActionCodeEnum, TransactionCodeEnum> eitherESResult = tx.invokeESAction(false, ESActionTypeEnum.ADD_ARTIFACT, createDummyArtifactData());
         assertTrue(eitherESResult.isRight());
-        assertSame(eitherESResult.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
+        assertSame(TransactionCodeEnum.TRANSACTION_CLOSED, eitherESResult.right().value());
 
         Either<Object, TransactionCodeEnum> eitherJanusGraphResult = tx.invokeJanusGraphAction(false, createBasicAction(TestAction.JanusGraphAction, TestResponse.JanusGraphResponseSuccess));
         assertTrue(eitherJanusGraphResult.isRight());
-        assertSame(eitherJanusGraphResult.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
+        assertSame(TransactionCodeEnum.TRANSACTION_CLOSED, eitherJanusGraphResult.right().value());
 
         Either<Object, TransactionCodeEnum> eitherGeneralDBAction = tx.invokeGeneralDBAction(true, DBTypeEnum.JANUSGRAPH, createBasicAction(TestAction.JanusGraphAction, TestResponse.JanusGraphResponseSuccess),
                 createBasicAction(TestAction.Rollback, TestResponse.JanusGraphResponseSuccess));
         assertTrue(eitherGeneralDBAction.isRight());
-        assertSame(eitherGeneralDBAction.right().value(), TransactionCodeEnum.TRANSACTION_CLOSED);
+        assertSame(TransactionCodeEnum.TRANSACTION_CLOSED, eitherGeneralDBAction.right().value());
 
-        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
+        assertSame(TransactionStatusEnum.CLOSED, tx.getStatus());
         verify(log, times(3)).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.ACTION_ON_CLOSED_TRANSACTION, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
     }
@@ -166,14 +166,14 @@ public class SdncTransactionTest {
             janusGraphGenericDao);
 
         doBasicJanusGraphAction(transactionId, tx, false, true);
-        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
+        assertSame(TransactionStatusEnum.OPEN, tx.getStatus());
 
         doESAddArtifactAction(transactionId, tx, true, true);
-        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
+        assertSame(TransactionStatusEnum.OPEN, tx.getStatus());
 
         doFinishTransaction(transactionId, tx, true);
 
-        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
+        assertSame(TransactionStatusEnum.CLOSED, tx.getStatus());
 
     }
 
@@ -189,8 +189,8 @@ public class SdncTransactionTest {
         Either<TestResponse, TransactionCodeEnum> eitherTransactionResult = tx.invokeJanusGraphAction(false, createCrushingAction(TestAction.JanusGraphAction, crushMessage));
 
         assertTrue(eitherTransactionResult.isRight());
-        assertSame(eitherTransactionResult.right().value(), TransactionCodeEnum.ROLLBACK_SUCCESS);
-        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
+        assertSame(TransactionCodeEnum.ROLLBACK_SUCCESS, eitherTransactionResult.right().value());
+        assertSame(TransactionStatusEnum.CLOSED, tx.getStatus());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.JANUSGRAPH
             .name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
@@ -219,8 +219,8 @@ public class SdncTransactionTest {
         Either<TestResponse, TransactionCodeEnum> eitherTransactionResult = tx.invokeJanusGraphAction(false, createCrushingAction(TestAction.JanusGraphAction, crushMessage));
 
         assertTrue(eitherTransactionResult.isRight());
-        assertSame(tx.getStatus(), TransactionStatusEnum.FAILED_ROLLBACK);
-        assertSame(eitherTransactionResult.right().value(), TransactionCodeEnum.ROLLBACK_FAILED);
+        assertSame(TransactionStatusEnum.FAILED_ROLLBACK, tx.getStatus());
+        assertSame(TransactionCodeEnum.ROLLBACK_FAILED, eitherTransactionResult.right().value());
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.JANUSGRAPH
             .name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
@@ -245,8 +245,8 @@ public class SdncTransactionTest {
         when(janusGraphGenericDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         // finishTransaction
         TransactionCodeEnum transactionCode = tx.finishTransaction();
-        assertSame(transactionCode, TransactionCodeEnum.ROLLBACK_SUCCESS);
-        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
+        assertSame(TransactionCodeEnum.ROLLBACK_SUCCESS, transactionCode);
+        assertSame(TransactionStatusEnum.CLOSED, tx.getStatus());
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -274,8 +274,8 @@ public class SdncTransactionTest {
         Mockito.doThrow(new RuntimeException(esError)).when(esCatalogDao).deleteArtifact(Mockito.anyString());
         // finishTransaction
         TransactionCodeEnum transactionCode = tx.finishTransaction();
-        assertSame(transactionCode, TransactionCodeEnum.ROLLBACK_FAILED);
-        assertSame(tx.getStatus(), TransactionStatusEnum.FAILED_ROLLBACK);
+        assertSame(TransactionCodeEnum.ROLLBACK_FAILED, transactionCode);
+        assertSame(TransactionStatusEnum.FAILED_ROLLBACK, tx.getStatus());
 
         verify(log, times(1)).debug(LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
         verify(log, times(1)).debug(TransactionUtils.TRANSACTION_MARKER, LogMessages.ROLLBACK_PERSISTENT_ACTION, DBTypeEnum.ELASTIC_SEARCH.name(), transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
@@ -299,13 +299,13 @@ public class SdncTransactionTest {
 
         Either<TestResponse, TransactionCodeEnum> eitherResult = tx.invokeGeneralDBAction(false, DBTypeEnum.MYSTERY, generalAction, rollbackAction);
         assertTrue(eitherResult.isLeft());
-        assertSame(eitherResult.left().value(), TestResponse.GeneralSuccess);
-        assertSame(tx.getStatus(), TransactionStatusEnum.OPEN);
+        assertSame(TestResponse.GeneralSuccess, eitherResult.left().value());
+        assertSame(TransactionStatusEnum.OPEN, tx.getStatus());
         eitherResult = tx.invokeGeneralDBAction(false, DBTypeEnum.MYSTERY, crushingAction, rollbackAction);
 
         assertTrue(eitherResult.isRight());
-        assertSame(eitherResult.right().value(), TransactionCodeEnum.ROLLBACK_SUCCESS);
-        assertSame(tx.getStatus(), TransactionStatusEnum.CLOSED);
+        assertSame(TransactionCodeEnum.ROLLBACK_SUCCESS, eitherResult.right().value());
+        assertSame(TransactionStatusEnum.CLOSED, tx.getStatus());
 
         verify(log).info(TransactionUtils.TRANSACTION_MARKER, LogMessages.DB_ACTION_FAILED_WITH_EXCEPTION, DBTypeEnum.MYSTERY.name(), transactionId, crushMessage, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
 
@@ -323,7 +323,7 @@ public class SdncTransactionTest {
         if (isVerifyAction) {
             // Check JanusGraph Action
             assertTrue(eitherJanusGraphResult.isLeft());
-            assertSame(eitherJanusGraphResult.left().value(), TestResponse.JanusGraphResponseSuccess);
+            assertSame(TestResponse.JanusGraphResponseSuccess, eitherJanusGraphResult.left().value());
             verify(log).debug(TestAction.JanusGraphAction.name());
             verify(log).debug(LogMessages.INVOKE_ACTION, transactionId, DBTypeEnum.JANUSGRAPH.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
             verifyNoErrorsInLog();
@@ -342,7 +342,7 @@ public class SdncTransactionTest {
             verify(log).debug(LogMessages.COMMIT_ACTION_ALL_DB, transactionId, TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
             verify(log).debug(LogMessages.COMMIT_ACTION_SPECIFIC_DB, transactionId, DBTypeEnum.JANUSGRAPH
                 .name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
-            assertSame(transactionCode, TransactionCodeEnum.SUCCESS);
+            assertSame(TransactionCodeEnum.SUCCESS, transactionCode);
         }
         return transactionCode;
     }
@@ -358,7 +358,7 @@ public class SdncTransactionTest {
         if (isVerifyAction) {
             // Check JanusGraph Action
             assertTrue(eitherEsAction.isLeft());
-            assertSame(eitherEsAction.left().value(), DBActionCodeEnum.SUCCESS);
+            assertSame(DBActionCodeEnum.SUCCESS, eitherEsAction.left().value());
             verify(log).debug(LogMessages.INVOKE_ACTION, transactionId, DBTypeEnum.ELASTIC_SEARCH.name(), TransactionUtils.DUMMY_USER, ActionTypeEnum.ADD_ARTIFACT.name());
             verifyNoErrorsInLog();
             verifyNoInfoInLog();
