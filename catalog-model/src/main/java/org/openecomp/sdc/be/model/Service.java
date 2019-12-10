@@ -101,7 +101,7 @@ public class Service extends Component {
 	}
 
 	public Boolean isEcompGeneratedNaming() {
-		return getServiceMetadataDefinition().isEcompGeneratedNaming();
+		return getServiceMetadataDefinition().getEcompGeneratedNaming();
 	}
 
 	public void setNamingPolicy(String namingPolicy) {
