@@ -74,8 +74,8 @@ public abstract class ComponentMetadataData extends GraphNode {
 		metadataDataDefinition.setImportedToscaChecksum((String) properties.get(GraphPropertiesDictionary.IMPORTED_TOSCA_CHECKSUM.getProperty()));
 		metadataDataDefinition.setInvariantUUID((String) properties.get(GraphPropertiesDictionary.INVARIANT_UUID.getProperty()));
 //		metadataDataDefinition.setComponentType(ComponentTypeEnum.valueOf((String) properties.get(GraphPropertyEnum.COMPONENT_TYPE.getProperty())));
-		metadataDataDefinition.setArchived((Boolean) properties.get(GraphPropertiesDictionary.IS_ARCHIVED.getProperty()));
-		metadataDataDefinition.setVspArchived((Boolean) properties.get(GraphPropertiesDictionary.IS_VSP_ARCHIVED.getProperty()));
+		metadataDataDefinition.setIsArchived((Boolean) properties.get(GraphPropertiesDictionary.IS_ARCHIVED.getProperty()));
+		metadataDataDefinition.setIsVspArchived((Boolean) properties.get(GraphPropertiesDictionary.IS_VSP_ARCHIVED.getProperty()));
 		Object archiveTime = properties.get(GraphPropertiesDictionary.ARCHIVE_TIME.getProperty());
 		if (archiveTime instanceof Integer){
 			metadataDataDefinition.setArchiveTime(new Long((Integer) archiveTime));
@@ -104,7 +104,7 @@ public abstract class ComponentMetadataData extends GraphNode {
 		addIfExists(map, GraphPropertiesDictionary.UUID, metadataDataDefinition.getUUID());
 		addIfExists(map, GraphPropertiesDictionary.NORMALIZED_NAME, metadataDataDefinition.getNormalizedName());
 		addIfExists(map, GraphPropertiesDictionary.SYSTEM_NAME, metadataDataDefinition.getSystemName());
-		addIfExists(map, GraphPropertiesDictionary.IS_DELETED, metadataDataDefinition.isDeleted());
+		addIfExists(map, GraphPropertiesDictionary.IS_DELETED, metadataDataDefinition.getIsDeleted());
 		addIfExists(map, GraphPropertiesDictionary.INSTANCE_COUNTER, componentInstanceCounter);
 		addIfExists(map, GraphPropertiesDictionary.PROJECT_CODE, metadataDataDefinition.getProjectCode());
 		addIfExists(map, GraphPropertiesDictionary.CSAR_UUID, metadataDataDefinition.getCsarUUID());

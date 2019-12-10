@@ -113,7 +113,7 @@ public class ServiceMetadataDataDefinitionTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.isEcompGeneratedNaming();
+		result = testSubject.getEcompGeneratedNaming();
 	}
 
 	

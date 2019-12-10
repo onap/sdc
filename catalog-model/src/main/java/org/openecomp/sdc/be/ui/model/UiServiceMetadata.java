@@ -38,7 +38,7 @@ public class UiServiceMetadata extends UiComponentMetadata {
 	public UiServiceMetadata(List<CategoryDefinition> categories, ServiceMetadataDataDefinition metadata) {
 		super(categories, metadata);
 		this.distributionStatus = metadata.getDistributionStatus();
-		this.ecompGeneratedNaming = metadata.isEcompGeneratedNaming();
+		this.ecompGeneratedNaming = metadata.getEcompGeneratedNaming();
 		this.namingPolicy = metadata.getNamingPolicy();
 		this.serviceType = metadata.getServiceType();
 		this.serviceRole = metadata.getServiceRole();
