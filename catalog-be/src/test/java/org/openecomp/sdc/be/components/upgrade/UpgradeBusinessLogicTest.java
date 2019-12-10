@@ -210,7 +210,7 @@ public class UpgradeBusinessLogicTest {
 
         resourceMetadataDataDefinition.setHighestVersion(true);
         resourceMetadataDataDefinition.setLifecycleState(LifecycleStateEnum.CERTIFIED.name());
-        resourceMetadataDataDefinition.setArchived(true);
+        resourceMetadataDataDefinition.setIsArchived(true);
 
         when(toscaOperationFacade.getToscaFullElement(COMPONENT_ID))
                 .thenReturn(Either.left(resource));

@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.datatypes.tosca;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import fj.data.Either;
+import lombok.EqualsAndHashCode;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 
 public abstract class ToscaDataDefinition {
 
+    @EqualsAndHashCode.Exclude
     protected Map<String, Object> toscaPresentation;
 
     public ToscaDataDefinition() {

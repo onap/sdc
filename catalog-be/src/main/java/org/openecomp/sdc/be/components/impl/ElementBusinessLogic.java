@@ -1311,8 +1311,8 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                 ComponentMetadataDataDefinition componentData = component.getLeft().getMetadataDataDefinition();
                 Boolean isHighest = componentData.isHighestVersion();
                 boolean isMatchingResourceType = isMatchingByResourceType(neededType, resourceType, componentData);
-                boolean isDeleted = isTrue(componentData.isDeleted());
-                boolean isArchived = isTrue(componentData.isArchived());
+                boolean isDeleted = isTrue(componentData.getIsDeleted());
+                boolean isArchived = isTrue(componentData.getIsArchived());
 
                 if (isHighest && isMatchingResourceType && !isDeleted && !isArchived) {
                     Either<T, StorageOperationStatus> result = (Either<T, StorageOperationStatus>) toscaOperationFacade.getToscaElement(componentData.getUniqueId(), JsonParseFlagEnum.ParseMetadata);
