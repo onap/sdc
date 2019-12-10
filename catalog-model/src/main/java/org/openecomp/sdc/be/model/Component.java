@@ -452,7 +452,7 @@ public abstract class Component implements PropertiesOwner {
 	}
 
     public Boolean getIsDeleted() {
-        return componentMetadataDefinition.getMetadataDataDefinition().isDeleted();
+        return componentMetadataDefinition.getMetadataDataDefinition().getIsDeleted();
     }
 
     public void setIsDeleted(Boolean isDeleted) {
@@ -1018,16 +1018,16 @@ public abstract class Component implements PropertiesOwner {
         return componentMetadataDefinition.getMetadataDataDefinition().getActualComponentType();
     }
 
-    public Boolean isArchived() { return componentMetadataDefinition.getMetadataDataDefinition().isArchived(); }
+    public Boolean isArchived() { return componentMetadataDefinition.getMetadataDataDefinition().getIsArchived(); }
 
-    public void setArchived(Boolean archived) { componentMetadataDefinition.getMetadataDataDefinition().setArchived(archived); }
+    public void setArchived(Boolean archived) { componentMetadataDefinition.getMetadataDataDefinition().setIsArchived(archived); }
 
     public Long getArchiveTime() { return componentMetadataDefinition.getMetadataDataDefinition().getArchiveTime(); }
 
     public void setArchiveTime(Long archiveTime) { componentMetadataDefinition.getMetadataDataDefinition().setArchiveTime(archiveTime); }
 
-    public Boolean isVspArchived() { return componentMetadataDefinition.getMetadataDataDefinition().isVspArchived();	}
+    public Boolean isVspArchived() { return componentMetadataDefinition.getMetadataDataDefinition().getIsVspArchived();	}
 
-    public void setVspArchived(Boolean vspArchived) { componentMetadataDefinition.getMetadataDataDefinition().setVspArchived(vspArchived); }
+    public void setVspArchived(Boolean vspArchived) { componentMetadataDefinition.getMetadataDataDefinition().setIsVspArchived(vspArchived); }
 
 }
