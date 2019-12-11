@@ -119,9 +119,9 @@ public abstract class UiComponentMetadata {
         this.lastUpdaterUserId = metadata.getLastUpdaterUserId();
 
         //archive
-        this.isArchived = metadata.isArchived();
+        this.isArchived = metadata.getIsArchived();
         this.archiveTime = metadata.getArchiveTime();
-        this.isVspArchived = metadata.isVspArchived();
+        this.isVspArchived = metadata.getIsVspArchived();
     }
 
 
