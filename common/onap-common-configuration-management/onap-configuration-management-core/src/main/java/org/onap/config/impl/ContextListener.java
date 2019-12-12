@@ -24,9 +24,13 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import org.onap.config.api.ConfigurationManager;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 @WebListener
 public class ContextListener implements ServletContextListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContextListener.class);
 
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
@@ -38,7 +42,7 @@ public class ContextListener implements ServletContextListener {
         try {
             ManagementFactory.getPlatformMBeanServer().unregisterMBean(new ObjectName(MBEAN_NAME));
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOGGER.error("Unregistering bean '{}' failed.", MBEAN_NAME, exception);
         }
     }
 }
