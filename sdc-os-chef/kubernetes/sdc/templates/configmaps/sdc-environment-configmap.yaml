@@ -57,9 +57,7 @@ data:
                 },
                 "WORKFLOW": {
                     "workflow_discovery_url": "10.0.2.15",
-                    "workflow_source_url": "10.0.2.15",
-                    "workflow_fe_proxy_url": "10.0.2.15",
-                    "workflow_redirect_path": "/wf"
+                    "workflow_source_url": "10.0.2.15"
                 }
             },
                "VnfRepo": {
