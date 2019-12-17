@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "882f018c_30111501",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/exception/GeneralUiRuntimeException.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-12-17T11:19:20Z",
+      "side": 1,
+      "message": "Does GeneralUiRuntimeException  passes serialization?\nThe serialVersionUID is used during deserialization to verify that the sender and receiver of a serialized object have loaded classes for that object that are compatible with respect to serialization. (https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html)\nIf it does not passes serialization there is no need in serialVersionUID.\nI am not aware of Sonar warning regarding this class serialVersionUID.\nYou can either change you IDE settings if you have this warning, or add an suppress annotation @SuppressWarnings(\"serial\").",
+      "revId": "48fae88a07a2c3f2b14cf654fe8fc95e3e318043",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
