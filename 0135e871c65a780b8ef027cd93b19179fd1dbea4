@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e399ba7c_abe3e1c6",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-17T08:17:19Z",
+      "side": 1,
+      "message": "This \"return\" is for the anonymous function inside the forEach, and not for the isHiddenCategory function.\n\nYou can use vanilla for loop or array filter function instead of forEach",
+      "range": {
+        "startLine": 354,
+        "startChar": 23,
+        "endLine": 354,
+        "endChar": 27
+      },
+      "revId": "0135e871c65a780b8ef027cd93b19179fd1dbea4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
