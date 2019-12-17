@@ -49,7 +49,7 @@ const SDC_CONFIG = {
 		"GET_lifecycle_state_UNDOCHECKOUT":"lifecycleState/UNDOCHECKOUT",
 		"root": "/sdc1/feProxy/rest",
         "no_proxy_root": "/sdc1/rest",
-		"workflow_root": "/sdc1/feProxy/plugin/wf",
+		"workflow_root": "/sdc1/feProxy/wf",
 		"POST_workflow_artifact": "sdc/v1/catalog",
 		"PUT_service": "/v1/catalog/services/:id/metadata",
 		"GET_download_artifact": "/v1/catalog/",

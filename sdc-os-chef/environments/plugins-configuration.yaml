@@ -19,8 +19,6 @@ pluginsList:
    - pluginId: WORKFLOW
      pluginDiscoveryUrl: <%= @workflow_discovery_url %>
      pluginSourceUrl: <%= @workflow_source_url %>
-     pluginFeProxyUrl: <%= @workflow_fe_proxy_url %>
-     pluginProxyRedirectPath: <%= @workflow_redirect_path %>
      pluginStateUrl: "workflowDesigner"
      pluginDisplayOptions:
         tab:
