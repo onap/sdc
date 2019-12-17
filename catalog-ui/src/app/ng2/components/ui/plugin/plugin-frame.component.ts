@@ -18,6 +18,7 @@ export class PluginFrameComponent implements OnInit {
     pluginUrl: string;
     private urlSearchParams: URLSearchParams;
     private isClosed: boolean;
+    private isReady: boolean;
     private isPluginCheckDone: boolean;
 
     constructor(private eventBusService: EventBusService,
@@ -44,6 +45,7 @@ export class PluginFrameComponent implements OnInit {
     private initPlugin() {
         this.pluginUrl = this.plugin.pluginSourceUrl;
         this.isClosed = false;
+        this.isReady = false;
 
         if (this.queryParams && !_.isEmpty(this.queryParams)) {
             _.forOwn(this.queryParams, (value, key) => {
@@ -57,6 +59,7 @@ export class PluginFrameComponent implements OnInit {
         let readyEvent = (eventData) => {
             if (eventData.originId === this.plugin.pluginId) {
                 if (eventData.type == "READY") {
+                    this.isReady = true;
                     this.onLoadingDone.emit();
                     this.eventBusService.off(readyEvent)
                 }
@@ -69,10 +72,13 @@ export class PluginFrameComponent implements OnInit {
         // before moving to a new state
         this.$scope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
             if ((fromState.name !== toState.name) || (fromState.name === toState.name) && (toParams.path !== fromParams.path)) {
+                if (!this.isReady) {
+                    this.onLoadingDone.emit();
+                    this.eventBusService.off(readyEvent)
+                }
                 if (this.eventBusService.NoWindowOutEvents.indexOf(this.eventBusService.lastEventNotified) == -1) {
                     if (!this.isClosed) {
                         event.preventDefault();
-
                         this.eventBusService.notify("WINDOW_OUT").subscribe(() => {
                             this.isClosed = true;
                             this.eventBusService.unregister(this.plugin.pluginId);
