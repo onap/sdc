@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11f74a71_f1e24d60",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-17T11:43:17Z",
+      "side": 1,
+      "message": "Is this message still accurate?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 6
+      },
+      "revId": "1cc34f4ad6c2a2e021c917320e66f54df3289337",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "74b41a6c_9779720c",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-17T11:43:17Z",
+      "side": 1,
+      "message": "Didn\u0027t we change it to vtp chart name in OOM?",
+      "range": {
+        "startLine": 24,
+        "startChar": 56,
+        "endLine": 24,
+        "endChar": 59
+      },
+      "revId": "1cc34f4ad6c2a2e021c917320e66f54df3289337",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ce99608_06316ce4",
+        "filename": "openecomp-be/tools/install/database/init_schemas.cql",
+        "patchSetId": 6
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2019-12-17T11:43:17Z",
+      "side": 1,
+      "message": "is this still necessary?",
+      "range": {
+        "startLine": 55,
+        "startChar": 27,
+        "endLine": 55,
+        "endChar": 38
+      },
+      "revId": "1cc34f4ad6c2a2e021c917320e66f54df3289337",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
