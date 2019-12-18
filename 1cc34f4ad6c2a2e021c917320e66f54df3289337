@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6b91ff72_bfcd37c4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-18T08:18:40Z",
+      "side": 1,
+      "message": "Yes, because we are maintaining Unique identifier in UI session.",
+      "parentUuid": "11f74a71_f1e24d60",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 6
+      },
+      "revId": "1cc34f4ad6c2a2e021c917320e66f54df3289337",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "74b41a6c_9779720c",
         "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb",
         "patchSetId": 6
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "d15c07cc_568af0d9",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-18T08:18:40Z",
+      "side": 1,
+      "message": "We have not found any OOM\u0027s configuration  in previous release where changes can be done. \nThis file gets executed inside SDC-Onboard docker container when it gets started.\nPlease let us know you input on this.",
+      "parentUuid": "74b41a6c_9779720c",
+      "range": {
+        "startLine": 24,
+        "startChar": 56,
+        "endLine": 24,
+        "endChar": 59
+      },
+      "revId": "1cc34f4ad6c2a2e021c917320e66f54df3289337",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2ce99608_06316ce4",
         "filename": "openecomp-be/tools/install/database/init_schemas.cql",
         "patchSetId": 6
@@ -59,6 +107,30 @@
       "writtenOn": "2019-12-17T11:43:17Z",
       "side": 1,
       "message": "is this still necessary?",
+      "range": {
+        "startLine": 55,
+        "startChar": 27,
+        "endLine": 55,
+        "endChar": 38
+      },
+      "revId": "1cc34f4ad6c2a2e021c917320e66f54df3289337",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc28fca2_76a85962",
+        "filename": "openecomp-be/tools/install/database/init_schemas.cql",
+        "patchSetId": 6
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-18T08:18:40Z",
+      "side": 1,
+      "message": "Not required, now it is removed.",
+      "parentUuid": "2ce99608_06316ce4",
       "range": {
         "startLine": 55,
         "startChar": 27,
