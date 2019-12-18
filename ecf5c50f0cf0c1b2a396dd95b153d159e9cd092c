@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c3281a99_1ea1d5a2",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/flow/exception/MissingParameterRuntimeException.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-12-18T10:17:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc841db7_7208a2e2",
+      "revId": "ecf5c50f0cf0c1b2a396dd95b153d159e9cd092c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4b7e32fa_de17c2a0",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/flow/exception/UiTestFlowRuntimeException.java",
         "patchSetId": 5
@@ -33,6 +51,24 @@
       "revId": "ecf5c50f0cf0c1b2a396dd95b153d159e9cd092c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e30d8b3_c207cd68",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/flow/exception/UiTestFlowRuntimeException.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2019-12-18T10:17:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4b7e32fa_de17c2a0",
+      "revId": "ecf5c50f0cf0c1b2a396dd95b153d159e9cd092c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
