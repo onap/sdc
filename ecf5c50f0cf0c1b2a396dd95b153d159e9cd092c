@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc841db7_7208a2e2",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/flow/exception/MissingParameterRuntimeException.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-12-18T06:30:26Z",
+      "side": 1,
+      "message": "Is it being serialized?",
+      "revId": "ecf5c50f0cf0c1b2a396dd95b153d159e9cd092c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b7e32fa_de17c2a0",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/flow/exception/UiTestFlowRuntimeException.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-12-18T06:30:26Z",
+      "side": 1,
+      "message": "same issue",
+      "revId": "ecf5c50f0cf0c1b2a396dd95b153d159e9cd092c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
