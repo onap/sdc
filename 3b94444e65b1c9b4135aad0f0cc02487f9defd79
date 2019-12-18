@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19d69967_af2739b8",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductValidationPage.scss",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "in general the page looks out of sync with the rest of the UI. please changes the color of the border of the boxes and the headers similar to the other onboarding pages",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a33fb2f0_1136a1a7",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "should elected also be capitalized?",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b732e228_25d5bc69",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationActionHelper.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "why not map the endpoint and return the set instead?",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4871d83d_f20fd5a6",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "should this be hardcoded or configuration?",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13a11681_1aa74bdb",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "the filename will be \"name.null\" if no extension was given?",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbf55e76_793b41ac",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "there can be no metadata that this field is hidden? if so - the these 2 clauses should probably be combined",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce68b243_b202d87b",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "do you constantly want to set the state and deal with the side effects? why not prepare a flatmap and set the state when you\u0027re done mapping?",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07f72d7d_25effd2c",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "shouldn\u0027t this be from i18n ?",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "910dc6a2_9dba340a",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "from i18n",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "667b78d6_887379c2",
+        "filename": "openecomp-ui/test/softwareProduct/validationResults/SoftwareProductValidationResultsViewActionHelper.test.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-18T11:40:21Z",
+      "side": 1,
+      "message": "shouldn\u0027t this throw an error to fail the test?",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
