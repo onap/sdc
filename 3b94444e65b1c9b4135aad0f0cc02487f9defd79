@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "11e50727_fd442fd5",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductValidationPage.scss",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:22:25Z",
+      "side": 1,
+      "message": "File type input is added in the validation form. Can you please let us know that is this comment only for the file type ?",
+      "parentUuid": "19d69967_af2739b8",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a33fb2f0_1136a1a7",
         "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
         "patchSetId": 6
