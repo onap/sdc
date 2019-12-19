@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "ec5ea473_7860ce25",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a33fb2f0_1136a1a7",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b732e228_25d5bc69",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationActionHelper.js",
         "patchSetId": 6
@@ -50,6 +68,24 @@
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9cb473a_dc45ee12",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationActionHelper.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b732e228_25d5bc69",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "c643875e_b2ccf829",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "It was hard-coded, now VTP returns test case in \"onap-dublin\".\nThere is no configuration in UI yet for this.",
+      "parentUuid": "4871d83d_f20fd5a6",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "13a11681_1aa74bdb",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
         "patchSetId": 6
@@ -84,6 +138,24 @@
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e065472_3c5df97b",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13a11681_1aa74bdb",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "f0b4b7a1_24abe834",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "Code has been refactored, but at lease it is required condition for text and file type configuration.",
+      "parentUuid": "dbf55e76_793b41ac",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ce68b243_b202d87b",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
         "patchSetId": 6
@@ -118,6 +208,24 @@
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9de3c3b_5d1deede",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce68b243_b202d87b",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -138,6 +246,24 @@
     },
     {
       "key": {
+        "uuid": "93af0a28_f67bc8f8",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07f72d7d_25effd2c",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "910dc6a2_9dba340a",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
         "patchSetId": 6
@@ -155,6 +281,24 @@
     },
     {
       "key": {
+        "uuid": "9a491d42_6e655658",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "910dc6a2_9dba340a",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "667b78d6_887379c2",
         "filename": "openecomp-ui/test/softwareProduct/validationResults/SoftwareProductValidationResultsViewActionHelper.test.js",
         "patchSetId": 6
@@ -169,6 +313,24 @@
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ead2e567_291ec47b",
+        "filename": "openecomp-ui/test/softwareProduct/validationResults/SoftwareProductValidationResultsViewActionHelper.test.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-19T16:00:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "667b78d6_887379c2",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
