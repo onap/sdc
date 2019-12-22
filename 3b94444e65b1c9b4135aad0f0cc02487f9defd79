@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a8b10b4c_de0fc443",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductValidationPage.scss",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "it\u0027s the entire box that behaves differently than the rest of the UI. The border color should probably be set to the grey color of catalog/onboarding and maybe add the hover change to blue as well and a bit of padding.",
+      "parentUuid": "11e50727_fd442fd5",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a33fb2f0_1136a1a7",
         "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
         "patchSetId": 6
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "a33fb2f0_1136a1a7",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e9659ba4_d494d7b0",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 6
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec5ea473_7860ce25",
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -107,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "4c57a0cc_174642f2",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationActionHelper.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9cb473a_dc45ee12",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4871d83d_f20fd5a6",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
         "patchSetId": 6
@@ -139,6 +193,24 @@
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "153de63f_f8cd12b2",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "why not add it to the config.json file and read it from configuration?",
+      "parentUuid": "c643875e_b2ccf829",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
@@ -177,6 +249,24 @@
     },
     {
       "key": {
+        "uuid": "7949c98c_4f6d60b3",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "There would still be the \".\" at the end of the fileName. shouldn\u0027t it be without an extensions completely, similar to the file that was given as an input?",
+      "parentUuid": "8e065472_3c5df97b",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dbf55e76_793b41ac",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
         "patchSetId": 6
@@ -206,6 +296,24 @@
       "side": 1,
       "message": "Code has been refactored, but at lease it is required condition for text and file type configuration.",
       "parentUuid": "dbf55e76_793b41ac",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3d9b755_6b7b784c",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f0b4b7a1_24abe834",
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -247,6 +355,24 @@
     },
     {
       "key": {
+        "uuid": "d050fd8b_b5d61f9f",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e9de3c3b_5d1deede",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07f72d7d_25effd2c",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
         "patchSetId": 6
@@ -276,6 +402,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "07f72d7d_25effd2c",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b98fe2aa_afedcd60",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93af0a28_f67bc8f8",
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -317,6 +461,24 @@
     },
     {
       "key": {
+        "uuid": "283a934a_66c3162e",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validationResults/SoftwareProductValidationResultsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a491d42_6e655658",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "667b78d6_887379c2",
         "filename": "openecomp-ui/test/softwareProduct/validationResults/SoftwareProductValidationResultsViewActionHelper.test.js",
         "patchSetId": 6
@@ -346,6 +508,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "667b78d6_887379c2",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88643d32_ef2b95da",
+        "filename": "openecomp-ui/test/softwareProduct/validationResults/SoftwareProductValidationResultsViewActionHelper.test.js",
+        "patchSetId": 6
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2019-12-22T08:31:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ead2e567_291ec47b",
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
