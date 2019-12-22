@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c51ccb4b_7a09297a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services/src/main/java/org/openecomp/sdcrests/externaltesting/rest/services/ExternalTestingImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2019-12-22T06:14:41Z",
+      "side": 1,
+      "message": "https://sonar.onap.org/project/issues?createdAt\u003d2019-12-20T22%3A12%3A49%2B0000\u0026id\u003dorg.openecomp.sdc%3Asdc-main%3Amaster\u0026open\u003dAW8lZmSQs-COkqaH9S1M",
+      "revId": "39116c7da381ff5e5b2ce7ae80f103dfc77c0253",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
