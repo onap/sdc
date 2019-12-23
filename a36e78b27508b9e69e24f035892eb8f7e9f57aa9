@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a0b8f920_78895dde",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/recipes/03-schemaCreation.rb",
+        "patchSetId": 8
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1937
+      },
+      "writtenOn": "2019-12-23T10:11:37Z",
+      "side": 1,
+      "message": "Please set the node object to use string instead \":\"",
+      "revId": "a36e78b27508b9e69e24f035892eb8f7e9f57aa9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eda05b8a_ffa0905f",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/recipes/03-schemaCreation.rb",
+        "patchSetId": 8
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1937
+      },
+      "writtenOn": "2019-12-23T10:11:37Z",
+      "side": 1,
+      "message": "Janus connection timeout is defined twice once as janus_connection and once as janusgraph_connection",
+      "revId": "a36e78b27508b9e69e24f035892eb8f7e9f57aa9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cffdad62_8f274815",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/recipes/03-schemaCreation.rb",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1937
+      },
+      "writtenOn": "2019-12-23T10:11:37Z",
+      "side": 1,
+      "message": "Should not ended with \",\"",
+      "revId": "a36e78b27508b9e69e24f035892eb8f7e9f57aa9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa6d6bb7_53384197",
+        "filename": "asdctool/src/main/resources/config/janusgraph.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1937
+      },
+      "writtenOn": "2019-12-23T10:11:37Z",
+      "side": 1,
+      "message": "The Backend was changed to \u0027cql\u0027 .\nWhy this one remains \u0027cassandra\u0027 ?",
+      "revId": "a36e78b27508b9e69e24f035892eb8f7e9f57aa9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b59baaba_d239bc82",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/recipes/BE_2_setup_configuration.rb",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1937
+      },
+      "writtenOn": "2019-12-23T10:11:37Z",
+      "side": 1,
+      "message": "Please set it to cassandra_port",
+      "revId": "a36e78b27508b9e69e24f035892eb8f7e9f57aa9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "366385b4_1dc4b1dc",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-janusgraph.properties.erb",
+        "patchSetId": 8
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1937
+      },
+      "writtenOn": "2019-12-23T10:11:37Z",
+      "side": 1,
+      "message": "Please set it to cassandra_port",
+      "revId": "a36e78b27508b9e69e24f035892eb8f7e9f57aa9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
