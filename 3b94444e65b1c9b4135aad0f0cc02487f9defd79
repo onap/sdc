@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "a0c7518c_84db6d56",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductValidationPage.scss",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-23T11:19:43Z",
+      "side": 1,
+      "message": "Border is added in file type, other inputs have already that properties. \nPlease find screenshot ValidationForm.png in \"https://jira.onap.org/browse/SDC-2585\".",
+      "parentUuid": "a8b10b4c_de0fc443",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a33fb2f0_1136a1a7",
         "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
         "patchSetId": 6
