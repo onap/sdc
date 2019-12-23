@@ -232,6 +232,24 @@
     },
     {
       "key": {
+        "uuid": "e18e3b43_4ab7fc99",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/SoftwareProductValidationView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-23T11:21:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "153de63f_f8cd12b2",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "13a11681_1aa74bdb",
         "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
         "patchSetId": 6
@@ -282,6 +300,24 @@
       "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d68979a4_32205c04",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/validation/inputs/VspValidationInputsView.jsx",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-23T11:21:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7949c98c_4f6d60b3",
+      "revId": "3b94444e65b1c9b4135aad0f0cc02487f9defd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
