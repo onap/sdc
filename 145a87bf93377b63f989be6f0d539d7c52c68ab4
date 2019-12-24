@@ -16,6 +16,24 @@
       "revId": "145a87bf93377b63f989be6f0d539d7c52c68ab4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13c82b15_092b591f",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductValidationPage.scss",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 6131
+      },
+      "writtenOn": "2019-12-24T09:03:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d02b3d76_ed6df090",
+      "revId": "145a87bf93377b63f989be6f0d539d7c52c68ab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
