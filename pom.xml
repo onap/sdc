@@ -549,6 +549,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <module>catalog-fe</module>
         <module>test-apis-ci</module>
         <module>ui-ci</module>
+        <module>ui-ci-new</module>
         <module>sdc-os-chef</module>
         <module>utils/webseal-simulator</module>
       </modules>
@@ -586,7 +587,18 @@ Modifications copyright (c) 2018-2019 Nokia
       </modules>
     </profile>
 
-  </profiles>
+  <profile>
+            <id>sanity-tests</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>test-apis-ci</module>
+                <module>ui-ci</module>
+            </modules>
+        </profile>
+
+    </profiles>
 
   <repositories>
     <!-- LF repositories -->

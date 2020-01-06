@@ -21,6 +21,14 @@
 package org.openecomp.sdc.ci.tests.execute.setup;
 
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
@@ -30,20 +38,11 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
 
 public class DriverFactory {
 
     private static ThreadLocal<WebDriverThread> driverThread;
-    private static List<WebDriverThread> webDriverThreadPool = Collections.synchronizedList(new ArrayList<WebDriverThread>());
+    private static List<WebDriverThread> webDriverThreadPool = Collections.synchronizedList(new ArrayList<>());
     private static Config config;
 
     public DriverFactory() {
@@ -82,7 +81,7 @@ public class DriverFactory {
         return driverThread.get().getDriver();
     }
 
-    public static FirefoxProfile getDriverFirefoxProfile() throws Exception {
+    public static FirefoxProfile getDriverFirefoxProfile() {
         return driverThread.get().getFirefoxProfile();
     }
 
@@ -94,7 +93,7 @@ public class DriverFactory {
             }
         }
 
-        MobProxy.removeAllProxyServers();
+//        MobProxy.removeAllProxyServers();
 
         deleteDownloadDirs();
     }
@@ -108,11 +107,11 @@ public class DriverFactory {
         }
     }
 
-    public static void quitDriver() throws Exception {
+    public static void quitDriver() {
         driverThread.get().quitDriver();
         driverThread.remove();
         WindowTestManager.removeWindowTest();
-        MobProxy.removePoxyServer();
+//        MobProxy.removePoxyServer();
     }
 
     public static Config getConfig() {
