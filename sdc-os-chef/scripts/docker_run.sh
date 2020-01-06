@@ -44,7 +44,7 @@ fi
 
 
 function usage {
-    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -ta <run api tests with the supplied test suit>] [ -tu <run ui tests with the supplied test suit>] [ -tad <run api tests with the default test suit>] [ -tu <run ui tests with the default test suit>] [ -h|--help ]"
+    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ] [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -sim|--simulator <Run-with-simulator>] [ -ta <run api tests with the supplied test suite>] [ -tu <run ui tests with the supplied test suite>] [ -ta <run api tests with the supplied test suite>] [ -tad <run api tests with the default test suite>] [ -tud <run ui tests with the default test suite>] [ -tnu <run new ui tests with the supplied test suite>] [ -tnud <run new ui tests with the default test suite>] [ -h|--help ]"
     echo "start dockers built locally example: docker_run.sh -l"
     echo "start dockers built locally and simulator example: docker_run.sh -l -sim"
     echo "start dockers, pull from onap nexus according to release and simulator example: docker_run.sh -r 1.5-STAGING-latest -sim"
@@ -449,20 +449,32 @@ function sdc-api-tests {
 
 # ui-sanity
 function sdc-ui-tests {
-
     if [[ ${RUN_UI_TESTS} = true ]] ; then
 		healthCheck
         healthCheck_http_code=$?
         if [[ ${healthCheck_http_code} == 200 ]]; then
             echo "docker run sdc-ui-tets..."
             echo "Trigger sdc-ui-tests docker, please wait..."
-
-            if [ ${LOCAL} = false ]; then
-                docker pull ${PREFIX}/sdc-ui-tests:${RELEASE}
+            UI_TEST_IMAGE="sdc-ui-tests"
+            if [ "${RUN_NEW_UI_TESTS}" = true ]; then
+                UI_TEST_IMAGE="sdc-ui-tests-new"
             fi
+            if [ ${LOCAL} = false ]; then
+                docker pull "${PREFIX}"/"${UI_TEST_IMAGE}":"${RELEASE}"
+            fi
+
             RUN_SIMULATOR=true;
             sdc-sim
-            docker run --detach --name sdc-ui-tests --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${UI_TESTS_JAVA_OPTIONS}" --env SUITE_NAME=${UI_SUITE} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/sdc-ui-tests/target:/var/lib/tests/target --volume ${WORKSPACE}/data/logs/sdc-ui-tests/ExtentReport:/var/lib/tests/ExtentReport --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5901:5901 --publish 6901:6901 ${PREFIX}/sdc-ui-tests:${RELEASE}
+
+            echo "Running container based on image ${PREFIX}/${UI_TEST_IMAGE}:${RELEASE}"
+            docker run --detach --name sdc-ui-tests --env HOST_IP="${IP}" --env ENVNAME="${DEP_ENV}" \
+              --env JAVA_OPTIONS="${UI_TESTS_JAVA_OPTIONS}" --env SUITE_NAME="${UI_SUITE}" \
+              --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 \
+              --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} \
+              --volume "${WORKSPACE}"/data/logs/sdc-ui-tests/target:/var/lib/tests/target \
+              --volume "${WORKSPACE}"/data/logs/sdc-ui-tests/ExtentReport:/var/lib/tests/ExtentReport \
+              --volume "${WORKSPACE}"/data/environments:/root/chef-solo/environments \
+              --publish 5901:5901 --publish 6901:6901 "${PREFIX}"/${UI_TEST_IMAGE}:${RELEASE}
             echo "please wait while SDC-UI-TESTS is starting....."
             monitor_docker sdc-ui-tests
         fi
@@ -557,7 +569,19 @@ while [ $# -gt 0 ]; do
           UI_SUITE="onapUiSanity";
           RUN_UI_TESTS=true;
           shift 1 ;;
-
+    # -tnu: Use this for running the supplied suite of tests in new UI sanity docker after all other dockers have been deployed
+    -tnu   )
+        shift 1 ;
+        UI_SUITE=$1;
+        RUN_UI_TESTS=true;
+        RUN_NEW_UI_TESTS=true;
+        shift 1 ;;
+    # -tnud: Use this for running the DEFAULT suite of tests in new UI sanity docker after all other dockers have been deployed
+    -tnud   )
+          UI_SUITE="onapUiSanity";
+          RUN_UI_TESTS=true;
+          RUN_NEW_UI_TESTS=true;
+          shift 1 ;;
     # -d | --docker - The init specified docker
     -d | --docker )
           shift 1 ;
