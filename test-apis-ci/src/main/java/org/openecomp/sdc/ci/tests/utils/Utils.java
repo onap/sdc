@@ -225,9 +225,8 @@ public final class Utils {
 		}
 	}
 
-	public static Config getConfig() throws FileNotFoundException {
-		Config config = Config.instance();
-		return config;
+	public static Config getConfig() {
+		return Config.instance();
 	}
 
 	public static Config getConfigHandleException() {

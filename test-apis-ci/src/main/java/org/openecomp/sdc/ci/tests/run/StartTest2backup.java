@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -69,13 +68,9 @@ public class StartTest2backup {
 		enableLogger();
 
 		Config config = null;
-		try {
-			config = Utils.getConfig();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+        config = Utils.getConfig();
 
-		if (config == null) {
+        if (config == null) {
 			logger.error("Failed to configuration file of ci tests.");
 			System.exit(1);
 		}

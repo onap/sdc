@@ -31,7 +31,6 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,11 +47,7 @@ public class DriverFactory {
     private static Config config;
 
     public DriverFactory() {
-        try {
-            config = Utils.getConfig();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        config = Utils.getConfig();
     }
 
     @BeforeSuite(alwaysRun = true)

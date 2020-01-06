@@ -1,0 +1,48 @@
+browser: firefox
+uiSimulator: true
+geckoDriverLocation: '/opt/geckodriver/geckodriver'
+
+
+<% if node[:disableHttp] -%>
+sdcHttpMethod: https
+onboardingBePort:  <%= node['ONBOARDING_BE'][:https_port] %>
+onboardingBeHost:  <%= node['ONBOARDING_BE'][:domain_name] %>
+url: https://<%= node['FE'][:domain_name] %>:8286/sdc1
+catalogBeHost:  <%= node['BE'][:domain_name] %>
+catalogBePort:  <%= node['BE'][:https_port] %>
+catalogFeHost:  <%= node['FE'][:domain_name] %>
+catalogFePort:  <%= node['FE'][:https_port] %>
+<% else %>
+sdcHttpMethod: http
+onboardingBePort:  <%= node['ONBOARDING_BE'][:http_port] %>
+onboardingBeHost:  <%= node['ONBOARDING_BE_VIP'] %>
+url: http://<%= @webportal_host %>:8285/sdc1
+catalogBeHost:  <%= @catalogBE_host %>
+catalogBePort:  <%= @catalogBE_port %>
+catalogFeHost:  <%= @webportal_host %>
+catalogFePort:  <%= @webportal_port %>
+<% end -%>
+
+
+esHost:         <%= @ES_IP %>
+esPort: 9200
+disributionClientHost: disClient
+disributionClientPort: 8181
+
+remoteTesting: false
+systemUnderDebug: false
+reportDBhost: 135.76.210.43
+reportDBport: 27017
+
+useBrowserMobProxy: false
+captureTraffic: false
+
+
+resourceConfigDir: <%= @tests_path_ci %>
+componentsConfigDir: <%= @components_path %>
+importResourceConfigDir: <%= @importResourceConfigDir %>
+importResourceTestsConfigDir: <%= @importResourceTestsConfigDir %>
+errorConfigurationFile: <%= @errorConfigurationFile %>
+configurationFile: <%= @ConfigurationFile %>
+importTypesConfigDir: <%= @importTypesDir %>
+janusGraphPropertiesFile: <%= @janusgraph_file %>

@@ -20,18 +20,24 @@
 
 package org.openecomp.sdc.ci.tests.config;
 
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
 public class Config {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(Config.class);
+
 	private static String WINDOWS_CONFIG_FILE = "src/main/resources/ci/conf/attsdc.yaml";
+    public static final String GECKO_DRIVER_PROPERTY = "webdriver.gecko.driver";
+
 	private boolean systemUnderDebug;
 	private boolean rerun;
 	private String reportDBhost;
@@ -46,7 +52,6 @@ public class Config {
 	private String disributionClientHost;
 	private String disributionClientPort;
 	private boolean isDistributionClientRunning;
-
 
 	private String errorConfigurationFile;
 	private String resourceConfigDir;
@@ -98,22 +103,38 @@ public class Config {
 	private String sdcHttpMethod;
 	private String localDataCenter;
 	private boolean uiSimulator;
+    private String geckoDriverLocation;
+
+	private static Config configIt = null;
+
+	private static Yaml yaml = new Yaml();
+	String configurationFile;
+
+	private Config() {
+		super();
+	}
 
 	public String getLocalDataCenter() {
 		return localDataCenter;
 	}
 
+    public void loadGeckoDriverLocation() {
+        if (StringUtils.isNotEmpty(geckoDriverLocation)) {
+            System.setProperty(GECKO_DRIVER_PROPERTY, geckoDriverLocation);
+        }
+		LOGGER.debug("Gecko driver location '{}'", geckoDriverLocation);
+    }
+
+    public String getGeckoDriverLocation() {
+        return geckoDriverLocation;
+    }
+
+    public void setGeckoDriverLocation(String geckoDriverLocation) {
+        this.geckoDriverLocation = geckoDriverLocation;
+    }
+
 	public void setLocalDataCenter(String localDataCenter) {
 		this.localDataCenter = localDataCenter;
-	}
-
-	private static Config configIt = null;
-
-	private static Yaml yaml = new Yaml();
-
-	
-	private Config() {
-		super();
 	}
 
 	public String getOnboardingBePort() {
@@ -174,6 +195,7 @@ public class Config {
 
 	private static Config init() throws IOException {
 
+
 		Config config = null;
 
 		String configFile = System.getProperty("config.resource");
@@ -187,8 +209,10 @@ public class Config {
 			}
 		}
 
+		LOGGER.info("Initializing configuration from '{}'", configFile);
+
 		File file = new File(configFile);
-		if (false == file.exists()) {
+        if (!file.exists()) {
 			throw new RuntimeException("The config file " + configFile + " cannot be found.");
 		}
 
@@ -211,9 +235,7 @@ public class Config {
 			}
 		}
 
-		// JsonReader jsonReader = new JsonReader(new FileReader(configFile));
-		// Config configAttOdlIt = new Gson().fromJson(jsonReader,
-		// Config.class);
+		LOGGER.debug("Configuration loaded:\n{}", yaml.dump(config));
 
 		return config;
 	}
@@ -232,7 +254,7 @@ public class Config {
 		String dirPath = path.substring(0, separator + 1);
 		String packagesFile = dirPath + File.separator + "attsdc-packages.yaml";
 		File file = new File(packagesFile);
-		if (false == file.exists()) {
+        if (!file.exists()) {
 			throw new RuntimeException("The config file " + packagesFile + " cannot be found.");
 		}
 
@@ -261,22 +283,6 @@ public class Config {
 		}
 
 	}
-
-	// public Config(String catalogBeHost, String esHost, String esPort, String
-	// resourceConfigDir, String componentsConfigDir, String catalogFeHost,
-	// String catalogFePort, String catalogBePort) {
-	// super();
-	// this.catalogBeHost = catalogBeHost;
-	// this.esHost = esHost;
-	// this.esPort = esPort;
-	// this.resourceConfigDir = resourceConfigDir;
-	// this.componentsConfigDir = componentsConfigDir;
-	// this.catalogFeHost = catalogFeHost;
-	// this.catalogFePort = catalogFePort;
-	// this.catalogBePort = catalogBePort;
-	// }
-
-	String configurationFile;
 	
 	public boolean getSystemUnderDebug() {
 		return systemUnderDebug;
@@ -317,16 +323,6 @@ public class Config {
 	public void setReportDBport(int reportDBport) {
 		this.reportDBport = reportDBport;
 	}
-//	public boolean isUsingBrowserMobProxy() {
-//		return useBrowserMobProxy;
-//	}
-//
-//	public void setUsingBrowserMobProxy(boolean usingBrowserMobProxy) {
-//		this.useBrowserMobProxy = usingBrowserMobProxy;
-//	} 
-
-	
-	
 	
 	public String getBrowser() {
 		return browser;
@@ -339,8 +335,6 @@ public class Config {
 	public void setUseBrowserMobProxy(boolean useBrowserMobProxy) {
 		this.useBrowserMobProxy = useBrowserMobProxy;
 	}
-
-
 
 	public boolean getCaptureTraffic() {
 		return captureTraffic;
@@ -618,7 +612,6 @@ public class Config {
 		this.cassandraArtifactKeySpace = cassandraArtifactKeySpace;
 	}
 
-	
 	public String getWindowsDownloadDirectory() {
 		return windowsDownloadDirectory;
 	}
