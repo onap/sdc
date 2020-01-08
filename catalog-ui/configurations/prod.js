@@ -80,6 +80,7 @@ const SDC_CONFIG = {
 		"junctionName": "IV_JCT",
 		"prefix": "AMWEBJCT!",
 		"userIdSuffix": "USER_ID",
+		"userRole": "USER_ROLE",
 		"userFirstName": "HTTP_CSP_FIRSTNAME",
 		"userLastName": "HTTP_CSP_LASTNAME",
 		"userEmail": "HTTP_CSP_EMAIL",

@@ -27,6 +27,7 @@ interface ICookieService {
     getLastName():string;
     getEmail():string;
     getUserIdSuffix():string;
+    getUserRole():string;
 }
 
 export class CookieService implements ICookieService {
@@ -70,6 +71,10 @@ export class CookieService implements ICookieService {
         let userIdCookieName:string = this.cookiePrefix + this.cookie.userIdSuffix;
         let userId:string = this.getCookieByName(userIdCookieName);
         return userId;
+    };
+
+    public getUserRole = ():string => {
+        return this.getCookieByName(this.cookie.userRole);
     };
 
     public getFirstName = ():string => {

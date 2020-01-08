@@ -19,6 +19,8 @@
  */
 
 'use strict';
+import {CookieService} from "app/services";
+import {Role} from "app/utils/constants";
 
 export interface IWelcomeViewMode {
     onCloseButtonClick():void;
@@ -31,11 +33,13 @@ export class WelcomeViewModel {
 
     static '$inject' = [
         '$scope',
-        '$state'
+        '$state',
+        'Sdc.Services.CookieService'
     ];
 
     constructor(private $scope:IWelcomeViewMode,
-                private $state:ng.ui.IStateService
+                private $state:ng.ui.IStateService,
+                private cookieService:CookieService
                ) {
         this.init();
         this.initScope();
@@ -49,12 +53,14 @@ export class WelcomeViewModel {
     }
 
     private initScope = ():void => {
-        let timeout = window.setTimeout(():void => {
-            this.$state.go("dashboard", {});
-        }, 4000);
-        this.$scope.onCloseButtonClick = ():void => {
-            window.clearTimeout(timeout);
-            this.$state.go("dashboard", {});
+        if (this.cookieService.getUserRole().toUpperCase() !== Role.ADMIN) {
+          let timeoutWelcomePage = window.setTimeout(():void => {
+              this.$state.go("dashboard", {});
+          }, 4000);
+          this.$scope.onCloseButtonClick = ():void => {
+              window.clearTimeout(timeoutWelcomePage);
+              this.$state.go("dashboard", {});
+          }
         }
     };
 

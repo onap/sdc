@@ -102,6 +102,7 @@ export interface ICookie {
     userFirstName:string;
     userLastName:string;
     userEmail:string;
+    userRole:string;
 }
 export interface IUserTypes {
     admin:any;

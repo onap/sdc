@@ -141,6 +141,7 @@ public class Login extends HttpServlet {
 			Cookie cookieLastName = new Cookie("HTTP_CSP_LASTNAME", user.getLastName());
 			Cookie cookieRemoteAddress = new Cookie("HTTP_IV_REMOTE_ADDRESS", "0.0.0.0");
 			Cookie cookieWsType = new Cookie("HTTP_CSP_WSTYPE", "Intranet");
+			Cookie cookieUserRole = new Cookie("USER_ROLE", user.getRole());
 			response.addCookie(cookieUser);
 			response.addCookie(cookieUserId);
 			response.addCookie(cookieFirstName);
@@ -148,6 +149,7 @@ public class Login extends HttpServlet {
 			response.addCookie(cookieLastName);
 			response.addCookie(cookieRemoteAddress);
 			response.addCookie(cookieWsType);
+			response.addCookie(cookieUserRole);
 			response.sendRedirect("/sdc1");
 		}
 
