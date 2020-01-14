@@ -548,4 +548,15 @@ topology_template:
 
   substitution_mappings:
     node_type: tosca.nodes.nfv.VNF.vPCRF
+  policies:
+    scaling_aspects:
+      type: tosca.policies.nfv.ScalingAspects
+      properties:
+        aspects:
+          processing:
+            name: processing
+            description: aspect for processing
+            max_scale_level: 5
+            step_deltas:
+              - delta_1
 tosca_definitions_version: tosca_simple_yaml_1_0

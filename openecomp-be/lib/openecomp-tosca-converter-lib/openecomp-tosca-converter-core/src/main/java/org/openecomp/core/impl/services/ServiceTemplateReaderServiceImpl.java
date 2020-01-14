@@ -33,68 +33,78 @@ import static org.openecomp.core.converter.datatypes.Constants.*;
 
 public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderService {
 
-  private Map<String, Object> readServiceTemplate = new HashMap<>();
+    private Map<String, Object> readServiceTemplate = new HashMap<>();
 
-  public ServiceTemplateReaderServiceImpl(byte[] serviceTemplateContent){
-    this.readServiceTemplate = readServiceTemplate(serviceTemplateContent);
-  }
+    public ServiceTemplateReaderServiceImpl(byte[] serviceTemplateContent) {
+        this.readServiceTemplate = readServiceTemplate(serviceTemplateContent);
+    }
 
-  @Override
-  public Map<String, Object> readServiceTemplate(byte[] serviceTemplateContent) {
+    @Override
+    public Map<String, Object> readServiceTemplate(byte[] serviceTemplateContent) {
 
-    return
-        new YamlUtil().yamlToObject(new String(serviceTemplateContent), Map.class);
+        return new YamlUtil().yamlToObject(new String(serviceTemplateContent), Map.class);
 
-  }
+    }
 
-  @Override
-  public List<Object> getImports(){
-    return Objects.isNull(this.readServiceTemplate.get("imports")) ?
-            new ArrayList<>() : (List<Object>) this.readServiceTemplate.get("imports");
-  }
+    @Override
+    public List<Object> getImports() {
+        return Objects.isNull(this.readServiceTemplate.get("imports")) ? new ArrayList<>()
+                       : (List<Object>) this.readServiceTemplate.get("imports");
+    }
 
-  @Override
-  public Object getMetadata(){
-    return this.readServiceTemplate.get(metadata);
-  }
+    @Override
+    public Map<String, Object> getPolicies() {
+        Map<String, Object> policiesAsMap = new HashMap<>();
+        if (!Objects.isNull(this.getTopologyTemplate()) && !Objects.isNull(
+                ((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES))) {
+            policiesAsMap = (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(POLICIES);
+        }
+        return policiesAsMap;
+    }
 
-  @Override
-  public Object getToscaVersion(){
-    return this.readServiceTemplate.get(definitionVersion);
-  }
+    @Override
+    public Object getMetadata() {
+        return this.readServiceTemplate.get(metadata);
+    }
 
-  @Override
-  public Map<String, Object> getNodeTypes(){
-    return Objects.isNull(this.readServiceTemplate.get(nodeTypes)) ? new HashMap<>()
-        :(Map<String, Object>) this.readServiceTemplate.get(nodeTypes);
-  }
+    @Override
+    public Object getToscaVersion() {
+        return this.readServiceTemplate.get(definitionVersion);
+    }
 
-  @Override
-  public Object getTopologyTemplate(){
-    return this.readServiceTemplate.get(topologyTemplate);
-  }
+    @Override
+    public Map<String, Object> getNodeTypes() {
+        return Objects.isNull(this.readServiceTemplate.get(nodeTypes)) ? new HashMap<>()
+                       : (Map<String, Object>) this.readServiceTemplate.get(nodeTypes);
+    }
 
-  @Override
-  public Map<String, Object> getNodeTemplates(){
-    return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
-        : (Map<String, Object>) ((Map<String, Object>)this.getTopologyTemplate()).get(nodeTemplates);
-  }
+    @Override
+    public Object getTopologyTemplate() {
+        return this.readServiceTemplate.get(topologyTemplate);
+    }
 
-  @Override
-  public Map<String, Object> getInputs(){
-    return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
-        : (Map<String, Object>) ((Map<String, Object>)this.getTopologyTemplate()).get(inputs);
-  }
+    @Override
+    public Map<String, Object> getNodeTemplates() {
+        return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
+                       : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(nodeTemplates);
+    }
 
-  @Override
-  public Map<String, Object> getOutputs(){
-    return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
-        : (Map<String, Object>) ((Map<String, Object>)this.getTopologyTemplate()).get(outputs);
-  }
+    @Override
+    public Map<String, Object> getInputs() {
+        return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
+                       : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(inputs);
+    }
 
-  @Override
-  public Map<String, Object> getSubstitutionMappings(){
-    return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
-        : (Map<String, Object>) ((Map<String, Object>)this.getTopologyTemplate()).get(substitutionMappings);
-  }
+    @Override
+    public Map<String, Object> getOutputs() {
+        return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
+                       : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(outputs);
+    }
+
+    @Override
+    public Map<String, Object> getSubstitutionMappings() {
+        return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
+                       : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate())
+                                                       .get(substitutionMappings);
+    }
 }
