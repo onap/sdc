@@ -26,23 +26,25 @@ import java.util.Map;
 
 public interface ServiceTemplateReaderService {
 
-  Map<String, Object> readServiceTemplate(byte[] serivceTemplateContent);
+    Map<String, Object> readServiceTemplate(byte[] serivceTemplateContent);
 
-  Object getMetadata();
+    Object getMetadata();
 
-  Object getToscaVersion();
+    Object getToscaVersion();
 
-  Map<String, Object> getNodeTypes();
+    Map<String, Object> getNodeTypes();
 
-  Object getTopologyTemplate();
+    Object getTopologyTemplate();
 
-  Map<String, Object> getNodeTemplates();
+    Map<String, Object> getNodeTemplates();
 
-  Map<String, Object> getInputs();
+    Map<String, Object> getInputs();
 
-  Map<String, Object> getOutputs();
+    Map<String, Object> getOutputs();
 
-  Map<String, Object> getSubstitutionMappings();
+    Map<String, Object> getSubstitutionMappings();
 
-  List<Object> getImports();
+    List<Object> getImports();
+
+    Map<String, Object> getPolicies();
 }

@@ -40,6 +40,7 @@ import java.nio.file.NotDirectoryException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.openecomp.core.converter.datatypes.Constants.globalStName;
 import static org.openecomp.core.converter.datatypes.Constants.mainStName;
 
@@ -132,6 +133,23 @@ public class ToscaConverterImplTest {
     Object[] occurrences = buildOccurrences((List<String>) null);
     Assert.assertEquals(1, occurrences[0]);
     Assert.assertEquals(1, occurrences[1]);
+  }
+
+  @Test
+  public void testPoliciesBeenConverted() throws IOException {
+    String inputFilesPath = BASE_DIR + "/convertPolicies/in";
+    FileContentHandler fileContentHandler =
+            createFileContentHandlerFromInput(inputFilesPath);
+    ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
+    Optional<ServiceTemplate> st = toscaServiceModel.getServiceTemplate("MainServiceTemplate.yaml");
+
+    assertTrue(st.isPresent());
+
+    Map<String, PolicyDefinition> pds = st.get().getTopology_template().getPolicies();
+
+    assertEquals(2, pds.size());
+    assertTrue(pds.containsKey("scaling_aspects"));
+    assertTrue(pds.containsKey("instantiation_levels"));
   }
 
   private Object[] buildOccurrences(String... bounds) {
