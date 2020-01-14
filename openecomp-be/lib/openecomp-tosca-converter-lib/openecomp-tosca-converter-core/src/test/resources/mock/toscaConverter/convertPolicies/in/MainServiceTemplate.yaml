@@ -1,4 +1,4 @@
-imports: 
+imports:
 - openovnf__tosca.nodes.nfv.VNF.vPCRF.yaml
 - openonfv__tosca.capabilities.Scalable.yaml
 - openonfv__tosca.capabilities.nfv.Metric.yaml
@@ -559,4 +559,14 @@ topology_template:
             max_scale_level: 5
             step_deltas:
               - delta_1
+    instantiation_levels:
+      type: tosca.policies.nfv.InstantiationLevels
+      description: test policy
+      properties:
+        levels:
+          instantiation_level_1:
+            scale_info:
+              processing:
+                scale_level: 0
+        default_level: instantiation_level_1
 tosca_definitions_version: tosca_simple_yaml_1_0
