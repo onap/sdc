@@ -544,5 +544,16 @@ topology_template:
       - virtual_link:
           capability: virtual_linkable
           node: Fabric
+  policies:
+    scaling_aspects:
+      type: tosca.policies.nfv.ScalingAspects
+      properties:
+        aspects:
+          processing:
+            name: processing
+            description: aspect for processing
+            max_scale_level: 5
+            step_deltas:
+              - delta_1
   substitution_mappings:
     node_type: tosca.nodes.nfv.VNF.vPCRF

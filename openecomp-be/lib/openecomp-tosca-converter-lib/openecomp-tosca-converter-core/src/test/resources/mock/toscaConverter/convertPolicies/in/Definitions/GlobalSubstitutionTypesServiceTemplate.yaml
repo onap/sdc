@@ -1,0 +1,60 @@
+node_types:
+  tosca.nodes.nfv.VDU.Compute:
+    attributes:
+      private_address:
+        type: string
+      public_address:
+        type: string
+      networks:
+        type: string
+      ports:
+        type: string
+    capabilities:
+      scalable:
+        type: tosca.capabilities.Scalable
+      virtual_compute:
+        type: tosca.capabilities.nfv.VirtualCompute
+      endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+      os:
+        type: tosca.capabilities.OperatingSystem
+      virtual_binding:
+        type: tosca.capabilities.nfv.VirtualBindable
+      host:
+        type: tosca.capabilities.Container
+      binding:
+        type: tosca.capabilities.network.Bindable
+      monitoring_parameter:
+        type: tosca.capabilities.nfv.Metric
+    derived_from: tosca.nodes.Root
+    properties:
+      configurable_properties:
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfcConfigurableProperties
+        type: map
+      name:
+        type: string
+      nfvi_constraints:
+        entry_schema:
+          type: string
+        required: false
+        type: list
+      descrption:
+        type: string
+      boot_order:
+        entry_schema:
+          type: string
+        required: false
+        type: list
+    requirements:
+    - local_storage:
+        capability: tosca.capabilities.Attachment
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - virtual_storage:
+        capability: tosca.capabilities.nfv.VirtualStorage
+        occurrences:
+        - 0
+        - UNBOUNDED
+tosca_definitions_version: tosca_simple_yaml_1_0
