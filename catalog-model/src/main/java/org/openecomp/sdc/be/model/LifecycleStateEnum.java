@@ -22,10 +22,6 @@ package org.openecomp.sdc.be.model;
 
 public enum LifecycleStateEnum {
 
-    READY_FOR_CERTIFICATION,
-
-    CERTIFICATION_IN_PROGRESS,
-
     CERTIFIED,
 
     NOT_CERTIFIED_CHECKIN,

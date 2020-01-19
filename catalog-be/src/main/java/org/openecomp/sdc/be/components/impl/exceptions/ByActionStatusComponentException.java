@@ -30,6 +30,7 @@ public class ByActionStatusComponentException extends ComponentException {
     private final String[] params;
 
     public ByActionStatusComponentException(ActionStatus actionStatus, String... params) {
+        super(actionStatus, params);
         this.actionStatus = actionStatus;
         this.params = params.clone();
     }

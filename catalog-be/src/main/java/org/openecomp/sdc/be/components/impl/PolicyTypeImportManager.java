@@ -30,10 +30,10 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
@@ -47,14 +47,14 @@ public class PolicyTypeImportManager {
 
     private final IPolicyTypeOperation policyTypeOperation;
     private final ComponentsUtils componentsUtils;
-    private final IGroupOperation groupOperation;
+    private final GroupOperation groupOperation;
     private final ToscaOperationFacade toscaOperationFacade;
     private final CommonImportManager commonImportManager;
-    private final IGroupTypeOperation groupTypeOperation;
+    private final GroupTypeOperation groupTypeOperation;
 
     public PolicyTypeImportManager(IPolicyTypeOperation policyTypeOperation, ComponentsUtils componentsUtils,
-        IGroupOperation groupOperation, ToscaOperationFacade toscaOperationFacade,
-        CommonImportManager commonImportManager, IGroupTypeOperation groupTypeOperation) {
+                                   GroupOperation groupOperation, ToscaOperationFacade toscaOperationFacade,
+                                   CommonImportManager commonImportManager, GroupTypeOperation groupTypeOperation) {
         this.policyTypeOperation = policyTypeOperation;
         this.componentsUtils = componentsUtils;
         this.groupOperation = groupOperation;

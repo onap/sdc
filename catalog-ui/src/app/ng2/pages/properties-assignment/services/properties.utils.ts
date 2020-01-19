@@ -48,7 +48,7 @@ export class PropertiesUtils {
 
                     let newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
 
-                    this.initValueObjectRef(newFEProp); //initialize valueObj.
+                    this.initValueObjectRef(newFEProp); //initialize valueObj AND creates flattened children
                     propertyFeArray.push(newFEProp);
                     newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children
                     this.dataTypeService.checkForCustomBehavior(newFEProp);
@@ -79,8 +79,8 @@ export class PropertiesUtils {
         return instanceFePropertiesMap;
     }
 
-    public convertAddPropertyBAToPropertyFE = (property: PropertyBEModel):PropertyFEModel => {
-        let newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
+    public convertAddPropertyBAToPropertyFE = (property: PropertyBEModel): PropertyFEModel => {
+        const newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
         this.initValueObjectRef(newFEProp);
         newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children
         this.dataTypeService.checkForCustomBehavior(newFEProp);
@@ -108,7 +108,7 @@ export class PropertiesUtils {
         let tempProps: Array<DerivedFEProperty> = [];
         let dataTypeObj: DataTypeModel = this.dataTypeService.getDataTypeByTypeName(type);
         this.dataTypeService.getDerivedDataTypeProperties(dataTypeObj, tempProps, parentName);
-        return tempProps;
+        return _.sortBy(tempProps, ['propertiesName']);
     }
 
     /* Sets the valueObj of parent property and its children.

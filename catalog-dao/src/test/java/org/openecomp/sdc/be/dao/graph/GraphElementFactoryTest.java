@@ -23,15 +23,23 @@ package org.openecomp.sdc.be.dao.graph;
 import mockit.Deencapsulation;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GraphElementFactoryTest {
+
+	private static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+			"src/test/resources/config/catalog-dao");
+	private static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
 	@Test
 	public void testCreateElement() throws Exception {

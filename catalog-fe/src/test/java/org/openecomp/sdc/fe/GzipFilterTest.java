@@ -23,6 +23,7 @@ package org.openecomp.sdc.fe;
 import javax.servlet.FilterConfig;
 
 import org.junit.Test;
+import org.openecomp.sdc.fe.filters.GzipFilter;
 
 
 public class GzipFilterTest {

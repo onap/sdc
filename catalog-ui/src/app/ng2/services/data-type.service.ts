@@ -20,9 +20,9 @@
 
 import * as _ from "lodash";
 import { Injectable } from '@angular/core';
-import { DataTypeModel, DataTypesMap, PropertyBEModel, PropertyFEModel, DerivedFEProperty, DerivedFEPropertyMap } from "app/models";
+import { DataTypeModel, DataTypesMap, PropertyFEModel, DerivedFEProperty} from "app/models";
 import { DataTypesService } from "app/services/data-types-service";
-import { PROPERTY_DATA, PROPERTY_TYPES } from "app/utils";
+import { PROPERTY_DATA } from "app/utils";
 
 /** This is a new service for NG2, to eventually replace app/services/data-types-service.ts
  *
@@ -32,19 +32,29 @@ import { PROPERTY_DATA, PROPERTY_TYPES } from "app/utils";
 
 @Injectable()
 export class DataTypeService {
-    private dataTypes: DataTypesMap;
+    public dataTypes: DataTypesMap;
 
     constructor(private dataTypeService: DataTypesService) {
         this.dataTypes = dataTypeService.getAllDataTypes(); //This should eventually be replaced by an NG2 call to the backend instead of utilizing Angular1 downgraded component.
     }
 
     public getDataTypeByTypeName(typeName: string): DataTypeModel {
+        if(!this.dataTypes){
+            this.dataTypes = this.dataTypeService.getAllDataTypes();
+        }
         if (!this.dataTypes[typeName]) console.log("MISSING Datatype: " + typeName);
         return this.dataTypes[typeName];
     }
 
     public getAllDataTypes(): DataTypesMap {
         return this.dataTypes;
+    }
+
+    public getConstraintsByParentTypeAndUniqueID(rootPropertyType, propertyName){
+        // const property = this.dataTypes[rootPropertyType].properties.filter(property =>
+        //     property.name == propertyName);
+        // return property[0] && property[0].constraints ? property[0].constraints[0].validValues : null;
+        return null;
     }
 
 

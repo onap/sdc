@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.components.merge.instance;
 import org.openecomp.sdc.be.components.merge.input.DeclaredInputsResolver;
 import org.openecomp.sdc.be.components.merge.input.InputsValuesMergingBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;

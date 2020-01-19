@@ -30,9 +30,7 @@ import org.springframework.context.annotation.PropertySource;
 @ComponentScan({
         "org.openecomp.sdc.be.dao.cassandra",
         "org.openecomp.sdc.be.dao.neo4j",
-        "org.openecomp.sdc.be.dao.es",
-        "org.openecomp.sdc.be.dao.impl",
-        "org.openecomp.sdc.be.resources.impl"
+        "org.openecomp.sdc.be.dao.impl"
         })
 @PropertySource("classpath:dao.properties")
 public class DAOSpringConfig {

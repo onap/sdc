@@ -3,7 +3,6 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * Modifications Copyright (C) 2019 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +49,10 @@ import {SelectTypeListDirective} from "../directives/select-property-types/selec
 import {ValidationOnLoadDirective} from "../directives/utils/validation-on-load/validation-on-load";
 import {InfoTooltipDirective} from "../directives/info-tooltip/info-tooltip";
 import {SdcTabsDirective} from "../directives/sdc-tabs/sdc-tabs-directive";
-import {SdcSingleTabDirective, InnerSdcSingleTabDirective} from "../directives/sdc-tabs/sdc-single-tab/sdc-single-tab-directive";
+import {
+    SdcSingleTabDirective,
+    InnerSdcSingleTabDirective
+} from "../directives/sdc-tabs/sdc-single-tab/sdc-single-tab-directive";
 import {ExpandCollapseListHeaderDirective} from "../directives/utils/expand-collapse-list-header/expand-collapse-list-header";
 import {JsonExportExcelDirective} from "../directives/export-json-to-excel/export-json-to-excel";
 import {TopProgressDirective} from "../directives/layout/top-progress/top-progress";
@@ -61,21 +63,8 @@ import {InputRowDirective} from "../directives/inputs-and-properties/inputs/inpu
 import {PropertyRowDirective} from "../directives/inputs-and-properties/properties/property-row-directive";
 import {NodesFactory} from "../models/graph/nodes/nodes-factory";
 import {LinksFactory} from "../models/graph/graph-links/links-factory";
-import {ImageCreatorService} from "../directives/graphs-v2/image-creator/image-creator.service";
-import {Palette} from "../directives/graphs-v2/palette/palette.directive";
-import {CompositionGraph} from "../directives/graphs-v2/composition-graph/composition-graph.directive";
-import {DeploymentGraph} from "../directives/graphs-v2/deployment-graph/deployment-graph.directive";
-import {CommonGraphUtils} from "../directives/graphs-v2/common/common-graph-utils";
-import {CompositionGraphNodesUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-nodes-utils";
-import {CompositionGraphGeneralUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-general-utils";
-import {CompositionGraphLinkUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-links-utils";
-import {DeploymentGraphGeneralUtils} from "../directives/graphs-v2/deployment-graph/deployment-utils/deployment-graph-general-utils";
-import {CompositionGraphPaletteUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-palette-utils";
-import {CompositionGraphZoneUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-zone-utils";
-import {MatchCapabilitiesRequirementsUtils} from "../directives/graphs-v2/composition-graph/utils/match-capability-requierment-utils";
 import {CapabilitiesListDirective} from "../directives/capabilities-and-requirements/capability/capabilities-list-directive";
 import {RequirementsListDirective} from "../directives/capabilities-and-requirements/requirement/requirements-list-directive";
-import {ServicePathGraphUtils} from "../directives/graphs-v2/composition-graph/utils/composition-graph-service-path-utils";
 import {PreventDoubleClickDirective} from "../directives/prevent-double-click/prevent-double-click";
 
 let moduleName:string = 'Sdc.Directives';
@@ -139,31 +128,6 @@ directiveModule.directive('propertyRow', PropertyRowDirective.factory);
 // //Util service for Graph
 directiveModule.service('NodesFactory', NodesFactory);
 directiveModule.service('LinksFactory', LinksFactory);
-directiveModule.service('ImageCreatorService', ImageCreatorService);
-//
-// //composition
-directiveModule.directive('palette', Palette.factory);
-directiveModule.directive('compositionGraph', CompositionGraph.factory);
-
-//
-// //deployment
-directiveModule.directive('deploymentGraph', DeploymentGraph.factory);
-//
-// //Graph Utils - Common
-directiveModule.service('CommonGraphUtils', CommonGraphUtils);
-//
-// //Composition Graph Utils
-directiveModule.service('CompositionGraphNodesUtils', CompositionGraphNodesUtils);
-directiveModule.service('CompositionGraphGeneralUtils', CompositionGraphGeneralUtils);
-directiveModule.service('CompositionGraphLinkUtils', CompositionGraphLinkUtils);
-directiveModule.service('CompositionGraphPaletteUtils', CompositionGraphPaletteUtils);
-directiveModule.service('CompositionGraphZoneUtils', CompositionGraphZoneUtils);
-directiveModule.service('MatchCapabilitiesRequirementsUtils', MatchCapabilitiesRequirementsUtils);
-directiveModule.service('ServicePathGraphUtils', ServicePathGraphUtils);
-
-//
-// //Deployment Graph Utils
-directiveModule.service('DeploymentGraphGeneralUtils', DeploymentGraphGeneralUtils);
 
 
 //Compoisiton right tab directives
@@ -172,24 +136,34 @@ directiveModule.directive('requirementsList', RequirementsListDirective.factory)
 
 
 // *** NG2 Components (downgraded) *** //
-import { downgradeComponent } from "@angular/upgrade/static";
-import { MenuListNg2Component } from "../ng2/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.component";
-import { TopNavComponent } from "../ng2/components/layout/top-nav/top-nav.component";
-import { ZoneContainerComponent } from "../ng2/components/ui/canvas-zone/zone-container.component";
-import { ZoneInstanceComponent } from "../ng2/components/ui/canvas-zone/zone-instance/zone-instance.component";
-import { CompositionPanelComponent } from 'app/ng2/pages/composition/panel/panel.component';
-import { PropertiesAssignmentComponent } from "../ng2/pages/properties-assignment/properties-assignment.page.component";
-import { SearchWithAutoCompleteComponent } from "../ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
-import { PalettePopupPanelComponent } from "../ng2/components/ui/palette-popup-panel/palette-popup-panel.component";
-import { ServicePathComponent } from '../ng2/components/logic/service-path/service-path.component';
-import { ServicePathSelectorComponent } from '../ng2/components/logic/service-path-selector/service-path-selector.component';
-import { ServiceConsumptionComponent } from '../ng2/components/logic/service-consumption/service-consumption.component';
-import { ServiceDependenciesComponent } from '../ng2/components/logic/service-dependencies/service-dependencies.component';
-import { MultilineEllipsisComponent } from "../ng2/shared/multiline-ellipsis/multiline-ellipsis.component";
+import {downgradeComponent} from "@angular/upgrade/static";
+import {MenuListNg2Component} from "../ng2/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.component";
+import {TopNavComponent} from "../ng2/components/layout/top-nav/top-nav.component";
+import {ZoneContainerComponent} from "../ng2/pages/composition/graph/canvas-zone/zone-container.component";
+import {ZoneInstanceComponent} from "../ng2/pages/composition/graph/canvas-zone/zone-instance/zone-instance.component";
+import {CompositionPanelComponent} from 'app/ng2/pages/composition/panel/composition-panel.component';
+import {PropertiesAssignmentComponent} from "../ng2/pages/properties-assignment/properties-assignment.page.component";
+import {SearchWithAutoCompleteComponent} from "../ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
+import {PalettePopupPanelComponent} from "../ng2/pages/composition/palette/palette-popup-panel/palette-popup-panel.component";
+import {ServicePathSelectorComponent} from '../ng2/pages/composition/graph/service-path-selector/service-path-selector.component';
+import {MultilineEllipsisComponent} from "../ng2/shared/multiline-ellipsis/multiline-ellipsis.component";
 import { InterfaceOperationComponent } from '../ng2/pages/interface-operation/interface-operation.page.component';
 import { PluginFrameComponent } from "../ng2/components/ui/plugin/plugin-frame.component";
-import { TileComponent } from "../ng2/components/ui/tile/tile.component";
-
+import {TileComponent} from "../ng2/components/ui/tile/tile.component";
+import {CompositionPageComponent} from "../ng2/pages/composition/composition-page.component";
+import {CatalogComponent} from "../ng2/pages/catalog/catalog.component";
+import {HomeComponent} from "../ng2/pages/home/home.component";
+import {PluginContextViewPageComponent} from "../ng2/pages/plugins/plugin-context-view/plugin-context-view.page.component";
+import {PluginTabViewPageComponent} from "../ng2/pages/plugins/plugin-tab-view/plugin-tab-view.page.component";
+import {CompositionGraphComponent} from "../ng2/pages/composition/graph/composition-graph.component";
+import {DeploymentPageComponent} from "../ng2/pages/workspace/deployment/deployment-page.component";
+import {ActivityLogComponent} from "../ng2/pages/workspace/activity-log/activity-log.component";
+import {ToscaArtifactPageComponent} from "../ng2/pages/workspace/tosca-artifacts/tosca-artifact-page.component";
+import {InformationArtifactPageComponent} from "../ng2/pages/workspace/information-artifact/information-artifact-page.component";
+import {AttributesComponent} from "../ng2/pages/workspace/attributes/attributes.component";
+import {DeploymentArtifactsPageComponent} from "../ng2/pages/workspace/deployment-artifacts/deployment-artifacts-page.component";
+import { ReqAndCapabilitiesComponent } from "../ng2/pages/workspace/req-and-capabilities/req-and-capabilities.component";
+import { DistributionComponent } from '../ng2/pages/workspace/disribution/distribution.component';
 
 directiveModule.directive('menuListNg2', downgradeComponent({
     component: MenuListNg2Component,
@@ -204,14 +178,14 @@ directiveModule.directive('topNav', downgradeComponent({
 
 directiveModule.directive('ng2ZoneContainer', downgradeComponent({
     component: ZoneContainerComponent,
-        inputs: ['title', 'count', 'type', 'visible', 'minimized'],
+    inputs: ['title', 'count', 'type', 'visible', 'minimized'],
     outputs: ['minimize', 'backgroundClick']
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('ng2ZoneInstance', downgradeComponent({
-        component: ZoneInstanceComponent,
-        inputs: ['zoneInstance', 'isActive', 'activeInstanceMode', 'defaultIconText', 'isViewOnly', 'hidden', 'forceSave'],
-        outputs: ['modeChange', 'tagHandleClick', 'assignmentSaveStart', 'assignmentSaveComplete']
+    component: ZoneInstanceComponent,
+    inputs: ['zoneInstance', 'isActive', 'activeInstanceMode', 'defaultIconText', 'isViewOnly', 'hidden', 'forceSave'],
+    outputs: ['modeChange', 'tagHandleClick', 'assignmentSaveStart', 'assignmentSaveComplete']
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('ng2CompositionPanel', downgradeComponent({
@@ -221,6 +195,26 @@ directiveModule.directive('ng2CompositionPanel', downgradeComponent({
 
 directiveModule.directive('propertiesAssignment', downgradeComponent({
     component: PropertiesAssignmentComponent
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('compositionPage', downgradeComponent({
+    component: CompositionPageComponent
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('activityLog', downgradeComponent({
+    component: ActivityLogComponent
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('distribution', downgradeComponent({
+    component: DistributionComponent
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('attributes', downgradeComponent({
+    component: AttributesComponent
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('reqAndCapabilities', downgradeComponent({
+    component: ReqAndCapabilitiesComponent
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('ng2SearchWithAutocomplete', downgradeComponent({
@@ -235,31 +229,13 @@ directiveModule.directive('ng2PalettePopupPanel', downgradeComponent({
     outputs: []
 }) as angular.IDirectiveFactory);
 
-directiveModule.directive('ng2ServicePath', downgradeComponent({
-    component: ServicePathComponent,
-    inputs: ['onCreate', 'service', 'isViewOnly'],
-    outputs: []
-}) as angular.IDirectiveFactory);
-
 directiveModule.directive('ng2ServicePathSelector', downgradeComponent({
     component: ServicePathSelectorComponent,
     inputs: ['drawPath', 'deletePaths', 'service', 'selectedPathId'],
     outputs: []
 }) as angular.IDirectiveFactory);
 
-directiveModule.directive('ng2ServiceConsumption', downgradeComponent({
-    component: ServiceConsumptionComponent,
-    inputs: ['parentService', 'selectedService', 'selectedServiceInstanceId', 'instancesMappedList', 'parentServiceInputs', 'instancesCapabilitiesMap', 'readonly'],
-    outputs: []
-}) as angular.IDirectiveFactory);
-
-directiveModule.directive('ng2ServiceDependencies', downgradeComponent({
-    component: ServiceDependenciesComponent,
-    inputs: ['compositeService', 'currentServiceInstance', 'selectedInstanceProperties', 'selectedInstanceSiblings', 'selectedInstanceConstraints', 'readonly'],
-    outputs: ['updateRulesListEvent', 'loadRulesListEvent','dependencyStatus']
-}) as angular.IDirectiveFactory);
-
-directiveModule.directive('interfaceOperation', downgradeComponent({
+directiveModule.directive('ng2InterfaceOperation', downgradeComponent({
     component: InterfaceOperationComponent,
     inputs: ['component', 'readonly'],
     outputs: []
@@ -277,8 +253,60 @@ directiveModule.directive('ng2UiTile', downgradeComponent({
     outputs: ['onTileClick']
 }) as angular.IDirectiveFactory);
 
-directiveModule.directive('pluginFrame', downgradeComponent( {
+directiveModule.directive('pluginFrame', downgradeComponent({
     component: PluginFrameComponent,
     inputs: ['plugin', 'queryParams'],
     outputs: ['onLoadingDone']
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('catalogPage', downgradeComponent({
+    component: CatalogComponent,
+    inputs: [],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('homePage', downgradeComponent({
+    component: HomeComponent,
+    inputs: [],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('pluginContextView', downgradeComponent({
+    component: PluginContextViewPageComponent,
+    inputs: [],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('pluginTabView', downgradeComponent({
+    component: PluginTabViewPageComponent,
+    inputs: [],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('compositionGraph', downgradeComponent({
+    component: CompositionGraphComponent,
+    inputs: ['topologyTemplate', 'isViewOnly'],
+    outputs: []
+}) as angular.IDirectiveFactory);
+directiveModule.directive('toscaArtifactPage', downgradeComponent({
+    component: ToscaArtifactPageComponent,
+    inputs: [],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('deploymentPage', downgradeComponent({
+    component: DeploymentPageComponent,
+    inputs: [],
+    outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('informationArtifactPage', downgradeComponent({
+    component: InformationArtifactPageComponent,
+    inputs: [],
+    outputs: []
+}) as angular.IDirectiveFactory);
+directiveModule.directive('deploymentArtifactPage', downgradeComponent({
+    component: DeploymentArtifactsPageComponent,
+    inputs: [],
+    outputs: []
 }) as angular.IDirectiveFactory);

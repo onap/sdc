@@ -22,7 +22,6 @@
  * Created by ob0695 on 2/23/2017.
  */
 export * from './utils/dictionary/dictionary';
-export * from './utils/artifacts-utils';
 export * from'./utils/file-utils'
 export * from './utils/validation-utils'
 export * from './utils/component-factory';

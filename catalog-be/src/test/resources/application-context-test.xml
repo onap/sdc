@@ -8,11 +8,19 @@
 
   <context:annotation-config />
   <aop:aspectj-autoproxy proxy-target-class="true" />
-
-    <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapConsumer" />
+    <bean id="fileChangeListener" class=" org.openecomp.sdc.common.impl.ConfigFileChangeListener" />
+    <bean id="fsConfig" class="org.openecomp.sdc.common.impl.FSConfigurationSource">
+      <constructor-arg ref="fileChangeListener" />
+      <constructor-arg value="src/test/resources/config/catalog-be"/>
+    </bean>
+    <bean class="org.openecomp.sdc.be.config.ConfigurationManager">
+      <constructor-arg ref="fsConfig"/>
+    </bean>
+    <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapConsumer"/>
     <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory" />
     <bean class="org.openecomp.sdc.be.components.distribution.engine.ExecutorFactory" />
     <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapHealth" />
-    <bean class="org.openecomp.sdc.be.impl.ComponentsUtils" />
+    <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth" />
+    <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducer" />
 
 </beans>

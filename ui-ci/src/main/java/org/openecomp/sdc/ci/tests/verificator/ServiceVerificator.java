@@ -68,44 +68,45 @@ public class ServiceVerificator {
     private ServiceVerificator() {
     }
 
-    public static void verifyNumOfComponentInstances(ComponentReqDetails component, String version, int numOfVFC,
-                                                     User user) {
-        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifing the number of components on the canvas; should be %s", numOfVFC));
-        String responseAfterDrag = null;
-        component.setVersion(version);
-        if (component instanceof ServiceReqDetails) {
-            responseAfterDrag = RestCDUtils.getService((ServiceReqDetails) component, user).getResponse();
-        } else if (component instanceof ResourceReqDetails) {
-            responseAfterDrag = RestCDUtils.getResource((ResourceReqDetails) component, user).getResponse();
-        }
-        int size = 0;
-        JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
-        if (jsonResource.get("componentInstances") != null) {
-            size = ((JSONArray) jsonResource.get("componentInstances")).size();
-            assertTrue(size == numOfVFC, "Expected number of componenet instances is " + numOfVFC + ", but actual is " + size);
-            ExtentTestActions.log(Status.INFO, "The number of components on the canvas was verified.");
-        } else {
-            assertTrue(false, "Expected number of componenet instances is " + numOfVFC + ", but actual is " + size);
-        }
-    }
+	public static void verifyNumOfComponentInstances(ComponentReqDetails component, String version, int numOfVFC,
+			User user) {
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verifing the number of components on the canvas; should be %s", numOfVFC));
+		String responseAfterDrag = null;
+		component.setVersion(version);
+		if (component instanceof ServiceReqDetails) {
+			responseAfterDrag = RestCDUtils.getService((ServiceReqDetails) component, user).getResponse();
+		} else if (component instanceof ResourceReqDetails) {
+			responseAfterDrag = RestCDUtils.getResource((ResourceReqDetails) component, user).getResponse();
+		}
+		int size = 0;
+		JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
+		if(jsonResource.get("componentInstances")!= null){
+		 	size = ((JSONArray) jsonResource.get("componentInstances")).size();
+			assertTrue(size == numOfVFC, "Expected number of componenet instances is " + numOfVFC + ", but actual is " + size);
+			ExtentTestActions.log(Status.INFO, "The number of components on the canvas was verified.");
+		}else{
+			assertTrue(false, "Expected number of componenet instances is " + numOfVFC + ", but actual is " + size);
+		}
+	}
 
-    public static void verifyServiceUpdatedInUI(ServiceReqDetails service) {
-        assertTrue(service.getName().equals(ResourceGeneralPage.getNameText()));
-        assertTrue(service.getDescription().equals(ResourceGeneralPage.getDescriptionText()));
-        assertTrue(service.getCategory().equals(ServiceGeneralPage.getCategoryText()));
-        assertTrue(service.getProjectCode().equals(ServiceGeneralPage.getProjectCodeText()));
-        for (String tag : ServiceGeneralPage.getTags()) {
-            assertTrue(service.getTags().contains(tag));
-        }
-        assertTrue(service.getContactId().equals(ResourceGeneralPage.getContactIdText()));
-    }
+	public static void verifyServiceUpdatedInUI(ServiceReqDetails service) {
+		assertTrue(service.getName().equals(ResourceGeneralPage.getNameText()));
+		assertTrue(service.getDescription().equals(ResourceGeneralPage.getDescriptionText()));
+		assertTrue(service.getCategory().equals(ServiceGeneralPage.getCategoryText()));
+		assertTrue(service.getServiceFunction().equals(ServiceGeneralPage.getServiceFunctionText()));
+		assertTrue(service.getNamingPolicy().equals(ServiceGeneralPage.getNamingPolicyText()));
+		for(String tag: ServiceGeneralPage.getTags()){
+			assertTrue(service.getTags().contains(tag));
+		}
+		assertTrue(service.getContactId().equals(ResourceGeneralPage.getContactIdText()));
+	}
 
-    public static void verifyServiceDeletedInUI(ServiceReqDetails service) throws InterruptedException {
-        Thread.sleep(SLEEP_TIME);
-        List<WebElement> cardElements = GeneralUIUtils.getElementsByCSS(DataTestIdEnum.DashboardCardEnum.DASHBOARD_CARD.getValue());
-        if (!(cardElements.isEmpty())) {
-            for (WebElement cardElement : cardElements) {
-                WebElement componentName = GeneralUIUtils.getElementfromElementByCSS(cardElement,
+	public static void verifyServiceDeletedInUI(ServiceReqDetails service) throws InterruptedException {
+		Thread.sleep(1000);
+		List<WebElement> cardElements = GeneralUIUtils.getElementsByCSS(DataTestIdEnum.DashboardCardEnum.DASHBOARD_CARD.getValue());
+		if (!(cardElements.isEmpty())){
+			for (WebElement cardElement: cardElements){
+				WebElement componentName = GeneralUIUtils.getElementfromElementByCSS(cardElement,
                         DataTestIdEnum.DashboardCardEnum.INFO_NAME.getValue());
                 WebElement componentType = GeneralUIUtils.getElementfromElementByCSS(cardElement,
                         DataTestIdEnum.DashboardCardEnum.ASSET_TYPE_CSS.getValue());

@@ -32,6 +32,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.slf4j.MDC;
 
 import java.util.HashMap;
@@ -337,7 +338,7 @@ public abstract class ToscaElement {
         if ((prevUUID == null && NodeTypeOperation.uuidNormativeNewVersion.matcher(version).matches()) || NodeTypeOperation.uuidNewVersion.matcher(version).matches()) {
             UUID uuid = UUID.randomUUID();
             setUUID(uuid.toString());
-            MDC.put("serviceInstanceID", uuid.toString());
+            MDC.put(ILogConfiguration.MDC_SERVICE_INSTANCE_ID, uuid.toString());
         }
     }
 

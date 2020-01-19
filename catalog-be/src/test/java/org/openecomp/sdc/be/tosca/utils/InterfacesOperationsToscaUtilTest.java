@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
+import static org.mockito.Mockito.mock;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceDefinitionElement;
 import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.addInterfaceTypeElement;
@@ -33,10 +34,12 @@ import java.util.Objects;
 
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.DummyConfigurationManager;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
@@ -55,7 +58,7 @@ import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
-
+import static org.mockito.Mockito.when;
 
 public class InterfacesOperationsToscaUtilTest {
 
@@ -65,14 +68,22 @@ public class InterfacesOperationsToscaUtilTest {
     private static final String NODE_TYPE_NAME = "test";
     private String[] inputTypes = {"string", "integer", "float", "boolean"};
     private static ObjectMapper mapper;
+    private Configuration.EnvironmentContext environmentContext = mock(Configuration.EnvironmentContext.class);
+    DummyConfigurationManager dummyConfigurationManager = new DummyConfigurationManager();
     private static final Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
 
 
     @BeforeClass
     public static void setUp() {
-        new DummyConfigurationManager();
         mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    }
+    @Before
+    public void beforeTest() {
+        when(environmentContext.getDefaultValue()).thenReturn("General_Revenue-Bearing");
+        when(dummyConfigurationManager.getConfigurationMock().getEnvironmentContext())
+                .thenReturn(environmentContext);
     }
 
 

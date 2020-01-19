@@ -108,8 +108,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     private boolean isAfterSubmitForTesting(GraphVertex vertex){
-        List allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.READY_FOR_CERTIFICATION.name(),
-                LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.name(), LifecycleStateEnum.CERTIFIED.name()));
+        List allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.CERTIFIED.name()));
         return allowedStates.contains(vertex.getMetadataProperty(GraphPropertyEnum.STATE));
     }
 }

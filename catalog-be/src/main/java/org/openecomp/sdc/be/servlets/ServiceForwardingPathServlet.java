@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.servlets;
 
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import javax.inject.Inject;
@@ -38,10 +39,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import io.swagger.annotations.Api;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -70,15 +75,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
+
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/services/{serviceId}/paths")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @OpenAPIDefinition(info = @Info(title = "Service Forwarding Path", description = "Service Forwarding Path Servlet"))
-@Singleton
+@Controller
 public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ServiceForwardingPathServlet.class);
+    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+    private static final String MODIFIER_ID_IS = "modifier id is {}";
     private final ServiceBusinessLogic serviceBusinessLogic;
 
     @Inject
@@ -102,11 +111,12 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
                     @ApiResponse(responseCode = "403", description = "Restricted operation"),
                     @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
                     @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createForwardingPath(
             @Parameter(description = "Forwarding Path to create", required = true) String data,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         return createOrUpdate(data, serviceId, request, userId, false);
     }
 
@@ -123,21 +133,22 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
                     @ApiResponse(responseCode = "403", description = "Restricted operation"),
                     @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
                     @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateForwardingPath(
             @Parameter(description = "Update Path to create", required = true) String data,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         return createOrUpdate(data, serviceId, request, userId, true);
     }
 
-    private Response createOrUpdate( String data, String serviceId, HttpServletRequest request, String userId, boolean isUpdate) {
+    private Response createOrUpdate( String data, String serviceId, HttpServletRequest request, String userId, boolean isUpdate) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
 
@@ -151,29 +162,21 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
                 return response;
             }
             Service updatedService = convertResponse.left().value();
-            Either<Service, ResponseFormat> actionResponse ;
+            Service actionResponse ;
             if (isUpdate) {
                 actionResponse = serviceBusinessLogic.updateForwardingPath(serviceIdLower, updatedService, modifier, true);
             } else {
                 actionResponse = serviceBusinessLogic.createForwardingPath(serviceIdLower, updatedService, modifier, true);
             }
 
-            if (actionResponse.isRight()) {
-                log.debug("failed to update or create paths");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
-            }
-
-            Service service = actionResponse.left().value();
+            Service service = actionResponse;
             Object result = RepresentationUtils.toRepresentation(service);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Forward Path Creation or update");
             log.debug("create or update forwarding path with an error", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -188,18 +191,19 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
                     @ApiResponse(responseCode = "403", description = "Restricted operation"),
                     @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
                     @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getForwardingPath(
             @Parameter(description = "Forwarding Path to create", required = true) String datax,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Parameter(description = "Forwarding Path Id") @PathParam("forwardingPathId") String forwardingPathId,
             @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
 
         try {
@@ -220,7 +224,7 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Service Metadata");
             log.debug("update service metadata failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
@@ -235,41 +239,32 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
                     @ApiResponse(responseCode = "403", description = "Restricted operation"),
                     @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
                     @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteForwardingPath(
             @Parameter(description = "Forwarding Path Id") @PathParam("forwardingPathId") String forwardingPathId,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
 
         try {
             String serviceIdLower = serviceId.toLowerCase();
 
-            Either<Set<String>, ResponseFormat> actionResponse = serviceBusinessLogic.deleteForwardingPaths(serviceIdLower, Sets.newHashSet(forwardingPathId), modifier, true);
-
-            if (actionResponse.isRight()) {
-                log.debug("failed to delete paths");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
-            }
-
-            Set<String> deletedPaths = actionResponse.left().value();
+            Set<String> deletedPaths = serviceBusinessLogic.deleteForwardingPaths(serviceIdLower, Sets.newHashSet(forwardingPathId), modifier, true);
             Object result = RepresentationUtils.toRepresentation(deletedPaths);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete forward paths");
             log.debug("Delete service paths with an error", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 

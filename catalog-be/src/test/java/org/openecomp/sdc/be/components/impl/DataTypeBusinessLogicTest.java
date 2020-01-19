@@ -49,7 +49,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 public class DataTypeBusinessLogicTest {
 
@@ -63,7 +63,7 @@ public class DataTypeBusinessLogicTest {
     private ComponentsUtils componentsUtilsMock;
 
     @Mock
-    private IUserBusinessLogic userAdminMock;
+    private UserBusinessLogic userAdminMock;
 
     @Mock
     private ToscaOperationFacade toscaOperationFacadeMock;
@@ -92,7 +92,7 @@ public class DataTypeBusinessLogicTest {
         service.setComponentInstances(Collections.singletonList(componentInstance));
         DataTypeDefinition dataType = new DataTypeDefinition();
         dataType.setName(DATATYPE_NAME);
-        dataType.setDerivedFromName(ToscaPropertyType.Root.getType());
+        dataType.setDerivedFromName(ToscaPropertyType.ROOT.getType());
         List<DataTypeDefinition> dataTypes = Arrays.asList(dataType);
         service.setDataTypes(dataTypes);
 
@@ -102,8 +102,8 @@ public class DataTypeBusinessLogicTest {
         instanceInputMap.put(COMPONENT_INSTANCE_ID, Collections.singletonList(componentInstanceInput));
         instanceInputMap.put("someInputId", Collections.singletonList(new ComponentInstanceInput()));
         service.setComponentInstancesInputs(instanceInputMap);
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(new User());
-        when(userAdminMock.getUser(USER_ID, false)).thenReturn(Either.left(new User()));
+        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(new User());
+        when(userAdminMock.getUser(USER_ID, false)).thenReturn(new User());
     }
 
     @Test

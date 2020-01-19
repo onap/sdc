@@ -17,7 +17,7 @@ node_types:
       network_scope:
         type: string
         constraints:
-          valid_values: ["VF", "SERVICE", "GLOBAL"]
+        - valid_values: ["VF", "SERVICE", "GLOBAL"]
         description: >
           Uniquely identifies the network scope. Valid values for the network scope  
           includes:

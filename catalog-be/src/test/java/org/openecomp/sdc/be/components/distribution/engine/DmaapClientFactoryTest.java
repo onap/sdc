@@ -69,6 +69,11 @@ public class DmaapClientFactoryTest {
 		parameters.setAftDme2RoundtripTimeoutMs(435345);
 		parameters.setAftDme2ReadTimeoutMs(5645);
 		parameters.setDme2preferredRouterFilePath(filePath);
+		parameters.setAftDme2ClientIgnoreSslConfig(false);
+		parameters.setAftDme2SslEnable(true);
+		parameters.setAftDme2ClientKeystore("mock");
+		parameters.setAftDme2ClientKeystorePassword("mock");
+		parameters.setAftDme2ClientSslCertAlias("mock");
 
 		// default test
 		testSubject = createTestSubject();
@@ -111,6 +116,11 @@ public class DmaapClientFactoryTest {
 		parameters.setAftDme2RoundtripTimeoutMs(435345);
 		parameters.setAftDme2ReadTimeoutMs(5645);
 		parameters.setDme2preferredRouterFilePath(filePath);
+        parameters.setAftDme2ClientIgnoreSslConfig(false);
+        parameters.setAftDme2SslEnable(true);
+        parameters.setAftDme2ClientKeystore("mock");
+        parameters.setAftDme2ClientKeystorePassword("mock");
+        parameters.setAftDme2ClientSslCertAlias("mock");
 
 		// default test
 		testSubject = createTestSubject();

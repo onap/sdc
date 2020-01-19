@@ -19,7 +19,7 @@
  */
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
-import {ImageCreatorService} from "../../../../directives/graphs-v2/image-creator/image-creator.service";
+import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
 import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
 
 export class CompositionCiNodeVf extends CompositionCiNodeBase {

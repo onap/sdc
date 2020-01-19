@@ -20,121 +20,30 @@
 
 package org.openecomp.sdc.be.auditing.impl.externalapi;
 
-import org.junit.Before;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
-
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
-import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
-import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
-import org.openecomp.sdc.be.resources.data.auditing.ExternalApiEvent;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
-import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AuditCreateResourceExternalApiEventFactoryTest {
 
 	private AuditCreateResourceExternalApiEventFactory createTestSubject() {
-		CommonAuditData.Builder newBuilder = CommonAuditData.newBuilder()
-				.description(DESCRIPTION)
-				.status(STATUS_OK)
-				.requestId(REQUEST_ID)
-				.serviceInstanceId(SERVICE_INSTANCE_ID);
+		CommonAuditData.Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData commonAuData = newBuilder.build();
-		ResourceVersionInfo.Builder newBuilder2 = ResourceVersionInfo.newBuilder()
-				.version(CURRENT_VERSION)
-				.state(CURRENT_STATE)
-				.artifactUuid(ARTIFACT_UUID);
+		ResourceVersionInfo.Builder newBuilder2 = ResourceVersionInfo.newBuilder();
 		ResourceVersionInfo resAuData = newBuilder2.build();
-		return new AuditCreateResourceExternalApiEventFactory(commonAuData,
-				new ResourceCommonInfo(RESOURCE_NAME,RESOURCE_TYPE),
-				new DistributionData(DIST_CONSUMER_ID,DIST_RESOURCE_URL),
-				resAuData,
-				INVARIANT_UUID,
-				modifier);
+		return new AuditCreateResourceExternalApiEventFactory(commonAuData,new ResourceCommonInfo(),new DistributionData("",""),resAuData,"", new User());
 	}
-
-	private AuditingManager auditingManager;
-	@Mock
-	private static AuditCassandraDao cassandraDao;
-	@Mock
-	private static AuditingDao auditingDao;
-	@Mock
-	private static Configuration.ElasticSearchConfig esConfig;
-
-	@Captor
-	private ArgumentCaptor<ExternalApiEvent> eventCaptor;
-
-	@Before
-	public void setUp() {
-		init(esConfig);
-		auditingManager = new AuditingManager(auditingDao, cassandraDao, new TestConfigurationProvider());
-	}
-
 
 	@Test
 	public void testGetLogMessage() throws Exception {
 		AuditCreateResourceExternalApiEventFactory testSubject;
+		String result;
 
 		// default test
 		testSubject = createTestSubject();
-		assertThat(testSubject.getLogMessage()).isNotBlank();
-		assertThat(testSubject.getLogMessage()).isEqualTo(EXPECTED_EXTERNAL_CREATE_RESOURCE_LOG_STR);
-	}
-
-	@Test
-	public void testCreateResourceEvent() {
-		AuditEventFactory factory = new AuditCreateResourceExternalApiEventFactory(
-				CommonAuditData.newBuilder()
-						.description(DESCRIPTION)
-						.status(STATUS_OK)
-						.requestId(REQUEST_ID)
-						.serviceInstanceId(SERVICE_INSTANCE_ID)
-						.build(),
-				new ResourceCommonInfo(RESOURCE_NAME, RESOURCE_TYPE),
-				new DistributionData(DIST_CONSUMER_ID, DIST_RESOURCE_URL),
-				ResourceVersionInfo.newBuilder()
-						.artifactUuid(ARTIFACT_UUID)
-						.state(CURRENT_STATE)
-						.version(CURRENT_VERSION)
-						.build(),
-				INVARIANT_UUID, modifier);
-
-		when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.CREATE_RESOURCE_BY_API.getAuditingEsType())))
-				.thenReturn(ActionStatus.OK);
-		when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
-
-		assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_EXTERNAL_CREATE_RESOURCE_LOG_STR);
-		verifyExternalApiEvent(AuditingActionEnum.CREATE_RESOURCE_BY_API.getName());
-	}
-
-	private void verifyExternalApiEvent(String action) {
-		verify(cassandraDao).saveRecord(eventCaptor.capture());
-		ExternalApiEvent storedEvent = eventCaptor.getValue();
-		assertThat(storedEvent.getModifier()).isEqualTo(MODIFIER_UID);
-		assertThat(storedEvent.getDesc()).isEqualTo(DESCRIPTION);
-		assertThat(storedEvent.getStatus()).isEqualTo(STATUS_OK);
-		assertThat(storedEvent.getServiceInstanceId()).isEqualTo(SERVICE_INSTANCE_ID);
-		assertThat(storedEvent.getAction()).isEqualTo(action);
-		assertThat(storedEvent.getResourceType()).isEqualTo(RESOURCE_TYPE);
+		result = testSubject.getLogMessage();
 	}
 }

@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
@@ -36,11 +35,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ExternalApiEvent;
@@ -69,18 +65,14 @@ public class AuditCreateServiceExternalApiEventFactoryTest {
 
     @Mock
     private static AuditCassandraDao cassandraDao;
-    @Mock
-    private static AuditingDao auditingDao;
-    @Mock
-    private static Configuration.ElasticSearchConfig esConfig;
 
     @Captor
     private ArgumentCaptor<ExternalApiEvent> eventCaptor;
 
     @Before
     public void setUp() {
-        init(esConfig);
-        auditingManager = new AuditingManager(auditingDao, cassandraDao, new TestConfigurationProvider());
+        init();
+        auditingManager = new AuditingManager(cassandraDao, new TestConfigurationProvider());
     }
 
     @Test
@@ -108,8 +100,6 @@ public class AuditCreateServiceExternalApiEventFactoryTest {
                 new DistributionData(DIST_CONSUMER_ID, DIST_RESOURCE_URL),
                 INVARIANT_UUID, modifier);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.CREATE_SERVICE_BY_API.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_EXTERNAL_CREATE_SERVICE_LOG_STR);

@@ -72,6 +72,11 @@ public class ComponentPropertyServletTest extends JerseySpringBaseTest {
     private static final String INVALID_PROPERTY_NAME = "invalid_name_$.&";
     private static final String STRING_TYPE = "string";
 
+    @Before
+    public void initClass() {
+        initMockitoStubbings();
+    }
+
     @Test
     public void testCreatePropertyOnService_success() {
         PropertyDefinition property = new PropertyDefinition();
@@ -103,6 +108,14 @@ public class ComponentPropertyServletTest extends JerseySpringBaseTest {
                 componentPropertyServlet.createPropertyInService(SERVICE_ID, getInvalidProperty(), request, USER_ID);
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST_400.getStatusCode(), propertyInService.getStatus());
+    }
+
+    private static void initMockitoStubbings() {
+        when(request.getSession()).thenReturn(session);
+        when(session.getServletContext()).thenReturn(context);
+        when(context.getAttribute(eq(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))).thenReturn(wrapper);
+        when(wrapper.getWebAppContext(any())).thenReturn(webAppContext);
+        when(webAppContext.getBean(eq(ComponentsUtils.class))).thenReturn(componentsUtils);
     }
 
     private String getValidProperty() {

@@ -28,7 +28,7 @@
     "GENERAL_LABEL_SERVICE_TYPE": "Service Type:",
     "GENERAL_LABEL_SERVICE_ROLE": "Service Role:",
     "GENERAL_LABEL_STATUS": "Status:",
-    "GENERAL_LABEL_PROJECT_CODE": "Project Code:",
+    "GENERAL_LABEL_SERVICE_FUNCTION": "Service Function:",
     "GENERAL_LABEL_DESCRIPTION": "Description:",
     "GENERAL_LABEL_TAGS": "Tags:",
     "GENERAL_LABEL_RESOURCE_TYPE": "Resource Type:",
@@ -43,10 +43,12 @@
     "GENERAL_LABEL_SOURCE_SERVICE_NAME": "Source Service Name:",
     "GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID": "Resource Customization UUID:",
 
+
     "=========== GENERAL_TAB ===========": "",
     "GENERAL_TAB_LABEL_RESOURCE_MODEL_NUMBER":"Vendor Model Number",
     "GENERAL_TAB_LABEL_SERVICE_TYPE": "Service Type",
     "GENERAL_TAB_LABEL_SERVICE_ROLE": "Service Role",
+    "GENERAL_TAB_LABEL_SERVICE_FUNCTION": "Service Function",
 
     "=========== GENERAL ERROR PAGES ===========": "",
     "GENERAL_ERROR_403_TITLE": "SDC Access Denied",
@@ -192,8 +194,6 @@
     "WELCOME_BTN_START_TUTORIAL": "Let's start",
     "WELCOME_BTN_SKIP": "skip for now",
     "WELCOME_BTN_ACTION_DESIGN_STUDIO": "Design Studio",
-    "WELCOME_BTN_ACTION_CERTIFICATION_STUDIO": "Tester's Workspace",
-    "WELCOME_BTN_ACTION_GOVERNOR_BOARD": "Governance Board",
     "WELCOME_BTN_ACTION_DISTRIBUTION_STUDIO": "Distribution Studio",
     "WELCOME_BTN_ACTION_CATALOG": "Catalog",
 
@@ -216,8 +216,6 @@
     "NEW_SERVICE_RESOURCE_ERROR_NAME_EXISTS": "Name already exists.",
     "NEW_SERVICE_RESOURCE_ERROR_SPECIAL_CHARS": "Special characters not allowed.",
     "NEW_SERVICE_RESOURCE_ERROR_CATEGORY_REQUIRED": "category is required.",
-    "NEW_SERVICE_RESOURCE_ERROR_PROJECT_CODE_REQUIRED": "Project code is required.",
-    "NEW_SERVICE_RESOURCE_ERROR_PROJECT_CODE_NOT_VALID": "Project code is not valid.",
     "NEW_SERVICE_RESOURCE_ERROR_CONTACT_REQUIRED": "Contact is required.",
     "NEW_SERVICE_RESOURCE_ERROR_CONTACT_NOT_VALID": "Contact is not valid.",
     "NEW_SERVICE_RESOURCE_ERROR_SERVICE_DESCRIPTION_REQUIRED": "Service description is required.",
@@ -304,6 +302,7 @@
 
     "=========== ATTRIBUTE VIEW ===========": "",
     "ATTRIBUTE_VIEW_DELETE_MODAL_TITLE": "Delete Attribute Confirmation",
+    "ATTRIBUTE_DETAILS_MODAL_TITLE": "Attribute Details",
     "ATTRIBUTE_VIEW_DELETE_MODAL_TEXT": "Are you sure you want to delete '{{name}}'?",
     "ATTRIBUTE_EDIT_PATTERN": "Invalid value.",
     "NEW_ATTRIBUTE_ERROR_NAME_EXISTS":"Name already exists.",
@@ -335,7 +334,6 @@
     "WHATS_NEW_4_TITLE": "App Navigation",
     "WHATS_NEW_4_BODY": "This release introduces View and Edit modes<ol><li>Use the view mode when:<ul><li>User does not have authorization to edit an Asset</li><li>Asset is in Check-In Mode</li></ul></li><li>Use the Edit Mode when:<ul><li>User has authorization to edit an Asset</li><li>Asset is in Check-out Mode</li></ul></li></ol>",
     "WHATS_NEW_5_TITLE": "Certification Studio",
-    "WHATS_NEW_5_BODY": "Tester, Governor and Ops roles can view VF and Service Composition.<br/>They can also download the asset’s artifacts, and download the asset’s resource instance artifacts",
     "WHATS_NEW_6_TITLE": "Composition: Virtual Link",
     "WHATS_NEW_6_BODY": "The ability to link VFs via a Virtual link has been expanded. Now a Virtual link can be defined as having either Point-to-Point connectivity or Multi-point connectivity. Additionally from within a Virtual Link, Point-to-Point connectivity can be dynamically changed to Multi-Point connectivity.",
     "WHATS_NEW_7_TITLE": "Distribution",
@@ -357,11 +355,8 @@
     "NEW_USER_ERROR_USER_ID_NOT_VALID": "User id not valid.",
     "NEW_USER_ERROR_ROLE_REQUIRED": "User role is required.",
 
-    "=========== EMAIL_MODAL ===========": "",
-    "EMAIL_MODAL_TITLE": "Submit For Testing",
-    "EMAIL_MODAL_SUBJECT": "{{entityName}}; version {{entityVersion}}",
-    "EMAIL_MODAL_MESSAGE": "Enter your message here...",
-    "EMAIL_OUTLOOK_MESSAGE": "mailto:{{to}}?subject={{subject}} is now ready for testing&body={{message}}%0D%0A%0D%0AClick on the link below to open {{entityNameAndVersion}} that is ready for testing. %0D%0A{{link}}%0D%0A",
+    "=========== CONFIRMATION_MODAL ===========": "",
+    "CONFIRMATION_MODAL_PLACEHOLDER": "Comment...",
 
     "=========== CATEGORY_MANAGEMENT SCREEN ===========": "",
     "RESOURCE_CATEGORY_HEADER": "Resource Category",
@@ -390,7 +385,7 @@
     "DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER": "Add Other Artifact",
     "DEPLOYMENT_ARTIFACT_GAB_NO_CONFIG": "Generic Artifact Browser has no columns configured"
 
-,"=========== IMPORT VF ===========": "",
+    ,"=========== IMPORT VF ===========": "",
     "IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_TITLE": "Create VF",
     "IMPORT_VF_MESSAGE_CREATE_TAKES_LONG_TIME_DESCRIPTION": "Your VF is being created.<br/>It can take up to 10 minutes.<br/>When done, you can view it in SDC Catalog.",
     "IMPORT_VF_MESSAGE_CREATE_FINISHED_TITLE": "Create/Update",
@@ -412,16 +407,6 @@
     "CHECKOUT_SUCCESS_MESSAGE_TITLE": "Check out",
     "DELETE_SUCCESS_MESSAGE_TEXT": "Deleted successfully",
     "DELETE_SUCCESS_MESSAGE_TITLE": "Delete",
-    "SUBMIT_FOR_TESTING_SUCCESS_MESSAGE_TEXT": "Submitted successfully for testing",
-    "SUBMIT_FOR_TESTING_SUCCESS_MESSAGE_TITLE": "Submit For Testing",
-    "START_TESTING_SUCCESS_MESSAGE_TEXT": "Tested successfully",
-    "START_TESTING_SUCCESS_MESSAGE_TITLE": "Start Testing",
-    "CANCEL_TESTING_SUCCESS_MESSAGE_TEXT": "Cancelled successfully",
-    "CANCEL_TESTING_SUCCESS_MESSAGE_TITLE": "Cancel",
-    "REJECT_SUCCESS_MESSAGE_TEXT": "Rejected successfully",
-    "REJECT_SUCCESS_MESSAGE_TITLE": "Reject",
-    "ACCEPT_TESTING_SUCCESS_MESSAGE_TEXT": "Accepted successfully",
-    "ACCEPT_TESTING_SUCCESS_MESSAGE_TITLE": "Accept",
     "APPROVE_SUCCESS_MESSAGE_TEXT": "Approved successfully",
     "APPROVE_SUCCESS_MESSAGE_TITLE": "Approve",
     "DISTRIBUTE_SUCCESS_MESSAGE_TEXT": "Distributed successfully",
@@ -431,10 +416,11 @@
     "ARCHIVE_SUCCESS_MESSAGE_TITLE":"Archive",
     "ARCHIVE_SUCCESS_MESSAGE_TEXT":"successfully archived",
 
-    "=========== ON BOARDING MODAL INFO MESSAGES ===========": "",
-    "ON_BOARDING_GENERAL_INFO": "Displays a table of VSPs created using Onboarding.<br/> Each row displays details for a single VSP.<br/> When expanded you can either import CSAR files that are yet to  be imported or update CSAR files that were previously imported.",
-    "ON_BOARDING_IMPORT_INFO": "Displays the Onboarding repository and supports importing on-boarded CSAR files.<br/>  Select  an imported CSAR file to create a VF from the on-boarded and imported  information.",
-    "ON_BOARDING_UPDATE_INFO": "Displays the Onboarding repository and supports updating on-boarded and previously imported CSAR files.<br/> Clicking Update, updates the existing VF with information available from a new version of the CSAR file.",
+    "=========== ON BOARDING MODAL ===========": "",
+    "ON_BOARDING_MODAL_SUB_TITLE": "Select one of the software product component below:",
+    "ON_BOARDING_GENERAL_INFO": "Displays a table of VSPs created using Onboarding.\nEach row displays details for a single VSP.\nWhen expanded you can either import CSAR files that are yet to  be imported or update CSAR files that were previously imported.",
+    "ON_BOARDING_IMPORT_INFO": "Displays the Onboarding repository and supports importing on-boarded CSAR files.\nSelect  an imported CSAR file to create a VF from the on-boarded and imported  information.",
+    "ON_BOARDING_UPDATE_INFO": "Displays the Onboarding repository and supports updating on-boarded and previously imported CSAR files.\nClicking Update, updates the existing VF with information available from a new version of the CSAR file.",
 
     "=========== HEAT PARAMETERS MODAL INFO MESSAGES ===========": "",
     "DEFAULT_VALUE_INFO": "This column indicates all the default values that were declared in the Main Heat ",
@@ -450,6 +436,7 @@
     "=========== SERVICE PATH SELECTOR ===========": "",
     "SERVICE_PATH_SELECTOR_HIDE_ALL_VALUE" : "⚊ Hide all ⚊",
     "SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE" : "⚊ Show all ⚊",
+    "SERVICE_OPERATION_PROPERTY_TOOLTIP_TEXT": "Service properties are defined by the input parameter type. In case you can't find a certain parameter, it might be due to a wrong type selection.",
 
     "=========== INTERFACE OPERATION ==========": "",
     "INTERFACE_ADD_OPERATION": "Add Operation",
@@ -499,7 +486,6 @@
 
     "PARAM_NONE_OF_TYPE": "No available properties of this type.",
 
-
     "=========== PLUGIN NOT CONNECTED ===========": "",
     "PLUGIN_NOT_CONNECTED_ERROR_MAIN": "The \"{{pluginName}}\" plugin is currently unavailable.",
     "PLUGIN_NOT_CONNECTED_ERROR_SUB": "Please try again later.",
@@ -531,9 +517,11 @@
     "MODAL_CREATE" : "Create",
     "MODAL_CANCEL" : "Cancel",
     "MODAL_DELETE" : "Delete",
+
     "=========== POLICY AND GROUPS ===========": "",
     "ADD_TARGETS" : "Add Targets",
     "ADD_MEMBERS" : "Add Members",
+
     "=========== PROPERTIES ASSIGNMENT DECLARE AS POLICY ===========": "",
     "DELETE_POLICY_TITLE": "Delete Policy",
     "DELETE_POLICY_MSG": "Are you sure you want to delete policy '{{policyName}}'?",
@@ -553,21 +541,31 @@
     "RESOURCE_UPGRADE_STATUS_FAIL": "Automated service upgrade failed.",
     "SERVICE_UPGRADE_STATUS_SUCCESS": "Automated service upgrade was completed and successful.<br/>The services which are successfully upgraded are in checked-in state with version displayed below. Please close this popup window and proceed with design completion on the services",
     "SERVICE_UPGRADE_STATUS_FAIL": "Automated service upgrade failed.",
-    "SERVICE_CERTIFICATION_STATUS_TEXT": "Service {{serviceName}} was successfully certified",
+    "SERVICE_CERTIFICATION_STATUS_TEXT": "Service successfully certified",
+    "SERVICE_CERTIFICATION_STATUS_TITLE": "Service Certification",
     "SERVICE_AUTOMATED_UPGRADE_WITH_COMPONENTS_TO_UPGRADE":  "The following services reference <b>{{vspName}}</b>.<br/> One or more of the services were not yet upgraded with the most recently certified version of <b>{{vspName}}</b>.</br>Select services from the list to upgrade them with <b>{{vspName}} {{vspVersion}}</b>.",
     "SERVICE_AUTOMATED_UPGRADE_ALL_COMPONENTS_LOCKED": "The listed services reference <b>{{vspName}}</b>.<br/> These services were not upgraded with the most recently certified version of <b>{{vspName}}</b>. Currently they are locked from being upgraded with <b>{{vspName}} {{vspVersion}}</b>",
-  "SERVICE_AUTOMATED_UPGRADE_ALL_COMPONENTS_UPGRADED": "The listed services each reference <b>{{vspName}}</b> and have already been updated with the most recently certified version of  the <b>{{vspName}} {{vspVersion}}</b>",
-  "=========== REQUIREMENTS AND CAPABILITIES ===========": "",
-  "REQ_NAME": "Requirement Name",
-  "REQ_RELATED_CAPABILITY": "Related Capability",
-  "REQ_NODE": "Node",
-  "REQ_RELATIONSHIP": "Relationship",
-  "REQ_CAP_OCCURRENCES": "Occurrences",
-  "REQ_CAP_OCCURRENCES_UNBOUNDED": "UNBOUNDED",
-  "REQ_CAP_OCCURRENCES_MIN": "Min",
-  "REQ_CAP_OCCURRENCES_MAX": "Max",
-  "CAP_NAME": "Capability Name",
-  "CAP_TYPE": "Capability Type",
-  "CAP_DESCRIPTION": "Description",
-  "CAP_VALID_SOURCE": "Valid Sources"
+    "SERVICE_AUTOMATED_UPGRADE_ALL_COMPONENTS_UPGRADED": "The listed services each reference <b>{{vspName}}</b> and have already been updated with the most recently certified version of  the <b>{{vspName}} {{vspVersion}}</b>",
+
+    "=========== ERROR_MODAL ===========": "",
+    "ERROR_MODAL_TEXT": "Error code: {{messageId}} <br/> Status code: {{status}} <br/> {{message}}",
+    "DEFAULT_ERROR_MESSAGE": "Error getting response from server",
+
+    "=========== CONFORMANCE_LEVEL_MODAL ===========": "",
+    "CONFORMANCE_LEVEL_MODAL_TITLE": "Warning",
+    "CONFORMANCE_LEVEL_MODAL_TEXT": "<p>You are about to distribute a service with models and artifacts created with an <b>older version of the platform</b>.For such service, new properties, metadata and requirements needed by ECOMP components will not be available.</p><p>It is highly recommended that you upgrade the service models and artifacts.</p><p>Click \"Continue\" if you need to distribute the current service version.<br />Click \"Reject\" if you need to stop the distribution and manually upgrade the service.</p>",
+
+    "=========== REQUIREMENTS AND CAPABILITIES ===========": "",
+    "REQ_NAME": "Requirement Name",
+    "REQ_RELATED_CAPABILITY": "Related Capability",
+    "REQ_NODE": "Node",
+    "REQ_RELATIONSHIP": "Relationship",
+    "REQ_CAP_OCCURRENCES": "Occurrences",
+    "REQ_CAP_OCCURRENCES_UNBOUNDED": "UNBOUNDED",
+    "REQ_CAP_OCCURRENCES_MIN": "Min",
+    "REQ_CAP_OCCURRENCES_MAX": "Max",
+    "CAP_NAME": "Capability Name",
+    "CAP_TYPE": "Capability Type",
+    "CAP_DESCRIPTION": "Description",
+    "CAP_VALID_SOURCE": "Valid Sources"
 }

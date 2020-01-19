@@ -1,0 +1,126 @@
+@import '../../../../assets/styles/mixins_old';
+@import '../../../../assets/styles/sprite';
+.w-sdc-left-sidebar-nav {
+  margin-top: 46px;
+}
+
+.w-sdc-main-right-container {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.w-sdc-main-right-container-element {
+  float: left;
+  height: 217px;
+  width: 217px;
+  margin: 10px;
+  position: relative;
+}
+
+.w-sdc-main-right-container-element-details-container {
+  position: absolute;
+  top: 165px;
+  left: 50px;
+}
+
+.w-sdc-main-right-container-element-name {
+  font-weight: bold;
+}
+
+.i-sdc-left-sidebar-item{
+  display: flex;
+  &.category-title .title-text, sdc-checkbox{
+    flex-grow: 1;
+  }
+  &:not(.category-title).i-sdc-left-sidebar-item-state-count {
+    line-height: 14px;
+  }
+}
+
+
+//////////////////////////////Cards////////////////////
+.w-sdc-dashboard-card-new {
+  border: 2px dashed @color_m;
+  .border-radius(2px);
+  cursor: pointer;
+  display: inline-block;
+  height: 198px;
+  margin: 11px;
+  position: relative;
+  vertical-align: middle;
+  width: 202px;
+}
+
+.w-sdc-dashboard-card-new-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.w-sdc-dashboard-card-new-content-plus {
+  .sprite-new;
+  .add-icon;
+  position: relative;
+  margin-bottom: 20px;
+
+  &:after {
+    .n_14_m;
+    content: 'ADD';
+    position: absolute;
+    top: 25px;
+    left: -3px;
+    vertical-align: -50%;
+  }
+}
+
+.w-sdc-dashboard-card-import-content-plus {
+  .sprite-new;
+  .import-icon;
+  position: relative;
+  margin-bottom: 20px;
+
+  &:after {
+    .n_14_m;
+    content: 'IMPORT';
+    position: absolute;
+    top: 25px;
+    left: -16px;
+    vertical-align: -50%;
+  }
+}
+
+.sdc-dashboard-create-element-container,
+.sdc-dashboard-import-element-container {
+
+  width: 140px;
+
+  sdc-button, 
+  sdc-button-file-opener {
+    padding-bottom: 5px;
+    &:last-child{
+      padding-bottom: 0;
+    }
+  }
+  
+  .import-file{
+    position: relative;
+    file-opener{
+      position: absolute;
+      top: 0;
+      /deep/ input[type="file"] {
+          .hand;
+          filter: alpha(opacity=0);
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 140px;
+          height: 36px;
+      }
+    }
+  }
+}
+
+

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,121 +33,113 @@ import java.util.Map;
 
 public class ConfigurationManager implements FileChangeCallback, IEcompConfigurationManager {
 
+
+	ConfigurationSource configurationSource = null;
+	private static ConfigurationManager instance;
+
     @VisibleForTesting
     public ConfigurationManager() {
         super();
         instance = this;
     }
 
-    private ConfigurationSource configurationSource = null;
-    private static ConfigurationManager instance;
+    Map<String, Object> configurations = new HashMap<>();
+	public ConfigurationManager(ConfigurationSource configurationSource) {
+		super();
+		this.configurationSource = configurationSource;
+		loadConfigurationFiles();
+		instance = this;
+	}
 
-    public Map<String, Object> getConfigurations() {
-        return configurations;
-    }
+	private void loadConfigurationFiles() {
 
-    public void setConfigurations(Map<String, Object> configurations) {
-        this.configurations = configurations;
-    }
+		loadConfigurationClass(Configuration.class);
+		loadConfigurationClass(ErrorConfiguration.class);
+		loadConfigurationClass(Neo4jErrorsConfiguration.class);
+		loadConfigurationClass(EcompErrorConfiguration.class);
+		loadConfigurationClass(DistributionEngineConfiguration.class);
+	}
 
-    private Map<String, Object> configurations = new HashMap<>();
+	private <T extends BasicConfiguration> void loadConfigurationClass(Class<T> clazz) {
+		ConfigurationListener configurationListener = new ConfigurationListener(clazz, this);
 
-    public ConfigurationManager(ConfigurationSource configurationSource) {
-        super();
-        this.configurationSource = configurationSource;
-        loadConfigurationFiles();
-        instance = this;
-    }
+		T object = configurationSource.getAndWatchConfiguration(clazz, configurationListener);
 
-    private void loadConfigurationFiles() {
+		configurations.put(getKey(clazz), object);
+	}
 
-        loadConfigurationClass(Configuration.class);
-        loadConfigurationClass(ErrorConfiguration.class);
-        loadConfigurationClass(Neo4jErrorsConfiguration.class);
-        loadConfigurationClass(EcompErrorConfiguration.class);
-        loadConfigurationClass(DistributionEngineConfiguration.class);
-    }
+	private <T> String getKey(Class<T> class1) {
 
-    private <T extends BasicConfiguration> void loadConfigurationClass(Class<T> clazz) {
-        ConfigurationListener configurationListener = new ConfigurationListener(clazz, this);
+		return class1.getSimpleName();
 
-        T object = configurationSource.getAndWatchConfiguration(clazz, configurationListener);
+	}
 
-        configurations.put(getKey(clazz), object);
-    }
+	public Configuration getConfiguration() {
 
-    private <T> String getKey(Class<T> class1) {
+		return (Configuration) configurations.get(getKey(Configuration.class));
 
-        return class1.getSimpleName();
+	}
 
-    }
+	public void setConfiguration(Configuration configuration) {
 
-    public Configuration getConfiguration() {
+		configurations.put(getKey(Configuration.class), configuration);
 
-        return (Configuration) configurations.get(getKey(Configuration.class));
+	}
 
-    }
+	public void setErrorConfiguration(ErrorConfiguration configuration) {
 
-    public void setConfiguration(Configuration configuration) {
+		configurations.put(getKey(ErrorConfiguration.class), configuration);
 
-        configurations.put(getKey(Configuration.class), configuration);
+	}
 
-    }
+	public ErrorConfiguration getErrorConfiguration() {
 
-    public void setErrorConfiguration(ErrorConfiguration configuration) {
+		return (ErrorConfiguration) configurations.get(getKey(ErrorConfiguration.class));
 
-        configurations.put(getKey(ErrorConfiguration.class), configuration);
+	}
 
-    }
+	public Neo4jErrorsConfiguration getNeo4jErrorsConfiguration() {
+		return (Neo4jErrorsConfiguration) configurations.get(getKey(Neo4jErrorsConfiguration.class));
+	}
 
-    public ErrorConfiguration getErrorConfiguration() {
+	@Override
+	public EcompErrorConfiguration getEcompErrorConfiguration() {
 
-        return (ErrorConfiguration) configurations.get(getKey(ErrorConfiguration.class));
+		return (EcompErrorConfiguration) configurations.get(getKey(EcompErrorConfiguration.class));
 
-    }
+	}
 
-    public Neo4jErrorsConfiguration getNeo4jErrorsConfiguration() {
-        return (Neo4jErrorsConfiguration) configurations.get(getKey(Neo4jErrorsConfiguration.class));
-    }
+	public Configuration getConfigurationAndWatch(ConfigurationListener configurationListener) {
 
-    @Override
-    public EcompErrorConfiguration getEcompErrorConfiguration() {
+		if (configurationListener != null) {
 
-        return (EcompErrorConfiguration) configurations.get(getKey(EcompErrorConfiguration.class));
+			configurationSource.addWatchConfiguration(Configuration.class, configurationListener);
 
-    }
+		}
+		return (Configuration) configurations.get(getKey(Configuration.class));
 
-    public Configuration getConfigurationAndWatch(ConfigurationListener configurationListener) {
+	}
 
-        if (configurationListener != null) {
-
-            configurationSource.addWatchConfiguration(Configuration.class, configurationListener);
-
-        }
-        return (Configuration) configurations.get(getKey(Configuration.class));
-
-    }
-
-    public static ConfigurationManager getConfigurationManager() {
-        return instance;
-    }
+	public static ConfigurationManager getConfigurationManager() {
+		return instance;
+	}
 
     public void reconfigure(BasicConfiguration obj) { }
 
-    /**
-     * FOR TEST ONLY
-     *
-     * @param ecompErrorConfiguration
-     */
-    public void setEcompErrorConfiguration(EcompErrorConfiguration ecompErrorConfiguration) {
+	/**
+	 * FOR TEST ONLY
+	 * 
+	 * @param ecompErrorConfiguration
+	 */
+	public void setEcompErrorConfiguration(EcompErrorConfiguration ecompErrorConfiguration) {
 
-        configurations.put(getKey(EcompErrorConfiguration.class), ecompErrorConfiguration);
+		configurations.put(getKey(EcompErrorConfiguration.class), ecompErrorConfiguration);
 
-    }
+	}
 
-    public DistributionEngineConfiguration getDistributionEngineConfiguration() {
+	public DistributionEngineConfiguration getDistributionEngineConfiguration() {
 
-        return (DistributionEngineConfiguration) configurations.get(getKey(DistributionEngineConfiguration.class));
+		return (DistributionEngineConfiguration) configurations.get(getKey(DistributionEngineConfiguration.class));
 
-    }
+	}
 }

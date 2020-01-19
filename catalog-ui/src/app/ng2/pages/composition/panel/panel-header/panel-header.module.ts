@@ -18,29 +18,26 @@
  * ============LICENSE_END=========================================================
  */
 import { NgModule } from "@angular/core";
-import { HttpModule } from "@angular/http";
 import { FormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
 import { CompositionPanelHeaderComponent } from "./panel-header.component";
 import { UiElementsModule } from './../../../../components/ui/ui-elements.module';
-import { ValueEditComponent } from './../../../../components/ui/forms/value-edit/value-edit.component';
-import { SdcUiComponentsModule } from "sdc-ui/lib/angular";
-import { ModalFormsModule } from "app/ng2/components/ui/forms/modal-forms.module";
+import { SdcUiComponentsModule } from "onap-ui-angular";
+import { EditNameModalComponent } from "app/ng2/pages/composition/panel/panel-header/edit-name-modal/edit-name-modal.component";
 
 @NgModule({
     declarations: [
-        CompositionPanelHeaderComponent
+        CompositionPanelHeaderComponent,
+        EditNameModalComponent
     ],
     imports: [
         BrowserModule,
         FormsModule,
-        HttpModule,
         UiElementsModule,
-        SdcUiComponentsModule,
-        ModalFormsModule
+        SdcUiComponentsModule
     ],
     entryComponents: [
-        CompositionPanelHeaderComponent, ValueEditComponent
+        CompositionPanelHeaderComponent, EditNameModalComponent
     ],
     exports: [
         CompositionPanelHeaderComponent

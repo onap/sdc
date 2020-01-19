@@ -27,24 +27,24 @@ export class GroupInstance {
     public originArchived?:boolean;
 
 
-    constructor(group:GroupInstance) {
-
-        this.name = group.name;
-        this.groupUUID = group.groupUUID;
-        this.invariantUUID = group.invariantUUID;
-        this.propertyValueCounter = group.propertyValueCounter;
-        this.type = group.type;
-        this.typeUid = group.typeUid;
-        this.uniqueId = group.uniqueId;
-        this.version = group.version;
-        this.artifacts = group.artifacts;
-        this.artifactsUuid = group.artifactsUuid;
-        this.properties = CommonUtils.initProperties(group.properties);
-        this.members = _.values(group.members);
-        this.description = group.description;
-        this.empty = group.empty;
-        this.ownerId = group.ownerId;
-
+    constructor(group?:GroupInstance) {
+        if (group) {
+            this.name = group.name;
+            this.groupUUID = group.groupUUID;
+            this.invariantUUID = group.invariantUUID;
+            this.propertyValueCounter = group.propertyValueCounter;
+            this.type = group.type;
+            this.typeUid = group.typeUid;
+            this.uniqueId = group.uniqueId;
+            this.version = group.version;
+            this.artifacts = group.artifacts;
+            this.artifactsUuid = group.artifactsUuid;
+            this.properties = CommonUtils.initProperties(group.properties);
+            this.members = _.values(group.members);
+            this.description = group.description;
+            this.empty = group.empty;
+            this.ownerId = group.ownerId;
+        }
         this.iconSprite = '';
         this.icon = 'icon-group';
     }

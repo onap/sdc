@@ -23,6 +23,8 @@ package org.openecomp.sdc.be.components.path;
 import fj.data.Either;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -49,108 +51,68 @@ public class ForwardingPathValidator {
     private static final int  PROTOCOL_LENGTH = 200;
     private static final int  DESTINATION_PORT_LENGTH = 200;
 
-    public Either<Boolean, ResponseFormat> validateForwardingPaths(Collection<ForwardingPathDataDefinition> paths,
-                                                                   String serviceId, boolean isUpdate) {
+    public void validateForwardingPaths(Collection<ForwardingPathDataDefinition> paths,
+                                        String serviceId, boolean isUpdate) {
         for (ForwardingPathDataDefinition path : paths) {
-            Either<Boolean, ResponseFormat> forwardingPathResponseEither = validateForwardingPath(path,
-                    serviceId, isUpdate);
-            if (forwardingPathResponseEither.isRight()) {
-                return forwardingPathResponseEither;
-            }
+            validateForwardingPath(path, serviceId, isUpdate);
         }
-        return Either.left(Boolean.TRUE);
     }
 
-    private Either<Boolean, ResponseFormat> validateForwardingPath(ForwardingPathDataDefinition path,
-                                                                   String serviceId, boolean isUpdate) {
+    private void validateForwardingPath(ForwardingPathDataDefinition path, String serviceId, boolean isUpdate) {
         ResponseFormatManager responseFormatManager = getResponseFormatManager();
-
-        Either<Boolean, ResponseFormat> errorResponseName = validateName(path,
-                responseFormatManager, serviceId, isUpdate);
-        if (errorResponseName != null)
-            return errorResponseName;
-
-        Either<Boolean, ResponseFormat> protocolErrorResponse = validateProtocol(path, responseFormatManager);
-        if (protocolErrorResponse != null)
-            return protocolErrorResponse;
-
-        Either<Boolean, ResponseFormat> portNumberResponse = validateDestinationPortNumber(path, responseFormatManager);
-        if (portNumberResponse != null)
-            return portNumberResponse;
-
-        return Either.left(true);
+        validateName(path, responseFormatManager, serviceId, isUpdate);
+        validateProtocol(path);
+        validateDestinationPortNumber(path);
     }
 
-    private Either<Boolean, ResponseFormat> validateDestinationPortNumber(ForwardingPathDataDefinition dataDefinition,
-                                                                          ResponseFormatManager responseFormatManager) {
+    private void validateDestinationPortNumber(ForwardingPathDataDefinition dataDefinition) {
         if (dataDefinition.getDestinationPortNumber() != null &&
             dataDefinition.getDestinationPortNumber().length() > DESTINATION_PORT_LENGTH ) {
             logger.debug("Forwarding path destination port {} too long, , maximum allowed 200 characters ",
                     dataDefinition.getDestinationPortNumber());
-            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
+            throw new ByActionStatusComponentException(ActionStatus
                     .FORWARDING_PATH_DESTINATION_PORT_MAXIMUM_LENGTH, dataDefinition.getDestinationPortNumber());
-            return Either.right(errorResponse);
         }
-        return null;
     }
 
-    private Either<Boolean, ResponseFormat> validateProtocol(ForwardingPathDataDefinition dataDefinition,
-                                                             ResponseFormatManager responseFormatManager) {
+    private void validateProtocol(ForwardingPathDataDefinition dataDefinition) {
         if (dataDefinition.getProtocol() != null && dataDefinition.getProtocol().length() > PROTOCOL_LENGTH) {
             logger.debug("Forwarding path protocol {} too long, , maximum allowed 200 characters ", dataDefinition.getProtocol());
-            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .FORWARDING_PATH_PROTOCOL_MAXIMUM_LENGTH, dataDefinition.getProtocol());
-            return Either.right(errorResponse);
+            throw new ByActionStatusComponentException(ActionStatus.FORWARDING_PATH_PROTOCOL_MAXIMUM_LENGTH, dataDefinition.getProtocol());
         }
-        return null;
     }
 
-    private Either<Boolean, ResponseFormat> validateName(ForwardingPathDataDefinition dataDefinition,
+    private void validateName(ForwardingPathDataDefinition dataDefinition,
                                                          ResponseFormatManager responseFormatManager,
                                                          String serviceId, boolean isUpdate) {
         String pathName = dataDefinition.getName();
-        Either<Boolean, ResponseFormat> pathEmptyResponse = validatePathNameIfEmpty(responseFormatManager, pathName);
-        if (pathEmptyResponse != null)
-            return pathEmptyResponse;
+        validatePathNameIfEmpty(responseFormatManager, pathName);
 
-        Either<Boolean, ResponseFormat> pathLengthResponse = validatePathNameLength(responseFormatManager, pathName);
-        if (pathLengthResponse != null)
-            return pathLengthResponse;
+        validatePathNameLength(responseFormatManager, pathName);
 
-        Either<Boolean, ResponseFormat> isPathNameUniqueResponse = validatePathIfUnique(dataDefinition, serviceId, isUpdate, responseFormatManager );
-        if(isPathNameUniqueResponse.isRight()) {
-            return Either.right(isPathNameUniqueResponse.right().value());
-        }
-        if (!isPathNameUniqueResponse.left().value()) {
+        Boolean isPathNameUniqueResponse = validatePathIfUnique(dataDefinition, serviceId, isUpdate, responseFormatManager );
+        if (!isPathNameUniqueResponse) {
             logger.debug("Forwarding path name {} already in use ", dataDefinition.getName());
-            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .FORWARDING_PATH_NAME_ALREADY_IN_USE, dataDefinition.getName());
-            return Either.right(errorResponse);
+            throw new ByActionStatusComponentException(ActionStatus.FORWARDING_PATH_NAME_ALREADY_IN_USE, dataDefinition.getName());
         }
-        return null;
     }
 
-    private Either<Boolean, ResponseFormat> validatePathNameLength(ResponseFormatManager responseFormatManager, String pathName) {
+    private void validatePathNameLength(ResponseFormatManager responseFormatManager, String pathName) {
         if (pathName.length() > PATH_NAME_LENGTH) {
             logger.debug("Forwarding path name  {} too long, , maximum allowed 200 characters ", pathName);
-            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus
-                    .FORWARDING_PATH_NAME_MAXIMUM_LENGTH, pathName);
-            return Either.right(errorResponse);
+            throw new ByActionStatusComponentException(ActionStatus.FORWARDING_PATH_NAME_MAXIMUM_LENGTH, pathName);
         }
-        return null;
     }
 
-    private Either<Boolean, ResponseFormat> validatePathNameIfEmpty(ResponseFormatManager responseFormatManager, String pathName) {
+    private void validatePathNameIfEmpty(ResponseFormatManager responseFormatManager, String pathName) {
         if (StringUtils.isEmpty(pathName)) {
             logger.debug("Forwarding Path Name can't be empty");
-            ResponseFormat errorResponse = responseFormatManager.getResponseFormat(ActionStatus.FORWARDING_PATH_NAME_EMPTY);
-            return Either.right(errorResponse);
+            throw new ByActionStatusComponentException(ActionStatus.FORWARDING_PATH_NAME_EMPTY);
         }
-        return null;
     }
 
 
-    private Either<Boolean, ResponseFormat> validatePathIfUnique(ForwardingPathDataDefinition dataDefinition, String serviceId,
+    private Boolean validatePathIfUnique(ForwardingPathDataDefinition dataDefinition, String serviceId,
                                                                  boolean isUpdate, ResponseFormatManager responseFormatManager) {
         boolean isPathNameUnique = false;
         ComponentParametersView filter = new ComponentParametersView(true);
@@ -158,7 +120,7 @@ public class ForwardingPathValidator {
         Either<Service, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade
                 .getToscaElement(serviceId, filter);
         if (forwardingPathOrigin.isRight()){
-            return Either.right(responseFormatManager.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
         Collection<ForwardingPathDataDefinition> allPaths = forwardingPathOrigin.left().value().getForwardingPaths().values();
         Map<String, String> pathNames = new HashMap<>();
@@ -181,7 +143,7 @@ public class ForwardingPathValidator {
             isPathNameUnique = true;
         }
 
-        return Either.left(isPathNameUnique);
+        return isPathNameUnique;
     }
 
     protected ResponseFormatManager getResponseFormatManager() {

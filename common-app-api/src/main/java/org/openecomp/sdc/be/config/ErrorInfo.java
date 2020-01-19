@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,76 +24,76 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class ErrorInfo {
 
-    private Integer code;
-    private String message;
-    private String messageId;
-    private ErrorInfoType errorInfoType;
+	private Integer code;
+	private String message;
+	private String messageId;
+	private ErrorInfoType errorInfoType;
 
-    private static final String SVC_PREFIX = "SVC";
-    private static final String POL_PREFIX = "POL";
+	private static final String SVC_PREFIX = "SVC";
+	private static final String POL_PREFIX = "POL";
 
-    private static Logger log = Logger.getLogger(ErrorInfo.class.getName());
+	private static Logger log = Logger.getLogger(ErrorInfo.class.getName());
 
-    public ErrorInfo() {
-        this.errorInfoType = ErrorInfoType.OK;
-    }
+	public ErrorInfo() {
+		this.errorInfoType = ErrorInfoType.OK;
+	}
 
-    public Integer getCode() {
-        return code;
-    }
+	public Integer getCode() {
+		return code;
+	}
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+	public void setCode(Integer code) {
+		this.code = code;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public String getMessageId() {
-        return messageId;
-    }
+	public String getMessageId() {
+		return messageId;
+	}
 
-    public void setMessageId(String messageId) {
-        // Determining the type of error
-        if (messageId == null) {
-            this.errorInfoType = ErrorInfoType.OK;
-        } else if (messageId.startsWith(SVC_PREFIX)) {
-            this.errorInfoType = ErrorInfoType.SERVICE_EXCEPTION;
-        } else if (messageId.startsWith(POL_PREFIX)) {
-            this.errorInfoType = ErrorInfoType.POLICY_EXCEPTION;
-        } else {
-            // unexpected - should it fail the startup?
-            BeEcompErrorManager.getInstance().logErrorConfigFileFormat("Error Info",
-                    "Could not set error info type for message id " + messageId);
-            log.debug("Error: unexpected error message ID {}, should start with {} or {}", messageId, SVC_PREFIX,
-                    POL_PREFIX);
-        }
-        this.messageId = messageId;
-    }
+	public void setMessageId(String messageId) {
+		// Determining the type of error
+		if (messageId == null) {
+			this.errorInfoType = ErrorInfoType.OK;
+		} else if (messageId.startsWith(SVC_PREFIX)) {
+			this.errorInfoType = ErrorInfoType.SERVICE_EXCEPTION;
+		} else if (messageId.startsWith(POL_PREFIX)) {
+			this.errorInfoType = ErrorInfoType.POLICY_EXCEPTION;
+		} else {
+			// unexpected - should it fail the startup?
+			BeEcompErrorManager.getInstance().logErrorConfigFileFormat("Error Info",
+					"Could not set error info type for message id " + messageId);
+			log.debug("Error: unexpected error message ID {}, should start with {} or {}", messageId, SVC_PREFIX,
+					POL_PREFIX);
+		}
+		this.messageId = messageId;
+	}
 
-    public ErrorInfoType getErrorInfoType() {
-        return this.errorInfoType;
-    }
+	public ErrorInfoType getErrorInfoType() {
+		return this.errorInfoType;
+	}
 
-    public void cloneData(ErrorInfo other) {
-        this.code = other.getCode();
-        this.message = other.getMessage();
-        this.messageId = other.getMessageId();
-        this.errorInfoType = other.errorInfoType;
-    }
+	public void cloneData(ErrorInfo other) {
+		this.code = other.getCode();
+		this.message = other.getMessage();
+		this.messageId = other.getMessageId();
+		this.errorInfoType = other.errorInfoType;
+	}
 
-    @Override
-    public String toString() {
-        return "ErrorInfo [code=" + code + ", messageId=" + messageId + ", message=" + message + "]";
-    }
+	@Override
+	public String toString() {
+		return "ErrorInfo [code=" + code + ", messageId=" + messageId + ", message=" + message + "]";
+	}
 
-    public enum ErrorInfoType {
-        OK, POLICY_EXCEPTION, SERVICE_EXCEPTION
-    }
+	public enum ErrorInfoType {
+		OK, POLICY_EXCEPTION, SERVICE_EXCEPTION
+	}
 
 }

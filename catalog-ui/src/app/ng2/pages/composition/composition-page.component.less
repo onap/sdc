@@ -1,0 +1,26 @@
+@import "./../../../../assets/styles/override";
+.workspace-composition-page {
+    height:100%;
+    display: block;
+    text-align: left;
+    align-items: left;
+    padding: 0;
+
+    .composition-graph {
+        height:100%;
+        background-color: @sdcui_color_white;
+        bottom: 0;
+        display:flex;
+        flex-direction: row;
+        
+        .view-mode{
+            background-color: #f8f8f8;
+            border:0;
+        }
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

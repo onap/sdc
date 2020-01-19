@@ -232,7 +232,13 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 								} else {
 									InRangeConstraint rangeConstraint = new InRangeConstraint();
 									String minValue = rangeArray.get(0).getAsString();
-									String maxValue = rangeArray.get(1).getAsString();
+									String maxValue;
+									JsonElement maxElement = rangeArray.get(1);
+									if(maxElement.isJsonNull()){
+                                        maxValue = String.valueOf(maxElement.getAsJsonNull());
+                                    } else {
+                                        maxValue = maxElement.getAsString();
+                                    }
 									rangeConstraint.setRangeMinValue(minValue);
 									rangeConstraint.setRangeMaxValue(maxValue);
 									propertyConstraint = rangeConstraint;
@@ -288,24 +294,19 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 					case VALID_VALUES:
 
 						if (value != null) {
-							if (value instanceof JsonArray) {
-								JsonArray rangeArray = (JsonArray) value;
-								if (rangeArray.size() == 0) {
-									log.error("The valid values constraint content is invalid. value = {}", value);
-								} else {
-									ValidValuesConstraint vvConstraint = new ValidValuesConstraint();
-									List<String> validValues = new ArrayList<>();
-									for (JsonElement jsonElement : rangeArray) {
-										String item = jsonElement.getAsString();
-										validValues.add(item);
-									}
-									vvConstraint.setValidValues(validValues);
-									propertyConstraint = vvConstraint;
+							JsonArray rangeArray = (JsonArray) value;
+							if (rangeArray.size() == 0) {
+								log.error("The valid values constraint content is invalid. value = {}", value);
+							} else {
+								ValidValuesConstraint vvConstraint = new ValidValuesConstraint();
+								List<String> validValues = new ArrayList<>();
+								for (JsonElement jsonElement : rangeArray) {
+									String item = jsonElement.getAsString();
+									validValues.add(item);
 								}
+								vvConstraint.setValidValues(validValues);
+								propertyConstraint = vvConstraint;
 							}
-
-						} else {
-							log.warn("The value of ValidValuesConstraint is null");
 						}
 						break;
 

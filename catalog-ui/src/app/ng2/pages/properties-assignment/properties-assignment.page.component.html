@@ -18,7 +18,7 @@
     <div class="main-content">
         <div class="left-column">
             <div class="main-tabs-section">
-                <tabs #propertyInputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)" [hideIndicationOnTabChange]="true">
+                <tabs #propertyInputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)" [hideIndicationOnTabChange]="true" >
                     <tab tabTitle="Properties">
                         <properties-table class="properties-table"
                             [fePropertiesMap]="instanceFePropertiesMap"
@@ -42,12 +42,13 @@
                     </tab>
                     <tab tabTitle="Inputs">
                         <inputs-table class="properties-table"
-                                      [readonly]="isReadonly"
-                                      [inputs]="inputs | searchFilter:'name':searchQuery"
-                                      [instanceNamesMap]="componentInstanceNamesMap"
-                                      [isLoading]="loadingInputs"
-                                      (deleteInput)="deleteInput($event)"
-                                      (inputChanged)="dataChanged($event)">
+                            [fePropertiesMap]="instanceFePropertiesMap"
+                            [readonly]="isReadonly"
+                            [inputs]="inputs | searchFilter:'name':searchQuery"
+                            [instanceNamesMap]="componentInstanceNamesMap"
+                            [isLoading]="loadingInputs"
+                            (deleteInput)="deleteInput($event)"
+                            (inputChanged)="dataChanged($event)">
                         </inputs-table>
                     </tab>
                     <tab tabTitle="Policies">

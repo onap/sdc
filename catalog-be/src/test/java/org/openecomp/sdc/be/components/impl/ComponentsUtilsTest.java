@@ -28,6 +28,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -42,12 +43,14 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
@@ -70,6 +73,9 @@ public class ComponentsUtilsTest {
 
     @Captor
     private ArgumentCaptor<AuditEventFactory> factoryCaptor;
+
+    @Captor
+    private ArgumentCaptor<LoggerSdcAudit> audit;
 
     @InjectMocks
     private static ComponentsUtils utils;
@@ -281,8 +287,9 @@ public class ComponentsUtilsTest {
 
     @Test
     public void auditEcompOpEnvEvent() {
+
         utils.auditEnvironmentEngine(AuditingActionEnum.CREATE_ENVIRONMENT, OP_ENV_ID, OP_ENV_TYPE, OP_ENV_ACTION, OP_ENV_NAME, TENANT_CONTEXT);
-        verify(manager).auditEvent(factoryCaptor.capture());
+        verify(manager).auditEvent(factoryCaptor.capture(), audit.capture());
         AuditEventFactory factory = factoryCaptor.getValue();
         EcompOperationalEnvironmentEvent event = (EcompOperationalEnvironmentEvent)factory.getDbEvent();
         assertThat(event.getAction()).isEqualTo(AuditingActionEnum.CREATE_ENVIRONMENT.getName());
@@ -438,69 +445,6 @@ public class ComponentsUtilsTest {
         assertThat(event.getResourceType()).isEqualTo(ComponentTypeEnum.RESOURCE.getValue());
     }
 
-    @Test
-    public void auditChangeLifeCycleExternalApiEventWhenComponentIsNotNullAndResponseObjectIsNull() {
-        when(responseFormat.getStatus()).thenReturn(Integer.valueOf(STATUS_500));
-        when(responseFormat.getFormattedMessage()).thenReturn(DESC_ERROR);
-        Component component = new Resource();
-        component.setVersion(PREV_RESOURCE_VERSION);
-        component.setState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        component.setInvariantUUID(INVARIANT_UUID);
-        component.setName(RESOURCE_NAME);
-
-        utils.auditChangeLifecycleAction(responseFormat, ComponentTypeEnum.RESOURCE, REQUEST_ID,
-                component, null, new DistributionData(DIST_CONSUMER_ID, DIST_RESOURCE_URL), modifier);
-
-        verify(manager).auditEvent(factoryCaptor.capture());
-        AuditChangeLifecycleExternalApiEventFactory factory = (AuditChangeLifecycleExternalApiEventFactory)factoryCaptor.getValue();
-
-        ExternalApiEvent event = (ExternalApiEvent)factory.getDbEvent();
-        assertThat(event.getAction()).isEqualTo(AuditingActionEnum.CHANGE_LIFECYCLE_BY_API.getName());
-
-        verifyCommonDataForExternalApiEvent(event, false);
-        verifyPreviousResourceVersionInfoForExternalApiEvent(event, false);
-        verifyDistributionDataForExternalApiEvent(event);
-        assertThat(event.getModifier()).isEqualTo(MODIFIER_UID);
-        assertThat(event.getInvariantUuid()).isEqualTo(INVARIANT_UUID);
-        assertThat(event.getResourceName()).isEqualTo(RESOURCE_NAME);
-        assertThat(event.getResourceType()).isEqualTo(ComponentTypeEnum.RESOURCE.getValue());
-    }
-
-    @Test
-    public void auditChangeLifeCycleExternalApiEventWhenComponentAndResponseObjectAreNotNull() {
-        when(responseFormat.getStatus()).thenReturn(Integer.valueOf(STATUS_OK));
-        when(responseFormat.getFormattedMessage()).thenReturn(DESCRIPTION);
-        Component responseObject = new Resource();
-        responseObject.setVersion(CURRENT_VERSION);
-        responseObject.setState(LifecycleStateEnum.CERTIFIED);
-        responseObject.setInvariantUUID(INVARIANT_UUID);
-        responseObject.setUUID(SERVICE_INSTANCE_ID);
-
-        Component component = new Resource();
-        component.setVersion(PREV_RESOURCE_VERSION);
-        component.setState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        component.setInvariantUUID(INVARIANT_UUID);
-        component.setUUID(SERVICE_INSTANCE_ID);
-        component.setName(RESOURCE_NAME);
-
-        utils.auditChangeLifecycleAction(responseFormat, ComponentTypeEnum.RESOURCE, REQUEST_ID,
-                null, responseObject, new DistributionData(DIST_CONSUMER_ID, DIST_RESOURCE_URL), modifier);
-
-        verify(manager).auditEvent(factoryCaptor.capture());
-        AuditChangeLifecycleExternalApiEventFactory factory = (AuditChangeLifecycleExternalApiEventFactory)factoryCaptor.getValue();
-
-        ExternalApiEvent event = (ExternalApiEvent)factory.getDbEvent();
-        assertThat(event.getAction()).isEqualTo(AuditingActionEnum.CHANGE_LIFECYCLE_BY_API.getName());
-        verifyCommonDataForExternalApiEvent(event, true);
-        verifyPreviousResourceVersionInfoForExternalApiEvent(event, true);
-        verifyCurrentResourceVersionInfoForExternalApiEvent(event, false);
-        verifyDistributionDataForExternalApiEvent(event);
-        assertThat(event.getModifier()).isEqualTo(MODIFIER_UID);
-        assertThat(event.getInvariantUuid()).isEqualTo(INVARIANT_UUID);
-        assertThat(event.getResourceName()).isNull();
-        assertThat(event.getResourceType()).isEqualTo(ComponentTypeEnum.RESOURCE.getValue());
-
-    }
 
     private void verifyDistributionDataForExternalApiEvent(ExternalApiEvent event) {
         assertThat(event.getConsumerId()).isEqualTo(DIST_CONSUMER_ID);
@@ -545,7 +489,6 @@ public class ComponentsUtilsTest {
             assertThat(event.getPrevVersion()).isNull();
         }
         else {
-            assertThat(event.getPrevState()).isEqualTo(LifecycleStateEnum.READY_FOR_CERTIFICATION.name());
             assertThat(event.getPrevVersion()).isEqualTo(PREV_RESOURCE_VERSION);
         }
     }

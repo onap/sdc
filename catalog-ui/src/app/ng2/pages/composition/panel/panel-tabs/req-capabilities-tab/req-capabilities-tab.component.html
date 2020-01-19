@@ -1,0 +1,36 @@
+<div class="w-sdc-designer-sidebar-tab-content sdc-general-tab relations">
+    <div *ngIf="!isCurrentDisplayComponentIsComplex(); else complexComponentTemplate">
+        <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
+            <sdc-accordion [title]="'Capabilities'" [arrow-direction]="'right'" [testId]="'Capabilities-accordion'">
+                <div *ngFor="let capability of capabilities" class="relations-details-container">
+                    <div class="relations-name">{{capability.name}}&nbsp;</div>
+                    <div class="relations-desc"> {{capability.type}} </div>
+                </div>
+            </sdc-accordion>
+        </div>
+        <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
+            <sdc-accordion [title]="'Requirements'" [arrow-direction]="'right'" [testId]="'Requirements-accordion'">
+                <requirement-list [component]='component' [requirements]="requirements" [isInstanceSelected]="isComponentInstanceSelected"></requirement-list>
+            </sdc-accordion>
+
+        </div>
+    </div>
+
+    <ng-template #complexComponentTemplate>
+        <sdc-accordion *ngIf="capabilitiesInstancesMap" [title]="'Capabilities'" [arrow-direction]="'right'" [testId]="'Capabilities-accordion'">
+            <sdc-accordion *ngFor="let key of objectKeys(capabilitiesInstancesMap); let i = index" [title]="key">
+                    <div *ngFor="let capability of capabilitiesInstancesMap[key]" class="relations-details-container">
+                            <div class="relations-name">{{capability.name}}&nbsp;</div>
+                            <div class="relations-desc"> {{capability.type}} </div>
+                        </div>
+            </sdc-accordion>
+        </sdc-accordion>
+
+        <sdc-accordion *ngIf="requirementsInstancesMap" [title]="'Requirements'" [arrow-direction]="'right'" [testId]="'Requirements-accordion'">
+                <sdc-accordion *ngFor="let key of objectKeys(requirementsInstancesMap); let i = index" [title]="key">
+                    <requirement-list [component]='component' [requirements]="requirementsInstancesMap[key]" [isInstanceSelected]="isComponentInstanceSelected"></requirement-list>
+                </sdc-accordion>
+        </sdc-accordion>
+
+    </ng-template>
+</div>

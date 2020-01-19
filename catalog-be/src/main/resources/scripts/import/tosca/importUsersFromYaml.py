@@ -60,7 +60,8 @@ def getUser(scheme, beHost, bePort, user):
 		c.setopt(c.URL, url)
 
 		if scheme == 'https':
-			c.setopt(c.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYHOST, 0)
 
 		#adminHeader = 'USER_ID: ' + adminUser
 		c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json'])
@@ -106,7 +107,8 @@ def createUser(scheme, beHost, bePort, user, adminUser):
 		c.setopt(c.POSTFIELDS, data)
 
 		if scheme == 'https':
-			c.setopt(c.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYHOST, 0)
 
 		c.setopt(c.WRITEFUNCTION, lambda x: None)
 		#print("before perform")	

@@ -88,6 +88,9 @@ export class AttributeModel implements IAttributeModel {
             this.resourceInstanceUniqueId = attribute.resourceInstanceUniqueId;
             this.readonly = attribute.readonly;
             this.valueUniqueUid = attribute.valueUniqueUid;
+        } else {
+            this.defaultValue = '';
+            this.hidden = false;
         }
 
         if (!this.schema || !this.schema.property) {
@@ -100,7 +103,7 @@ export class AttributeModel implements IAttributeModel {
         this.convertValueToView();
     }
 
-    public convertToServerObject:Function = ():string => {
+    public convertToServerObject():string {
         if (this.defaultValue && this.type === 'map') {
             this.defaultValue = '{' + this.defaultValue + '}';
         }

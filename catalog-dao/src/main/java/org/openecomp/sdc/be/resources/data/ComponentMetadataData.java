@@ -20,15 +20,13 @@
 
 package org.openecomp.sdc.be.resources.data;
 
-import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class ComponentMetadataData extends GraphNode {
@@ -42,47 +40,30 @@ public abstract class ComponentMetadataData extends GraphNode {
 		this.componentInstanceCounter = 0;
 	}
 
-	@SuppressWarnings("unchecked")
-	public ComponentMetadataData(NodeTypeEnum label, ComponentMetadataDataDefinition metadataDataDefinition, Map<String, Object> properties) {
+	public ComponentMetadataData(NodeTypeEnum label, ComponentMetadataDataDefinition metadataDataDefinition, GraphPropertiesDictionaryExtractor extractor) {
 		this(label, metadataDataDefinition);
-		metadataDataDefinition.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
-		metadataDataDefinition.setCreationDate((Long) properties.get(GraphPropertiesDictionary.CREATION_DATE.getProperty()));
-		metadataDataDefinition.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
-		metadataDataDefinition.setConformanceLevel((String) properties.get(GraphPropertiesDictionary.CONFORMANCE_LEVEL.getProperty()));
-		metadataDataDefinition.setIcon((String) properties.get(GraphPropertiesDictionary.ICON.getProperty()));
-		metadataDataDefinition.setHighestVersion((Boolean) properties.get(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()));
-		metadataDataDefinition.setLastUpdateDate((Long) properties.get(GraphPropertiesDictionary.LAST_UPDATE_DATE.getProperty()));
-		metadataDataDefinition.setName((String) properties.get(GraphPropertiesDictionary.NAME.getProperty()));
-		metadataDataDefinition.setState((String) properties.get(GraphPropertiesDictionary.STATE.getProperty()));
-		List<String> tagsFromJson;
-		if(properties.get(GraphPropertiesDictionary.TAGS.getProperty()) instanceof List<?>){
-			tagsFromJson = (List<String>) properties.get(GraphPropertiesDictionary.TAGS.getProperty());
-		} else {
-			Type listType = new TypeToken<List<String>>() {}.getType();
-			tagsFromJson = getGson().fromJson((String) properties.get(GraphPropertiesDictionary.TAGS.getProperty()), listType);
-		}
-		metadataDataDefinition.setTags(tagsFromJson);
-		metadataDataDefinition.setVersion((String) properties.get(GraphPropertiesDictionary.VERSION.getProperty()));
-		metadataDataDefinition.setContactId((String) properties.get(GraphPropertiesDictionary.CONTACT_ID.getProperty()));
-		metadataDataDefinition.setUUID((String) properties.get(GraphPropertiesDictionary.UUID.getProperty()));
-		metadataDataDefinition.setNormalizedName((String) properties.get(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty()));
-		metadataDataDefinition.setSystemName((String) properties.get(GraphPropertiesDictionary.SYSTEM_NAME.getProperty()));
-		metadataDataDefinition.setIsDeleted((Boolean) properties.get(GraphPropertiesDictionary.IS_DELETED.getProperty()));
-		metadataDataDefinition.setProjectCode((String) properties.get(GraphPropertiesDictionary.PROJECT_CODE.getProperty()));
-		metadataDataDefinition.setCsarUUID((String) properties.get(GraphPropertiesDictionary.CSAR_UUID.getProperty()));
-		metadataDataDefinition.setCsarVersion((String) properties.get(GraphPropertiesDictionary.CSAR_VERSION.getProperty()));
-		metadataDataDefinition.setImportedToscaChecksum((String) properties.get(GraphPropertiesDictionary.IMPORTED_TOSCA_CHECKSUM.getProperty()));
-		metadataDataDefinition.setInvariantUUID((String) properties.get(GraphPropertiesDictionary.INVARIANT_UUID.getProperty()));
-//		metadataDataDefinition.setComponentType(ComponentTypeEnum.valueOf((String) properties.get(GraphPropertyEnum.COMPONENT_TYPE.getProperty())));
-		metadataDataDefinition.setArchived((Boolean) properties.get(GraphPropertiesDictionary.IS_ARCHIVED.getProperty()));
-		metadataDataDefinition.setVspArchived((Boolean) properties.get(GraphPropertiesDictionary.IS_VSP_ARCHIVED.getProperty()));
-		Object archiveTime = properties.get(GraphPropertiesDictionary.ARCHIVE_TIME.getProperty());
-		if (archiveTime instanceof Integer){
-			metadataDataDefinition.setArchiveTime(new Long((Integer) archiveTime));
-		} else if (archiveTime instanceof Long) {
-			metadataDataDefinition.setArchiveTime((Long)archiveTime);
-		}
-		componentInstanceCounter = (Integer) properties.get(GraphPropertiesDictionary.INSTANCE_COUNTER.getProperty());
+		metadataDataDefinition.setUniqueId(extractor.getUniqueId());
+		metadataDataDefinition.setCreationDate(extractor.getCreationDate());
+		metadataDataDefinition.setDescription(extractor.getDescription());
+		metadataDataDefinition.setConformanceLevel(extractor.getConformanceLevel());
+		metadataDataDefinition.setIcon(extractor.getIcon());
+		metadataDataDefinition.setHighestVersion(extractor.isHighestVersion());
+		metadataDataDefinition.setLastUpdateDate(extractor.getLastUpdateDate());
+		metadataDataDefinition.setName(extractor.getName());
+		metadataDataDefinition.setState(extractor.getState());
+		metadataDataDefinition.setTags(extractor.getTags());
+		metadataDataDefinition.setVersion(extractor.getVersion());
+		metadataDataDefinition.setContactId(extractor.getContactId());
+		metadataDataDefinition.setUUID(extractor.getUUID());
+		metadataDataDefinition.setNormalizedName(extractor.getNormalizedName());
+		metadataDataDefinition.setSystemName(extractor.getSystemName());
+		metadataDataDefinition.setIsDeleted(extractor.isDeleted());
+		metadataDataDefinition.setProjectCode(extractor.getProjectCode());
+		metadataDataDefinition.setCsarUUID(extractor.getCsarUuid());
+		metadataDataDefinition.setCsarVersion(extractor.getCsarVersion());
+		metadataDataDefinition.setImportedToscaChecksum(extractor.getImportedToscaChecksum());
+		metadataDataDefinition.setInvariantUUID(extractor.getInvariantUuid());
+		componentInstanceCounter = extractor.getInstanceCounter();
 	}
 
 	@Override

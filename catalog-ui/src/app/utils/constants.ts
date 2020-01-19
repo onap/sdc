@@ -43,7 +43,19 @@ export class ComponentType {
 export class ServerTypeUrl {
     static RESOURCES = 'resources/';
     static SERVICES = 'services/';
+
+    public static toServerTypeUrl(componentType: ComponentType) : string {
+        if (componentType == ComponentType.SERVICE) {
+            return ServerTypeUrl.SERVICES.slice(0,-1);
+        } else if (componentType == ComponentType.RESOURCE) {
+            return ServerTypeUrl.RESOURCES.slice(0,-1);
+        } else {
+            return undefined;
+        }
+    }
 }
+
+
 
 export class ResourceType {
     static VF = 'VF';
@@ -57,6 +69,11 @@ export class ResourceType {
     static CR = 'CR';
 }
 
+export class SdcElementType {
+    static GROUP = 'GROUP';
+    static POLICY = 'POLICY';
+    static SERVICE_PROXY = 'ServiceProxy'
+}
 export class ComponentState {
     static CERTIFICATION_IN_PROGRESS = 'CERTIFICATION_IN_PROGRESS';
     static CERTIFIED = 'CERTIFIED';
@@ -76,9 +93,15 @@ export class ArtifactGroupType {
     static DEPLOYMENT = "DEPLOYMENT";
     static INFORMATION = "INFORMATIONAL";
     static SERVICE_API = "SERVICE_API";
+    static TOSCA = "TOSCA";
 }
 
 export class ArtifactType {
+
+    static DEPLOYMENT = "DEPLOYMENT";
+    static INFORMATION = "INFORMATIONAL";
+    static SERVICE_API = "SERVICE_API";
+    static HEAT_ENV = "HEAT_ENV";
     static HEAT = "HEAT";
     static HEAT_VOL = "HEAT_VOL";
     static HEAT_NET = "HEAT_NET";
@@ -202,6 +225,7 @@ export class ServerErrors {
     static ERROR_TITLE = 'Error';
     static DEFAULT_ERROR = 'Error getting response from server';
     static MESSAGE_ERROR = 'Wrong error format from server';
+    static DOWNLOAD_ERROR = 'Download error';
 }
 
 export class GraphColors {
@@ -255,6 +279,8 @@ export class States {
     public static WORKSPACE_ACTIVITY_LOG = 'workspace.activity_log';
     public static WORKSPACE_DEPLOYMENT_ARTIFACTS = 'workspace.deployment_artifacts';
     public static WORKSPACE_PROPERTIES = 'workspace.properties';
+    public static WORKSPACE_SERVICE_INPUTS = 'workspace.service_inputs';
+    public static WORKSPACE_RESOURCE_INPUTS = 'workspace.resource_inputs';
     public static WORKSPACE_ATTRIBUTES = 'workspace.attributes';
     public static WORKSPACE_INFORMATION_ARTIFACTS = 'workspace.information_artifacts';
     public static WORKSPACE_TOSCA_ARTIFACTS = 'workspace.tosca_artifacts';
@@ -287,6 +313,7 @@ export class EVENTS {
     static SHOW_LOADER_EVENT = "showLoaderEvent";
     static HIDE_LOADER_EVENT = "hideLoaderEvent";
     static UPDATE_PANEL = 'updatePanel';
+    static ON_DISTRIBUTION_SUCCESS = 'onDistributionSuccess';
 }
 
 
@@ -312,6 +339,7 @@ export class GRAPH_EVENTS {
     static ON_PALETTE_COMPONENT_HOVER_OUT = 'onPaletteComponentHoverOut';
     static ON_PALETTE_COMPONENT_DRAG_START = 'onPaletteComponentDragStart';
     static ON_PALETTE_COMPONENT_DRAG_ACTION = 'onPaletteComponentDragAction';
+    static ON_PALETTE_COMPONENT_DROP = 'onPaletteComponentDrop';
     static ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL = 'onPaletteComponentShowPopupPanel';
     static ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL = 'onPaletteComponentHidePopupPanel';
     static ON_COMPONENT_INSTANCE_NAME_CHANGED = 'onComponentInstanceNameChanged';
@@ -329,6 +357,7 @@ export class GRAPH_EVENTS {
     static ON_CANVAS_TAG_END = 'onCanvasTagEnd';
     static ON_POLICY_INSTANCE_UPDATE = 'onPolicyInstanceUpdate';
     static ON_GROUP_INSTANCE_UPDATE = 'onGroupInstanceUpdate';
+    static ON_SERVICE_PATH_CREATED = 'onServicePathCreated';
 }
 
 export class DEPENDENCY_EVENTS {
@@ -349,6 +378,7 @@ export class COMPONENT_FIELDS {
     static COMPONENT_INFORMATIONAL_ARTIFACTS = "artifacts";
     static COMPONENT_PROPERTIES = "properties";
     static COMPONENT_CAPABILITIES = "capabilities";
+    static COMPONENT_CAPABILITIES_PROPERTIES = "instanceCapabiltyProperties";
     static COMPONENT_REQUIREMENTS = "requirements";
     static COMPONENT_TOSCA_ARTIFACTS = "toscaArtifacts";
     static COMPONENT_POLICIES = "policies";
@@ -357,6 +387,8 @@ export class COMPONENT_FIELDS {
     static COMPONENT_INSTANCES_INTERFACES = "componentInstancesInterfaces";
     static COMPONENT_NON_EXCLUDED_GROUPS = "nonExcludedGroups";
     static COMPONENT_NON_EXCLUDED_POLICIES = "nonExcludedPolicies";
+    static FORWARDING_PATHS = "forwardingPaths";
+    static SERVICE_API_ARTIFACT = "serviceApiArtifacts";
 }
 
 export class SERVICE_FIELDS {

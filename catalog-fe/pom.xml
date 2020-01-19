@@ -28,13 +28,6 @@
 
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
-			<artifactId>security-utils</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openecomp.sdc</groupId>
 			<artifactId>common-app-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -39,11 +39,6 @@ public class DeleteComponentTool extends SdcInternalTool{
         String appConfigDir = args[0];
         String password = args[1];
         
-        if ( !PSW.equals(password) ){
-            ConsoleWriter.dataLine("Wrong password");
-            System.exit(1);
-        }
-        
         disableConsole();
         ConsoleWriter.dataLine("STARTED... ");
 

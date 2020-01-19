@@ -134,6 +134,7 @@ public class ComponentInstanceCapabilitiesMergeBLTest {
         getCapabilitiesPropsFilter.setIgnoreComponentInstances(false);
         getCapabilitiesPropsFilter.setIgnoreCapabilities(false);
         getCapabilitiesPropsFilter.setIgnoreCapabiltyProperties(false);
+        getCapabilitiesPropsFilter.setIgnoreGroups(false);
 
         ExternalConfiguration.setAppName("catalog-be");
         String appConfigDir = "src/test/resources/config/catalog-be";

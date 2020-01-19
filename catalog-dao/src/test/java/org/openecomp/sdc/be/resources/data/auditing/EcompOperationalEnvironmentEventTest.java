@@ -113,7 +113,7 @@ public class EcompOperationalEnvironmentEventTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setOperational_environment_type(operationalEnvironmentType);
+		testSubject.setOperationalEnvironmentType(operationalEnvironmentType);
 	}
 
 	@Test

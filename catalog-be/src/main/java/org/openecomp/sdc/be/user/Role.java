@@ -20,10 +20,27 @@
 
 package org.openecomp.sdc.be.user;
 
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+
+import java.util.Iterator;
+
 /*
  * Warning changing the order of the Enum variables changes the ordianl() function output
  * which may result in ecompRole id change
  */
 public enum Role {
-    ADMIN, TESTER, DESIGNER, GOVERNOR, OPS, PRODUCT_MANAGER, PRODUCT_STRATEGIST
+    ADMIN, TESTER, DESIGNER, PRODUCT_MANAGER, PRODUCT_STRATEGIST;
+
+    public static Role getByNameIgnoreCase(String name) {
+        for (Role inst : Role.values()) {
+            if (inst.name().equalsIgnoreCase(name)) {
+                return inst;
+            }
+        }
+        return null;
+    }
 }
+
+
+
+

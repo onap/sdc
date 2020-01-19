@@ -40,7 +40,6 @@ export class MenuItem {
     alertModal:string;
     conformanceLevelModal: boolean; // Call validateConformanceLevel API and shows conformanceLevelModal if necessary, then continue with action or invokes another action
     confirmationModal:string;       // Open confirmation modal (user should select "OK" or "Cancel"), and continue with the action.
-    emailModal:string;              // Open email modal (user should fill email details), and continue with the action.
     url:string;                     // Data added to menu item, in case the function need to use it, example: for function "changeLifecycleState", I need to pass also the state "CHECKOUT" that I want the state to change to.
 
 

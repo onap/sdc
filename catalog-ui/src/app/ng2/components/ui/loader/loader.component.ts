@@ -79,6 +79,13 @@ export class LoaderComponent {
                 width: (parentElement.offsetWidth !== undefined) ? parentElement.offsetWidth + "px" : undefined,
                 height: (parentElement.offsetHeight !== undefined) ? parentElement.offsetHeight + "px" : undefined
             };
+        } else {
+            this.offset = {
+                left: '0px',
+                top: '0px',
+                width: '100%',
+                height: '100%'
+            }
         }
         this.isVisible = true;
     }

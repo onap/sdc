@@ -32,6 +32,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.AuditHandler;
@@ -62,10 +67,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
 
 /**
  * This Servlet serves external users for distribution purposes.
- * 
+ *
  * @author tgitelman
  *
  */
@@ -74,7 +80,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Path("/v1")
 @OpenAPIDefinition(info =  @Info(title = "Distribution Servlet",description = "This Servlet serves external users for distribution purposes."))
 
-@Singleton
+@Controller
 public class DistributionServlet extends BeGenericServlet {
 
     private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
@@ -115,6 +121,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
             @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response getUebServerList(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
@@ -185,9 +192,9 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
             @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500", description = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-    
-    //@ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
-    
+
+    @ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response registerForDistribution(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
@@ -223,12 +230,6 @@ public class DistributionServlet extends BeGenericServlet {
     /**
      * Returns list of valid artifact types for validation done in the distribution client.<br>
      * The list is the representation of the values of the enum ArtifactTypeEnum.
-     *
-     * @param requestId
-     * @param instanceId
-     * @param authorization
-     * @param accept
-     * @return
      */
     @GET
     @Path("/artifactTypes")
@@ -242,6 +243,7 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
             @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500", description = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response getValidArtifactTypes(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,
@@ -282,7 +284,7 @@ public class DistributionServlet extends BeGenericServlet {
     @Operation(parameters = @Parameter(name = "requestJson", required = true ),description = "Subscription status", method = "POST", summary = "Removes from subscription for distribution notifications")
     //TODO Edit the responses
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "ECOMP component is successfully unregistered", 
+            @ApiResponse(responseCode = "204", description = "ECOMP component is successfully unregistered",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = TopicUnregistrationResponse.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "400", description = "Missing  Body - POL4500"),
@@ -294,6 +296,8 @@ public class DistributionServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500", description = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
     //@ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "requestJson", required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response unRegisterForDistribution(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId,

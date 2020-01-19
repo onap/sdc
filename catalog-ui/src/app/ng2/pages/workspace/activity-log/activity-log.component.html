@@ -1,0 +1,68 @@
+<!--
+  ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+<div class="activity-log">
+    <div class="sdc-filter-bar-wrapper">
+        <sdc-filter-bar
+                [placeHolder]="'Search...'"
+                [testId]="activityLogSearchBar"
+                (keyup)="updateFilter($event)">
+        </sdc-filter-bar>
+    </div>
+    <ngx-datatable
+            columnMode="flex"
+            [footerHeight]="0"
+            [limit]="50"
+            [headerHeight]="40"
+            [rowHeight]="35"
+            #activityLogTable
+            [rows]="activities">
+
+        <ngx-datatable-column name="Time" [flexGrow]="2" [prop]="'TIMESTAMP'">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{row.TIMESTAMP | date }} | {{row.TIMESTAMP | date:"HH:mm O"}}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Action" [flexGrow]="3" [prop]="'ACTION'">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{row.ACTION}}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Comment" [flexGrow]="5" [prop]="'COMMENT'">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span sdc-tooltip [tooltip-text]="row.COMMENT">{{ row.COMMENT }}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Modifier" [flexGrow]="3" [prop]="'MODIFIER'">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{ row.MODIFIER }}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Status" [flexGrow]="1" [prop]="'STATUS'">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <svg-icon-label
+                        [name]="row.STATUS <= 399 ? 'success' : 'icons_close'"
+                        [mode]="row.STATUS <= 399 ? 'success' : 'error'"
+                        [size]="'medium'"
+                        [label]="row.STATUS"
+                        [labelPlacement]="'left'"
+                        [labelClassName]="'label'"
+                >
+                </svg-icon-label>
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+
+</div>

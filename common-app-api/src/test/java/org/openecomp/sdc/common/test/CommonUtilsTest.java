@@ -83,16 +83,6 @@ public class CommonUtilsTest {
 
 	}
 
-	@Test
-	public void testFloatParsing() {
-		assertTrue(ValidationUtils.isFloatNumber("15555.45"));
-		assertTrue(ValidationUtils.isFloatNumber("0.5"));
-		assertFalse(ValidationUtils.isFloatNumber("15555"));
-		assertFalse(ValidationUtils.isFloatNumber("1"));
-		assertFalse(ValidationUtils.isFloatNumber("jk532"));
-		assertFalse(ValidationUtils.isFloatNumber("12..6"));
-
-	}
 
 	@Test
 	public void testValidateIconLength() {
@@ -377,31 +367,6 @@ public class CommonUtilsTest {
 		assertFalse(ValidationUtils.validateArtifactLabel("sfsdfhkj111=dfsf%"));
 		assertFalse(ValidationUtils.validateArtifactLabel("sdfsdfljghgklsdg908*"));
 
-	}
-
-	@Test
-	public void validateConsumerNameTest() {
-		assertTrue(ValidationUtils.validateConsumerName("ab037cd"));
-		assertFalse(ValidationUtils.validateConsumerName(" "));
-		assertTrue(ValidationUtils.validateConsumerName("_dD.d9"));
-		assertTrue(ValidationUtils.validateConsumerName("_dd.G9-"));
-		assertFalse(ValidationUtils.validateConsumerName(".dA.d9-"));
-		assertFalse(ValidationUtils.validateConsumerName("-d"));
-		assertFalse(ValidationUtils.validateConsumerName("d?"));
-		assertTrue(ValidationUtils.validateConsumerName("9"));
-	}
-
-	@Test
-	public void validateConsumerPassSaltTest() {
-		assertTrue(ValidationUtils.validateConsumerPassSalt("ad35fg2"));
-		assertTrue(ValidationUtils.validateConsumerPassSalt("12s"));
-		assertTrue(ValidationUtils.validateConsumerPassSalt("9"));
-		assertFalse(ValidationUtils.validateConsumerPassSalt("dA.d9-"));
-		assertFalse(ValidationUtils.validateConsumerPassSalt("dASQe"));
-		assertFalse(ValidationUtils.validateConsumerPassSalt("_d"));
-		assertFalse(ValidationUtils.validateConsumerPassSalt("?"));
-		assertFalse(ValidationUtils.validateConsumerPassSalt(""));
-		assertFalse(ValidationUtils.validateConsumerPassSalt(" "));
 	}
 
 	@Test

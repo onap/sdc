@@ -27,28 +27,28 @@ import org.openecomp.sdc.common.api.FileChangeCallback;
 import org.openecomp.sdc.common.config.EcompErrorConfiguration;
 import org.openecomp.sdc.common.config.IEcompConfigurationManager;
 import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigurationManager implements FileChangeCallback, IEcompConfigurationManager {
 
-    private ConfigurationSource configurationSource = null;
-    private static ConfigurationManager instance;
-    private static Logger logger = LoggerFactory.getLogger(ConfigurationManager.class.getName());
+	ConfigurationSource configurationSource = null;
+	private static ConfigurationManager instance;
 
-    public ConfigurationManager(ConfigurationSource configurationSource) {
-        super();
-        this.configurationSource = configurationSource;
-        loadConfigurationFiles();
-        instance = this;
-    }
+	private static final Logger log = Logger.getLogger(ConfigurationManager.class.getName());
 
-    private Map<String, Object> configurations = new HashMap<>();
+	public ConfigurationManager(ConfigurationSource configurationSource) {
+		super();
+		this.configurationSource = configurationSource;
+		loadConfigurationFiles();
+		instance = this;
+	}
 
-    private void loadConfigurationFiles() {
+	Map<String, Object> configurations = new HashMap<>();
+
+	private void loadConfigurationFiles() {
 
         loadConfigurationClass(Configuration.class);
         loadConfigurationClass(RestConfigurationInfo.class);
@@ -56,54 +56,54 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
         loadConfigurationClass(PluginsConfiguration.class);
         loadConfigurationClass(WorkspaceConfiguration.class);
 
-    }
+	}
 
-    private <T extends BasicConfiguration> void loadConfigurationClass(Class<T> clazz) {
-        ConfigurationListener configurationListener = new ConfigurationListener(clazz, this);
+	private <T extends BasicConfiguration> void loadConfigurationClass(Class<T> clazz) {
+		ConfigurationListener configurationListener = new ConfigurationListener(clazz, this);
 
-        logger.info("created listener for class {}: {}", clazz.getName(), configurationListener);
+		log.info("created listener for class {}: {}", clazz.getName(), configurationListener);
 
-        T object = configurationSource.getAndWatchConfiguration(clazz, configurationListener);
+		T object = configurationSource.getAndWatchConfiguration(clazz, configurationListener);
 
-        configurations.put(getKey(clazz), object);
-    }
+		configurations.put(getKey(clazz), object);
+	}
 
-    private <T> String getKey(Class<T> class1) {
+	private <T> String getKey(Class<T> class1) {
 
-        return class1.getSimpleName();
+		return class1.getSimpleName();
 
-    }
+	}
 
-    public Configuration getConfiguration() {
+	public Configuration getConfiguration() {
 
-        return (Configuration) configurations.get(getKey(Configuration.class));
+		return (Configuration) configurations.get(getKey(Configuration.class));
 
-    }
+	}
 
-    public RestConfigurationInfo getRestClientConfiguration() {
+	public RestConfigurationInfo getRestClientConfiguration() {
 
-        return (RestConfigurationInfo) configurations.get(getKey(RestConfigurationInfo.class));
+		return (RestConfigurationInfo) configurations.get(getKey(RestConfigurationInfo.class));
 
-    }
+	}
 
-    @Override
-    public EcompErrorConfiguration getEcompErrorConfiguration() {
+	@Override
+	public EcompErrorConfiguration getEcompErrorConfiguration() {
 
-        return (EcompErrorConfiguration) configurations.get(getKey(EcompErrorConfiguration.class));
+		return (EcompErrorConfiguration) configurations.get(getKey(EcompErrorConfiguration.class));
 
-    }
+	}
 
-    public PluginsConfiguration getPluginsConfiguration() {
+	public PluginsConfiguration getPluginsConfiguration() {
 
-        logger.info("requested plugins configuration and got this:{}", configurations.get(getKey(PluginsConfiguration.class)));
+		log.info("requested plugins configuration and got this:{}", configurations.get(getKey(PluginsConfiguration.class)));
 
-        return (PluginsConfiguration) configurations.get(getKey(PluginsConfiguration.class));
-    }
+		return (PluginsConfiguration) configurations.get(getKey(PluginsConfiguration.class));
+	}
 
 
     public WorkspaceConfiguration getWorkspaceConfiguration() {
 
-        logger.info("requested plugins configuration and got this:{}", configurations.get(getKey(WorkspaceConfiguration.class)));
+        log.info("requested plugins configuration and got this:{}", configurations.get(getKey(WorkspaceConfiguration.class)));
 
         return (WorkspaceConfiguration) configurations.get(getKey(WorkspaceConfiguration.class));
     }
@@ -111,22 +111,34 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
     public Configuration getConfigurationAndWatch(ConfigurationListener configurationListener) {
 
-        if (configurationListener != null) {
+		if (configurationListener != null) {
 
-            configurationSource.addWatchConfiguration(Configuration.class, configurationListener);
+			configurationSource.addWatchConfiguration(Configuration.class, configurationListener);
 
-        }
-        return (Configuration) configurations.get(getKey(Configuration.class));
+		}
+		return (Configuration) configurations.get(getKey(Configuration.class));
 
-    }
+	}
 
-    public void reconfigure(BasicConfiguration obj) { }
+	public void reconfigure(BasicConfiguration obj) {
+		//
+		// if (obj != null) {
+		//
+		// if (obj instanceof Configuration) {
+		// configurations.put(getKey(Configuration.class), obj);
+		// }
+		//
+		// if (obj instanceof EcompErrorConfiguration) {
+		// configurations.put(getKey(EcompErrorConfiguration.class), obj);
+		// }
+		// }
+	}
 
-    public static ConfigurationManager getConfigurationManager() {
-        return instance;
-    }
+	public static ConfigurationManager getConfigurationManager() {
+		return instance;
+	}
 
-    public static void setTestInstance(ConfigurationManager configurationManagerInstance) {
-        instance = configurationManagerInstance;
-    }
+	public static void setTestInstance(ConfigurationManager configurationManagerInstance) {
+		instance = configurationManagerInstance;
+	}
 }

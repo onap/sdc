@@ -53,17 +53,15 @@ public class Configuration extends BasicConfiguration {
 
     private FeMonitoringConfig systemMonitoring;
 
-    private String kibanaHost;
-
-    private Integer kibanaPort;
-
-    private String kibanaProtocol;
-
     private String onboardingForwardContext;
 
     private OnboardingConfig onboarding;
 
     private DcaeConfig dcae;
+
+    private CookieConfig authCookie;
+
+    private CatalogFacadeMsConfig catalogFacadeMs;
     /**
      * be http context
      */
@@ -80,30 +78,15 @@ public class Configuration extends BasicConfiguration {
     private int requestTimeout;
     private List<List<String>> identificationHeaderFields;
     private List<List<String>> optionalHeaderFields;
+
     private List<String> forwardHeaderFields;
 
-    public String getKibanaProtocol() {
-        return kibanaProtocol;
+    public CatalogFacadeMsConfig getCatalogFacadeMs() {
+        return catalogFacadeMs;
     }
 
-    public void setKibanaProtocol(String kibanaProtocol) {
-        this.kibanaProtocol = kibanaProtocol;
-    }
-
-    public String getKibanaHost() {
-        return kibanaHost;
-    }
-
-    public void setKibanaHost(String kibanaHost) {
-        this.kibanaHost = kibanaHost;
-    }
-
-    public Integer getKibanaPort() {
-        return kibanaPort;
-    }
-
-    public void setKibanaPort(Integer kibanaPort) {
-        this.kibanaPort = kibanaPort;
+    public void setCatalogFacadeMs(CatalogFacadeMsConfig catalogFacadeMs) {
+        this.catalogFacadeMs = catalogFacadeMs;
     }
 
     public FeMonitoringConfig getSystemMonitoring() {
@@ -274,6 +257,14 @@ public class Configuration extends BasicConfiguration {
         this.dcae = dcae;
     }
 
+    public CookieConfig getAuthCookie() {
+        return authCookie;
+    }
+
+    public void setAuthCookie(CookieConfig authCookie) {
+        this.authCookie = authCookie;
+    }
+
     @Override
     public String toString() {
         return new StringBuilder().append(format("backend host: %s%n", beHost))
@@ -288,9 +279,9 @@ public class Configuration extends BasicConfiguration {
 
     public static class FeMonitoringConfig {
 
-        private Boolean enabled;
-        private Boolean isProxy;
-        private Integer probeIntervalInSeconds;
+        Boolean enabled;
+        Boolean isProxy;
+        Integer probeIntervalInSeconds;
 
         public Boolean getEnabled() {
             return enabled;
@@ -322,13 +313,13 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class OnboardingConfig {
-        private String protocolFe = "http";
-        private String hostFe;
-        private Integer portFe;
-        private String protocolBe = "http";
-        private String hostBe;
-        private Integer portBe;
-        private String healthCheckUriFe;
+        String protocolFe = "http";
+        String hostFe;
+        Integer portFe;
+        String protocolBe = "http";
+        String hostBe;
+        Integer portBe;
+        String healthCheckUriFe;
 
         public String getProtocolFe() {
             return protocolFe;
@@ -389,10 +380,10 @@ public class Configuration extends BasicConfiguration {
 
     public static class DcaeConfig {
 
-        private String protocol = "http";
-        private String host;
-        private Integer port;
-        private String healthCheckUri;
+        String protocol = "http";
+        String host;
+        Integer port;
+        String healthCheckUri;
 
         public String getProtocol() {
             return protocol;
@@ -425,6 +416,94 @@ public class Configuration extends BasicConfiguration {
         public void setHealthCheckUri(String healthCheckUri) {
             this.healthCheckUri = healthCheckUri;
         }
+    }
+
+    public static class CookieConfig {
+        String cookieName = "AuthenticationCookie";
+        String path = "";
+        String domain = "";
+        String securityKey = "";
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
+
+        public String getSecurityKey() {return securityKey;
+        }
+
+        public void setSecurityKey(String securityKey) {
+            this.securityKey = securityKey;
+        }
+
+        public String getCookieName() {
+            return cookieName;
+        }
+
+        public void setCookieName(String cookieName) {
+            this.cookieName = cookieName;
+        }
+    }
+
+    public static class CatalogFacadeMsConfig {
+        String protocol;
+        String host;
+        Integer port;
+        String healthCheckUri;
+        String path;
+
+        public void setProtocol(String protocol) {
+            this.protocol = protocol;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public void setPort(Integer port) {
+            this.port = port;
+        }
+
+        public void setHealthCheckUri(String healthCheckUri) {
+            this.healthCheckUri = healthCheckUri;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public String getHealthCheckUri() {
+            return healthCheckUri;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+
     }
 
     public List<String> getHealthStatusExclude() {

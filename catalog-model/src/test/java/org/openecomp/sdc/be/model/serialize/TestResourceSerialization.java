@@ -94,6 +94,8 @@ public class TestResourceSerialization {
                 if (type.toString().contains(".List")) {
                     ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
                     Class<?> stringListClass = (Class<?>) stringListType.getActualTypeArguments()[0];
+                    // System.out.println(stringListClass); // class
+                    // java.lang.String.
                     allClasses.add(stringListClass);
                 }
 
@@ -135,12 +137,27 @@ public class TestResourceSerialization {
 
                 }
 
+                // System.out.println(type);
                 allClasses.add(type);
             }
         }
 
     }
+
+    private void addInternalTypeOfList(Class clazz) {
+
+        // clazz.
+        // ParameterizedType stringListType = (ParameterizedType)
+        // field.getGenericType();
+        // Class<?> stringListClass = (Class<?>)
+        // stringListType.getActualTypeArguments()[0];
+        // //System.out.println(stringListClass); // class java.lang.String.
+        // allClasses.add(stringListClass);
+        //
+    }
+
     private boolean isClassImplementedSerialize(Class clazz) {
+
         Type[] genericInterfaces = clazz.getGenericInterfaces();
         if (genericInterfaces != null) {
             Type orElse = Arrays.stream(genericInterfaces).filter(p -> p.getTypeName().equals("java.io.Serializable"))
@@ -149,6 +166,47 @@ public class TestResourceSerialization {
                 return true;
             }
         }
+
         return false;
+    }
+
+    // @Test
+    public void testSimpleResourceSerialize() {
+
+        Resource resource = new Resource();
+        String name = "res1";
+        Map<String, String> allVersions = new HashMap<>();
+        allVersions.put("keya", "valuea");
+
+        resource.setName(name);
+        // all versions
+        resource.setAllVersions(allVersions);
+        List<ComponentInstance> resourceInstances = new ArrayList<>();
+        // component instances
+        ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setDescription("desc1");
+        componentInstance.setComponentUid("comUid");
+        resourceInstances.add(componentInstance);
+
+        resource.setComponentInstances(resourceInstances);
+
+        Either<byte[], Boolean> serialize = SerializationUtils.serialize(resource);
+        assertTrue("check object serialized", serialize.isLeft());
+        byte[] value = serialize.left().value();
+
+        Either<Object, Boolean> deserialize = SerializationUtils.deserialize(value);
+        assertTrue("check object deserialized", deserialize.isLeft());
+        Object obj = deserialize.left().value();
+        Resource desResource = (Resource) obj;
+        assertEquals("check name", name, desResource.getName());
+        verifyAllVersions(desResource);
+
+    }
+
+    private void verifyAllVersions(Resource desResource) {
+        assertNotNull("check all versions", desResource.getAllVersions());
+        assertEquals("check all version size", 1, desResource.getAllVersions().size());
+        assertEquals("check all version key", "keya", desResource.getAllVersions().keySet().iterator().next());
+        assertEquals("check all version value", "valuea", desResource.getAllVersions().values().iterator().next());
     }
 }

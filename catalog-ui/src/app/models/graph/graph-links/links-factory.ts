@@ -22,60 +22,49 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {RelationshipModel, Relationship, CompositionCiLinkBase, CompositionCiNodeBase, LinkUcpeHost, CompositionCiUcpeLink,
-    CompositionCiVlUcpeLink, CompositionCiSimpleLink, ModuleCiLinkBase, ModuleCiVlLink, CompositionCiVLink} from "../../../models";
+import {
+    RelationshipModel, Relationship, CompositionCiLinkBase, CompositionCiNodeBase, LinkUcpeHost, CompositionCiUcpeLink,
+    CompositionCiVlUcpeLink, CompositionCiSimpleLink, ModuleCiLinkBase, ModuleCiVlLink, CompositionCiVLink
+} from "app/models";
+import {Injectable} from "@angular/core";
 
+@Injectable()
 export class LinksFactory {
 
-  constructor() {
-  }
-
-  public createGraphLink = (cy:Cy.Instance, relation:RelationshipModel, singleRelation:Relationship):CompositionCiLinkBase => {
-
-    let newRelation:CompositionCiLinkBase;
-
-    // let fromNode:CompositionCiNodeBase = cy.getElementById(relation.fromNode).data();
-    // let toNode:CompositionCiNodeBase = cy.getElementById(relation.toNode).data();
-    //
-    // if ((relation.fromNode && fromNode.isUcpePart) || (relation.toNode && toNode.isUcpePart )) { //Link from or to node inside ucpe
-    //
-    //   if (singleRelation && singleRelation.relationship.type && singleRelation.relationship.type == 'tosca.relationships.HostedOn') {
-    //     newRelation = new LinkUcpeHost(relation, singleRelation);
-    //   } else if (singleRelation.relationship.type && _.includes(singleRelation.relationship.type.toLowerCase(), 'link')) {
-    //     newRelation = new CompositionCiVlUcpeLink(relation, fromNode.isUcpePart, singleRelation);
-    //   } else {
-    //     newRelation = new CompositionCiUcpeLink(relation, fromNode.isUcpePart, singleRelation);
-    //   }
-    // } else
-     if (singleRelation.relation.relationship.type && _.includes(singleRelation.relation.relationship.type.toLowerCase(), 'link')) {
-      newRelation = new CompositionCiVLink(relation, singleRelation);
-    } else {
-      newRelation = new CompositionCiSimpleLink(relation, singleRelation);
+    constructor() {
     }
 
-    return newRelation;
-  };
+    public createGraphLink = (cy:Cy.Instance, relation:RelationshipModel, singleRelation:Relationship):CompositionCiLinkBase => {
 
-  public createUcpeHostLink = (relation:RelationshipModel):LinkUcpeHost => {
-    return new LinkUcpeHost(relation);
-  };
+        let newRelation:CompositionCiLinkBase;
+        if (singleRelation.relation.relationship.type && _.includes(singleRelation.relation.relationship.type.toLowerCase(), 'link')) {
+            newRelation = new CompositionCiVLink(relation, singleRelation);
+        } else {
+            newRelation = new CompositionCiSimpleLink(relation, singleRelation);
+        }
 
-  public createVLLink = (relation:RelationshipModel):CompositionCiVLink => {
-    return new CompositionCiVLink(relation);
-  }
+        return newRelation;
+    };
 
+    public createUcpeHostLink = (relation:RelationshipModel):LinkUcpeHost => {
+        return new LinkUcpeHost(relation);
+    };
 
-  public createModuleGraphLinks = (relation:RelationshipModel, singleRelation:Relationship):ModuleCiLinkBase => {
-
-    let newRelation:ModuleCiLinkBase;
-
-    if (_.includes(singleRelation.relation.relationship.type.toLowerCase(), 'link')) {
-      newRelation = new ModuleCiVlLink(relation, singleRelation);
-    } else {
-      newRelation = new ModuleCiLinkBase(relation, singleRelation);
+    public createVLLink = (relation:RelationshipModel):CompositionCiVLink => {
+        return new CompositionCiVLink(relation);
     }
 
-    return newRelation;
-  };
+    public createModuleGraphLinks = (relation:RelationshipModel, singleRelation:Relationship):ModuleCiLinkBase => {
+
+        let newRelation:ModuleCiLinkBase;
+
+        if (_.includes(singleRelation.relation.relationship.type.toLowerCase(), 'link')) {
+            newRelation = new ModuleCiVlLink(relation, singleRelation);
+        } else {
+            newRelation = new ModuleCiLinkBase(relation, singleRelation);
+        }
+
+        return newRelation;
+    };
 
 }

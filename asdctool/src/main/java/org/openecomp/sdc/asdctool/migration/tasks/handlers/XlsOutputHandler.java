@@ -82,7 +82,7 @@ public class XlsOutputHandler implements OutputHandler {
 			file.close();
 			return true;
 		} catch (Exception e) {
-			log.debug("#writeOutputAndCloseFile - Failed to write an output file. ", e);
+			log.debug("#writeOutputAndCloseFile - Failed to write an output file. The {} exception occurred. ", e.getMessage());
 			return false;
 		}
 	}

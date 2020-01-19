@@ -35,13 +35,6 @@ import org.springframework.core.io.FileSystemResource;
 @Configuration
 @Import({DAOSpringConfig.class, CatalogModelSpringConfig.class})
 public class InternalToolConfiguration {
-    @Bean(name = "elasticsearchConfig")
-    public PropertiesFactoryBean mapper() {
-        String configHome = System.getProperty("config.home");
-        PropertiesFactoryBean bean = new PropertiesFactoryBean();
-        bean.setLocation(new FileSystemResource(configHome + "/elasticsearch.yml"));
-        return bean;
-    }
     
     @Bean
     public DeleteComponentHandler deleteComponentHandler(

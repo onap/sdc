@@ -54,7 +54,7 @@ public class ExternalRefsMergeBL implements ComponentInstanceMergeInterface {
     }
 
     @Override
-    public Either<Component, ResponseFormat> mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
+    public Component mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
         Optional<ComponentInstance> componentInstance = updatedContainerComponent.getComponentInstanceById(newInstanceId);
         if (!componentInstance.isPresent()) {
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND,
@@ -65,6 +65,6 @@ public class ExternalRefsMergeBL implements ComponentInstanceMergeInterface {
             externalReferencesOperation.addAllExternalReferences(updatedContainerComponent.getUniqueId(),
                     componentInstance.get().getUniqueId(), savedExternalRefs);
         }
-        return Either.left(updatedContainerComponent);
+        return updatedContainerComponent;
     }
 }

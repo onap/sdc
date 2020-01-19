@@ -48,7 +48,7 @@ export class Module {
     public groupInstanceUniqueId:string; // This will only have a value if this is a group instance
 
     constructor(module?:Module) {
-        if (module) {
+        if (module) {   
             this.name = module.name;
             this.groupUUID = module.groupUUID;
             this.invariantUUID = module.invariantUUID;
