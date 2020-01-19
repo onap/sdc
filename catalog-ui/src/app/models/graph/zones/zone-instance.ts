@@ -43,11 +43,11 @@ export class ZoneInstance {
     hidden:boolean;
     forceSave:Subject<Function>;
 
-    constructor(instance: PolicyInstance | GroupInstance, topologyTemplate:TopologyTemplate) {
+    constructor(instance: PolicyInstance | GroupInstance, topologyTemplateType: string, topologyTemplateId: string) {
 
         this.instanceData = instance;
-        this.parentComponentType = topologyTemplate.componentType;
-        this.parentComponentID = topologyTemplate.uniqueId;
+        this.parentComponentType = topologyTemplateType;
+        this.parentComponentID = topologyTemplateId;
 
         if (instance instanceof PolicyInstance) {
             this.type = ZoneInstanceType.POLICY;

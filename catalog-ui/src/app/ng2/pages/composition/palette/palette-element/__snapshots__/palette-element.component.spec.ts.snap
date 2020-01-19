@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`palette element component should match current snapshot of palette element component 1`] = `
+<palette-element>
+  <div
+    class="palette-element"
+  >
+    <sdc-element-icon
+      class="palette-element-icon"
+    />
+    <div
+      class="palette-element-text"
+    >
+      <div
+        class="palette-element-name"
+        sdc-tooltip=""
+      >
+        
+      </div>
+      <span>
+         V.
+      </span>
+      <span>
+        
+      </span>
+    </div>
+  </div>
+</palette-element>
+`;

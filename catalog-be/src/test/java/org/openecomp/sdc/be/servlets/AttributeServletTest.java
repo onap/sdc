@@ -20,14 +20,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.Mockito.mock;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Equivalence.Wrapper;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
@@ -35,7 +30,10 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import com.google.common.base.Equivalence.Wrapper;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+
+import static org.mockito.Mockito.mock;
 
 public class AttributeServletTest {
 

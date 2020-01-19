@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.be.components.merge.input;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.model.InputDefinition;
 
+import java.util.List;
+import java.util.Map;
 @org.springframework.stereotype.Component
 public class InputsValuesMergingBusinessLogic {
 

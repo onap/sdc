@@ -20,8 +20,33 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.stereotype.Controller;
+
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -36,36 +61,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @OpenAPIDefinition(info = @Info(title = "Additional Information Servlet", description = "Additional Information Servlet"))
-@Singleton
+@Controller
 public class AdditionalInformationServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(AdditionalInformationServlet.class);
+    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+    private static final String MODIFIER_ID_IS = "modifier id is {}";
+    private static final String FAILED_TO_UPDATE_ADDITIONAL_INFO_PROPERTY = "Failed to update additional information property. Reason - {}";
+
     private final AdditionalInformationBusinessLogic businessLogic;
 
     @Inject
@@ -95,6 +103,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createResourceAdditionalInformationLabel(
             @Parameter(description = "resource id to update with new property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -126,6 +135,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createServiceAdditionalInformationLabel(
             @Parameter(description = "service id to update with new property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -157,6 +167,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceAdditionalInformationLabel(
             @Parameter(description = "resource id to update with new property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -189,6 +200,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateServiceAdditionalInformationLabel(
             @Parameter(description = "service id to update with new property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -220,6 +232,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceAdditionalInformationLabel(
             @Parameter(description = "resource id to update with new property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -250,6 +263,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteServiceAdditionalInformationLabel(
             @Parameter(description = "service id to update with new property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -279,6 +293,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceAdditionalInformationLabel(
             @Parameter(description = "resource id to update with new property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -308,6 +323,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getServiceAdditionalInformationLabel(
             @Parameter(description = "service id to update with new property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -336,6 +352,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllResourceAdditionalInformationLabel(
             @Parameter(description = "resource id to update with new property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -363,6 +380,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllServiceAdditionalInformationLabel(
             @Parameter(description = "service id to update with new property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -388,13 +406,15 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
-        log.debug("modifier id is {}", userId);
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        log.debug(MODIFIER_ID_IS, userId);
         log.debug("data is {}", data);
 
         try {
             // convert json to AdditionalInfoParameterInfo
             AdditionalInfoParameterInfo additionalInfoParameterInfo = gson.fromJson(data, AdditionalInfoParameterInfo.class);
+
+            // create the new property
 
             Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.createAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, userId);
 
@@ -435,21 +455,23 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
-        log.debug("modifier id is {}", userId);
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        log.debug(MODIFIER_ID_IS, userId);
         log.debug("data is {}", data);
 
         try {
             // convert json to AdditionalInfoParameterInfo
             AdditionalInfoParameterInfo additionalInfoParameterInfo = gson.fromJson(data, AdditionalInfoParameterInfo.class);
 
+            // create the new property
+            
             additionalInfoParameterInfo.setUniqueId(labelId);
 
             Either<AdditionalInfoParameterInfo, ResponseFormat> either = businessLogic.updateAdditionalInformation(nodeType, uniqueId, additionalInfoParameterInfo, userId);
 
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
-                log.info("Failed to update additional information property. Reason - {}", responseFormat);
+                log.info(FAILED_TO_UPDATE_ADDITIONAL_INFO_PROPERTY, responseFormat);
                 return buildErrorResponse(responseFormat);
             }
 
@@ -485,8 +507,8 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
-        log.debug("modifier id is {}", userId);
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        log.debug(MODIFIER_ID_IS, userId);
 
         try {
 
@@ -497,7 +519,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
-                log.info("Failed to update additional information property. Reason - {}", responseFormat);
+                log.info(FAILED_TO_UPDATE_ADDITIONAL_INFO_PROPERTY, responseFormat);
                 return buildErrorResponse(responseFormat);
             }
 
@@ -532,10 +554,13 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
-        log.debug("modifier id is {}", userId);
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        log.debug(MODIFIER_ID_IS, userId);
 
         try {
+
+            // create the new property
+            
 
             AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
             additionalInfoParameterInfo.setUniqueId(labelId);
@@ -544,7 +569,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
-                log.info("Failed to update additional information property. Reason - {}", responseFormat);
+                log.info(FAILED_TO_UPDATE_ADDITIONAL_INFO_PROPERTY, responseFormat);
                 return buildErrorResponse(responseFormat);
             }
 
@@ -579,14 +604,17 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
-        log.debug("modifier id is {}", userId);
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        log.debug(MODIFIER_ID_IS, userId);
 
         try {
+
+            
+
             Either<AdditionalInformationDefinition, ResponseFormat> either = businessLogic.getAllAdditionalInformation(nodeType, uniqueId, userId);
             if (either.isRight()) {
                 ResponseFormat responseFormat = either.right().value();
-                log.info("Failed to update additional information property. Reason - {}", responseFormat);
+                log.info(FAILED_TO_UPDATE_ADDITIONAL_INFO_PROPERTY, responseFormat);
                 return buildErrorResponse(responseFormat);
             }
 

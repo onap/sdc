@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.info;
 
 import com.google.common.annotations.VisibleForTesting;
+
 import java.util.List;
 
 public class ServiceInfo {

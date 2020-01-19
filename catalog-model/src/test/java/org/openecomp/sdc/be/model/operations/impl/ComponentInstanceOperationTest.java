@@ -71,6 +71,7 @@ public class ComponentInstanceOperationTest {
 		componentInstanceOperation.setJanusGraphGenericDao(janusGraphGenericDao);
 	}
 
+	
 	@Test
 	public void testUpdateInputValueInResourceInstance() {
 		ComponentInstanceInput input = null;

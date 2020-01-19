@@ -20,10 +20,44 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.mixin.GroupCompositionMixin;
+import org.openecomp.sdc.be.mixin.PolicyCompositionMixin;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiLeftPaletteComponent;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.be.view.ResponseView;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.stereotype.Controller;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -37,41 +71,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.mixin.GroupCompositionMixin;
-import org.openecomp.sdc.be.mixin.PolicyCompositionMixin;
-import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.be.view.ResponseView;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.stereotype.Controller;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.openecomp.sdc.common.util.GeneralUtility.getCategorizedComponents;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -108,6 +114,7 @@ public class ComponentServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response conformanceLevelValidation(@PathParam("componentType") final String componentType,
             @PathParam("componentUuid") final String componentUuid, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -142,9 +149,10 @@ public class ComponentServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getRequirementAndCapabilities(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         Response response;
 
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -154,16 +162,12 @@ public class ComponentServlet extends BeGenericServlet {
         if (componentTypeEnum != null) {
             try {
                 ComponentBusinessLogic compBL = componentBusinessLogicProvider.getInstance(componentTypeEnum);
-                Either<CapReqDef, ResponseFormat> eitherRequirementsAndCapabilities = compBL.getRequirementsAndCapabilities(componentId, componentTypeEnum, userId);
-                if (eitherRequirementsAndCapabilities.isRight()) {
-                    response = buildErrorResponse(eitherRequirementsAndCapabilities.right().value());
-                } else {
-                    response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(eitherRequirementsAndCapabilities.left().value()));
-                }
-            } catch (Exception e) {
+                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                        RepresentationUtils.toRepresentation(compBL.getRequirementsAndCapabilities(componentId, componentTypeEnum, userId)));
+            } catch (IOException e) {
                 BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Capabilities and requirements for " + componentId);
                 log.debug("getRequirementAndCapabilities failed with exception", e);
-                response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+                throw e;
             }
         } else {
             response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
@@ -182,15 +186,15 @@ public class ComponentServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getLatestVersionNotAbstractCheckoutComponents(
             @PathParam("componentType") final String componentType, @Context final HttpServletRequest request,
             @QueryParam("internalComponentType") String internalComponentType,
             @QueryParam("componentUids") List<String> componentUids,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
-        Response response = null;
 
         try {
 
@@ -211,11 +215,9 @@ public class ComponentServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(GET_CERTIFIED_NON_ABSTRACT + componentType);
             log.debug(GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION, e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
+            throw e;
 
         }
-
     }
 
     @POST
@@ -228,15 +230,16 @@ public class ComponentServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getLatestVersionNotAbstractCheckoutComponentsByBody(
             @PathParam("componentType") final String componentType, @Context final HttpServletRequest request,
             @QueryParam("internalComponentType") String internalComponentType,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @Parameter(description = "Consumer Object to be created", required = true) List<String> data) {
+            @Parameter(description = "Consumer Object to be created", required = true) List<String> data) throws IOException {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET) Start handle request of {}", url);
-        Response response = null;
+        Response response;
 
         try {
 
@@ -261,9 +264,7 @@ public class ComponentServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(GET_CERTIFIED_NON_ABSTRACT + componentType);
             log.debug(GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION, e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
 
     }
@@ -278,15 +279,15 @@ public class ComponentServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getLatestVersionNotAbstractCheckoutComponentsIdesOnly(
             @PathParam("componentType") final String componentType, @Context final HttpServletRequest request,
             @QueryParam("internalComponentType") String internalComponentType,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @Parameter(description = "uid list", required = true) String data) {
+            @Parameter(description = "uid list", required = true) String data) throws IOException {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}", url);
-        Response response = null;
         try {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
             ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
@@ -296,15 +297,15 @@ public class ComponentServlet extends BeGenericServlet {
                 log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, componentType);
                 return buildErrorResponse(actionResponse.right().value());
             }
-            Object components = RepresentationUtils.toRepresentation(actionResponse.left().value());
+            List<UiLeftPaletteComponent> uiLeftPaletteComponents = getComponentsUtils().convertComponentToUiLeftPaletteComponentObject(actionResponse.left().value());
+            Map<String, Map<String, List<UiLeftPaletteComponent>>> categorizedComponents = getCategorizedComponents(uiLeftPaletteComponents);
+            Object components = RepresentationUtils.toRepresentation(categorizedComponents);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), components);
 
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(GET_CERTIFIED_NON_ABSTRACT + componentType);
             log.debug(GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION, e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
 
     }
@@ -319,15 +320,15 @@ public class ComponentServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentInstancesFilteredByPropertiesAndInputs(
             @PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
             @Context final HttpServletRequest request, @QueryParam("searchText") String searchText,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @Parameter(description = "uid" + " " + "list", required = true) String data) {
+            @Parameter(description = "uid" + " " + "list", required = true) String data) throws IOException {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET) Start handle request of {}", url);
-        Response response = null;
         try {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
             ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
@@ -343,8 +344,7 @@ public class ComponentServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Component Instances filtered by properties & inputs" + componentType);
             log.debug("getComponentInstancesFilteredByPropertiesAndInputs failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
+            throw e;
         }
     }
 
@@ -362,6 +362,7 @@ public class ComponentServlet extends BeGenericServlet {
      * @return
      */
 
+
     @GET
     @Path("/{componentType}/{componentId}/filteredDataByParams")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -373,10 +374,11 @@ public class ComponentServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Resource not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentDataFilteredByParams(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,
             @QueryParam("include") final List<String> dataParamsToReturn, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF , url);
@@ -385,8 +387,6 @@ public class ComponentServlet extends BeGenericServlet {
         User modifier = new User();
         modifier.setUserId(userId);
         log.debug("modifier id is {}" , userId);
-
-        Response response;
 
         try {
             String resourceIdLower = componentId.toLowerCase();
@@ -398,8 +398,7 @@ public class ComponentServlet extends BeGenericServlet {
 
             if (actionResponse.isRight()) {
                 log.debug("failed to get component data filtered by ui params");
-                response = buildErrorResponse(actionResponse.right().value());
-                return response;
+                return buildErrorResponse(actionResponse.right().value());
             }
             RepresentationUtils.toRepresentation(actionResponse.left().value());
             return buildOkResponse(actionResponse.left().value());
@@ -407,8 +406,7 @@ public class ComponentServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get component filtered by ui params");
             log.debug("get resource failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -426,13 +424,14 @@ public class ComponentServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getFilteredComponentInstanceProperties(
             @PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,
             @PathParam("propertyNameFragment") final String propertyNameFragment,
             @QueryParam("resourceType") List<String> resourceTypes,
             @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         User user = new User();
         user.setUserId(userId);
@@ -459,8 +458,7 @@ public class ComponentServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Filtered Component Instance Properties");
             log.debug("Getting of filtered component instance properties failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 }

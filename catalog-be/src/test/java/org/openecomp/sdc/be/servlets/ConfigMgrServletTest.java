@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.datastax.driver.core.Configuration;
 import org.junit.Test;
 
-import com.datastax.driver.core.Configuration;
+import javax.servlet.http.HttpServletRequest;
 
 public class ConfigMgrServletTest {
 

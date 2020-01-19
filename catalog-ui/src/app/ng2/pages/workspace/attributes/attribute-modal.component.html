@@ -1,0 +1,104 @@
+<form>
+    <div class="attr-container">
+
+        <div class="attr-col">
+            <!-- ATTRIBUTE NAME - MANDATORY -->
+            <div>
+                <sdc-input
+                        #attributeName
+                        label="Name"
+                        [required]="true"
+                        [(value)]="attributeToEdit.name"
+                        [disabled]="isEdit"
+                        name="attributeName"
+                        testId="attributeName"
+                        [maxLength]="255">
+                </sdc-input>
+                <sdc-validation [validateElement]="attributeName" (validityChanged)="onValidityChange($event, 'name')">
+                    <sdc-required-validator message="{{'VALIDATION_ERROR_REQUIRED' | translate : { 'field' : 'Name' } }}"></sdc-required-validator>
+                    <sdc-regex-validator message="{{'VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED' | translate }}" [pattern]="validationPatterns.propertyName"></sdc-regex-validator>
+                </sdc-validation>
+            </div>
+
+            <!-- ATTRIBUTE DESCRIPTION - OPTIONAL -->
+            <div>
+                <sdc-textarea #attributeDescription
+                              [(value)]="attributeToEdit.description"
+                              [required]="false"
+                              testId="description"
+                              [maxLength]="256"
+                              label="Description">
+                </sdc-textarea>
+            </div>
+        </div>
+
+        <div class="attr-col">
+
+            <div class="attributeType">
+                <!-- ATTRIBUTE TYPE - MANDATORY -->
+                <sdc-dropdown #attributeType [disabled]="false" label="Type" [required]="true"
+                              [selectedOption]="toDropDownOption(this.attributeToEdit.type)" placeHolder="Choose Type"
+                              [options]="types" (changed)="onTypeSelected($event)">
+                    <sdc-validation [validateElement]="attributeType" (validityChanged)="onValidityChange($event, 'type')">
+                        <sdc-required-validator message="'required field'"></sdc-required-validator>
+                    </sdc-validation>
+                </sdc-dropdown>
+            </div>
+
+            <!-- ATTRIBUTE DEFAULT VALUE TEXT - OPTIONAL -->
+            <div *ngIf="attributeToEdit.type != 'boolean'">
+                <sdc-input
+                        #defaultValue
+                        [required]="false"
+                        label="Default Value"
+                        [(value)]="attributeToEdit.defaultValue"
+                        [disabled]="false"
+                        name="defaultValue"
+                        testId="defaultValue"
+                        [maxLength]="255"
+                        (valueChange)="defaultValueChanged()">
+                </sdc-input>
+
+                <sdc-validation [validateElement]="defaultValue" (validityChanged)="onValidityChange($event, 'defaultValue')">
+                    <sdc-regex-validator *ngIf="this.attributeToEdit.defaultValue && this.attributeToEdit.defaultValue.length > 0"  message="{{ this.defaultValueErrorMessage }}"
+                                         [pattern]="defaultValuePattern"></sdc-regex-validator>
+                    <sdc-custom-validator *ngIf="this.attributeToEdit.type == 'map' && this.attributeToEdit.schema.property.type" message="{{ 'PROPERTY_EDIT_MAP_UNIQUE_KEYS' | translate }}"
+                                          [callback]="isMapUnique" [disabled]="false"></sdc-custom-validator>
+                </sdc-validation>
+            </div>
+
+            <!-- ATTRIBUTE DEFAULT VALUE BOOLEAN- OPTIONAL -->
+            <div *ngIf="attributeToEdit.type == 'boolean'">
+                <sdc-dropdown [disabled]="false" label="Default Value"
+                              [required]="false"
+                              [selectedOption]="toDropDownOption(this.attributeToEdit.defaultValue)" placeHolder="Choose Default Value"
+                              [options]="booleanValues" (changed)="onBooleanDefaultValueSelected($event)">
+
+                </sdc-dropdown>
+            </div>
+
+            <div *ngIf="attributeToEdit.type == 'list' || attributeToEdit.type == 'map'">
+                <!-- ATTRIBUTE ENTRY SCHEMA - MANDATORY -->
+                <sdc-dropdown #entrySchema
+                              [disabled]="false" label="Entry Schema" [required]="true"
+                              [selectedOption]="toDropDownOption(this.attributeToEdit.schema.property.type)" placeHolder="Choose Schema Type"
+                              [options]="entrySchemaValues" (changed)="onEntrySchemaTypeSelected($event)">
+                    <sdc-validation [validateElement]="entrySchema" (validityChanged)="onValidityChange($event, 'entrySchema')">
+                        <sdc-required-validator message="'required !TODO - CHANGE MESSAGE'"></sdc-required-validator>
+                    </sdc-validation>
+                </sdc-dropdown>
+            </div>
+
+            <!-- ATTRIBUTE HIDDEN - OPTIONAL -->
+            <sdc-checkbox
+                    label="Hidden"
+                    [checked]="attributeToEdit.hidden"
+                    [disabled]="false"
+                    testId="hidden"
+                    (checkedChange)="this.onHiddenCheckboxClicked($event)"
+            >
+            </sdc-checkbox>
+        </div>
+    </div>
+
+</form>

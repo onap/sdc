@@ -20,16 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest.getExtendTest;
-import static org.openecomp.sdc.ci.tests.pages.HomePage.PageElement.REPOSITORY_ICON;
-
 import com.aventstack.extentreports.Status;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.exception.HomePageRuntimeException;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
@@ -42,6 +33,16 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.UUID;
+
+import static org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest.getExtendTest;
+import static org.openecomp.sdc.ci.tests.pages.HomePage.PageElement.REPOSITORY_ICON;
 
 public class HomePage {
 
@@ -60,6 +61,7 @@ public class HomePage {
     }
 
     public static boolean searchForVSP(String vspName) {
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ImportVfRepository.SEARCH.getValue()).clear();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ImportVfRepository.SEARCH.getValue()).sendKeys(vspName);
         GeneralUIUtils.ultimateWait();
         return true;

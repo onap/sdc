@@ -20,36 +20,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.commons.lang3.tuple.Pair;
-import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
-import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.openecomp.sdc.common.api.HealthCheckWrapper;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.monitoring.MonitoringEvent;
-import org.openecomp.sdc.exception.ResponseFormat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jcabi.aspects.Loggable;
-import fj.data.Either;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -58,27 +31,49 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.commons.lang3.tuple.Pair;
+import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.api.HealthCheckInfo;
+import org.openecomp.sdc.common.api.HealthCheckWrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.WebApplicationContext;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
 @OpenAPIDefinition(info = @Info(title = "BE Monitoring", description = "BE Monitoring"))
-@Singleton
+@Controller
 public class BeMonitoringServlet extends BeGenericServlet {
 
     Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 
     private static final Logger log = Logger.getLogger(ConfigServlet.class);
     private final HealthCheckBusinessLogic healthCheckBusinessLogic;
-    private final MonitoringBusinessLogic monitoringBusinessLogic;
 
     @Inject
     public BeMonitoringServlet(UserBusinessLogic userBusinessLogic,
         ComponentsUtils componentsUtils,
-        HealthCheckBusinessLogic healthCheckBusinessLogic,
-        MonitoringBusinessLogic monitoringBusinessLogic) {
+        HealthCheckBusinessLogic healthCheckBusinessLogic){
         super(userBusinessLogic, componentsUtils);
         this.healthCheckBusinessLogic = healthCheckBusinessLogic;
-        this.monitoringBusinessLogic = monitoringBusinessLogic;
     }
 
     @GET
@@ -92,8 +87,7 @@ public class BeMonitoringServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "500", description = "One or more SDC BE components are down")})
     public Response getHealthCheck(@Context final HttpServletRequest request) {
         try {
-            Pair<Boolean, List<HealthCheckInfo>> beHealthCheckInfosStatus =
-                    healthCheckBusinessLogic.getBeHealthCheckInfosStatus();
+            Pair<Boolean, List<HealthCheckInfo>> beHealthCheckInfosStatus = healthCheckBusinessLogic.getBeHealthCheckInfosStatus();
             Boolean aggregateStatus = beHealthCheckInfosStatus.getLeft();
             ActionStatus status = aggregateStatus ? ActionStatus.OK : ActionStatus.GENERAL_ERROR;
             String sdcVersion = getVersionFromContext(request);
@@ -101,8 +95,7 @@ public class BeMonitoringServlet extends BeGenericServlet {
                 sdcVersion = "UNKNOWN";
             }
             String siteMode = healthCheckBusinessLogic.getSiteMode();
-            HealthCheckWrapper healthCheck =
-                    new HealthCheckWrapper(beHealthCheckInfosStatus.getRight(), sdcVersion, siteMode);
+            HealthCheckWrapper healthCheck = new HealthCheckWrapper(beHealthCheckInfosStatus.getRight(), sdcVersion, siteMode);
             // The response can be either with 200 or 500 aggregate status - the
             // body of individual statuses is returned either way
 
@@ -112,42 +105,18 @@ public class BeMonitoringServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeHealthCheckError("BeHealthCheck");
             log.debug("BE health check unexpected exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
-    @POST
-    @Path("/monitoring")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response processMonitoringMetrics(@Context final HttpServletRequest request, String json) {
-        try {
-            MonitoringEvent monitoringEvent = convertContentToJson(json, MonitoringEvent.class);
-            if (monitoringEvent == null) {
-                return buildErrorResponse(getComponentsUtils().getResponseFormatAdditionalProperty(ActionStatus.GENERAL_ERROR));
-            }
-            log.trace("Received monitoring metrics: {}", monitoringEvent);
-            Either<Boolean, ResponseFormat> result = monitoringBusinessLogic.logMonitoringEvent(monitoringEvent);
-            if (result.isRight()) {
-                return buildErrorResponse(result.right().value());
-            }
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), null);
 
-        } catch (Exception e) {
-            log.debug("BE system metrics unexpected exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormatAdditionalProperty(ActionStatus.GENERAL_ERROR));
-        }
-    }
-
-    @GET
+    //TODO remove after UI alignment and tests after API consolidation ASDC-191
+    /*@GET
     @Path("/version")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "return the ASDC application version", summary = "return the ASDC application version",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "return ASDC version"),
-            @ApiResponse(responseCode = "500", description = "Internal Error")})
+    @ApiOperation(value = "return the ASDC application version", notes = "return the ASDC application version", response = String.class)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "return ASDC version"), @ApiResponse(code = 500, message = "Internal Error") })
     public Response getSdcVersion(@Context final HttpServletRequest request) {
         try {
             String url = request.getMethod() + " " + request.getRequestURI();
@@ -171,24 +140,17 @@ public class BeMonitoringServlet extends BeGenericServlet {
             log.debug("BE get ASDC version unexpected exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
-    }
+    }*/
 
     private String getVersionFromContext(HttpServletRequest request) {
         ServletContext servletContext = request.getSession().getServletContext();
         return (String) servletContext.getAttribute(Constants.ASDC_RELEASE_VERSION_ATTR);
     }
 
-    protected MonitoringEvent convertContentToJson(String content, Class<MonitoringEvent> clazz) {
-
-        MonitoringEvent object = null;
-        try {
-            object = gson.fromJson(content, clazz);
-            object.setFields(null);
-        } catch (Exception e) {
-            log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
-        }
-
-        return object;
+    private HealthCheckBusinessLogic getHealthCheckBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(HealthCheckBusinessLogic.class);
     }
 
 }

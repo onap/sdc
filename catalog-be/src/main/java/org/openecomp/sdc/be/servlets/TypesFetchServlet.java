@@ -20,22 +20,16 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.collections4.ListUtils;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
@@ -45,6 +39,8 @@ import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
@@ -63,22 +59,29 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @OpenAPIDefinition(info = @Info(title = "Types Fetch Servlet",description = "Types Fetch Servlet"))
-@Singleton
+@Controller
 public class TypesFetchServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(TypesFetchServlet.class);
@@ -117,44 +120,27 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Data types not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllDataTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-        try {
-            init();
-            validateUserExist(responseWrapper, userWrapper, userId);
 
-            if (responseWrapper.isEmpty()) {
-                String url = request.getMethod() + " " + request.getRequestURI();
-                log.debug("Start handle request of {} | modifier id is {}", url, userId);
+        init();
+        validateUserExist(responseWrapper, userWrapper, userId);
 
-                Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes =
-                    propertyBusinessLogic.getAllDataTypes();
+        if (responseWrapper.isEmpty()) {
+            String url = request.getMethod() + " " + request.getRequestURI();
+            log.debug("Start handle request of {} - modifier id is {}", url, userId);
 
-                if (allDataTypes.isRight()) {
-                    log.info("Failed to get all dara types. Reason - {}", allDataTypes.right().value());
-                    Response errorResponse = buildErrorResponse(allDataTypes.right().value());
-                    responseWrapper.setInnerElement(errorResponse);
-
-                } else {
-
-                    Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
-                    String dataTypeJson = gson.toJson(dataTypes);
-                    Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
-                    responseWrapper.setInnerElement(okResponse);
-
-                }
-            }
+            Map<String, DataTypeDefinition> dataTypes = propertyBusinessLogic.getAllDataTypes();
+            String dataTypeJson = gson.toJson(dataTypes);
+            Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
+            responseWrapper.setInnerElement(okResponse);
+        }
 
             return responseWrapper.getInnerElement();
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Property");
-            log.debug("get all data types failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
-        }
-    }
+   }
 
     @GET
     @Path("interfaceLifecycleTypes")
@@ -168,6 +154,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Interface lifecycle types not found")
     })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getInterfaceLifecycleTypes(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
@@ -181,7 +168,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 log.info("Start handle request of {} | modifier id is {}", url, userId);
 
                 Either<Map<String, InterfaceDefinition>, ResponseFormat> allInterfaceLifecycleTypes =
-                    interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
+                        interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
 
                 if (allInterfaceLifecycleTypes.isRight()) {
                     log.info("Failed to get all interface lifecycle types. Reason - {}",
@@ -214,6 +201,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Capability types not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllCapabilityTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
             Constants.USER_ID_HEADER) String userId) {
 
@@ -266,6 +254,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Relationship types not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllRelationshipTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
             Constants.USER_ID_HEADER) String userId) {
 
@@ -317,6 +306,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "nodeTypes"), @ApiResponse(responseCode = "403", description =
             "Restricted operation"), @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Node types not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllNodeTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value =
             Constants.USER_ID_HEADER) String userId) {
 

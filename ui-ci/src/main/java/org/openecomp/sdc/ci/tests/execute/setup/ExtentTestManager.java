@@ -22,8 +22,9 @@ package org.openecomp.sdc.ci.tests.execute.setup;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import java.util.HashMap;
 import org.openecomp.sdc.ci.tests.api.SomeInterface;
+
+import java.util.HashMap;
 
 public class ExtentTestManager implements SomeInterface {
 

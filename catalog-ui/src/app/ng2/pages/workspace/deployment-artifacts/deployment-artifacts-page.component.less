@@ -1,0 +1,55 @@
+.deployment-artifact-page {
+
+
+  .env-artifact-container {
+    margin-left: -25px;
+    margin-top: -21px;
+    padding-left: 10px;
+    position: absolute;
+    background-color: white;
+    .env-artifact {
+      border-left: 1px #848586 solid;
+      height: 33px;
+
+      border-top: 1px #848586 solid;
+      border-bottom: 1px #848586 solid;
+      width: 10px;
+      float: left;
+
+    }
+  }
+  .add-artifact-btn {
+    display: flex;
+    cursor: pointer;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  .download-artifact-button {
+    display: flex;
+    justify-content: center;
+
+    .action-icon {
+      margin-right: 10px;
+    }
+  }
+
+  .table-footer-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    margin: 20px 0px;
+  }
+}
+
+:host ::ng-deep {
+
+  .ngx-datatable {
+    //border: 1px solid red;
+    .datatable-body-cell {
+      .info {
+        float: right;
+      }
+    }
+  }
+}

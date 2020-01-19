@@ -25,6 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.exception.GeneralUiRuntimeException;
 import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
+import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openqa.selenium.By;
@@ -40,8 +41,10 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
@@ -51,8 +54,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest.getExtendTest;
 import static org.testng.AssertJUnit.assertTrue;
@@ -62,7 +63,7 @@ public final class GeneralUIUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneralUIUtils.class);
 
-    private static final String DATA_TESTS_ID = "//*[@data-tests-id='%1$s' or @data-test-id='%1$s']";
+    private static final String DATA_TESTS_ID = "//*[@data-tests-id='";
     private static final String COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW = "color: yellow; border: 4px solid yellow;";
 
     private static final int TIME_OUT = (int) (60 * 1.5);
@@ -117,13 +118,18 @@ public final class GeneralUIUtils {
     }
 
     public static WebElement getWebElementByTestID(final String dataTestId, final int timeout) {
-        final WebDriverWait wait = new WebDriverWait(getDriver(), timeout);
-        return wait
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
+        try {
+            final WebDriverWait wait = new WebDriverWait(getDriver(), timeout);
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']"))));
+        }
+        catch (Exception e) {
+            System.out.println("Element with dataTestId name: "+dataTestId+" not found");
+            return null;
+        }
     }
 
     public static boolean isWebElementExistByTestId(String dataTestId) {
-        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId))).size() != 0;
+        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']"))).size() != 0;
     }
 
     public static boolean isWebElementExistByClass(String className) {
@@ -133,7 +139,7 @@ public final class GeneralUIUtils {
     public static WebElement getInputElement(String dataTestId) {
         try {
             ultimateWait();
-            return getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID, dataTestId)));
+            return getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']")));
         } catch (Exception e) {
             return null;
         }
@@ -141,7 +147,7 @@ public final class GeneralUIUtils {
 
     public static List<WebElement> getInputElements(String dataTestId) {
         ultimateWait();
-        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId)));
+        return getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']")));
 
     }
 
@@ -179,7 +185,7 @@ public final class GeneralUIUtils {
     public static List<WebElement> getWebElementsListByContainTestID(String dataTestId) {
         try {
             WebDriverWait wait = new WebDriverWait(getDriver(), WEB_DRIVER_WAIT_TIME_OUT);
-            return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(String.format("//*[contains(@data-tests-id, '%1$s') or contains(@data-test-id, '%1$s')]", dataTestId))));
+            return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(String.format("//*[contains(@data-tests-id, '", dataTestId, "')]"))));
         } catch (Exception e) {
             return new ArrayList<WebElement>();
         }
@@ -201,7 +207,7 @@ public final class GeneralUIUtils {
 
     public static List<WebElement> getWebElementsListByTestID(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
-        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']"))));
     }
 
     public static List<WebElement> getWebElementsListByClassName(String className) {
@@ -213,50 +219,68 @@ public final class GeneralUIUtils {
     public static Boolean isElementInvisibleByTestId(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
         return wait.until(
-                ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
+                ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']"))));
     }
 
     public static Boolean isElementVisibleByTestId(String dataTestId) {
         try {
             WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
-            return wait.until(ExpectedConditions.visibilityOfElementLocated((By.xpath(String.format(DATA_TESTS_ID, dataTestId))))).isDisplayed();
+            return wait.until(ExpectedConditions.visibilityOfElementLocated((By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']"))))).isDisplayed();
         } catch (Exception e) {
             return false;
         }
     }
 
     public static void clickOnElementByTestId(String dataTestId) {
-        LOGGER.debug("Clicking on the element by test id " + dataTestId);
-        clickOnElementByTestIdWithoutWait(dataTestId);
-        LOGGER.debug("Waiting after clicking element by test id " + dataTestId);
-        ultimateWait();
-        LOGGER.debug(String.format("Waiting after clicking element by test id '%s' finished", dataTestId));
+        try {
+            clickOnElementByTestIdWithoutWait(dataTestId);
+            ultimateWait();
+        }catch (Exception e) {
+            LOGGER.debug("", e);
+        }
     }
 
-    public static void clickOnElementChildByTestId(String dataTestId) {
-        clickOnElementChildByTestIdWithoutWait(dataTestId);
-        ultimateWait();
+    public static boolean tryToclickOnElementByTestId(String dataTestId, int timeOut) {
+        try {
+            clickOnElementByTestId(dataTestId, timeOut);
+            ultimateWait();
+            return true;
+        } catch (Exception e) {
+            LOGGER.debug("", e);
+            return false;
+        }
     }
 
-    public static void clickOnElementByTestIdWithoutWait(final String dataTestId) {
-        final WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
-        wait
-            .until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId)))).click();
-    }
-
-    public static void clickOnElementChildByTestIdWithoutWait(String dataTestId) {
+    public static void clickOnElementByTestIdWithoutWait(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId) + "//*"))).click();
+        try {
+            wait.until(ExpectedConditions
+                    .elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']")))).click();
+            getExtendTest().log(Status.INFO, String.format("Click on element ", DATA_TESTS_ID, dataTestId, "']"));
+        } catch (Exception e) {
+            ExtentTestActions.log(Status.FAIL, dataTestId + " element isn't clickable");
+            ExtentTestActions.log(Status.FAIL, e);
+        }
+    }
+
+    public static void clickOnElementByInputTestIdWithoutWait(String dataTestId) {
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']//*")))).click();
     }
 
     public static void clickOnElementByTestId(String dataTestId, int customTimeout) {
         WebDriverWait wait = new WebDriverWait(getDriver(), customTimeout);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId)))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']")))).click();
     }
 
     public static WebElement waitForElementVisibilityByTestId(String dataTestId) {
         WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']"))));
+    }
+
+    public static WebElement waitForElementVisibilityByClass(String className) {
+        WebDriverWait wait = new WebDriverWait(getDriver(), TIME_OUT);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format("//*[contains(@class, '", className, "')]"))));
     }
 
     public static Boolean waitForElementInVisibilityByTestId(String dataTestId) {
@@ -265,10 +289,9 @@ public final class GeneralUIUtils {
 
     public static Boolean waitForElementInVisibilityByTestId(String dataTestId, int timeOut) {
         WebDriverWait wait = new WebDriverWait(getDriver(), timeOut);
-        boolean displayed = getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId))).isEmpty();
+        boolean displayed = getDriver().findElements(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']"))).isEmpty();
         if (!displayed) {
-            Boolean until = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId))));
-            ultimateWait();
+            Boolean until = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "'])"))));
             return until;
         }
         return false;
@@ -363,7 +386,7 @@ public final class GeneralUIUtils {
     }
 
     public static void moveToStep(final String dataTestId) {
-        clickOnElementChildByTestId(dataTestId);
+        clickOnElementByTestId(dataTestId);
     }
 
 
@@ -393,7 +416,7 @@ public final class GeneralUIUtils {
 
     public static WebElement getSelectedElementFromDropDown(String dataTestId) {
         GeneralUIUtils.ultimateWait();
-        return new Select(getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID, dataTestId)))).getFirstSelectedOption();
+        return new Select(getDriver().findElement(By.xpath(String.format(DATA_TESTS_ID, dataTestId, "']")))).getFirstSelectedOption();
     }
 
     public static boolean checkElementsCountInTable(int expectedElementsCount, Supplier<List<WebElement>> func) {
@@ -419,7 +442,7 @@ public final class GeneralUIUtils {
         func.run();
         long estimateTime = System.nanoTime();
         long duration = TimeUnit.NANOSECONDS.toSeconds(estimateTime - startTime);
-        return String.format("%02d:%02d", duration / DURATION_FORMATIN, duration % DURATION_FORMATIN);
+        return String.format("%02`d:%02d", duration / DURATION_FORMATIN, duration % DURATION_FORMATIN);
     }
 
     public static WebElement clickOnAreaJS(String areaId) {

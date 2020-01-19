@@ -190,6 +190,8 @@ public class ComparableVersion implements Comparable<ComparableVersion> {
                 case 'm':
                     value = "milestone";
                     break;
+                default:
+                    throw new RuntimeException("Invalid item");
                 }
             }
             this.value = ALIASES.getProperty(value, value);

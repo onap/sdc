@@ -20,23 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogicNew;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.common.api.Constants;
-import org.springframework.stereotype.Controller;
 import com.jcabi.aspects.Loggable;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +30,31 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogicNew;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.GroupProperty;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
+import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * Here new APIs for group will be written in an attempt to gradually clean BL code
@@ -57,12 +65,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class GroupEndpoint {
+public class GroupEndpoint extends BeGenericServlet{
 
     private final GroupBusinessLogicNew groupBusinessLogic;
+    private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(GroupEndpoint.class.getName());
 
     @Inject
-    public GroupEndpoint(GroupBusinessLogicNew groupBusinessLogic) {
+    public GroupEndpoint(UserBusinessLogic userBusinessLogic,
+                         ComponentsUtils componentsUtils, GroupBusinessLogicNew groupBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
         this.groupBusinessLogic = groupBusinessLogic;
     }
 
@@ -77,11 +88,14 @@ public class GroupEndpoint {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<String> updateGroupMembers(@PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
             @Parameter(description = "List of members unique ids", required = true) List<String> members,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_GROUP_MEMBERS, StatusCode.STARTED," Starting to update Group Members for component {} " , componentId );
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_GROUP_MEMBERS, StatusCode.COMPLETE," Ended update Group Members for component {} " , componentId );
         return groupBusinessLogic.updateMembers(componentId, componentTypeEnum, userId, groupUniqueId, members);
     }
 
@@ -93,6 +107,7 @@ public class GroupEndpoint {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group Updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<PropertyDataDefinition> getGroupProperties(
             @PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
@@ -108,6 +123,7 @@ public class GroupEndpoint {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group Updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<GroupProperty> updateGroupProperties(
             @PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,

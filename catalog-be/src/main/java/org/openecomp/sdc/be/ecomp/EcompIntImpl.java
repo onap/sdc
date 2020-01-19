@@ -28,6 +28,7 @@ import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.onap.portalsdk.core.onboarding.util.PortalApiProperties;
 import org.onap.portalsdk.core.restful.domain.EcompRole;
 import org.onap.portalsdk.core.restful.domain.EcompUser;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -36,6 +37,7 @@ import org.openecomp.sdc.be.ecomp.converters.EcompUserConverter;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.be.user.UserBusinessLogicExt;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -50,9 +52,9 @@ import java.util.Map;
 
 public class EcompIntImpl implements IPortalRestAPIService {
 	private static final String FAILED_TO_CONVERT_ROLES = "Failed to convert Roles";
-	private static final String FAILED_TO_GET_ROLES = "Failed to get Roles";
+	public static final String FAILED_TO_GET_ROLES = "Failed to get Roles";
 	private static final String GET_USER_ROLES = "GetUserRoles";
-	private static final String ERROR_FAILED_TO_GET_ROLES = "Error: Failed to get Roles";
+	public static final String ERROR_FAILED_TO_GET_ROLES = "Error: Failed to get Roles";
 	private static final String PUSH_USER_ROLE = "PushUserRole";
 	private static final String FAILED_TO_FETCH_ROLES = "Failed to fetch roles";
 	private static final String FAILED_TO_CONVERT_USER2 = "Failed to convert User {}";
@@ -89,32 +91,26 @@ public class EcompIntImpl implements IPortalRestAPIService {
             UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
 
             final String modifierAttId = JH0003;
-            User modifier = new User();
-            modifier.setUserId(modifierAttId);
             log.debug("modifier id is {}", modifierAttId);
 
             User convertedAsdcUser = EcompUserConverter.convertEcompUserToUser(user);
             if (convertedAsdcUser == null) {
-                BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CONVERT_USER, ErrorSeverity.INFO);
+                BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, NULL_POINTER_RETURNED_FROM_USER_CONVERTER, ErrorSeverity.INFO);
                 log.debug(FAILED_TO_CREATE_USER, user);
-                throw new PortalAPIException("Failed to convert user " + user);
+                throw new PortalAPIException("Failed to create user " + convertedAsdcUser);
             }
-
-            Either<User, ResponseFormat> createUserResponse = userBusinessLogic.createUser(modifier, convertedAsdcUser);
-
-            // ALREADY EXIST ResponseFormat
-            final String ALREADY_EXISTS_RESPONSE_ID = "SVC4006";
-
-            if (createUserResponse.isRight()) {
-                if (!createUserResponse.right().value().getMessageId().equals(ALREADY_EXISTS_RESPONSE_ID)) {
-                    log.debug(FAILED_TO_CREATE_USER, user);
-                    BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CREATE_USER, ErrorSeverity.ERROR);
-                    throw new PortalAPIException(FAILED_TO_CREATE_USER + createUserResponse.right());
-                }
-                log.debug("User already exist {}", user);
-            }
+            userBusinessLogic.createUser(modifierAttId, convertedAsdcUser);
             log.debug("User created {}", user);
-        } catch (Exception e) {
+        } catch (ComponentException ce) {
+            if (ActionStatus.USER_ALREADY_EXIST.equals(ce.getActionStatus())) {
+                log.debug("User already exist {}", user);
+            } else {
+                log.debug(FAILED_TO_CREATE_USER, user);
+                BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CREATE_USER, ErrorSeverity.ERROR);
+                throw new PortalAPIException(FAILED_TO_CREATE_USER + ce.getActionStatus());
+            }
+        }
+        catch (Exception e) {
             log.debug(FAILED_TO_CREATE_USER, user, e);
             BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CREATE_USER, ErrorSeverity.ERROR);
             throw new PortalAPIException(FAILED_TO_CREATE_USER, e);
@@ -153,14 +149,14 @@ public class EcompIntImpl implements IPortalRestAPIService {
                 user.setLoginId(loginId);
             }
 
-            User convertedAsdcUser = EcompUserConverter.convertEcompUserToUser(user);
-            if (convertedAsdcUser == null) {
-                BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CONVERT_USER, ErrorSeverity.INFO);
-                log.debug(FAILED_TO_CREATE_USER, user);
-                throw new PortalAPIException("Failed to convert user " + user);
+            User asdcUser = EcompUserConverter.convertEcompUserToUser(user);
+            if (asdcUser == null) {
+                log.debug(NULL_POINTER_RETURNED_FROM_USER_CONVERTER);
+                BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, NULL_POINTER_RETURNED_FROM_USER_CONVERTER, ErrorSeverity.INFO);
+                throw new PortalAPIException(FAILED_TO_EDIT_USER);
             }
 
-            Either<User, ResponseFormat> updateUserCredentialsResponse = userBusinessLogic.updateUserCredentials(convertedAsdcUser);
+            Either<User, ResponseFormat> updateUserCredentialsResponse = userBusinessLogic.updateUserCredentials(asdcUser);
 
             if (updateUserCredentialsResponse.isRight()) {
                 log.debug(FAILED_TO_UPDATE_USER_CREDENTIALS);
@@ -177,40 +173,29 @@ public class EcompIntImpl implements IPortalRestAPIService {
     @Override
     public EcompUser getUser(String loginId) throws PortalAPIException {
         log.debug("Start handle request of ECOMP getUser");
-
         try {
-
             if (loginId == null) {
                 log.debug(RECEIVED_NULL_FOR_ARGUMENT_LOGIN_ID);
                 BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER, RECEIVED_NULL_FOR_ARGUMENT_LOGIN_ID, ErrorSeverity.INFO);
                 throw new PortalAPIException(RECEIVED_NULL_FOR_ARGUMENT_LOGIN_ID);
             }
-
             UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
-
-            Either<User, ActionStatus> getUserResponse = userBusinessLogic.getUser(loginId, false);
-
-            if (getUserResponse.isRight()) {
+            User user = userBusinessLogic.getUser(loginId, false);
+            Either<EcompUser, String> ecompUser = EcompUserConverter.convertUserToEcompUser(user);
+            if (ecompUser.isLeft() && ecompUser.left().value() != null) {
+                return ecompUser.left().value();
+            } else {
                 log.debug(FAILED_TO_GET_USER);
                 BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER, FAILED_TO_GET_USER, ErrorSeverity.INFO);
-                throw new PortalAPIException(FAILED_TO_GET_USER + getUserResponse.right());
-            } else {
-                if (getUserResponse.left().value() != null) {
-                    Either<EcompUser, String> ecompUser = EcompUserConverter.convertUserToEcompUser(getUserResponse.left().value());
-                    if (ecompUser.isLeft() && ecompUser.left().value() != null) {
-                        return ecompUser.left().value();
-                    } else {
-                        log.debug(FAILED_TO_GET_USER);
-                        BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER, FAILED_TO_GET_USER, ErrorSeverity.INFO);
-                        throw new PortalAPIException(ecompUser.right().value());
-                    }
-                } else {
-                    log.debug(FAILED_TO_GET_USER);
-                    BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER, FAILED_TO_GET_USER, ErrorSeverity.INFO);
-                    throw new PortalAPIException(FAILED_TO_GET_USER + getUserResponse.right());
-                }
+                throw new PortalAPIException(ecompUser.right().value());
             }
-        } catch (Exception e) {
+        } catch (ComponentException ce) {
+            log.debug(FAILED_TO_GET_USER);
+            BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER, FAILED_TO_GET_USER, ErrorSeverity.INFO);
+            throw new PortalAPIException(FAILED_TO_GET_USER + ce.getActionStatus());
+
+        }
+        catch (Exception e) {
             log.debug(FAILED_TO_GET_USER);
             throw new PortalAPIException(FAILED_TO_GET_USER, e);
         }
@@ -222,36 +207,22 @@ public class EcompIntImpl implements IPortalRestAPIService {
 
         try {
             UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
-
-            Either<List<User>, ResponseFormat> getUsersResponse = userBusinessLogic.getUsersList(JH0003, null, null);
-
-            if (getUsersResponse.isRight()) {
-                log.debug(FAILED_TO_GET_USERS);
-                BeEcompErrorManager.getInstance().logInvalidInputError(GET_USERS, FAILED_TO_GET_USERS, ErrorSeverity.INFO);
-                throw new PortalAPIException(FAILED_TO_GET_USERS + getUsersResponse.right());
-            } else {
-                if (getUsersResponse.left().value() != null) {
-                    List<EcompUser> ecompUserList = new LinkedList<>();
-                    for (User user : getUsersResponse.left().value()) {
-                        Either<EcompUser, String> ecompUser = EcompUserConverter.convertUserToEcompUser(user);
-                        if (ecompUser.isRight()) {
-                            log.debug(FAILED_TO_CONVERT_USER2, user);
-                            BeEcompErrorManager.getInstance().logInvalidInputError(GET_USERS, "Failed to convert User" + user.toString(), ErrorSeverity.WARNING);
-                            continue;
-                        } else if (ecompUser.left().value() == null) {
-                            log.debug(FAILED_TO_CONVERT_USER2, user);
-                            BeEcompErrorManager.getInstance().logInvalidInputError(GET_USERS, "Failed to convert User" + user.toString(), ErrorSeverity.WARNING);
-                            continue;
-                        }
-                        ecompUserList.add(ecompUser.left().value());
-                    }
-                    return ecompUserList;
-                } else {
-                    log.debug(FAILED_TO_GET_USERS);
-                    BeEcompErrorManager.getInstance().logInvalidInputError(GET_USERS, FAILED_TO_GET_USERS, ErrorSeverity.INFO);
-                    throw new PortalAPIException(FAILED_TO_GET_USERS + getUsersResponse.right());
+            List<User> users = userBusinessLogic.getUsersList(JH0003, null, null);
+            List<EcompUser> ecompUserList = new LinkedList<>();
+            for (User user : users) {
+                Either<EcompUser, String> ecompUser = EcompUserConverter.convertUserToEcompUser(user);
+                if (ecompUser.isRight()) {
+                    log.debug(FAILED_TO_CONVERT_USER2, user);
+                    BeEcompErrorManager.getInstance().logInvalidInputError(GET_USERS, "Failed to convert User" + user.toString(), ErrorSeverity.WARNING);
+                    continue;
+                } else if (ecompUser.left().value() == null) {
+                    log.debug(FAILED_TO_CONVERT_USER2, user);
+                    BeEcompErrorManager.getInstance().logInvalidInputError(GET_USERS, "Failed to convert User" + user.toString(), ErrorSeverity.WARNING);
+                    continue;
                 }
+                ecompUserList.add(ecompUser.left().value());
             }
+            return ecompUserList;
         } catch (Exception e) {
             log.debug(FAILED_TO_GET_USERS);
             BeEcompErrorManager.getInstance().logInvalidInputError(GET_USERS, FAILED_TO_GET_USERS, ErrorSeverity.INFO);
@@ -266,7 +237,7 @@ public class EcompIntImpl implements IPortalRestAPIService {
             List<EcompRole> ecompRolesList = new LinkedList<>();
             for (Role role : Role.values()) {
                 EcompRole ecompRole = new EcompRole();
-                ecompRole.setId(new Long(role.ordinal()));
+                ecompRole.setId((long) role.ordinal());
                 ecompRole.setName(role.name());
                 ecompRolesList.add(ecompRole);
             }
@@ -292,35 +263,37 @@ public class EcompIntImpl implements IPortalRestAPIService {
         log.debug("Start handle request of ECOMP pushUserRole");
 
         final String modifierAttId = JH0003;
-        User modifier = new User();
-        modifier.setUserId(modifierAttId);
         log.debug("modifier id is {}", modifierAttId);
 
         UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
 
-        String updatedRole = null;
+        String updatedRole;
 
         if (roles == null) {
-            throw new PortalAPIException("Error: Recieved null for roles");
+            throw new PortalAPIException("Error: Received null for roles");
         } else if (roles.iterator().hasNext()) {
             EcompRole ecompRole = roles.iterator().next();
             updatedRole = EcompRoleConverter.convertEcompRoleToRole(ecompRole);
             log.debug("pushing role: {} to user: {}", updatedRole, loginId);
-            Either<User, ResponseFormat> updateUserRoleResponse = userBusinessLogic.updateUserRole(modifier, loginId, updatedRole);
-            if (updateUserRoleResponse.isRight()) {
+            try {
+                userBusinessLogic.updateUserRole(modifierAttId, loginId, updatedRole);
+            }
+            catch (Exception e) {
                 log.debug("Error: Failed to update role");
                 BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER_ROLE, "Failed to update role", ErrorSeverity.INFO);
-                throw new PortalAPIException("Failed to update role" + updateUserRoleResponse.right().value().toString());
+                throw new PortalAPIException("Failed to update role" + e);
             }
         } else {
             log.debug("Error: No roles in List");
             BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER_ROLE, FAILED_TO_FETCH_ROLES, ErrorSeverity.INFO);
             //in this cases we want to deactivate the user
-            Either<User, ResponseFormat> deActivateUserResponse = userBusinessLogic.deActivateUser(modifier, loginId);
-            if (deActivateUserResponse.isRight()) {
+            try {
+                getUserBusinessLogicExt().deActivateUser(modifierAttId, loginId);
+            }
+            catch (Exception e) {
                 log.debug("Error: Failed to deactivate user {}",loginId);
                 BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER_ROLE, "Failed to deactivate user", ErrorSeverity.INFO);
-                throw new PortalAPIException(deActivateUserResponse.right().value().getFormattedMessage());
+                throw new PortalAPIException("Error: Failed to deactivate user" + e);
             }
         }
     }
@@ -329,36 +302,25 @@ public class EcompIntImpl implements IPortalRestAPIService {
     public List<EcompRole> getUserRoles(String loginId) throws PortalAPIException {
         try {
             log.debug("Start handle request of ECOMP getUserRoles");
-
             UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
-
-            Either<User, ActionStatus> getUserResponse = userBusinessLogic.getUser(loginId, false);
-
-            if (getUserResponse.isRight()) {
-                log.debug(ERROR_FAILED_TO_GET_ROLES);
-                BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER_ROLES, FAILED_TO_GET_ROLES, ErrorSeverity.INFO);
-                throw new PortalAPIException(FAILED_TO_GET_ROLES + getUserResponse.right());
-            } else {
-                if (getUserResponse.left().value() != null) {
-                    Either<EcompUser, String> ecompUser = EcompUserConverter.convertUserToEcompUser(getUserResponse.left().value());
-                    if (ecompUser.isRight()) {
-                        log.debug("Error: Failed to convert Roles");
-                        BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER_ROLES, FAILED_TO_CONVERT_ROLES, ErrorSeverity.ERROR);
-                        throw new PortalAPIException(ecompUser.right().value());
-                    } else if (ecompUser.left().value() == null) {
-                        log.debug("Error: Failed to convert Roles");
-                        BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER_ROLES, FAILED_TO_CONVERT_ROLES, ErrorSeverity.ERROR);
-                        throw new PortalAPIException();
-                    }
-
-                    return new LinkedList<>(ecompUser.left().value().getRoles());
-                } else {
-                    log.debug(ERROR_FAILED_TO_GET_ROLES);
-                    BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER_ROLES, FAILED_TO_GET_ROLES, ErrorSeverity.ERROR);
-                    throw new PortalAPIException(FAILED_TO_GET_ROLES + getUserResponse.right());
-                }
+            User user = userBusinessLogic.getUser(loginId, false);
+            Either<EcompUser, String> ecompUser = EcompUserConverter.convertUserToEcompUser(user);
+            if (ecompUser.isRight()) {
+                log.debug("Error: Failed to convert Roles");
+                BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER_ROLES, FAILED_TO_CONVERT_ROLES, ErrorSeverity.ERROR);
+                throw new PortalAPIException(ecompUser.right().value());
+            } else if (ecompUser.left().value() == null) {
+                log.debug("Error: Failed to convert Roles");
+                BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER_ROLES, FAILED_TO_CONVERT_ROLES, ErrorSeverity.ERROR);
+                throw new PortalAPIException();
             }
-        } catch (Exception e) {
+            return new LinkedList<>(ecompUser.left().value().getRoles());
+        } catch (ComponentException ce) {
+            log.debug(ERROR_FAILED_TO_GET_ROLES);
+            BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER_ROLES, FAILED_TO_GET_ROLES, ErrorSeverity.INFO);
+            throw new PortalAPIException(FAILED_TO_GET_ROLES + ce.getActionStatus());
+        }
+        catch (Exception e) {
             log.debug(ERROR_FAILED_TO_GET_ROLES);
             BeEcompErrorManager.getInstance().logInvalidInputError(GET_USER_ROLES, FAILED_TO_GET_ROLES, ErrorSeverity.INFO);
             throw new PortalAPIException(FAILED_TO_GET_ROLES, e);
@@ -366,7 +328,7 @@ public class EcompIntImpl implements IPortalRestAPIService {
     }
 
     @Override
-    public boolean isAppAuthenticated(HttpServletRequest request) throws PortalAPIException {
+    public boolean isAppAuthenticated(HttpServletRequest request) {
         final String portal_key = PortalApiProperties.getProperty("portal_pass");
         final String portal_user = PortalApiProperties.getProperty("portal_user");
         final String USERNAME = request.getHeader("username");
@@ -391,6 +353,11 @@ public class EcompIntImpl implements IPortalRestAPIService {
     private UserBusinessLogic getUserBusinessLogic() {
         ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
         return (UserBusinessLogic) ctx.getBean("userBusinessLogic");
+    }
+
+    private UserBusinessLogicExt getUserBusinessLogicExt() {
+        ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
+        return (UserBusinessLogicExt) ctx.getBean("userBusinessLogicExt");
     }
 
     /**

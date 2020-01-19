@@ -19,14 +19,15 @@
  */
 package org.openecomp.sdc.be.info;
 
+import org.junit.Test;
+
+import java.util.Collections;
+import java.util.Set;
+
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.util.Collections;
-import java.util.Set;
-import org.junit.Test;
 
 public class GenericArtifactQueryInfoTest {
 

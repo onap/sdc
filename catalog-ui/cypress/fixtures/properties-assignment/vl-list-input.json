@@ -1,0 +1,43 @@
+[
+  {
+    "uniqueId": "39be5200-143f-4962-a0ad-52882c2df138.vl 0 list",
+    "type": "list",
+    "required": false,
+    "definition": false,
+    "description": "new list for vl 0 properties",
+    "schema": {
+      "property": {
+        "type": "new schema",
+        "required": false,
+        "definition": true,
+        "password": false,
+        "hidden": false,
+        "immutable": false,
+        "isDeclaredListInput": false,
+        "getInputProperty": false,
+        "empty": false
+      },
+      "empty": false
+    },
+    "password": false,
+    "name": "vl 0 list",
+    "hidden": false,
+    "immutable": false,
+    "instanceUniqueId": "693b08c5-bd20-41f4-8d10-81a8d8351944.6c42f981-f1d1-4b00-b54c-901a653589d2.vl0",
+    "isDeclaredListInput": true,
+    "getInputProperty": false,
+    "schemaType": "new schema",
+    "schemaProperty": {
+      "type": "new schema",
+      "required": false,
+      "definition": true,
+      "password": false,
+      "hidden": false,
+      "immutable": false,
+      "isDeclaredListInput": false,
+      "getInputProperty": false,
+      "empty": false
+    },
+    "empty": false
+  }
+]

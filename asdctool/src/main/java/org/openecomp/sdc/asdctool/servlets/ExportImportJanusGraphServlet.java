@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.asdctool.servlets;
 
-import org.janusgraph.core.JanusGraph;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLWriter;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.janusgraph.core.JanusGraph;
 import org.openecomp.sdc.asdctool.Utils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
@@ -34,7 +34,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map.Entry;
 import java.util.Properties;
 //import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
@@ -146,7 +152,7 @@ public class ExportImportJanusGraphServlet {
 			result = outputFile;
 
 		} catch (Exception e) {
-			log.info("export Graph failed - {}" , e);
+			e.printStackTrace();
 			// graph.rollback();
 			graph.tx().rollback();
 		} finally {
@@ -155,7 +161,7 @@ public class ExportImportJanusGraphServlet {
 					out.close();
 				}
 			} catch (IOException e) {
-				log.info("close FileOutputStream failed - {}" , e);
+				e.printStackTrace();
 			}
 		}
 		return result;

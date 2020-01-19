@@ -37,6 +37,8 @@ export interface ITypeListScope extends ng.IScope {
     listDefaultValue:any;
     listNewItem:any;
     maxLength:number;
+    
+    constraints:string[];
 
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
@@ -49,7 +51,7 @@ export class TypeListDirective implements ng.IDirective {
 
     constructor(private DataTypesService:DataTypesService,
                 private PropertyNameValidationPattern:RegExp,
-                private ValidationUtils:ValidationUtils) {
+                private ValidationUtils:ValidationUtils) {  
     }
 
     scope = {
@@ -59,7 +61,8 @@ export class TypeListDirective implements ng.IDirective {
         fieldsPrefixName: '=',//prefix for form fields names
         readOnly: '=',//is form read only
         defaultValue: '@',//this list default value
-        maxLength: '='
+        maxLength: '=',
+        constraints: '='
     };
 
     restrict = 'E';

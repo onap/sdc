@@ -35,7 +35,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.api.UserRoleEnum;
-import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.Set;
 
@@ -71,11 +70,11 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
 
         testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
         assertEquals(nodeACI.getName(), dataHolder.getOrigComponentInstId());
-        Either<Component, ResponseFormat> componentResponseFormatEither = testInstance
+        Component componentResponseFormatEither = testInstance
             .mergeDataAfterCreate(user, dataHolder, newNodeAC, "3344");
         assertNotNull(componentResponseFormatEither);
-        assertTrue(componentResponseFormatEither.isLeft());
-        assertEquals(newNodeAC, componentResponseFormatEither.left().value());
+        assertTrue(componentResponseFormatEither != null);
+        assertEquals(newNodeAC, componentResponseFormatEither);
     }
 
     @Test
@@ -84,7 +83,7 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
             .findForwardingPathNamesToDeleteOnComponentInstanceDeletion(service, nodeACI.getUniqueId());
         nodeACI.getCapabilities().clear();
         newNodeAC.getCapabilities().clear();
-        Either<Set<String>, ResponseFormat> returnValue = Either.left(forwardingPathNamesToDeleteOnComponentInstanceDeletion);
+        Set<String> returnValue = forwardingPathNamesToDeleteOnComponentInstanceDeletion;
         when(serviceBusinessLogic.deleteForwardingPaths(any(), any(), any(), anyBoolean()))
             .thenReturn(returnValue);
         when(toscaOperationFacade.getToscaFullElement(any())).thenReturn(Either.left(newNodeAC));
@@ -95,17 +94,16 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
 
         testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
         assertEquals(nodeACI.getName(), dataHolder.getOrigComponentInstId());
-        Either<Component, ResponseFormat> componentResponseFormatEither = testInstance
+        Component componentResponseFormatEither = testInstance
             .mergeDataAfterCreate(user, dataHolder, service, newNodeA);
         assertNotNull(componentResponseFormatEither);
-        assertTrue(componentResponseFormatEither.isLeft());
-        assertEquals(0, ((Service) componentResponseFormatEither.left().value()).getForwardingPaths().size());
+        assertEquals(0, ((Service) componentResponseFormatEither).getForwardingPaths().size());
     }
 
     @Test
     public void mergeShouldUpdate() {
           when(serviceBusinessLogic.updateForwardingPath(any(), any(), any(), anyBoolean()))
-              .then(invocationOnMock -> Either.left(service));
+              .then(invocationOnMock -> service);
            when(toscaOperationFacade.getToscaFullElement(any())).thenReturn(Either.left(newNodeAC));
           testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
           assertEquals(nodeACI.getName(), dataHolder.getOrigComponentInstId());
@@ -114,10 +112,8 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
           service.getComponentInstances().remove(nodeACI);
           service.getComponentInstances().add(newNodeACI);
 
-          Either<Component, ResponseFormat> componentResponseFormatEither = testInstance
-              .mergeDataAfterCreate(user, dataHolder, service, newNodeA);
-          assertNotNull(componentResponseFormatEither);
-          assertTrue(componentResponseFormatEither.isLeft());
+          Component component = testInstance.mergeDataAfterCreate(user, dataHolder, service, newNodeA);
+          assertNotNull(component);
     }
 
     @Test

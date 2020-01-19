@@ -34,7 +34,11 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
@@ -46,7 +50,9 @@ import org.openecomp.sdc.common.http.client.api.HttpResponse;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class StepsTenantIsolation {
 
@@ -282,7 +288,7 @@ public class StepsTenantIsolation {
     @Then("^trying to retrieve Ueb Addresses From AftDme (.*)$")
     public void trying_to_retrieve_ueb_addresses_from_AftDme(boolean isActivated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated))).discoverUebHosts(
-                Mockito.anyString(), Mockito.anyString());
+                Mockito.anyString());
 
     }
 

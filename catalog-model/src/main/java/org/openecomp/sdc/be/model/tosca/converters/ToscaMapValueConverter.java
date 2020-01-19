@@ -124,7 +124,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 
     private void convertEntry(String innerType, Map<String, DataTypeDefinition> dataTypes, List<PropertyDefinition> allPropertiesRecursive, Map<String, Object> toscaMap, final boolean isScalarF, final ToscaValueConverter innerConverterFinal,
             Entry<String, JsonElement> e) {
-        log.debug("try convert element {}", e.getValue());
+        log.debug("try convert element ");
         boolean scalar = false;
         String propType = null;
         ToscaValueConverter innerConverterProp = innerConverterFinal;
@@ -155,7 +155,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
     public Object convertDataTypeToToscaObject(String innerType, Map<String, DataTypeDefinition> dataTypes, ToscaValueConverter innerConverter, final boolean isScalarF, JsonElement entryValue, boolean preserveEmptyValue) {
         Object convertedValue = null;
         if (isScalarF && entryValue.isJsonPrimitive()) {
-            log.debug("try convert scalar value {}", entryValue.getAsString());
+            log.debug("try convert scalar value ");
             if (entryValue.getAsString() == null) {
                 convertedValue = null;
             } else {

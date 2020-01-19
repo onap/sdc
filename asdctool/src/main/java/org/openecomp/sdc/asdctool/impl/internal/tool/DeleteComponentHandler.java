@@ -19,11 +19,11 @@
  */
 package org.openecomp.sdc.asdctool.impl.internal.tool;
 
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.asdctool.utils.ConsoleWriter;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;

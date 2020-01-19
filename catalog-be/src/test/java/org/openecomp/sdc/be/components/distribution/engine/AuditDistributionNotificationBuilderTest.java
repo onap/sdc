@@ -19,14 +19,15 @@
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import static org.mockito.Mockito.RETURNS_DEFAULTS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+
+import static org.mockito.Mockito.RETURNS_DEFAULTS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AuditDistributionNotificationBuilderTest {
     

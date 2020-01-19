@@ -19,14 +19,15 @@
  */
 package org.openecomp.sdc.externalupload.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ServiceUtilsTest {
 
@@ -46,8 +47,8 @@ public class ServiceUtilsTest {
     public void shouldGetObjectAsMap() {
         TestModel testModel = getTestModel();
         Map<String, Object> objectAsMap = ServiceUtils.getObjectAsMap(testModel);
-        assertEquals(1, objectAsMap.size());
-        assertEquals(OBJ_1, objectAsMap.get(PROP));
+        assertEquals(objectAsMap.size(), 1);
+        assertEquals(objectAsMap.get(PROP), OBJ_1);
     }
 
     @Test

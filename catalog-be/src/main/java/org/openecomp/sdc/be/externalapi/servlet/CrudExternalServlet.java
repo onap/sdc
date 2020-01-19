@@ -23,6 +23,8 @@ package org.openecomp.sdc.be.externalapi.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,15 +35,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.common.Strings;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoBase;
@@ -49,20 +52,20 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ExternalCategoryTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ExternalCategoryTypeEnum;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -77,17 +80,17 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.stereotype.Controller;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Path;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.POST;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -97,12 +100,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @OpenAPIDefinition(info = @Info(title = "CRUD External Servlet",
         description = "This Servlet serves external users for creating assets and changing their lifecycle state"))
 
-@Singleton
+@Controller
 public class CrudExternalServlet extends AbstractValidationsServlet {
 
     @Context
@@ -190,9 +196,8 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                     description = "Create VFCMT request: VFCMT name exceeds character limit - SVC4073"),
             @ApiResponse(responseCode = "400", description = "Invalid Content. Missing PROJECT_CODE number - SVC4129"),
             @ApiResponse(responseCode = "409", description = "Error: %1 (Service) with name '%2' already exists. - SVC4050")})
-    // @ApiImplicitParams({@ApiImplicitParam(required = true, dataType =
-    // "org.openecomp.sdc.be.model.Resource", paramType = "body", value = "json describe the created
-    // resource")})
+    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.Resource", paramType = "body", value = "json describe the created resource")})
+    @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response createComponentExternal(
             @Parameter(description = "Determines the format of the body of the request",
                     required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
@@ -221,7 +226,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         User modifier = null;
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(ComponentTypeEnum.RESOURCE.getValue());
         Service service = null;
-        
+
         ServletContext context = request.getSession().getServletContext();
         try {
             // Validate X-ECOMP-InstanceID Header
@@ -237,7 +242,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             if( responseWrapper.isEmpty() && !(AssetTypeEnum.RESOURCES.getValue().equals(assetType) || AssetTypeEnum.SERVICES.getValue().equals(assetType))) {
                 responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             }
-            
+
 			if (responseWrapper.isEmpty() && AssetTypeEnum.SERVICES.getValue().equals(assetType)) {
 
                 modifier = new User();
@@ -258,7 +263,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 }
 
                 //validate name exist
-                if(responseWrapper.isEmpty() &&  Strings.isEmpty(service.getName())){
+                if(responseWrapper.isEmpty() &&  isNullOrEmpty(service.getName())){
                     responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
                     ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue()));
                 }
@@ -323,7 +328,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 }
                 //validate name exist
                 if(responseWrapper.isEmpty()){
-                    if( Strings.isEmpty(resource.getName())){
+                    if(isNullOrEmpty(resource.getName())){
                         responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
                                 ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue()));
 
@@ -335,18 +340,18 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                     resource.setSystemName(ValidationUtils.convertToSystemName(resource.getName()));
                     resource.setToscaResourceName(CommonBeUtils.generateToscaResourceName(ResourceTypeEnum.VFCMT.name(),
                             resource.getSystemName()));
-                    handleCategories(context, data, resource, responseWrapper);
+                    handleCategories(data, resource, responseWrapper);
                 }
                 // Create the resource in the dataModel
                 if (responseWrapper.isEmpty()) {
                     resource = resourceBusinessLogic.createResource(resource, null,
                             modifier, null, null);
-                    return buildCreatedResourceResponse(resource, context, responseWrapper);
+                    return buildCreatedResourceResponse(resource, responseWrapper);
                 } else {
                     return buildErrorResponse(responseWrapper.getInnerElement());
                 }
             }
-            
+
         } catch (IOException|ParseException e) {
             final String message = "failed to create vfc monitoring template resource";
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
@@ -398,6 +403,8 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403",
                     description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080")})
   //  @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction", paramType = "body", value = "userRemarks - Short description (free text) about the asset version being changed")})
+    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction", paramType = "body", value = "userRemarks - Short description (free text) about the asset version being changed")})
+    @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response changeResourceStateExternal(
             @Parameter(description = "Determines the format of the body of the request",
                     required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
@@ -427,9 +434,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         String requestURI = request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
-
-        //get the business logic
-        ServletContext context = request.getSession().getServletContext();
 
         Wrapper<ResponseFormat> responseWrapper = runValidations(assetType);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
@@ -489,8 +493,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 }
 
                 //execute business logic
-                Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic
-                    .changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, false, true);
+                Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic.changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, false, true);
                 if (actionResponse.isRight()) {
                     log.info("failed to change resource state");
                     ResponseFormat responseFormat = actionResponse.right().value();
@@ -500,7 +503,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 
                 log.debug("change state successful !!!");
                 responseObject = actionResponse.left().value();
-                response = buildCreatedResourceResponse(responseObject, context, responseWrapper);
+                response = buildCreatedResourceResponse(responseObject, responseWrapper);
             } else {
                 response = buildErrorResponse(responseWrapper.getInnerElement());
             }
@@ -523,7 +526,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         }
     }
 
-    private Response buildCreatedResourceResponse(Component resource, ServletContext context,
+    private Response buildCreatedResourceResponse(Component resource,
             Wrapper<ResponseFormat> responseWrapper) throws IOException {
         ResponseFormat responseFormat;
         Response response;
@@ -546,18 +549,18 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         return response;
     }
 
-    private void handleCategories(ServletContext context, String data, Resource resource,
+    private void handleCategories(String data, Resource resource,
             Wrapper<ResponseFormat> responseWrapper) {
         try {
             JSONParser parser = new JSONParser();
             JSONObject jsonObj = (JSONObject) parser.parse(data);
             String category = (String) jsonObj.get(CategoryTypeEnum.CATEGORY.getValue());
             String subcategory = (String) jsonObj.get(CategoryTypeEnum.SUBCATEGORY.getValue());
-            if (Strings.isEmpty(category)) {
+            if (isNullOrEmpty(category)) {
                 responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
                         ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue()));
             }
-            else if (Strings.isEmpty(subcategory)) {
+            else if (isNullOrEmpty(subcategory)) {
                 responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
                         ActionStatus.COMPONENT_MISSING_SUBCATEGORY));
             }

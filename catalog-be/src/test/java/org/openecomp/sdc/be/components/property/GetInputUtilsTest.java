@@ -16,11 +16,11 @@
 
 package org.openecomp.sdc.be.components.property;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+
+import static org.junit.Assert.assertTrue;
 
 public class GetInputUtilsTest {
     private static final String INPUT_ID = "inputUid";

@@ -19,16 +19,6 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertThat;
-import static org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.IMPORT_VSP_BTN;
-import static org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.MODAL_DIV;
-import static org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.RESULTS_CONTAINER_DIV;
-import static org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.SEARCH_TXT;
-
-import java.util.List;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.LoaderHelper;
 import org.openecomp.sdc.ci.tests.utilities.NotificationHelper;
@@ -37,6 +27,17 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertThat;
+import static org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.IMPORT_VSP_BTN;
+import static org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.MODAL_DIV;
+import static org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.RESULTS_CONTAINER_DIV;
+import static org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent.XpathSelector.SEARCH_TXT;
 
 /**
  * Handles the VSP Repository Modal UI actions

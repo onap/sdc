@@ -22,11 +22,11 @@
 
 package org.openecomp.sdc.be.user;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 import org.hamcrest.core.IsNull;
 import org.junit.Test;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class UserAdminValidatorTest {
 

@@ -1,0 +1,21 @@
+<div class="service-path-list">
+    <div class="add-path-link" *ngIf="!isViewOnly"><a (click)="onAddServicePath()" data-tests-id="add-service-path-lnk" >+ Add Flow</a></div>
+    <div class="generic-table table-container" >
+        <div class="header-row">
+            <div class="cell header-cell" *ngFor="let header of headers">
+                {{header}}
+            </div>
+        </div>
+        <div *ngFor="let path of paths" class="data-row" >
+            <div class="cell" data-tests-id="path-name" >{{path.name}}</div>
+            <div class="cell path-action-buttons">
+                <span class="sprite-new update-component-icon" (click)="onEditServicePath(path.uniqueId)" data-tests-id="update-service-path-btn" ></span>
+                <span class="sprite-new delete-item-icon" *ngIf="!isViewOnly" (click)="deletePath(path.uniqueId)" data-tests-id="delete-service-path-btn"></span>
+            </div>
+        </div>
+        <div *ngIf="paths && paths.length === 0" class="no-row-text" >
+            No flows have been added yet.
+        </div>
+    </div>
+
+</div>

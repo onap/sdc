@@ -32,7 +32,11 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @Component("interfaceLifecycleTypeImportManager")
 public class InterfaceLifecycleTypeImportManager {

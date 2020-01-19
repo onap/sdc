@@ -22,6 +22,7 @@ package org.openecomp.sdc.exception;
 
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.GeneralUtility;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -30,87 +31,94 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractSdncException {
 
-    private String messageId;
+	private String messageId;
 
-    private String text;
+	private String text;
 
-    private String[] variables;
+	private final String ecompRequestId;
 
-    private static Logger log = Logger.getLogger(AbstractSdncException.class.getName());
+	private String[] variables;
 
-    private static final Pattern ERROR_PARAM_PATTERN = Pattern.compile("%\\d");
+	private static Logger log = Logger.getLogger(AbstractSdncException.class.getName());
 
-    public AbstractSdncException() {
-    }
+	private final static Pattern ERROR_PARAM_PATTERN = Pattern.compile("%\\d");
 
-    public AbstractSdncException(String messageId, String text, String[] variables) {
-        super();
-        this.messageId = messageId;
-        this.text = text;
-        this.variables = validateParameters(messageId, text, variables);
-    }
+	public AbstractSdncException() {
+		this.ecompRequestId = GeneralUtility.getEcompRequestId();
+	}
 
-    private String[] validateParameters(String messageId, String text, String[] variables) {
-        String[] res = null;
-        Matcher m = ERROR_PARAM_PATTERN.matcher(text);
-        int expectedParamsNum = 0;
-        while (m.find()) {
-            expectedParamsNum += 1;
-        }
-        int actualParamsNum = (variables != null) ? variables.length : 0;
-        if (actualParamsNum < expectedParamsNum) {
-            log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "",
-                    "Received less parameters than expected for error with messageId {}, expected: {}, actual: {}. Missing parameters are padded with null values.",
-                    messageId, expectedParamsNum, actualParamsNum);
-        } else if (actualParamsNum > expectedParamsNum) {
-            log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "",
-                    "Received more parameters than expected for error with messageId {}, expected: {}, actual: {}. Extra parameters are ignored.",
-                    messageId, expectedParamsNum, actualParamsNum);
-        }
-        if (variables != null) {
-            res = Arrays.copyOf(variables, expectedParamsNum);
-        }
+	public AbstractSdncException(String messageId, String text, String[] variables) {
+		this();
+		this.messageId = messageId;
+		this.text = text;
+		this.variables = validateParameters(messageId, text, variables);
+	}
 
-        return res;
-    }
+	private String[] validateParameters(String messageId, String text, String[] variables) {
+		String[] res = null;
+		Matcher m = ERROR_PARAM_PATTERN.matcher(text);
+		int expectedParamsNum = 0;
+		while (m.find()) {
+			expectedParamsNum += 1;
+		}
+		int actualParamsNum = (variables != null) ? variables.length : 0;
+		if (actualParamsNum < expectedParamsNum) {
+			log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","",
+					"Received less parameters than expected for error with messageId {}, expected: {}, actual: {}. Missing parameters are padded with null values.",
+					messageId, expectedParamsNum, actualParamsNum);
+		} else if (actualParamsNum > expectedParamsNum) {
+			log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","",
+					"Received more parameters than expected for error with messageId {}, expected: {}, actual: {}. Extra parameters are ignored.",
+					messageId, expectedParamsNum, actualParamsNum);
+		}
+		if (variables != null) {
+			res = Arrays.copyOf(variables, expectedParamsNum);
+		}
 
-    public String getMessageId() {
-        return this.messageId;
-    }
+		return res;
+	}
 
-    public String getText() {
-        return text;
-    }
+	public String getMessageId() {
+		return messageId;
+	}
 
-    public String[] getVariables() {
-        return variables;
-    }
+	public String getText() {
+		return text;
+	}
 
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
-    }
+	public String getEcompRequestId() {
+		return ecompRequestId;
+	}
 
-    public void setText(String text) {
-        this.text = text;
-    }
+	public String[] getVariables() {
+		return variables;
+	}
 
-    public void setVariables(String[] variables) {
-        this.variables = variables;
-    }
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
+	}
 
-    public String getFormattedErrorMessage() {
-        String res;
-        if (variables != null && variables.length > 0) {
-            Formatter formatter = new Formatter();
-            try {
-                res = formatter.format(this.text.replaceAll("%\\d", "%s"), (Object[]) this.variables).toString();
-            } finally {
-                formatter.close();
-            }
-        } else {
-            res = this.text;
-        }
-        return res;
-    }
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public void setVariables(String[] variables) {
+		this.variables = variables;
+	}
+
+	public String getFormattedErrorMessage() {
+		String res;
+		if (variables != null && variables.length > 0) {
+			Formatter formatter = new Formatter();
+			try {
+				res = formatter.format(this.text.replaceAll("%\\d", "%s"), (Object[]) this.variables).toString();
+			} finally {
+				formatter.close();
+			}
+		} else {
+			res = this.text;
+		}
+		return res;
+	}
 
 }

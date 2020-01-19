@@ -16,11 +16,6 @@
 
 package org.openecomp.sdc.be.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
@@ -30,6 +25,12 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ServiceFilterUtils {
 

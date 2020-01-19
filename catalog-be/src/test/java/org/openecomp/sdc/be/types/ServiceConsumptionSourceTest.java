@@ -19,9 +19,9 @@
  */
 package org.openecomp.sdc.be.types;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ServiceConsumptionSourceTest {
 

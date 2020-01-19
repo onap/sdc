@@ -26,6 +26,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+
 import java.util.Collections;
 
 import static org.junit.Assert.assertTrue;

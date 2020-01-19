@@ -21,17 +21,6 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +32,17 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)

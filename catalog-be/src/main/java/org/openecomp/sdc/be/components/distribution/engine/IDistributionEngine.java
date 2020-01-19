@@ -26,6 +26,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
+import java.util.List;
+
 public interface IDistributionEngine {
 
     boolean isActive();
@@ -50,4 +52,6 @@ public interface IDistributionEngine {
     INotificationData buildServiceForDistribution(Service service, String distributionId, String workloadContext);
 
     OperationalEnvironmentEntry getEnvironmentById(String opEnvId);
+
+    OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress);
 }

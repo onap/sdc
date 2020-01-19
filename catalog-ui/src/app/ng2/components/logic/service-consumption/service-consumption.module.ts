@@ -14,11 +14,11 @@
  * permissions and limitations under the License.
  */
 
-import { NgModule } from "@angular/core";
-import {CommonModule} from "@angular/common";
-import {ServiceConsumptionComponent} from "./service-consumption.component";
-import {UiElementsModule} from "app/ng2/components/ui/ui-elements.module";
-import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { UiElementsModule } from 'app/ng2/components/ui/ui-elements.module';
+import { TranslateModule } from 'app/ng2/shared/translator/translate.module';
+import { ServiceConsumptionComponent } from './service-consumption.component';
 
 @NgModule({
     declarations: [
@@ -29,7 +29,9 @@ import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
         UiElementsModule,
         TranslateModule
     ],
-    exports: [],
+    exports: [
+        ServiceConsumptionComponent
+    ],
     entryComponents: [
         ServiceConsumptionComponent
     ],

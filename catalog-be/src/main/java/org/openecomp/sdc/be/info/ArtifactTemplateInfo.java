@@ -34,7 +34,11 @@ import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ArtifactTemplateInfo {
     private static final Logger log = Logger.getLogger(ArtifactTemplateInfo.class);

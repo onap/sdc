@@ -20,20 +20,8 @@
 
 package org.openecomp.sdc.be.datamodel.utils;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.validation.PolicyUtils;
@@ -57,6 +45,18 @@ import org.openecomp.sdc.be.ui.model.UiResourceMetadata;
 import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiServiceMetadata;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @org.springframework.stereotype.Component("uiComponentDataConverter")
 public class UiComponentDataConverter {

@@ -28,13 +28,11 @@ import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-
-import static org.junit.Assert.assertTrue;
 
 public class ArtifactUtilsTest {
 
@@ -99,6 +97,12 @@ public class ArtifactUtilsTest {
 		artifactId = null;
 		result = ArtifactUtils.buildJsonForUpdateArtifact(artifactId, artifactName, artifactType, artifactGroupType,
 				label, displayName, description, artifactContentent, updatedRequiredArtifacts, isFromCsar);
+
+		// test 2
+		/*artifactId = "";
+		result = ArtifactUtils.buildJsonForUpdateArtifact(artifactId, artifactName, artifactType, artifactGroupType,
+				label, displayName, description, artifactContentent, updatedRequiredArtifacts, isFromCsar);
+		Assert.assertEquals(null, result);*/
 	}
 
 	@Test

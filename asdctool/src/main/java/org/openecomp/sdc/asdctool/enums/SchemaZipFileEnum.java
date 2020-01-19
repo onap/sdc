@@ -20,7 +20,9 @@
 
 package org.openecomp.sdc.asdctool.enums;
 
-import static org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum.SchemaZipConstants.*;
+import static org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum.SchemaZipConstants.DATA_IMPORT_LIST;
+import static org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum.SchemaZipConstants.EMPTY_IMPORT_LIST;
+import static org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum.SchemaZipConstants.RELATIONSHIPS_TYPES_IMPORT_LIST;
 
 public enum SchemaZipFileEnum {
 

@@ -20,22 +20,8 @@
 
 package org.openecomp.sdc.be.components.property;
 
-import static org.openecomp.sdc.common.api.Constants.GET_INPUT;
-import static org.openecomp.sdc.common.api.Constants.GET_POLICY;
-
 import com.google.gson.Gson;
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +47,21 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.yaml.snakeyaml.Yaml;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.common.api.Constants.GET_INPUT;
+import static org.openecomp.sdc.common.api.Constants.GET_POLICY;
 
 public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends PropertiesOwner, PROPERTYTYPE extends PropertyDataDefinition> implements PropertyDeclarator {
 

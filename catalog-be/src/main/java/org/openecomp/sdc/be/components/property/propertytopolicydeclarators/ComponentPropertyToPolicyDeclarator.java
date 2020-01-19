@@ -21,8 +21,6 @@
 package org.openecomp.sdc.be.components.property.propertytopolicydeclarators;
 
 import fj.data.Either;
-import java.util.List;
-import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.property.DefaultPropertyDeclarator;
@@ -36,6 +34,9 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+
+import java.util.List;
+import java.util.Optional;
 
 @org.springframework.stereotype.Component
 public class ComponentPropertyToPolicyDeclarator extends DefaultPropertyDeclarator<Component, PropertyDataDefinition> {

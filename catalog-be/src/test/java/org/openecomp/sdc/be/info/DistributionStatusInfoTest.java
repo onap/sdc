@@ -21,17 +21,18 @@
  */
 package org.openecomp.sdc.be.info;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 public class DistributionStatusInfoTest {
 
@@ -47,8 +48,8 @@ public class DistributionStatusInfoTest {
 	}
 
 	@Test
-	public void testCtorWithESTimeBasedEvent() {
-		ESTimeBasedEvent distributionStatusEvent = createESTimeBasedEvent();
+	public void testCtorWithAuditingGenericEvent() {
+		AuditingGenericEvent distributionStatusEvent = createAuditingGenericEvent();
 		DistributionStatusInfo distributionStatusInfo = new DistributionStatusInfo(distributionStatusEvent);
 		Assert.assertThat(distributionStatusInfo.getTimestamp(), is(AUDIT_DISTRIBUTION_STATUS_TIME));
 		Assert.assertThat(distributionStatusInfo.getOmfComponentID(), is(AUDIT_DISTRIBUTION_CONSUMER_ID));
@@ -66,8 +67,8 @@ public class DistributionStatusInfoTest {
 		Assert.assertThat(distributionStatusInfo.getTimestamp(), is(AUDIT_DISTRIBUTION_STATUS_TIME));
 	}
 
-	private ESTimeBasedEvent createESTimeBasedEvent() {
-		ESTimeBasedEvent distributionStatusEvent = new ESTimeBasedEvent();
+	private AuditingGenericEvent createAuditingGenericEvent() {
+		AuditingGenericEvent distributionStatusEvent = new AuditingGenericEvent();
 		Map<String, Object> fields = new HashMap<>();
 		fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName(), AUDIT_DISTRIBUTION_CONSUMER_ID);
 		fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_STATUS_TIME.getDisplayName(), AUDIT_DISTRIBUTION_STATUS_TIME);

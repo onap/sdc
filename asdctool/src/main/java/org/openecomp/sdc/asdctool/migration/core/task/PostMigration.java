@@ -27,7 +27,7 @@ public interface PostMigration extends IMigrationStage {
 	@Override
 	default
 	public DBVersion getVersion() {
-		return DBVersion.CURRENT_VERSION;
+		return DBVersion.DEFAULT_VERSION;
 	}
 	
 	@Override

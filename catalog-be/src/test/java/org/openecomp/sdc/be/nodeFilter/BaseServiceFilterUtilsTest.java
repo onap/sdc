@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Before;
 import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
@@ -26,6 +25,8 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyData
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
+
+import java.util.Arrays;
 
 public class BaseServiceFilterUtilsTest {
 

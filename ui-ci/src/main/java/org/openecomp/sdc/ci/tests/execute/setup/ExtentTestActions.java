@@ -26,15 +26,15 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
-import java.util.Optional;
 import org.openecomp.sdc.ci.tests.api.SomeInterface;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ExtentTestActions {
 

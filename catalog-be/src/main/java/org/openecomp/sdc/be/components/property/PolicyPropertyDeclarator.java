@@ -19,15 +19,7 @@
  */
 package org.openecomp.sdc.be.components.property;
 
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
-
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -39,6 +31,15 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.PolicyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
 
 @org.springframework.stereotype.Component
 public class PolicyPropertyDeclarator extends DefaultPropertyDeclarator<PolicyDefinition, PropertyDataDefinition> {

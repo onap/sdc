@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.components.path.beans;
 
-import org.janusgraph.core.PropertyKey;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphQuery;
+import org.janusgraph.core.PropertyKey;
 import org.janusgraph.core.schema.ConsistencyModifier;
 import org.janusgraph.core.schema.JanusGraphIndex;
 import org.janusgraph.core.schema.JanusGraphManagement;
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.be.dao.graph.datatype.ActionEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;

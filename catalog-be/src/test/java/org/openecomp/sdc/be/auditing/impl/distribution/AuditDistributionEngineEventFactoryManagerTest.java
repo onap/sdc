@@ -19,19 +19,19 @@
  */
 package org.openecomp.sdc.be.auditing.impl.distribution;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL;
-import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.CREATE_DISTRIBUTION_TOPIC;
-import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.GET_UEB_CLUSTER;
-import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.REMOVE_KEY_FROM_TOPIC_ACL;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL;
+import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.CREATE_DISTRIBUTION_TOPIC;
+import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.GET_UEB_CLUSTER;
+import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.REMOVE_KEY_FROM_TOPIC_ACL;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditDistributionEngineEventFactoryManagerTest {

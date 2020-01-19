@@ -21,13 +21,19 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,23 +70,23 @@ public class ComponentInstancePropsAndInputsMerge implements ComponentInstanceMe
     }
 
     @Override
-    public Either<Component, ResponseFormat> mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
+    public Component mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
         Either<List<ComponentInstanceInput>, ActionStatus> instanceInputsEither = mergeComponentInstanceInputsIntoContainer(dataHolder, updatedContainerComponent, newInstanceId);
         if (instanceInputsEither.isRight()) {
             ActionStatus actionStatus = instanceInputsEither.right().value();
-            return Either.right(componentsUtils.getResponseFormat(actionStatus));
+            throw new ByActionStatusComponentException(actionStatus);
         }
         Either<List<ComponentInstanceProperty>, ActionStatus> instancePropsEither = mergeComponentInstancePropsIntoContainer(dataHolder, updatedContainerComponent, newInstanceId);
         if (instancePropsEither.isRight()) {
             ActionStatus actionStatus = instancePropsEither.right().value();
-            return Either.right(componentsUtils.getResponseFormat(actionStatus));
+            throw new ByActionStatusComponentException(actionStatus);
         }
         Either<List<InputDefinition>, ActionStatus> inputsEither = mergeComponentInputsIntoContainer(dataHolder, updatedContainerComponent.getUniqueId(), newInstanceId);
         if (inputsEither.isRight()) {
             ActionStatus actionStatus = inputsEither.right().value();
-            return Either.right(componentsUtils.getResponseFormat(actionStatus));
+            throw new ByActionStatusComponentException(actionStatus);
         }
-        return Either.left(updatedContainerComponent);
+        return updatedContainerComponent;
     }
 
     private Either<List<ComponentInstanceProperty>, ActionStatus> mergeComponentInstancePropsIntoContainer(DataForMergeHolder dataHolder, Component updatedComponent, String instanceId) {

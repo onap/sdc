@@ -19,22 +19,23 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static java.util.stream.Collectors.toList;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
-
-import java.util.List;
-import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.csar.pnf.PnfSoftwareInformation;
 import org.openecomp.sdc.be.csar.pnf.PnfSoftwareVersion;
 import org.openecomp.sdc.be.csar.pnf.SoftwareInformationArtifactYamlParser;
-import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
 
 @Component("softwareInformationBusinessLogic")
 public class SoftwareInformationBusinessLogic {

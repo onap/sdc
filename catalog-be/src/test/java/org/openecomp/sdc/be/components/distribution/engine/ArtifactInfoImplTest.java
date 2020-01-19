@@ -29,7 +29,11 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ArtifactInfoImplTest extends BeConfDependentTest {
 
@@ -315,12 +319,4 @@ public class ArtifactInfoImplTest extends BeConfDependentTest {
 		testSubject.setGeneratedFromUUID(generatedFromUUID);
 	}
 
-	@Test
-	public void testUpdateArtifactTimeout() throws Exception {
-		ArtifactInfoImpl testSubject;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.updateArtifactTimeout();
-	}
 }

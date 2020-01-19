@@ -21,9 +21,8 @@
  */
 package org.openecomp.sdc.be.info;
 
-import org.junit.Test;
-
 import com.google.code.beanmatchers.BeanMatchers;
+import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static org.hamcrest.MatcherAssert.assertThat;

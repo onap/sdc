@@ -1,0 +1,37 @@
+{
+  "artifacts": null,
+  "deploymentArtifacts": null,
+  "toscaArtifacts": null,
+  "categories": null,
+  "creatorUserId": null,
+  "creatorFullName": null,
+  "lastUpdaterUserId": null,
+  "lastUpdaterFullName": null,
+  "componentType": null,
+  "componentInstances": null,
+  "componentInstancesRelations": null,
+  "componentInstancesInputs": null,
+  "componentInstancesProperties": null,
+  "componentInstancesAttributes": null,
+  "capabilities": null,
+  "policies": null,
+  "requirements": null,
+  "inputs": null,
+  "groups": null,
+  "additionalInformation": null,
+  "interfaces": null,
+  "nodeFilter": null,
+  "properties": null,
+  "componentInstancesInterfaces": null,
+  "serviceApiArtifacts": null,
+  "forwardingPaths": null,
+  "metadata": null,
+  "nodeFilterData": {
+    "39be5200-143f-4962-a0ad-52882c2df138.104329b3-49bd-4cfe-bf66-c97122ae7437.childservice_proxy0": {
+      "properties": null
+    },
+    "693b08c5-bd20-41f4-8d10-81a8d8351944.104329b3-49bd-4cfe-bf66-c97122ae7437.childservice_proxy0": {
+      "properties": null
+    }
+  }
+}

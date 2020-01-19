@@ -19,8 +19,9 @@
 
 package org.openecomp.sdc.ci.tests.flow;
 
-import java.util.Optional;
 import org.openecomp.sdc.ci.tests.pages.PageObject;
+
+import java.util.Optional;
 
 /**
  * Represents a UI test flow

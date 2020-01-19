@@ -40,8 +40,40 @@ public class DistributionEngineHealthCheckTest extends BeConfDependentTest {
     @Mock
     private CambriaHandler cambriaHandler = Mockito.mock(CambriaHandler.class);
 
+    DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();
+
+    Gson gson = new Gson();
+
+    Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+
+    //
+    // @Test
+    // public void validateDownWhenEnvAreDown() {
+    //
+    // Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+    // envNamePerStatus.put("PROD1", new AtomicBoolean(false));
+    // envNamePerStatus.put("PROD2", new AtomicBoolean(false));
+    //
+    // distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
+    //
+    // HealthCheckInfo healthCheckInfo =
+    // distributionEngineClusterHealth.getHealthCheckInfo();
+    // assertEquals("verify down", HealthCheckStatus.DOWN,
+    // healthCheckInfo.getHealthCheckStatus());
+    // assertEquals("verify DE component", HealthCheckComponent.DE,
+    // healthCheckInfo.getHealthCheckComponent());
+    //
+    // }
+
     @Test
     public void validateUpWhenQuerySucceed() {
+
+        // Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+        // envNamePerStatus.put("PROD1", new AtomicBoolean(true));
+        // envNamePerStatus.put("PROD2", new AtomicBoolean(false));
+        //
+        // distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus,
+        // false);
 
         CambriaErrorResponse cambriaOkResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
         CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);

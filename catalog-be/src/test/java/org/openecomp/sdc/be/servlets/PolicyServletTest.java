@@ -20,27 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.common.api.Constants.GET_POLICY;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import fj.data.Either;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -58,8 +39,13 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.aaf.RoleAuthorizationHandler;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -82,8 +68,36 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.api.FilterDecisionEnum;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.common.api.Constants.GET_POLICY;
+
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyServletTest extends JerseySpringBaseTest{
@@ -95,6 +109,7 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     private static ServletUtils servletUtils;
     private static PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
     private static ToscaOperationFacade toscaOperationFacade;
+    private static RoleAuthorizationHandler roleAuthorizationHandler;
     private static ResponseFormat responseFormat;
     @Captor
     private static ArgumentCaptor<PolicyDefinition> policyCaptor;
@@ -114,25 +129,33 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     private static final String PROP_1 = "prop1";
 
     private static final String UPDATE_TARGETS_URL = "/v1/catalog/{componentType}/{componentId}/policies/{policyId}/targets";
+    static ConfigurationSource configurationSource = new FSConfigurationSource(
+            ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @BeforeClass
     public static void initClass() {
+        ResponseFormatManager.getInstance();
         createMocks();
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
     }
-    
+
     @Before
     public void beforeMethod() {
+        Mockito.reset(businessLogic);
         final JacksonJsonProvider jacksonJsonProvider = new JacksonJaxbJsonProvider().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         setClient(ClientBuilder.newClient(new ClientConfig(jacksonJsonProvider)));
+        ThreadLocalsHolder.setApiType(FilterDecisionEnum.EXTERNAL);
+        when(request.isUserInRole(anyString())).thenReturn(true);
+
     }
+
 
     @Test
     public void testGetPolicySuccess(){
         String path = "/v1/catalog/" + validComponentType + "/" + componentId + "/policies/" + POLICY_ID;
-        Either<PolicyDefinition, ResponseFormat> successResponse = Either.left(new PolicyDefinition());
+        PolicyDefinition successResponse = new PolicyDefinition();
         when(businessLogic.getPolicy(eq(ComponentTypeEnum.RESOURCE), eq(componentId), eq(POLICY_ID), eq(USER_ID))).thenReturn(successResponse);
-        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200.getStatusCode());
         Response response = target()
                 .path(path)
                 .request(MediaType.APPLICATION_JSON)
@@ -145,8 +168,6 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     @Test
     public void testGetPolicyFailure(){
         String path = "/v1/catalog/" + unsupportedComponentType + "/" + componentId + "/policies/" + POLICY_ID;
-        when(responseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST_400.getStatusCode());
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.UNSUPPORTED_ERROR), eq(unsupportedComponentType))).thenReturn(responseFormat);
         Response response = target()
                 .path(path)
                 .request(MediaType.APPLICATION_JSON)
@@ -160,7 +181,7 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     public void testPostPolicySuccess(){
         String path = "/v1/catalog/" + validComponentType + "/" + componentId + "/policies/" + policyTypeName;
         PolicyDefinition policy = new PolicyDefinition();
-        Either<PolicyDefinition, ResponseFormat> successResponse = Either.left(policy);
+        PolicyDefinition successResponse = policy;
         when(businessLogic.createPolicy(eq(ComponentTypeEnum.RESOURCE), eq(componentId), eq(policyTypeName), eq(USER_ID), eq(true))).thenReturn(successResponse);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.CREATED_201.getStatusCode());
         when(componentsUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(responseFormat);
@@ -177,8 +198,6 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     public void testPostPolicyFailure(){
         String path = "/v1/catalog/" + unsupportedComponentType + "/" + componentId + "/policies/" + policyTypeName;
         PolicyDefinition policy = new PolicyDefinition();
-        when(responseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST_400.getStatusCode());
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.UNSUPPORTED_ERROR), eq(unsupportedComponentType))).thenReturn(responseFormat);
         Response response = target()
                 .path(path)
                 .request(MediaType.APPLICATION_JSON)
@@ -193,9 +212,8 @@ public class PolicyServletTest extends JerseySpringBaseTest{
         String path = "/v1/catalog/" + validComponentType + "/" + componentId + "/policies/" + POLICY_ID;
         PolicyDefinition policy = new PolicyDefinition();
         policy.setUniqueId(POLICY_ID);
-        Either<PolicyDefinition, ResponseFormat> successResponse = Either.left(policy);
+        PolicyDefinition successResponse = policy;
         when(businessLogic.updatePolicy(eq(ComponentTypeEnum.RESOURCE), eq(componentId), any(PolicyDefinition.class), eq(USER_ID), eq(true))).thenReturn(successResponse);
-        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200.getStatusCode());
         Response response = target()
                 .path(path)
                 .request(MediaType.APPLICATION_JSON)
@@ -209,8 +227,6 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     public void testPutPolicyFailure(){
         String path = "/v1/catalog/" + unsupportedComponentType + "/" + componentId + "/policies/" + POLICY_ID;
         PolicyDefinition policy = new PolicyDefinition();
-        when(responseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST_400.getStatusCode());
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.UNSUPPORTED_ERROR), eq(unsupportedComponentType))).thenReturn(responseFormat);
         Response response = target()
                 .path(path)
                 .request(MediaType.APPLICATION_JSON)
@@ -223,9 +239,8 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     @Test
     public void testDeletePolicySuccess(){
         String path = "/v1/catalog/" + validComponentType + "/" + componentId + "/policies/" + POLICY_ID;
-        Either<PolicyDefinition, ResponseFormat> successResponse = Either.left(new PolicyDefinition());
+        PolicyDefinition successResponse = new PolicyDefinition();
         when(businessLogic.deletePolicy(eq(ComponentTypeEnum.RESOURCE), eq(componentId), eq(POLICY_ID), eq(USER_ID), eq(true))).thenReturn(successResponse);
-        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200.getStatusCode());
         Response response = target()
                 .path(path)
                 .request(MediaType.APPLICATION_JSON)
@@ -238,8 +253,6 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     @Test
     public void testDeletePolicyFailure(){
         String path = "/v1/catalog/" + unsupportedComponentType + "/" + componentId + "/policies/" + POLICY_ID;
-        when(responseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST_400.getStatusCode());
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.UNSUPPORTED_ERROR), eq(unsupportedComponentType))).thenReturn(responseFormat);
         Response response = target()
                 .path(path)
                 .request(MediaType.APPLICATION_JSON)
@@ -251,12 +264,14 @@ public class PolicyServletTest extends JerseySpringBaseTest{
 
     @Test
     public void getPolicyProperties_operationForbidden() {
-        when(businessLogic.getPolicyProperties(ComponentTypeEnum.SERVICE, SERVICE_ID, POLICY_ID, USER_ID)).thenReturn(Either.right(new ResponseFormat(Response.Status.FORBIDDEN.getStatusCode())));
+       // doThrow(new ComponentException(ActionStatus.GENERAL_ERROR)).when(businessLogic).getPolicyProperties(ComponentTypeEnum.SERVICE, SERVICE_ID, POLICY_ID, USER_ID);
+        when(businessLogic.getPolicyProperties(ComponentTypeEnum.SERVICE, SERVICE_ID, POLICY_ID, USER_ID))
+                .thenThrow(new ByActionStatusComponentException(ActionStatus.AUTH_FAILED, USER_ID));
         Response response = buildGetPropertiesRequest().get();
         assertThat(response.getStatus()).isEqualTo(Response.Status.FORBIDDEN.getStatusCode());
     }
 
-    @Test
+    @Test//(expected = ComponentException.class)
     public void getPolicyProperties_unHandledError_returnGeneralError() {
         when(businessLogic.getPolicyProperties(ComponentTypeEnum.SERVICE, SERVICE_ID, POLICY_ID, USER_ID)).thenThrow(new RuntimeException());
         Response response = buildGetPropertiesRequest().get();
@@ -266,14 +281,14 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     @Test
     public void getPolicyProperties_wrongComponentType() {
         Response response = buildGetPropertiesRequest("unknownType").get();
-        assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
         //verifyZeroInteractions(businessLogic);
     }
 
     @Test
     public void getPolicyProperties() {
         List<PropertyDataDefinition> properties = getPropertiesList();
-        when(businessLogic.getPolicyProperties(ComponentTypeEnum.SERVICE, SERVICE_ID, POLICY_ID, USER_ID)).thenReturn(Either.left(properties));
+        when(businessLogic.getPolicyProperties(ComponentTypeEnum.SERVICE, SERVICE_ID, POLICY_ID, USER_ID)).thenReturn(properties);
         List<PropertyDataDefinition> policyProps = buildGetPropertiesRequest().get(new GenericType<List<PropertyDataDefinition>>() {});
         assertThat(policyProps)
                 .usingElementComparatorOnFields("uniqueId")
@@ -283,7 +298,8 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     @Test
     public void updatePolicyPropertiesSuccess() {
         List<PropertyDataDefinition> properties = getPropertiesList();
-        when(businessLogic.updatePolicyProperties(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID), eq(POLICY_ID), any(PropertyDataDefinition[].class), eq(USER_ID), eq(true))).thenReturn(Either.left(properties));
+        when(businessLogic.updatePolicyProperties(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID), eq(POLICY_ID),
+                any(PropertyDataDefinition[].class), eq(USER_ID), eq(true))).thenReturn(properties);
         List<PropertyDataDefinition> policyProps = buildUpdatePropertiesRequest(ComponentTypeEnum.SERVICE_PARAM_NAME, properties).invoke(new GenericType<List<PropertyDataDefinition>>() {});
         assertThat(policyProps)
                 .usingElementComparatorOnFields("uniqueId")
@@ -293,7 +309,7 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     @Test
     public void updatePolicyTargetsSuccess() {
         List<PolicyTargetDTO> targets = getTargetDTOList();
-        when(businessLogic.updatePolicyTargets(eq(ComponentTypeEnum.RESOURCE), eq(COMPONENT_ID), eq(POLICY_ID), anyMap(), eq(USER_ID))).thenReturn(Either.left(new PolicyDefinition()));
+        when(businessLogic.updatePolicyTargets(eq(ComponentTypeEnum.RESOURCE), eq(COMPONENT_ID), eq(POLICY_ID), anyMap(), eq(USER_ID))).thenReturn(new PolicyDefinition());
         Response policyTargets = buildUpdateTargetsRequest(ComponentTypeEnum.RESOURCE_PARAM_NAME, targets).invoke();
         assertThat(policyTargets.getStatus()).isEqualTo(200);
     }
@@ -302,7 +318,7 @@ public class PolicyServletTest extends JerseySpringBaseTest{
     public void updatePolicyPropertiesFailure() {
         List<PropertyDataDefinition> properties = getPropertiesList();
         ResponseFormat notFoundResponse = new ResponseFormat(HttpStatus.NOT_FOUND_404.getStatusCode());
-        when(businessLogic.updatePolicyProperties(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID), eq(POLICY_ID), any(PropertyDataDefinition[].class), eq(USER_ID), eq(true))).thenReturn(Either.right(notFoundResponse));
+        when(businessLogic.updatePolicyProperties(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID), eq(POLICY_ID), any(PropertyDataDefinition[].class), eq(USER_ID), eq(true))).thenThrow(new ByResponseFormatComponentException(notFoundResponse));
         Response policyProps = buildUpdatePropertiesRequest(ComponentTypeEnum.SERVICE_PARAM_NAME, properties).invoke();
         assertEquals(HttpStatus.NOT_FOUND_404.getStatusCode(), policyProps.getStatus());
     }
@@ -338,7 +354,7 @@ public class PolicyServletTest extends JerseySpringBaseTest{
 
         addGetPolicyValueToProperty(origProperty, policyDefinition);
 
-        when(businessLogic.deletePolicy(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID), eq(policyDefinition.getUniqueId()), eq(USER_ID), eq(true))).thenReturn(Either.left(policyDefinition));
+        when(businessLogic.deletePolicy(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID), eq(policyDefinition.getUniqueId()), eq(USER_ID), eq(true))).thenReturn(policyDefinition);
 
         Response deleteResponse = buildDeletePolicyRequest(policyDefinition).invoke();
         assertEquals(HttpStatus.OK_200.getStatusCode(), deleteResponse.getStatus());
@@ -470,7 +486,7 @@ public class PolicyServletTest extends JerseySpringBaseTest{
 
         return componentInstInputsMap;
     }
-    
+
     @Override
     protected ResourceConfig configure() {
         return super.configure()
@@ -495,6 +511,7 @@ public class PolicyServletTest extends JerseySpringBaseTest{
         componentsUtils = Mockito.mock(ComponentsUtils.class);
         servletUtils = Mockito.mock(ServletUtils.class);
         responseFormat = Mockito.mock(ResponseFormat.class);
+        roleAuthorizationHandler = Mockito.mock(RoleAuthorizationHandler.class);
     }
 
     private static class BaseBusinessLogicTest extends BaseBusinessLogic {

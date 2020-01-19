@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class ErrorConfigurationTest {
     ConfigurationSource configurationSource = null;

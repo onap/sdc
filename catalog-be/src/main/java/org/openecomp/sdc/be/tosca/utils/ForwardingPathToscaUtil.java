@@ -33,8 +33,14 @@ import org.openecomp.sdc.be.tosca.CapabilityRequirementConverter;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author KATYR

@@ -52,8 +52,8 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("node-type-operation")
 public class NodeTypeOperation extends ToscaElementOperation {
-	public final static Pattern uuidNewVersion = Pattern.compile("^\\d{1,}.1");
-	public final static Pattern uuidNormativeNewVersion = Pattern.compile("^\\d{1,}.0");
+    public static final Pattern uuidNewVersion = Pattern.compile("^\\d+.1");
+    public static final Pattern uuidNormativeNewVersion = Pattern.compile("^\\d+.0");
     private static final Logger log = Logger.getLogger(NodeTypeOperation.class);
     private DerivedNodeTypeResolver derivedResourceResolver;
 
@@ -68,10 +68,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
         nodeType.generateUUID();
 
-		//Set missing props such as names, default lifecycle state, dates etc...
         nodeType = getResourceMetaDataFromResource(nodeType);
-
-		//Set unique ID
         String resourceUniqueId = nodeType.getUniqueId();
         if (resourceUniqueId == null) {
             resourceUniqueId = UniqueIdBuilder.buildResourceUniqueId();
@@ -88,11 +85,9 @@ public class NodeTypeOperation extends ToscaElementOperation {
             derivedResources = derivedResourcesResult.left().value();
         }
 
-		//Create Vertext Object and fill according to given NodeType
         GraphVertex nodeTypeVertex = new GraphVertex(VertexTypeEnum.NODE_TYPE);
         fillToscaElementVertexData(nodeTypeVertex, nodeType, JsonParseFlagEnum.ParseAll);
 
-		//Create Node Type in Graph
         Either<GraphVertex, JanusGraphOperationStatus> createdVertex = janusGraphDao.createVertex(nodeTypeVertex);
         if (createdVertex.isRight()) {
             JanusGraphOperationStatus status = createdVertex.right().value();

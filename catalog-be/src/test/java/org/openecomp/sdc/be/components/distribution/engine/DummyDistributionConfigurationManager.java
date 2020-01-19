@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import org.mockito.Mockito;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
@@ -28,7 +29,8 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 
 public class DummyDistributionConfigurationManager {
 
-    DistributionEngineConfiguration configurationMock = Mockito.mock(DistributionEngineConfiguration.class);
+    private DistributionEngineConfiguration configurationMock = Mockito.mock(DistributionEngineConfiguration.class);
+    private Configuration configuration = Mockito.mock(Configuration.class);
 
     public DummyDistributionConfigurationManager() {
         new ConfigurationManager(new DummyConfigurationSource());
@@ -42,6 +44,9 @@ public class DummyDistributionConfigurationManager {
             if (className.equals(DistributionEngineConfiguration.class)) {
                 return (T)configurationMock;
             }
+            if (className.equals(Configuration.class)) {
+                return (T)configuration;
+            }
             return null;
         }
 
@@ -53,5 +58,8 @@ public class DummyDistributionConfigurationManager {
 
     public DistributionEngineConfiguration getConfigurationMock() {
         return configurationMock;
+    }
+    public Configuration getConfiguration() {
+        return configuration;
     }
 }

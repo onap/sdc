@@ -78,8 +78,7 @@ public class CategoryOperation extends BaseOperation{
      * @return
      */
     public  Either<GraphVertex, StorageOperationStatus> getSubCategoryForCategory(GraphVertex categoryV, String name ) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = janusGraphDao
-            .getChildrenVertecies(categoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = janusGraphDao.getChildrenVertices(categoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         if ( childrenVertecies.isRight() ){
             log.debug("Failed to fetch children verticies for category {} error {}", categoryV.getUniqueId(), childrenVertecies.right().value());
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childrenVertecies.right().value()));

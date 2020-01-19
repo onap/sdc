@@ -26,7 +26,11 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 import static org.openecomp.sdc.be.dao.utils.MapUtil.flattenMapValues;

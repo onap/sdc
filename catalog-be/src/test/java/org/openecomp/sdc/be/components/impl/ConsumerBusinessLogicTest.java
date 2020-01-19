@@ -21,6 +21,7 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import fj.data.Either;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,25 +29,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ConsumerOperation;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.ConsumerData;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
-import fj.data.Either;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +64,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 	private ComponentsUtils componentsUtils;
 
 	@Mock
-	private IUserBusinessLogic iUserBusinessLogic;
+	private UserBusinessLogic UserBusinessLogic;
 
 	@Mock
 	private IGraphLockOperation iGraphLockOperation;
@@ -104,8 +100,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		ConsumerDefinition consumerDefinition = new ConsumerDefinition();
 		Mockito.when(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_ACCESS))
 				.thenReturn(new ResponseFormat());
-		Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-				.thenReturn(Either.right(ActionStatus.RESTRICTED_OPERATION));
+		Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenThrow(new ByActionStatusComponentException(ActionStatus.RESTRICTED_OPERATION));
 		assertTrue(consumerBusinessLogic.createConsumer(user, consumerDefinition).isRight());
 	}
 
@@ -114,8 +109,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		user.setRole("DESIGNER");
 		Mockito.when(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION))
 				.thenReturn(new ResponseFormat());
-		Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-				.thenReturn(Either.left(user));
+		Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 		assertTrue(consumerBusinessLogic.createConsumer(user, consumer).isRight());
 	}
 
@@ -127,8 +121,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		invalidConsumerNames.put(RandomStringUtils.random(256, true, false), ActionStatus.EXCEEDS_LIMIT);
 		for(Map.Entry<String, ActionStatus> e: invalidConsumerNames.entrySet()){
 			consumer.setConsumerName(e.getKey());
-			Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-					.thenReturn(Either.left(user));
+			Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 			Mockito.when(componentsUtils.getResponseFormat(e.getValue(), "Consumer name"))
 					.thenReturn(new ResponseFormat());
 			assertTrue(consumerBusinessLogic.createConsumer(user, consumer).isRight());
@@ -144,8 +137,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		for(Map.Entry<String, ActionStatus> e: invalidPasswordResults.entrySet()){
 			consumer.setConsumerName("_marvel");
 			consumer.setConsumerPassword(e.getKey());
-			Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-					.thenReturn(Either.left(user));
+			Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 			Mockito.when(componentsUtils.getResponseFormat(e.getValue(), "Consumer password"))
 					.thenReturn(new ResponseFormat());
 			assertTrue(consumerBusinessLogic.createConsumer(user, consumer).isRight());
@@ -162,8 +154,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		for(Map.Entry<String, ActionStatus> e: invalidPasswordSalts.entrySet()){
 			consumer.setConsumerName("_marvel");
 			consumer.setConsumerSalt(e.getKey());
-			Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-					.thenReturn(Either.left(user));
+			Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 			Mockito.when(componentsUtils.getResponseFormat(e.getValue(), "Consumer salt"))
 					.thenReturn(new ResponseFormat());
 			assertTrue(consumerBusinessLogic.createConsumer(user, consumer).isRight());
@@ -175,8 +166,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		consumer.setConsumerName("_marvel");
 		consumer.setConsumerPassword(RandomStringUtils.random(64, true,true));
 		consumer.setConsumerSalt(RandomStringUtils.random(32, 'a'));
-		Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-				.thenReturn(Either.left(user));
+		Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 		Mockito.when(iGraphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class)))
 				.thenReturn(StorageOperationStatus.GENERAL_ERROR);
 		assertTrue(consumerBusinessLogic.createConsumer(user, consumer).isRight());
@@ -189,8 +179,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		consumerDataDefinition.setConsumerPassword(RandomStringUtils.random(64, true,true));
 		consumerDataDefinition.setConsumerSalt(RandomStringUtils.random(32, 'a'));
 		ConsumerDefinition consumer = new ConsumerDefinition(consumerDataDefinition);
-		Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-				.thenReturn(Either.left(user));
+		Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 		Mockito.when(iGraphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class)))
 				.thenReturn(StorageOperationStatus.OK);
 		Mockito.when(consumerOperation.getCredentials(anyString()))
@@ -207,8 +196,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		consumerDataDefinition.setConsumerPassword(RandomStringUtils.random(64, true,true));
 		consumerDataDefinition.setConsumerSalt(RandomStringUtils.random(32, 'a'));
 		ConsumerDefinition consumer = new ConsumerDefinition(consumerDataDefinition);
-		Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-				.thenReturn(Either.left(user));
+		Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 		Mockito.when(iGraphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class)))
 				.thenReturn(StorageOperationStatus.OK);
 		Mockito.when(consumerOperation.getCredentials(anyString()))
@@ -231,8 +219,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 				.thenReturn(Either.left(new ConsumerData()));
 		Mockito.when(consumerData.getConsumerDataDefinition())
 				.thenReturn(consumerDataDefinition);
-		Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-				.thenReturn(Either.left(user));
+		Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 		assertTrue(consumerBusinessLogic.getConsumer("marvel123", user).isLeft());
 	}
 
@@ -258,8 +245,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 	@Test
 	public void testDeleteConsumer_givenValidUserAndConsumerId_thenReturnsSuccessful() {
 		ConsumerData consumerData = new ConsumerData(new ConsumerDataDefinition());
-		Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-				.thenReturn(Either.left(user));
+		Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 		Mockito.when(consumerOperation.deleteCredentials("marvel123"))
 				.thenReturn(Either.left(consumerData));
 		assertTrue(consumerBusinessLogic.deleteConsumer("marvel123", user).isLeft());
@@ -267,8 +253,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 
 	@Test
 	public void testDeleteConsumer_givenInvalidUser_thenReturnsError() {
-		Mockito.when(iUserBusinessLogic.getUser(user.getUserId(), false))
-				.thenReturn(Either.left(user));
+		Mockito.when(UserBusinessLogic.getUser(user.getUserId(), false)).thenReturn(user);
 		Mockito.when(consumerOperation.deleteCredentials("marvel123"))
 				.thenReturn(Either.right(StorageOperationStatus.USER_NOT_FOUND));
 		assertTrue(consumerBusinessLogic.deleteConsumer("marvel123", user).isRight());

@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import static org.mockito.Mockito.atLeast;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +30,11 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.atLeast;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccessValidationsTest {
@@ -58,7 +59,7 @@ public class AccessValidationsTest {
     public void testValidateUserCanRetrieveComponentData() {
         accessValidations.validateUserCanRetrieveComponentData(COMPONENT_ID, RESOURCES, USER_ID, ANY_CONTEXT);
 
-        Mockito.verify(userValidations).validateUserExists(USER_ID, ANY_CONTEXT, true);
+        Mockito.verify(userValidations).validateUserExists(USER_ID);
         Mockito.verify(componentValidations).getComponent(COMPONENT_ID, ComponentTypeEnum.RESOURCE);
     }
 
@@ -68,11 +69,11 @@ public class AccessValidationsTest {
         List<Role> adminRoles = new ArrayList<>();
         adminRoles.add(Role.ADMIN);
         adminRoles.add(Role.DESIGNER);
-        Mockito.when(userValidations.validateUserExists(USER_ID, ANY_CONTEXT, true)).thenReturn(user);
+        Mockito.when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
 
         accessValidations.validateUserCanWorkOnComponent(COMPONENT_ID, ComponentTypeEnum.RESOURCE, USER_ID, ANY_CONTEXT);
 
-        Mockito.verify(userValidations).validateUserExists(USER_ID, ANY_CONTEXT, true);
+        Mockito.verify(userValidations).validateUserExists(USER_ID);
         Mockito.verify(userValidations).validateUserRole(user, adminRoles);
         Mockito.verify(componentValidations).validateComponentIsCheckedOutByUser(COMPONENT_ID, ComponentTypeEnum.RESOURCE,
             USER_ID);
@@ -85,11 +86,11 @@ public class AccessValidationsTest {
         List<Role> adminRoles = new ArrayList<>();
         adminRoles.add(Role.ADMIN);
         adminRoles.add(Role.DESIGNER);
-        Mockito.when(userValidations.validateUserExists(USER_ID, ANY_CONTEXT, true)).thenReturn(user);
+        Mockito.when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
 
         accessValidations.validateUserCanWorkOnComponent(component, USER_ID, ANY_CONTEXT);
 
-        Mockito.verify(userValidations, atLeast(1)).validateUserExists(USER_ID, ANY_CONTEXT, true);
+        Mockito.verify(userValidations, atLeast(1)).validateUserExists(USER_ID);
         Mockito.verify(userValidations).validateUserRole(user, adminRoles);
         Mockito.verify(componentValidations).validateComponentIsCheckedOutByUser(component, USER_ID);
     }
@@ -97,13 +98,13 @@ public class AccessValidationsTest {
     @Test
     public void testValidateUserExists() {
         accessValidations.validateUserExists(COMPONENT_ID, ANY_CONTEXT);
-        Mockito.verify(userValidations).validateUserExists(COMPONENT_ID, ANY_CONTEXT, true);
+        Mockito.verify(userValidations).validateUserExists(COMPONENT_ID);
     }
 
     @Test
     public void validateUserExist() {
         accessValidations.validateUserExist(COMPONENT_ID, ANY_CONTEXT);
-        Mockito.verify(userValidations).validateUserExists(COMPONENT_ID, ANY_CONTEXT, false);
+        Mockito.verify(userValidations).validateUserExists(COMPONENT_ID);
     }
 
     @Test
@@ -112,7 +113,7 @@ public class AccessValidationsTest {
         List<Role> adminRoles = new ArrayList<>();
         adminRoles.add(Role.ADMIN);
         adminRoles.add(Role.DESIGNER);
-        Mockito.when(userValidations.validateUserExists(COMPONENT_ID, ANY_CONTEXT, true)).thenReturn(user);
+        Mockito.when(userValidations.validateUserExists(COMPONENT_ID)).thenReturn(user);
 
         accessValidations.userIsAdminOrDesigner(COMPONENT_ID, ANY_CONTEXT);
 

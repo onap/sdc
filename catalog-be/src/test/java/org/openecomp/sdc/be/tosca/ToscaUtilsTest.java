@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.util.Map;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
+
+import java.util.Map;
 
 public class ToscaUtilsTest {
 	

@@ -24,13 +24,13 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by chaya on 7/4/2017.
@@ -76,6 +76,7 @@ public class ValidationConfigManager {
             input = new FileInputStream(path);
             prop.load(input);
         } catch (IOException ex) {
+            ex.printStackTrace();
             log.info("FileInputStream failed - {}", ex);
         }
         return prop;

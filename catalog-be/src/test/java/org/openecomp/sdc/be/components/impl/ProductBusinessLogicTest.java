@@ -21,50 +21,36 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.components.validation.ValidationUtils;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.category.GroupingDefinition;
-import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import fj.data.Either;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -110,11 +96,16 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 	@Mock
 	private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
+	@Mock
+	ComponentNameValidator componentNameValidator;
+
 	@Before
 	public void setUp() {
 		productBusinessLogic = new ProductBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
 			groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
-			artifactsBusinessLogic, componentInstanceBusinessLogic, artifactToscaOperation);
+			artifactsBusinessLogic, componentInstanceBusinessLogic, artifactToscaOperation, componentContactIdValidator,
+			componentNameValidator, componentTagsValidator, componentValidator,
+			componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator );
 		MockitoAnnotations.initMocks(this);
 		product = new Product();
 		user = new User();
@@ -133,34 +124,6 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 		user.setRole(role);
 	}
 
-	@Test
-	public void testCreateProduct_givenValidProductAndUser_thenReturnsProduct() {
-		product.setName(pName);
-		product.setFullName("avengers");
-		product.setInvariantUUID("ABCD1234");
-		product.setContacts(getContacts());
-		product.setTags(getTags());
-		product.setIcon(pIcon);
-		product.setProjectCode(pCode);
-		product.setDescription(desc);
-
-		when(userValidations.validateUserNotEmpty(Mockito.any(User.class), Mockito.anyString()))
-				.thenReturn(user);
-		when(userValidations.validateUserExists(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean()))
-				.thenReturn(user);
-		when(toscaOperationFacade.validateComponentNameExists(Mockito.anyString(), Mockito.any(), Mockito.any(ComponentTypeEnum.class)))
-				.thenReturn(Either.left(Boolean.FALSE));
-		when(iGraphLockOperation.lockComponentByName(Mockito.any(), Mockito.any(NodeTypeEnum.class)))
-				.thenReturn(StorageOperationStatus.OK);
-		when(toscaOperationFacade.createToscaComponent(any(org.openecomp.sdc.be.model.Product.class)))
-				.thenReturn(Either.left(product));
-		Either result = productBusinessLogic.createProduct(product, user);
-		assertTrue(result.isLeft());
-		Product returnedProduct = (Product) result.left().value();
-
-		assertEquals(product.getFullName(), returnedProduct.getFullName());
-
-	}
 
 	@Test(expected = ComponentException.class)
 	public void testCreateProduct_givenEmptyUserId_thenReturnsException() {
@@ -169,15 +132,6 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 		productBusinessLogic.createProduct(product, user);
 	}
 
-	@Test(expected = ComponentException.class)
-	public void testCreateProduct_givenUnknownUser_thenReturnsException() {
-		ComponentException componentException = new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND);
-		when(userValidations.validateUserNotEmpty(any(User.class), anyString()))
-				.thenReturn(user);
-		when(userValidations.validateUserExists(anyString(), anyString(), anyBoolean()))
-				.thenThrow(componentException);
-		productBusinessLogic.createProduct(product, user);
-	}
 
 	@Test(expected = ComponentException.class)
 	public void testCreateProduct_givenInvalidUserRole_thenReturnsException() {
@@ -193,23 +147,8 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 	}
 
 	@Test
-	public void testCreateProduct_givenInvalidProductFullNames_thenReturnsErrors() {
-		List<String> invalidProductNames = new ArrayList<>();
-		invalidProductNames.add(null);
-		invalidProductNames.add("~~");
-		invalidProductNames.add("yo");
-		invalidProductNames.add("infinity");
-		when(toscaOperationFacade.validateComponentNameExists(anyString(), any(), any(ComponentTypeEnum.class)))
-				.thenReturn(Either.left(Boolean.TRUE));
-		for (String s : invalidProductNames) {
-			product.setName(s);
-			assertTrue(productBusinessLogic.createProduct(product, user).isRight());
-		}
-	}
-
-	@Test
 	public void testValidateProductName_givenValidName_thenReturnsSuccessful() {
-		when(userValidations.validateUserExists(anyString(), anyString(), anyBoolean()))
+		when(userValidations.validateUserExists(anyString()))
 				.thenReturn(user);
 		when(toscaOperationFacade.validateComponentNameUniqueness(eq(pName), any(), any(ComponentTypeEnum.class)))
 				.thenReturn(Either.left(Boolean.TRUE));
@@ -221,7 +160,7 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 	@Test
 	public void testValidateProductName_givenInvalidName_thenReturnsError() {
 		String invalidProductName = "~~";
-		when(userValidations.validateUserExists(anyString(), anyString(), anyBoolean()))
+		when(userValidations.validateUserExists(anyString()))
 				.thenReturn(user);
 		when(toscaOperationFacade.validateComponentNameUniqueness(eq(invalidProductName), any(), any(ComponentTypeEnum.class)))
 				.thenReturn(Either.left(Boolean.FALSE));
@@ -231,7 +170,7 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 
 	@Test
 	public void testValidateProductName_givenNameUniquenessCheckFails_thenReturnsError() {
-		when(userValidations.validateUserExists(anyString(), anyString(), anyBoolean()))
+		when(userValidations.validateUserExists(anyString()))
 				.thenReturn(user);
 		when(toscaOperationFacade.validateComponentNameUniqueness(eq(pName), any(), any(ComponentTypeEnum.class)))
 				.thenReturn(Either.right(StorageOperationStatus.ENTITY_ALREADY_EXISTS));
@@ -267,67 +206,6 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 	}
 
 	@Test
-	public void testUpdateProductMetadata_givenValidProductAndUser_thenReturnsSuccessful() {
-		String componentId = "component1";
-		String projectName = "Product1";
-		String version = "2.0";
-		String lifecycleState = "NOT_CERTIFIED_CHECKOUT";
-		String uniqueId = "pUniqueId";
-
-		Product product = new Product();
-		ProductMetadataDataDefinition productMetadataDataDefinition = new ProductMetadataDataDefinition();
-		ComponentMetadataDefinition componentMetadataDefinition = new ComponentMetadataDefinition(productMetadataDataDefinition);
-		CategoryDefinition categoryDefinition = new CategoryDefinition();
-		SubCategoryDefinition subCategoryDefinition = new SubCategoryDefinition();
-		GroupingDefinition groupingDefinition = new GroupingDefinition();
-
-		List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
-		List<SubCategoryDefinition> subCategoryDefinitionList = new ArrayList<>();
-		List<GroupingDefinition> groupingDefinitionsList = new ArrayList<>();
-
-		categoryDefinition.setName("cat1");
-		subCategoryDefinition.setName("subCat1");
-		groupingDefinition.setName("subCatGroup1");
-
-		groupingDefinitionsList.add(groupingDefinition);
-		subCategoryDefinition.setGroupings(groupingDefinitionsList);
-		subCategoryDefinitionList.add(subCategoryDefinition);
-		categoryDefinition.setSubcategories(subCategoryDefinitionList);
-		categoryDefinitionList.add(categoryDefinition);
-
-		productMetadataDataDefinition.setFullName(projectName);
-		productMetadataDataDefinition.setName(projectName);
-		productMetadataDataDefinition.setState(lifecycleState);
-		productMetadataDataDefinition.setUniqueId(uniqueId);
-		productMetadataDataDefinition.setComponentType(ComponentTypeEnum.PRODUCT);
-
-		product.setMetadataDefinition(componentMetadataDefinition);
-		product.setLastUpdaterUserId(uId);
-		product.setDescription(desc);
-		product.setVersion(version);
-		product.setProjectCode(pCode);
-		product.setIcon(pIcon);
-		product.setCategories(categoryDefinitionList);
-		product.setContacts(contacts);
-		product.setTags(tags);
-
-		when(userValidations.validateUserExists(eq(uId), anyString(), anyBoolean()))
-				.thenReturn(user);
-		when(toscaOperationFacade.getToscaElement(eq(componentId)))
-				.thenReturn(Either.left(product));
-		when(toscaOperationFacade.getToscaElement(eq(componentId), any(JsonParseFlagEnum.class)))
-				.thenReturn(Either.left(product));
-		when(elementDao.getAllProductCategories())
-				.thenReturn(Either.left(categoryDefinitionList));
-		when(iGraphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class)))
-				.thenReturn(StorageOperationStatus.OK);
-		when(toscaOperationFacade.updateToscaElement(any(Product.class)))
-				.thenReturn(Either.left(product));
-
-		assertTrue(productBusinessLogic.updateProductMetadata(componentId, product, user).isLeft());
-	}
-
-	@Test
 	public void testUpdateProductMetadata_givenUpdateProductNull_thenReturnsError() {
 		Product updateProduct = null;
 		String productId = null;
@@ -341,25 +219,6 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 		assertTrue(productBusinessLogic.updateProductMetadata(productId, product, user).isRight());
 	}
-
-	@Test
-	public void testUpdateProductMetada_givenUserRestricted_thenReturnsError() {
-
-		ProductMetadataDataDefinition productMetadataDataDefinition = new ProductMetadataDataDefinition();
-		productMetadataDataDefinition.setLifecycleState("CERTIFIED");
-		ComponentMetadataDefinition componentMetadataDefinition = new ComponentMetadataDefinition(productMetadataDataDefinition);
-		product.setMetadataDefinition(componentMetadataDefinition);
-
-
-		when(userValidations.validateUserExists(eq(uId), anyString(), anyBoolean()))
-				.thenReturn(user);
-		when(toscaOperationFacade.getToscaElement(eq(pId)))
-				.thenReturn(Either.left(product));
-		when(toscaOperationFacade.getToscaElement(eq(pId), eq(JsonParseFlagEnum.ParseMetadata)))
-				.thenReturn(Either.left(product));
-		assertTrue(productBusinessLogic.updateProductMetadata(pId, product, user).isRight());
-	}
-
 
 	@Test
 	public void testGetProductByNameAndVersion_givenValidNameAndVersion_thenReturnsSuccessful() {

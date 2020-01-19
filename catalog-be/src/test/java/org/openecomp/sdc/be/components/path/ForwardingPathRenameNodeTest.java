@@ -16,16 +16,17 @@
 
 package org.openecomp.sdc.be.components.path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Sets;
-import java.util.Set;
-import java.util.UUID;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
+
+import java.util.Set;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ForwardingPathRenameNodeTest implements ForwardingPathTestUtils{
 

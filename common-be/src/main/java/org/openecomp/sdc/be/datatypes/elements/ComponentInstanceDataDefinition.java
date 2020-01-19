@@ -20,16 +20,19 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
@@ -98,6 +101,17 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
     public void setModificationTime(Long modificationTime) {
         setToscaPresentationValue(JsonPresentationFields.MODIFICATION_TIME, modificationTime);
+	}
+
+	public CreatedFrom getCreatedFrom() {
+		String createdFrom = (String) getToscaPresentationValue(JsonPresentationFields.CREATED_FROM);
+		return Objects.nonNull(createdFrom) ? CreatedFrom.valueOf(createdFrom) : null;
+	}
+
+	public void setCreatedFrom(CreatedFrom createdFrom) {
+		if (Objects.nonNull(createdFrom)){
+			setToscaPresentationValue(JsonPresentationFields.CREATED_FROM, createdFrom.name());
+		}
     }
 
     public String getDescription() {

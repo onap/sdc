@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import org.janusgraph.core.JanusGraphFactory;
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphQuery;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraphQuery;
 import org.openecomp.sdc.asdctool.Utils;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -99,7 +99,7 @@ public class UpdatePropertyOnVertex {
 			return numberOfUpdatedVertexes;
 
 		} catch (Exception e) {
-			log.info("update Property On Service At Least Certified failed -{}" , e);
+			e.printStackTrace();
 			graph.tx().rollback();
 
 			return null;

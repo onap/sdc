@@ -1,0 +1,42 @@
+{
+  "uniqueId": "aea8c885-a9e9-471a-b029-eff0eae6c92b",
+  "name": "Certified2",
+  "version": "1.0",
+  "isHighestVersion": true,
+  "creationDate": 1568210404578,
+  "lastUpdateDate": 1568814910705,
+  "description": "11212",
+  "lifecycleState": "CERTIFIED",
+  "tags": ["Certified2"],
+  "icon": "defaulticon",
+  "normalizedName": "certified2",
+  "systemName": "Certified2",
+  "contactId": "m08740",
+  "allVersions": {
+    "1.0": "aea8c885-a9e9-471a-b029-eff0eae6c92b"
+  },
+  "serviceFunction": "121212",
+  "invariantUUID": "1ef104f9-7d49-4383-8b7a-fcfab3725283",
+  "componentType": "SERVICE",
+  "categories": [{
+    "name": "Network Service",
+    "normalizedName": "network service",
+    "uniqueId": "serviceNewCategory.network service",
+    "empty": false
+  }],
+  "creatorUserId": "m08740",
+  "creatorFullName": "Carlos Santana",
+  "lastUpdaterUserId": "m08740",
+  "lastUpdaterFullName": "Carlos Santana",
+  "archiveTime": 0,
+  "distributionStatus": "DISTRIBUTION_NOT_APPROVED",
+  "ecompGeneratedNaming": true,
+  "namingPolicy": "",
+  "serviceType": "",
+  "serviceRole": "",
+  "environmentContext": "General_Revenue-Bearing",
+  "instantiationType": "A-la-carte",
+  "archived": false,
+  "vspArchived": false,
+  "uuid": "b6b57bbb-e6a2-4849-8ba7-144c59d36bde"
+}

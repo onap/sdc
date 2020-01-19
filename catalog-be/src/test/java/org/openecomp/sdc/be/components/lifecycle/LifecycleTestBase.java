@@ -31,6 +31,7 @@ import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.version.VesionUpdateHandler;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
@@ -44,7 +45,13 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
@@ -68,6 +75,7 @@ import javax.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 public class LifecycleTestBase extends ComponentBusinessLogicMock {
@@ -78,6 +86,7 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
     protected WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     protected WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
     protected ToscaElementLifecycleOperation toscaElementLifecycleOperation = Mockito.mock(ToscaElementLifecycleOperation.class);
+    protected VesionUpdateHandler vesionUpdateHandler = Mockito.mock(VesionUpdateHandler.class);
     protected ArtifactsBusinessLogic artifactsManager = Mockito.mock(ArtifactsBusinessLogic.class);;
     protected User user = null;
     protected Resource resourceResponse;
@@ -109,6 +118,14 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
 
     public void setup() {
 
+//        ExternalConfiguration.setAppName("catalog-be");
+//
+//        // init Configuration
+//        String appConfigDir = "src/test/resources/config/catalog-be";
+//        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+//        configurationManager = new ConfigurationManager(configurationSource);
+
+
         // User data and management
         user = new User();
         user.setUserId("jh003");
@@ -116,15 +133,16 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
         user.setLastName("Hendrix");
         user.setRole(Role.ADMIN.name());
 
-        Either<User, ActionStatus> eitherGetUser = Either.left(user);
-        when(mockUserAdmin.getUser("jh003", false)).thenReturn(eitherGetUser);
-
+        when(mockUserAdmin.getUser("jh003", false)).thenReturn(user);
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
         when(webAppContext.getBean(ToscaElementLifecycleOperation.class)).thenReturn(toscaElementLifecycleOperation);
         when(webAppContext.getBean(ArtifactsBusinessLogic.class)).thenReturn(artifactsManager);
+
+        // Resource Operation mock methods
+        // getCount
 
         // createResource
         resourceResponse = createResourceObject();
@@ -133,9 +151,6 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
                 .thenAnswer(createAnswer(eitherComponent));
 
         when(toscaElementLifecycleOperation.checkinToscaELement(Mockito.any(LifecycleStateEnum.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class)))
-                .thenAnswer(createAnswer(eitherComponent));
-
-        when(toscaElementLifecycleOperation.requestCertificationToscaElement(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class)))
                 .thenAnswer(createAnswer(eitherComponent));
 
         Either<User, StorageOperationStatus> getOwnerResult = Either.left(user);
@@ -159,15 +174,18 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
     }
 
     protected Resource createResourceObject() {
-        return createResourceObject(ComponentTypeEnum.RESOURCE);
+        return createResourceObject(ComponentTypeEnum.RESOURCE, "uid");
     }
 
-    protected Resource createResourceObject(ComponentTypeEnum componentType) {
+    protected Resource createResourceObject(String uid) {
+        return createResourceObject(ComponentTypeEnum.RESOURCE, uid);
+    }
+
+    protected Resource createResourceObject(ComponentTypeEnum componentType, String uid) {
         Resource resource = new Resource();
-        resource.setUniqueId("uid");
+        resource.setUniqueId(uid);
         resource.setComponentType(componentType);
         resource.setName("MyResourceName");
-        resource.setUniqueId("uid");
         resource.addCategory("VoIP", "INfra");
         resource.setDescription("My short description");
         List<String> tgs = new ArrayList<>();
@@ -209,11 +227,14 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
 
         return resource;
     }
-
     protected Service createServiceObject() {
+        return createServiceObject("sid");
+    }
+
+    protected Service createServiceObject(String uid) {
         Service service = new Service();
         service.setName("MyServiceName");
-        service.setUniqueId("sid");
+        service.setUniqueId(uid);
         service.addCategory("VoIP", null);
         service.setDescription("My short description");
         List<String> tgs = new ArrayList<>();
@@ -230,11 +251,13 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
     protected void assertResponse(Either<? extends Component, ResponseFormat> createResponse, ActionStatus expectedStatus, String... variables) {
         ResponseFormat expectedResponse = responseManager.getResponseFormat(expectedStatus, variables);
         ResponseFormat actualResponse = createResponse.right().value();
+        assertThat(expectedResponse.getMessageId()).isEqualTo(actualResponse.getMessageId());
     }
 
     protected void assertServiceResponse(Either<Service, ResponseFormat> createResponse, ActionStatus expectedStatus, String... variables) {
         ResponseFormat expectedResponse = responseManager.getResponseFormat(expectedStatus, variables);
         ResponseFormat actualResponse = createResponse.right().value();
+        assertThat(expectedResponse.getMessageId()).isEqualTo(actualResponse.getMessageId());
     }
 
     protected static ArtifactDefinition getArtifactPlaceHolder(String resourceId, String logicalName) {

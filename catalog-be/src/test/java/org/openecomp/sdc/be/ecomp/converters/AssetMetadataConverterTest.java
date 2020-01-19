@@ -25,8 +25,20 @@ import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.externalapi.servlet.representation.*;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ArtifactMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetDetailedMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceInstanceMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetDetailedMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetMetadata;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -63,7 +75,7 @@ public class AssetMetadataConverterTest {
 		String serverBaseURL = "";
 		boolean detailed = false;
 		Either<? extends AssetMetadata, ResponseFormat> result;
-		component.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		component.setComponentType(ComponentTypeEnum.RESOURCE);
 		// default test
 		testSubject = createTestSubject();
@@ -77,7 +89,7 @@ public class AssetMetadataConverterTest {
 		boolean detailed = false;
 		Resource curr = new Resource();
 		Either<? extends AssetMetadata, ResponseFormat> result;
-		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		curr.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		curr.setComponentType(ComponentTypeEnum.RESOURCE);
 		// default test
 		testSubject = createTestSubject();
@@ -91,7 +103,7 @@ public class AssetMetadataConverterTest {
 		String serverBaseURL = "";
 		Resource curr = new Resource();
 		Either<? extends AssetMetadata, ResponseFormat> result;
-		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		curr.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		curr.setComponentType(ComponentTypeEnum.RESOURCE);
 		// default test
 		testSubject = createTestSubject();
@@ -114,7 +126,7 @@ public class AssetMetadataConverterTest {
 		String serverBaseURL = "";
 		boolean detailed = false;
 		Service curr = new Service();
-		curr.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		curr.setLifecycleState(LifecycleStateEnum.CERTIFIED);
 		curr.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
 
 		Either<? extends AssetMetadata, ResponseFormat> result;
@@ -145,7 +157,7 @@ public class AssetMetadataConverterTest {
 		String serverBaseURL = "";
 		boolean detailed = false;
 		ResourceAssetMetadata result;
-		resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 
 		// default test
 		testSubject = createTestSubject();
@@ -158,7 +170,7 @@ public class AssetMetadataConverterTest {
 		AssetMetadataConverter testSubject;
 		ServiceAssetMetadata assetToPopulate = new ServiceAssetMetadata();
 		Service service = new Service();
-		service.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		service.setLifecycleState(LifecycleStateEnum.CERTIFIED);
 		service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
 		String serverBaseURL = "";
 		boolean detailed = false;
@@ -216,7 +228,7 @@ public class AssetMetadataConverterTest {
 		Service service = new Service();
 		Map<String, ArtifactDefinition> artifacts = new HashMap<>();
 		ServiceAssetDetailedMetadata result;
-		service.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		service.setLifecycleState(LifecycleStateEnum.CERTIFIED);
 		service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
 		// default test
 		testSubject = createTestSubject();

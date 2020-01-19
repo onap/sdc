@@ -1,0 +1,45 @@
+@import './../../../../../../assets/styles/variables.less';
+.service-path-creator {
+    font-family: @font-opensans-regular;
+    .separator-buttons {
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    .i-sdc-form-label {
+    	font-size: 12px;
+	}
+  .w-sdc-form .i-sdc-form-item {
+    margin-bottom: 15px;
+  }
+
+  .side-by-side {
+    display: flex;
+    .i-sdc-form-item {
+      flex-basis: 100%;
+      &:first-child {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .generic-table {
+    max-height: 233px;
+    .header-row .header-cell {
+      &:last-child {
+        padding: 0;
+      }
+    }
+    /deep/ .cell {
+      &:last-child {
+        min-width: 30px;
+      }
+    }
+  }
+
+  .based-on-title {
+    text-transform: uppercase;
+    font-size: 18px;
+    font-family: @font-opensans-regular;
+  }
+}

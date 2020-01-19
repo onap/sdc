@@ -19,7 +19,7 @@
  */
 
 import {Injectable, Inject} from '@angular/core';
-import {IAppConfigurtaion, ICookie} from "../../models/app-config";
+import {ICookie} from "../../models/app-config";
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 
 @Injectable()

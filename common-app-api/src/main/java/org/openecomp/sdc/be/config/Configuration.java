@@ -68,7 +68,6 @@ public class Configuration extends BasicConfiguration {
     private List<String> protocols;
     private Map<String, String> users;
     private Map<String, Object> neo4j;
-    private ElasticSearchConfig elasticSearch;
     private String janusGraphCfgFile;
     private String janusGraphMigrationKeySpaceCfgFile;
     private Boolean janusGraphInMemoryGraph;
@@ -77,7 +76,6 @@ public class Configuration extends BasicConfiguration {
     private Long janusGraphReconnectIntervalInSeconds;
     private List<String> healthStatusExclude;
     private Long janusGraphHealthCheckReadTimeout;
-    private Long esReconnectIntervalInSeconds;
     private Long uebHealthCheckReconnectIntervalInSeconds;
     private Long uebHealthCheckReadTimeout;
     private List<Map<String, Map<String, String>>> defaultImports;
@@ -100,14 +98,12 @@ public class Configuration extends BasicConfiguration {
     private Map<String, ArtifactTypeConfig> resourceInformationalDeployedArtifacts;
     private Map<String, Object> serviceApiArtifacts;
     private List<String> excludeServiceCategory;
-    private Map<String, Set<String>> requirementsToFulfillBeforeCert;
-    private Map<String, Set<String>> capabilitiesToConsumeBeforeCert;
 
     private List<String> artifactTypes;
     private List<String> licenseTypes;
 
     private Integer additionalInformationMaxNumberOfKeys;
-    private Integer defaultHeatArtifactTimeoutMinutes;
+    private HeatDeploymentArtifactTimeout heatArtifactDeploymentTimeout;
 
     private BeMonitoringConfig systemMonitoring;
     private CleanComponentsConfiguration cleanComponentsConfiguration;
@@ -136,11 +132,41 @@ public class Configuration extends BasicConfiguration {
 
     private boolean disableAudit;
 
+    private Boolean consumerBusinessLogic;
+
     private Map<String, VfModuleProperty> vfModuleProperties;
 
     private Map<String, String> genericAssetNodeTypes;
 
     private String appVersion;
+    private String artifactGeneratorConfig;
+
+    private CadiFilterParams cadiFilterParams;
+
+    private Boolean aafAuthNeeded;
+
+    private String autoHealingOwner;
+    private boolean enableAutoHealing;
+
+    private Map<String, List<String>> resourcesForUpgrade;
+    private DmaapConsumerConfiguration dmaapConsumerConfiguration;
+    private DmaapProducerConfiguration dmaapProducerConfiguration;
+
+    private boolean skipUpgradeFailedVfs;
+    private boolean skipUpgradeVSPs;
+    private DmeConfiguration dmeConfiguration;
+
+    private boolean supportAllottedResourcesAndProxy;
+    private Integer deleteLockTimeoutInSeconds;
+    private Integer maxDeleteComponents;
+    private CookieConfig authCookie;
+
+
+    private String aafNamespace;
+    private String workloadContext;
+
+    private EnvironmentContext environmentContext;
+
 
     public String getAutoHealingOwner() {
         return autoHealingOwner;
@@ -149,19 +175,6 @@ public class Configuration extends BasicConfiguration {
     public void setAutoHealingOwner(String autoHealingOwner) {
         this.autoHealingOwner = autoHealingOwner;
     }
-
-    private String autoHealingOwner;
-    private boolean enableAutoHealing;
-
-    private Map<String, List<String>> resourcesForUpgrade;
-    private DmaapConsumerConfiguration dmaapConsumerConfiguration;
-    private boolean skipUpgradeFailedVfs;
-    private boolean skipUpgradeVSPs;
-    private DmeConfiguration dmeConfiguration;
-
-    private boolean supportAllottedResourcesAndProxy;
-    private Integer deleteLockTimeoutInSeconds;
-    private Integer maxDeleteComponents;
 
     public Integer getMaxDeleteComponents() {
         return maxDeleteComponents;
@@ -202,14 +215,9 @@ public class Configuration extends BasicConfiguration {
     public void setDmeConfiguration(DmeConfiguration dmeConfiguration) {
         this.dmeConfiguration = dmeConfiguration;
     }
+    public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) { this.skipUpgradeVSPs = skipUpgradeVSPs; }
 
-    public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) {
-        this.skipUpgradeVSPs = skipUpgradeVSPs;
-    }
-
-    public boolean getSkipUpgradeVSPsFlag() {
-        return skipUpgradeVSPs;
-    }
+    public boolean getSkipUpgradeVSPsFlag() { return skipUpgradeVSPs; }
 
     public boolean getSkipUpgradeFailedVfs() {
         return skipUpgradeFailedVfs;
@@ -235,9 +243,13 @@ public class Configuration extends BasicConfiguration {
         this.appVersion = appVersion;
     }
 
-    private String workloadContext;
+    public String getArtifactGeneratorConfig() {
+        return artifactGeneratorConfig;
+    }
 
-    private EnvironmentContext environmentContext;
+    public void setArtifactGeneratorConfig(String artifactGeneratorConfig) {
+        this.artifactGeneratorConfig = artifactGeneratorConfig;
+    }
 
     private List<GabConfig> gabConfig;
 
@@ -371,14 +383,6 @@ public class Configuration extends BasicConfiguration {
         this.neo4j = neo4j;
     }
 
-    public ElasticSearchConfig getElasticSearch() {
-        return elasticSearch;
-    }
-
-    public void setElasticSearch(ElasticSearchConfig elasticSearch) {
-        this.elasticSearch = elasticSearch;
-    }
-
     public String getJanusGraphCfgFile() {
         return janusGraphCfgFile;
     }
@@ -441,18 +445,6 @@ public class Configuration extends BasicConfiguration {
 
     public void setJanusGraphReconnectIntervalInSeconds(Long janusGraphReconnectIntervalInSeconds) {
         this.janusGraphReconnectIntervalInSeconds = janusGraphReconnectIntervalInSeconds;
-    }
-
-    public Long getEsReconnectIntervalInSeconds() {
-        return esReconnectIntervalInSeconds;
-    }
-
-    public Long getEsReconnectIntervalInSeconds(long defaultVal) {
-        return esReconnectIntervalInSeconds == null ? defaultVal : esReconnectIntervalInSeconds;
-    }
-
-    public void setEsReconnectIntervalInSeconds(Long esReconnectIntervalInSeconds) {
-        this.esReconnectIntervalInSeconds = esReconnectIntervalInSeconds;
     }
 
     public List<String> getArtifactTypes() {
@@ -576,20 +568,20 @@ public class Configuration extends BasicConfiguration {
         this.additionalInformationMaxNumberOfKeys = additionalInformationMaxNumberOfKeys;
     }
 
+    public HeatDeploymentArtifactTimeout getHeatArtifactDeploymentTimeout() {
+        return heatArtifactDeploymentTimeout;
+    }
+
+    public void setHeatArtifactDeploymentTimeout(HeatDeploymentArtifactTimeout heatArtifactDeploymentTimeout) {
+        this.heatArtifactDeploymentTimeout = heatArtifactDeploymentTimeout;
+    }
+
     public BeMonitoringConfig getSystemMonitoring() {
         return systemMonitoring;
     }
 
     public void setSystemMonitoring(BeMonitoringConfig systemMonitoring) {
         this.systemMonitoring = systemMonitoring;
-    }
-
-    public Integer getDefaultHeatArtifactTimeoutMinutes() {
-        return defaultHeatArtifactTimeoutMinutes;
-    }
-
-    public void setDefaultHeatArtifactTimeoutMinutes(Integer defaultHeatArtifactTimeoutMinutes) {
-        this.defaultHeatArtifactTimeoutMinutes = defaultHeatArtifactTimeoutMinutes;
     }
 
     public Long getUebHealthCheckReconnectIntervalInSeconds() {
@@ -632,65 +624,127 @@ public class Configuration extends BasicConfiguration {
         this.gabConfig = gabConfig;
     }
 
-    public static class ElasticSearchConfig {
 
-        private List<IndicesTimeFrequencyEntry> indicesTimeFrequency;
+    public static class CookieConfig {
+        String securityKey = "";
+        long maxSessionTimeOut = 600*1000;
+        long sessionIdleTimeOut = 30*1000;
+        String cookieName = "AuthenticationCookie";
+        String redirectURL = "https://www.e-access.att.com/ecomp_portal_ist/ecompportal/process_csp";
+        List<String> excludedUrls;
+        List<String> onboardingExcludedUrls;
+        String domain = "";
+        String path = "";
+        boolean isHttpOnly = true;
 
-        public List<IndicesTimeFrequencyEntry> getIndicesTimeFrequency() {
-            return indicesTimeFrequency;
+        public String getSecurityKey() {
+            return securityKey;
         }
 
-        public void setIndicesTimeFrequency(List<IndicesTimeFrequencyEntry> indicesTimeFrequency) {
-            this.indicesTimeFrequency = indicesTimeFrequency;
+        public void setSecurityKey(String securityKey) {
+            this.securityKey = securityKey;
         }
 
-        public static class IndicesTimeFrequencyEntry {
-
-            private String indexPrefix;
-            private String creationPeriod;
-
-            public String getIndexPrefix() {
-                return indexPrefix;
-            }
-
-            public void setIndexPrefix(String indexPrefix) {
-                this.indexPrefix = indexPrefix;
-            }
-
-            public String getCreationPeriod() {
-                return creationPeriod;
-            }
-
-            public void setCreationPeriod(String creationPeriod) {
-                this.creationPeriod = creationPeriod;
-            }
+        public long getMaxSessionTimeOut() {
+            return maxSessionTimeOut;
         }
+
+        public void setMaxSessionTimeOut(long maxSessionTimeOut) {
+            this.maxSessionTimeOut = maxSessionTimeOut;
+        }
+
+        public long getSessionIdleTimeOut() {
+            return sessionIdleTimeOut;
+        }
+
+        public void setSessionIdleTimeOut(long sessionIdleTimeOut) {
+            this.sessionIdleTimeOut = sessionIdleTimeOut;
+        }
+
+        public String getCookieName() {
+            return cookieName;
+        }
+
+        public void setCookieName(String cookieName) {
+            this.cookieName = cookieName;
+        }
+
+        public String getRedirectURL() {
+            return redirectURL;
+        }
+
+        public void setRedirectURL(String redirectURL) {
+            this.redirectURL = redirectURL;
+        }
+
+        public List<String> getExcludedUrls() {
+            return excludedUrls;
+        }
+
+        public void setExcludedUrls(List<String> excludedUrls) {
+            this.excludedUrls = excludedUrls;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public boolean isHttpOnly() {
+            return isHttpOnly;
+        }
+
+        public void setIsHttpOnly(boolean isHttpOnly) {
+            this.isHttpOnly = isHttpOnly;
+        }
+
+        public List<String> getOnboardingExcludedUrls() {
+            return onboardingExcludedUrls;
+        }
+
+        public void setOnboardingExcludedUrls(List<String> onboardingExcludedUrls) {
+            this.onboardingExcludedUrls = onboardingExcludedUrls;
+        }
+    }
+
+    public CookieConfig getAuthCookie() {
+        return authCookie;
+    }
+
+    public void setAuthCookie(CookieConfig authCookie) {
+        this.authCookie = authCookie;
     }
 
     public static class CassandrConfig {
         private static final Integer CASSANDRA_DEFAULT_PORT = 9042;
+        List<String> cassandraHosts;
+        Integer cassandraPort;
+        String localDataCenter;
+        Long reconnectTimeout;
+        Integer socketReadTimeout;
+        Integer socketConnectTimeout;
+        List<KeyspaceConfig> keySpaces;
+        boolean authenticate;
+        String username;
+        String password;
+        boolean ssl;
+        String truststorePath;
+        String truststorePassword;
 
-        private List<String> cassandraHosts;
-        private Integer cassandraPort;
-        private String localDataCenter;
-        private Long reconnectTimeout;
-        private Integer socketReadTimeout;
-        private Integer socketConnectTimeout;
-        private List<KeyspaceConfig> keySpaces;
-        private boolean authenticate;
-        private String username;
-        private String password;
-        private boolean ssl;
-        private String truststorePath;
-        private String truststorePassword;
+        public Integer getCassandraPort() { return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT; }
 
-        public Integer getCassandraPort() {
-            return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT;
-        }
-
-        public void setCassandraPort(Integer cassandraPort) {
-            this.cassandraPort = cassandraPort;
-        }
+        public void setCassandraPort(Integer cassandraPort) { this.cassandraPort = cassandraPort; }
 
         public String getLocalDataCenter() {
             return localDataCenter;
@@ -756,21 +810,13 @@ public class Configuration extends BasicConfiguration {
             this.reconnectTimeout = reconnectTimeout;
         }
 
-        public Integer getSocketReadTimeout() {
-            return socketReadTimeout;
-        }
+        public Integer getSocketReadTimeout() { return socketReadTimeout; }
 
-        public void setSocketReadTimeout(Integer socketReadTimeout) {
-            this.socketReadTimeout = socketReadTimeout;
-        }
+        public void setSocketReadTimeout(Integer socketReadTimeout) { this.socketReadTimeout = socketReadTimeout;}
 
-        public Integer getSocketConnectTimeout() {
-            return socketConnectTimeout;
-        }
+        public Integer getSocketConnectTimeout() {	return socketConnectTimeout;}
 
-        public void setSocketConnectTimeout(Integer socketConnectTimeout) {
-            this.socketConnectTimeout = socketConnectTimeout;
-        }
+        public void setSocketConnectTimeout(Integer socketConnectTimeout) { this.socketConnectTimeout = socketConnectTimeout; 	}
 
         public List<String> getCassandraHosts() {
             return cassandraHosts;
@@ -790,9 +836,9 @@ public class Configuration extends BasicConfiguration {
 
         public static class KeyspaceConfig {
 
-            private String name;
-            private String replicationStrategy;
-            private List<String> replicationInfo;
+            String name;
+            String replicationStrategy;
+            List<String> replicationInfo;
 
             public String getName() {
                 return name;
@@ -822,19 +868,19 @@ public class Configuration extends BasicConfiguration {
 
     public static class SwitchoverDetectorConfig {
 
-        private String gBeFqdn;
-        private String gFeFqdn;
-        private String beVip;
-        private String feVip;
-        private int beResolveAttempts;
-        private int feResolveAttempts;
-        private Boolean enabled;
-        private long interval;
-        private String changePriorityUser;
-        private String changePriorityPassword;
-        private String publishNetworkUrl;
-        private String publishNetworkBody;
-        private Map<String, GroupInfo> groups;
+        String gBeFqdn;
+        String gFeFqdn;
+        String beVip;
+        String feVip;
+        int beResolveAttempts;
+        int feResolveAttempts;
+        Boolean enabled;
+        long interval;
+        String changePriorityUser;
+        String changePriorityPassword;
+        String publishNetworkUrl;
+        String publishNetworkBody;
+        Map<String, GroupInfo> groups;
 
         public String getgBeFqdn() {
             return gBeFqdn;
@@ -942,8 +988,8 @@ public class Configuration extends BasicConfiguration {
 
         public static class GroupInfo {
 
-            private String changePriorityUrl;
-            private String changePriorityBody;
+            String changePriorityUrl;
+            String changePriorityBody;
 
             public String getChangePriorityUrl() {
                 return changePriorityUrl;
@@ -964,11 +1010,46 @@ public class Configuration extends BasicConfiguration {
 
     }
 
+    public static class HeatDeploymentArtifactTimeout {
+        Integer defaultMinutes;
+        Integer minMinutes;
+        Integer maxMinutes;
+
+        public Integer getDefaultMinutes() {
+            return defaultMinutes;
+        }
+
+        public void setDefaultMinutes(Integer defaultMinutes) {
+            this.defaultMinutes = defaultMinutes;
+        }
+
+        public Integer getMinMinutes() {
+            return minMinutes;
+        }
+
+        public void setMinMinutes(Integer minMinutes) {
+            this.minMinutes = minMinutes;
+        }
+
+        public Integer getMaxMinutes() {
+            return maxMinutes;
+        }
+
+        public void setMaxMinutes(Integer maxMinutes) {
+            this.maxMinutes = maxMinutes;
+        }
+
+        @Override
+        public String toString() {
+            return "HeatDeploymentArtifactTimeout config [default=" + defaultMinutes + ", min=" + minMinutes + ", max=" + maxMinutes + "]";
+        }
+    }
+
     public static class BeMonitoringConfig {
 
-        private Boolean enabled;
-        private Boolean isProxy;
-        private Integer probeIntervalInSeconds;
+        Boolean enabled;
+        Boolean isProxy;
+        Integer probeIntervalInSeconds;
 
         public Boolean getEnabled() {
             return enabled;
@@ -1001,8 +1082,8 @@ public class Configuration extends BasicConfiguration {
 
     public static class ArtifactTypeConfig {
 
-        private List<String> acceptedTypes;
-        private List<String> validForResourceTypes;
+        List<String> acceptedTypes;
+        List<String> validForResourceTypes;
 
         public List<String> getValidForResourceTypes() {
             return validForResourceTypes;
@@ -1023,11 +1104,11 @@ public class Configuration extends BasicConfiguration {
 
     public static class OnboardingConfig {
 
-        private String protocol = "http";
-        private String host;
-        private Integer port;
-        private String downloadCsarUri;
-        private String healthCheckUri;
+        String protocol = "http";
+        String host;
+        Integer port;
+        String downloadCsarUri;
+        String healthCheckUri;
 
         public String getProtocol() {
             return protocol;
@@ -1087,10 +1168,10 @@ public class Configuration extends BasicConfiguration {
 
     public static class DcaeConfig {
 
-        private String protocol = "http";
-        private String host;
-        private Integer port;
-        private String healthCheckUri;
+        String protocol = "http";
+        String host;
+        Integer port;
+        String healthCheckUri;
 
         public String getProtocol() {
             return protocol;
@@ -1126,8 +1207,54 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class EcompPortalConfig {
-
+        private String protocol = "https";
+        private String host;
+        private Integer port;
+        private String healthCheckUri;
         private String defaultFunctionalMenu;
+
+        public void setPollingInterval(Integer pollingInterval) {
+            this.pollingInterval = pollingInterval;
+        }
+
+        public void setTimeoutMs(Integer timeoutMs) {
+            this.timeoutMs = timeoutMs;
+        }
+
+        private Integer pollingInterval;
+        private Integer timeoutMs;
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public void setProtocol(String protocol) {
+            this.protocol = protocol;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(Integer port) {
+            this.port = port;
+        }
+
+        public String getHealthCheckUri() {
+            return healthCheckUri;
+        }
+
+        public void setHealthCheckUri(String healthCheckUri) {
+            this.healthCheckUri = healthCheckUri;
+        }
 
         public String getDefaultFunctionalMenu() {
             return defaultFunctionalMenu;
@@ -1135,6 +1262,14 @@ public class Configuration extends BasicConfiguration {
 
         public void setDefaultFunctionalMenu(String defaultFunctionalMenu) {
             this.defaultFunctionalMenu = defaultFunctionalMenu;
+        }
+
+        public Integer getPollingInterval() {
+            return pollingInterval;
+        }
+
+        public Integer getTimeoutMs() {
+            return timeoutMs;
         }
 
         @Override
@@ -1146,7 +1281,7 @@ public class Configuration extends BasicConfiguration {
 
     public static class ApplicationL1CacheConfig {
 
-        private ApplicationL1CacheInfo datatypes;
+        ApplicationL1CacheInfo datatypes;
 
         public ApplicationL1CacheInfo getDatatypes() {
             return datatypes;
@@ -1165,10 +1300,10 @@ public class Configuration extends BasicConfiguration {
 
     public static class ApplicationL2CacheConfig {
 
-        private boolean enabled;
-        private ApplicationL1CacheCatalogInfo catalogL1Cache;
+        boolean enabled;
+        ApplicationL1CacheCatalogInfo catalogL1Cache;
 
-        private QueueInfo queue;
+        QueueInfo queue;
 
         public boolean isEnabled() {
             return enabled;
@@ -1222,9 +1357,9 @@ public class Configuration extends BasicConfiguration {
 
     public static class ApplicationL1CacheInfo {
 
-        private Boolean enabled;
-        private Integer firstRunDelay;
-        private Integer pollIntervalInSec;
+        Boolean enabled;
+        Integer firstRunDelay;
+        Integer pollIntervalInSec;
 
         public Boolean getEnabled() {
             return enabled;
@@ -1259,10 +1394,10 @@ public class Configuration extends BasicConfiguration {
 
     public static class ApplicationL1CacheCatalogInfo {
 
-        private Boolean enabled;
-        private Integer resourcesSizeInCache;
-        private Integer servicesSizeInCache;
-        private Integer productsSizeInCache;
+        Boolean enabled;
+        Integer resourcesSizeInCache;
+        Integer servicesSizeInCache;
+        Integer productsSizeInCache;
 
         public Boolean getEnabled() {
             return enabled;
@@ -1306,9 +1441,9 @@ public class Configuration extends BasicConfiguration {
     }
 
     public static class QueueInfo {
-        private Integer numberOfCacheWorkers;
-        private Integer waitOnShutDownInMinutes;
-        private Integer syncIntervalInSecondes;
+        Integer numberOfCacheWorkers;
+        Integer waitOnShutDownInMinutes;
+        Integer syncIntervalInSecondes;
 
         public Integer getWaitOnShutDownInMinutes() {
             return waitOnShutDownInMinutes;
@@ -1343,8 +1478,8 @@ public class Configuration extends BasicConfiguration {
 
     public static class EnvironmentContext {
 
-        private String defaultValue;
-        private List<String> validValues;
+        String defaultValue;
+        List<String> validValues;
 
         public String getDefaultValue() {
             return defaultValue;
@@ -1380,12 +1515,10 @@ public class Configuration extends BasicConfiguration {
                 .append(format("backend protocol: %s%n", beProtocol)).append(format("Version: %s%n", version))
                 .append(format("Released: %s%n", released)).append(format("Supported protocols: %s%n", protocols))
                 .append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
-                .append(format("ElasticSearch: %s%n", elasticSearch))
                 .append(format("JanusGraph Cfg File: %s%n", janusGraphCfgFile))
                 .append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
                 .append(format("JanusGraph lock timeout: %s%n", janusGraphLockTimeout))
-                .append(format("JanusGraph reconnect interval seconds: %s%n",
-                        janusGraphReconnectIntervalInSeconds))
+                .append(format("JanusGraph reconnect interval seconds: %s%n", janusGraphReconnectIntervalInSeconds))
                 .append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
                 .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
                 .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
@@ -1394,14 +1527,12 @@ public class Configuration extends BasicConfiguration {
                 .append(format("Supported license types: %s%n", licenseTypes))
                 .append(format("Additional information Maximum number of preoperties: %s%n",
                         additionalInformationMaxNumberOfKeys))
-                .append(format("Default Heat Artifact Timeout in Minutes: %s%n", defaultHeatArtifactTimeoutMinutes))
+                .append(format("Heat Artifact Timeout in Minutes: %s%n", heatArtifactDeploymentTimeout))
                 .append(format("URLs For HTTP Requests that will not be automatically logged : %s%n", unLoggedUrls))
                 .append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
                 .append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
                 .append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter))
-                .append(format("onboarding: %s%n", onboarding))
-                .append(format("tosca conformance level: %s%n", toscaConformanceLevel))
-                .toString();
+                .append(format("onboarding: %s%n", onboarding)).toString();
     }
 
     public List<String> getUnLoggedUrls() {
@@ -1485,22 +1616,6 @@ public class Configuration extends BasicConfiguration {
         this.heatTranslatorPath = heatTranslatorPath;
     }
 
-    public Map<String, Set<String>> getRequirementsToFulfillBeforeCert() {
-        return requirementsToFulfillBeforeCert;
-    }
-
-    public void setRequirementsToFulfillBeforeCert(Map<String, Set<String>> requirementsToFulfillBeforeCert) {
-        this.requirementsToFulfillBeforeCert = requirementsToFulfillBeforeCert;
-    }
-
-    public Map<String, Set<String>> getCapabilitiesToConsumeBeforeCert() {
-        return capabilitiesToConsumeBeforeCert;
-    }
-
-    public void setCapabilitiesToConsumeBeforeCert(Map<String, Set<String>> capabilitiesToConsumeBeforeCert) {
-        this.capabilitiesToConsumeBeforeCert = capabilitiesToConsumeBeforeCert;
-    }
-
     public OnboardingConfig getOnboarding() {
         return onboarding;
     }
@@ -1527,6 +1642,14 @@ public class Configuration extends BasicConfiguration {
 
     public boolean isDisableAudit() {
         return disableAudit;
+    }
+
+    public Boolean getConsumerBusinessLogic() {
+        return consumerBusinessLogic;
+    }
+
+    public void setConsumerBusinessLogic(Boolean consumerBusinessLogic) {
+        this.consumerBusinessLogic = consumerBusinessLogic;
     }
 
     public void setDisableAudit(boolean enableAudit) {
@@ -1568,19 +1691,15 @@ public class Configuration extends BasicConfiguration {
     public static class VfModuleProperty {
         private String forBaseModule;
         private String forNonBaseModule;
-
         public String getForBaseModule() {
             return forBaseModule;
         }
-
         public void setForBaseModule(String forBaseModule) {
             this.forBaseModule = forBaseModule;
         }
-
         public String getForNonBaseModule() {
             return forNonBaseModule;
         }
-
         public void setForNonBaseModule(String forNonBaseModule) {
             this.forNonBaseModule = forNonBaseModule;
         }
@@ -1603,7 +1722,7 @@ public class Configuration extends BasicConfiguration {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K, V> Map<K, V> safeGetCapsInsensitiveMap(Map<K, V> map) {
+    public static <K,V> Map<K,V> safeGetCapsInsensitiveMap(Map<K,V> map) {
         return map == null ? emptyMap() : new CaseInsensitiveMap(map);
     }
 
@@ -1614,6 +1733,38 @@ public class Configuration extends BasicConfiguration {
 
     public void setHealthStatusExclude(List<String> healthStatusExclude) {
         this.healthStatusExclude = healthStatusExclude;
+    }
+
+    public DmaapProducerConfiguration getDmaapProducerConfiguration() {
+        return dmaapProducerConfiguration;
+    }
+
+    public void setDmaapProducerConfiguration(DmaapProducerConfiguration dmaapProducerConfiguration) {
+        this.dmaapProducerConfiguration = dmaapProducerConfiguration;
+    }
+
+    public String getAafNamespace() {
+        return aafNamespace;
+    }
+
+    public void setAafNamespace(String aafNamespace) {
+        this.aafNamespace = aafNamespace;
+    }
+
+    public Boolean getAafAuthNeeded(){
+        return aafAuthNeeded;
+    }
+
+    public void setAafAuthNeeded(Boolean aafAuthNeeded){
+        this.aafAuthNeeded = aafAuthNeeded;
+    }
+
+    public CadiFilterParams getCadiFilterParams() {
+        return cadiFilterParams;
+    }
+
+    public void setCadiFilterParams(CadiFilterParams cadiFilterParams) {
+        this.cadiFilterParams = cadiFilterParams;
     }
 
 
@@ -1667,4 +1818,5 @@ public class Configuration extends BasicConfiguration {
             this.pathsAndNamesDefinitions = pathsAndNamesDefinitions;
         }
     }
+
 }

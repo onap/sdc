@@ -22,7 +22,15 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import javax.inject.Inject;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +39,8 @@ import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
@@ -46,22 +56,27 @@ import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityType
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import javax.inject.Singleton;
+import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -72,10 +87,13 @@ import java.util.Map;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @OpenAPIDefinition(info = @Info(title = "Resources Catalog", description = "Resources Servlet"))
-@Singleton
+@Controller
 public class ResourcesServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ResourcesServlet.class);
+    private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ResourcesServlet.class.getName());
+    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+    private static final String MODIFIER_ID_IS = "modifier id is {}";
     private final ResourceBusinessLogic resourceBusinessLogic;
 
     @Inject
@@ -99,20 +117,20 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Resource already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createResource(@Parameter(description = "Resource object to be created", required = true) String data,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException, ZipException {
 
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         init();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
-
+        log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
-
+        log.debug(MODIFIER_ID_IS, userId);
+        loggerSupportability.log(LoggerSupportabilityActions.CREATE_RESOURCE, StatusCode.STARTED,"Starting to create Resource by user {}",userId);
         Response response;
         try {
 
@@ -136,13 +154,13 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                 Object representation = RepresentationUtils.toRepresentation(createdResource);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
                 responseWrapper.setInnerElement(response);
+                loggerSupportability.log(LoggerSupportabilityActions.CREATE_RESOURCE,resource.getComponentMetadataForSupportLog() ,StatusCode.COMPLETE,"Resource successfully created user {}",userId);
             }
             return responseWrapper.getInnerElement();
         } catch (final IOException | ZipException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Resource");
             log.debug("create resource failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
+            throw e;
         }
     }
 
@@ -198,19 +216,17 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/resources/{resourceId}")
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResource(@PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request) {
 
-        ServletContext context = request.getSession().getServletContext();
-
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
-
+        log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
-
+        log.debug(MODIFIER_ID_IS, userId);
+        loggerSupportability.log(LoggerSupportabilityActions.DELETE_RESOURCE ,StatusCode.STARTED,"Starting to delete Resource by user {}",userId);
         Response response;
 
         try {
@@ -223,34 +239,41 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                 return response;
             }
             response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
+            loggerSupportability.log(LoggerSupportabilityActions.DELETE_RESOURCE ,StatusCode.COMPLETE,"Ended delete Resource by user {}",userId);
             return response;
 
         } catch (JSONException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Resource");
             log.debug("delete resource failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
     @DELETE
     @Path("/resources/{resourceName}/{version}")
+    @Operation(description = "Delete Resource By Name And Version", method = "DELETE", summary = "Returns no content", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+    @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Resource deleted"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Resource not found") })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResourceByNameAndVersion(@PathParam("resourceName") final String resourceName, @PathParam("version") final String version, @Context final HttpServletRequest request) {
 
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
-        ResponseFormat actionResponse = resourceBusinessLogic.deleteResourceByNameAndVersion(resourceName, version, modifier);
+        ResourceBusinessLogic businessLogic = getResourceBL(context);
+        ResponseFormat actionResponse = businessLogic.deleteResourceByNameAndVersion(resourceName, version, modifier);
 
         if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
             log.debug("failed to delete resource");
@@ -271,18 +294,19 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Resource not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceById(@PathParam("resourceId") final String resourceId,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         ServletContext context = request.getSession().getServletContext();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
 
         Response response;
 
@@ -302,8 +326,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Resource");
             log.debug("get resource failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -317,15 +340,15 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Resource not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceByNameAndVersion(@PathParam("resourceName") final String resourceName,
-            @PathParam("resourceVersion") final String resourceVersion, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                                @PathParam("resourceVersion") final String resourceVersion, @Context final HttpServletRequest request,
+                                                @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
-        ServletContext context = request.getSession().getServletContext();
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Response response;
         try {
             Either<Resource, ResponseFormat> actionResponse = resourceBusinessLogic.getResourceByNameAndVersion(resourceName, resourceVersion, userId);
@@ -339,8 +362,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Resource by name and version");
             log.debug("get resource failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -353,17 +375,17 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response validateResourceName(@PathParam("resourceName") final String resourceName,
             @QueryParam("subtype") String resourceType, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}" , userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Response response;
 
         if (resourceType != null && !ResourceTypeEnum.containsName(resourceType)) {
@@ -390,7 +412,8 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/certified/abstract")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCertifiedAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getCertifiedAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}" , url);
         try {
@@ -401,7 +424,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Certified Abstract Resources");
             log.debug("getCertifiedAbstractResources failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
@@ -409,7 +432,8 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/certified/notabstract")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCertifiedNotAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getCertifiedNotAbstractResources(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(get) Start handle request of {}" , url);
         try {
@@ -419,7 +443,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Certified Non Abstract Resources");
             log.debug("getCertifiedNotAbstractResources failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
 
     }
@@ -434,17 +458,18 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource metadata updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceMetadata(@PathParam("resourceId") final String resourceId,
             @Parameter(description = "Resource metadata to be updated", required = true) String data,
-            @Context final HttpServletRequest request,       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request,       @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}" , url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
         Response response;
         try {
             String resourceIdLower = resourceId.toLowerCase();
@@ -460,9 +485,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Resource Metadata");
             log.debug("Update Resource Metadata failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -477,19 +500,21 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Resource already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResource(
             @Parameter(description = "Resource object to be updated", required = true) String data,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @PathParam(value = "resourceId") String resourceId) {
+            @PathParam(value = "resourceId") String resourceId) throws IOException, ZipException {
 
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         init();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
+        log.debug(MODIFIER_ID_IS, userId);
+        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_RESOURCE,StatusCode.STARTED,"Starting to update a resource by user {}",userId);
         Response response;
         try {
             Wrapper<Response> responseWrapper = new Wrapper<>();
@@ -503,19 +528,18 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
-                Resource updatedResource = resourceBusinessLogic.validateAndUpdateResourceFromCsar(
-                        convertResponse.left().value(), modifier, null, null, resourceId);
+                Resource updatedResource = resourceBusinessLogic.validateAndUpdateResourceFromCsar(convertResponse.left().value(), modifier, null, null, resourceId);
                 Object representation = RepresentationUtils.toRepresentation(updatedResource);
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);
                 responseWrapper.setInnerElement(response);
+                loggerSupportability.log(LoggerSupportabilityActions.UPDATE_RESOURCE,updatedResource.getComponentMetadataForSupportLog(),StatusCode.COMPLETE,"Ended update a resource by user {}",userId);
+
             }
             return responseWrapper.getInnerElement();
         } catch (final IOException | ZipException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Resource");
             log.debug("update resource failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -529,14 +553,15 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource retrieced"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceFromCsar(@Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @PathParam(value = "csaruuid") String csarUUID) {
+            @PathParam(value = "csaruuid") String csarUUID) throws IOException {
 
         init();
 
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // retrieve user details
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
@@ -555,8 +580,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             // validate response
             if (eitherResource.isRight()) {
                 log.debug("failed to get resource from csarUuid : {}", csarUUID);
-                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                        eitherResource.right().value());
+                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), eitherResource.right().value());
             } else {
                 Object representation = RepresentationUtils.toRepresentation(eitherResource.left().value());
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);
@@ -566,8 +590,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
         } catch (IOException e) {
             log.debug("get resource by csar failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
+            throw e;
         }
     }
 }

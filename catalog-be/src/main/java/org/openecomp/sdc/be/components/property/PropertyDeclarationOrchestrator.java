@@ -20,14 +20,12 @@
 
 package org.openecomp.sdc.be.components.property;
 
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
-
 import fj.data.Either;
-import java.util.Arrays;
-import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.property.propertytopolicydeclarators.ComponentInstancePropertyToPolicyDeclarator;
 import org.openecomp.sdc.be.components.property.propertytopolicydeclarators.ComponentPropertyToPolicyDeclarator;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
@@ -35,6 +33,14 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
 
 @org.springframework.stereotype.Component
 public class PropertyDeclarationOrchestrator {
@@ -67,9 +73,17 @@ public class PropertyDeclarationOrchestrator {
     }
 
     public Either<List<InputDefinition>, StorageOperationStatus> declarePropertiesToInputs(Component component, ComponentInstInputsMap componentInstInputsMap) {
+        updatePropertiesConstraints(component, componentInstInputsMap);
         PropertyDeclarator propertyDeclarator = getPropertyDeclarator(componentInstInputsMap);
         Pair<String, List<ComponentInstancePropInput>> propsToDeclare = componentInstInputsMap.resolvePropertiesToDeclare();
         return propertyDeclarator.declarePropertiesAsInputs(component, propsToDeclare.getLeft(), propsToDeclare.getRight());
+    }
+
+    private void updatePropertiesConstraints(Component component, ComponentInstInputsMap componentInstInputsMap) {
+        componentInstInputsMap.getComponentInstanceProperties().forEach((k, v) -> updatePropsConstraints(component.safeGetComponentInstancesProperties(), k, v));
+        componentInstInputsMap.getComponentInstanceInputsMap().forEach((k, v) -> updatePropsConstraints(component.safeGetComponentInstancesInputs(), k, v));
+        componentInstInputsMap.getGroupProperties().forEach((k, v) -> updatePropsConstraints(component.safeGetPolicyProperties(), k, v));
+        componentInstInputsMap.getPolicyProperties().forEach((k, v) -> updatePropsConstraints(component.safeGetGroupsProperties(), k, v));
     }
 
     public Either<List<PolicyDefinition>, StorageOperationStatus> declarePropertiesToPolicies(Component component, ComponentInstInputsMap componentInstInputsMap) {
@@ -78,19 +92,38 @@ public class PropertyDeclarationOrchestrator {
         return propertyDeclarator.declarePropertiesAsPolicies(component, propsToDeclare.getLeft(), propsToDeclare.getRight());
     }
 
-    /**
-     *
-     * @param component
-     * @param componentInstInputsMap
-     * @param input
-     * @return
-     */
     public Either<InputDefinition, StorageOperationStatus> declarePropertiesToListInput(Component component, ComponentInstInputsMap componentInstInputsMap, InputDefinition input) {
         PropertyDeclarator propertyDeclarator = getPropertyDeclarator(componentInstInputsMap);
         Pair<String, List<ComponentInstancePropInput>> propsToDeclare = componentInstInputsMap.resolvePropertiesToDeclare();
         log.debug("#declarePropertiesToInputs: componentId={}, propOwnerId={}", component.getUniqueId(), propsToDeclare.getLeft());
         return propertyDeclarator.declarePropertiesAsListInput(component, propsToDeclare.getLeft(), propsToDeclare.getRight(), input);
     }
+
+    private <T extends PropertyDataDefinition> void updatePropsConstraints(Map<String, List<T>> instancesProperties , String ownerId, List<ComponentInstancePropInput> inputs) {
+        Optional<List<T>> propertiesOpt = instancesProperties.entrySet()
+                .stream()
+                .filter(e -> e.getKey().equals(ownerId))
+                .map(Map.Entry::getValue)
+                .findFirst();
+        if(propertiesOpt.isPresent()){
+            Map<String, PropertyDataDefinition> instProps = propertiesOpt.get()
+                    .stream()
+                    .collect(Collectors.toMap(PropertyDataDefinition::getName, p->p));
+            inputs.stream()
+                    .filter(i->instProps.containsKey(i.getName()))
+                    .forEach(i->updatePropConstraints(i, instProps.get(i.getName())));
+
+        }
+    }
+
+    private void updatePropConstraints(PropertyDataDefinition input, PropertyDataDefinition property) {
+        if(CollectionUtils.isNotEmpty(property.getPropertyConstraints())){
+            input.setPropertyConstraints(property.getPropertyConstraints());
+        } else if(property.getSchemaProperty() != null && CollectionUtils.isNotEmpty(property.getSchemaProperty().getPropertyConstraints())){
+            input.setPropertyConstraints(property.getSchemaProperty().getPropertyConstraints());
+        }
+    }
+
 
     public StorageOperationStatus unDeclarePropertiesAsInputs(Component component, InputDefinition inputToDelete) {
         log.debug("#unDeclarePropertiesAsInputs - removing input declaration for input {} on component {}", inputToDelete.getName(), component.getUniqueId());

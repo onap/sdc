@@ -22,12 +22,6 @@ package org.openecomp.sdc.be.components.validation;
 
 import com.google.common.collect.ImmutableSet;
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
@@ -49,6 +43,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 @Component("NodeFilterValidator")
 public class NodeFilterValidator {

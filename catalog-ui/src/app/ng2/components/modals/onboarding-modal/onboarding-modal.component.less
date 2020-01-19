@@ -1,0 +1,97 @@
+@import "../../../../../assets/styles/variables";
+@import "../../../../../assets/styles/mixins";
+
+
+.onboarding-components-details{
+    display: flex;
+}
+.row-details-description,
+.row-details-metadata1,
+.row-details-metadata2,
+.row-details-metadata3{
+    .th { .m_14_m; }
+    flex-basis: 0;
+    overflow: hidden;
+    padding: 5px 15px;
+    white-space: normal;
+}
+.row-details-description,
+.row-details-metadata3 {
+    border-right: 1px solid @main_color_o;
+}
+
+.row-details-icon {
+    flex-basis: 0;
+    overflow: hidden;
+    padding: 5px 10px;
+    align-self: center;
+}
+
+.row-details-description {
+    flex-grow: 19;
+}
+.row-details-metadata1 {
+    flex-grow: 26.5;
+}
+.row-details-metadata2 {
+    flex-grow: 35;
+    .note {
+        color: @func_color_q;
+    }
+}
+.row-details-metadata3 {
+    flex-grow: 8;  
+}
+.info-button{
+    cursor: pointer;
+    float: right;
+}
+.row-details-icon {
+    flex-grow: 18; 
+}
+.download-file-btn {
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+.import-update-file-btn {
+    cursor: pointer;
+}
+.sprite.table-arrow{
+    margin-right: 7px;
+}
+.search-wrapper {
+    .sdc-filter-bar-wrapper {
+      flex: 0 0 30%;
+    }
+    .sub-title-wrapper {
+        flex: 0 0 70%;
+        font-size: 15px;
+        line-height: 35px;
+        font-family: OpenSans-Regular, sans-serif;
+        align-items: center;
+        display: inline-flex;
+        .sub-title{
+            padding-left: 5px;
+        }
+    }
+    display: flex;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+
+  :host ::ng-deep {
+    .datatable-row-detail{
+        width: 1120px;
+    }
+    .datatable-body-row {
+        cursor: pointer;
+    }
+  }
+
+
+
+
+
+
+

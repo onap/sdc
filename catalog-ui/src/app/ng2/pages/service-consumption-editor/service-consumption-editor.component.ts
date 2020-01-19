@@ -14,29 +14,29 @@
  * permissions and limitations under the License.
  */
 
-import * as _ from "lodash";
 import { Component } from '@angular/core';
-import {ServiceServiceNg2} from "app/ng2/services/component-services/service.service";
 import {
-    Service,
-    ServiceInstanceObject,
-    InstanceFePropertiesMap,
-    InstanceBePropertiesMap,
-    PropertyBEModel,
+    Capability,
     InputBEModel,
-    OperationModel,
+    InstanceBePropertiesMap,
+    InstanceFePropertiesMap,
     InterfaceModel,
-    Capability
+    OperationModel,
+    PropertyBEModel,
+    Service
 } from 'app/models';
-import {ConsumptionInput, ConsumptionInputDetails, ServiceOperation} from 'app/ng2/components/logic/service-consumption/service-consumption.component';
-import {PropertiesUtils} from "app/ng2/pages/properties-assignment/services/properties.utils";
+import { ConsumptionInput, ConsumptionInputDetails, ServiceOperation } from 'app/ng2/components/logic/service-consumption/service-consumption.component';
+import { PropertiesUtils } from 'app/ng2/pages/properties-assignment/services/properties.utils';
+import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
 import { PROPERTY_DATA } from 'app/utils';
-
+import * as _ from 'lodash';
+import { ServiceInstanceObject } from '../../../models/service-instance-properties-and-interfaces';
+import { TopologyTemplateService } from '../../services/component-services/topology-template.service';
 
 @Component({
     selector: 'service-consumption-editor',
     templateUrl: './service-consumption-editor.component.html',
-    styleUrls:['./service-consumption-editor.component.less'],
+    styleUrls: ['./service-consumption-editor.component.less'],
     providers: []
 })
 
@@ -45,27 +45,27 @@ export class ServiceConsumptionCreatorComponent {
     input: {
         interfaceId: string,
         serviceOperationIndex: number,
-        serviceOperations: Array<ServiceOperation>,
+        serviceOperations: ServiceOperation[],
         parentService: Service,
         selectedService: Service,
-        parentServiceInputs: Array<InputBEModel>,
-        selectedServiceProperties: Array<PropertyBEModel>,
-        selectedServiceInstanceId: String,
-        selectedInstanceSiblings: Array<ServiceInstanceObject>,
-        selectedInstanceCapabilitisList: Array<Capability>,
-        siblingsCapabilitiesList: Map<string, Array<Capability>>
+        parentServiceInputs: InputBEModel[],
+        selectedServiceProperties: PropertyBEModel[],
+        selectedServiceInstanceId: string,
+        selectedInstanceSiblings: ServiceInstanceObject[],
+        selectedInstanceCapabilitisList: Capability[],
+        siblingsCapabilitiesList: Map<string, Capability[]>
     };
-    sourceTypes: Array<any> = [];
-    serviceOperationsList: Array<ServiceOperation>;
+    sourceTypes: any[] = [];
+    serviceOperationsList: ServiceOperation[];
     serviceOperation: ServiceOperation;
     currentIndex: number;
     isLoading: boolean = false;
     parentService: Service;
     selectedService: Service;
-    selectedServiceInstanceId: String;
-    parentServiceInputs: Array<InputBEModel>;
-    selectedServiceProperties: Array<PropertyBEModel>;
-    changedData: Array<ConsumptionInputDetails> = [];
+    selectedServiceInstanceId: string;
+    parentServiceInputs: InputBEModel[];
+    selectedServiceProperties: PropertyBEModel[];
+    changedData: ConsumptionInputDetails[] = [];
     inputFePropertiesMap: any = [];
 
     SOURCE_TYPES = {
@@ -75,7 +75,7 @@ export class ServiceConsumptionCreatorComponent {
         SERVICE_INPUT_LABEL: 'Service Input'
     };
 
-    constructor(private serviceServiceNg2: ServiceServiceNg2, private propertiesUtils:PropertiesUtils) {}
+    constructor(private topologyTemplateService: TopologyTemplateService, private propertiesUtils: PropertiesUtils) {}
 
     ngOnInit() {
         this.serviceOperationsList = this.input.serviceOperations;
@@ -112,7 +112,7 @@ export class ServiceConsumptionCreatorComponent {
                 capabilities: []
     }
         ];
-        _.forEach(this.input.selectedInstanceSiblings, sib =>
+        _.forEach(this.input.selectedInstanceSiblings, (sib) =>
             this.sourceTypes.push({
                 label: sib.name,
                 value: sib.id,
@@ -128,161 +128,32 @@ export class ServiceConsumptionCreatorComponent {
     }
 
     onExpandAll() {
-        _.forEach(this.serviceOperation.consumptionInputs, coInput => {
+        _.forEach(this.serviceOperation.consumptionInputs, (coInput) => {
             coInput.expanded = true;
-        })
+        });
     }
     onCollapseAll() {
-        _.forEach(this.serviceOperation.consumptionInputs, coInput => {
+        _.forEach(this.serviceOperation.consumptionInputs, (coInput) => {
             coInput.expanded = false;
-        })
+        });
     }
 
     isAllInputExpanded() {
-        return _.every(this.serviceOperation.consumptionInputs, coInput => coInput.expanded === true);
+        return _.every(this.serviceOperation.consumptionInputs, (coInput) => coInput.expanded === true);
     }
     isAllInputCollapsed() {
-        return _.every(this.serviceOperation.consumptionInputs, coInput => coInput.expanded === false);
+        return _.every(this.serviceOperation.consumptionInputs, (coInput) => coInput.expanded === false);
     }
 
     onChangePage(newIndex) {
         if (newIndex >= 0 && newIndex < this.serviceOperationsList.length) {
             this.currentIndex = newIndex;
             this.serviceOperation = this.serviceOperationsList[newIndex];
-            if(!this.serviceOperation.consumptionInputs || this.serviceOperation.consumptionInputs.length === 0) {
+            if (!this.serviceOperation.consumptionInputs || this.serviceOperation.consumptionInputs.length === 0) {
                 this.initConsumptionInputs();
             }
             this.getComplexPropertiesForCurrentInputsOfOperation(this.serviceOperation.consumptionInputs);
         }
-    }
-
-    private initConsumptionInputs() {
-        this.isLoading = true;
-        this.serviceServiceNg2.getServiceConsumptionInputs(this.parentService, this.selectedServiceInstanceId, this.input.interfaceId, this.serviceOperation.operation).subscribe((result: Array<ConsumptionInput>) => {
-            this.isLoading = false;
-            this.serviceOperation.consumptionInputs = this.analyzeCurrentConsumptionInputs(result);
-            this.getComplexPropertiesForCurrentInputsOfOperation(this.serviceOperation.consumptionInputs);
-        }, err=> {
-            this.isLoading = false;
-        });
-    }
-
-    private analyzeCurrentConsumptionInputs(result: Array<any>): Array<ConsumptionInputDetails> {
-        let inputsResult: Array<ConsumptionInputDetails> = [];
-        let currentOp = this.serviceOperation.operation;
-        if(currentOp) {
-            inputsResult = _.map(result, input => {
-                let sourceVal = input.source || this.SOURCE_TYPES.STATIC;
-                let consumptionInputDetails: ConsumptionInputDetails = _.cloneDeep(input);
-                consumptionInputDetails.source = sourceVal;
-                consumptionInputDetails.isValid = true;
-                consumptionInputDetails.expanded = false;
-                let filteredListsObj = this.getFilteredProps(sourceVal, input.type);
-                consumptionInputDetails.assignValueLabel = this.getAssignValueLabel(sourceVal);
-                consumptionInputDetails.associatedProps = filteredListsObj.associatedPropsList;
-                consumptionInputDetails.associatedInterfaces = filteredListsObj.associatedInterfacesList;
-                consumptionInputDetails.associatedCapabilities = filteredListsObj.associatedCapabilitiesList;
-                return new ConsumptionInputDetails(consumptionInputDetails);
-            });
-        }
-        return inputsResult;
-    }
-
-    private onSourceChanged(consumptionInput: ConsumptionInputDetails): void {
-        consumptionInput.assignValueLabel = this.getAssignValueLabel(consumptionInput.source);
-        let filteredListsObj = this.getFilteredProps(consumptionInput.source, consumptionInput.type);
-        consumptionInput.associatedProps = filteredListsObj.associatedPropsList;
-        consumptionInput.associatedInterfaces = filteredListsObj.associatedInterfacesList;
-        consumptionInput.associatedCapabilities = filteredListsObj.associatedCapabilitiesList;
-        if(consumptionInput.source === this.SOURCE_TYPES.STATIC) {
-            if(PROPERTY_DATA.SIMPLE_TYPES.indexOf(consumptionInput.type) !== -1) {
-                consumptionInput.value = consumptionInput.defaultValue || "";
-            }
-            else {
-                consumptionInput.value = null;
-                Object.assign(this.inputFePropertiesMap, this.processPropertiesOfComplexTypeInput(consumptionInput));
-            }
-        }
-    }
-
-    private getFilteredProps(sourceVal, inputType) {
-        let currentSourceObj = this.sourceTypes.find(s => s.value === sourceVal);
-        let associatedInterfacesList = [], associatedPropsList = [], associatedCapabilitiesPropsList: Array<Capability> = [];
-        if(currentSourceObj) {
-            if (currentSourceObj.interfaces) {
-                associatedInterfacesList = this.getFilteredInterfaceOutputs(currentSourceObj, inputType);
-            }
-            associatedPropsList = currentSourceObj.options.reduce((result, prop) => {
-                if (prop.type === inputType) {
-                    result.push(prop.name);
-                }
-                return result;
-            }, []);
-            associatedCapabilitiesPropsList =
-                _.reduce(currentSourceObj.capabilities,
-                    (filteredCapsList, capability: Capability) => {
-                        let filteredProps = _.filter(capability.properties, prop => prop.type === inputType);
-                        if (filteredProps.length) {
-                            let cap = new Capability(capability);
-                            cap.properties = filteredProps;
-                            filteredCapsList.push(cap);
-                        }
-                        return filteredCapsList
-                    }, []);
-        }
-        return {
-            associatedPropsList: associatedPropsList,
-            associatedInterfacesList: associatedInterfacesList,
-            associatedCapabilitiesList: associatedCapabilitiesPropsList
-        }
-    }
-
-    private getFilteredInterfaceOutputs(currentSourceObj, inputType) {
-        let currentServiceOperationId = this.serviceOperation.operation.uniqueId;
-        let filteredInterfacesList = [];
-        Object.keys(currentSourceObj.interfaces).map(interfId => {
-            let interfaceObj: InterfaceModel = new InterfaceModel(currentSourceObj.interfaces[interfId]);
-            Object.keys(interfaceObj.operations).map(opId => {
-                if(currentServiceOperationId !== opId) {
-                    let operationObj: OperationModel = interfaceObj.operations[opId];
-                    let filteredOutputsList = _.filter(operationObj.outputs.listToscaDataDefinition, output => output.type === inputType);
-                    if (filteredOutputsList.length) {
-                        filteredInterfacesList.push({
-                            name: `${interfaceObj.type}.${operationObj.name}`,
-                            label: `${interfaceObj.displayType()}.${operationObj.name}`,
-                            outputs: filteredOutputsList
-                        });
-                    }
-                }
-            });
-        });
-        return filteredInterfacesList;
-    }
-
-    getAssignValueLabel(selectedSource: string): string {
-        if(selectedSource === this.SOURCE_TYPES.STATIC ||  selectedSource === "") {
-            return this.SOURCE_TYPES.STATIC;
-        }
-        else {
-            if(selectedSource === this.parentService.uniqueId) { //parent is the source
-                return this.SOURCE_TYPES.SERVICE_INPUT_LABEL;
-            }
-            return this.SOURCE_TYPES.SERVICE_PROPERTY_LABEL;
-        }
-    }
-
-
-    private isValidInputsValues(): boolean {
-        return this.changedData.length > 0 && this.changedData.every((changedItem) => changedItem.isValid);
-    }
-
-    private isMandatoryFieldsValid(): boolean {
-        const invalid: Array<ConsumptionInputDetails> = this.serviceOperation.consumptionInputs.filter(item =>
-            item.required && (item.value === null || typeof item.value === 'undefined' || item.value === ''));
-        if (invalid.length > 0) {
-            return false;
-        }
-        return true;
     }
 
     checkFormValidForSubmit(): boolean {
@@ -307,23 +178,153 @@ export class ServiceConsumptionCreatorComponent {
         }
     }
 
-    private getComplexPropertiesForCurrentInputsOfOperation(opInputs: Array<ConsumptionInput>) {
-        _.forEach(opInputs, input => {
-            if(PROPERTY_DATA.SIMPLE_TYPES.indexOf(input.type) === -1 && input.source === this.SOURCE_TYPES.STATIC) {
+    onComplexPropertyChanged(property, consumptionInput) {
+        consumptionInput.value = JSON.stringify(property.valueObj);
+        this.onChange(property.valueObj, property.valueObjIsValid , consumptionInput);
+    }
+
+    private initConsumptionInputs() {
+        this.isLoading = true;
+        this.topologyTemplateService.getServiceConsumptionInputs(this.parentService.uniqueId, this.selectedServiceInstanceId,
+            this.input.interfaceId, this.serviceOperation.operation).subscribe((result: ConsumptionInput[]) => {
+            this.isLoading = false;
+            this.serviceOperation.consumptionInputs = this.analyzeCurrentConsumptionInputs(result);
+            this.getComplexPropertiesForCurrentInputsOfOperation(this.serviceOperation.consumptionInputs);
+        }, (err) => {
+            this.isLoading = false;
+        });
+    }
+
+    private analyzeCurrentConsumptionInputs(result: any[]): ConsumptionInputDetails[] {
+        let inputsResult: ConsumptionInputDetails[] = [];
+        const currentOp = this.serviceOperation.operation;
+        if (currentOp) {
+            inputsResult = _.map(result, (input) => {
+                const sourceVal = input.source || this.SOURCE_TYPES.STATIC;
+                const consumptionInputDetails: ConsumptionInputDetails = _.cloneDeep(input);
+                consumptionInputDetails.source = sourceVal;
+                consumptionInputDetails.isValid = true;
+                consumptionInputDetails.expanded = false;
+                const filteredListsObj = this.getFilteredProps(sourceVal, input.type);
+                consumptionInputDetails.assignValueLabel = this.getAssignValueLabel(sourceVal);
+                consumptionInputDetails.associatedProps = filteredListsObj.associatedPropsList;
+                consumptionInputDetails.associatedInterfaces = filteredListsObj.associatedInterfacesList;
+                consumptionInputDetails.associatedCapabilities = filteredListsObj.associatedCapabilitiesList;
+                return new ConsumptionInputDetails(consumptionInputDetails);
+            });
+        }
+        return inputsResult;
+    }
+
+    private onSourceChanged(consumptionInput: ConsumptionInputDetails): void {
+        consumptionInput.assignValueLabel = this.getAssignValueLabel(consumptionInput.source);
+        const filteredListsObj = this.getFilteredProps(consumptionInput.source, consumptionInput.type);
+        consumptionInput.associatedProps = filteredListsObj.associatedPropsList;
+        consumptionInput.associatedInterfaces = filteredListsObj.associatedInterfacesList;
+        consumptionInput.associatedCapabilities = filteredListsObj.associatedCapabilitiesList;
+        if (consumptionInput.source === this.SOURCE_TYPES.STATIC) {
+            if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(consumptionInput.type) !== -1) {
+                consumptionInput.value = consumptionInput.defaultValue || '';
+            } else {
+                consumptionInput.value = null;
+                Object.assign(this.inputFePropertiesMap, this.processPropertiesOfComplexTypeInput(consumptionInput));
+            }
+        }
+    }
+
+    private getFilteredProps(sourceVal, inputType) {
+        const currentSourceObj = this.sourceTypes.find((s) => s.value === sourceVal);
+        let associatedInterfacesList = [];
+        let associatedPropsList = [];
+        let associatedCapabilitiesPropsList: Capability[] = [];
+        if (currentSourceObj) {
+            if (currentSourceObj.interfaces) {
+                associatedInterfacesList = this.getFilteredInterfaceOutputs(currentSourceObj, inputType);
+            }
+            associatedPropsList = currentSourceObj.options.reduce((result, prop) => {
+                if (prop.type === inputType) {
+                    result.push(prop.name);
+                }
+                return result;
+            }, []);
+            associatedCapabilitiesPropsList =
+                _.reduce(currentSourceObj.capabilities,
+                    (filteredCapsList, capability: Capability) => {
+                        const filteredProps = _.filter(capability.properties, (prop) => prop.type === inputType);
+                        if (filteredProps.length) {
+                            const cap = new Capability(capability);
+                            cap.properties = filteredProps;
+                            filteredCapsList.push(cap);
+                        }
+                        return filteredCapsList;
+                    }, []);
+        }
+        return {
+            associatedPropsList,
+            associatedInterfacesList,
+            associatedCapabilitiesList: associatedCapabilitiesPropsList
+        };
+    }
+
+    private getFilteredInterfaceOutputs(currentSourceObj, inputType) {
+        const currentServiceOperationId = this.serviceOperation.operation.uniqueId;
+        const filteredInterfacesList = [];
+        Object.keys(currentSourceObj.interfaces).map((interfId) => {
+            const interfaceObj: InterfaceModel = new InterfaceModel(currentSourceObj.interfaces[interfId]);
+            Object.keys(interfaceObj.operations).map((opId) => {
+                if (currentServiceOperationId !== opId) {
+                    const operationObj: OperationModel = interfaceObj.operations[opId];
+                    const filteredOutputsList = _.filter(operationObj.outputs.listToscaDataDefinition, (output) => output.type === inputType);
+                    if (filteredOutputsList.length) {
+                        filteredInterfacesList.push({
+                            name: `${interfaceObj.type}.${operationObj.name}`,
+                            label: `${interfaceObj.displayType()}.${operationObj.name}`,
+                            outputs: filteredOutputsList
+                        });
+                    }
+                }
+            });
+        });
+        return filteredInterfacesList;
+    }
+
+    private getAssignValueLabel(selectedSource: string): string {
+        if (selectedSource === this.SOURCE_TYPES.STATIC ||  selectedSource === '') {
+            return this.SOURCE_TYPES.STATIC;
+        } else {
+            if (selectedSource === this.parentService.uniqueId) { // parent is the source
+                return this.SOURCE_TYPES.SERVICE_INPUT_LABEL;
+            }
+            return this.SOURCE_TYPES.SERVICE_PROPERTY_LABEL;
+        }
+    }
+
+    private isValidInputsValues(): boolean {
+        return this.changedData.length > 0 && this.changedData.every((changedItem) => changedItem.isValid);
+    }
+
+    private isMandatoryFieldsValid(): boolean {
+        const invalid: ConsumptionInputDetails[] = this.serviceOperation.consumptionInputs.filter((item) =>
+            item.required && (item.value === null || typeof item.value === 'undefined' || item.value === ''));
+        if (invalid.length > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private getComplexPropertiesForCurrentInputsOfOperation(opInputs: ConsumptionInput[]) {
+        _.forEach(opInputs, (input) => {
+            if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(input.type) === -1 && input.source === this.SOURCE_TYPES.STATIC) {
                 Object.assign(this.inputFePropertiesMap, this.processPropertiesOfComplexTypeInput(input));
             }
         });
     }
 
     private processPropertiesOfComplexTypeInput(input: ConsumptionInput): InstanceFePropertiesMap {
-        let inputBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        const inputBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         inputBePropertiesMap[input.name] = [input];
-        let originTypeIsVF = false;
-        return this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren(inputBePropertiesMap, originTypeIsVF); //create flattened children and init values
+        const originTypeIsVF = false;
+        return this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren(inputBePropertiesMap, originTypeIsVF); // create flattened children and init values
     }
 
-    onComplexPropertyChanged(property, consumptionInput) {
-        consumptionInput.value = JSON.stringify(property.valueObj);
-        this.onChange(property.valueObj, property.valueObjIsValid , consumptionInput);
-    }
 }

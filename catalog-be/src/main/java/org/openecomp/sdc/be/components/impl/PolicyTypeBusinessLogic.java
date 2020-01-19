@@ -59,7 +59,7 @@ public class PolicyTypeBusinessLogic {
     @Transactional
     public List<PolicyTypeDefinition> getAllPolicyTypes(String userId, String internalComponentType) {
         Set<String> excludedPolicyTypes = getExcludedPolicyTypes(internalComponentType);
-        userValidations.validateUserExists(userId, "get policy types", true);
+        userValidations.validateUserExists(userId);
         return getPolicyTypes(excludedPolicyTypes);
     }
 

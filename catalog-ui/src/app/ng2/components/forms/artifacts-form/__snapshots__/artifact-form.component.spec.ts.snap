@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`artifact form component should match current snapshot of artifact form component 1`] = `
+<artifact-form
+  artifactTypesOptions={[Function Array]}
+  cacheService={[Function Object]}
+  initArtifactTypes={[Function Function]}
+  onDescriptionChange={[Function Function]}
+  onLabelChange={[Function Function]}
+  onTypeChange={[Function Function]}
+  onUploadFile={[Function Function]}
+  onValidationChange={[Function Subject]}
+  verifyTypeAndFileWereFilled={[Function Function]}
+>
+  <form
+    class="artifact-form"
+    name="artifactForm"
+    novalidate=""
+  >
+    <onap-file-upload />
+    <div
+      class="artifact-form-container"
+    >
+      
+      <div
+        class="right-form-container"
+      >
+        <sdc-textarea
+          label="Description"
+          testid="description"
+        />
+        <sdc-validation>
+          <sdc-required-validator />
+          <sdc-regex-validator />
+        </sdc-validation>
+      </div>
+    </div>
+  </form>
+</artifact-form>
+`;

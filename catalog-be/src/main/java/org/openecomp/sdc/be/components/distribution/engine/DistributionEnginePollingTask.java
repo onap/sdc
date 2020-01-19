@@ -32,6 +32,7 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionS
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -41,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 public class DistributionEnginePollingTask implements Runnable {
 
     public static final String DISTRIBUTION_STATUS_POLLING = "distributionEngineStatusPolling";
+    private static final String PARTNER_NAME = "UNKNOWN";
 
     private String topicName;
     private ComponentsUtils componentUtils;
@@ -56,6 +58,7 @@ public class DistributionEnginePollingTask implements Runnable {
     private ScheduledExecutorService scheduledPollingService = Executors.newScheduledThreadPool(1, new BasicThreadFactory.Builder().namingPattern("TopicPollingThread-%d").build());
 
     private static final Logger logger = Logger.getLogger(DistributionEnginePollingTask.class.getName());
+    private static LoggerSdcAudit audit = new LoggerSdcAudit(DistributionEnginePollingTask.class);
 
     ScheduledFuture<?> scheduledFuture = null;
     private CambriaConsumer cambriaConsumer = null;
@@ -96,9 +99,7 @@ public class DistributionEnginePollingTask implements Runnable {
             }
         } catch (Exception e) {
             logger.debug("unexpected error occured", e);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
-
+            String methodName = Object.class.getEnclosingMethod().getName();
             BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(methodName, e.getMessage());
         }
     }
@@ -154,7 +155,8 @@ public class DistributionEnginePollingTask implements Runnable {
                 logger.trace("received message {}", message);
                 try {
                     DistributionStatusNotification notification = gson.fromJson(message, DistributionStatusNotification.class);
-                    handleDistributionNotificationMsg(notification);
+                    audit.startAuditFetchLog(PARTNER_NAME, DistributionEnginePollingTask.class.getName());
+                    handleDistributionNotificationMsg(notification, audit);
                     distributionEngineClusterHealth.setHealthCheckOkAndReportInCaseLastStateIsDown();
                 } catch (Exception e) {
                     logger.debug("failed to convert message to object", e);
@@ -163,18 +165,18 @@ public class DistributionEnginePollingTask implements Runnable {
 
             }
         } catch (Exception e) {
-            logger.debug("unexpected error occured", e);
-            String methodName = new Object() {
-            }.getClass().getEnclosingMethod().getName();
-
+            logger.debug("unexpected error occurred", e);
+            String methodName = Object.class.getEnclosingMethod().getName();
             BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(methodName, e.getMessage());
         }
 
     }
 
-    private void handleDistributionNotificationMsg(DistributionStatusNotification notification) {
-        componentUtils.auditDistributionStatusNotification(notification.getDistributionID(), notification.getConsumerID(), topicName, notification.getArtifactURL(),
-                String.valueOf(notification.getTimestamp()), notification.getStatus().name(), notification.getErrorReason());
+    private void handleDistributionNotificationMsg(DistributionStatusNotification notification, LoggerSdcAudit audit) {
+        componentUtils.auditDistributionStatusNotification(notification.getDistributionID(),
+                notification.getConsumerID(), topicName, notification.getArtifactURL(),
+                String.valueOf(notification.getTimestamp()), notification.getStatus().name(),
+                notification.getErrorReason(), audit);
         if (notification.isDistributionCompleteNotification()) {
             distributionCompleteReporter.reportDistributionComplete(notification);
         }

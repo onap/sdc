@@ -21,10 +21,6 @@
 package org.openecomp.sdc.be.components.property.propertytopolicydeclarators;
 
 import fj.data.Either;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.property.DefaultPropertyDeclarator;
@@ -38,6 +34,11 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @org.springframework.stereotype.Component
 public class ComponentInstancePropertyToPolicyDeclarator extends

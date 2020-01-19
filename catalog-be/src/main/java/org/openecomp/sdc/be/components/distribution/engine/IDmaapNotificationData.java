@@ -29,10 +29,6 @@ public interface IDmaapNotificationData {
 
     DmaapActionEnum getAction();
 
-
-
-
-
     enum DmaapActionEnum {
         DELETE("Delete"),
         CREATE("Create"),
@@ -53,7 +49,8 @@ public interface IDmaapNotificationData {
         public static DmaapActionEnum findByName(String actionName){
             return getEnumValueByFieldValue(actionName, DmaapActionEnum.values(), DmaapActionEnum::getActionName, UNKONW, false);
         }
-    };
+    }
+
     enum OperationaEnvironmentTypeEnum {
         ECOMP("ECOMP"),
         UNKONW("UNKONW")
@@ -71,6 +68,5 @@ public interface IDmaapNotificationData {
         public static OperationaEnvironmentTypeEnum findByName(String operationalEnvironmentTypeName){
             return getEnumValueByFieldValue(operationalEnvironmentTypeName, OperationaEnvironmentTypeEnum.values(), OperationaEnvironmentTypeEnum::getEventTypenName, UNKONW, false);
         }
-    };
-
+    }
 }

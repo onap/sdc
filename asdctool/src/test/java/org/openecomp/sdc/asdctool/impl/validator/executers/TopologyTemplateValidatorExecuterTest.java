@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import static org.mockito.Mockito.mock;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+
+import static org.mockito.Mockito.mock;
 
 public class TopologyTemplateValidatorExecuterTest {
 

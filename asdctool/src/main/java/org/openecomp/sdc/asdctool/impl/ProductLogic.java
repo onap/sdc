@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import org.janusgraph.core.JanusGraphFactory;
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphVertex;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -75,7 +75,8 @@ public class ProductLogic {
 			graph.tx().commit();
 			return productsToDelete;
 		} catch (Exception e) {
-			log.info("get All Products failed - {}" , e);
+            e.printStackTrace();
+            log.info("get All Products failed - {}" , e);
 			if(graph != null) {
 			    graph.tx().rollback();
 			}

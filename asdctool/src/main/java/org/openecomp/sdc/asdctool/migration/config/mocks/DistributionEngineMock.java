@@ -29,6 +29,8 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component("distributionEngine")
 public class DistributionEngineMock implements IDistributionEngine {
     @Override
@@ -73,6 +75,11 @@ public class DistributionEngineMock implements IDistributionEngine {
 
     @Override
     public OperationalEnvironmentEntry getEnvironmentById(String opEnvId) {
+        return null;
+    }
+
+    @Override
+    public OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
         return null;
     }
 

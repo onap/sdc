@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.asdctool.main;
 
-import java.util.Scanner;
-
 import org.openecomp.sdc.asdctool.configuration.ConfigurationUploader;
 import org.openecomp.sdc.asdctool.configuration.CsarGeneratorConfiguration;
 import org.openecomp.sdc.asdctool.impl.internal.tool.CsarGenerator;
 import org.openecomp.sdc.asdctool.utils.ConsoleWriter;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.Scanner;
 
 public class CsarGeneratorTool extends SdcInternalTool {
 

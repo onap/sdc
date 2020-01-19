@@ -6,7 +6,24 @@
 
     "validationPatterns": {
         "string": "^[\\sa-zA-Z0-9+-]+$",
+        "stringOrEmpty": "^[\\sa-zA-Z0-9&-]*$",
         "comment": "^[\\u0000-\\u00BF]*$",
-        "integer": "^(([-+]?\\d+)|([-+]?0x[0-9a-fA-F]+))$"
+        "integer": "^(([-+]?\\d+)|([-+]?0x[0-9a-fA-F]+))$",
+        "componentName": "^(?=.*[^. ])[\\s\\w\\&_.:-]{1,1024}$",
+        "propertyName": "^[a-zA-Z0-9_:-]{1,50}$",
+        "tag": "^[\\s\\w_.-]{1,50}$",
+        "vendorRelease": "^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]{1,25}$",
+        "vendorName": "^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]{1,60}$",
+        "vendorModelNumber": "^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]{1,65}$",
+        "serviceTypeAndRole": "^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]{1,256}$",
+        "contactId": "^[\\s\\w-]{1,50}$",
+        "userId": "^[\\s\\w-]{1,50}$",
+        "label": "^[\\sa-zA-Z0-9+-]{1,25}$",
+        "integerNoLeadingZero": "^(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+)$",
+        "float": "^[-+]?[0-9]*.?[0-9]+([eE][-+]?[0-9]+)?f?$",
+        "number": "^((([-+]?\\d+)|([-+]?0x[0-9a-fA-F]+))|([-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?))$",
+        "key": "^[\\s\\w-]{1,50}$",
+        "boolean": "^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$",
+        "mapKey": "^[\\w]{1,50}$"
     }
 }

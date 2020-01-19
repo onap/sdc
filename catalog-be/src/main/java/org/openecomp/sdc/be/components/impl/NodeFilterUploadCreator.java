@@ -16,16 +16,17 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
 import org.openecomp.sdc.be.utils.TypeUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NodeFilterUploadCreator {
 

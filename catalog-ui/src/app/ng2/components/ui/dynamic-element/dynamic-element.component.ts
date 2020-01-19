@@ -37,11 +37,13 @@ enum DynamicElementComponentCreatorIdentifier {
     BOOLEAN,
     SUBNETPOOLID,
     ENUM,
+    LIST,
     DEFAULT
 }
 
 @Component({
     selector: 'dynamic-element',
+    // Span - if constraints not empty
     template: `<div #target></div>`,
     styleUrls: ['./dynamic-element.component.less'],
     entryComponents: [
@@ -61,6 +63,7 @@ export class DynamicElementComponent {
     @Input() readonly:boolean;
     @Input() constraints: Array<any>;
     @Input() path:string;//optional param. used only for for subnetpoolid type
+    @Input() declared:boolean;
 
     @Input() value: any;
     @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();
@@ -72,16 +75,19 @@ export class DynamicElementComponent {
     validation = ValidationConfiguration.validation;
 
     constructor(
+        
         private componentFactoryResolver: ComponentFactoryResolver,
         private compiler: Compiler,
         private el: ElementRef) {
+           
+            
     }
 
     updateComponent() {
         if (!this.isViewInitialized) {
             return;
         }
-
+        
         // Factory to create component based on type or other property attributes.
         const prevElementCreatorIdentifier: DynamicElementComponentCreatorIdentifier = this.elementCreatorIdentifier;
         switch(true) {
@@ -112,7 +118,7 @@ export class DynamicElementComponent {
         }
 
         // In case the dynamic element creator is changed, then destroy old and build new.
-        if (this.elementCreatorIdentifier !== prevElementCreatorIdentifier) {
+        if (this.declared || this.elementCreatorIdentifier !== prevElementCreatorIdentifier) {
             if (this.cmpRef) {
                 this.cmpRef.destroy();
             }
@@ -149,64 +155,81 @@ export class DynamicElementComponent {
     }
 
     createComponentByIdentifier() {
-        switch(this.elementCreatorIdentifier) {
-            case DynamicElementComponentCreatorIdentifier.SUBNETPOOLID:
-                if(this.name.toUpperCase().indexOf("SUBNETPOOLID") == -1){//if it's an item of subnetpoolid list get the parent name
-                    let pathArray = this.path.split("#");
-                    this.name = pathArray[pathArray.length - 2];
-                }
-                this.createComponent(UiElementPopoverInputComponent);
-                break;
-
-            case DynamicElementComponentCreatorIdentifier.ENUM:
-                this.createComponent(UiElementDropDownComponent);
-                let validVals:Array<DropdownValue> = [...this.getValidValues()].map(val => new DropdownValue(val, val));
-                if (this.type === 'float' || this.type === 'integer') {
-                    this.value = this.value && Number(this.value);
-                    validVals = _.map(
-                        validVals,
-                        val => new DropdownValue(Number(val.value), val.value)
-                    );
-                }
-                this.cmpRef.instance.values = validVals;
-                break;
-
-            case DynamicElementComponentCreatorIdentifier.INTEGER:
-                this.createComponent(UiElementIntegerInputComponent);
-                this.cmpRef.instance.pattern = this.validation.validationPatterns.integer;
-                break;
-
-            case DynamicElementComponentCreatorIdentifier.FLOAT:
-                this.createComponent(UiElementIntegerInputComponent);
-                this.cmpRef.instance.pattern = /^[-+]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?$/.source;
-                break;
-
-            case DynamicElementComponentCreatorIdentifier.STRING:
-                this.createComponent(UiElementInputComponent);
-                break;
-
-            case DynamicElementComponentCreatorIdentifier.BOOLEAN:
-                this.createComponent(UiElementDropDownComponent);
-
-                // Build drop down values
-                let tmp = [];
-                tmp.push(new DropdownValue(true,'TRUE'));
-                tmp.push(new DropdownValue(false,'FALSE'));
-                this.cmpRef.instance.values = tmp;
-                try {
-                    if (typeof this.value === 'string') {
-                        this.value = JSON.parse(this.value);
+        // if(!this.constraints || this.declared){
+            switch(this.elementCreatorIdentifier) {
+                case DynamicElementComponentCreatorIdentifier.SUBNETPOOLID:
+                    if(this.name.toUpperCase().indexOf("SUBNETPOOLID") == -1){//if it's an item of subnetpoolid list get the parent name
+                        let pathArray = this.path.split("#");
+                        this.name = pathArray[pathArray.length - 2];
                     }
-                } catch(err) {
-                    this.value = null;
-                }
-                break;
+                    this.createComponent(UiElementPopoverInputComponent);
+                    break;
+                case DynamicElementComponentCreatorIdentifier.ENUM:
+                    this.createComponent(UiElementDropDownComponent);
+                    let validVals:Array<DropdownValue> = [...this.getValidValues()].map(val => new DropdownValue(val, val));
+                    if (this.type === 'float' || this.type === 'integer') {
+                        this.value = this.value && Number(this.value);
+                        validVals = _.map(
+                            validVals,
+                            (val) => new DropdownValue(Number(val.value), val.value)
+                        );
+                    }
+                    this.cmpRef.instance.values = validVals;
+                    break;
+                case DynamicElementComponentCreatorIdentifier.INTEGER:
+                    this.createComponent(UiElementIntegerInputComponent);
+                    this.cmpRef.instance.pattern = this.validation.validationPatterns.integer;
+                    break;
 
-            case DynamicElementComponentCreatorIdentifier.DEFAULT:
-            default:
-                this.createComponent(UiElementInputComponent);
-                console.log("ERROR: No ui-models component to handle type: " + this.type);
-        }
+                case DynamicElementComponentCreatorIdentifier.FLOAT:
+                    this.createComponent(UiElementIntegerInputComponent);
+                    this.cmpRef.instance.pattern = /^[-+]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?$/.source;
+                    break;
+
+                case DynamicElementComponentCreatorIdentifier.STRING:
+                    this.createComponent(UiElementInputComponent);
+                    break;
+
+                case DynamicElementComponentCreatorIdentifier.BOOLEAN:
+                    this.createComponent(UiElementDropDownComponent);
+
+                    // Build drop down values
+                    let tmp = [];
+                    tmp.push(new DropdownValue(true,'TRUE'));
+                    tmp.push(new DropdownValue(false,'FALSE'));
+                    this.cmpRef.instance.values = tmp;
+                    try {
+                        if(typeof this.value === 'string'){
+                            this.value = JSON.parse(this.value);
+                        }
+                    } catch (err) {
+                        this.value = null;
+                    }
+                    break;
+
+                case DynamicElementComponentCreatorIdentifier.DEFAULT:
+                default:
+                    this.createComponent(UiElementInputComponent);
+                    console.log("ERROR: No ui-models component to handle type: " + this.type);
+            }
+        // }
+        // //There are consraints
+        // else {
+            
+        //     this.createComponent(UiElementDropDownComponent);
+
+        //     // Build drop down values
+        //     let items = [];
+        //     this.constraints.forEach( (element) => {
+        //         items.push(new DropdownValue(element,element));
+        //     });
+
+        //     items.push(new DropdownValue(this.value,this.value, true, true));
+        //     this.cmpRef.instance.values = items;
+            
+            
+            
+        // }
 
         // Subscribe to change event of of ui-models-element-basic and fire event to change the value
         this.cmpRef.instance.baseEmitter.subscribe((event) => { this.emitter.emit(event); });

@@ -102,7 +102,6 @@ catalog-dao/bin/
 catalog-fe/bin
 catalog-fe/src/main/webapp/*
 catalog-ui/*.tmp.txt
-catalog-ui/.*
 catalog-ui/app/dist/*
 catalog-ui/.editorconfig
 catalog-ui/.jshintrc

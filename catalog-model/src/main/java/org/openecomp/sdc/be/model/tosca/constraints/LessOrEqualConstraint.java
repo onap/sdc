@@ -20,10 +20,12 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 import javax.validation.constraints.NotNull;
 
@@ -38,6 +40,16 @@ public class LessOrEqualConstraint extends AbstractComparablePropertyConstraint 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         initialize(lessOrEqual, propertyType);
+    }
+
+    @Override
+    public ConstraintType getConstraintType() {
+        return ConstraintType.LESS_OR_EQUAL;
+    }
+
+    @Override
+    public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
+
     }
 
     @Override

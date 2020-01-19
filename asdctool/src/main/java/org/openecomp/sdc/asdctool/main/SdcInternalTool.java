@@ -20,10 +20,9 @@
 
 package org.openecomp.sdc.asdctool.main;
 
+import ch.qos.logback.core.Appender;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.core.Appender;
 
 public abstract class SdcInternalTool {
     protected static void disableConsole() {

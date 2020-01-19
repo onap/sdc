@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.components.path.utils;
 
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;

@@ -22,20 +22,32 @@ package org.openecomp.sdc.be.components.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.openecomp.sdc.be.components.impl.utils.ExceptionUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -52,7 +64,14 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -303,21 +322,60 @@ public final class ImportUtils {
     }
 
     private static void setPropertyConstraints(Map<String, Object> propertyValue, PropertyDefinition property) {
-        Either<List<Object>, ResultStatusEnum> propertyFieldconstraints = findFirstToscaListElement(propertyValue, TypeUtils.ToscaTagNamesEnum.CONSTRAINTS);
-        if (propertyFieldconstraints.isLeft()) {
-            List<Object> jsonConstraintList = propertyFieldconstraints.left().value();
+        List<PropertyConstraint> constraints = getPropertyConstraints(propertyValue, property.getType());
+        if (CollectionUtils.isNotEmpty(constraints)) {
+            property.setConstraints(constraints);
+        }
+    }
 
+    private static List<PropertyConstraint> getPropertyConstraints(Map<String, Object> propertyValue, String propertyType) {
+        List<Object> propertyFieldConstraints = findCurrentLevelConstraintsElement(propertyValue);
+        if (CollectionUtils.isNotEmpty(propertyFieldConstraints)) {
             List<PropertyConstraint> constraintList = new ArrayList<>();
             Type constraintType = new TypeToken<PropertyConstraint>() {
             }.getType();
             Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
 
-            for (Object constraintJson : jsonConstraintList) {
-                PropertyConstraint propertyConstraint = gson.fromJson(gson.toJson(constraintJson), constraintType);
+            for (Object constraintJson : propertyFieldConstraints) {
+                PropertyConstraint propertyConstraint = validateAndGetPropertyConstraint(propertyType, constraintType, gson, constraintJson);
                 constraintList.add(propertyConstraint);
             }
-            property.setConstraints(constraintList);
+            return constraintList;
         }
+        return null;
+    }
+
+    private static List<Object> findCurrentLevelConstraintsElement(Map<String, Object> toscaJson) {
+        List<Object> constraints = null;
+        if (toscaJson.containsKey(TypeUtils.ToscaTagNamesEnum.CONSTRAINTS.getElementName())) {
+            try {
+                constraints = (List<Object>) toscaJson.get(TypeUtils.ToscaTagNamesEnum.CONSTRAINTS.getElementName());
+            } catch (ClassCastException e){
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS_FORMAT, toscaJson.get(TypeUtils.ToscaTagNamesEnum.CONSTRAINTS.getElementName()).toString());
+            }
+        }
+        return constraints;
+
+    }
+
+    private static PropertyConstraint validateAndGetPropertyConstraint(String propertyType, Type constraintType, Gson gson, Object constraintJson) {
+        PropertyConstraint propertyConstraint;
+        try{
+            propertyConstraint = gson.fromJson(gson.toJson(constraintJson), constraintType);
+        } catch (ClassCastException|JsonParseException e){
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS_FORMAT, constraintJson.toString());
+        }
+        if(propertyConstraint!= null && propertyConstraint instanceof ValidValuesConstraint){
+            try {
+                ((ValidValuesConstraint)propertyConstraint).validateType(propertyType);
+            } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
+                BeEcompErrorManager.getInstance().logInternalFlowError("GetInitializedPropertyConstraint",
+                        e.getMessage(), BeEcompErrorManager.ErrorSeverity.ERROR);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS, ConstraintType.VALID_VALUES.name(),
+                        ((ValidValuesConstraint) propertyConstraint).getValidValues().toString(), propertyType);
+            }
+        }
+        return propertyConstraint;
     }
 
     public static PropertyDefinition createModuleProperty(Map<String, Object> propertyValue) {
@@ -445,35 +503,29 @@ public final class ImportUtils {
     }
 
     private static void setScheme(Map<String, Object> propertyValue, PropertyDefinition propertyDefinition) {
-        Either<SchemaDefinition, ResultStatusEnum> eitherSchema = getSchema(propertyValue);
-        if (eitherSchema.isLeft()) {
-            SchemaDefinition schemaDef = new SchemaDefinition();
-            schemaDef.setProperty(eitherSchema.left().value().getProperty());
+        Either<Object, ResultStatusEnum> schemaElementRes = findSchemaElement(propertyValue);
+        if (schemaElementRes.isLeft()) {
+            SchemaDefinition schemaDef = getSchema(schemaElementRes.left().value());
             propertyDefinition.setSchema(schemaDef);
         }
-
     }
 
-    private static Either<SchemaDefinition, ResultStatusEnum> getSchema(Map<String, Object> propertyValue) {
-        Either<SchemaDefinition, ResultStatusEnum> result = Either.right(ResultStatusEnum.ELEMENT_NOT_FOUND);
-        Either<Object, ResultStatusEnum> propertyFieldEntryScheme = findToscaElement(propertyValue, TypeUtils.ToscaTagNamesEnum.ENTRY_SCHEMA, ToscaElementTypeEnum.ALL);
-        if (propertyFieldEntryScheme.isLeft()) {
-            if (propertyFieldEntryScheme.left().value() instanceof String) {
-                String schemaType = (String) propertyFieldEntryScheme.left().value();
-                SchemaDefinition schema = new SchemaDefinition();
-                PropertyDefinition schemeProperty = new PropertyDefinition();
-                schemeProperty.setType(schemaType);
-                schema.setProperty(schemeProperty);
-                result = Either.left(schema);
+    private static Either<Object,ResultStatusEnum> findSchemaElement(Map<String, Object> propertyValue) {
+        return findToscaElement(propertyValue, TypeUtils.ToscaTagNamesEnum.ENTRY_SCHEMA, ToscaElementTypeEnum.ALL);
+    }
 
-            } else if (propertyFieldEntryScheme.left().value() instanceof Map) {
-                PropertyDefinition schemeProperty = createModuleProperty((Map<String, Object>) propertyFieldEntryScheme.left().value());
-                SchemaDefinition schema = new SchemaDefinition();
-                schema.setProperty(schemeProperty);
-                result = Either.left(schema);
-            }
+    private static SchemaDefinition getSchema(Object propertyFieldEntryScheme) {
+        SchemaDefinition schema = new SchemaDefinition();
+        if (propertyFieldEntryScheme instanceof String) {
+            String schemaType = (String) propertyFieldEntryScheme;
+            PropertyDefinition schemeProperty = new PropertyDefinition();
+            schemeProperty.setType(schemaType);
+            schema.setProperty(schemeProperty);
+        } else if (propertyFieldEntryScheme instanceof Map) {
+            PropertyDefinition schemeProperty = createModuleProperty((Map<String, Object>) propertyFieldEntryScheme);
+            schema.setProperty(schemeProperty);
         }
-        return result;
+        return schema;
     }
 
     public static void setField(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum tagName, Consumer<String> setter) {
@@ -665,7 +717,7 @@ public final class ImportUtils {
             return null;
         }
         ToscaPropertyType validType = ToscaPropertyType.isValidType(type);
-        if (validType == null ||  validType.equals(ToscaPropertyType.JSON) ||validType.equals(ToscaPropertyType.MAP) || validType.equals(ToscaPropertyType.LIST)) {
+        if (validType == null ||  validType == ToscaPropertyType.JSON || validType == ToscaPropertyType.MAP || validType == ToscaPropertyType.LIST) {
             return gson.toJson(value);
         }
         return value.toString();

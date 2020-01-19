@@ -20,30 +20,28 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -64,17 +62,28 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum.RESOURCE;
 
 /**
  * This Servlet serves external users for retrieving component metadata.
@@ -88,41 +97,33 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 // for retrieving component metadata.")
 @OpenAPIDefinition(info = @Info(title = "Asset Metadata External Servlet",
         description = "This Servlet serves external users for retrieving component metadata."))
-@Singleton
+@Controller
 public class AssetsDataServlet extends AbstractValidationsServlet {
 
     @Context
     private HttpServletRequest request;
 
     private static final Logger log = Logger.getLogger(AssetsDataServlet.class);
+
     private final ElementBusinessLogic elementBusinessLogic;
     private final AssetMetadataConverter assetMetadataConverter;
+    private final ServiceBusinessLogic serviceBusinessLogic;
+    private final ResourceBusinessLogic resourceBusinessLogic;
     private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
 
     @Inject
     public AssetsDataServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
             ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
             ElementBusinessLogic elementBusinessLogic, AssetMetadataConverter assetMetadataConverter,
-            ComponentBusinessLogicProvider componentBusinessLogicProvider) {
+            ComponentBusinessLogicProvider componentBusinessLogicProvider, ServiceBusinessLogic serviceBusinessLogic, ResourceBusinessLogic resourceBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.elementBusinessLogic = elementBusinessLogic;
         this.assetMetadataConverter = assetMetadataConverter;
+        this.serviceBusinessLogic = serviceBusinessLogic;
+        this.resourceBusinessLogic = resourceBusinessLogic;
         this.componentBusinessLogicProvider = componentBusinessLogicProvider;
     }
 
-    /**
-     *
-     * @param requestId
-     * @param instanceIdHeader
-     * @param accept
-     * @param authorization
-     * @param assetType
-     * @param category
-     * @param subCategory
-     * @param distributionStatus
-     * @param resourceType
-     * @return
-     */
     @GET
     @Path("/{assetType}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -139,6 +140,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                     description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500",
                     description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+    @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getAssetListExternal(
             @Parameter(description = "X-ECOMP-RequestID header",
                     required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -157,19 +159,17 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             @Parameter(description = "The filter key (resourceType only for resources)",
                     required = false) @QueryParam("distributionStatus") String distributionStatus,
             @Parameter(description = "The filter key (resourceType only for resources)",
-                    required = false) @QueryParam("resourceType") String resourceType) {
+                    required = false) @QueryParam("resourceType") String resourceType) throws IOException {
 
         Response response = null;
         ResponseFormat responseFormat = null;
         String query = request.getQueryString();
-        String requestURI =
-                request.getRequestURI().endsWith("/") ? removeDuplicateSlashSeparator(request.getRequestURI())
-                        : request.getRequestURI();
+        String requestURI = request.getRequestURI().endsWith("/")?
+                removeDuplicateSlashSeparator(request.getRequestURI()): request.getRequestURI();
         String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
 
-        AuditingActionEnum auditingActionEnum =
-                query == null ? AuditingActionEnum.GET_ASSET_LIST : AuditingActionEnum.GET_FILTERED_ASSET_LIST;
+        AuditingActionEnum auditingActionEnum = query == null ? AuditingActionEnum.GET_ASSET_LIST : AuditingActionEnum.GET_FILTERED_ASSET_LIST;
 
         String resourceUrl = query == null ? requestURI : requestURI + "?" + query;
         DistributionData distributionData = new DistributionData(instanceIdHeader, resourceUrl);
@@ -178,8 +178,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
             log.debug("getAssetList: Missing X-ECOMP-InstanceID header");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-            getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData,
-                    requestId);
+            getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
             return buildErrorResponse(responseFormat);
         }
 
@@ -200,37 +199,31 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 if (resourceTypeEnum == null) {
                     log.debug("getAssetList: Asset Fetching Failed. Invalid resource type was received");
                     responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
-                    getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData,
-                            requestId);
+                    getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                     return buildErrorResponse(responseFormat);
                 }
                 filters.put(FilterKeyEnum.RESOURCE_TYPE, resourceTypeEnum.name());
             }
 
-            Either<List<? extends Component>, ResponseFormat> assetTypeData =
-                    elementBusinessLogic.getFilteredCatalogComponents(assetType, filters, query);
+            Either<List<? extends Component>, ResponseFormat> assetTypeData = elementBusinessLogic.getFilteredCatalogComponents(assetType, filters, query);
 
             if (assetTypeData.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
                 responseFormat = assetTypeData.right().value();
-                getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData,
-                        requestId);
+                getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                 return buildErrorResponse(responseFormat);
             } else {
                 log.debug("getAssetList: Asset Fetching Success");
-                Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata =
-                        assetMetadataConverter.convertToAssetMetadata(assetTypeData.left().value(), requestURI, false);
+                Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter.convertToAssetMetadata(assetTypeData.left().value(), requestURI, false);
                 if (resMetadata.isRight()) {
                     log.debug("getAssetList: Asset conversion Failed");
                     responseFormat = resMetadata.right().value();
-                    getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData,
-                            requestId);
+                    getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                     return buildErrorResponse(responseFormat);
                 }
                 Object result = RepresentationUtils.toRepresentation(resMetadata.left().value());
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData,
-                        requestId);
+                getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
 
                 response = buildOkResponse(responseFormat, result);
                 return response;
@@ -238,7 +231,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Fetch filtered list of assets");
             log.debug("getAssetList: Fetch list of assets failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
@@ -271,6 +264,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                     description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500",
                     description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+    @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getAssetSpecificMetadataByUuidExternal(
             @Parameter(description = "X-ECOMP-RequestID header",
                     required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -283,7 +277,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             @Parameter(description = "The requested asset type",schema = @Schema(allowableValues = {"resources", "services"}),
                     required = true) @PathParam("assetType") final String assetType,
             @Parameter(description = "The requested asset uuid",
-                    required = true) @PathParam("uuid") final String uuid) {
+                    required = true) @PathParam("uuid") final String uuid) throws IOException {
 
         Response response = null;
         ResponseFormat responseFormat = null;
@@ -305,8 +299,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         }
 
         try {
-            Either<List<? extends Component>, ResponseFormat> assetTypeData =
-                    elementBusinessLogic.getCatalogComponentsByUuidAndAssetType(assetType, uuid);
+
+            Either<List<? extends Component>, ResponseFormat> assetTypeData = elementBusinessLogic.getCatalogComponentsByUuidAndAssetType(assetType, uuid);
 
             if (assetTypeData.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
@@ -318,8 +312,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             }
             resourceCommonInfo.setResourceName(assetTypeData.left().value().iterator().next().getName());
             log.debug("getAssetList: Asset Fetching Success");
-            Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata =
-                    assetMetadataConverter.convertToAssetMetadata(assetTypeData.left().value(), requestURI, true);
+            Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter.convertToAssetMetadata(assetTypeData.left().value(), requestURI, true);
             if (resMetadata.isRight()) {
                 log.debug("getAssetList: Asset conversion Failed");
                 responseFormat = resMetadata.right().value();
@@ -339,7 +332,16 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Fetch filtered list of assets");
             log.debug("getAssetList: Fetch list of assets failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
+        }
+    }
+
+    private ComponentBusinessLogic getComponentBLByType(ComponentTypeEnum componentTypeEnum) {
+        if(componentTypeEnum.equals(RESOURCE)) {
+            return resourceBusinessLogic;
+        } else {
+            // Implementation is the same for any ComponentBusinessLogic
+            return serviceBusinessLogic;
         }
     }
 
@@ -353,6 +355,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
      * @param uuid
      * @return
      */
+
     @GET
     @Path("/{assetType}/{uuid}/toscaModel")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -373,6 +376,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                     description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500",
                     description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+    @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getToscaModelExternal(
             @Parameter(description = "X-ECOMP-RequestID header",
                     required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -406,35 +410,26 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         }
 
         try {
-            ComponentBusinessLogic componentBL = componentBusinessLogicProvider.getInstance(componentType);
-
-
-            Either<ImmutablePair<String, byte[]>, ResponseFormat> csarArtifact =
-                    componentBL.getToscaModelByComponentUuid(componentType, uuid, resourceCommonInfo);
-            if (csarArtifact.isRight()) {
-                responseFormat = csarArtifact.right().value();
-                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
-                        resourceCommonInfo, requestId, uuid);
-                response = buildErrorResponse(responseFormat);
-            } else {
-                byte[] value = csarArtifact.left().value().getRight();
-                InputStream is = new ByteArrayInputStream(value);
-                String contenetMD5 = GeneralUtility.calculateMD5Base64EncodedByByteArray(value);
-                Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.CONTENT_DISPOSITION_HEADER,
-                        getContentDispositionValue(csarArtifact.left().value().getLeft()));
-                headers.put(Constants.MD5_HEADER, contenetMD5);
-                responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
-                        resourceCommonInfo, requestId, uuid);
-                response = buildOkResponse(responseFormat, is, headers);
-            }
+            ComponentBusinessLogic componentBusinessLogic = getComponentBLByType(componentType);
+            ImmutablePair<String, byte[]> csarArtifact = componentBusinessLogic.getToscaModelByComponentUuid(componentType, uuid, resourceCommonInfo);
+            byte[] value = csarArtifact.getRight();
+            InputStream is = new ByteArrayInputStream(value);
+            String contenetMD5 = GeneralUtility.calculateMD5Base64EncodedByByteArray(value);
+            Map<String, String> headers = new HashMap<>();
+            headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(csarArtifact.getLeft()));
+            headers.put(Constants.MD5_HEADER, contenetMD5);
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                    resourceCommonInfo, requestId, uuid);
+            response = buildOkResponse(responseFormat, is, headers);
             return response;
 
-        } catch (Exception e) {
+        } catch (ComponentException e) {
+            responseFormat = e.getResponseFormat();
+            getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
+                    resourceCommonInfo, requestId, uuid);
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get asset tosca model");
-            log.debug("falied to get asset tosca model", e);
-            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
+            log.debug("failed to get asset tosca model", e);
             response = buildErrorResponse(responseFormat);
             getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, distributionData,
                     resourceCommonInfo, requestId, uuid);
@@ -444,8 +439,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 
 
     private String removeDuplicateSlashSeparator(String requestUri) {
-        return requestUri.substring(0, requestUri.length() - 1);
+        return requestUri.substring(0, requestUri.length()-1);
     }
-
-
 }

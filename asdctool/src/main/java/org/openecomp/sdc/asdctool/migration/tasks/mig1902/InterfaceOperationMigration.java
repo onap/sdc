@@ -17,10 +17,6 @@
 package org.openecomp.sdc.asdctool.migration.tasks.mig1902;
 
 import fj.data.Either;
-import java.math.BigInteger;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
@@ -44,6 +40,11 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigInteger;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 @org.springframework.stereotype.Component
 public class InterfaceOperationMigration implements Migration {

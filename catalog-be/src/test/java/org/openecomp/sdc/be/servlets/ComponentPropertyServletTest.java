@@ -20,15 +20,7 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-import com.google.gson.Gson;
 import fj.data.Either;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Response;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,6 +39,14 @@ import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Response;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentPropertyServletTest extends JerseySpringBaseTest {
@@ -71,6 +71,11 @@ public class ComponentPropertyServletTest extends JerseySpringBaseTest {
     private static final String VALID_PROPERTY_NAME = "valid_name_123";
     private static final String INVALID_PROPERTY_NAME = "invalid_name_$.&";
     private static final String STRING_TYPE = "string";
+
+    @Before
+    public void initClass() {
+        initMockitoStubbings();
+    }
 
     @Test
     public void testCreatePropertyOnService_success() {
@@ -103,6 +108,14 @@ public class ComponentPropertyServletTest extends JerseySpringBaseTest {
                 componentPropertyServlet.createPropertyInService(SERVICE_ID, getInvalidProperty(), request, USER_ID);
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST_400.getStatusCode(), propertyInService.getStatus());
+    }
+
+    private static void initMockitoStubbings() {
+        when(request.getSession()).thenReturn(session);
+        when(session.getServletContext()).thenReturn(context);
+        when(context.getAttribute(eq(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))).thenReturn(wrapper);
+        when(wrapper.getWebAppContext(any())).thenReturn(webAppContext);
+        when(webAppContext.getBean(eq(ComponentsUtils.class))).thenReturn(componentsUtils);
     }
 
     private String getValidProperty() {

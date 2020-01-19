@@ -19,12 +19,13 @@
 
 package org.openecomp.sdc.be.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.onap.sdc.tosca.parser.utils.YamlToObjectConverter;
 import org.openecomp.sdc.be.config.exception.LoadConfigurationException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Singleton that loads and stores the Non Mano configuration
@@ -47,7 +48,7 @@ public class NonManoConfigurationManager {
         }
         final String data;
         try {
-            data = IOUtils.toString(configYamlAsStream, StandardCharsets.UTF_8);
+            data = IOUtils.toString(configYamlAsStream, String.valueOf(StandardCharsets.UTF_8));
         } catch (final IOException e) {
             throw new LoadConfigurationException("Could not parse non-mano configuration file 'config/nonManoConfig.yaml' to string", e);
         }

@@ -27,6 +27,7 @@ import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
