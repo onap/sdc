@@ -38,6 +38,10 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
+import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
@@ -86,6 +90,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -93,6 +98,10 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LogLevel;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
@@ -106,20 +115,20 @@ import java.util.stream.Collectors;
 @org.springframework.stereotype.Component("node-template-operation")
 public class NodeTemplateOperation extends BaseOperation {
     private static final String FAILED_TO_FETCH_CONTAINER_VERTEX_ERROR = "Failed to fetch container vertex {} error {}";
-	private static final String FAILED_TO_UPDATE_TOPOLOGY_TEMPLATE_WITH_NEW_COMPONENT_INSTANCE = "Failed to update topology template {} with new component instance {}. ";
-	private static final String ARTIFACT_PLACEHOLDER_TYPE = "type";
+    private static final String FAILED_TO_UPDATE_TOPOLOGY_TEMPLATE_WITH_NEW_COMPONENT_INSTANCE = "Failed to update topology template {} with new component instance {}. ";
+    private static final String ARTIFACT_PLACEHOLDER_TYPE = "type";
     private static final String ARTIFACT_PLACEHOLDER_DISPLAY_NAME = "displayName";
     private static final Object ARTIFACT_PLACEHOLDER_DESCRIPTION = "description";
-    public static final String HEAT_ENV_NAME = "heatEnv";
-    public static final String HEAT_VF_ENV_NAME = "VfHeatEnv";
-    public static final String HEAT_ENV_SUFFIX = "env";
+    static final String HEAT_ENV_NAME = "heatEnv";
+    static final String HEAT_VF_ENV_NAME = "VfHeatEnv";
+    static final String HEAT_ENV_SUFFIX = "env";
     private static Integer defaultHeatTimeout;
     public static final Integer NON_HEAT_TIMEOUT = 0;
 
     private static final Logger log = Logger.getLogger(NodeTemplateOperation.class.getName());
-
+    public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(NodeTemplateOperation.class.getName());
     public NodeTemplateOperation() {
-        defaultHeatTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getDefaultHeatArtifactTimeoutMinutes();
+        defaultHeatTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout().getDefaultMinutes();
         if ((defaultHeatTimeout == null) || (defaultHeatTimeout < 1)) {
             defaultHeatTimeout = 60;
         }
@@ -129,8 +138,8 @@ public class NodeTemplateOperation extends BaseOperation {
         return defaultHeatTimeout;
     }
 
-    public Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addComponentInstanceToTopologyTemplate(TopologyTemplate container, ToscaElement originToscaElement, String instanceNumberSuffix, ComponentInstance componentInstance,
-            boolean allowDeleted, User user) {
+    Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addComponentInstanceToTopologyTemplate(TopologyTemplate container, ToscaElement originToscaElement, String instanceNumberSuffix, ComponentInstance componentInstance,
+                                                                                                                          boolean allowDeleted, User user) {
 
         Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> result = null;
         Either<TopologyTemplate, StorageOperationStatus> addComponentInstanceRes = null;
@@ -169,7 +178,7 @@ public class NodeTemplateOperation extends BaseOperation {
             }
             if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy) {
                 TopologyTemplate updatedContainer = addComponentInstanceRes.left().value();
-                result = addServerCapAndReqToProxyServerInstance(updatedContainer, componentInstance, componentInstanceData);
+                result = addCapAndReqToProxyServiceInstance(updatedContainer, componentInstance, componentInstanceData);
                 if(result.isRight()) {
                     return result;
                 }
@@ -197,12 +206,8 @@ public class NodeTemplateOperation extends BaseOperation {
         return result;
     }
 
-    private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addServerCapAndReqToProxyServerInstance(TopologyTemplate updatedContainer, ComponentInstance componentInstance,
-
-            ComponentInstanceDataDefinition componentInstanceData) {
-
-        Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> result;
-
+    private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addCapAndReqToProxyServiceInstance(TopologyTemplate updatedContainer, ComponentInstance componentInstance,
+                                                                                                                       ComponentInstanceDataDefinition componentInstanceData) {
         Map<String, MapListCapabilityDataDefinition> calcCap = updatedContainer.getCalculatedCapabilities();
         Map<String, MapListRequirementDataDefinition> calcReg = updatedContainer.getCalculatedRequirements();
         Map<String, MapCapabilityProperty> calcCapProp = updatedContainer.getCalculatedCapabilitiesProperties();
@@ -223,12 +228,10 @@ public class NodeTemplateOperation extends BaseOperation {
             Map<String, ListCapabilityDataDefinition> serverCap = additionalCap.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, en -> new ListCapabilityDataDefinition(en.getValue().stream().map(CapabilityDataDefinition::new).collect(Collectors.toList()))));
 
-            serverCap.entrySet().forEach(entryPerType ->
-                entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
-                    cap.addToPath(componentInstance.getUniqueId());
-                    allCalculatedCap.add(entryPerType.getKey(), cap);
-                }));
-
+            serverCap.entrySet().forEach(entryPerType -> entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
+                cap.addToPath(componentInstance.getUniqueId());
+                allCalculatedCap.add(entryPerType.getKey(), cap);
+            }));
 
             addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES, allCalculatedCap, componentInstance.getUniqueId());
 
@@ -244,34 +247,25 @@ public class NodeTemplateOperation extends BaseOperation {
             additionalCap.forEach(new BiConsumer<String, List<CapabilityDefinition>>() {
                 @Override
                 public void accept(String s, List<CapabilityDefinition> caps) {
-
                     if (caps != null && !caps.isEmpty()) {
-
-                        MapPropertiesDataDefinition dataToCreate = new MapPropertiesDataDefinition();
-
+                        MapPropertiesDataDefinition dataToCreate;
                         for (CapabilityDefinition cap : caps) {
+                            dataToCreate = new MapPropertiesDataDefinition();
                             List<ComponentInstanceProperty> capPrps = cap.getProperties();
                             if (capPrps != null) {
-
                                 for (ComponentInstanceProperty cip : capPrps) {
                                     dataToCreate.put(cip.getName(), new PropertyDataDefinition(cip));
                                 }
-
                                 StringBuilder sb = new StringBuilder(componentInstance.getUniqueId());
                                 sb.append(ModelConverter.CAP_PROP_DELIM);
-
                                 sb.append(cap.getOwnerId());
-
                                 sb.append(ModelConverter.CAP_PROP_DELIM).append(s).append(ModelConverter.CAP_PROP_DELIM).append(cap.getName());
                                 allCalculatedCapProp.put(sb.toString(), dataToCreate);
                             }
                         }
-
                     }
-
                 }
             });
-
             addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, allCalculatedCapProp, componentInstance.getUniqueId());
         }
 
@@ -288,12 +282,10 @@ public class NodeTemplateOperation extends BaseOperation {
             Map<String, ListRequirementDataDefinition> serverReq = additionalReq.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, en -> new ListRequirementDataDefinition(en.getValue().stream().map(RequirementDataDefinition::new).collect(Collectors.toList()))));
 
-            serverReq.entrySet().forEach(entryPerType ->
-                entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
-                    cap.addToPath(componentInstance.getUniqueId());
-                    allCalculatedReq.add(entryPerType.getKey(), cap);
-                }));
-
+            serverReq.entrySet().forEach(entryPerType -> entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
+                cap.addToPath(componentInstance.getUniqueId());
+                allCalculatedReq.add(entryPerType.getKey(), cap);
+            }));
 
             addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS, allCalculatedReq, componentInstance.getUniqueId());
 
@@ -302,10 +294,9 @@ public class NodeTemplateOperation extends BaseOperation {
         Either<ToscaElement, StorageOperationStatus> updatedComponentInstanceRes = topologyTemplateOperation.getToscaElement(updatedContainer.getUniqueId());
         if (updatedComponentInstanceRes.isRight()) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch updated topology template {} with new component instance {}. ", updatedContainer.getName(), componentInstance.getName());
-            result = Either.right(updatedComponentInstanceRes.right().value());
+            Either.right(updatedComponentInstanceRes.right().value());
         }
-        result = Either.left(new ImmutablePair<>((TopologyTemplate) updatedComponentInstanceRes.left().value(), componentInstanceData.getUniqueId()));
-        return result;
+        return Either.left(new ImmutablePair<>((TopologyTemplate) updatedComponentInstanceRes.left().value(), componentInstanceData.getUniqueId()));
     }
 
     private Either<String, StorageOperationStatus> buildValidateInstanceName(TopologyTemplate container, ToscaElement originToscaElement, ComponentInstance componentInstance, String instanceNumberSuffix) {
@@ -421,7 +412,7 @@ public class NodeTemplateOperation extends BaseOperation {
             result = Either.right(StorageOperationStatus.INVALID_ID);
         }
         Boolean isArchived = originToscaElement.isArchived();
-        if ( isArchived != null && isArchived ){
+        if (isArchived != null && isArchived) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create instance {}. Origin {} component is archived . ", componentInstance.getName(), originToscaElement.getName());
             result = Either.right(StorageOperationStatus.COMPONENT_IS_ARCHIVED);
         }
@@ -437,7 +428,7 @@ public class NodeTemplateOperation extends BaseOperation {
             }
         }
         if (result == null) {
-            Either<GraphVertex, StorageOperationStatus> addToscaDataRes = addComponentInstanceToscaDataToContainerComponent(originToscaElement, componentInstance, updateElement.left().value(), user);
+            Either<GraphVertex, StorageOperationStatus> addToscaDataRes = addComponentInstanceToscaDataToContainerComponent(originToscaElement, componentInstance, updateElement.left().value());
             if (addToscaDataRes.isRight()) {
                 result = Either.right(addToscaDataRes.right().value());
             }
@@ -727,7 +718,7 @@ public class NodeTemplateOperation extends BaseOperation {
         return StorageOperationStatus.OK;
     }
 
-    protected Either<GraphVertex, StorageOperationStatus> addComponentInstanceToscaDataToContainerComponent(ToscaElement originToscaElement, ComponentInstanceDataDefinition componentInstance, GraphVertex updatedContainerVertex, User user) {
+    protected Either<GraphVertex, StorageOperationStatus> addComponentInstanceToscaDataToContainerComponent(ToscaElement originToscaElement, ComponentInstanceDataDefinition componentInstance, GraphVertex updatedContainerVertex) {
 
         Either<GraphVertex, StorageOperationStatus> result;
         StorageOperationStatus status;
@@ -766,9 +757,9 @@ public class NodeTemplateOperation extends BaseOperation {
         return status;
     }
 
-    private MapPropertiesDataDefinition turnInputsIntoProperties(MapPropertiesDataDefinition instInput){
+    private MapPropertiesDataDefinition turnInputsIntoProperties(MapPropertiesDataDefinition instInput) {
         if (instInput.getMapToscaDataDefinition() != null) {
-            for (PropertyDataDefinition currProp : instInput.getMapToscaDataDefinition().values()){
+            for (PropertyDataDefinition currProp : instInput.getMapToscaDataDefinition().values()) {
                 String temp = currProp.getValue();
                 currProp.setValue(currProp.getDefaultValue());
                 currProp.setDefaultValue(temp);
@@ -996,7 +987,7 @@ public class NodeTemplateOperation extends BaseOperation {
         return null;
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private ArtifactDataDefinition createArtifactPlaceHolderInfo(ArtifactDataDefinition artifactHeat, String componentId, User user, String heatEnvType) {
         Map<String, Object> deploymentResourceArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getDeploymentResourceInstanceArtifacts();
         if (deploymentResourceArtifacts == null) {
@@ -1064,7 +1055,6 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     /**
-     *
      * @param originNodeType
      * @param componentInstance
      * @param updatedContainerVertex
@@ -1111,13 +1101,13 @@ public class NodeTemplateOperation extends BaseOperation {
             }
         }
         MapListRequirementDataDefinition fullCalculatedReq = new MapListRequirementDataDefinition();
-        addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, VertexTypeEnum.FULLFILLED_REQUIREMENTS, fullCalculatedReq, componentInstance.getUniqueId());
+        status = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.FULLFILLED_REQUIREMENTS, VertexTypeEnum.FULLFILLED_REQUIREMENTS, fullCalculatedReq, componentInstance.getUniqueId());
         return StorageOperationStatus.OK;
 
     }
 
     public static String createCapPropertyKey(String key, String instanceId) {
-        StringBuilder sb = new StringBuilder(instanceId);
+        StringBuffer sb = new StringBuffer(instanceId);
         sb.append(ModelConverter.CAP_PROP_DELIM).append(instanceId).append(ModelConverter.CAP_PROP_DELIM).append(key);
         return sb.toString();
     }
@@ -1230,7 +1220,7 @@ public class NodeTemplateOperation extends BaseOperation {
     private Boolean isUniqueInstanceName(TopologyTemplate container, String instanceName) {
         Boolean isUniqueName = true;
         try {
-            isUniqueName = !container.getComponentInstances().values().stream().filter(ci -> ci.getName() != null && ci.getName().equals(instanceName)).findAny().isPresent();
+            isUniqueName = !container.getComponentInstances().values().stream().anyMatch(ci -> ci.getName() != null && ci.getName().equals(instanceName));
 
         } catch (Exception e) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during fetching component instance with name {} from component container {}. {} ", instanceName, container.getName(), e.getMessage());
@@ -1242,18 +1232,18 @@ public class NodeTemplateOperation extends BaseOperation {
         return instanceName + " " + (instanceSuffixNumber == null ? 0 : instanceSuffixNumber);
     }
 
-    public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String componentId, RequirementCapabilityRelDef relation) {
+    public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(Component component, String componentId, RequirementCapabilityRelDef relation) {
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         relations.add(relation);
-        Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> associateResourceInstances = associateResourceInstances(componentId, relations);
+        Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> associateResourceInstances = associateResourceInstances(component, componentId, relations);
         if (associateResourceInstances.isRight()) {
             return Either.right(associateResourceInstances.right().value());
         }
         return Either.left(associateResourceInstances.left().value().get(0));
     }
 
-    @SuppressWarnings({ "unchecked" })
-    public <T extends ToscaDataDefinition> Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> associateResourceInstances(String componentId, List<RequirementCapabilityRelDef> relations) {
+    @SuppressWarnings({"unchecked"})
+    public <T extends ToscaDataDefinition> Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> associateResourceInstances(Component component, String componentId, List<RequirementCapabilityRelDef> relations) {
 
         Either<GraphVertex, JanusGraphOperationStatus> containerVEither = janusGraphDao
             .getVertexById(componentId, JsonParseFlagEnum.ParseAll);
@@ -1302,8 +1292,8 @@ public class NodeTemplateOperation extends BaseOperation {
             if (relationships == null || relationships.isEmpty()) {
                 BeEcompErrorManager.getInstance().logBeFailedAddingResourceInstanceError("AssociateResourceInstances - missing relationship", fromNode, componentId);
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "No requirement definition sent in order to set the relation between {} to {}", fromNode, toNode);
-                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
-                    JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
+                loggerSupportability.log(LogLevel.INFO,LoggerSupportabilityActions.CREATE_RELATION.getName(),"componentId: "+componentId+" No requirement definition sent in order to set the relation between: "+fromNode+" to: "+toNode);
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
             }
 
             for (CapabilityRequirementRelationship immutablePair : relationships) {
@@ -1315,6 +1305,8 @@ public class NodeTemplateOperation extends BaseOperation {
                 if (associateRes.isRight()) {
                     status = associateRes.right().value();
                     BeEcompErrorManager.getInstance().logBeFailedAddingResourceInstanceError("AssociateResourceInstances - missing relationship", fromNode, componentId);
+                    loggerSupportability.log(LogLevel.INFO,LoggerSupportabilityActions.CREATE_RELATIONS.name(),
+                        StatusCode.ERROR,"missing relationship: "+fromNode,"ComopnentId: "+componentId);
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to associate resource instance {} to resource instance {}. status is {}", fromNode, toNode, status);
                     return Either.right(status);
                 }
@@ -1338,10 +1330,12 @@ public class NodeTemplateOperation extends BaseOperation {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "update customization UUID for from CI {} and to CI {}", relation.getFromNode(), relation.getToNode());
                 status = updateCustomizationUUID(relation.getFromNode(), compositionDataDefinition);
                 if (status != StorageOperationStatus.OK) {
+                    loggerSupportability.log(LogLevel.INFO,LoggerSupportabilityActions.CREATE_RELATIONS.name(),StatusCode.ERROR,"ERROR while update customization UUID for from CI "+relation.getFromNode()+" and to CI: "+relation.getToNode());
                     return Either.right(status);
                 }
                 status = updateCustomizationUUID(relation.getToNode(), compositionDataDefinition);
                 if (status != StorageOperationStatus.OK) {
+                    loggerSupportability.log(LogLevel.INFO,LoggerSupportabilityActions.CREATE_RELATIONS.name(),StatusCode.ERROR,"ERROR while update customization UUID for from CI "+relation.getFromNode()+" and to CI: "+relation.getToNode());
                     return Either.right(status);
                 }
             }
@@ -1349,18 +1343,16 @@ public class NodeTemplateOperation extends BaseOperation {
             reqCapRelDef.setRelationships(relationshipsResult);
             relationsList.add(reqCapRelDef);
         }
-        // update metadata of container and composition json
         status = updateAllAndCalculatedCapReqOnGraph(componentId, containerV, capResult, capFullResult, reqResult, reqFullResult);
         if (status != StorageOperationStatus.OK) {
             return Either.right(status);
         }
-
         return Either.left(relationsList);
     }
 
     private StorageOperationStatus updateAllAndCalculatedCapReqOnGraph(String componentId, GraphVertex containerV, Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capResult,
-            Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult, Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult,
-            Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult) {
+                                                                       Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult, Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult,
+                                                                       Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult) {
         containerV.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
         Either<GraphVertex, JanusGraphOperationStatus> updateElement = janusGraphDao.updateVertex(containerV);
         if (updateElement.isRight()) {
@@ -1403,7 +1395,7 @@ public class NodeTemplateOperation extends BaseOperation {
         return StorageOperationStatus.OK;
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public Either<RequirementCapabilityRelDef, StorageOperationStatus> dissociateResourceInstances(String componentId, RequirementCapabilityRelDef requirementDef) {
         if (requirementDef.getRelationships() == null) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "No relation pair in request [ {} ]", requirementDef);
@@ -1526,7 +1518,7 @@ public class NodeTemplateOperation extends BaseOperation {
      * @return
      */
     public Either<RequirementDataDefinition, StorageOperationStatus> getFulfilledRequirementByRelation(String componentId, String instanceId, RequirementCapabilityRelDef foundRelation,
-            BiPredicate<RelationshipInfo, RequirementDataDefinition> predicate) {
+                                                                                                       BiPredicate<RelationshipInfo, RequirementDataDefinition> predicate) {
 
         Either<RequirementDataDefinition, StorageOperationStatus> result = null;
         Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult = null;
@@ -1575,7 +1567,7 @@ public class NodeTemplateOperation extends BaseOperation {
      * @return
      */
     public Either<CapabilityDataDefinition, StorageOperationStatus> getFulfilledCapabilityByRelation(String componentId, String instanceId, RequirementCapabilityRelDef foundRelation,
-            BiPredicate<RelationshipInfo, CapabilityDataDefinition> predicate) {
+                                                                                                     BiPredicate<RelationshipInfo, CapabilityDataDefinition> predicate) {
 
         Either<CapabilityDataDefinition, StorageOperationStatus> result = null;
         Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult = null;
@@ -1616,7 +1608,7 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     private StorageOperationStatus updateCalculatedRequirementsAfterDeleteRelation(Map<String, MapListRequirementDataDefinition> calculatedRequirement, Map<String, MapListRequirementDataDefinition> fullFilledRequirement, String fromResInstanceUid,
-            RelationshipInstDataDefinition relation, CapabilityRequirementRelationship relationship) {
+                                                                                   RelationshipInstDataDefinition relation, CapabilityRequirementRelationship relationship) {
         StorageOperationStatus status;
         String hereIsTheKey = null;
         MapListRequirementDataDefinition reqByInstance = calculatedRequirement.get(fromResInstanceUid);
@@ -1651,7 +1643,7 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     private StorageOperationStatus updateCalculatedCapabiltyAfterDeleteRelation(Map<String, MapListCapabilityDataDefinition> calculatedCapability, Map<String, MapListCapabilityDataDefinition> fullFilledCapability, String toResInstanceUid,
-            RelationshipInstDataDefinition relation, CapabilityRequirementRelationship relationship) {
+                                                                                RelationshipInstDataDefinition relation, CapabilityRequirementRelationship relationship) {
         StorageOperationStatus status;
         String hereIsTheKey = null;
         MapListCapabilityDataDefinition capByInstance = calculatedCapability.get(toResInstanceUid);
@@ -1686,7 +1678,7 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     private StorageOperationStatus moveFromFullFilledCapabilty(Map<String, MapListCapabilityDataDefinition> calculatedCapability, Map<String, MapListCapabilityDataDefinition> fullFilledCapability, String toResInstanceUid,
-            RelationshipInstDataDefinition relation, String hereIsTheKey, CapabilityRequirementRelationship relationship) {
+                                                               RelationshipInstDataDefinition relation, String hereIsTheKey, CapabilityRequirementRelationship relationship) {
         MapListCapabilityDataDefinition capByInstance = fullFilledCapability.get(toResInstanceUid);
         if (capByInstance == null) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "No capability in fulfilled list for instance {} ", toResInstanceUid);
@@ -1735,7 +1727,7 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     private StorageOperationStatus moveFromFullFilledRequirement(Map<String, MapListRequirementDataDefinition> calculatedRequirement, Map<String, MapListRequirementDataDefinition> fullFilledRequirement, String fromResInstanceUid,
-            RelationshipInstDataDefinition relation, String hereIsTheKey, CapabilityRequirementRelationship relationship) {
+                                                                 RelationshipInstDataDefinition relation, String hereIsTheKey, CapabilityRequirementRelationship relationship) {
         MapListRequirementDataDefinition reqByInstance = fullFilledRequirement.get(fromResInstanceUid);
         if (reqByInstance == null) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "No requirement in fullfilled list for instance {} ", fromResInstanceUid);
@@ -1798,8 +1790,8 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     public <T extends ToscaDataDefinition> Either<Map<JsonPresentationFields, T>, StorageOperationStatus> connectInstancesInContainer(String fromResInstanceUid, String toResInstanceUid, RelationshipInfo relationPair, boolean originUI,
-            Map<String, MapListCapabilityDataDefinition> calculatedCapabilty, Map<String, MapListRequirementDataDefinition> calculatedRequirement, Map<String, MapListCapabilityDataDefinition> fullfilledCapabilty,
-            Map<String, MapListRequirementDataDefinition> fullfilledRequirement, CompositionDataDefinition compositionDataDefinition, String containerId) {
+                                                                                                                                      Map<String, MapListCapabilityDataDefinition> calculatedCapabilty, Map<String, MapListRequirementDataDefinition> calculatedRequirement, Map<String, MapListCapabilityDataDefinition> fullfilledCapabilty,
+                                                                                                                                      Map<String, MapListRequirementDataDefinition> fullfilledRequirement, CompositionDataDefinition compositionDataDefinition, String containerId) {
         String requirement = relationPair.getRequirement();
         Map<String, ComponentInstanceDataDefinition> componentInstances = compositionDataDefinition.getComponentInstances();
 
@@ -1856,8 +1848,8 @@ public class NodeTemplateOperation extends BaseOperation {
 
     @SuppressWarnings("unchecked")
     private <T extends ToscaDataDefinition> Either<Map<JsonPresentationFields, T>, StorageOperationStatus> connectRequirementVsCapability(ComponentInstanceDataDefinition fromResInstance, ComponentInstanceDataDefinition toResInstance,
-            RelationshipInfo relationPair, boolean originUI, Map<String, MapListCapabilityDataDefinition> calculatedCapabilty, Map<String, MapListRequirementDataDefinition> calculatedRequirement,
-            Map<String, MapListCapabilityDataDefinition> fullfilledCapabilty, Map<String, MapListRequirementDataDefinition> fullfilledRequirement, String containerId) {
+                                                                                                                                          RelationshipInfo relationPair, boolean originUI, Map<String, MapListCapabilityDataDefinition> calculatedCapabilty, Map<String, MapListRequirementDataDefinition> calculatedRequirement,
+                                                                                                                                          Map<String, MapListCapabilityDataDefinition> fullfilledCapabilty, Map<String, MapListRequirementDataDefinition> fullfilledRequirement, String containerId) {
         String type = relationPair.getRelationship().getType();
         // capability
 
@@ -2007,25 +1999,27 @@ public class NodeTemplateOperation extends BaseOperation {
         return relationshipInstData;
     }
 
-    public <T extends Component> StorageOperationStatus associateComponentInstancesToComponent(Component containerComponent, Map<ComponentInstance, T> componentInstanceTMap, GraphVertex containerVertex, boolean allowDeleted) {
+    public <T extends Component> Map<String, ComponentInstanceDataDefinition> associateComponentInstancesToComponent(Component containerComponent, Map<ComponentInstance, T> componentInstanceTMap, GraphVertex containerVertex, boolean allowDeleted, boolean isUpdateCsar) {
 
-        StorageOperationStatus result = null;
         String containerId = containerComponent.getUniqueId();
-        Map<String, ComponentInstanceDataDefinition> instancesJsonData = null;
+        Map<String, ComponentInstanceDataDefinition> instancesJsonData;
         Either<GraphVertex, JanusGraphOperationStatus> updateElement = null;
         if (!validateInstanceNames(componentInstanceTMap)) {
-            result = StorageOperationStatus.INCONSISTENCY;
+            throw new StorageException(StorageOperationStatus.INCONSISTENCY);
         }
-        if (result == null && !validateInstanceNames(componentInstanceTMap)) {
-            result = StorageOperationStatus.INCONSISTENCY;
+        if (!validateInstanceNames(componentInstanceTMap)) {
+            throw new StorageException(StorageOperationStatus.INCONSISTENCY);
         }
-        if (result == null && !allowDeleted && !validateDeletedResources(componentInstanceTMap)) {
-            result = StorageOperationStatus.INCONSISTENCY;
+
+        if (!allowDeleted) {
+            if (!validateDeletedResources(componentInstanceTMap)) {
+                throw new StorageException(StorageOperationStatus.INCONSISTENCY);
+            }
         }
-        if (result == null) {
-            instancesJsonData = convertToComponentInstanceDataDefinition(componentInstanceTMap, containerId);
-        }
-        if (result == null && MapUtils.isNotEmpty(instancesJsonData)) {
+
+        instancesJsonData = convertToComponentInstanceDataDefinition(componentInstanceTMap, containerId, isUpdateCsar);
+
+        if (MapUtils.isNotEmpty(instancesJsonData)) {
             containerVertex.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
             Map<String, CompositionDataDefinition> compositions = new HashMap<>();
             CompositionDataDefinition composition = new CompositionDataDefinition();
@@ -2035,22 +2029,21 @@ public class NodeTemplateOperation extends BaseOperation {
             updateElement = janusGraphDao.updateVertex(containerVertex);
             if (updateElement.isRight()) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update topology template {} with new component instances. ", containerComponent.getName());
-                result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateElement.right().value());
+                throw new StorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateElement.right().value()));
             }
         }
-        if (result == null && updateElement != null) {
+        if (updateElement != null) {
             GraphVertex vertexC = updateElement.left().value();
-            instancesJsonData.entrySet().forEach(i ->createInstanceEdge(vertexC, i.getValue()));
-            result = StorageOperationStatus.OK;
+            instancesJsonData.entrySet().forEach(i -> createInstanceEdge(vertexC, i.getValue()));
         }
-        return result;
+        return instancesJsonData;
     }
 
-    private <T extends Component> Map<String, ComponentInstanceDataDefinition> convertToComponentInstanceDataDefinition(Map<ComponentInstance, T> componentInstanceTMap, String containerId) {
+    private <T extends Component> Map<String, ComponentInstanceDataDefinition> convertToComponentInstanceDataDefinition(Map<ComponentInstance, T> componentInstanceTMap, String containerId, boolean isUpdateCsar) {
 
         Map<String, ComponentInstanceDataDefinition> instances = new HashMap<>();
         for (Entry<ComponentInstance, T> entry : componentInstanceTMap.entrySet()) {
-            ComponentInstanceDataDefinition instance = buildComponentInstanceDataDefinition(entry.getKey(), containerId, null, true, ModelConverter.convertToToscaElement(entry.getValue()));
+            ComponentInstanceDataDefinition instance = buildComponentInstanceDataDefinition(entry.getKey(), containerId, null, !isUpdateCsar || entry.getKey().isCreatedFromCsar(), ModelConverter.convertToToscaElement(entry.getValue()));
             instances.put(instance.getUniqueId(), instance);
         }
         return instances;
@@ -2110,7 +2103,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public StorageOperationStatus generateCustomizationUUIDOnInstance(String componentId, String instanceId) {
         Either<GraphVertex, JanusGraphOperationStatus> metadataVertex = janusGraphDao
             .getVertexById(componentId, JsonParseFlagEnum.ParseAll);
@@ -2181,10 +2174,10 @@ public class NodeTemplateOperation extends BaseOperation {
         return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, property, pathKeys, JsonPresentationFields.NAME);
     }
 
-    public StorageOperationStatus updateComponentInstanceCapabilityProperty(Component containerComponent, String componentInstanceId, String capabilityUniqueId, ComponentInstanceProperty property) {
+    public StorageOperationStatus updateComponentInstanceCapabilityProperty(Component containerComponent, String componentInstanceId, String capabilityPropertyKey, ComponentInstanceProperty property) {
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add(componentInstanceId);
-        pathKeys.add(capabilityUniqueId);
+        pathKeys.add(capabilityPropertyKey);
         return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, property, pathKeys, JsonPresentationFields.NAME);
     }
 
@@ -2243,8 +2236,8 @@ public class NodeTemplateOperation extends BaseOperation {
                  DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
 
         if (result == StorageOperationStatus.OK && componentInstance.getIsProxy()) {
-                // create edge between container and service origin
-                result = createOrUpdateInstanceEdge(metadataVertex, EdgeLabelEnum.PROXY_OF, componentInstance.getSourceModelUid(), instUniqueId)
+            // create edge between container and service origin
+            result = createOrUpdateInstanceEdge(metadataVertex, EdgeLabelEnum.PROXY_OF, componentInstance.getSourceModelUid(), instUniqueId)
                         .either(v -> StorageOperationStatus.OK, DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
         }
         return result;
@@ -2252,7 +2245,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     public StorageOperationStatus createAllottedOfEdge(String componentId, String instanceId, String serviceUUID) {
         Either<GraphVertex, JanusGraphOperationStatus> vertexById = janusGraphDao.getVertexById(componentId);
-        if ( vertexById.isRight() ){
+        if (vertexById.isRight()) {
             log.debug("Failed to fetch component metadata vertex for id {} error {}", componentId, vertexById.right().value());
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(vertexById.right().value());
         }
@@ -2267,13 +2260,13 @@ public class NodeTemplateOperation extends BaseOperation {
 
         Either<List<GraphVertex>, JanusGraphOperationStatus> byCriteria = janusGraphDao
             .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props,hasNot, JsonParseFlagEnum.ParseMetadata );
-        if ( byCriteria.isRight() ){
+        if (byCriteria.isRight()) {
             log.debug("Failed to fetch vertex by criteria {} error {}", props, byCriteria.right().value());
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(byCriteria.right().value());
         }
         List<GraphVertex> vertecies = byCriteria.left().value();
         StorageOperationStatus result = StorageOperationStatus.OK;
-        if ( vertecies != null ){
+        if (vertecies != null) {
             GraphVertex serviceVertex = vertecies.get(0);
             //remove previous edges
 
@@ -2333,11 +2326,10 @@ public class NodeTemplateOperation extends BaseOperation {
         }
         try {
             String jsonArr = JsonParserUtils.toJson(property);
-            log.debug("Update INSTANCES edge property with value {} ", jsonArr );
-
+            log.debug("Update INSTANCES edge property with value {} ", jsonArr);
             edge.property(EdgePropertyEnum.INSTANCES.getProperty(), jsonArr);
         } catch (IOException e) {
-           log.debug("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e );
+            log.debug("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e);
            return Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
         }
         return Either.left(metadataVertex);
@@ -2361,7 +2353,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 String jsonArr = JsonParserUtils.toJson(property);
                 edge.property(EdgePropertyEnum.INSTANCES.getProperty(), jsonArr);
             } catch (IOException e) {
-               log.debug("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e );
+                log.debug("Failed to convert INSTANCES edge property to json for container {}", metadataVertex.getUniqueId(), e);
                return Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
             }
         }
@@ -2408,7 +2400,7 @@ public class NodeTemplateOperation extends BaseOperation {
             GraphVertex originVertex = vertexById.left().value();
             JanusGraphVertex vertex = originVertex.getVertex();
             Iterator<Edge> edges = vertex.edges(Direction.OUT, EdgeLabelEnum.ALLOTTED_OF.name());
-            while ( edges != null && edges.hasNext() ){
+            while (edges != null && edges.hasNext()) {
                 Edge edge = edges.next();
                 edge.remove();
             }

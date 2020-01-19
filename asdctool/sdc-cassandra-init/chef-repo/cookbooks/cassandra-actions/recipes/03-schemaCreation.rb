@@ -49,14 +49,6 @@ template "/tmp/sdctool/config/configuration.yaml" do
 end
 
 
-template "/tmp/sdctool/config/elasticsearch.yml" do
-  sensitive true
-  source "elasticsearch.yml.erb"
-  mode 0755
-  variables({
-     :elastic_ip => node['Nodes']['ES']
-  })
-end
 
 bash "executing-schema-creation" do
    code <<-EOH

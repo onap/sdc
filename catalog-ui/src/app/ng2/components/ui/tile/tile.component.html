@@ -23,15 +23,21 @@
 
     <div class='sdc-tile-content' data-tests-id="dashboard-Elements" (click)="tileClicked()">
         <div class='sdc-tile-content-icon'>
-            <div [ngClass]="[component.iconSprite, component.icon]" [ngClass]="{'sprite-resource-icons': component.isResource(), 'sprite-services-icons': component.isService()}"
+            <div [ngClass]="[component.iconSprite, component.icon]"
+                 [ngClass]="{'sprite-resource-icons': component.isResource(), 'sprite-services-icons': component.isService()}"
                  [attr.data-tests-id]="component.name"></div>
         </div>
 
         <div class='sdc-tile-content-info'>
-            <div class="sdc-tile-info-line title" [attr.data-tests-id]="component.name | resourceName" [tooltip]="component.name | resourceName" [tooltipDisabled]="!hasEllipsis">
-                <multiline-ellipsis className="w-sdc-tile-multiline-ellipsis" [lines]="3" (hasEllipsisChanged)="hasEllipsis = $event">{{component.name | resourceName}}</multiline-ellipsis>
+            <div class="sdc-tile-info-line title" [attr.data-tests-id]="component.name | resourceName"
+                 [tooltip]="component.name | resourceName" [tooltipDisabled]="!hasEllipsis">
+                <multiline-ellipsis className="w-sdc-tile-multiline-ellipsis" [lines]="3"
+                                    (hasEllipsisChanged)="hasEllipsis = $event">{{component.name | resourceName}}
+                </multiline-ellipsis>
             </div>
-            <div class="sdc-tile-info-line subtitle" [attr.data-tests-id]="component.name+'Version'">V {{component.version}}</div>
+            <div class="sdc-tile-info-line subtitle" [attr.data-tests-id]="component.name+'Version'">V
+                {{component.version}}
+            </div>
         </div>
     </div>
 
@@ -42,3 +48,32 @@
     </div>
 
 </div>
+
+<!--<sdc-tile>-->
+<!--<sdc-tile-header>-->
+<!--<div [ngClass]="{'blue': component.isService(), 'purple':  component.isResource()}">{{component.isResource() ?-->
+<!--component.getComponentSubType(): 'S' }}-->
+<!--</div>-->
+<!--</sdc-tile-header>-->
+<!--<sdc-tile-content>-->
+<!--<div class='sdc-tile-content-icon blue'>-->
+<!--<svg-icon-->
+<!--[type]="catalogIcon.type"-->
+<!--[name]="catalogIcon.iconName"-->
+<!--[size]="catalogIcon.size"-->
+<!--[mode]="catalogIcon.color"-->
+<!--[backgroundShape]="catalogIcon.shape"-->
+<!--[backgroundColor]="catalogIcon.backgroundColor"-->
+<!--[disabled]="false"-->
+<!--&gt;-->
+<!--</svg-icon>-->
+<!--</div>-->
+<!--<div class="sdc-tile-content-info">-->
+<!--<span class="sdc-tile-info-line title">{{component.name | resourceName}}</span>-->
+<!--<div class="sdc-tile-info-line subtitle">{{'V'+ component.version}}</div>-->
+<!--</div>-->
+<!--</sdc-tile-content>-->
+<!--<sdc-tile-footer>-->
+<!--<span class="sdc-tile-footer-cell">{{component.getStatus(sdcMenu)}}</span>-->
+<!--</sdc-tile-footer>-->
+<!--</sdc-tile>-->

@@ -1,0 +1,55 @@
+@import '../../../../../assets/styles/variables';
+
+.w-sdc-designer-sidebar {
+  background-color:@main_color_p ;
+  font-family: @font-opensans-regular;
+  font-size: 13px;
+  color: #191919;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  bottom: 0;
+  position: fixed;
+  right: -302px;
+  width: 302px;
+  top: 103px;
+  transition: right 0.2s;
+  z-index: 1010;
+  box-shadow: -7px -3px 6px -8px @main_color_n;
+}
+
+.w-sdc-designer-sidebar-toggle {
+  background-color: @main_color_p;
+  border-left: 1px solid @main_color_o;
+  border-bottom: 1px solid @main_color_o;
+  height: 21px;
+  position: absolute;
+  right: 0;
+  top: 53px;
+  width: 17px;
+  transition: right 0.2s;
+  z-index: 1005;
+  box-shadow: -1px 1px 3px 0  @main_color_n;
+  cursor: pointer;
+
+  &.active {
+    right: 302px;
+    .w-sdc-designer-sidebar-toggle-icon{
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.w-sdc-designer-sidebar-toggle-icon {
+  margin-left: 6px;
+  margin-top: 6px;
+}
+
+.w-sdc-designer-sidebar-toggle.active + .w-sdc-designer-sidebar {
+  right: 0;
+  display: flex;
+  flex-direction: column;
+}

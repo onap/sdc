@@ -1,0 +1,11 @@
+<div class="palette-element" >
+        <sdc-element-icon class="palette-element-icon" [iconName]="paletteElement.icon"
+            [elementType]="paletteElement.componentSubType"[uncertified]="this.paletteElement.certifiedIconClass"></sdc-element-icon>
+    <div class="palette-element-text">
+        <div class="palette-element-name" sdc-tooltip
+                            tooltip-text='{{paletteElement.name | resourceName}}'>{{paletteElement.name | resourceName}}
+        </div>
+        <span> V.{{paletteElement.version}}</span>
+        <span>{{paletteElement.componentSubType}}</span>
+    </div>
+</div>

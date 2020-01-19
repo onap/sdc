@@ -1,0 +1,88 @@
+<div class="sdc-catalog-container">
+    <div class="w-sdc-main-container" *ngIf="user">
+
+        <div id="dashboard-main-scroll" infiniteScroll class="w-sdc-main-right-container" (infiniteScroll)="raiseNumberOfElementToDisplay()" [infiniteScrollDistance]="100">
+
+            <div class='w-sdc-row-flex-items'>
+
+                <!-- ADD Component -->
+                <div *ngIf="user.role === 'DESIGNER'" class="w-sdc-dashboard-card-new"
+                     (mouseleave)="setDisplayActions(false)"
+                     (mouseover)="setDisplayActions(true)">
+                    <div class="w-sdc-dashboard-card-new-content" data-tests-id="AddButtonsArea">
+                        <div class="w-sdc-dashboard-card-new-content-plus" [hidden]="displayActions"></div>
+                        <div class="sdc-dashboard-create-element-container" [hidden]="!displayActions">
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createResourceButton" size="medium" type="secondary" text="Add VF" (click)="openCreateModal('RESOURCE')"></sdc-button>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createCRButton" size="medium" type="secondary" text="Add CR" (click)="createCR()"></sdc-button>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createPNFButton" size="medium" type="secondary" text="Add PNF" (click)="createPNF()"></sdc-button>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="createServiceButton" size="medium" type="secondary" text="Add Service" (click)="openCreateModal('SERVICE')"></sdc-button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Component -->
+                <div *ngIf="user.role === 'DESIGNER'" class="w-sdc-dashboard-card-new"
+                     (mouseleave)="setDisplayActions(false)"
+                     (mouseover)="setDisplayActions(true)">
+                    <div class="w-sdc-dashboard-card-new-content" data-tests-id="importButtonsArea"  >
+                        <div class="w-sdc-dashboard-card-import-content-plus" [hidden]="displayActions"></div>
+                        <div class="sdc-dashboard-import-element-container" [hidden]="!displayActions">
+                            <sdc-button-file-opener
+                                *ngIf="roles[user.role].dashboard.showCreateNew"
+                                size="medium"
+                                type="secondary"
+                                text="Import VFC"
+                                testId="importVFCbutton"
+                                [extensions]="sdcConfig.toscaFileExtension"
+                                (fileUpload)="onImportVfc($event)"
+                                [convertToBase64]="true"
+                            ></sdc-button-file-opener>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" data-tests-id="importButtonsVSP" size="medium" type="secondary" text="Import VSP" (click)="notificationIconCallback()"></sdc-button>
+                            <sdc-button-file-opener
+                                *ngIf="roles[user.role].dashboard.showCreateNew"
+                                size="medium"
+                                type="secondary"
+                                text="Import DCAE"
+                                testId="importDCAE"
+                                [extensions]="sdcConfig.csarFileExtension"
+                                (fileUpload)="onImportVf($event)"
+                                [convertToBase64]="true"
+                            ></sdc-button-file-opener>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile new -->
+                <ui-tile *ngFor="let item of homeFilteredSlicedItems"
+                    [component]="item" (onTileClick)="goToComponent(item)"></ui-tile>
+                <!-- Tile new -->
+
+            </div>
+
+        </div>
+
+        <div class="w-sdc-left-sidebar">
+            <div class="i-sdc-left-sidebar-item "
+                 *ngFor="let folder of folders.getFolders()"
+                 [ngClass]="{'category-title': folder.isGroup(), 'selectedLink': folder.isSelected()}">
+
+                <span *ngIf="folder.isGroup()" class="title-text">{{folder.text}}</span>
+                <sdc-checkbox *ngIf="!folder.isGroup() && !folder.dist"
+                    [label]="folder.text"
+                    [attr.data-tests-id]="'filter-' + folder.state"
+                    [checked]="homeFilter.selectedStatuses.indexOf(folder.state) !== -1"
+                    (checkedChange)="changeCheckboxesFilter(homeFilter.selectedStatuses, folder.state, $event)"></sdc-checkbox>
+
+                <sdc-checkbox *ngIf="!folder.isGroup() && folder.dist"
+                    [label]="folder.text"
+                    [checked]="homeFilter.distributed.indexOf(folder.dist) !== -1"
+                    (checkedChange)="changeCheckboxesFilter(homeFilter.distributed, folder.dist, $event)"></sdc-checkbox>
+                <span class="i-sdc-left-sidebar-item-state-count" [attr.data-tests-id]="'count-' + folder.state">{{entitiesCount(folder)}}</span>
+            </div>
+        </div>
+
+    </div>
+
+    <top-nav [topLvlSelectedIndex]="0" [version]="version" [searchTerm]="homeFilter.search.filterTerm" (searchTermChange)="changeFilterTerm($event)" [notificationIconCallback]="notificationIconCallback"></top-nav>
+
+</div>

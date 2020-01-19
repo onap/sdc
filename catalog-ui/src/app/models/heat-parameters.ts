@@ -30,6 +30,7 @@ export class HeatParameterModel {
     description:string;
     currentValue:string;
     defaultValue:string;
+    envDisplayName:string;
 
     filterTerm:string;
     constructor(parameter?:HeatParameterModel) {

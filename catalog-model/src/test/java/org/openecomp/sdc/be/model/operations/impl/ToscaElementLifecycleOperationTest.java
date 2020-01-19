@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model.operations.impl;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
+import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -59,6 +60,10 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -170,14 +175,6 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         status = nodeTypeOperation.addToscaDataToToscaElement(id, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, prop66, JsonPresentationFields.NAME);
         assertSame(status, StorageOperationStatus.OK);
 
-        res = lifecycleOperation.requestCertificationToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
-
-        res = lifecycleOperation.startCertificationToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
-
         res = lifecycleOperation.certifyToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
@@ -212,14 +209,6 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         status = nodeTypeOperation.addToscaDataToToscaElement(id, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, prop88, JsonPresentationFields.NAME);
         assertSame(status, StorageOperationStatus.OK);
 
-        res = lifecycleOperation.requestCertificationToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
-
-        res = lifecycleOperation.startCertificationToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
-
         res = lifecycleOperation.certifyToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
@@ -238,33 +227,10 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         status = nodeTypeOperation.addToscaDataToToscaElement(id, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, prop99, JsonPresentationFields.NAME);
         assertSame(status, StorageOperationStatus.OK);
 
-        res = lifecycleOperation.requestCertificationToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
-
-        res = lifecycleOperation.startCertificationToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
-
         status = nodeTypeOperation.deleteToscaDataElement(id, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES, "prop99", JsonPresentationFields.NAME);
         assertSame(status, StorageOperationStatus.OK);
 
-        // cancel certification
-        res = lifecycleOperation.cancelOrFailCertification(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId(), LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
-
-        res = lifecycleOperation.startCertificationToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
-
-        // fail certification
-        res = lifecycleOperation.cancelOrFailCertification(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId(), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        assertTrue(res.isLeft());
-        id = res.left().value().getUniqueId();
         verifyInCatalogData(4, null);
-        // exportGraphMl(janusGraphDao.getGraph().left().value());
-
     }
 
     @Test
@@ -296,7 +262,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         expectedIds.add(vertex4.getUniqueId());
         verifyInCatalogData(4, expectedIds);
 
-        Either<ToscaElement, StorageOperationStatus> res = lifecycleOperation.undoCheckout(vertex4.getUniqueId());
+        lifecycleOperation.undoCheckout(vertex4.getUniqueId());
         expectedIds.remove(vertex4.getUniqueId());
         verifyInCatalogData(3, expectedIds);
 
@@ -304,7 +270,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         expectedIds.add(vertex4.getUniqueId());
         verifyInCatalogData(4, expectedIds);
 
-        res = lifecycleOperation.checkinToscaELement(LifecycleStateEnum.findState((String) vertex4.getMetadataProperty(GraphPropertyEnum.STATE)), vertex4.getUniqueId(), modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
+        lifecycleOperation.checkinToscaELement(LifecycleStateEnum.findState((String) vertex4.getMetadataProperty(GraphPropertyEnum.STATE)), vertex4.getUniqueId(), modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
         Either<ToscaElement, StorageOperationStatus> certifyToscaElement = lifecycleOperation.certifyToscaElement(vertex4.getUniqueId(), modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
         assertTrue(certifyToscaElement.isLeft());
         expectedIds.remove(vertex4.getUniqueId());
@@ -312,7 +278,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         expectedIds.add(certifiedId);
         verifyInCatalogData(4, expectedIds);
 
-        res = lifecycleOperation.checkoutToscaElement(certifiedId, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
+        Either<ToscaElement, StorageOperationStatus> res = lifecycleOperation.checkoutToscaElement(certifiedId, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
         assertTrue(certifyToscaElement.isLeft());
         expectedIds.add(res.left().value().getUniqueId());
         verifyInCatalogData(5, expectedIds);
@@ -435,6 +401,24 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         derivedFrom.add("root");
         vf.setDerivedFrom(derivedFrom);
 
+        // Map<String, PropertyDataDefinition> properties = new HashMap<>();
+        // PropertyDataDefinition prop1 = new PropertyDataDefinition();
+        // prop1.setName("prop1");
+        // prop1.setDefaultValue("def1");
+        //
+        // properties.put("prop1", prop1);
+        //
+        // PropertyDataDefinition prop2 = new PropertyDataDefinition();
+        // prop2.setName("prop2");
+        // prop2.setDefaultValue("def2");
+        // properties.put("prop2", prop2);
+        //
+        // PropertyDataDefinition prop3 = new PropertyDataDefinition();
+        // prop3.setName("prop3");
+        // prop3.setDefaultValue("def3");
+        // properties.put("prop3", prop3);
+        //
+        // vf.setProperties(properties);
         vf.setComponentType(ComponentTypeEnum.RESOURCE);
         Either<NodeType, StorageOperationStatus> createVFRes = nodeTypeOperation.createNodeType(vf);
         assertTrue(createVFRes.isLeft());
@@ -591,7 +575,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
     public void verifyInCatalogData(int expected, List<String> expectedIds) {
 
-        Either<List<CatalogComponent>, StorageOperationStatus> highestResourcesRes = topologyTemplateOperation.getElementCatalogData(true, null);
+		Either<List<CatalogComponent>, StorageOperationStatus> highestResourcesRes = topologyTemplateOperation.getElementCatalogData(true, null);
         assertTrue(highestResourcesRes.isLeft());
         List<CatalogComponent> highestResources = highestResourcesRes.left().value();
         // calculate expected count value
@@ -620,4 +604,22 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         }
         janusGraphDao.commit();
     }
+
+    private String exportGraphMl(JanusGraph graph) {
+        String result = null;
+        String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".graphml";
+        try {
+            try (final OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+                graph.io(IoCore.graphml()).writer().normalize(true).create().writeGraph(os, graph);
+            }
+            result = outputFile;
+            graph.tx().commit();
+        } catch (Exception e) {
+            graph.tx().rollback();
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
 }

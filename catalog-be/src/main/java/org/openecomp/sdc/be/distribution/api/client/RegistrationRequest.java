@@ -20,13 +20,16 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import java.util.Collections;
 import java.util.List;
 
 public class RegistrationRequest {
-    String apiPublicKey;
-    String distrEnvName;
-    Boolean isConsumerToSdcDistrStatusTopic;
-    List<String> distEnvEndPoints;
+    private String apiPublicKey;
+    private String distrEnvName;
+    private Boolean isConsumerToSdcDistrStatusTopic;
+    private List<String> distEnvEndPoints;
+    private String managerApiPublicKey;
+    private String managerApiSecretKey;
 
     public RegistrationRequest(String apiPublicKey, String distrEnvName, boolean isConsumerToSdcDistrStatusTopic) {
         this.apiPublicKey = apiPublicKey;
@@ -59,4 +62,19 @@ public class RegistrationRequest {
         this.distEnvEndPoints = distEnvEndPoints;
     }
 
+    public String getManagerApiPublicKey() {
+        return managerApiPublicKey;
+    }
+
+    public void setManagerApiPublicKey(String managerApiPublicKey) {
+        this.managerApiPublicKey = managerApiPublicKey;
+    }
+
+    public String getManagerApiSecretKey() {
+        return managerApiSecretKey;
+    }
+
+    public void setManagerApiSecretKey(String managerApiSecretKey) {
+        this.managerApiSecretKey = managerApiSecretKey;
+    }
 }

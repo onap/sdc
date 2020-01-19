@@ -46,6 +46,8 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -69,9 +71,11 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
@@ -113,6 +117,11 @@ public class ArchiveEndpointTest extends JerseyTest {
     private static final ServletUtils servletUtils = mock(ServletUtils.class);
     private static final UserBusinessLogic userAdmin = mock(UserBusinessLogic.class);
     private static final ComponentsUtils componentUtils = mock(ComponentsUtils.class);
+    private static final CatalogOperation catalogOperations = mock(CatalogOperation.class);
+//    private static final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
+    private static final ToscaOperationFacade toscaOperationFacade = Mockito.spy(new ToscaOperationFacade());
+
+
     private static final ResponseFormat responseFormat = mock(ResponseFormat.class);
     private static final ResponseFormat notFoundResponseFormat = mock(ResponseFormat.class);
     private static final ResponseFormat badRequestResponseFormat = mock(ResponseFormat.class);
@@ -137,7 +146,9 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ArchiveEndpoint archiveEndpoint() {
-            return new ArchiveEndpoint(archiveBusinessLogic());
+            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+            return new ArchiveEndpoint(userBusinessLogic, componentsUtils, archiveBusinessLogic());
         }
 
         @Bean
@@ -157,7 +168,7 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ArchiveBusinessLogic archiveBusinessLogic() {
-            return new ArchiveBusinessLogic(janusGraphDao(), accessValidations(), archiveOperation(), toscaOperationFacade(), componentUtils);
+            return new ArchiveBusinessLogic(janusGraphDao(), accessValidations(), archiveOperation(), toscaOperationFacade(), componentUtils, catalogOperations);
         }
 
         @Bean
@@ -180,7 +191,7 @@ public class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ToscaOperationFacade toscaOperationFacade() {
-            return new ToscaOperationFacade();
+            return toscaOperationFacade;
         }
 
         @Bean
@@ -281,7 +292,7 @@ public class ArchiveEndpointTest extends JerseyTest {
     private static final User adminUser = new User("admin", "admin", "admin", "admin@email.com", Role.ADMIN.name(), System.currentTimeMillis());
     private static final User designerUser = new User("designer", "designer", "designer", "designer@email.com", Role.DESIGNER.name(), System
                                                                                                                                               .currentTimeMillis());
-    private static final User otherUser = new User("other", "other", "other", "other@email.com", Role.OPS.name(), System.currentTimeMillis());
+    private static final User otherUser = new User("other", "other", "other", "other@email.com", Role.TESTER.name(), System.currentTimeMillis());
 
     @BeforeClass
     public static void setup() {
@@ -307,22 +318,22 @@ public class ArchiveEndpointTest extends JerseyTest {
         when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), (String[]) any())).thenReturn(badRequestResponseFormat);
 
         when(graphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
-
-        Either<User, ActionStatus> adminEither = Either.left(adminUser);
-        Either<User, ActionStatus> designerEither = Either.left(designerUser);
-        Either<User, ActionStatus> otherEither = Either.left(otherUser);
-
-        when(userAdmin.getUser(adminUser.getUserId(), false)).thenReturn(adminEither);
-        when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerEither);
-        when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherEither);
+        when(userAdmin.getUser(adminUser.getUserId(), false)).thenReturn(adminUser);
+        when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerUser);
+        when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
-        String appConfigDir = "src/test/resources/config/catalog-be";
+        String appConfigDir = "src/test/resources/config";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
         org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
         configuration.setJanusGraphInMemoryGraph(true);
+
+        org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout();
+        heatDeploymentArtifactTimeout.setDefaultMinutes(30);;
+        configuration.setHeatArtifactDeploymentTimeout(heatDeploymentArtifactTimeout);
+        configurationManager.setConfiguration(configuration);
 
         configurationManager.setConfiguration(configuration);
         ExternalConfiguration.setAppName("catalog-be");
@@ -334,15 +345,31 @@ public class ArchiveEndpointTest extends JerseyTest {
     }
 
     @Test
-    public void archiveAndGetArchivedComponents_SingleComponent() {
-        archiveComponent(serviceVertex.getUniqueId(), HttpStatus.OK.value());
+    public void archiveAndGetArchivedService_SingleService() {
+        Component serviceComponent = mock(Component.class);
+        final String serviceUniqueId = serviceVertex.getUniqueId();
+        when(toscaOperationFacade.getToscaElement(serviceUniqueId)).thenReturn(Either.left(serviceComponent));
+        when(catalogOperations.updateCatalog(ChangeTypeEnum.ARCHIVE, serviceComponent)).thenReturn(ActionStatus.OK);
+        archiveService(serviceUniqueId, HttpStatus.OK.value());
         assertOnGetArchivedComponents(ComponentTypeEnum.SERVICE_PARAM_NAME, 1);
+        //restoreService(serviceUniqueId, 200);
+    }
+
+    @Test
+    public void archiveAndGetArchivedResource_SingleResource() {
+        Component component = mock(Component.class);
+        final String uniqueId = resourceVertex.getUniqueId();
+        when(toscaOperationFacade.getToscaElement(uniqueId)).thenReturn(Either.left(component));
+        when(catalogOperations.updateCatalog(ChangeTypeEnum.ARCHIVE, component)).thenReturn(ActionStatus.OK);
+        archiveResource(uniqueId, HttpStatus.OK.value());
+        assertOnGetArchivedComponents(ComponentTypeEnum.RESOURCE_PARAM_NAME, 1);
+        //restoreResource(uniqueId, 200);
     }
 
     @Test
     public void attemptArchiveCheckedOutService() {
         checkoutComponent(serviceVertex);
-        archiveComponent(serviceVertex.getUniqueId(), HttpStatus.CONFLICT.value());
+        archiveService(serviceVertex.getUniqueId(), HttpStatus.CONFLICT.value());
     }
 
     @Test
@@ -384,12 +411,12 @@ public class ArchiveEndpointTest extends JerseyTest {
      */
     @Test
     public void archiveWithInvalidUid() {
-        archiveComponent("fakeUid", HttpStatus.NOT_FOUND.value());
+        archiveService("fakeUid", HttpStatus.NOT_FOUND.value());
     }
 
     @Test
     public void restoreWithInvalidUid() {
-        restoreComponent("fakeUid", HttpStatus.NOT_FOUND.value());
+        restoreService("fakeUid", HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -420,10 +447,13 @@ public class ArchiveEndpointTest extends JerseyTest {
         assertThat(v.getMetadataProperty(GraphPropertyEnum.IS_VSP_ARCHIVED)).isEqualTo(expectedValue);
     }
 
-    private void archiveComponent(String id, int expectedStatus){ archiveOrRestoreComponent(id, ArchiveOperation.Action.ARCHIVE, expectedStatus); }
-    private void restoreComponent(String id, int expectedStatus){ archiveOrRestoreComponent(id, ArchiveOperation.Action.RESTORE, expectedStatus); }
+    private void archiveService(String id, int expectedStatus){ archiveOrRestoreService(id, ArchiveOperation.Action.ARCHIVE, expectedStatus); }
+    private void restoreService(String id, int expectedStatus){ archiveOrRestoreService(id, ArchiveOperation.Action.RESTORE, expectedStatus); }
 
-    private void archiveOrRestoreComponent(String compUid, ArchiveOperation.Action action, int expectedStatus) {
+    private void archiveResource(String id, int expectedStatus){ archiveOrRestoreResource(id, ArchiveOperation.Action.ARCHIVE, expectedStatus); }
+    private void restoreResource(String id, int expectedStatus){ archiveOrRestoreResource(id, ArchiveOperation.Action.RESTORE, expectedStatus); }
+
+    private void archiveOrRestoreService(String compUid, ArchiveOperation.Action action, int expectedStatus) {
         String path = String.format("/v1/catalog/services/%s/%s", compUid, action.name().toLowerCase());
         Response response = target()
                                     .path(path)
@@ -431,6 +461,18 @@ public class ArchiveEndpointTest extends JerseyTest {
                                     .accept(MediaType.APPLICATION_JSON)
                                     .header(Constants.USER_ID_HEADER, designerUser.getUserId())
                                     .post(null);
+
+        assertThat(response.getStatus()).isEqualTo(expectedStatus);
+    }
+
+    private void archiveOrRestoreResource(String compUid, ArchiveOperation.Action action, int expectedStatus) {
+        String path = String.format("/v1/catalog/resources/%s/%s", compUid, action.name().toLowerCase());
+        Response response = target()
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+                .post(null);
 
         assertThat(response.getStatus()).isEqualTo(expectedStatus);
     }

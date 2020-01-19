@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
+import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -50,7 +51,7 @@ public class ListValidator implements PropertyTypeValidator {
 
         log.debug("Going to validate value {} with inner type {}", value, innerType);
 
-        if (value == null || value == "") {
+        if (Strings.isNullOrEmpty(value)) {
             return true;
         }
         if (innerType == null) {

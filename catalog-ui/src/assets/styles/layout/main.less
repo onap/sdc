@@ -62,6 +62,7 @@
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+
 }
 
 .sdc-loading-page {
@@ -158,4 +159,10 @@
         }
     }
 
+}
+//temporary fix. should be removed after converting all the modals to onap-ui modals
+sdc-modal{
+    .sdc-modal, .modal-background{
+        z-index: 1050;
+    }
 }

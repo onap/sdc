@@ -128,10 +128,8 @@ public class ArchiveOperation extends BaseOperation {
 
     public List<String> setArchivedOriginsFlagInComponentInstances(GraphVertex compositionService) {
         List<String> ciUidsWithArchivedOrigins = new LinkedList();
-        Either<List<GraphVertex>, JanusGraphOperationStatus> instanceOfVerticesE = janusGraphDao
-            .getChildrenVertecies(compositionService, EdgeLabelEnum.INSTANCE_OF, JsonParseFlagEnum.NoParse);
-        Either<List<GraphVertex>, JanusGraphOperationStatus> proxyOfVerticesE = janusGraphDao
-            .getChildrenVertecies(compositionService, EdgeLabelEnum.PROXY_OF, JsonParseFlagEnum.NoParse);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> instanceOfVerticesE = janusGraphDao.getChildrenVertices(compositionService, EdgeLabelEnum.INSTANCE_OF, JsonParseFlagEnum.NoParse);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> proxyOfVerticesE = janusGraphDao.getChildrenVertices(compositionService, EdgeLabelEnum.PROXY_OF, JsonParseFlagEnum.NoParse);
 
         List<GraphVertex> all = new LinkedList<>();
         if (instanceOfVerticesE.isLeft()){

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:aop="http://www.springframework.org/schema/aop"
   xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
   <context:annotation-config />
   <aop:aspectj-autoproxy proxy-target-class="true" />
@@ -14,8 +13,8 @@
           base-package= "org.openecomp.sdc.be.components.health,
                          org.openecomp.sdc.be.servlets,
                          org.openecomp.sdc.be.externalapi.servlet,
-                         org.openecomp.sdc.be.components.scheduledtasks
-                         ">
+                         org.openecomp.sdc.be.components.scheduledtasks,
+                         org.openecomp.sdc.be.facade.operations">
   </context:component-scan>
 
   <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
@@ -29,9 +28,10 @@
       <aop:pointcut id="lockingTransaction" expression="@annotation(org.openecomp.sdc.be.components.impl.lock.LockingTransactional) and args(componentId, componentType,..)"/>
       <aop:around method="lock" arg-names="proceedingJoinPoint,componentId,componentType" pointcut-ref="lockingTransaction"/>
     </aop:aspect>
+    <aop:aspect id="roleAuthorizationAspect" ref="roleAuthorizationHandler">
+      <aop:pointcut id="roleAuthorize" expression="@annotation(permissions)"/>
+      <aop:before method="authorizeRole" arg-names="joinPoint, permissions" pointcut-ref="roleAuthorize"/>
+    </aop:aspect>
   </aop:config>
 
-
-  <util:properties id="elasticsearchConfig" location="file:${config.home}/elasticsearch.yml" />
-  
 </beans>

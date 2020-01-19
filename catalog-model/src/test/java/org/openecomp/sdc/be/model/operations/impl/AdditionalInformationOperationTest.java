@@ -38,7 +38,6 @@ import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
-import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.springframework.test.context.ContextConfiguration;
@@ -65,7 +64,7 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
     private JanusGraphGenericDao janusGraphDao;
 
     @javax.annotation.Resource(name = "additional-information-operation")
-    private IAdditionalInformationOperation additionalInformationOperation;
+    private AdditionalInformationOperation additionalInformationOperation;
 
     @Before
     public void createUserAndCategory() {

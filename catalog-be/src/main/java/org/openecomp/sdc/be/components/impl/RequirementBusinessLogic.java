@@ -19,6 +19,7 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.RequirementValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -88,7 +89,7 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
     public Either<List<RequirementDefinition>, ResponseFormat> createRequirements(
             String componentId, List<RequirementDefinition> requirementDefinitions,
             User user, String errorContext, boolean lock) {
-        validateUserExists(user.getUserId(), errorContext, true);
+        validateUserExists(user.getUserId());
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither
                 = getComponentDetails(componentId);
         if (componentEither.isRight()) {
@@ -160,7 +161,7 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
     public Either<List<RequirementDefinition>, ResponseFormat> updateRequirements(
             String componentId, List<RequirementDefinition> requirementDefinitions,
             User user, String errorContext, boolean lock) {
-        validateUserExists(user.getUserId(), errorContext, true);
+        validateUserExists(user.getUserId());
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither
                 = getComponentDetails(componentId);
         if (componentEither.isRight()) {
@@ -327,7 +328,7 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
 
     public Either<RequirementDefinition, ResponseFormat> getRequirement(String componentId,
                                                                         String requirementIdToGet, User user, boolean lock) {
-        validateUserExists(user.getUserId(), GET_REQUIREMENTS, true);
+        validateUserExists(user.getUserId());
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
@@ -369,7 +370,7 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
     public Either<RequirementDefinition, ResponseFormat> deleteRequirement(String componentId,
                                                                            String requirementIdToDelete,
                                                                            User user, boolean lock) {
-        validateUserExists(user.getUserId(), DELETE_REQUIREMENTS, true);
+        validateUserExists(user.getUserId());
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither
                 = getComponentDetails(componentId);
         if (componentEither.isRight()) {
@@ -476,12 +477,13 @@ public class RequirementBusinessLogic extends BaseBusinessLogic {
                                                                 org.openecomp.sdc.be.model.Component component,
                                                                 String action) {
         if (lock) {
-            Either<Boolean, ResponseFormat> lockResult = lockComponent(component.getUniqueId(), component, action);
-            if (lockResult.isRight()) {
+            try{
+            lockComponent(component.getUniqueId(), component, action);
+            } catch (ComponentException e){
                 LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, component.getName(),
-                        lockResult.right().value().getFormattedMessage());
+                        e.getMessage());
                 janusGraphDao.rollback();
-                return Either.right(lockResult.right().value());
+                throw e;
             }
         }
         return Either.left(true);

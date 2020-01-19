@@ -1,0 +1,57 @@
+<div class="sdc-composition-graph-wrapper {{zoneTagMode}}"
+     [ngClass]="{'with-sidebar': withSidebar$ | async, 'view-only':isViewOnly$ | async}">
+</div>
+
+<div class="sdc-composition-menu" [ngClass]="{'with-sidebar': withSidebar$ | async}">
+
+    <service-path-selector
+            *ngIf="topologyTemplate.isService() && compositionService.forwardingPaths"
+            [drawPath]="drawPathOnCy"
+            [deletePaths]="deletePathsOnCy"
+            [selectedPathId]="selectedPathId">
+    </service-path-selector>
+
+    <canvas-search *ngIf="componentInstanceNames" class="composition-search"
+                   [placeholder]="'Type to search'"
+                   [data]="componentInstanceNames"
+                   (searchChanged)="getAutoCompleteValues($event)"
+                   (searchButtonClicked)="highlightSearchMatches($event)">
+    </canvas-search>
+
+    <!--<service-path class="zoom-icons"-->
+                  <!--*ngIf="!(isViewOnly$ | async) && topologyTemplate.isService()"-->
+                  <!--[service]="topologyTemplate"-->
+                  <!--[onCreate]="createOrUpdateServicePath">-->
+    <!--</service-path>-->
+
+    <svg-icon  *ngIf="!(isViewOnly$ | async) && topologyTemplate.isService()" class="zoom-icons" [mode]="'primary2'" [size]="'medium'" [backgroundShape]="'rectangle'"
+               [backgroundColor]="'silver'" [name]="'browse'" [clickable]="true" [testId]="'pathsMenuBtn'"
+               (click)="openServicePathMenu($event)"></svg-icon>
+    <svg-icon class="zoom-icons" [mode]="'primary2'" [size]="'medium'" [backgroundShape]="'rectangle'"
+              [backgroundColor]="'silver'" [name]="'expand-o'" [clickable]="true"
+              (click)="zoomAllWithoutSidebar()"></svg-icon>
+    <svg-icon class="zoom-icons" [mode]="'primary2'" [size]="'medium'" [backgroundShape]="'rectangle'"
+              [backgroundColor]="'silver'" [name]="'plus'" [clickable]="true"
+              (click)="zoom(true)"></svg-icon>
+    <svg-icon class="zoom-icons" [mode]="'primary2'" [size]="'medium'" [backgroundShape]="'rectangle'"
+              [backgroundColor]="'silver'" [name]="'minus'" [clickable]="true"
+              (click)="zoom(false)"></svg-icon>
+</div>
+
+<div class="sdc-canvas-zones__wrapper {{zoneTagMode}}" [ngClass]="{'with-sidebar': withSidebar$ | async}">
+    <zone-container *ngFor="let zone of zones" [title]="zone.title" [type]="zone.type" [count]="zone.instances.length"
+                    [visible]="zone.visible" [minimized]="zone.minimized" (minimize)="zoneMinimizeToggle(zone.type)"
+                    (backgroundClick)="zoneBackgroundClicked()">
+        <zone-instance *ngFor="let instance of zone.instances" [hidden]="instance.hidden"
+                       [zoneInstance]="instance" [defaultIconText]="zone.defaultIconText"
+                       [isActive]="activeZoneInstance == instance"
+                       [activeInstanceMode]="activeZoneInstance && activeZoneInstance.mode"
+                       [isViewOnly]="isViewOnly$ | async"
+                       [forceSave]="instance.forceSave"
+                       (modeChange)="zoneInstanceModeChanged($event.newMode, $event.instance, zone.type)"
+                       (tagHandleClick)="zoneInstanceTagged($event)"
+                       (assignmentSaveStart)="zoneAssignmentSaveStart()"
+                       (assignmentSaveComplete)="zoneAssignmentSaveComplete($event)">
+        </zone-instance>
+    </zone-container>
+</div>

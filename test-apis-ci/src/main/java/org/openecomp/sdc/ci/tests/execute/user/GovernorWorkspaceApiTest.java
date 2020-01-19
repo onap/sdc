@@ -174,7 +174,7 @@ public class GovernorWorkspaceApiTest extends ComponentBaseTest {
 			throws Exception {
 		RestResponse res = LifecycleRestUtils.sendApproveDistribution(user, serviceDetails.getUniqueId(), userRemarks);
 		assertEquals(200, res.getErrorCode().intValue());
-		ServiceValidationUtils.validateDistrubtionStatusValue(res, DistributionStatusEnum.DISTRIBUTION_APPROVED);
+		ServiceValidationUtils.validateDistrubtionStatusValue(res, DistributionStatusEnum.DISTRIBUTED);
 	}
 
 	protected void rejectDistributionStatusOfService(ServiceReqDetails serviceDetails, User user) throws Exception {
@@ -185,7 +185,7 @@ public class GovernorWorkspaceApiTest extends ComponentBaseTest {
 			throws Exception {
 		RestResponse res = LifecycleRestUtils.rejectDistribution(serviceDetails, version, user, userRemarks);
 		assertEquals(200, res.getErrorCode().intValue());
-		ServiceValidationUtils.validateDistrubtionStatusValue(res, DistributionStatusEnum.DISTRIBUTION_REJECTED);
+		ServiceValidationUtils.validateDistrubtionStatusValue(res, DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
 	}
 
 	protected JSONArray getFollowedListAsJsonArray(User user) throws Exception {

@@ -20,9 +20,11 @@
 
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {CommonCINodeBase} from "../common-ci-node-base";
-import {ICanvasImage, ImageCreatorService} from "app/directives/graphs-v2/image-creator/image-creator.service";
 import {ImagesUrl, GraphUIObjects} from "app/utils";
 import {AngularJSBridge} from "app/services";
+import {ResourceNamePipe} from "app/ng2/pipes/resource-name.pipe";
+import {ComponentInstanceNodesStyle} from "app/ng2/pages/composition/graph/common/style/component-instances-nodes-style";
+import {ImageCreatorService, ICanvasImage} from "app/ng2/pages/composition/graph/common/image-creator.service";
 
 export interface ICompositionCiNodeBase {
 
@@ -48,14 +50,16 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
         this.isUcpePart = false;
         this.isInsideGroup = false;
     }
-
-
+    
+    
     protected enhanceImage(node:Cy.Collection, nodeMinSize:number, imgUrl: string):string {
+
         let infoIconWidth:number = GraphUIObjects.HANDLE_SIZE;
         let nodeWidth:number = node.data('imgWidth') || node.width();
+        // let uncertifiedCanvasWidth: number = nodeWidth;
         let infoCanvasWidth: number = nodeWidth;
 
-        if (nodeWidth < nodeMinSize) { //info icon will overlap too much of the node, need to expand canvas.
+        if (nodeWidth < nodeMinSize) { //uncertified icon will overlap too much of the node, need to expand canvas.
             infoCanvasWidth = nodeWidth + infoIconWidth/2; //expand canvas so that only half of the icon overlaps with the node
         }
 
@@ -66,13 +70,14 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
             { src: imgUrl, x: 0, y: 0, width: infoIconWidth, height: infoIconWidth}
         ];
 
+
        //Create the image and update the node background styles
         this.imageCreator.getMultiLayerBase64Image(canvasImages, infoCanvasWidth, infoCanvasWidth).then(img => this.updateNodeStyles(node,infoCanvasWidth,img));
         return this.img; // Return the referance to the image (in Base64 format)
     }
 
-
-    public setArchivedImageBgStyle(node:Cy.Collection, nodeMinSize:number):string {
+    
+    public setArchivedImageBgStyle(node:Cy.Collection, nodeMinSize:number):string {        
         let archivedIconWidth:number = GraphUIObjects.HANDLE_SIZE;
         let nodeWidth:number = node.data('imgWidth') || node.width();
         let archivedCanvasWidth: number = nodeWidth;
@@ -95,13 +100,12 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
     }
 
     protected getDisplayName():string {
-        let graphResourceName = AngularJSBridge.getFilter('graphResourceName');
-        let resourceName = AngularJSBridge.getFilter('resourceName');
-        return graphResourceName(resourceName(this.componentInstance.name));
+        let resourceName = ResourceNamePipe.getDisplayName(this.componentInstance.name);
+        return ComponentInstanceNodesStyle.getGraphDisplayName(resourceName);
     }
 
     //TODO:: move to Base class ???
-    private updateNodeStyles(node,canvasWidth,imageBase64){
+    private updateNodeStyles(node,canvasWidth,imageBase64){     
         this.img = imageBase64;
         node.style({
             'background-image': this.img,
@@ -109,7 +113,7 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
             'background-height': canvasWidth,
             'background-position-x':0,
             'background-position-y':0
-        });
+        });        
     }
 
 }

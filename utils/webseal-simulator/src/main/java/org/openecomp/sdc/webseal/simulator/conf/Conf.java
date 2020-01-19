@@ -31,10 +31,19 @@ import java.util.Map;
 
 public class Conf {
 
-	private static Conf conf= null;		
+	private static Conf conf = new Conf();
 	private String feHost;
-	Map<String,User> users = new HashMap<String,User>();
-	
+	private Map<String,User> users = new HashMap<String,User>();
+    private String portalCookieName;
+
+    private void setPortalCookieName(String portalCookieName) {
+        this.portalCookieName = portalCookieName;
+    }
+
+    public String getPortalCookieName() {
+        return portalCookieName;
+    }
+
 	private Conf(){	
 		initConf();
 	}
@@ -50,7 +59,9 @@ public class Conf {
 			Config confFile = ConfigFactory.parseFileAnySyntax(new File(confPath));
 			Config resolve = confFile.resolve();		
 			setFeHost(resolve.getString("webseal.fe"));
-			List<? extends Config> list = resolve.getConfigList("webseal.users");			
+			setPortalCookieName(resolve.getString("webseal.portalCookieName"));
+			List<? extends Config> list = resolve.getConfigList("webseal.users");
+
 			for (Config conf : list  ){
 				String userId = conf.getString("userId");
 				String password = conf.getString("password");
@@ -67,9 +78,6 @@ public class Conf {
 	}
 
 	public static Conf getInstance(){
-		if (conf == null){
-			conf = new Conf();
-		}
 		return conf;
 	}
 

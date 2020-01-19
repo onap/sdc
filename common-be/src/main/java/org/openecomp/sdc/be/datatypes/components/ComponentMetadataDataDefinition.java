@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.datatypes.components;
 
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
@@ -202,6 +203,33 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.isVspArchived = other.isVspArchived;
         this.archiveTime = other.getArchiveTime();
     }
+
+	public ComponentMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
+		this.uniqueId = extractor.getUniqueId();
+		this.name = extractor.getName();
+		this.version = extractor.getVersion();
+		this.isHighestVersion = extractor.isHighestVersion();
+		this.creationDate = extractor.getCreationDate();
+		this.lastUpdateDate = extractor.getLastUpdateDate();
+		this.description = extractor.getDescription();
+		this.state = extractor.getState();
+		this.tags = extractor.getTags();
+		this.icon = extractor.getIcon();
+		this.contactId = extractor.getContactId();
+		this.UUID = extractor.getUUID();
+		this.normalizedName = extractor.getNormalizedName();
+		this.systemName = extractor.getSystemName();
+		this.isDeleted = extractor.isDeleted();
+		this.projectCode = extractor.getProjectCode();
+		this.csarUUID = extractor.getCsarUuid();
+		this.csarVersion = extractor.getCsarVersion();
+		this.importedToscaChecksum = extractor.getImportedToscaChecksum();
+		this.invariantUUID = extractor.getInvariantUuid();
+		this.isArchived =  extractor.isArchived();
+		this.isVspArchived =  extractor.isVspArchived();
+		this.archiveTime =  extractor.getArchiveTime();
+	}
+
 
     public String getUniqueId() {
         return uniqueId;

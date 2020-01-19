@@ -20,12 +20,37 @@
 
 package org.openecomp.sdc.be.model;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 import java.util.Map;
 
 public class ServiceTest {
+
+	protected static ConfigurationManager configurationManager;
+	static Configuration.EnvironmentContext environmentContext = new Configuration.EnvironmentContext();
+
+	@BeforeClass
+	public static void init() {
+		String appConfigDir = "src/test/resources/config";
+		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+				appConfigDir);
+		configurationManager = new ConfigurationManager(configurationSource);
+
+		Configuration configuration = new Configuration();
+
+		configuration.setJanusGraphInMemoryGraph(true);
+		environmentContext.setDefaultValue("General_Revenue-Bearing");
+		configuration.setEnvironmentContext(environmentContext);
+
+		configurationManager.setConfiguration(configuration);
+	}
 
 	private Service createTestSubject() {
 		return new Service();

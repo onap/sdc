@@ -22,12 +22,15 @@
  * Created by ob0695 on 4/18/2017.
  */
 
-import { ArtifactGroupModel, PropertyModel, PropertiesGroup, InputsGroup, AttributeModel, AttributesGroup, ComponentInstance, OperationModel,
-    InputBEModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup, InterfaceModel} from "app/models";
+import { ArtifactGroupModel, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance, OperationModel,
+    InputBEModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup} from "app/models";
 import {CommonUtils} from "app/utils";
 import {Serializable} from "../utils/serializable";
+import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../../../models/graph/zones/group-instance";
+import { InputsGroup } from "../../../models/inputs";
+import { InterfaceModel } from "../../../models/operation";
 
 export class ComponentGenericResponse  implements Serializable<ComponentGenericResponse> {
 
@@ -40,7 +43,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public componentInstancesAttributes:AttributesGroup;
     public componentInstancesRelations:Array<RelationshipModel>;
     public componentInstances:Array<ComponentInstance>;
-    public componentInstancesInterfaces:Map<string,Array<InterfaceModel>>;
+    public componentInstancesInterfaces: Map<string, Array<InterfaceModel>>;
     public inputs:Array<InputBEModel>;
     public capabilities:CapabilitiesGroup;
     public requirements:RequirementsGroup;
@@ -75,7 +78,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
         if(response.deploymentArtifacts) {
             this.deploymentArtifacts = new ArtifactGroupModel(response.deploymentArtifacts);
         }
-        if(response.inputs) {
+        if(response.inputs) { 
             this.inputs = CommonUtils.initInputs(response.inputs);
         }
         if(response.attributes) {
@@ -97,10 +100,9 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
             this.toscaArtifacts = new ArtifactGroupModel(response.toscaArtifacts);
         }
         if(response.interfaces) {
-            this.interfaces = CommonUtils.initInterfaces(response.interfaces);
             this.interfaceOperations = CommonUtils.initInterfaceOperations(response.interfaces);
         }
-        if(response.componentInstancesInterfaces) {
+        if (response.componentInstancesInterfaces) {
             this.componentInstancesInterfaces = new Map();
             for (let resourceId in response.componentInstancesInterfaces) {
                 this.componentInstancesInterfaces[resourceId] = CommonUtils.initInterfaces(response.componentInstancesInterfaces[resourceId]);

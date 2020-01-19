@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.resources.data;
 
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -38,18 +39,15 @@ public class ResourceMetadataData extends ComponentMetadataData {
 		super(NodeTypeEnum.Resource, metadataDataDefinition);
 	}
 
-	public ResourceMetadataData(Map<String, Object> properties) {
-		super(NodeTypeEnum.Resource, new ResourceMetadataDataDefinition(), properties);
-		((ResourceMetadataDataDefinition) metadataDataDefinition).setVendorName((String) properties.get(GraphPropertiesDictionary.VENDOR_NAME.getProperty()));
-		((ResourceMetadataDataDefinition) metadataDataDefinition).setVendorRelease((String) properties.get(GraphPropertiesDictionary.VENDOR_RELEASE.getProperty()));
-		if (properties.get(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty()) != null) {
-			((ResourceMetadataDataDefinition) metadataDataDefinition).setResourceType(ResourceTypeEnum.valueOf((String) properties.get(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty())));
-		}
-		((ResourceMetadataDataDefinition) metadataDataDefinition).setAbstract((Boolean) properties.get(GraphPropertiesDictionary.IS_ABSTRACT.getProperty()));
-		((ResourceMetadataDataDefinition) metadataDataDefinition).setCost((String) properties.get(GraphPropertiesDictionary.COST.getProperty()));
-		((ResourceMetadataDataDefinition) metadataDataDefinition).setLicenseType((String) properties.get(GraphPropertiesDictionary.LICENSE_TYPE.getProperty()));
-		((ResourceMetadataDataDefinition) metadataDataDefinition).setToscaResourceName((String) properties.get(GraphPropertiesDictionary.TOSCA_RESOURCE_NAME.getProperty()));
-
+	public ResourceMetadataData(GraphPropertiesDictionaryExtractor extractor) {
+		super(NodeTypeEnum.Resource, new ResourceMetadataDataDefinition(), extractor);
+		((ResourceMetadataDataDefinition) metadataDataDefinition).setVendorName(extractor.getVendorName());
+		((ResourceMetadataDataDefinition) metadataDataDefinition).setVendorRelease(extractor.getVendorRelease());
+		((ResourceMetadataDataDefinition) metadataDataDefinition).setResourceType(extractor.getResourceType());
+		((ResourceMetadataDataDefinition) metadataDataDefinition).setAbstract(extractor.isAbstract());
+		((ResourceMetadataDataDefinition) metadataDataDefinition).setCost(extractor.getCost());
+		((ResourceMetadataDataDefinition) metadataDataDefinition).setLicenseType(extractor.getLicenseType());
+		((ResourceMetadataDataDefinition) metadataDataDefinition).setToscaResourceName(extractor.getToscaResourceName());
 	}
 
 	@Override

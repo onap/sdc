@@ -23,7 +23,7 @@ import {Component, Input, Output, EventEmitter, ViewChild, ComponentRef} from "@
 import { PropertyFEModel, DerivedFEProperty, DerivedPropertyType } from "app/models";
 import { PROPERTY_TYPES } from 'app/utils';
 import { DataTypeService } from "../../../../services/data-type.service";
-import { trigger, state, style, transition, animate } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import {PropertiesUtils} from "../../../../pages/properties-assignment/services/properties.utils";
 import {IUiElementChangeEvent} from "../../../ui/form-components/ui-element-base.component";
 import {DynamicElementComponent} from "../../../ui/dynamic-element/dynamic-element.component";
@@ -42,6 +42,7 @@ export class DynamicPropertyComponent {
     isPropertyFEModel: boolean;
     nestedLevel: number;
     propertyTestsId: string;
+    constraints:string[];
 
     @Input() canBeDeclared: boolean;
     @Input() property: PropertyFEModel | DerivedFEProperty;
@@ -72,7 +73,30 @@ export class DynamicPropertyComponent {
         this.propPath = (this.property instanceof PropertyFEModel) ? this.property.name : this.property.propertiesName;
         this.nestedLevel = (this.property.propertiesName.match(/#/g) || []).length;
         this.rootProperty = (this.rootProperty) ? this.rootProperty : <PropertyFEModel>this.property;
-        this.propertyTestsId = this.getPropertyTestsId();
+        this.propertyTestsId = this.getPropertyTestsId(); 
+        
+        this.initConsraintsValues();
+        
+        
+    }
+
+    initConsraintsValues(){
+        let primitiveProperties = ['string', 'integer', 'float', 'boolean'];
+
+        //Property has constraints
+        if(this.property.constraints){
+            this.constraints = this.property.constraints[0].validValues
+        }
+
+        //Complex Type
+        else if (primitiveProperties.indexOf(this.rootProperty.type) == -1 && primitiveProperties.indexOf(this.property.type) >= 0 ){
+            this.constraints = this.dataTypeService.getConstraintsByParentTypeAndUniqueID(this.rootProperty.type, this.property.name);           
+        }
+ 
+        else{
+            this.constraints = null;
+        }
+        
     }
 
     ngDoCheck() {

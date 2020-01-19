@@ -25,6 +25,7 @@ import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+
 import org.openecomp.sdc.ci.tests.utilities.CatalogUIUtilitis;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
@@ -149,10 +150,12 @@ public class GeneralPageElements {
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.APPROVE_MESSAGE.getValue())
                     .sendKeys("resource " + componentName + " certified successfully");
             clickOKButton();
-            clickUpgradeServicesCloseButton();
+            GeneralUIUtils.ultimateWait();
+            HomePage.navigateToHomePage();
             GeneralUIUtils.ultimateWait();
             HomePage.navigateToHomePage();
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(), GeneralUIUtils.getTimeOut() / WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER);
+            GeneralUIUtils.ultimateWait();
         } catch (Exception e) {
             throw new Exception("Certification of " + componentName + " failed");
         }
@@ -231,7 +234,7 @@ public class GeneralPageElements {
 
     public static List<WebElement> getElementsFromTable() {
         GeneralUIUtils.ultimateWait();
-        return GeneralUIUtils.getElementsByLocator(By.className("flex-container"));
+        return GeneralUIUtils.getElementsByLocator(By.className("datatable-body"));
     }
 
     public static boolean checkElementsCountInTable(int expectedElementsCount) {

@@ -69,7 +69,10 @@ public class GlobalInputsMergeCommand extends InputsMergeCommand implements Comp
 
     @Override
     Map<String, List<PropertyDataDefinition>> getProperties(Component component) {
-        return Stream.of(component.safeGetGroupsProperties(), component.safeGetPolicyProperties())
+        return Stream.of(component.safeGetUiComponentInstancesProperties(),
+                         component.safeGetUiComponentInstancesInputs(),
+                         component.safeGetGroupsProperties(),
+                         component.safeGetPolicyProperties())
                 .flatMap(map -> map.entrySet().stream())
                 .collect(toMap(Map.Entry::getKey, entry -> convertListOfProperties(entry.getValue())));
     }

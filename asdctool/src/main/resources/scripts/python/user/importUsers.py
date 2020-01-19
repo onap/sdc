@@ -70,7 +70,8 @@ def getUser(scheme, beHost, bePort, user):
 		c.setopt(c.WRITEFUNCTION, lambda x: None)
 
 		if scheme == 'https':
-			c.setopt(c.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYHOST, 0)
 
 		res = c.perform()
 					
@@ -111,7 +112,8 @@ def createUser(scheme, beHost, bePort, user, adminUser):
 		c.setopt(c.WRITEFUNCTION, lambda x: None)
 
 		if scheme == 'https':
-			c.setopt(c.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYHOST, 0)
 
 		#print("before perform")	
 		res = c.perform()

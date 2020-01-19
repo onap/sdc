@@ -19,7 +19,6 @@
  */
 import { NgModule } from "@angular/core";
 import {HierarchyNavigationComponent} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.component";
-import {HttpModule} from "@angular/http";
 import {FormsModule} from "@angular/forms";
 import {PropertyTableModule} from "../../components/logic/properties-table/property-table.module";
 import {UiElementsModule} from "../../components/ui/ui-elements.module";
@@ -46,12 +45,11 @@ import {ComponentModeService} from "../../services/component-services/component-
     imports: [
         BrowserModule,
         FormsModule,
-        HttpModule,
         GlobalPipesModule,
         PropertyTableModule,
         PoliciesTableModule,
         UiElementsModule],
-    
+
     entryComponents: [PropertiesAssignmentComponent],
     exports: [
         PropertiesAssignmentComponent

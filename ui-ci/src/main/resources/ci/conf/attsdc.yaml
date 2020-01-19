@@ -1,17 +1,17 @@
 outputFolder: target
 reportName: index.html
-catalogBeHost: 192.168.33.10
+catalogBeHost: localhost
 esHost: eshost
 disributionClientHost: disClient
 catalogFePort: 8181
-catalogBePort: 8080
+catalogBePort: 8284
 disributionClientPort: 8181
 esPort: 9200
 neoHost: neoHost
 neoPort: 7474
 neoDBusername: neo4j
 neoDBpassword: 123456
-url: http://192.168.33.10:8285/sdc1
+url: http://localhost:8285/sdc1
 #url: https://www.e-access.att.com/QA-AUTOMATE1/sdc1/portal
 #url: https://www.e-access.att.com/AA-IFT-testing/sdc1/portal
 #url: https://www.e-access.att.com/QA-SCRUM1/sdc1/portal
@@ -40,8 +40,8 @@ janusGraphPropertiesFile: src/main/resources/ci/conf/janusgraph.properties
 
 stopOnClassFailure: false
 #todo
-onboardingBeHost: 192.168.33.10
-onboardingBePort: 8080
+onboardingBeHost: localhost
+onboardingBePort: 8283
 #List of non-abstract resources to keep during JanusGraph cleanup between tests
 #Only 1.0 version will be kept
 resourcesNotToDelete:

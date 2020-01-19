@@ -31,11 +31,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditGetUebClusterEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.be.resources.data.auditing.model.*;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
@@ -43,7 +40,6 @@ import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
@@ -55,18 +51,14 @@ public class AuditDistributionEventFuncTest {
 
     @Mock
     private static AuditCassandraDao cassandraDao;
-    @Mock
-    private static AuditingDao auditingDao;
-    @Mock
-    private static Configuration.ElasticSearchConfig esConfig;
 
     @Captor
     private ArgumentCaptor<AuditingGenericEvent> eventCaptor;
 
     @Before
     public void setUp() {
-        init(esConfig);
-        auditingManager = new AuditingManager(auditingDao, cassandraDao, new TestConfigurationProvider());
+        init();
+        auditingManager = new AuditingManager(cassandraDao, new TestConfigurationProvider());
         ThreadLocalsHolder.setUuid(REQUEST_ID);
     }
 
@@ -87,8 +79,6 @@ public class AuditDistributionEventFuncTest {
                 DIST_ID, user, TOPIC_NAME,
                 new OperationalEnvAuditData(OP_ENV_ID, VNF_WORKLOAD_CONTEXT, TENANT_CONTEXT));
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.DISTRIBUTION_NOTIFY.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DISTRIB_NOTIFICATION_LOG_STR);
@@ -107,8 +97,6 @@ public class AuditDistributionEventFuncTest {
                 new DistributionData(DIST_CONSUMER_ID, DIST_RESOURCE_URL),
                 DIST_ID, TOPIC_NAME, DIST_STATUS_TIME);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.DISTRIBUTION_STATUS.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DIST_STATUS_LOG_STR);
@@ -126,8 +114,6 @@ public class AuditDistributionEventFuncTest {
                         .build(),
                 new DistributionData(DIST_CONSUMER_ID, DIST_RESOURCE_URL));
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.DISTRIBUTION_ARTIFACT_DOWNLOAD.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DIST_DOWNLOAD_LOG_STR);
@@ -146,8 +132,6 @@ public class AuditDistributionEventFuncTest {
                 new ResourceCommonInfo(RESOURCE_NAME,RESOURCE_TYPE),
                 DIST_ID, user, CURRENT_VERSION);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.DISTRIBUTION_DEPLOY.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DISTRIB_DEPLOY_LOG_STR);
@@ -165,8 +149,6 @@ public class AuditDistributionEventFuncTest {
                         .build(),
                 DIST_CONSUMER_ID);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.GET_UEB_CLUSTER.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).contains(EXPECTED_GET_UEB_CLUSTER_LOG_STR);

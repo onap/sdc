@@ -146,7 +146,7 @@ public class ExportImportJanusGraphServlet {
 			result = outputFile;
 
 		} catch (Exception e) {
-			log.info("export Graph failed - {}" , e);
+			e.printStackTrace();
 			// graph.rollback();
 			graph.tx().rollback();
 		} finally {
@@ -155,7 +155,7 @@ public class ExportImportJanusGraphServlet {
 					out.close();
 				}
 			} catch (IOException e) {
-				log.info("close FileOutputStream failed - {}" , e);
+				e.printStackTrace();
 			}
 		}
 		return result;

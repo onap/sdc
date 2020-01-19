@@ -156,27 +156,27 @@ org.openecomp.capabilities.Metric:
       type: string
       description: Unit of the metric value
       required: true
-      status: supported
+      status: SUPPORTED
     description:
       type: string
       description: Description of the metric
       required: false
-      status: supported
+      status: SUPPORTED
     type:
       type: string
       description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
       required: true
-      status: supported
+      status: SUPPORTED
     category:
       type: string
       description: Category of the metric, for an example, compute, disk, network, storage and etc.
       required: false
-      status: supported
+      status: SUPPORTED
   attributes:
     value:
       type: string
       description: Runtime monitored value
-      status: supported
+      status: SUPPORTED
 org.openecomp.capabilities.metric.Ceilometer:
   derived_from: org.openecomp.capabilities.Metric
   description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -185,7 +185,7 @@ org.openecomp.capabilities.metric.Ceilometer:
       type: string
       description: Ceilometer metric type name to monitor. (The name ceilometer is using)
       required: true
-      status: supported
+      status: SUPPORTED
 org.openecomp.capabilities.metric.SnmpPolling:
   derived_from: org.openecomp.capabilities.Metric
   description: A node type that includes the Metric capability indicates that it can be monitored using snmp polling.
@@ -194,7 +194,7 @@ org.openecomp.capabilities.metric.SnmpPolling:
       type: string
       description: Object Id of the metric
       required: true
-      status: supported
+      status: SUPPORTED
 org.openecomp.capabilities.metric.SnmpTrap:
   derived_from: org.openecomp.capabilities.Metric
   description: A node type that includes the Metric capability indicates that it can be monitored using snmp trap.
@@ -203,4 +203,4 @@ org.openecomp.capabilities.metric.SnmpTrap:
       type: string
       description: Object Id of the metric
       required: true
-      status: supported
+      status: SUPPORTED

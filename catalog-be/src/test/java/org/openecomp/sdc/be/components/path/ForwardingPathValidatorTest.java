@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -75,72 +76,58 @@ public class ForwardingPathValidatorTest implements ForwardingPathTestUtils {
 
     @Test
     public void testValidForwardingPathName(){
-
         Collection<ForwardingPathDataDefinition> paths = createData("pathName", "http", "8285", "pathName");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = test.validateForwardingPaths(paths, SERVICE_ID, false);
-        assertTrue(booleanResponseFormatEither.isLeft());
+        test.validateForwardingPaths(paths, SERVICE_ID, false);
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void testEmptyForwardingPathName(){
         Collection<ForwardingPathDataDefinition> paths = createData("", "protocol", "8285", "name1");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither =   test
-                .validateForwardingPaths(paths, SERVICE_ID, false);
-        assertTrue(booleanResponseFormatEither.isRight());
+        test.validateForwardingPaths(paths, SERVICE_ID, false);
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void testLongForwardingPathName(){
         String pathName = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
                 "org.openecomp.sdc:catalog-be:war:1.1.0-SNAPSHOT: Failed to collect dependencies at \n" +
                 "org.openecomp.sdc.common:openecomp-sdc-artifact-generator-api:jar:1802.0.1.167: ";
         Collection<ForwardingPathDataDefinition> paths = createData(pathName,
                 "http", "port", "name1");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither =   test
-                .validateForwardingPaths(paths, SERVICE_ID, false);
-        assertTrue(booleanResponseFormatEither.isRight());
+        test.validateForwardingPaths(paths, SERVICE_ID, false);
 
     }
 
     @Test
     public void testUniqueForwardingPathNameUpdateName(){
-
         Collection<ForwardingPathDataDefinition> paths = createData("pathName4", "httpfd", "82df85", "name1");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = test.validateForwardingPaths(paths, SERVICE_ID, true);
-        assertTrue(booleanResponseFormatEither.isLeft());
-
+        test.validateForwardingPaths(paths, SERVICE_ID, true);
     }
 
     @Test
     public void testUniqueForwardingPathNameUpdatePort(){
-
         Collection<ForwardingPathDataDefinition> paths = createData("pathName3", "httpfd", "82df85", "name1");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = test.validateForwardingPaths(paths, SERVICE_ID, true);
-        assertTrue(booleanResponseFormatEither.isLeft());
-
+        test.validateForwardingPaths(paths, SERVICE_ID, true);
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void testLongForwardingPathPortNumber(){
         String port = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
                 "org.openecomp.sdc:catalog-be:war:1.1.0-SNAPSHOT: Failed to collect dependencies at \n" +
                 "org.openecomp.sdc.common:openecomp-sdc-artifact-generator-api:jar:1802.0.1.167: ";
         Collection<ForwardingPathDataDefinition> paths = createData("pathName",
                 "http", port, "name1");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = test.validateForwardingPaths(paths, SERVICE_ID, false);
-        assertTrue(booleanResponseFormatEither.isRight());
+        test.validateForwardingPaths(paths, SERVICE_ID, false);
 
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void testLongForwardingPathProtocol(){
         String protocol = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
                 "org.openecomp.sdc:catalog-be:war:1.1.0-SNAPSHOT: Failed to collect dependencies at \n" +
                 "org.openecomp.sdc.common:openecomp-sdc-artifact-generator-api:jar:1802.0.1.167: ";
         Collection<ForwardingPathDataDefinition> paths = createData("pathName",
                 protocol, "port", "name1");
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither =  test.validateForwardingPaths(paths, SERVICE_ID, false);
-        assertTrue(booleanResponseFormatEither.isRight());
+        test.validateForwardingPaths(paths, SERVICE_ID, false);
 
     }
 

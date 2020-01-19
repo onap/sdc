@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.text.StrBuilder;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -32,6 +33,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
@@ -40,6 +42,7 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -49,7 +52,9 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.GeneralUtility;
 import org.slf4j.MDC;
 
 import java.util.*;
@@ -61,13 +66,15 @@ public class ArtifactsOperations extends BaseOperation {
     private static final String FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR = "failed to fetch {} for tosca element with id {}, error {}";
 	private static final Logger log = Logger.getLogger(ArtifactsOperations.class.getName());
 
-    public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, String instanceId) {
+    public Either<ArtifactDefinition, StorageOperationStatus> addArtifactToComponent(ArtifactDefinition artifactInfo,
+           Component component, NodeTypeEnum type, boolean failIfExist, String instanceId) {
 
+        String parentId = component.getUniqueId();
         String artifactId = artifactInfo.getUniqueId();
         if (artifactId == null && artifactInfo.getEsId() != null) {
             artifactId = artifactInfo.getEsId();
         }
-        Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(parentId, artifactInfo, type, artifactId, instanceId, false, false);
+        Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(component, artifactInfo, type, artifactId, instanceId, false, false);
         if (status.isRight()) {
 
             log.debug("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), parentId, status.right().value());
@@ -84,9 +91,11 @@ public class ArtifactsOperations extends BaseOperation {
 
     }
 
-    public Either<ArtifactDefinition, StorageOperationStatus> updateArtifactOnResource(ArtifactDefinition artifactInfo, String id, String artifactId, NodeTypeEnum type, String instanceId) {
+    public Either<ArtifactDefinition, StorageOperationStatus> updateArtifactOnResource(ArtifactDefinition artifactInfo,
+           Component component, String artifactId, NodeTypeEnum type, String instanceId, boolean isUpdate) {
 
-        Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(id, artifactInfo, type, artifactId, instanceId, true, false);
+        String id = component.getUniqueId();
+        Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(component, artifactInfo, type, artifactId, instanceId, isUpdate, false);
         if (status.isRight()) {
 
             log.debug("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), id, status.right().value());
@@ -97,7 +106,7 @@ public class ArtifactsOperations extends BaseOperation {
             ArtifactDataDefinition artifactData = status.left().value();
 
             ArtifactDefinition artifactDefResult = convertArtifactDataToArtifactDefinition(artifactInfo, artifactData);
-            log.debug("The returned ArtifactDefintion is {}", artifactDefResult);
+            log.debug("The returned ArtifactDefinition is {}", artifactDefResult);
             return Either.left(artifactDefResult);
         }
     }
@@ -296,45 +305,70 @@ public class ArtifactsOperations extends BaseOperation {
 
     }
 
-    public void updateUUID(ArtifactDataDefinition artifactData, String oldChecksum, String oldVesrion, boolean isUpdate, EdgeLabelEnum edgeLabel) {
-        if (oldVesrion == null || oldVesrion.isEmpty())
+    private void updateUUID(Map<String, ArtifactDefinition> deploymentArtifacts, ArtifactDefinition updateArtifactData, String oldChecksum, String oldVesrion, boolean isUpdate, EdgeLabelEnum edgeLabel, String prevArtUid) {
+        if (oldVesrion == null || oldVesrion.isEmpty()) {
             oldVesrion = "0";
-
-        String currentChecksum = artifactData.getArtifactChecksum();
+        }
+        String currentChecksum = updateArtifactData.getArtifactChecksum();
 
         if (isUpdate) {
-            ArtifactTypeEnum type = ArtifactTypeEnum.findType(artifactData.getArtifactType());
+            ArtifactTypeEnum type = ArtifactTypeEnum.findType(updateArtifactData.getArtifactType());
             switch (type) {
                 case HEAT_ENV:
                     if (edgeLabel == EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS) {
-                        generateUUID(artifactData, oldVesrion);
-                    } else {
-                        updateVersionAndDate(artifactData, oldVesrion);
+                        generateUUID(updateArtifactData, oldVesrion);
                     }
                     break;
                 case HEAT:
                 case HEAT_NET:
                 case HEAT_VOL:
-                    generateUUID(artifactData, oldVesrion);
+                    boolean changed = false;
+                    Optional<Entry<String, ArtifactDefinition>> any = deploymentArtifacts.entrySet()
+                            .stream()
+                            .filter(e -> e.getKey().equals(updateArtifactData.getArtifactLabel()))
+                            .findAny();
+                    if ( any.isPresent() ){
+                        if ( !any.get().getValue().getArtifactChecksum().equals(updateArtifactData.getArtifactChecksum()) ){
+                            changed = true;
+                        }
+                    }
+                    Optional<Entry<String, ArtifactDefinition>> anyEnv = deploymentArtifacts.entrySet()
+                            .stream()
+                            .filter(e -> prevArtUid.equals(e.getValue().getGeneratedFromId()))
+                            .findAny();
+                    if ( anyEnv.isPresent() && anyEnv.get().getValue().getHeatParamUpdated()){
+                        String newCheckSum = sortAndCalculateChecksumForHeatParameters(updateArtifactData.getHeatParameters());
+                        if ( !anyEnv.get().getValue().getArtifactChecksum().equals(newCheckSum) ){
+                            changed = true;
+                            anyEnv.get().getValue().setArtifactChecksum(newCheckSum);
+                            UUID uuid = UUID.randomUUID();
+                            anyEnv.get().getValue().setArtifactUUID(uuid.toString());
+                        }
+                    }
+                    if ( changed && anyEnv.isPresent() ){
+                            generateUUID(updateArtifactData, oldVesrion);
+                            anyEnv.get().getValue().setGeneratedFromId(updateArtifactData.getUniqueId());
+                            anyEnv.get().getValue().setDuplicated(false);
+                            anyEnv.get().getValue().setArtifactVersion(updateArtifactData.getArtifactVersion());
+                            anyEnv.get().getValue().setHeatParamUpdated(false);
+                    }
                     break;
                 default:
-                    if (oldChecksum == null || oldChecksum.isEmpty()) {
-                        if (currentChecksum != null) {
-                            generateUUID(artifactData, oldVesrion);
-                        }
-                    } else if ((currentChecksum != null && !currentChecksum.isEmpty()) && !oldChecksum.equals(currentChecksum)) {
-                        generateUUID(artifactData, oldVesrion);
-                    }
+                    generateUUIDForNonHeatArtifactType(updateArtifactData, oldChecksum, oldVesrion, currentChecksum);
                     break;
             }
         } else {
-            if (oldChecksum == null || oldChecksum.isEmpty()) {
-                if (currentChecksum != null) {
-                    generateUUID(artifactData, oldVesrion);
-                }
-            } else if ((currentChecksum != null && !currentChecksum.isEmpty()) && !oldChecksum.equals(currentChecksum)) {
+            generateUUIDForNonHeatArtifactType(updateArtifactData, oldChecksum, oldVesrion, currentChecksum);
+        }
+    }
+
+    private void generateUUIDForNonHeatArtifactType(ArtifactDataDefinition artifactData, String oldChecksum, String oldVesrion, String currentChecksum) {
+        if (oldChecksum == null || oldChecksum.isEmpty()) {
+            if (currentChecksum != null) {
                 generateUUID(artifactData, oldVesrion);
             }
+        } else if ((currentChecksum != null && !currentChecksum.isEmpty()) && !oldChecksum.equals(currentChecksum)) {
+            generateUUID(artifactData, oldVesrion);
         }
     }
 
@@ -344,9 +378,10 @@ public class ArtifactsOperations extends BaseOperation {
         return null;
     }
 
-    public Either<ArtifactDefinition, StorageOperationStatus> addHeatEnvArtifact(ArtifactDefinition artifactHeatEnv, ArtifactDefinition artifactHeat, String componentId, NodeTypeEnum parentType, boolean failIfExist, String instanceId) {
+    public Either<ArtifactDefinition, StorageOperationStatus> addHeatEnvArtifact(ArtifactDefinition artifactHeatEnv,
+           ArtifactDefinition artifactHeat, Component component, NodeTypeEnum parentType, boolean failIfExist, String instanceId) {
         artifactHeatEnv.setGeneratedFromId(artifactHeat.getUniqueId());
-        return addArifactToComponent(artifactHeatEnv, componentId, parentType, failIfExist, instanceId);
+        return addArtifactToComponent(artifactHeatEnv, component, parentType, failIfExist, instanceId);
     }
 
     public Either<ArtifactDefinition, StorageOperationStatus> getHeatArtifactByHeatEnvId(String parentId, ArtifactDefinition heatEnv, NodeTypeEnum parentType, String containerId, ComponentTypeEnum componentType) {
@@ -362,20 +397,30 @@ public class ArtifactsOperations extends BaseOperation {
         return getArtifactById(parentId, id, compType, containerId);
     }
 
-    public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvArtifact(String id, ArtifactDefinition artifactEnvInfo, String artifactId, String newArtifactId, NodeTypeEnum type, String instanceId) {
+    public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvArtifact(Component component, ArtifactDefinition artifactEnvInfo, String artifactId, String newArtifactId, NodeTypeEnum type, String instanceId) {
 
-        Either<Map<String, ArtifactDefinition>, JanusGraphOperationStatus> artifactsEither = getArtifactByLabel(id, instanceId, EdgeLabelEnum.DEPLOYMENT_ARTIFACTS);
+        Either<Map<String, ArtifactDefinition>, JanusGraphOperationStatus> artifactsEither = getArtifactByLabel(component.getUniqueId(), instanceId, EdgeLabelEnum.DEPLOYMENT_ARTIFACTS);
+        return updateHeatEnvArtifact(artifactsEither, component, artifactEnvInfo, artifactId, newArtifactId, type, instanceId);
+    }
+
+    private Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvArtifact(
+            Either<Map<String, ArtifactDefinition>, JanusGraphOperationStatus> artifactsEither, Component component,
+            ArtifactDefinition artifactEnvInfo, String artifactId, String newArtifactId, NodeTypeEnum type, String instanceId) {
+
+        String id = component.getUniqueId();
         if (artifactsEither.isRight()) {
             log.debug("Failed to find artifacts in component {} with id {} ", id, artifactsEither.right().value());
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(artifactsEither.right().value()));
         }
 
         Map<String, ArtifactDefinition> artifacts = artifactsEither.left().value();
-        List<ArtifactDefinition> envList = artifacts.values().stream().filter(a -> a.getGeneratedFromId() != null && a.getGeneratedFromId().equals(artifactId)).collect(Collectors.toList());
+        List<ArtifactDefinition> envList = artifacts.values().stream()
+                .filter(a -> a.getGeneratedFromId() != null && a.getGeneratedFromId().equals(artifactId))
+                .collect(Collectors.toList());
         if (envList != null && !envList.isEmpty()) {
             envList.forEach(a -> {
                 a.setGeneratedFromId(newArtifactId);
-                updateArtifactOnResource(a, id, a.getUniqueId(), type, instanceId);
+                updateArtifactOnResource(a, component, a.getUniqueId(), type, instanceId, true);
 
             });
 
@@ -383,8 +428,16 @@ public class ArtifactsOperations extends BaseOperation {
         return Either.left(artifactEnvInfo);
     }
 
-    public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvPlaceholder(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type) {
-		return updateArtifactOnResource(artifactInfo, parentId, artifactInfo.getUniqueId(), type, null);
+    public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvArtifactOnInstance(
+            Component component, ArtifactDefinition artifactEnvInfo, String artifactId, String newArtifactId, NodeTypeEnum type, String instanceId) {
+
+        String id = component.getUniqueId();
+        Either<Map<String, ArtifactDefinition>, JanusGraphOperationStatus> artifactsEither = getArtifactByLabel(id, instanceId, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
+        return updateHeatEnvArtifact(artifactsEither, component, artifactEnvInfo, artifactId, newArtifactId, type, instanceId);
+    }
+
+    public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvPlaceholder(ArtifactDefinition artifactInfo, Component parent, NodeTypeEnum type) {
+		return updateArtifactOnResource(artifactInfo, parent, artifactInfo.getUniqueId(), type, null, true);
     }
 
 
@@ -518,9 +571,10 @@ public class ArtifactsOperations extends BaseOperation {
 
     }
 
-    public Either<ArtifactDataDefinition, StorageOperationStatus> updateArtifactOnGraph(String componentId, ArtifactDefinition artifactInfo, NodeTypeEnum type, String artifactId, String instanceId, boolean isUpdate, boolean isDeletePlaceholder) {
+    public Either<ArtifactDataDefinition, StorageOperationStatus> updateArtifactOnGraph(Component component, ArtifactDefinition artifactInfo, NodeTypeEnum type, String artifactId, String instanceId, boolean isUpdate, boolean isDeletePlaceholder) {
+        String componentId = component.getUniqueId();
         Either<ArtifactDataDefinition, StorageOperationStatus> res = null;
-        ArtifactDataDefinition artifactToUpdate = new ArtifactDataDefinition(artifactInfo);
+        ArtifactDefinition artifactToUpdate = new ArtifactDefinition(artifactInfo);
         ArtifactGroupTypeEnum groupType = artifactInfo.getArtifactGroupType();
 
         Triple<EdgeLabelEnum, Boolean, VertexTypeEnum> triple = getEdgeLabelEnumFromArtifactGroupType(groupType, type);
@@ -535,6 +589,7 @@ public class ArtifactsOperations extends BaseOperation {
         }
         boolean isNeedToClone = isNeedToCloneEither.left().value();
 
+        String prevArtUid = artifactToUpdate.getUniqueId();
         if (artifactId == null || isNeedToClone) {
             String uniqueId;
             if (edgeLabelEnum != EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS && edgeLabelEnum != EdgeLabelEnum.INSTANCE_ARTIFACTS) {
@@ -542,20 +597,21 @@ public class ArtifactsOperations extends BaseOperation {
             } else {
                 uniqueId = UniqueIdBuilder.buildInstanceArtifactUniqueId(componentId, instanceId, artifactToUpdate.getArtifactLabel());
             }
+            prevArtUid = artifactToUpdate.getUniqueId();
             artifactToUpdate.setUniqueId(uniqueId);
             if (!isDeletePlaceholder)
                 artifactToUpdate.setEsId(uniqueId);
         } else
             artifactToUpdate.setUniqueId(artifactId);
 
-        Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
+        Map<String, ArtifactDefinition> artifacts = new HashMap<>();
         Map<String, MapArtifactDataDefinition> artifactInst = null;
         if (edgeLabelEnum != EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS && edgeLabelEnum != EdgeLabelEnum.INSTANCE_ARTIFACTS) {
 
             Either<Map<String, ArtifactDataDefinition>, JanusGraphOperationStatus> artifactsEither = this.getDataFromGraph(componentId, edgeLabelEnum);
 
             if (artifactsEither.isLeft() && artifactsEither.left().value() != null && !artifactsEither.left().value().isEmpty()) {
-                artifacts = artifactsEither.left().value();
+                artifacts = convertArtifactMapToArtifactDefinitionMap(artifactsEither.left().value());
                 if (isNeedToClone && artifacts != null) {
                     artifacts.values().stream().forEach(a -> a.setDuplicated(Boolean.TRUE));
                 }
@@ -570,7 +626,7 @@ public class ArtifactsOperations extends BaseOperation {
                 }
                 MapArtifactDataDefinition artifatcsOnInstance = artifactInst.get(instanceId);
                 if (artifatcsOnInstance != null) {
-                    artifacts = artifatcsOnInstance.getMapToscaDataDefinition();
+                    artifacts = convertArtifactMapToArtifactDefinitionMap(artifatcsOnInstance.getMapToscaDataDefinition());
                 }
             }
         }
@@ -600,7 +656,8 @@ public class ArtifactsOperations extends BaseOperation {
                 }
             }
         }
-        updateUUID(artifactToUpdate, oldChecksum, oldVersion, isUpdate, edgeLabelEnum);
+
+        updateUUID(artifacts, artifactToUpdate, oldChecksum, oldVersion, isUpdate, edgeLabelEnum, prevArtUid);
 
         if (artifactInfo.getPayloadData() == null) {
             if (!artifactToUpdate.getMandatory() || artifactToUpdate.getEsId() != null) {
@@ -614,11 +671,15 @@ public class ArtifactsOperations extends BaseOperation {
 
         StorageOperationStatus status = StorageOperationStatus.OK;
         if (edgeLabelEnum != EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS && edgeLabelEnum != EdgeLabelEnum.INSTANCE_ARTIFACTS) {
-            List<ArtifactDataDefinition> toscaDataList = new ArrayList<>();
+            List<ArtifactDefinition> toscaDataList = new ArrayList<>();
             toscaDataList.add(artifactToUpdate);
 
             if (isNeedToClone && artifacts != null) {
                 artifacts.values().stream().filter(a -> !a.getArtifactLabel().equals(artifactToUpdate.getArtifactLabel())).forEach(toscaDataList::add);
+            }else{
+                if ( artifacts != null ) {
+                    artifacts.values().stream().filter(a -> artifactToUpdate.getUniqueId().equals(a.getGeneratedFromId())).forEach(toscaDataList::add);
+                }
             }
             status = updateToscaDataOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, toscaDataList, JsonPresentationFields.ARTIFACT_LABEL);
         } else {
@@ -629,8 +690,9 @@ public class ArtifactsOperations extends BaseOperation {
             if (isNeedToClone) {
                 MapArtifactDataDefinition artifatcsOnInstance = artifactInst.get(instanceId);
                 if (artifatcsOnInstance != null) {
-                    artifacts = artifatcsOnInstance.getMapToscaDataDefinition();
-                    artifacts.put(artifactToUpdate.getArtifactLabel(), artifactToUpdate);
+                    Map<String, ArtifactDataDefinition> mapToscaDataDefinition = artifatcsOnInstance.getMapToscaDataDefinition();
+                    ArtifactDataDefinition artifactDataDefinitionToUpdate = new ArtifactDataDefinition(artifactToUpdate);
+                    mapToscaDataDefinition.put(artifactToUpdate.getArtifactLabel(), artifactDataDefinitionToUpdate);
                 }
 
                 for (Entry<String, MapArtifactDataDefinition> e : artifactInst.entrySet()) {
@@ -659,7 +721,7 @@ public class ArtifactsOperations extends BaseOperation {
 
         UUID uuid = UUID.randomUUID();
         artifactData.setArtifactUUID(uuid.toString());
-        MDC.put("serviceInstanceID", uuid.toString());
+        MDC.put(ILogConfiguration.MDC_SERVICE_INSTANCE_ID, uuid.toString());
         updateVersionAndDate(artifactData, oldVesrion);
     }
 
@@ -754,4 +816,13 @@ public class ArtifactsOperations extends BaseOperation {
         return result;
     }
 
+    public String sortAndCalculateChecksumForHeatParameters(List<HeatParameterDataDefinition> heatParameters) {
+        StrBuilder sb = new StrBuilder();
+        heatParameters.stream()
+                .sorted(Comparator.comparingInt(HeatParameterDataDefinition::hashCode))
+                .map(HeatParameterDataDefinition::hashCode)
+                .collect(Collectors.toSet())
+                .forEach(sb::append);
+        return GeneralUtility.calculateMD5Base64EncodedByString(sb.toString());
+    }
 }

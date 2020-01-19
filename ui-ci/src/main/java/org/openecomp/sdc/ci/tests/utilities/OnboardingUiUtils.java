@@ -59,7 +59,8 @@ public class OnboardingUiUtils {
 
         if (vspFound) {
             List<WebElement> elementsFromTable = GeneralPageElements.getElementsFromTable();
-            elementsFromTable.get(1).click();
+            elementsFromTable.get(0).click();
+            elementsFromTable.get(0).click();
             GeneralUIUtils.waitForLoader();
 
             if (isUpdate) {
@@ -184,7 +185,6 @@ public class OnboardingUiUtils {
 
         validateDeploymentArtifactsVersion(deploymentArtifacts, heatEnvFilesFromCSAR);
 
-        DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
         return createVendorSoftwareProduct;
     }
 

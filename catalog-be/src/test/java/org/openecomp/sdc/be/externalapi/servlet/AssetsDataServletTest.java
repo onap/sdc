@@ -39,6 +39,7 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -51,9 +52,11 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -69,6 +72,7 @@ import javax.ws.rs.core.Response;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class AssetsDataServletTest extends JerseyTest {
@@ -89,10 +93,9 @@ public class AssetsDataServletTest extends JerseyTest {
     private static final SubCategoryDefinition subCategoryDefinition = Mockito.mock(SubCategoryDefinition.class);
     private static final AssetMetadataConverter assetMetadataConverter = Mockito.mock(AssetMetadataConverter.class);
     private static final ResourceAssetMetadata resourceAssetMetadata = new ResourceAssetMetadata();
+    private static final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
     private static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
     private static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    private static final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
-
 
 
 
@@ -127,12 +130,19 @@ public class AssetsDataServletTest extends JerseyTest {
         when(elementBusinessLogic.getAllResourceCategories()).thenReturn(Either.left(Arrays.asList(categoryDefinition)));
         when(resourceBusinessLogic.createResource(Mockito.eq(resource), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(resource);
         when(webApplicationContext.getBean(AssetMetadataConverter.class)).thenReturn(assetMetadataConverter);
+        when(request.isUserInRole(anyString())).thenReturn(true);
 
         Mockito.doReturn(Either.left(resourceAssetMetadata)).when(assetMetadataConverter).convertToSingleAssetMetadata(Mockito.eq(resource), Mockito.anyString(),
                 Mockito.eq(true));
 
+        String appConfigDir = "src/test/resources/config";
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
+        org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
+        configuration.setJanusGraphInMemoryGraph(true);
 
+        configurationManager.setConfiguration(configuration);
     }
 
 
@@ -161,7 +171,7 @@ public class AssetsDataServletTest extends JerseyTest {
         final JSONObject createRequest = buildCreateJsonRequest();
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).header(Constants.X_ECOMP_INSTANCE_ID_HEADER, "mockXEcompInstanceId").header(Constants.USER_ID_HEADER, "mockAttID")
                 .post(Entity.json(createRequest.toJSONString()), Response.class);
-        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+        assertEquals(response.getStatus(), HttpStatus.SC_CREATED);
 
     }
     private static final String BASIC_CREATE_REQUEST = "{\r\n" +
@@ -189,22 +199,13 @@ public class AssetsDataServletTest extends JerseyTest {
     protected Application configure() {
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
-        return new ResourceConfig(CrudExternalServlet.class)
+        return new ResourceConfig()
+                .register(new CrudExternalServlet(userBusinessLogic, componentInstanceBusinessLogic,componentsUtils,servletUtils,resourceImportManager, elementBusinessLogic, assetMetadataConverter, lifecycleBusinessLogic, resourceBusinessLogic, serviceBusinessLogic))
                 .register(new AbstractBinder() {
 
                     @Override
                     protected void configure() {
                         bind(request).to(HttpServletRequest.class);
-                        bind(userBusinessLogic).to(UserBusinessLogic.class);
-                        bind(componentInstanceBusinessLogic).to(ComponentInstanceBusinessLogic.class);
-                        bind(componentsUtils).to(ComponentsUtils.class);
-                        bind(servletUtils).to(ServletUtils.class);
-                        bind(resourceImportManager).to(ResourceImportManager.class);
-                        bind(elementBusinessLogic).to(ElementBusinessLogic.class);
-                        bind(assetMetadataConverter).to(AssetMetadataConverter.class);
-                        bind(lifecycleBusinessLogic).to(LifecycleBusinessLogic.class);
-                        bind(resourceBusinessLogic).to(ResourceBusinessLogic.class);
-                        bind(serviceBusinessLogic).to(ServiceBusinessLogic.class);
                     }
                 })
                 .property("contextConfig", context);

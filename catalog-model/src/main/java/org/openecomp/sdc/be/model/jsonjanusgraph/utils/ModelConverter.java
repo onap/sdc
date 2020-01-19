@@ -27,11 +27,18 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
+import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
@@ -40,11 +47,17 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ProductMetadataData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -195,8 +208,7 @@ public class ModelConverter {
 				resource.setCsarUUID((String) topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_UUID));
 				resource.setCsarVersion((String) topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_VERSION));
 				resource.setImportedToscaChecksum((String) topologyTemplate.getMetadataValue(JsonPresentationFields.IMPORTED_TOSCA_CHECKSUM));
-				convertInterfaces(topologyTemplate, resource);
-
+                convertInterfaces(topologyTemplate, resource);
             }
             convertComponentInstances(topologyTemplate, resource);
             convertRelations(topologyTemplate, resource);
@@ -217,14 +229,14 @@ public class ModelConverter {
 	}
 
     private static void convertInterfaces(TopologyTemplate toscaElement, Resource resource) {
-      Map<String, InterfaceDataDefinition> interfaces = toscaElement.getInterfaces();
-      Map<String, InterfaceDefinition> copy;
-      if (interfaces != null) {
-        copy = interfaces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDefinition(e.getValue())));
-      } else {
-        copy = new HashMap<>();
-      }
-      resource.setInterfaces(copy);
+        Map<String, InterfaceDataDefinition> interfaces = toscaElement.getInterfaces();
+        Map<String, InterfaceDefinition> copy;
+        if (interfaces != null) {
+            copy = interfaces.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDefinition(e.getValue())));
+        } else {
+            copy = new HashMap<>();
+        }
+        resource.setInterfaces(copy);
     }
 
     private static void convertServiceInterfaces(TopologyTemplate toscaElement, Service service) {
@@ -293,6 +305,27 @@ public class ModelConverter {
         Map<String, MapArtifactDataDefinition> instDeploymentArtifacts = topologyTemplate.getInstDeploymentArtifacts();
         Map<String, MapArtifactDataDefinition> instanceArtifacts = topologyTemplate.getInstanceArtifacts();
 
+        setComponentInstancesDeploymentArtifactsToComponent(instDeploymentArtifacts, component);
+        setComponentInstancesInformationalArtifactsToComponent(instanceArtifacts, component);
+
+    }
+
+    public static void setComponentInstancesInformationalArtifactsToComponent(Map<String, MapArtifactDataDefinition> instanceArtifacts, Component component) {
+        List<ComponentInstance> instances = component.getComponentInstances();
+        if (instanceArtifacts != null && instances != null) {
+            instanceArtifacts.entrySet().forEach(e -> {
+                Optional<ComponentInstance> ci = instances.stream().filter(i -> i.getUniqueId().equals(e.getKey())).findFirst();
+                if (ci.isPresent()) {
+                    Map<String, ArtifactDataDefinition> mapToscaDataDefinition = e.getValue().getMapToscaDataDefinition();
+                    Map<String, ArtifactDefinition> deplArt = mapToscaDataDefinition.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, en -> new ArtifactDefinition(en.getValue())));
+
+                    ci.get().setArtifacts(deplArt);
+                }
+            });
+        }
+    }
+
+    public static void setComponentInstancesDeploymentArtifactsToComponent(Map<String, MapArtifactDataDefinition> instDeploymentArtifacts, Component component) {
         List<ComponentInstance> instances = component.getComponentInstances();
         if (instDeploymentArtifacts != null && instances != null) {
             instDeploymentArtifacts.entrySet().forEach(e -> {
@@ -305,18 +338,6 @@ public class ModelConverter {
                 }
             });
         }
-        if (instanceArtifacts != null && instances != null) {
-            instanceArtifacts.entrySet().forEach(e -> {
-                Optional<ComponentInstance> ci = instances.stream().filter(i -> i.getUniqueId().equals(e.getKey())).findFirst();
-                if (ci.isPresent()) {
-                    Map<String, ArtifactDataDefinition> mapToscaDataDefinition = e.getValue().getMapToscaDataDefinition();
-                    Map<String, ArtifactDefinition> deplArt = mapToscaDataDefinition.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, en -> new ArtifactDefinition(en.getValue())));
-
-                    ci.get().setArtifacts(deplArt);
-                }
-            });
-        }
-
     }
 
     public static void convertComponentInstances(Component component, TopologyTemplate topologyTemplate) {
@@ -404,7 +425,7 @@ public class ModelConverter {
             requirementCapabilityRelDef.setRequirement(p.getRelation().getRequirement());
             requirementCapabilityRelDef.setType(p.getRelation().getRelationship().getType());
             requirementCapabilityRelDef.setCapability(p.getRelation().getCapability());
-
+            requirementCapabilityRelDef.setOriginUI(relation.isOriginUI());
             relationsList.add(requirementCapabilityRelDef);
         });
 
@@ -517,18 +538,55 @@ public class ModelConverter {
         return component.getCapabilities() != null && component.getComponentInstances() != null
                 && component.getComponentInstances()
                 .stream()
-                .filter(ci->MapUtils.isNotEmpty(ci.getCapabilities()))
-                .findFirst()
-                .isPresent();
+                .anyMatch(ci->MapUtils.isNotEmpty(ci.getCapabilities()));
     }
     private static boolean groupsCapabilitiesExist(Component component) {
         return component.getCapabilities() != null && component.getGroups() != null
                 && component.getGroups()
                 .stream()
-                .filter(g->MapUtils.isNotEmpty(g.getCapabilities()))
-                .findFirst()
-                .isPresent();
+                .anyMatch(g->MapUtils.isNotEmpty(g.getCapabilities()));
     }
+
+    public static MapCapabilityProperty convertToMapOfMapCapabilityProperties(Map<String, List<CapabilityDefinition>> capabilities, String ownerId, boolean isAtomicType) {
+
+        Map<String, MapPropertiesDataDefinition> toscaCapPropMap = new HashMap<>();
+        if(MapUtils.isNotEmpty(capabilities)){
+            capabilities.forEach((s, caps)-> addCapsProperties(ownerId, isAtomicType, toscaCapPropMap, caps));
+        }
+        return new MapCapabilityProperty(toscaCapPropMap);
+    }
+
+    private static void addCapsProperties(String ownerId, boolean isAtomicType, Map<String, MapPropertiesDataDefinition> toscaCapPropMap, List<CapabilityDefinition> caps) {
+        if (CollectionUtils.isNotEmpty(caps)) {
+            caps.forEach(cap -> addCapProperties(ownerId, isAtomicType, toscaCapPropMap, cap));
+        }
+    }
+
+    private static void addCapProperties(String ownerId, boolean isAtomicType, Map<String, MapPropertiesDataDefinition> toscaCapPropMap, CapabilityDefinition cap) {
+        if (CollectionUtils.isNotEmpty(cap.getProperties())) {
+            MapPropertiesDataDefinition dataToCreate = new MapPropertiesDataDefinition(cap.getProperties()
+                    .stream()
+                    .map(PropertyDataDefinition::new)
+                    .collect(Collectors.toMap(PropertyDataDefinition::getName, p -> p)));
+            toscaCapPropMap.put(buildCapabilityPropertyKey(isAtomicType, cap.getType(),cap.getName(),ownerId, cap),
+                    new MapPropertiesDataDefinition(dataToCreate));
+        }
+    }
+
+    public static String buildCapabilityPropertyKey(boolean isAtomicType, String capabilityType, String capabilityName, String componentInstanceUniqueId, CapabilityDefinition cap) {
+        StringBuilder sb = new StringBuilder(componentInstanceUniqueId);
+        sb.append(CAP_PROP_DELIM)
+          .append(cap.getOwnerId())
+          .append(CAP_PROP_DELIM);
+        if(!isAtomicType && !componentInstanceUniqueId.equals(cap.getOwnerId())){
+            sb.append(cap.getOwnerId())
+              .append(CAP_PROP_DELIM);
+        }
+        return sb.append(capabilityType)
+                 .append(CAP_PROP_DELIM)
+                 .append(capabilityName).toString();
+    }
+
     public static MapCapabilityProperty convertToMapOfMapCapabiltyProperties(Map<String, List<CapabilityDefinition>> instCapabilities, String ownerId) {
         return convertToMapOfMapCapabiltyProperties(instCapabilities, ownerId, false);
     }
@@ -667,6 +725,11 @@ public class ModelConverter {
                 service.setServiceRole((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_ROLE));
             } else {
                 service.setServiceRole("");
+            }
+            if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_FUNCTION)) != null){
+                service.setServiceFunction((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_FUNCTION));
+            } else {
+                service.setServiceFunction("");
             }
         }
         component.setConformanceLevel((String) toscaElement.getMetadataValue(JsonPresentationFields.CONFORMANCE_LEVEL));
@@ -875,44 +938,47 @@ public class ModelConverter {
         Map<String, ListCapabilityDataDefinition> toscaCapabilities = toscaElement.getCapabilities();
         Map<String, MapPropertiesDataDefinition> toscaCapPropMap = toscaElement.getCapabilitiesProperties();
 
+        Map<String, List<CapabilityDefinition>> capabilitiesMapFromMapObject = getCapabilitiesMapFromMapObject(toscaCapabilities, toscaCapPropMap);
+        if (capabilitiesMapFromMapObject != null) {
+            component.setCapabilities(capabilitiesMapFromMapObject);
+        }
+    }
+
+    public static Map<String, List<CapabilityDefinition>> getCapabilitiesMapFromMapObject(Map<String, ListCapabilityDataDefinition> toscaCapabilities, Map<String, MapPropertiesDataDefinition>  toscaCapPropMap) {
         Map<String, List<CapabilityDefinition>> compCap = new HashMap<>();
         if (toscaCapabilities == null || toscaCapabilities.isEmpty())
-            return;
-		toscaCapabilities.forEach((s, cap)-> {
+            return null;
+        toscaCapabilities.forEach((s, cap)-> {
 
-                if (cap != null) {
-                    List<CapabilityDataDefinition> capDataList = cap.getListToscaDataDefinition();
+                    if (cap != null) {
+                        List<CapabilityDataDefinition> capDataList = cap.getListToscaDataDefinition();
 
-                    if (capDataList != null && !capDataList.isEmpty()) {
-						List<CapabilityDefinition> capList = capDataList.stream().map(CapabilityDefinition::new).collect(Collectors.toList());
-                        compCap.put(s, capList);
+                        if (capDataList != null && !capDataList.isEmpty()) {
+                            List<CapabilityDefinition> capList = capDataList.stream().map(CapabilityDefinition::new).collect(Collectors.toList());
+                            compCap.put(s, capList);
+                        }
                     }
+
                 }
-
-            }
-		);
+        );
         if (toscaCapPropMap != null && !toscaCapPropMap.isEmpty()) {
-			toscaCapPropMap.forEach((s, capProp)-> {
-                    String[] result = s.split(CAP_PROP_DELIM);
-                    if (capProp != null) {
-                        Map<String, PropertyDataDefinition> capMap = capProp.getMapToscaDataDefinition();
+            toscaCapPropMap.forEach((s, capProp)-> {
+                        String[] result = s.split(CAP_PROP_DELIM);
+                        if (capProp != null) {
+                            Map<String, PropertyDataDefinition> capMap = capProp.getMapToscaDataDefinition();
 
-                        if (capMap != null && !capMap.isEmpty()) {
-							List<ComponentInstanceProperty> capPropsList = capMap.values().stream().map(ComponentInstanceProperty::new).collect(Collectors.toList());
+                            if (capMap != null && !capMap.isEmpty()) {
+                                List<ComponentInstanceProperty> capPropsList = capMap.values().stream().map(ComponentInstanceProperty::new).collect(Collectors.toList());
 
-                            List<CapabilityDefinition> cap = compCap.get(result[0]);
-                            Optional<CapabilityDefinition> op = cap.stream().filter(c -> c.getName().equals(result[1])).findFirst();
-                            if (op.isPresent()) {
-                                op.get().setProperties(capPropsList);
+                                List<CapabilityDefinition> cap = compCap.get(result[0]);
+                                Optional<CapabilityDefinition> op = cap.stream().filter(c -> c.getName().equals(result[1])).findFirst();
+                                op.ifPresent(capabilityDefinition -> capabilityDefinition.setProperties(capPropsList));
                             }
                         }
                     }
-                }
-			);
+            );
         }
-
-        component.setCapabilities(compCap);
-
+        return compCap;
     }
 
     private static void convertGroups(TopologyTemplate toscaElement, Component component) {
@@ -938,7 +1004,7 @@ public class ModelConverter {
         Map<String, GroupDataDefinition> groups = new HashMap<>();
 
         if (groupDefinitions != null && groups.isEmpty()) {
-			groups = groupDefinitions.stream().collect(Collectors.toMap(GroupDefinition::getName, GroupDefinition::new));
+			groups = groupDefinitions.stream().collect(Collectors.toMap(GroupDefinition::getInvariantName, GroupDefinition::new));
         }
         toscaElement.setGroups(groups);
     }
@@ -1019,7 +1085,7 @@ public class ModelConverter {
         Map<String, InterfaceDefinition> interfaces = service.getInterfaces();
         if (interfaces != null && !interfaces.isEmpty()) {
             Map<String, InterfaceDataDefinition> copy = interfaces.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDataDefinition(e.getValue())));
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> new InterfaceDataDefinition(e.getValue())));
             topologyTemplate.setInterfaces(copy);
         }
     }
@@ -1028,7 +1094,7 @@ public class ModelConverter {
         convertServiceMetaData(service, topologyTemplate);
         convertServiceApiArtifacts(service, topologyTemplate);
         convertServicePaths(service,topologyTemplate);
-        convertServiceInterfaces(service, topologyTemplate);
+        convertServiceInterfaces(topologyTemplate,service);
     }
 
     private static void convertServicePaths(Service service, TopologyTemplate topologyTemplate) {
@@ -1182,6 +1248,11 @@ public class ModelConverter {
             } else {
                 toscaElement.setMetadataValue(JsonPresentationFields.SERVICE_ROLE, "");
             }
+            if (((Service) component).getServiceFunction() != null){
+                toscaElement.setMetadataValue(JsonPresentationFields.SERVICE_FUNCTION, ((Service) component).getServiceFunction());
+            } else {
+                toscaElement.setMetadataValue(JsonPresentationFields.SERVICE_FUNCTION, "");
+            }
         }
         toscaElement.setMetadataValue(JsonPresentationFields.CONFORMANCE_LEVEL, component.getConformanceLevel());
         toscaElement.setMetadataValue(JsonPresentationFields.IS_DELETED, component.getIsDeleted());
@@ -1208,6 +1279,7 @@ public class ModelConverter {
                 List<GroupInstance> groupInstances = topologyTemplate.getInstGroups().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new GroupInstance(e.getValue())).collect(Collectors.toList());
                 currComponentInstance.setGroupInstances(groupInstances);
             }
+            setComponentInstanceSource(currComponentInstance, component);
             if(nodeFilterComponents != null && nodeFilterComponents.containsKey(key)){
                 currComponentInstance.setNodeFilter(nodeFilterComponents.get(key));
             }
@@ -1227,6 +1299,36 @@ public class ModelConverter {
 
         }
         component.setComponentInstances(componentInstances);
+    }
+
+    public static List<ComponentInstance> getComponentInstancesFromMapObject(Map<String, ComponentInstanceDataDefinition> componentInstancesDefinitionMap, Component component) {
+        List<ComponentInstance> componentInstances = new ArrayList<>();
+        ComponentInstance currComponentInstance;
+        for (Map.Entry<String, ComponentInstanceDataDefinition> entry : componentInstancesDefinitionMap.entrySet()) {
+            String key = entry.getKey();
+            currComponentInstance = new ComponentInstance(componentInstancesDefinitionMap.get(key));
+            setComponentInstanceSource(currComponentInstance, component);
+            componentInstances.add(currComponentInstance);
+        }
+        return componentInstances;
+    }
+
+    private static void setComponentInstanceSource(ComponentInstance currComponentInstance, Component component) {
+        if (Objects.isNull(currComponentInstance.getCreatedFrom())){
+            if (ComponentTypeEnum.RESOURCE.equals(component.getComponentType())){
+                Resource resource = (Resource) component;
+                if (isFromCsar(resource)){
+                    currComponentInstance.setCreatedFrom(CreatedFrom.CSAR);
+                }
+                else {
+                    currComponentInstance.setCreatedFrom(CreatedFrom.UI);
+                }
+            }
+        }
+    }
+
+    private static boolean isFromCsar(Resource resource) {
+        return resource.getResourceType() == ResourceTypeEnum.VF || resource.getResourceType() == ResourceTypeEnum.CVFC;
     }
 
     private static void setComponentInstancesInputsToComponent(TopologyTemplate topologyTemplate, Component component) {
@@ -1258,64 +1360,85 @@ public class ModelConverter {
         }
     }
 
-	private static void setComponentInstancesInterfacesToComponent(TopologyTemplate topologyTemplate, Component component) {
-		if (topologyTemplate.getInstInterfaces() != null) {
-			Map<String, List<ComponentInstanceInterface>> interfaces = new HashMap<>();
-			for (Entry<String, MapInterfaceInstanceDataDefinition> entry : topologyTemplate.getInstInterfaces().entrySet()) {
-				if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
-					String key = entry.getKey();
-					List<ComponentInstanceInterface> componentInstanceInterfaces = entry.getValue()
-							.getMapToscaDataDefinition().entrySet().stream().map(e -> new
-									ComponentInstanceInterface(e.getKey(), e.getValue()))
-							.collect(Collectors.toList());
-					interfaces.put(key, componentInstanceInterfaces);
-				}
-			}
-			component.setComponentInstancesInterfaces(interfaces);
-		}
-		else if (topologyTemplate.getComponentInstInterfaces() != null) {
-			Map<String, List<ComponentInstanceInterface>> interfaces = new HashMap<>();
-			for (Entry<String, MapInterfaceDataDefinition> entry : topologyTemplate.getComponentInstInterfaces().entrySet()) {
-				if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
-					String key = entry.getKey();
-					List<ComponentInstanceInterface> componentInstanceInterfaces = entry.getValue()
-							.getMapToscaDataDefinition().entrySet().stream().map(e -> new
-									ComponentInstanceInterface(e.getKey(), e.getValue()))
-							.collect(Collectors.toList());
-					interfaces.put(key, componentInstanceInterfaces);
-				}
-			}
-			component.setComponentInstancesInterfaces(interfaces);
-		}
+    public static Map<String, List<ComponentInstanceProperty>> getComponentInstancesAttributes(Map<String, MapPropertiesDataDefinition> mapPropertiesDataDefinition) {
+        Map<String, List<ComponentInstanceProperty>> attributes = new HashMap<>();
+        for (Map.Entry<String, MapPropertiesDataDefinition> entry : mapPropertiesDataDefinition.entrySet()) {
+            if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
+                String key = entry.getKey();
+                List<ComponentInstanceProperty> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream().map(e -> new ComponentInstanceProperty(new ComponentInstanceProperty(e.getValue())))
+                        .collect(Collectors.toList());
+                attributes.put(key, componentInstanceAttributes);
+            }
+        }
+        return attributes;
+    }
 
-	}
+    private static void setComponentInstancesInterfacesToComponent(TopologyTemplate topologyTemplate, Component component) {
+        if (topologyTemplate.getInstInterfaces() != null) {
+            Map<String, List<ComponentInstanceInterface>> interfaces = new HashMap<>();
+            for (Map.Entry<String, MapInterfaceInstanceDataDefinition> entry : topologyTemplate.getInstInterfaces().entrySet()) {
+                if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
+                    String key = entry.getKey();
+                    List<ComponentInstanceInterface> componentInstanceInterfaces = entry.getValue()
+                            .getMapToscaDataDefinition().entrySet().stream().map(e -> new
+                                    ComponentInstanceInterface(e.getKey(), e.getValue()))
+                            .collect(Collectors.toList());
+                    interfaces.put(key, componentInstanceInterfaces);
+                }
+            }
+            component.setComponentInstancesInterfaces(interfaces);
+        }
+        else if (topologyTemplate.getComponentInstInterfaces() != null) {
+            Map<String, List<ComponentInstanceInterface>> interfaces = new HashMap<>();
+            for (Map.Entry<String, MapInterfaceDataDefinition> entry : topologyTemplate.getComponentInstInterfaces().entrySet()) {
+                if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
+                    String key = entry.getKey();
+                    List<ComponentInstanceInterface> componentInstanceInterfaces = entry.getValue()
+                            .getMapToscaDataDefinition().entrySet().stream().map(e -> new
+                                    ComponentInstanceInterface(e.getKey(), e.getValue()))
+                            .collect(Collectors.toList());
+                    interfaces.put(key, componentInstanceInterfaces);
+                }
+            }
+            component.setComponentInstancesInterfaces(interfaces);
+        }
 
-	private static void setComponentInstancesAttributesToComponent(TopologyTemplate topologyTemplate, Component component) {
-		if (topologyTemplate.getInstAttributes() != null) {
-			Map<String, List<ComponentInstanceProperty>> attributes = new HashMap<>();
-			for (Map.Entry<String, MapPropertiesDataDefinition> entry : topologyTemplate.getInstAttributes().entrySet()) {
-				if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
-					String key = entry.getKey();
-					List<ComponentInstanceProperty> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream().map(e -> new ComponentInstanceProperty(new ComponentInstanceProperty(e.getValue())))
-							.collect(Collectors.toList());
-					attributes.put(key, componentInstanceAttributes);
-				}
-			}
-			component.setComponentInstancesAttributes(attributes);
-		}
-	}
+    }
 
-    private static void setComponentInstancesRequirementsToComponent(TopologyTemplate topologyTemplate, Component component) {
+    private static void setComponentInstancesAttributesToComponent(TopologyTemplate topologyTemplate, Component component) {
+        if (topologyTemplate.getInstAttributes() != null) {
+            Map<String, List<ComponentInstanceProperty>> attributes = new HashMap<>();
+            for (Map.Entry<String, MapPropertiesDataDefinition> entry : topologyTemplate.getInstAttributes().entrySet()) {
+                if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
+                    String key = entry.getKey();
+                    List<ComponentInstanceProperty> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream().map(e -> new ComponentInstanceProperty(new ComponentInstanceProperty(e.getValue())))
+                            .collect(Collectors.toList());
+                    attributes.put(key, componentInstanceAttributes);
+                }
+            }
+            component.setComponentInstancesAttributes(attributes);
+        }
+    }
+
+
+    public static void setComponentInstancesRequirementsToComponent(TopologyTemplate topologyTemplate, Component component) {
 
         if (topologyTemplate.getCalculatedRequirements() != null) {
             // Requirements of component organized by capability
-            Map<String, List<RequirementDefinition>> instancesRequirements = new HashMap<>();
+            Map<String, List<RequirementDefinition>> instanceRequiermentsFromMapObject = getInstanceRequirementsFromMapObject(topologyTemplate.getCalculatedRequirements(), component);
+            component.setRequirements(instanceRequiermentsFromMapObject);
+        }
+    }
 
+    public static Map<String, List<RequirementDefinition>> getInstanceRequirementsFromMapObject(Map<String, MapListRequirementDataDefinition> mapListRequirements, Component component) {
+        // Requirements of component organized by capability
+        Map<String, List<RequirementDefinition>> instancesRequirements = new HashMap<>();
+        if (mapListRequirements!= null) {
             Map<String, ComponentInstance> instancesMap = new HashMap<>();
             for (ComponentInstance currInstance : component.getComponentInstances()) {
                 instancesMap.put(currInstance.getUniqueId(), currInstance);
             }
-            for (Map.Entry<String, MapListRequirementDataDefinition> entry : topologyTemplate.getCalculatedRequirements().entrySet()) {
+            for (Map.Entry<String, MapListRequirementDataDefinition> entry : mapListRequirements.entrySet()) {
 
                 String instanceId = entry.getKey();
                 // Requirements of instance organized by capability
@@ -1324,7 +1447,7 @@ public class ModelConverter {
                 if(capsMapList != null) {
                     for (Entry<String, ListRequirementDataDefinition> entryTypeList : capsMapList.entrySet()) {
                         String capabilityType = entryTypeList.getKey();
-					List<RequirementDefinition> caps = entryTypeList.getValue().getListToscaDataDefinition().stream().map(RequirementDefinition::new).collect(Collectors.toList());
+                        List<RequirementDefinition> caps = entryTypeList.getValue().getListToscaDataDefinition().stream().map(RequirementDefinition::new).collect(Collectors.toList());
                         if (instancesRequirements.containsKey(capabilityType)) {
                             instancesRequirements.get(capabilityType).addAll(caps);
                         } else {
@@ -1339,9 +1462,10 @@ public class ModelConverter {
             }
             component.setRequirements(instancesRequirements);
         }
+        return  instancesRequirements;
     }
 
-    private static void setComponentInstancesCapabilitiesToComponentAndCI(TopologyTemplate topologyTemplate, Component component) {
+    public static void setComponentInstancesCapabilitiesToComponentAndCI(TopologyTemplate topologyTemplate, Component component) {
         Map<String, MapCapabilityProperty> calculatedCapProperties = topologyTemplate.getCalculatedCapabilitiesProperties();
 
         if (topologyTemplate.getCalculatedCapabilities() != null) {
@@ -1662,32 +1786,52 @@ public class ModelConverter {
     }
 
     public static ComponentMetadataData convertToComponentMetadata(GraphVertex vertex) {
-        ComponentMetadataData metadata = null;
+        ComponentMetadataData metadata;
         switch (vertex.getType()) {
         case SERVICE:
-            metadata = new ServiceMetadataData(vertex.getMetadataJson());
+            metadata = new ServiceMetadataData(new GraphPropertiesDictionaryExtractor(vertex.getMetadataJson()));
             break;
         case RESOURCE:
-            metadata = new ResourceMetadataData(vertex.getMetadataJson());
+            metadata = new ResourceMetadataData(new GraphPropertiesDictionaryExtractor(vertex.getMetadataJson()));
             break;
         case PRODUCT:
-            metadata = new ProductMetadataData(vertex.getMetadataJson());
+            metadata = new ProductMetadataData(new GraphPropertiesDictionaryExtractor(vertex.getMetadataJson()));
             break;
         default:
-            break;
+            throw new StorageException(JanusGraphOperationStatus.INVALID_TYPE);
         }
-        if (metadata != null) {
-            metadata.getMetadataDataDefinition().setUniqueId(vertex.getUniqueId());
-            metadata.getMetadataDataDefinition().setLastUpdateDate((Long) vertex.getJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE));
-            metadata.getMetadataDataDefinition().setUUID((String) vertex.getJsonMetadataField(JsonPresentationFields.UUID));
-            metadata.getMetadataDataDefinition().setState((String) vertex.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE));
+        metadata.getMetadataDataDefinition().setUniqueId(vertex.getUniqueId());
+        metadata.getMetadataDataDefinition().setLastUpdateDate((Long) vertex.getJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE));
+        metadata.getMetadataDataDefinition().setUUID((String) vertex.getJsonMetadataField(JsonPresentationFields.UUID));
+        metadata.getMetadataDataDefinition().setState((String) vertex.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE));
+        return metadata;
+    }
+
+    public static ComponentMetadataDataDefinition convertToComponentMetadataDataDefinition(GraphVertex vertex) {
+        ComponentMetadataDataDefinition metadata;
+        switch (vertex.getType()) {
+            case SERVICE:
+                metadata = new ServiceMetadataDataDefinition(new JsonPresentationFieldsExtractor(vertex.getMetadataJson()));
+                break;
+            case RESOURCE:
+                metadata = new ResourceMetadataDataDefinition(new JsonPresentationFieldsExtractor(vertex.getMetadataJson()));
+                break;
+            case PRODUCT:
+                metadata = new ProductMetadataDataDefinition(new JsonPresentationFieldsExtractor(vertex.getMetadataJson()));
+                break;
+            default:
+                throw new StorageException(JanusGraphOperationStatus.INVALID_TYPE);
         }
+        metadata.setUniqueId(vertex.getUniqueId());
+        metadata.setLastUpdateDate((Long) vertex.getJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE));
+        metadata.setUUID((String) vertex.getJsonMetadataField(JsonPresentationFields.UUID));
+        metadata.setState((String) vertex.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE));
         return metadata;
     }
 
     public static List<GroupDefinition> convertToGroupDefinitions(Map<String, GroupDataDefinition> groups) {
 
-        List<GroupDefinition> groupDefinitions = null;
+        List<GroupDefinition> groupDefinitions = new ArrayList<>();
         if (MapUtils.isNotEmpty(groups)) {
 			groupDefinitions = groups.values().stream().map(GroupDefinition::new).collect(Collectors.toList());
         }
@@ -1718,7 +1862,7 @@ public class ModelConverter {
 		return calculatedCapabilities;
 	}
 
-	public static Map<String, ListCapabilityDataDefinition> buildMapOfListsOfCapabilities(GroupDefinition groupDefinition) {
+	private static Map<String, ListCapabilityDataDefinition> buildMapOfListsOfCapabilities(GroupDefinition groupDefinition) {
 		return groupDefinition.getCapabilities().entrySet()
 				.stream()
 				.collect(Collectors.toMap(Map.Entry::getKey, e-> new ListCapabilityDataDefinition(e.getValue()

@@ -374,13 +374,9 @@ public class LifecycleRestUtils extends BaseRestUtils {
 //		String environmentName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getEnvironments().get(0);
 		DistributionStatusEnum distributionStatusEnum = DistributionStatusEnum.findState(reqDistributionStatus.getValue());
 		switch(distributionStatusEnum){
-			case DISTRIBUTION_APPROVED:
-				return sendApproveDistribution(user, uniqueId, userRemarks);
 			case DISTRIBUTED:
 				String url = String.format(Urls.ACTIVATE_DISTRIBUTION, config.getCatalogBeHost(), config.getCatalogBePort(), uniqueId, environmentName);
 				return sendDistrState(user, userRemarks, url);
-			case DISTRIBUTION_REJECTED:
-				return rejectDistribution(user, userRemarks, uniqueId);
 			default:
 				return null;	
 			

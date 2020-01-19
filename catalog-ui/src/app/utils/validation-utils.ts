@@ -97,25 +97,25 @@ export class ValidationUtils {
         }
     };
 
-    public getPropertyListPatterns():IMapRegex {
+    public static getPropertyListPatterns():IMapRegex {
         return {
-            integer: /^(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+)(,?(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+))*$/,
-            string: /^"[\u0000-\u0021\u0023-\u00BF]+"(\s*,?\s*"[\u0000-\u0021\u0023-\u00BF]+")*$/,
-            boolean: /^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])(,?([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]))*$/,
-            float: /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?(,?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?f?)*$/
+            integer: /^$|^(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+)(,?(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+))*$/,
+            string: /^$|^"[\u0000-\u0021\u0023-\u00BF]+"(\s*,?\s*"[\u0000-\u0021\u0023-\u00BF]+")*$/,
+            boolean: /^$|^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])(,?([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]))*$/,
+            float: /^$|^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?(,?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?f?)*$/
         };
     }
 
-    public getPropertyMapPatterns():IMapRegex {
+    public static getPropertyMapPatterns():IMapRegex {
         return {
-            integer: /^"\w+"\s*:\s?(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+)+(\s*,?\s*"\w+"\s?:\s?(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+)+)*$/,
-            string: /^"\w+"\s?:\s?"[\u0000-\u0021\u0023-\u00BF]*"(\s*,?\s*"\w+"\s?:\s?"[\u0000-\u0021\u0023-\u00BF]*")*$/,
-            boolean: /^"\w+"\s?:\s?([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])(\s*,?\s*"\w+"\s?:\s?([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]))*$/,
-            float: /^"\w+"\s?:\s?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?f?(\s*,?\s*"\w+"\s?:\s?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?f?)*$/
+            integer: /^$|^"\w+"\s*:\s?(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+)+(\s*,?\s*"\w+"\s?:\s?(0|[-+]?[1-9][0-9]*|[-+]?0x[0-9a-fA-F]+|[-+]?0o[0-7]+)+)*$/,
+            string: /^$|^"\w+"\s?:\s?"[\u0000-\u0021\u0023-\u00BF]*"(\s*,?\s*"\w+"\s?:\s?"[\u0000-\u0021\u0023-\u00BF]*")*$/,
+            boolean: /^$|^"\w+"\s?:\s?([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])(\s*,?\s*"\w+"\s?:\s?([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]))*$/,
+            float: /^$|^"\w+"\s?:\s?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?f?(\s*,?\s*"\w+"\s?:\s?[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?f?)*$/
         };
     }
 
-    public validateUniqueKeys(viewValue:string):boolean {
+    public static validateUniqueKeys(viewValue: string): boolean {
         if (!viewValue) {
             return true; //allow empty value
         }

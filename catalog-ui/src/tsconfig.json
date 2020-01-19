@@ -13,6 +13,11 @@
       "es6",
       "dom"
     ],
+    "paths": {
+      "@angular/*": [
+        "../node_modules/@angular/*"
+     ]
+    },
     "sourceMap": true,
     "target": "es5",
     "typeRoots": [
@@ -20,14 +25,12 @@
       "./typings"
     ],
     "types": [
-      "jquery",
       "core-js",
-      "node"
+      "node",
+      "jest"
     ],
     "forceConsistentCasingInFileNames": true
   },
   "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
   ]
 }

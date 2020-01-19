@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,17 +40,6 @@ import java.util.function.Supplier;
 
 public class SdcSchemaBuilder {
 
-    /**
-     * creat key space statment for SimpleStrategy
-     */
-    private static final String CREATE_KEYSPACE_SIMPLE_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'SimpleStrategy', %s};";
-    /**
-     * creat key space statment for NetworkTopologyStrategy
-     */
-    private static final String CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'NetworkTopologyStrategy', %s};";
-
-    private static Logger log = Logger.getLogger(SdcSchemaBuilder.class.getName());
-    
 	private SdcSchemaUtils sdcSchemaUtils;
 	private Supplier<Configuration.CassandrConfig> cassandraConfigSupplier;
 
@@ -58,6 +47,16 @@ public class SdcSchemaBuilder {
 		this.sdcSchemaUtils = sdcSchemaUtils;
 		this.cassandraConfigSupplier = cassandraConfigSupplier;
 	}
+	/**
+	 * creat key space statment for SimpleStrategy
+	 */
+	private static final String CREATE_KEYSPACE_SIMPLE_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'SimpleStrategy', %s};";
+	/**
+	 * creat key space statment for NetworkTopologyStrategy
+	 */
+	private static final String CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY = "CREATE KEYSPACE IF NOT EXISTS %s WITH replication = {'class':'NetworkTopologyStrategy', %s};";
+
+	private static Logger log = Logger.getLogger(SdcSchemaBuilder.class.getName());
 
 	//TODO remove after 1707_OS migration
 	private static void handle1707OSMigration(Map<String, Map<String, List<String>>> cassndraMetadata, Map<String, List<ITableDescription>> schemeData){
@@ -66,12 +65,12 @@ public class SdcSchemaBuilder {
 			list.add(new OldExternalApiEventTableDesc());
 			schemeData.put("attaudit", list);
 		}
-
+		
 	}
 	/**
 	 * the method creates all keyspaces, tables and indexes in case they do not
 	 * already exist. the method can be run multiple times. the method uses the
-	 * internal enums and external configuration for its operation	 *
+	 * internal enums and external configuration for its operation	 * 
 	 * @return true if the create operation was successful
 	 */
 	public boolean createSchema() {
@@ -142,7 +141,7 @@ public class SdcSchemaBuilder {
 	 * creation of a map conting the names of keyspaces tabls and indexes
 	 * already defined in the cassandra keyspacename -> tablename -> list of
 	 * indexes info
-	 *
+	 * 
 	 * @param keyspacesMetadata
 	 *            cassndra mmetadata
 	 * @return a map of maps of lists holding parsed info
@@ -156,7 +155,7 @@ public class SdcSchemaBuilder {
 								.map(IndexMetadata::getName)
 								.collect(Collectors.toList())))));
 	}
-
+	
 	private static Map<String, Map<String, List<String>>> getMetadataTablesStructure(
 			List<KeyspaceMetadata> keyspacesMetadata) {
 		return keyspacesMetadata.stream()
@@ -172,7 +171,7 @@ public class SdcSchemaBuilder {
 	 * the method builds an index name according to a defined logic
 	 * <table>
 	 * _<column>_idx
-	 *
+	 * 
 	 * @param table: table name
 	 * @param column: column name
 	 * @return string name of the index
@@ -187,7 +186,7 @@ public class SdcSchemaBuilder {
 	 * @param iTableDescriptions: a list of table description we want to create
 	 * @param keyspaceMetadate: the current tables that exist in the cassandra under this keyspace
 	 * @param session: the session object used for the execution of the query.
-	 * @param existingTablesMetadata
+	 * @param existingTablesMetadata 
 	 *			the current tables columns that exist in the cassandra under this
 	 *            keyspace
 	 */
@@ -250,8 +249,8 @@ public class SdcSchemaBuilder {
 	 * @param columnDescription
 	 */
 	private static void alterTable(Session session, Map<String, List<String>> existingTablesMetadata,
-								   ITableDescription tableDescription, String tableName,
-								   Map<String, ImmutablePair<DataType, Boolean>> columnDescription) {
+			ITableDescription tableDescription, String tableName,
+			Map<String, ImmutablePair<DataType, Boolean>> columnDescription) {
 		List<String> definedTableColumns = existingTablesMetadata.get(tableName);
 		//add column to casandra if was added to table definition
 		for (Map.Entry<String, ImmutablePair<DataType, Boolean>> column : columnDescription.entrySet()) {
@@ -269,7 +268,7 @@ public class SdcSchemaBuilder {
 	/**
 	 * the method create the keyspace in case it does not already exists the
 	 * method uses configurtion to select the needed replication strategy
-	 *
+	 * 
 	 * @param keyspace: name of the keyspace we want to create
 	 * @param cassndraMetadata: cassndra metadata
 	 * @param session: the session object used for the execution of the query.
@@ -307,7 +306,7 @@ public class SdcSchemaBuilder {
 
 	/**
 	 * the method retries the schem info from the enums describing the tables
-	 *
+	 * 
 	 * @return a map of keyspaces to there table info
 	 */
 	private static Map<String, List<ITableDescription>> getSchemeData() {
@@ -326,14 +325,14 @@ public class SdcSchemaBuilder {
 	}
 
 	/**
-	 * the methoed creates the query string for the given keyspace the methoed
+ 	 * the methoed creates the query string for the given keyspace the methoed
 	 * valides the given data according the the requirments of the replication
 	 * strategy SimpleStrategy: "CREATE KEYSPACE IF NOT EXISTS
 	 * <keyspaceName></keyspaceName> WITH replication =
 	 * {'class':'SimpleStrategy', 'replication_factor':2};" SimpleStrategy:
 	 * "CREATE KEYSPACE IF NOT EXISTS <keyspaceName></keyspaceName> WITH
 	 * replication = {'class':'NetworkTopologyStrategy', 'dc1' : 2 ,dc2 : 2 };"
-	 *
+	 * 
 	 * @param keyspace
 	 *            name of the keyspace we want to create
 	 * @param keyspaceInfo
@@ -390,9 +389,9 @@ public class SdcSchemaBuilder {
 	public enum ReplicationStrategy {
 		NETWORK_TOPOLOGY_STRATEGY("NetworkTopologyStrategy"), SIMPLE_STRATEGY("SimpleStrategy");
 
-		private String strategyName;
+		public String strategyName;
 
-		ReplicationStrategy(String strategyName) {
+		private ReplicationStrategy(String strategyName) {
 			this.strategyName = strategyName;
 		}
 
@@ -400,4 +399,5 @@ public class SdcSchemaBuilder {
 			return strategyName;
 		}
 	}
+
 }

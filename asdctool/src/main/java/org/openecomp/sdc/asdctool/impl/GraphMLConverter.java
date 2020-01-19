@@ -95,6 +95,7 @@ public class GraphMLConverter {
             return importJsonGraph(graph, inputFile, propertiesCriteriaToDelete);
 
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("import graph failed ", e);
             return false;
         } finally {
@@ -121,6 +122,7 @@ public class GraphMLConverter {
 
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export graph failed ", e);
             return false;
         } finally {
@@ -145,6 +147,7 @@ public class GraphMLConverter {
 
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export exportGraphMl failed ", e);
             return null;
         } finally {
@@ -172,6 +175,7 @@ public class GraphMLConverter {
 
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("find Error In Json Graph failed ", e);
             return false;
         } finally {
@@ -208,8 +212,10 @@ public class GraphMLConverter {
             result = outputFile;
 
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export Json Graph failed ", e);
             graph.tx().rollback();
+				e.printStackTrace();
         }
         return result;
 
@@ -227,6 +233,7 @@ public class GraphMLConverter {
             graph.tx().commit();
         } catch (Exception e) {
             graph.tx().rollback();
+			e.printStackTrace();
             log.info("export Graph Ml failed ", e);
         }
         return result;
@@ -278,7 +285,9 @@ public class GraphMLConverter {
 
         } catch (Exception e) {
             log.info("Failed to import graph ", e);
+			e.printStackTrace();
             graph.tx().rollback();
+				e.printStackTrace();
         }
         return result;
 
@@ -306,8 +315,10 @@ public class GraphMLConverter {
             graph.tx().rollback();
 
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("find Error In Json Graph failed ", e);
             graph.tx().rollback();
+				e.printStackTrace();
         }
         return result;
 
@@ -355,8 +366,10 @@ public class GraphMLConverter {
             result = outputFile;
 
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export Users failed ", e);
             graph.tx().rollback();
+				e.printStackTrace();
         }
         return result;
 
@@ -397,6 +410,7 @@ public class GraphMLConverter {
 
             log.info(EXPORTED_FILE, result);
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export Users failed ", e);
             return false;
         } finally {

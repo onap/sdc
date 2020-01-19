@@ -25,7 +25,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 //TODO rename to AuditAction
 public enum AuditingActionEnum {
 
-    // User admininstration
+    // User administration
     ADD_USER("AddUser", AuditingTypesConstants.USER_ADMIN_EVENT_TYPE),
     UPDATE_USER("UpdateUser", AuditingTypesConstants.USER_ADMIN_EVENT_TYPE),
     DELETE_USER("DeleteUser", AuditingTypesConstants.USER_ADMIN_EVENT_TYPE),

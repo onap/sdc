@@ -109,7 +109,7 @@
                 .general-view-top-progress {
                     width: 30%;
                     margin: 0 auto;
-                    min-width: 150px;
+                    min-width: 140px;
                 }
             }
 
@@ -189,7 +189,7 @@
                 display: inline-block;
             }
         }
-        .tab-title{
+        .workspace-tab-title {
             height: 110px;
             padding-left: 100px;
             line-height: 110px;
@@ -198,6 +198,11 @@
         &.composition, &.deployment{
             .w-sdc-main-container-body-content {
                 height: 100%;
+            }
+
+            .w-sdc-main-container-body-content-wrapper {
+                height: 100%;
+                overflow:hidden;
             }
         }
         .w-sdc-main-container-body-content {
@@ -219,7 +224,7 @@
             height: calc(~'100% - @{action_nav_height}');
             .w-sdc-main-container-body-content-header {
                 display: flex;
-                .tab-title {
+                .workspace-tab-title {
                     flex-grow: 1;
                 }
                 .w-sdc-main-container-body-content-action-buttons {
@@ -239,4 +244,58 @@
         }
     }
 }
+// Fix till we remove everything to angular5 and fix all workspace style
+.composition{
+    .sdc-workspace-container{
+        .w-sdc-main-container{
+            .w-sdc-main-right-container{
+                left:0;
+                //overflow-y: scroll;
+                .sdc-workspace-top-bar {
+                    position: absolute;
+                    left: 245px;
+                    right: 0;
+                    z-index: 1;
+                    .not-latest{
+                        left: 270px;
+                    }
+                }
+                .w-sdc-main-container-body-content{
+                    padding: 0 0 0 0;
+                }
 
+                > div:first-child{
+                    padding: 0;
+                }
+            }
+        }
+    }
+}
+
+.deployment {
+
+    .sdc-workspace-container{
+        .w-sdc-main-container{
+            .w-sdc-main-right-container{
+                left:0;
+                //overflow-y: scroll;
+                .sdc-workspace-top-bar {
+                    position: absolute;
+                    left: 245px;
+                    right: 0;
+                    z-index: 1;
+                    .not-latest{
+                        left: 270px;
+                    }
+                }
+
+                > div:first-child{
+                    padding: 0;
+                }
+                .w-sdc-main-container-body-content-wrapper {
+                    padding: 0px;
+                }
+            }
+        }
+    }
+}

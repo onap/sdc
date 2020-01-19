@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,30 +22,31 @@ package org.openecomp.sdc.common.datastructure;
 
 /**
  * Very Basic Wrapper class.
- *
- * @param <T>
+ * 
  * @author mshitrit
+ * 
+ * @param <T>
  */
 public class Wrapper<T> {
-    private T innerElement;
+	private T innerElement;
 
-    public Wrapper(T innerElement) {
-        this.innerElement = innerElement;
-    }
+	public Wrapper(T innerElement) {
+		this.innerElement = innerElement;
+	}
 
-    public Wrapper() {
-        this.innerElement = null;
-    }
+	public Wrapper() {
+		this.innerElement = null;
+	}
 
-    public T getInnerElement() {
-        return innerElement;
-    }
+	public T getInnerElement() {
+		return innerElement;
+	}
 
-    public void setInnerElement(T innerElement) {
-        this.innerElement = innerElement;
-    }
+	public void setInnerElement(T innerElement) {
+		this.innerElement = innerElement;
+	}
 
-    public boolean isEmpty() {
-        return innerElement == null;
-    }
+	public boolean isEmpty() {
+		return innerElement == null;
+	}
 }

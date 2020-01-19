@@ -19,7 +19,7 @@
  */
 
 'use strict';
-import {CacheService} from "app/services";
+import {CacheService} from "app/services-ng2";
 import {IAppConfigurtaion} from "app/models";
 
 interface IAdminDashboardViewModelScope extends ng.IScope {

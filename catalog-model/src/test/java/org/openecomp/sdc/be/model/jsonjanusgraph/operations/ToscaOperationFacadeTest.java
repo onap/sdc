@@ -49,6 +49,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -442,10 +443,7 @@ public class ToscaOperationFacadeTest {
         Set<LifecycleStateEnum> lastStateStates = new HashSet<>();
         lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        lifecycleStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        lifecycleStates.add(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
         lifecycleStates.add(LifecycleStateEnum.CERTIFIED);
-        lastStateStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
         List<ToscaElement> toscaEleList = new ArrayList<>();
         ToscaElement toscaElement = getToscaElementForTest();
@@ -702,7 +700,7 @@ public class ToscaOperationFacadeTest {
         GraphVertex vertex = getTopologyTemplateVertex();
         when(janusGraphDaoMock.getVertexById(eq(componentId), eq(JsonParseFlagEnum.NoParse))).thenReturn(Either.left(vertex));
         when(topologyTemplateOperationMock.updatePolicyOfToscaElement(eq(vertex), any(PolicyDefinition.class))).thenReturn(status);
-        return testInstance.updatePolicyOfComponent(componentId, policy);
+        return testInstance.updatePolicyOfComponent(componentId, policy, PromoteVersionEnum.NONE);
     }
 
     private void removePolicyFromComponentWithStatus(StorageOperationStatus status) {

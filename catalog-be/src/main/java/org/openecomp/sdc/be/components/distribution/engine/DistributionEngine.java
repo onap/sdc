@@ -20,18 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
@@ -43,15 +31,22 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 @Component("distributionEngine")
 public class DistributionEngine implements IDistributionEngine {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DistributionEngine.class);
+    private static final Logger logger = Logger.getLogger(DistributionEngine.class.getName());
     private static final Pattern FQDN_PATTERN = Pattern.compile("^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*(:[0-9]{2,4})*$", Pattern.CASE_INSENSITIVE);
 
     @Autowired
@@ -73,6 +68,26 @@ public class DistributionEngine implements IDistributionEngine {
     private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
     private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
 
+    /**
+     * The main method for testing only
+     * @param args
+     */
+    public static void main(String[] args) {
+
+        List<String> servers = new ArrayList<>();
+        String server = "uebsb91kcdc.it.att.com:3904";
+        servers.add(server);
+        servers.add(server);
+        servers.add(server);
+
+        YamlToObjectConverter converter = new YamlToObjectConverter();
+        DistributionEngineConfiguration distributionEngineConfiguration = converter.convert("src/test/resources/config/catalog-be/distribEngine1/distribution-engine-configuration.yaml", DistributionEngineConfiguration.class);
+
+        DistributionEngineInitTask distributionEngineInitTask = new DistributionEngineInitTask(2l, distributionEngineConfiguration, "PROD", new AtomicBoolean(false), null, null, null);
+        distributionEngineInitTask.startTask();
+
+    }
+
     @Override
     public boolean isActive() {
 
@@ -91,14 +106,14 @@ public class DistributionEngine implements IDistributionEngine {
 
     @PostConstruct
     private void init() {
-        LOGGER.trace("Enter init method of DistributionEngine");
+        logger.trace("Enter init method of DistributionEngine");
 
         DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
 
         boolean startDistributionEngine = distributionEngineConfiguration.isStartDistributionEngine();
-        LOGGER.debug("Distribution engine activation parameter is {}", startDistributionEngine);
+        logger.debug("Distribution engine activation parameter is {}", startDistributionEngine);
         if (!startDistributionEngine) {
-            LOGGER.info("The disribution engine is disabled");
+            logger.info("The distribution engine is disabled");
 
             this.distributionEngineClusterHealth.setHealthCheckUebIsDisabled();
 
@@ -117,21 +132,21 @@ public class DistributionEngine implements IDistributionEngine {
         List<String> environments = distributionEngineConfiguration.getEnvironments();
 
         for (String envName : environments) {
-            LOGGER.debug("init task for environment {}", envName);
+            logger.debug("init task for environment {}", envName);
             AtomicBoolean status = new AtomicBoolean(false);
             envNamePerStatus.put(envName, status);
             environmentsEngine.connectUebTopicForDistributionConfTopic(envName, status, envNamePerInitTask, envNamePerPollingTask);
         }
 
-        LOGGER.debug("init UEB health check");
+        logger.debug("init UEB health check");
         distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
 
-        LOGGER.trace("Exit init method of DistributionEngine");
+        logger.trace("Exit init method of DistributionEngine");
     }
 
     @PreDestroy
     public void shutdown() {
-        LOGGER.info("distribution engine shutdown - start");
+        logger.info("distribution engine shutdown - start");
         if (envNamePerInitTask != null) {
             for (DistributionEngineInitTask task : envNamePerInitTask.values()) {
                 task.destroy();
@@ -147,16 +162,14 @@ public class DistributionEngine implements IDistributionEngine {
 
     /**
      * validate mandatory configuration parameters received
-     *
-     * @param deConfiguration
-     * @return
+     * @param deConfiguration: distribution engine configuration
+     * @return boolean result: true of false
      */
     protected boolean validateConfiguration(DistributionEngineConfiguration deConfiguration) {
 
         String methodName = "validateConfiguration";
 
-        boolean result = true;
-        result = isValidServers(deConfiguration.getUebServers(), methodName, "uebServers") && result;
+        boolean result = isValidServers(deConfiguration.getUebServers(), methodName, "uebServers");
         result = isValidParam(deConfiguration.getEnvironments(), methodName, "environments") && result;
         result = isValidParam(deConfiguration.getUebPublicKey(), methodName, "uebPublicKey") && result;
         result = isValidParam(deConfiguration.getUebSecretKey(), methodName, "uebSecretKey") && result;
@@ -203,7 +216,7 @@ public class DistributionEngine implements IDistributionEngine {
             return matcher.matches();
 
         } catch (Exception e) {
-            LOGGER.debug("Failed to match value of address {}", serverFqdn, e);
+            logger.debug("Failed to match value of address {}", serverFqdn, e);
             return false;
         }
     }
@@ -287,15 +300,16 @@ public class DistributionEngine implements IDistributionEngine {
     public ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, User modifier) {
         return notifyService(distributionId, service, notificationData, envName, envName, modifier);
     }
+
     @Override
-    public ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName,  User modifier) {
-        LOGGER.debug("Received notify service request. distributionId = {}, serviceUuid = {} serviceUid = {}, envName = {}, modifier {}", distributionId, service.getUUID(), service.getUniqueId(), envName,  modifier);
+    public ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName, User modifier) {
+        logger.debug("Received notify service request. distributionId = {}, serviceUuid = {} serviceUid = {}, envName = {}, userId = {}, modifierName {}", distributionId, service.getUUID(), service.getUniqueId(), envName, service.getLastUpdaterUserId(), modifier);
         String topicName = buildTopicName(envName);
         ActionStatus notifyServiceStatus = Optional.ofNullable(environmentsEngine.getEnvironmentById(envId))
                 .map(EnvironmentMessageBusData::new)
                 .map(messageBusData -> distributionNotificationSender.sendNotification(topicName, distributionId, messageBusData, notificationData, service, modifier))
                 .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
-        LOGGER.debug("Finish notifyService. status is {}", notifyServiceStatus);
+        logger.debug("Finish notifyService. status is {}", notifyServiceStatus);
         return notifyServiceStatus;
     }
 
@@ -318,6 +332,11 @@ public class DistributionEngine implements IDistributionEngine {
     @Override
     public OperationalEnvironmentEntry getEnvironmentById(String opEnvId) {
         return environmentsEngine.getEnvironmentById(opEnvId);
+    }
+
+    @Override
+    public OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
+        return environmentsEngine.getEnvironmentByDmaapUebAddress(dmaapUebAddress);
     }
 
     @Override

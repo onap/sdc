@@ -24,9 +24,11 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 import org.openecomp.sdc.be.model.tosca.version.Version;
 
 public class AbstractPropertyConstraintTest {
@@ -104,6 +106,16 @@ class TestPropertyConstraint extends AbstractPropertyConstraint {
     @Override
     public void validate(Object propertyValue) {
         last = propertyValue;
+    }
+
+    @Override
+    public ConstraintType getConstraintType() {
+        return null;
+    }
+
+    @Override
+    public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
+
     }
 
     @Override

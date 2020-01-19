@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceInstantiationType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ServiceReqDetails extends ComponentReqDetails {
 	
@@ -32,7 +33,8 @@ public class ServiceReqDetails extends ComponentReqDetails {
 	protected String serviceRole = "MyServiceRole";
 	protected String namingPolicy = "MyServiceNamingPolicy";
 	protected Boolean ecompGeneratedNaming = true;
-	protected String instantiationType = ServiceInstantiationType.A_LA_CARTE.getValue(); 
+	protected String instantiationType = ServiceInstantiationType.A_LA_CARTE.getValue();
+	protected String serviceFunction = "";
 
 	public String getServiceType() {
 		return serviceType;
@@ -70,6 +72,14 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		this.ecompGeneratedNaming = ecompGeneratedNaming;
 	}
 
+	public String getServiceFunction() {
+		return serviceFunction;
+	}
+
+	public void setServiceFunction(String serviceFunction) {
+		this.serviceFunction = serviceFunction;
+	}
+
 	public ServiceReqDetails(String serviceName, String category, ArrayList<String> tags, String description,
 			String contactId, String icon, String instantiationType) {
 		this.name = serviceName;
@@ -78,8 +88,10 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		this.contactId = contactId;
 		this.icon = icon;
 		projectCode = "12345";
+		serviceFunction = "serviceFunction name";
 		CategoryDefinition categoryDefinition = new CategoryDefinition();
 		categoryDefinition.setName(category);
+		categoryDefinition.setIcons(Collections.singletonList(icon));
 		categories = new ArrayList<>();
 		categories.add(categoryDefinition);
 

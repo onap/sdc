@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.filters;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -34,6 +35,7 @@ import org.openecomp.sdc.common.log.enums.Severity;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.MarkerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Priority;
@@ -92,7 +94,7 @@ public class ComponentsAvailabilityFilter implements ContainerRequestFilter {
 
         List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
         HealthCheckBusinessLogic healthCheckBusinessLogic = getHealthCheckBL(servletContext);
-        healthCheckBusinessLogic.getJanusGraphHealthCheck(healthCheckInfos); // JanusGraph
+        healthCheckInfos.add(healthCheckBusinessLogic.getJanusGraphHealthCheck());
         return healthCheckInfos;
     }
 
@@ -124,12 +126,13 @@ public class ComponentsAvailabilityFilter implements ContainerRequestFilter {
 
 	private void abortWith(ContainerRequestContext requestContext, String message, Response response) {
 
-		audit.log(sr.getRemoteAddr(),
+		audit.logExit(sr.getRemoteAddr(),
 				requestContext,
 				response.getStatusInfo(),
 				LogLevel.ERROR,
 				Severity.OK,
-				message);
+				message,
+                MarkerFactory.getMarker(ONAPLogConstants.Markers.EXIT.getName()));
 
 		log.error(message);
 		audit.clearMyData();

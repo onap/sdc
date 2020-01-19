@@ -22,8 +22,8 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.IConsumerOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;

@@ -22,7 +22,7 @@
 import * as _ from "underscore";
 import {IUserProperties} from "app/models";
 import {MenuItemGroup, MenuItem} from "app/utils";
-import {CacheService} from "app/services";
+import {CacheService} from "app/services-ng2";
 declare var PunchOutRegistry;
 
 export class BreadcrumbsMenuItem {

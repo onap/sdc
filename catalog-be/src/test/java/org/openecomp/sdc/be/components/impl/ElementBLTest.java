@@ -21,29 +21,27 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.components.validation.UserValidations;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
@@ -55,10 +53,8 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ElementOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
-import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.be.resources.data.category.CategoryData;
+import org.openecomp.sdc.be.resources.data.category.SubCategoryData;
 import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -66,6 +62,7 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,15 +79,27 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ElementBLTest {
 
-    private static final String CATAGORY_NAME = "categoryName";
+    private static final String CATEGORY_NAME = "categoryName";
     private static final String CATEGORY_UNIQUE_ID = "catUniqueId";
-    private static final String SERVICE_NOT_DELETED_ID = "notDeletedId";
-    private static final String DELETED_SERVICE_ID = "deletedId";
+    private static final String SUBCATEGORY_UNIQUE_ID = "subCatUniqeId";
+    private static final String PROPER_COMPONENT_ID = "properComponentId";
+    private static final String DELETED_COMPONENT_ID = "deletedId";
+    private static final String ARCHIVED_COMPONENT_ID = "archivedId";
+    private static final String NOT_HIGHEST_VERSION_ID = "notHighestVersionId";
+
+    private GraphVertex categoryVertex = new GraphVertex(VertexTypeEnum.RESOURCE_CATEGORY);
+    private List<GraphVertex> deletedAndNotDeletedResourceVertices = new ArrayList<>();
+    private List<GraphVertex> archivedAndNotArchivedResourceVertices = new ArrayList<>();
+    private List<GraphVertex> notHighestVersionAndHighestVersionResourceVertices = new ArrayList<>();
+    private List<GraphVertex> deletedAndNotDeletedServiceVertices = new ArrayList<>();
+
+    private Resource properResource = new Resource();
+
+    private Service properService = new Service();
+
     private List<CategoryData> categories = new ArrayList<>();
-    private List<ImmutablePair<ServiceMetadataData, GraphEdge>> services = new ArrayList<>();
-    private List<ImmutablePair<ResourceMetadataData, GraphEdge>> resources = new ArrayList<>();
-    private Service notDeletedService = new Service();
-    private Resource notDeletedResource =  new Resource();
+    private List<SubCategoryData> subCategories = new ArrayList<>();
+
 
     @Mock
     private JanusGraphGenericDao janusGraphGenericDao;
@@ -122,13 +131,12 @@ public class ElementBLTest {
     @InjectMocks
     private ElementBusinessLogic elementBusinessLogic;
 
+
     @Before
     public void setup() {
-
-        initCategoriesList();
-        initServicesList();
-        initResourceslist();
-
+        initCategoriesAndSubCategories();
+        initResourcesVerticesLists();
+        initServiceVerticesLists();
         elementBusinessLogic.setUserValidations(userValidations);
         elementBusinessLogic.setComponentsUtils(componentsUtils);
         elementBusinessLogic.setJanusGraphGenericDao(janusGraphGenericDao);
@@ -136,106 +144,142 @@ public class ElementBLTest {
         elementBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
 
         when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+
     }
 
-    private void initCategoriesList() {
+    private void initCategoriesAndSubCategories() {
         CategoryData categoryData = new CategoryData(NodeTypeEnum.ServiceNewCategory);
         categoryData.getCategoryDataDefinition().setUniqueId(CATEGORY_UNIQUE_ID);
         categories.add(categoryData);
+
+        SubCategoryData subCategoryData = new SubCategoryData(NodeTypeEnum.ResourceNewCategory);
+        subCategoryData.getSubCategoryDataDefinition().setUniqueId(SUBCATEGORY_UNIQUE_ID);
+        subCategories.add(subCategoryData);
     }
 
-    private void initServicesList() {
-        ServiceMetadataData serviceNotDeleted = new ServiceMetadataData();
-        ComponentMetadataDataDefinition componentMetadataDataDefinition1 = new ServiceMetadataDataDefinition();
-        componentMetadataDataDefinition1.setIsDeleted(false);
-        componentMetadataDataDefinition1.setHighestVersion(true);
-        componentMetadataDataDefinition1.setUniqueId(SERVICE_NOT_DELETED_ID);
-        serviceNotDeleted.setMetadataDataDefinition(componentMetadataDataDefinition1);
-        services.add(new ImmutablePair<>(serviceNotDeleted, null));
+    private void initServiceVerticesLists() {
+        Map<String, Object> properServiceMetadataJson = new HashMap<>();
+        properServiceMetadataJson.put(JsonPresentationFields.IS_DELETED.getPresentation(), false);
+        properServiceMetadataJson.put(JsonPresentationFields.HIGHEST_VERSION.getPresentation(), true);
+        properServiceMetadataJson.put(JsonPresentationFields.IS_ARCHIVED.getPresentation(), false);
+        GraphVertex properService = new GraphVertex(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+        properService.setType(ComponentTypeEnum.SERVICE);
+        properService.setMetadataJson(properServiceMetadataJson);
+        properService.setUniqueId(PROPER_COMPONENT_ID);
+        deletedAndNotDeletedServiceVertices.add(properService);
 
-        ServiceMetadataData deletedService = new ServiceMetadataData();
-        ComponentMetadataDataDefinition componentMetadataDataDefinition2 = new ServiceMetadataDataDefinition();
-        componentMetadataDataDefinition2.setIsDeleted(true);
-        componentMetadataDataDefinition2.setHighestVersion(true);
-        componentMetadataDataDefinition2.setUniqueId(DELETED_SERVICE_ID);
-        deletedService.setMetadataDataDefinition(componentMetadataDataDefinition2);
-        services.add(new ImmutablePair<>(deletedService, null));
+        Map<String, Object> deletedServiceMetadataJson = new HashMap<>();
+        deletedServiceMetadataJson.put(JsonPresentationFields.IS_DELETED.getPresentation(), true);
+        deletedServiceMetadataJson.put(JsonPresentationFields.HIGHEST_VERSION.getPresentation(), true);
+        deletedServiceMetadataJson.put(JsonPresentationFields.IS_ARCHIVED.getPresentation(), false);
+        GraphVertex deletedService = new GraphVertex(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+        deletedService.setType(ComponentTypeEnum.SERVICE);
+        deletedService.setMetadataJson(deletedServiceMetadataJson);
+        deletedService.setUniqueId(DELETED_COMPONENT_ID);
+        deletedAndNotDeletedServiceVertices.add(deletedService);
     }
 
-    private void initResourceslist() {
-        ResourceMetadataData notDeletedResource = new ResourceMetadataData();
-        ComponentMetadataDataDefinition componentMetadataDataDefinition3 = new ResourceMetadataDataDefinition();
-        componentMetadataDataDefinition3.setIsDeleted(false);
-        componentMetadataDataDefinition3.setHighestVersion(true);
-        componentMetadataDataDefinition3.setUniqueId(SERVICE_NOT_DELETED_ID);
-        notDeletedResource.setMetadataDataDefinition(componentMetadataDataDefinition3);
-        resources.add(new ImmutablePair<>(notDeletedResource, null));
+    private void initResourcesVerticesLists() {
+        Map<String, Object> properResourceMetadataJson = new HashMap<>();
+        properResourceMetadataJson.put(JsonPresentationFields.IS_DELETED.getPresentation(), false);
+        properResourceMetadataJson.put(JsonPresentationFields.HIGHEST_VERSION.getPresentation(), true);
+        properResourceMetadataJson.put(JsonPresentationFields.IS_ARCHIVED.getPresentation(), false);
+        properResourceMetadataJson.put(JsonPresentationFields.RESOURCE_TYPE.getPresentation(), ResourceTypeEnum.VFC.getValue());
+        GraphVertex properResource = new GraphVertex(VertexTypeEnum.NODE_TYPE);
+        properResource.setType(ComponentTypeEnum.RESOURCE);
+        properResource.setMetadataJson(properResourceMetadataJson);
+        properResource.setUniqueId(PROPER_COMPONENT_ID);
+        deletedAndNotDeletedResourceVertices.add(properResource);
+        archivedAndNotArchivedResourceVertices.add(properResource);
+        notHighestVersionAndHighestVersionResourceVertices.add(properResource);
 
-        ResourceMetadataData deletedResource = new ResourceMetadataData();
-        ComponentMetadataDataDefinition componentMetadataDataDefinition4 = new ResourceMetadataDataDefinition();
-        componentMetadataDataDefinition4.setIsDeleted(true);
-        componentMetadataDataDefinition4.setHighestVersion(true);
-        componentMetadataDataDefinition4.setUniqueId(DELETED_SERVICE_ID);
-        deletedResource.setMetadataDataDefinition(componentMetadataDataDefinition4);
-        resources.add(new ImmutablePair<>(deletedResource, null));
+        Map<String, Object> deletedResourceMetadataJson = new HashMap<>();
+        deletedResourceMetadataJson.put(JsonPresentationFields.IS_DELETED.getPresentation(), true);
+        deletedResourceMetadataJson.put(JsonPresentationFields.HIGHEST_VERSION.getPresentation(), true);
+        deletedResourceMetadataJson.put(JsonPresentationFields.IS_ARCHIVED.getPresentation(), false);
+        deletedResourceMetadataJson.put(JsonPresentationFields.RESOURCE_TYPE.getPresentation(), ResourceTypeEnum.VFC.getValue());
+        GraphVertex deletedResource = new GraphVertex(VertexTypeEnum.NODE_TYPE);
+        deletedResource.setType(ComponentTypeEnum.RESOURCE);
+        deletedResource.setMetadataJson(deletedResourceMetadataJson);
+        deletedResource.setUniqueId(DELETED_COMPONENT_ID);
+        deletedAndNotDeletedResourceVertices.add(deletedResource);
+
+        Map<String, Object> archivedResourceMetadataJson = new HashMap<>();
+        archivedResourceMetadataJson.put(JsonPresentationFields.IS_DELETED.getPresentation(), false);
+        archivedResourceMetadataJson.put(JsonPresentationFields.HIGHEST_VERSION.getPresentation(), true);
+        archivedResourceMetadataJson.put(JsonPresentationFields.IS_ARCHIVED.getPresentation(), true);
+        archivedResourceMetadataJson.put(JsonPresentationFields.RESOURCE_TYPE.getPresentation(), ResourceTypeEnum.VFC.getValue());
+        GraphVertex archivedResource = new GraphVertex(VertexTypeEnum.NODE_TYPE);
+        archivedResource.setType(ComponentTypeEnum.RESOURCE);
+        archivedResource.setMetadataJson(archivedResourceMetadataJson);
+        archivedResource.setUniqueId(ARCHIVED_COMPONENT_ID);
+        archivedAndNotArchivedResourceVertices.add(archivedResource);
+
+        Map<String, Object> notHighestVersionResourceMetadataJson = new HashMap<>();
+        notHighestVersionResourceMetadataJson.put(JsonPresentationFields.IS_DELETED.getPresentation(), false);
+        notHighestVersionResourceMetadataJson.put(JsonPresentationFields.HIGHEST_VERSION.getPresentation(), false);
+        notHighestVersionResourceMetadataJson.put(JsonPresentationFields.IS_ARCHIVED.getPresentation(), false);
+        notHighestVersionResourceMetadataJson.put(JsonPresentationFields.RESOURCE_TYPE.getPresentation(), ResourceTypeEnum.VFC.getValue());
+        GraphVertex notHighestVersionResource = new GraphVertex(VertexTypeEnum.NODE_TYPE);
+        notHighestVersionResource.setType(ComponentTypeEnum.RESOURCE);
+        notHighestVersionResource.setMetadataJson(notHighestVersionResourceMetadataJson);
+        notHighestVersionResource.setUniqueId(NOT_HIGHEST_VERSION_ID);
+        notHighestVersionAndHighestVersionResourceVertices.add(notHighestVersionResource);
     }
 
     @Test
-    public void testFetchElementsByCategoryName_filterDeleted() {
-        ArgumentCaptor<Map> criteriaCapture = ArgumentCaptor.forClass(Map.class);
-
-        when(janusGraphGenericDao
-            .getByCriteria(eq(NodeTypeEnum.ServiceNewCategory), criteriaCapture.capture(), eq(CategoryData.class)))
-                .thenReturn(Either.left(categories));
-        when(janusGraphGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ServiceNewCategory),
-                CATEGORY_UNIQUE_ID, GraphEdgeLabels.CATEGORY, NodeTypeEnum.Service, ServiceMetadataData.class))
-                .thenReturn(Either.left(services));
-        when(toscaOperationFacade.getToscaElement(SERVICE_NOT_DELETED_ID, JsonParseFlagEnum.ParseMetadata))
-                .thenReturn(Either.left(notDeletedService));
-
-        Either<List<Object>, StorageOperationStatus> elementsByCategoryEither =
-                elementBusinessLogic.fetchByCategoryOrSubCategoryName(CATAGORY_NAME, NodeTypeEnum.ServiceNewCategory,
-                        NodeTypeEnum.Service, false, ServiceMetadataData.class, null);
-
-        List<Object> elementsByCategory = elementsByCategoryEither.left().value();
-        assertThat(elementsByCategory.get(0)).isSameAs(notDeletedService);
-        assertThat(elementsByCategory.size()).isEqualTo(1);
-        verifyCriteriaProperties(criteriaCapture);
-    }
-
-    private void verifyCriteriaProperties(ArgumentCaptor<Map> propsCapture) {
-        Map<String, Object> props = propsCapture.getValue();
-        assertThat(props.size()).isEqualTo(1);
-        assertThat(props.get(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty())).isEqualTo(ValidationUtils.normalizeCategoryName4Uniqueness(CATAGORY_NAME));
-    }
-
-    @Test
-    public void testFetchResourcesBySubcategoryUid_filterDeleted() {
-
-        when(janusGraphGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceSubcategory),
-                CATEGORY_UNIQUE_ID, GraphEdgeLabels.CATEGORY, NodeTypeEnum.Resource, ResourceMetadataData.class))
-                .thenReturn(Either.left(resources));
-
-        when(toscaOperationFacade.getToscaElement(SERVICE_NOT_DELETED_ID, JsonParseFlagEnum.ParseMetadata))
-                .thenReturn(Either.left(notDeletedResource));
-
-        Either<List<Object>, StorageOperationStatus> resourcesBySubCategoryUidEither = elementBusinessLogic.fetchByCategoryOrSubCategoryUid(CATEGORY_UNIQUE_ID, NodeTypeEnum.ResourceSubcategory,
-                NodeTypeEnum.Resource, false, ResourceMetadataData.class, null);
-        List<Object> resourcesBySubCategoryUid = resourcesBySubCategoryUidEither.left().value();
+    public void testFetchByCategoryOrSubCategoryUid_deletedResource() {
+        when(janusGraphDao.getVertexById(CATEGORY_UNIQUE_ID, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(categoryVertex));
+        when(janusGraphDao.getParentVertices(categoryVertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(deletedAndNotDeletedResourceVertices));
+        when(toscaOperationFacade.getToscaElement(PROPER_COMPONENT_ID, JsonParseFlagEnum.ParseMetadata))
+                .thenReturn(Either.left(properResource));
+        Either<List<Component>, StorageOperationStatus> resourcesBySubCategoryUidEither = elementBusinessLogic.fetchByCategoryOrSubCategoryUid(CATEGORY_UNIQUE_ID, NodeTypeEnum.Resource, false, null);
+        List<Component> resourcesBySubCategoryUid = resourcesBySubCategoryUidEither.left().value();
         assertThat(resourcesBySubCategoryUid.size()).isEqualTo(1);
-        assertThat(resourcesBySubCategoryUid.get(0)).isSameAs(notDeletedResource);
+        assertThat(resourcesBySubCategoryUid.get(0)).isSameAs(properResource);
     }
 
     @Test
-    public void testDeleteCategory() {
-        Either<CategoryDefinition, ResponseFormat> result;
-        User user = new User();
-        String userId = "userId";
-        user.setUserId(userId);
-        when(elementBusinessLogic.validateUserExists(anyString(), anyString(), eq(false))).thenReturn(user);
-        when(elementOperation.deleteCategory(NodeTypeEnum.ResourceNewCategory, CATEGORY_UNIQUE_ID)).thenReturn(Either.left(categoryDef));
-        result = elementBusinessLogic.deleteCategory(CATEGORY_UNIQUE_ID, ComponentTypeEnum.RESOURCE_PARAM_NAME, userId);
-        Assert.assertTrue(result.isLeft());
+    public void testFetchByCategoryOrSubCategoryUid_archivedResource() {
+        when(janusGraphDao.getVertexById(CATEGORY_UNIQUE_ID, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(categoryVertex));
+        when(janusGraphDao.getParentVertices(categoryVertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(archivedAndNotArchivedResourceVertices));
+        when(toscaOperationFacade.getToscaElement(PROPER_COMPONENT_ID, JsonParseFlagEnum.ParseMetadata))
+                .thenReturn(Either.left(properResource));
+        Either<List<Component>, StorageOperationStatus> resourcesBySubCategoryUidEither = elementBusinessLogic.fetchByCategoryOrSubCategoryUid(CATEGORY_UNIQUE_ID, NodeTypeEnum.Resource, false, null);
+        List<Component> resourcesBySubCategoryUid = resourcesBySubCategoryUidEither.left().value();
+        assertThat(resourcesBySubCategoryUid.size()).isEqualTo(1);
+        assertThat(resourcesBySubCategoryUid.get(0)).isSameAs(properResource);
+    }
+
+    @Test
+    public void testFetchByCategoryOrSubCategoryUid_notHighestResource() {
+        when(janusGraphDao.getVertexById(CATEGORY_UNIQUE_ID, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(categoryVertex));
+        when(janusGraphDao.getParentVertices(categoryVertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(notHighestVersionAndHighestVersionResourceVertices));
+        when(toscaOperationFacade.getToscaElement(PROPER_COMPONENT_ID, JsonParseFlagEnum.ParseMetadata))
+                .thenReturn(Either.left(properResource));
+        Either<List<Component>, StorageOperationStatus> resourcesBySubCategoryUidEither = elementBusinessLogic.fetchByCategoryOrSubCategoryUid(CATEGORY_UNIQUE_ID, NodeTypeEnum.Resource, false, null);
+        List<Component> resourcesBySubCategoryUid = resourcesBySubCategoryUidEither.left().value();
+        assertThat(resourcesBySubCategoryUid.size()).isEqualTo(1);
+        assertThat(resourcesBySubCategoryUid.get(0)).isSameAs(properResource);
+    }
+
+
+    @Test
+    public void testFetchByCategoryOrSubCategoryName_resource() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(CATEGORY_NAME));
+        when(janusGraphGenericDao.getByCriteria(NodeTypeEnum.ResourceNewCategory, props, SubCategoryData.class))
+                .thenReturn(Either.left(subCategories));
+        when(janusGraphDao.getVertexById(SUBCATEGORY_UNIQUE_ID, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(categoryVertex));
+        when(janusGraphDao.getParentVertices(categoryVertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(deletedAndNotDeletedResourceVertices));
+        when(toscaOperationFacade.getToscaElement(PROPER_COMPONENT_ID, JsonParseFlagEnum.ParseMetadata))
+                .thenReturn(Either.left(properResource));
+        Either<List<Component>, StorageOperationStatus> elementsByCategoryEither =
+                elementBusinessLogic.fetchByCategoryOrSubCategoryName(CATEGORY_NAME, NodeTypeEnum.ResourceNewCategory,
+                        NodeTypeEnum.Resource, false, null);
+        List<Component> elementsByCategory = elementsByCategoryEither.left().value();
+        assertThat(elementsByCategory.get(0)).isSameAs(properResource);
+        assertThat(elementsByCategory.size()).isEqualTo(1);
     }
 
     @Test
@@ -244,7 +288,7 @@ public class ElementBLTest {
         User user = new User();
         String userId = "userId";
         user.setUserId(userId);
-        when(elementBusinessLogic.validateUserExists(anyString(), anyString(), eq(false))).thenReturn(user);
+        when(elementBusinessLogic.validateUserExists(anyString())).thenReturn(user);
         when(elementOperation.deleteSubCategory(NodeTypeEnum.ResourceSubcategory, CATEGORY_UNIQUE_ID)).thenReturn(Either.left(subCategoryDef));
         result = elementBusinessLogic.deleteSubCategory(CATEGORY_UNIQUE_ID, ComponentTypeEnum.RESOURCE_PARAM_NAME, userId);
         Assert.assertTrue(result.isLeft());
@@ -269,7 +313,7 @@ public class ElementBLTest {
         String userId = "userId";
         user.setUserId(userId);
         user.setRole(Role.ADMIN.name());
-        when(userAdminManager.getUser(userId, false)).thenReturn(Either.left(user));
+        when(userValidations.validateUserExists(eq(userId))).thenReturn(user);
         when(elementOperation.isCategoryUniqueForType(NodeTypeEnum.ResourceNewCategory, name)).thenReturn(Either.left(true));
         when(elementOperation.createCategory(categoryDef, NodeTypeEnum.ResourceNewCategory)).thenReturn(Either.left(categoryDef));
         result = elementBusinessLogic.createCategory(categoryDef, ComponentTypeEnum.RESOURCE_PARAM_NAME, userId);
@@ -283,7 +327,6 @@ public class ElementBLTest {
         List<CategoryDefinition> categoryDefList = new ArrayList<>();
         when(elementOperation.getAllCategories(NodeTypeEnum.ResourceNewCategory, false)).thenReturn(Either.left(categoryDefList));
         when(elementOperation.getAllCategories(NodeTypeEnum.ServiceNewCategory, false)).thenReturn(Either.left(categoryDefList));
-        when(elementOperation.getAllCategories(NodeTypeEnum.ProductCategory, false)).thenReturn(Either.left(categoryDefList));
         result = elementBusinessLogic.getAllCategories(userId);
         Assert.assertTrue(result.isLeft());
     }
@@ -321,7 +364,7 @@ public class ElementBLTest {
         String userId = "userId";
         user.setUserId(userId);
         user.setRole(Role.PRODUCT_STRATEGIST.name());
-        when(elementBusinessLogic.validateUserExists(userId, "create Grouping", false)).thenReturn(user);
+        when(elementBusinessLogic.validateUserExists(userId)).thenReturn(user);
         when(elementOperation.getCategory(NodeTypeEnum.ProductCategory, grandParentCatId)).thenReturn(Either.left(categoryDef));
         when(elementOperation.getSubCategory(NodeTypeEnum.ProductSubcategory, parentSubCatId)).thenReturn(Either.left(subCategoryDef));
         when(elementOperation.isGroupingUniqueForSubCategory(NodeTypeEnum.ProductGrouping, name, parentSubCatId)).thenReturn(Either.left(true));
@@ -331,4 +374,24 @@ public class ElementBLTest {
         result = elementBusinessLogic.createGrouping(groupDef, componentTypeParamName, grandParentCatId, parentSubCatId, userId);
         Assert.assertTrue(result.isLeft());
     }
+
+    @Test
+    public void testFetchByCategoryOrSubCategoryName_service() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(CATEGORY_NAME));
+        when(janusGraphGenericDao.getByCriteria(NodeTypeEnum.ServiceNewCategory, props, CategoryData.class))
+                .thenReturn(Either.left(categories));
+        when(janusGraphDao.getVertexById(CATEGORY_UNIQUE_ID, JsonParseFlagEnum.NoParse)).thenReturn(Either.left(categoryVertex));
+        when(janusGraphDao.getParentVertices(categoryVertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(deletedAndNotDeletedServiceVertices));
+        when(toscaOperationFacade.getToscaElement(PROPER_COMPONENT_ID, JsonParseFlagEnum.ParseMetadata))
+                .thenReturn(Either.left(properService));
+        Either<List<Component>, StorageOperationStatus> elementsByCategoryEither =
+                elementBusinessLogic.fetchByCategoryOrSubCategoryName(CATEGORY_NAME, NodeTypeEnum.ServiceNewCategory,
+                        NodeTypeEnum.Service, false, null);
+        List<Component> elementsByCategory = elementsByCategoryEither.left().value();
+        assertThat(elementsByCategory.get(0)).isSameAs(properService);
+        assertThat(elementsByCategory.size()).isEqualTo(1);
+    }
+
+
 }

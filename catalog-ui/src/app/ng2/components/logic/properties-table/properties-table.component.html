@@ -37,18 +37,18 @@
         <div class="no-data" *ngIf="!fePropertiesMap || !(fePropertiesMap | keys).length">No data to display</div>
 
         <ng-container *ngFor="let instanceId of fePropertiesMap | keys; trackBy:vspId">
+            <!-- Icon & Instance Name -->
             <div class="table-rows-header white-sub-header" *ngIf="feInstanceNamesMap">
-
-
                 <span [ngClass]="['prop-instance-icon', feInstanceNamesMap[instanceId].iconClass, 'small']"></span>
-                {{feInstanceNamesMap[instanceId].name}}
+                {{feInstanceNamesMap[instanceId].name}} 
                 <div class="sprite-new archive-label" *ngIf="feInstanceNamesMap[instanceId].originArchived == true"></div>
             </div>
-
-            <div class="table-row" *ngFor="let property of fePropertiesMap[instanceId] | searchFilter:'name':searchTerm | orderBy:{path: path, direction: direction}; trackBy:property?.name "
+            
+            <div class="table-row" *ngFor="let property of fePropertiesMap[instanceId] | searchFilter:'name':searchTerm | propertiesOrderBy:{path: path, direction: direction}; trackBy:property?.name "
                 (click)="onClickPropertyRow(property, instanceId, $event)" [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.name, 'readonly': property.isDisabled || property.isDeclared}">
 
                 <div class="table-cell col1" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared">
+                <!-- Property Name -->
                     <div class="property-name">
                         <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly"
                             (checkedChange)="propertyChecked(property)" [attr.data-tests-id]="property.name"></checkbox>
@@ -62,16 +62,19 @@
                         <span *ngIf="showDelete" class="sprite-new delete-btn" [ngClass]="{'disabled' : property.isDisabled || property.isDeclared}" (click)="openDeleteModal(property)" data-tests-id="delete-input-button"></span>
                     </div>
                 </div>
+                <!-- Property Type -->
                 <div class="table-cell col2" *ngIf="!hidePropertyType">
                     <div class="inner-cell-div" tooltip="{{property.type | contentAfterLastDot}}">
                         <span>{{property.type | contentAfterLastDot}}</span>
                     </div>
                 </div>
+                <!-- Property ES (Entry Schema) -->
                 <div class="table-cell col3" *ngIf="!hidePropertyType">
                     <div *ngIf="property.schema && property.schema.property && property.schema.property.type" class="inner-cell-div" tooltip="{{property.schema.property.type | contentAfterLastDot}}">
                         <span>{{property.schema.property.type | contentAfterLastDot}}</span>
                     </div>
                 </div>
+                <!-- Property Value -->
                 <div class="table-cell valueCol">
                     <!-- [ngClass]="{'filtered':property.name === propertyNameSearchText}" (selectProperty)="propertySelected(property, $event, flatProperty.propertiesName)" [propType]="property.type" [propSchema]="property.schema" [propKey]="" [propValue]="property.value"-->
                     <dynamic-property
@@ -86,9 +89,10 @@
                         (expandChild)="property.updateExpandedChildPropertyId($event)"
                         (clickOnPropertyRow)="onClickPropertyInnerRow($event, instanceId)"
                         (checkProperty)="propertyChecked(property, $event)"
-                        >
-                    </dynamic-property>
 
+                        >
+                        
+                    </dynamic-property>
                 </div>
             </div>
         </ng-container>

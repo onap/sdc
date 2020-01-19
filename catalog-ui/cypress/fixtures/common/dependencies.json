@@ -1,0 +1,79 @@
+[{
+  "name": "NewServiceAuto",
+  "version": "7.0",
+  "uniqueId": "711e7af6-b901-4870-b76e-0b4c77bb15a9",
+  "type": "SERVICE",
+  "icon": "defaulticon",
+  "state": "CERTIFIED",
+  "instanceNames": null,
+  "dependencies": null
+},
+  {
+    "name": "NewServiceAuto",
+    "version": "6.0",
+    "uniqueId": "0105b1ae-5162-42d2-8cf0-6cd17a1bf179",
+    "type": "SERVICE",
+    "icon": "defaulticon",
+    "state": "CERTIFIED",
+    "instanceNames": null,
+    "dependencies": null
+  },
+  {
+    "name": "NewServiceAuto",
+    "version": "5.0",
+    "uniqueId": "bb76bc99-fee3-4bb7-96cd-643b4b7a2ad4",
+    "type": "SERVICE",
+    "icon": "defaulticon",
+    "state": "CERTIFIED",
+    "instanceNames": null,
+    "dependencies": null
+  },
+  {
+    "name": "NewServiceAuto",
+    "version": "4.0",
+    "uniqueId": "75312de7-ca54-488f-a922-7ee996aceec9",
+    "type": "SERVICE",
+    "icon": "defaulticon",
+    "state": "CERTIFIED",
+    "instanceNames": null,
+    "dependencies": null
+  },
+  {
+    "name": "NewServiceAuto",
+    "version": "3.0",
+    "uniqueId": "4563db36-6c24-4013-b872-73b10b828760",
+    "type": "SERVICE",
+    "icon": "defaulticon",
+    "state": "CERTIFIED",
+    "instanceNames": null,
+    "dependencies": null
+  },
+  {
+    "name": "NewServiceAuto",
+    "version": "2.0",
+    "uniqueId": "f2ab18c7-8d15-4af2-8b51-25972c836c01",
+    "type": "SERVICE",
+    "icon": "defaulticon",
+    "state": "CERTIFIED",
+    "instanceNames": null,
+    "dependencies": null
+  },
+  {
+    "name": "NewServiceAuto",
+    "version": "1.0",
+    "uniqueId": "ddd11c00-e998-49f6-8523-1725ffeb8b03",
+    "type": "SERVICE",
+    "icon": "defaulticon",
+    "state": "CERTIFIED",
+    "instanceNames": null,
+    "dependencies": [{
+      "name": "ServiceNew",
+      "version": "3.1",
+      "uniqueId": "1874258c-62ec-4a8c-91e1-a6d2f78ac15d",
+      "type": "SERVICE",
+      "icon": "defaulticon",
+      "state": "NOT_CERTIFIED_CHECKOUT",
+      "instanceNames": ["newserviceauto_proxy 0"],
+      "dependencies": null
+    }]
+  }]

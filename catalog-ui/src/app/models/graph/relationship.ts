@@ -119,4 +119,11 @@ export class Relationship {
         this.capability = capability;
         this.requirement = requirement;
     };
+
+    public toJSON = ():any => {
+        let temp = angular.copy(this);
+        temp.capability = undefined;
+        temp.requirement = undefined;
+        return temp;
+    }
 }

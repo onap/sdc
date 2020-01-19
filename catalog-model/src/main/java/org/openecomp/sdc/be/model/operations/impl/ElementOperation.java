@@ -25,6 +25,7 @@ import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -809,8 +810,8 @@ public class ElementOperation implements IElementOperation {
     }
 
     @Override
-    public Either<Integer, ActionStatus> getDefaultHeatTimeout() {
-        return Either.left(ConfigurationManager.getConfigurationManager().getConfiguration().getDefaultHeatArtifactTimeoutMinutes());
+    public Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> getDefaultHeatTimeout() {
+        return Either.left(ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout());
     }
 
     @Override

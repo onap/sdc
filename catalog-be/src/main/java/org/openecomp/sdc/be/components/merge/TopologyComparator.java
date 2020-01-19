@@ -65,8 +65,8 @@ public class TopologyComparator {
         if (oldInstances == null && newInstances == null) {
             return Either.left(false);
         }
-        Map<String, ComponentInstance> oldInstancesByName = MapUtil.toMap(oldInstances, ComponentInstance::getName);
-        Map<String, ComponentInstance> newInstancesByName = MapUtil.toMap(newInstances, ComponentInstance::getName);
+        Map<String, ComponentInstance> oldInstancesByName = MapUtil.toMap(oldInstances, ComponentInstance::getInvariantName);
+        Map<String, ComponentInstance> newInstancesByName = MapUtil.toMap(newInstances, ComponentInstance::getInvariantName);
         return isTopologyInstancesChanged(oldResource, newResource, oldInstancesByName, newInstancesByName);
     }
 

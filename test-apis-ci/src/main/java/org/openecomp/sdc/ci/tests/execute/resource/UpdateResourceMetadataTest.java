@@ -153,7 +153,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedResourceDetails.setLastUpdaterFullName("Viktor Tzoy");
         updatedResourceDetails.setCreationDate(new Long(4444));
         updatedResourceDetails.setLastUpdateDate(new Long("534535"));
-        updatedResourceDetails.setLifecycleState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
+        updatedResourceDetails.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         updatedResourceDetails.setCost("6.1");
         updatedResourceDetails.setLicenseType("Installation");
         updatedResourceDetails.setUUID("dfsfsdf");

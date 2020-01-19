@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`palette component should match current snapshot of palette component 1`] = `
+<composition-palette
+  buildPaletteByCategories={[Function Function]}
+  compositionPaletteService={[Function Object]}
+  eventListenerService={[Function Object]}
+  numberOfElements="0"
+  onDragStart={[Function Function]}
+  onDraggableMoved={[Function Function]}
+  onDrop={[Function Function]}
+  onMouseOut={[Function Function]}
+  onMouseOver={[Function Function]}
+  onSearchChanged={[Function Function]}
+  position={[Function Point]}
+>
+  <div
+    class="composition-palette-component"
+  >
+    <div
+      class="palette-elements-count"
+    >
+      Elements 
+      <span
+        class="palette-elements-count-value"
+      >
+        
+      </span>
+    </div>
+    <sdc-filter-bar
+      placeholder="Search..."
+      testid="searchAsset"
+    />
+    <div
+      class="palette-elements-list"
+    >
+      <sdc-loader
+        name="palette-loader"
+        testid="palette-loader"
+      />
+      
+      
+    </div>
+  </div><div
+    dnddropzone=""
+    id="draggable_element"
+  >
+    
+  </div>
+</composition-palette>
+`;

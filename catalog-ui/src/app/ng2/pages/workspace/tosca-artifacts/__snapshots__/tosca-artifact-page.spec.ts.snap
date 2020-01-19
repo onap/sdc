@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tosca artifacts page should match current snapshot of tosca artifact pages component 1`] = `
+<tosca-artifact-page
+  serviceLoader={[Function Object]}
+  store={[Function Store]}
+  table={[Function DatatableComponent]}
+  workspaceService={[Function Object]}
+>
+  <div
+    class="tosca-artifact-page"
+  >
+    <ngx-datatable
+      class="ngx-datatable"
+      columnmode="flex"
+    >
+      <div
+        visibilityobserver=""
+      >
+        
+        <datatable-body
+          class="datatable-body"
+        >
+          <datatable-selection>
+            
+            
+            
+          </datatable-selection>
+        </datatable-body>
+        
+      </div>
+    </ngx-datatable>
+  </div>
+</tosca-artifact-page>
+`;

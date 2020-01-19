@@ -27,8 +27,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-
 @Component
 public class ComponentBusinessLogicProvider {
 
@@ -36,7 +34,6 @@ public class ComponentBusinessLogicProvider {
     private final ServiceBusinessLogic serviceBusinessLogic;
     private final ProductBusinessLogic productBusinessLogic;
 
-    @Inject
     public ComponentBusinessLogicProvider(ResourceBusinessLogic resourceBusinessLogic, ServiceBusinessLogic serviceBusinessLogic, ProductBusinessLogic productBusinessLogic) {
         this.resourceBusinessLogic = resourceBusinessLogic;
         this.serviceBusinessLogic = serviceBusinessLogic;
@@ -54,7 +51,7 @@ public class ComponentBusinessLogicProvider {
                return resourceBusinessLogic;
             default:
                 BeEcompErrorManager.getInstance().logBeSystemError("getComponentBL");
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT_PARAM, componentTypeEnum.getValue());
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT, componentTypeEnum.getValue());
         }
     }
 

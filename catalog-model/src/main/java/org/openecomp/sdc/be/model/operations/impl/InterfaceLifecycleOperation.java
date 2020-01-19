@@ -54,6 +54,8 @@ import java.util.stream.Collectors;
 public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation {
 
     private static final Logger log = Logger.getLogger(InterfaceLifecycleOperation.class.getName());
+    private static final String FAILED_TO_FIND_OPERATION = "Failed to find operation  {} on interface {}";
+    private static final String FAILED_TO_FIND_ARTIFACT = "Failed to add artifact {} to interface {}";
 
     public InterfaceLifecycleOperation() {
         super();
@@ -194,6 +196,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 
         return Either.left(createNodeResult.left().value());
     }
+
 
     @Override
     public Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfacesOfResource(String resourceIdn, boolean recursively) {
@@ -408,6 +411,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 
     @Override
     public Either<Operation, StorageOperationStatus> updateInterfaceOperation(String resourceId, String interfaceName, String operationName, Operation operation, boolean inTransaction) {
+
         return updateOperationOnGraph(operation, resourceId, interfaceName, operationName);
     }
 
@@ -443,7 +447,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                     .getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), (String) interfaceDataNode.getLeft().getUniqueId(),
                         GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class);
                 if (operationRes.isRight()) {
-                    log.error("Failed to find operation  {} on interface {}", operationName, interfaceName);
+                    log.error(FAILED_TO_FIND_OPERATION, operationName, interfaceName);
                     return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationRes.right().value()));
                 } else {
                     List<ImmutablePair<OperationData, GraphEdge>> operations = operationRes.left().value();
@@ -464,7 +468,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                             }
                             if (artStatus.isRight()) {
                                 janusGraphGenericDao.rollback();
-                                log.error("Failed to add artifact {} to interface {}", operationName, interfaceName);
+                                log.error(FAILED_TO_FIND_ARTIFACT, operationName, interfaceName);
                                 return Either.right(artStatus.right().value());
                             } else {
                                 newOperation = this.convertOperationDataToOperation(opData);
@@ -487,7 +491,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                             .getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), (String) parentInterfaceData.getUniqueId(),
                                 GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class);
                         if (opRes.isRight()) {
-                            log.error("Failed to find operation  {} on interface {}", operationName, interfaceName);
+                            log.error(FAILED_TO_FIND_OPERATION, operationName, interfaceName);
                             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationRes.right().value()));
 
                         } else {
@@ -534,7 +538,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
             Either<ArtifactDefinition, StorageOperationStatus> artStatus = artifactOperation.addArifactToComponent(artifact, (String) operationStatus.left().value().getUniqueId(), NodeTypeEnum.InterfaceOperation, true, true);
             if (artStatus.isRight()) {
                 janusGraphGenericDao.rollback();
-                log.error("Failed to add artifact {} to interface {}", operationName, interfaceName);
+                log.error(FAILED_TO_FIND_ARTIFACT, operationName, interfaceName);
             } else {
                 newOperation = this.convertOperationDataToOperation(opData);
                 newOperation.setImplementation(artStatus.left().value());
@@ -581,7 +585,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
             .getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), (String) interfaceData.getUniqueId(),
                 GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class);
         if (operationRes.isRight()) {
-            log.error("Failed to find operation  {} on interface {}", operationName, interfaceName);
+            log.error(FAILED_TO_FIND_OPERATION, operationName, interfaceName);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationRes.right().value()));
 
         } else {
@@ -676,7 +680,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                             Either<ArtifactDefinition, StorageOperationStatus> artRes = artifactOperation.addArifactToComponent(art, (String) opData.getUniqueId(), NodeTypeEnum.InterfaceOperation, failIfExist, true);
                             if (artRes.isRight()) {
                                 janusGraphGenericDao.rollback();
-                                log.error("Failed to add artifact {} to interface {}", operationName, interfaceName);
+                                log.error(FAILED_TO_FIND_ARTIFACT, operationName, interfaceName);
                             } else {
                                 newOperation.setImplementation(artRes.left().value());
                             }

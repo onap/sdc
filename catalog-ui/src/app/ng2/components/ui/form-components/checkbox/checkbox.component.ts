@@ -19,7 +19,7 @@
  */
 
 import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
-//import { trigger, state, style, transition, animate, keyframes } from '@angular/core';
+//import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 
 @Component({
     selector: 'checkbox',

@@ -177,23 +177,10 @@ public class CheckoutTransition extends LifeCycleTransition {
         if (userValidationResponse.isRight()) {
             return userValidationResponse;
         }
-
         // check resource is not locked by another user
         if (oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
             ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CHECKOUT_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
             return Either.right(error);
-        }
-
-        if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)) {
-            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-            return Either.right(error);
-        }
-
-        if (oldState.equals(LifecycleStateEnum.READY_FOR_CERTIFICATION)) {
-            if (!modifier.getRole().equals(Role.DESIGNER.name()) && !modifier.getRole().equals(Role.ADMIN.name())) {
-                ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-                return Either.right(error);
-            }
         }
         return Either.left(true);
     }

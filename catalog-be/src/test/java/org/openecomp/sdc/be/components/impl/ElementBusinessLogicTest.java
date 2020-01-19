@@ -131,47 +131,6 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
     	Assert.assertTrue(result.get("resources").size() == 1);
 	}
 
-	@Test
-	public void testGetFollowed_givenUserWithTesterRoleErrorOccursGettingService_thenReturnsError () {
-		user.setUserId("tester1");
-		user.setRole(Role.TESTER.name());
-
-		Set<Component> resources = new HashSet<>();
-
-		Resource resource = new Resource();
-		resources.add(resource);
-
-		Mockito.when(toscaOperationFacade.getFollowed(any(), Mockito.anySet(), any(), Mockito.eq(ComponentTypeEnum.RESOURCE)))
-				.thenReturn(Either.left(resources));
-		Mockito.when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.SERVICE)))
-				.thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
-		Assert.assertTrue(elementBusinessLogic.getFollowed(user).isRight());
-	}
-
-	@Test
-	public void testGetFollowed_givenUserWithGovernorRole_thenReturnsSuccessful(){
-		user.setUserId("governor1");
-    	user.setRole(Role.GOVERNOR.name());
-
-    	List<Service> services = new ArrayList<>();
-    	services.add(new Service());
-
-    	when(toscaOperationFacade.getCertifiedServicesWithDistStatus(any()))
-				.thenReturn(Either.left(services));
-		Assert.assertTrue(elementBusinessLogic.getFollowed(user).isLeft());
-	}
-
-	@Test
-	public void testGetFollowed_givenUserWithOPSRoleErrorOccursGettingServices_thenReturnsError(){
-		user.setUserId("ops1");
-    	user.setRole(Role.OPS.name());
-
-		when(toscaOperationFacade.getCertifiedServicesWithDistStatus(any()))
-				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-
-		Assert.assertTrue(elementBusinessLogic.getFollowed(user).isRight());
-
-	}
 
 	@Test
 	public void testGetFollowed_givenUserWithProductStrategistRole_thenReturnsEmptyList(){
@@ -217,14 +176,13 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
 
 	@Test(expected = ComponentException.class)
 	public void testGetAllCategories_givenValidationOfUserFails_thenReturnsError() {
-    	doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserExists(eq(user.getUserId()),
-				anyString(), anyBoolean());
+    	doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserExists(eq(user.getUserId()));
   		elementBusinessLogic.getAllCategories(null, user.getUserId());
 	}
 
 	@Test
 	public void testGetAllCategories_givenInvalidComponentType_thenReturnsError() {
-    	when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean())).thenReturn(user);
+    	when(userValidations.validateUserExists(eq(user.getUserId()))).thenReturn(user);
 
     	Assert.assertTrue(elementBusinessLogic.getAllCategories("NONE", user.getUserId()).isRight());
 
@@ -236,7 +194,7 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
     	List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
     	categoryDefinitionList.add(new CategoryDefinition());
 
-		when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean())).thenReturn(user);
+		when(userValidations.validateUserExists(eq(user.getUserId()))).thenReturn(user);
 		when(elementDao.getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
 				.thenReturn(Either.left(categoryDefinitionList));
 		Assert.assertTrue(elementBusinessLogic.getAllCategories(ComponentTypeEnum.RESOURCE_PARAM_NAME, user.getUserId())
@@ -249,7 +207,7 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
     	List<CategoryDefinition> dummyCategoryDefinitionList = new ArrayList<>();
     	dummyCategoryDefinitionList.add(new CategoryDefinition());
 
-    	when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean()))
+    	when(userValidations.validateUserExists(eq(user.getUserId())))
 				.thenReturn(user);
     	when(elementDao.getAllCategories(any(NodeTypeEnum.class), anyBoolean()))
 				.thenReturn(Either.left(dummyCategoryDefinitionList));
@@ -272,7 +230,7 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
 		SubCategoryDefinition subCatDef = new SubCategoryDefinition();
 		subCatDef.setName("subCat1");
 
-		when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean()))
+		when(userValidations.validateUserExists(eq(user.getUserId())))
 				.thenReturn(user);
 		when(elementDao.getCategory(any(NodeTypeEnum.class), anyString()))
 				.thenReturn(Either.left(new CategoryDefinition()));
@@ -296,49 +254,31 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
 	@Test(expected = ComponentException.class)
 	public void testCreateSubCategory_givenUserValidationFails_thenReturnsException() {
     	SubCategoryDefinition subCategoryDefinition = new SubCategoryDefinition();
-    	doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserExists(eq(user.getUserId()),
-				anyString(), anyBoolean());
+    	doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserExists(eq(user.getUserId()));
     	elementBusinessLogic.createSubCategory(subCategoryDefinition, "resources", "cat1", user.getUserId());
 	}
 
-	@Test
-    public void testcreateCategory_VALIDATION_OF_USER_FAILED() throws Exception {
-
-
+	@Test(expected=ComponentException.class)
+    public void testcreateCategory_VALIDATION_OF_USER_FAILED() {
         CategoryDefinition catdefinition = new CategoryDefinition();
-        String userid=null;
+        String userid = "";
         ResponseFormat responseFormat = new ResponseFormat(7);
-        when(componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION)).thenReturn(responseFormat);
-        Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"Service", userid);
-        Assert.assertEquals(true,response.isRight());
-        Assert.assertEquals((Integer) 7, response.right().value().getStatus());
+        when(userValidations.validateUserExists("")).thenThrow(new ByResponseFormatComponentException(responseFormat));
+        elementBusinessLogic.createCategory(catdefinition,"Service", userid);
     }
 
     @Test
     public void testcreateCategory_MISSING_INFORMATION() throws Exception {
-
         CategoryDefinition catdefinition = new CategoryDefinition();
         ResponseFormat responseFormat = new ResponseFormat(9);
         User user = new User();
-        when(userAdminManager.getUser("USR", false)).thenReturn(Either.left(user));
+        when(userValidations.validateUserExists("USR")).thenReturn(user);
         when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
         Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"Service", "USR");
-        Assert.assertEquals(true,response.isRight());
+        Assert.assertTrue(response.isRight());
         Assert.assertEquals((Integer) 9, response.right().value().getStatus());
     }
 
-    @Test
-    public void testcreateCategory_RESTRICTED_OPERATION() throws Exception {
-
-        CategoryDefinition catdefinition = new CategoryDefinition();
-        ResponseFormat responseFormat = new ResponseFormat(9);
-        User user = new User();
-        when(userAdminManager.getUser("USR", false)).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
-        when(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION)).thenReturn(responseFormat);
-        Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"Service", "USR");
-        Assert.assertEquals(true,response.isRight());
-        Assert.assertEquals((Integer) 9, response.right().value().getStatus());
-    }
 
     @Test
     public void testcreateCategory_Invalid_componentType() throws Exception {
@@ -348,10 +288,10 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
         ResponseFormat responseFormat = new ResponseFormat(9);
         User user = new User();
 
-        when(userAdminManager.getUser("USR", false)).thenReturn(Either.left(user));
+        when(userValidations.validateUserExists("USR")).thenReturn(user);
         when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
         Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"Service", "USR");
-        Assert.assertEquals(true,response.isRight());
+        Assert.assertTrue(response.isRight());
         Assert.assertEquals((Integer) 9, response.right().value().getStatus());
     }
 
@@ -363,10 +303,10 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
         ResponseFormat responseFormat = new ResponseFormat(9);
         User user = new User();
 
-        when(userAdminManager.getUser("USR", false)).thenReturn(Either.left(user));
+        when(userValidations.validateUserExists("USR")).thenReturn(user);
         when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
         Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition,"SERVICE_PARAM_NAME", "USR");
-        Assert.assertEquals(true,response.isRight());
+        Assert.assertTrue(response.isRight());
         Assert.assertEquals((Integer) 9, response.right().value().getStatus());
     }
 }

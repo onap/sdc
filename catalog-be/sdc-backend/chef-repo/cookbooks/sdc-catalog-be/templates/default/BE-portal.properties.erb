@@ -57,14 +57,34 @@ use_rest_for_functional_menu=true
 portal.api.impl.class = org.openecomp.sdc.be.ecomp.PortalRestAPICentralServiceImpl
 role_access_centralized = remote
 
+# Cookie set by CSP-SSO
+csp_cookie_name = onapCsp
+
+# CSP setting, most use PROD; DEV also recognized
+csp_gate_keeper_prod_key = PROD
+
 # URL of the Portal where this app is onboarded
 ecomp_redirect_url = <%= @ecomp_redirect_url %>
 
 # URL of the ECOMP Portal REST API
 ecomp_rest_url = <%= @ecomp_rest_url %>
 
-#Portal user & key
-portal_user = <%= @ecomp_portal_user %>
-portal_pass = <%= @ecomp_portal_pass %>
-portal_app_name = <%= @portal_app_name %>
+# Connection and Read timeout values
+ext_req_connection_timeout = 15000
+ext_req_read_timeout = 20000
 
+# Name of java class that implements the OnBoardingApiService interface.
+portal.api.impl.class = org.openecomp.sdc.be.ecomp.PortalRestAPICentralServiceImpl
+
+#Portal user & key
+portal_app_name = <%= @portal_app_name %>
+portal_pass = <%= @ecomp_portal_pass %>
+portal_user = <%= @ecomp_portal_user %>
+# Use this tag if the app is centralized remote/local
+role_access_centralized = remote
+
+# UEB key generated while on-boarding
+ueb_app_key = ""
+
+# Applications do not need to run a UEB listener after 1607.
+ueb_listeners_enable = false

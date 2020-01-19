@@ -19,80 +19,34 @@
  */
 
 import { Injectable, Inject } from "@angular/core";
-import { Headers } from "@angular/http";
 import { Observable } from "rxjs/Observable";
-import { HttpService } from "./http.service";
-import { Cookie2Service } from "./cookie.service";
 import { IUserProperties } from "../../models/user";
 
-import {ICookie} from "../../models/app-config";
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
-
+import { HttpClient } from "@angular/common/http";
+import { HttpHelperService } from "./http-hepler.service";
+/**
+ * User Service provides CRUD for Users. See authentication service for authentication/login.
+ */
 @Injectable()
-export class UserService {
+export class UserService { 
     private url:string;
-    private authorizeUrl:string;
 
-    private _loggedinUser:IUserProperties;
-
-    constructor(private httpService:HttpService,
-                private cookieService:Cookie2Service,
+    constructor(private http: HttpClient,
                 @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
         this.url = this.sdcConfig.api.root + this.sdcConfig.api.GET_user;
-        this.authorizeUrl = this.sdcConfig.api.root + this.sdcConfig.api.GET_user_authorize;
     }
 
-    public authorize() :Observable<IUserProperties> {
-        let cookie:ICookie = this.sdcConfig.cookie;
-        let authorizeHeaders:Headers = new Headers();
-        authorizeHeaders.set(cookie.userFirstName, this.cookieService.getFirstName());
-        authorizeHeaders.set(cookie.userLastName, this.cookieService.getLastName());
-        authorizeHeaders.set(cookie.userEmail, this.cookieService.getEmail());
-        authorizeHeaders.set(cookie.userIdSuffix, this.cookieService.getUserId());
-
-        return this.httpService.get(
-            this.authorizeUrl,
-            { headers: authorizeHeaders }
-        ).map(resp => resp.json());
-    }
 
     public getAllUsers() :Observable<IUserProperties[]> {
-        return this.httpService.get(
+        return this.http.get(
             this.sdcConfig.api.root + this.sdcConfig.api.GET_all_users
-        ).map(resp => resp.json());
+        ).map(resp => <IUserProperties[]> resp) ;
     }
 
     public getUser(userId:string) :Observable<IUserProperties> {
-        return this.httpService.get(
-            HttpService.replaceUrlParams(this.url, { id: userId })
-        ).map(resp => resp.json());
+        return this.http.get(
+            HttpHelperService.replaceUrlParams(this.url, { id: userId })
+        ).map(resp => <IUserProperties> resp);
     }
-
-    public createUser(userData:{[index:string]: any}) :Observable<IUserProperties> {
-        return this.httpService.post(
-            this.sdcConfig.api.root + this.sdcConfig.api.POST_create_user,
-            userData
-        ).map(resp => resp.json());
-    }
-
-    public deleteUser(userId:string) :Observable<IUserProperties> {
-        return this.httpService.delete(
-            HttpService.replaceUrlParams(this.sdcConfig.api.root + this.sdcConfig.api.DELETE_delete_user, { id: userId })
-        ).map(resp => resp.json());
-    }
-
-    public editUserRole(userId:string, role:string) :Observable<IUserProperties> {
-        return this.httpService.post(
-            HttpService.replaceUrlParams(this.sdcConfig.api.root + this.sdcConfig.api.POST_edit_user_role, { id: userId }),
-            { role: role }
-        ).map(resp => resp.json());
-    }
-
-    public getLoggedinUser():IUserProperties {
-        return this._loggedinUser;
-    }
-
-    public setLoggedinUser(loggedinUser:IUserProperties) {
-        this._loggedinUser = loggedinUser;
-    };
 }

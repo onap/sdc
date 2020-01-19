@@ -26,6 +26,8 @@ import com.google.gson.JsonObject;
 import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
@@ -35,6 +37,7 @@ import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.Configuration.VfModuleProperty;
@@ -47,7 +50,16 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.info.MergedArtifactInfo;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupProperty;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -56,6 +68,9 @@ import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
@@ -64,16 +79,27 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.FAILED_UPLOAD_ARTIFACT_TO_COMPONENT;
 import static org.openecomp.sdc.be.tosca.CsarUtils.ARTIFACTS_PATH;
 
 
@@ -89,6 +115,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     private static final String ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE = "Artifact with name {} and type {} already exist with type  {}";
     private final Gson gson = new Gson();
     private static final Pattern pattern = Pattern.compile("\\..(.*?)\\..");
+    private static final String LABEL_COUNTER_DELIMITER = "[^0-9]+";
     protected final ArtifactsBusinessLogic artifactsBusinessLogic;
     private final GroupBusinessLogic groupBusinessLogic;
 
@@ -108,13 +135,12 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<Resource, ResponseFormat> createResourceArtifactsFromCsar(CsarInfo csarInfo, Resource resource,
-            String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdArtifacts,
-            boolean shouldLock, boolean inTransaction) {
+            String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdArtifacts) {
 
         log.debug("parseResourceArtifactsInfoFromFile start");
         return  parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName)
                 .left()
-                .bind( p-> createResourceArtifacts(csarInfo, resource, p, createdArtifacts,shouldLock, inTransaction))
+                .bind( p-> createResourceArtifacts(csarInfo, resource, p, createdArtifacts))
                 .right()
                 .map(rf -> { componentsUtils.auditResource(rf, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE); return rf;})
                 .left()
@@ -137,35 +163,34 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         }
 
         List<GroupDefinition> groups = updatedResource.getGroups();
-        Map<String, ArtifactDefinition> deplymentArtifact = updatedResource.getDeploymentArtifacts();
-        if (deplymentArtifact == null || deplymentArtifact.isEmpty()) {
-            if(groups != null){
-                List<GroupDefinition> listToDelete =  groups.stream().filter(g -> g.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)).collect(Collectors.toList());
-                groupBusinessLogic.deleteGroups(updatedResource, listToDelete);
-            }
+        Map<String, ArtifactDefinition> deploymentArtifact = updatedResource.getDeploymentArtifacts();
+        if (MapUtils.isEmpty(deploymentArtifact)) {
+            deleteGroupsByType(groups, Constants.DEFAULT_GROUP_VF_MODULE, updatedResource);
             return createResourceArtifacts(csarInfo, updatedResource, parseResourceInfoFromYamlEither.left().value(),
-                    createdNewArtifacts, shouldLock, inTransaction);
+                    createdNewArtifacts);
         }
 
-        List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete = deplymentArtifact.values().stream().collect(Collectors.toList());
+        List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete = deploymentArtifact.values().stream()
+                                                                                                  .collect(Collectors.toList());
 
-        int labelCounter = createdDeplymentArtifactsAfterDelete.size();
-
+        int labelCounter = createdDeploymentArtifactsAfterDelete
+                .stream()
+                .map(ArtifactDefinition::getArtifactLabel)
+                .filter(this::isLastCharacterInLabelADigit)
+                .map(this::getNextInt)
+                .flatMapToInt(this::toStream)
+                .max()
+                .orElse(-1) + 1;
 
         ////////////////////////////////////// create set parsed
         ////////////////////////////////////// artifacts///////////////////////////////////////////
         Map<String, List<ArtifactTemplateInfo>> parsedArtifactsMap = parseResourceInfoFromYamlEither.left().value();
 
-
-        List<ArtifactTemplateInfo> artifactsWithoutGroups = null;
-        if (parsedArtifactsMap.containsKey(ArtifactTemplateInfo.CSAR_ARTIFACT)) {
-            artifactsWithoutGroups = parsedArtifactsMap.get(ArtifactTemplateInfo.CSAR_ARTIFACT);
-            parsedArtifactsMap.remove(ArtifactTemplateInfo.CSAR_ARTIFACT);
-        }
+        List<ArtifactTemplateInfo> artifactsWithoutGroups = parsedArtifactsMap.remove(ArtifactTemplateInfo.CSAR_ARTIFACT);
         Collection<List<ArtifactTemplateInfo>> parsedArifactsCollection = parsedArtifactsMap.values();
 
         Either<Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>>, ResponseFormat> parsedArtifactsPerGroupEither = createArtifactsTemplateCollection(csarInfo, updatedResource, createdNewArtifacts, shouldLock, inTransaction,
-                createdDeplymentArtifactsAfterDelete, labelCounter, parsedArifactsCollection);
+                createdDeploymentArtifactsAfterDelete, labelCounter, parsedArifactsCollection);
         if(parsedArtifactsPerGroupEither.isRight()){
             log.error("Failed to parse artifacts. Status is {} ", parsedArtifactsPerGroupEither.right().value());
             return Either.right(parsedArtifactsPerGroupEither.right().value());
@@ -175,20 +200,20 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
         // find master in group
         Map<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> groupArtifact = findMasterArtifactInGroup(
-                groups, deplymentArtifact);
+                groups, deploymentArtifact);
 
         ///////////////////////////////// find artifacts to
         ///////////////////////////////// delete////////////////////////////////////////////////////
 
 
         Map<String, List<ArtifactDefinition>> groupToDelete = new HashMap<>();
-        Set<ArtifactDefinition> artifactsToDelete = findArtifactThatNotInGroupToDelete(parsedGroup, createdDeplymentArtifactsAfterDelete);
+        Set<ArtifactDefinition> artifactsToDelete = findArtifactThatNotInGroupToDelete(parsedGroup, createdDeploymentArtifactsAfterDelete);
 
         Set<ArtifactTemplateInfo> jsonMasterArtifacts = parsedGroup.keySet();
         Map<GroupDefinition, MergedArtifactInfo> mergedgroup = mergeGroupInUpdateFlow(groupArtifact, parsedGroup,
-                artifactsToDelete, groupToDelete, jsonMasterArtifacts, createdDeplymentArtifactsAfterDelete);
+                artifactsToDelete, groupToDelete, jsonMasterArtifacts, createdDeploymentArtifactsAfterDelete);
 
-        List<ArtifactDefinition> deletedArtifacts = new ArrayList<>();;
+        List<ArtifactDefinition> deletedArtifacts = new ArrayList<>();
         Either<Resource, ResponseFormat> deletedArtifactsEither = deleteArtifactsInUpdateCsarFlow(
                 updatedResource, csarInfo.getModifier(), shouldLock, inTransaction, artifactsToDelete, groupToDelete, deletedArtifacts);
         if (deletedArtifactsEither.isRight()) {
@@ -200,76 +225,196 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         updatedResource = deletedArtifactsEither.left().value();
 
         // need to update resource if we updated artifacts
-        if (!deletedArtifacts.isEmpty()) {
-            for (ArtifactDefinition deletedArtifact : deletedArtifacts) {
-                ArtifactDefinition artToRemove = null;
-                for (ArtifactDefinition artFromResource : createdDeplymentArtifactsAfterDelete) {
-                    if (deletedArtifact.getUniqueId().equalsIgnoreCase(artFromResource.getUniqueId())) {
-                        artToRemove = artFromResource;
-                        break;
-                    }
-                }
-                if (artToRemove != null) {
-                    createdDeplymentArtifactsAfterDelete.remove(artToRemove);
-                }
-
-            }
-        }
+        excludeDeletedArtifacts(deletedArtifacts, createdDeploymentArtifactsAfterDelete);
 
         ////////////// dissociate, associate or create
         ////////////// artifacts////////////////////////////
         Either<Resource, ResponseFormat> assDissotiateEither = associateAndDissociateArtifactsToGroup(csarInfo,
-                updatedResource, createdNewArtifacts, labelCounter, inTransaction,
-                createdDeplymentArtifactsAfterDelete, mergedgroup, deletedArtifacts);
+                updatedResource, createdNewArtifacts, labelCounter,
+                createdDeploymentArtifactsAfterDelete, mergedgroup, deletedArtifacts);
         groups = updatedResource.getGroups();
         if (assDissotiateEither.isRight()) {
             log.debug("Failed to delete artifacts. Status is {} ", assDissotiateEither.right().value());
-
             return Either.right(assDissotiateEither.right().value());
-
         }
+
         updatedResource = assDissotiateEither.left().value();
-        deplymentArtifact = updatedResource.getDeploymentArtifacts();
-        createdDeplymentArtifactsAfterDelete.clear();
-        if (deplymentArtifact != null && !deplymentArtifact.isEmpty()) {
-            for (Entry<String, ArtifactDefinition> entry : deplymentArtifact.entrySet()) {
-                createdDeplymentArtifactsAfterDelete.add(entry.getValue());
-            }
-        }
+        deploymentArtifact = updatedResource.getDeploymentArtifacts();
 
+        createdDeploymentArtifactsAfterDelete = deploymentArtifact.values().stream()
+                                                                        .collect(Collectors.toList());
+        
         // update vfModule names
         Set<GroupDefinition> groupForAssociateWithMembers = mergedgroup.keySet();
-        if (groups != null && !groups.isEmpty()) {
+        Either<Resource, ResponseFormat> validateUpdateVfGroupNamesRes = updateVfModuleNames(createdNewArtifacts,
+                updatedResource, groups, createdDeploymentArtifactsAfterDelete, groupForAssociateWithMembers);
+        if (validateUpdateVfGroupNamesRes != null) return validateUpdateVfGroupNamesRes;
+
+        //////////////// create new artifacts in update
+        //////////////// flow////////////////////////////
+        List<ArtifactTemplateInfo> newArtifactsGroup = createNewArtifcats(parsedGroup, groupArtifact);
+        Either<Resource, ResponseFormat> validateGroupNamesRes = handleArtifactsInGroup(csarInfo, createdNewArtifacts,
+                updatedResource, groups, createdDeploymentArtifactsAfterDelete, labelCounter, newArtifactsGroup);
+        if (validateGroupNamesRes != null) return validateGroupNamesRes;
+
+        // updatedGroup
+        Either<Resource, ResponseFormat> updateVersionEither = updateGroupVersion(updatedResource, groupForAssociateWithMembers);
+        if (updateVersionEither != null) return updateVersionEither;
+        if (!CollectionUtils.isEmpty(artifactsWithoutGroups)) {
+            for (ArtifactTemplateInfo t : artifactsWithoutGroups) {
+                List<ArtifactTemplateInfo> artifacts = new ArrayList<>();
+                artifacts.add(t);
+                Either<Resource, ResponseFormat> resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo, updatedResource,
+                        artifacts, createdNewArtifacts, createdDeploymentArtifactsAfterDelete, labelCounter);
+                if (checkResponse(resStatus)) return resStatus;
+            }
+
+        }
+
+        Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade.getToscaElement(updatedResource.getUniqueId());
+        return mapResult(eitherGetResource, updatedResource);
+    }
+
+    private Either<Resource, ResponseFormat> handleArtifactsInGroup(CsarInfo csarInfo, List<ArtifactDefinition> createdNewArtifacts,
+                                                                    Resource updatedResource, List<GroupDefinition> groups,
+                                                                    List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete,
+                                                                    int labelCounter, List<ArtifactTemplateInfo> newArtifactsGroup) {
+        if (!newArtifactsGroup.isEmpty()) {
+            Collections.sort(newArtifactsGroup, ArtifactTemplateInfo::compareByGroupName);
+            int startGroupCounter = groupBusinessLogic.getNextVfModuleNameCounter(groups);
+            Either<Boolean, ResponseFormat> validateGroupNamesRes = groupBusinessLogic
+                    .validateGenerateVfModuleGroupNames(newArtifactsGroup, updatedResource.getSystemName(), startGroupCounter);
+            if (validateGroupNamesRes.isRight()) {
+                return Either.right(validateGroupNamesRes.right().value());
+            }
+            Either<Resource, ResponseFormat> resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo, updatedResource,
+                    newArtifactsGroup, createdNewArtifacts, createdDeploymentArtifactsAfterDelete, labelCounter);
+          checkResponse(resStatus);
+        }
+        return null;
+    }
+
+    private boolean checkResponse(Either<Resource, ResponseFormat> resStatus) {
+        return (resStatus.isRight());
+    }
+
+    private Either<Resource, ResponseFormat> updateVfModuleNames(List<ArtifactDefinition> createdNewArtifacts, Resource updatedResource, List<GroupDefinition> groups, List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete, Set<GroupDefinition> groupForAssociateWithMembers) {
+        if (!CollectionUtils.isEmpty(groups)) {
             Either<List<GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic
                     .validateUpdateVfGroupNamesOnGraph(groups, updatedResource);
             if (validateUpdateVfGroupNamesRes.isRight()) {
                 return Either.right(validateUpdateVfGroupNamesRes.right().value());
             }
-            List<GroupDefinition> heatGroups = null;
+            updateGroupMemebers(groups, groupForAssociateWithMembers, createdNewArtifacts, createdDeploymentArtifactsAfterDelete);
+        }
+        return null;
+    }
 
-            heatGroups = groups.stream().filter(e -> e.getMembers() != null).collect(Collectors.toList());
+    private Either<Resource, ResponseFormat> updateGroupVersion(Resource updatedResource, Set<GroupDefinition> groupForAssociateWithMembers) {
+        if (!groupForAssociateWithMembers.isEmpty()) {
 
-            for (GroupDefinition updatedGroupDef : groupForAssociateWithMembers) {
+            List<GroupDefinition> groupsId = groupForAssociateWithMembers.stream()
+                                                                         .collect(Collectors.toList());
 
-                if (updatedGroupDef.getMembers() != null && !updatedGroupDef.getMembers().isEmpty()) {
-                    updatedGroupDef.getMembers().clear();
+            Either<List<GroupDefinition>, ResponseFormat> updateVersionEither = groupBusinessLogic
+                    .updateGroups(updatedResource, groupsId, true);
+            if (updateVersionEither.isRight()) {
+                log.debug("Failed to update groups version. Status is {} ", updateVersionEither.right().value());
+
+                return Either.right(updateVersionEither.right().value());
+
+            }
+        }
+        return null;
+    }
+
+    private IntStream toStream(OptionalInt optionalInt) {
+        if (optionalInt.isPresent()) {
+            return IntStream.of(optionalInt.getAsInt());
+        }
+        return IntStream.empty();
+    }
+
+    private OptionalInt getNextInt(String artifactLabel) {
+        try(Scanner scanner = new Scanner(artifactLabel).useDelimiter(LABEL_COUNTER_DELIMITER)) {
+            if (scanner.hasNextInt()) {
+                return OptionalInt.of(scanner.nextInt());
+            }
+            return OptionalInt.empty();
+        }
+    }
+
+    private boolean isLastCharacterInLabelADigit(String artifactLabel) {
+        return Character.isDigit(artifactLabel.charAt(artifactLabel.length()-1));
+    }
+
+    private Either<Resource, ResponseFormat> mapResult(Either<Resource, StorageOperationStatus> result, Resource resource) {
+        return result.right()
+                     .map(status -> componentsUtils.getResponseFormatByResource(
+                             componentsUtils.convertFromStorageResponse(status), resource));
+    }
+
+
+    private void updateGroupMemebers(List<GroupDefinition> groups, Set<GroupDefinition> groupForAssociateWithMembers, List<ArtifactDefinition> createdNewArtifacts, List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete) {
+        List<GroupDefinition> heatGroups = collectGroupsWithMembers(groups);
+
+        for (GroupDefinition updatedGroupDef : groupForAssociateWithMembers) {
+            Map<String, String> members = new HashMap<>();
+            Set<String> artifactsGroup = new HashSet<>();
+            artifactsGroup.addAll(updatedGroupDef.getArtifacts());
+            associateMembersToArtifacts(createdNewArtifacts, createdDeploymentArtifactsAfterDelete, heatGroups,
+                    artifactsGroup, members);
+            
+            updatedGroupDef.setMembers(members);
+        }
+    }
+
+
+    /**
+     * @param groups
+     * @return
+     */
+    private List<GroupDefinition> collectGroupsWithMembers(List<GroupDefinition> groups) {
+        return groups.stream()
+                     .filter(e -> e.getMembers() != null)
+                     .collect(Collectors.toList());
+    }
+
+
+    /**
+     * Exclude deleted Artificats from Deployment Artifcats
+     * @param deletedArtifacts
+     * @param createdDeploymentArtifactsAfterDelete
+     */
+    private void excludeDeletedArtifacts(List<ArtifactDefinition> deletedArtifacts, List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete) {
+        for (ArtifactDefinition deletedArtifact : deletedArtifacts) {
+            ArtifactDefinition artToRemove = null;
+            for (ArtifactDefinition artFromResource : createdDeploymentArtifactsAfterDelete) {
+                if (deletedArtifact.getUniqueId().equalsIgnoreCase(artFromResource.getUniqueId())) {
+                    artToRemove = artFromResource;
+                    break;
                 }
-                Map<String, String> members = new HashMap<>();
-                Set<String> artifactsGroup = new HashSet<>();
-                artifactsGroup.addAll(updatedGroupDef.getArtifacts());
-                associateMembersToArtifacts(createdNewArtifacts, createdDeplymentArtifactsAfterDelete, heatGroups,
-                        artifactsGroup, members);
-                if (!members.isEmpty()) {
-                    updatedGroupDef.setMembers(members);
-
-                }
-
+            }
+            if (artToRemove != null) {
+                createdDeploymentArtifactsAfterDelete.remove(artToRemove);
             }
 
         }
+    }
 
-        //////////////// create new artifacts in update
-        //////////////// flow////////////////////////////
+
+    private void deleteGroupsByType(List<GroupDefinition> groups, String groupType, Resource resource) {
+        if(groups != null){
+            List<GroupDefinition> listToDelete =  groups.stream()
+                                                        .filter(g -> g.getType().equals(groupType))
+                                                        .collect(Collectors.toList());
+            
+            groupBusinessLogic.deleteGroups(resource, listToDelete);
+        }
+    }
+
+
+    private List<ArtifactTemplateInfo> createNewArtifcats(Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup, Map<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> groupArtifact) {
         List<ArtifactTemplateInfo> newArtifactsGroup = new ArrayList<>();
 
         for (Entry<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroupSetEntry : parsedGroup.entrySet()) {
@@ -291,77 +436,20 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             }
 
         }
-        if (!newArtifactsGroup.isEmpty()) {
-            Collections.sort(newArtifactsGroup, ArtifactTemplateInfo::compareByGroupName);
-            int startGroupCounter = groupBusinessLogic.getNextVfModuleNameCounter(groups);
-            Either<Boolean, ResponseFormat> validateGroupNamesRes = groupBusinessLogic
-                    .validateGenerateVfModuleGroupNames(newArtifactsGroup, updatedResource.getSystemName(), startGroupCounter);
-            if (validateGroupNamesRes.isRight()) {
-                return Either.right(validateGroupNamesRes.right().value());
-            }
-            Either<Resource, ResponseFormat> resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo, updatedResource,
-                    newArtifactsGroup, createdNewArtifacts, createdDeplymentArtifactsAfterDelete, labelCounter,
-                    shouldLock, inTransaction);
-            if (resStatus.isRight()) {
-                return resStatus;
-            }
-        }
-
-        // updatedGroup
-        if (!groupForAssociateWithMembers.isEmpty()) {
-
-            List<GroupDefinition> groupsId = groupForAssociateWithMembers.stream().map(e -> e)
-                    .collect(Collectors.toList());
-
-            Either<List<GroupDefinition>, ResponseFormat> updateVersionEither = groupBusinessLogic
-                    .updateGroups(updatedResource, groupsId, true);
-            if (updateVersionEither.isRight()) {
-                log.debug("Failed to update groups version. Status is {} ", updateVersionEither.right().value());
-
-                return Either.right(updateVersionEither.right().value());
-
-            }
-        }
-        if (artifactsWithoutGroups != null && !artifactsWithoutGroups.isEmpty()) {
-            for (ArtifactTemplateInfo t : artifactsWithoutGroups) {
-                List<ArtifactTemplateInfo> arrtifacts = new ArrayList<>();
-                arrtifacts.add(t);
-                Either<Resource, ResponseFormat> resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo, updatedResource,
-                        arrtifacts, createdNewArtifacts, createdDeplymentArtifactsAfterDelete, labelCounter, shouldLock,
-                        inTransaction);
-                if (resStatus.isRight()) {
-                    return resStatus;
-                }
-            }
-
-        }
-
-        Either<Resource, StorageOperationStatus> eitherGerResource = toscaOperationFacade
-                .getToscaElement(updatedResource.getUniqueId());
-        if (eitherGerResource.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                    componentsUtils.convertFromStorageResponse(eitherGerResource.right().value()), updatedResource);
-
-            return Either.right(responseFormat);
-
-        }
-        return Either.left(eitherGerResource.left().value());
+        return newArtifactsGroup;
     }
 
     private Set<ArtifactDefinition> findArtifactThatNotInGroupToDelete(
             Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup,
-            List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete) {
+            List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete) {
         Set<ArtifactDefinition> artifactsToDelete = new HashSet<>();
         for (Entry<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroupSetEntry : parsedGroup.entrySet()) {
             Set<ArtifactTemplateInfo> artifactsNames = parsedGroupSetEntry.getValue();
             for (ArtifactTemplateInfo template : artifactsNames) {
                 if(template.getType().equals(ArtifactTypeEnum.HEAT_ARTIFACT.getType())){
-                    Optional<ArtifactDefinition> op = createdDeplymentArtifactsAfterDelete.stream().filter(a -> a.getArtifactName().equalsIgnoreCase(template.getFileName())).findAny();
-                    if(op.isPresent()){
-                        if(!op.get().getArtifactType().equalsIgnoreCase(template.getType())){
-                            artifactsToDelete.add(op.get());
-                        }
-                            
+                    Optional<ArtifactDefinition> op = createdDeploymentArtifactsAfterDelete.stream().filter(a -> a.getArtifactName().equalsIgnoreCase(template.getFileName())).findAny();
+                    if (op.isPresent() && !op.get().getArtifactType().equalsIgnoreCase(template.getType())) {
+                        artifactsToDelete.add(op.get());
                     }
                 } 
             }
@@ -373,7 +461,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Resource, ResponseFormat> createResourceArtifacts(CsarInfo csarInfo, Resource resource,
             Map<String, List<ArtifactTemplateInfo>> artifactsMap,
-            List<ArtifactDefinition> createdArtifacts, boolean shouldLock, boolean inTransaction) {
+            List<ArtifactDefinition> createdArtifacts) {
 
         Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 
@@ -382,7 +470,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         for (List<ArtifactTemplateInfo> groupTemplateList : arifactsCollection) {
             if (groupTemplateList != null) {
                 resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo, resource, groupTemplateList,
-                        createdArtifacts, 0, shouldLock, inTransaction);
+                        createdArtifacts, 0);
                 if (resStatus.isRight()) {
                     return resStatus;
                 }
@@ -396,7 +484,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>>, ResponseFormat> createArtifactsTemplateCollection(CsarInfo csarInfo, Resource resource,
             List<ArtifactDefinition> createdNewArtifacts, boolean shouldLock, boolean inTransaction,
-            List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete, int labelCounter,
+            List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete, int labelCounter,
             Collection<List<ArtifactTemplateInfo>> parsedArifactsCollection) {
 
         Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup = new HashMap<>();
@@ -417,8 +505,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     List<ArtifactTemplateInfo> arrtifacts = new ArrayList<>();
                     arrtifacts.add(parsedGroupTemplate);
                     Either<Resource, ResponseFormat> resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo,
-                            resource, arrtifacts, createdNewArtifacts, createdDeplymentArtifactsAfterDelete,
-                            labelCounter, shouldLock, inTransaction);
+                            resource, arrtifacts, createdNewArtifacts, createdDeploymentArtifactsAfterDelete,
+                            labelCounter);
                     if (resStatus.isRight()) {
                         return Either.right(resStatus.right().value());
                     }
@@ -440,20 +528,20 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
             JsonElement importStructureElement = jsonElement.get(Constants.IMPORT_STRUCTURE);
             if (importStructureElement == null || importStructureElement.isJsonNull()) {
-                log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME, artifactFileName);
+                log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
                 BeEcompErrorManager.getInstance().logInternalDataError(
-                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                         ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either
                         .right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
             }
 
-            Map<String, List<Map<String, Object>>> artifactTemplateMap = new HashMap<>();
+            Map<String, List<Map<String, Object>>> artifactTemplateMap;
             artifactTemplateMap = ComponentsUtils.parseJsonToObject(importStructureElement.toString(), HashMap.class);
             if (artifactTemplateMap.isEmpty()) {
-                log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME, artifactFileName);
+                log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
                 BeEcompErrorManager.getInstance().logInternalDataError(
-                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                         ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either
                         .right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
@@ -482,7 +570,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
             log.debug("failed with exception.", e);
             BeEcompErrorManager.getInstance().logInternalDataError(
-                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 + artifactFileName,
+                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                     ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
         }
@@ -496,17 +584,17 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<List<ArtifactTemplateInfo>, ResponseFormat> artifactTemplateInfoListPairStatus = createArtifactTemplateInfoModule(
                 artifactsTypeKey, o);
         if (artifactTemplateInfoListPairStatus.isRight()) {
-            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME, artifactFileName);
+            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
             BeEcompErrorManager.getInstance().logInternalDataError(
-                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 + artifactFileName,
+                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                     ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(artifactTemplateInfoListPairStatus.right().value());
         }
         List<ArtifactTemplateInfo> artifactTemplateInfoList = artifactTemplateInfoListPairStatus.left().value();
         if (artifactTemplateInfoList == null) {
-            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME, artifactFileName);
+            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
             BeEcompErrorManager.getInstance().logInternalDataError(
-                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 + artifactFileName,
+                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                     ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(
                     componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
@@ -542,14 +630,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Resource, ResponseFormat> createGroupDeploymentArtifactsFromCsar(CsarInfo csarInfo,
             Resource resource, List<ArtifactTemplateInfo> artifactsTemplateList,
-            List<ArtifactDefinition> createdArtifacts, int labelCounter, boolean shouldLock, boolean inTransaction) {
-        Either<Resource, ResponseFormat> resStatus = Either.left(resource);
+            List<ArtifactDefinition> createdArtifacts, int labelCounter) {
         List<GroupDefinition> createdGroups = resource.getGroups();
         List<GroupDefinition> heatGroups = null;
-        if (createdGroups != null && !createdGroups.isEmpty()) {
-
-            heatGroups = createdGroups.stream().filter(e -> e.getMembers() != null).collect(Collectors.toList());
-
+        if (!CollectionUtils.isEmpty(createdGroups)) {
+            heatGroups = collectGroupsWithMembers(createdGroups);
         }
         List<GroupDefinition> needToCreate = new ArrayList<>();
         for (ArtifactTemplateInfo groupTemplateInfo : artifactsTemplateList) {
@@ -558,12 +643,14 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Set<String> artifactsUUIDGroup = new HashSet<>();
 
             log.debug("createDeploymentArtifactsFromCsar start");
-            resStatus = createDeploymentArtifactFromCsar(csarInfo, ARTIFACTS_PATH, resource, artifactsGroup,
-                    artifactsUUIDGroup, groupTemplateInfo, createdArtifacts, labelCounter, shouldLock, inTransaction);
+            Either<Resource, ResponseFormat> resStatus = createDeploymentArtifactFromCsar(csarInfo, ARTIFACTS_PATH, resource, artifactsGroup,
+                    artifactsUUIDGroup, groupTemplateInfo, createdArtifacts, labelCounter);
             log.debug("createDeploymentArtifactsFromCsar end");
             if (resStatus.isRight()) {
                 return resStatus;
             }
+            Map<String, ArtifactDefinition> createdArtifactsMap = createdArtifacts.stream().collect(Collectors.toMap(artifact -> artifact.getArtifactLabel(), artifact -> artifact));
+            resource.setDeploymentArtifacts(createdArtifactsMap);
             if (groupName != null && !groupName.isEmpty()) {
 
                 Either<GroupDefinition, ResponseFormat> groupDefinitionEither = buildGroupDefinition(createdArtifacts, heatGroups, groupTemplateInfo,
@@ -574,29 +661,16 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 needToCreate.add(groupDefinitionEither.left().value());
             }
         }
-
-        ComponentParametersView componentParametersView = new ComponentParametersView();
-        componentParametersView.disableAll();
-        componentParametersView.setIgnoreUsers(false);
-        componentParametersView.setIgnoreArtifacts(false);
-        componentParametersView.setIgnoreGroups(false);
-
-        componentParametersView.setIgnoreComponentInstances(false);
-
-        Either<Resource, StorageOperationStatus> component = toscaOperationFacade
-                .getToscaElement(resource.getUniqueId(), componentParametersView);
-
-        if (component.isRight()) {
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
+        Map<String, ArtifactDefinition> createdArtifactsMap = createdArtifacts.stream().collect(Collectors.toMap(artifact -> artifact.getArtifactLabel(), artifact -> artifact));
+        resource.setDeploymentArtifacts(createdArtifactsMap);
 
         Either<List<GroupDefinition>, ResponseFormat> createGroups = groupBusinessLogic
-                .addGroups(component.left().value(), needToCreate, false);
+                .addGroups(resource, needToCreate, false);
         if (createGroups.isRight()) {
             return Either.right(createGroups.right().value());
         }
 
-        return Either.left(component.left().value());
+        return Either.left(resource);
     }
 
     private Either<GroupDefinition, ResponseFormat>  buildGroupDefinition(List<ArtifactDefinition> createdArtifacts,
@@ -639,8 +713,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Resource, ResponseFormat> createDeploymentArtifactFromCsar(CsarInfo csarInfo, String artifactPath,
             Resource resource, Set<String> artifactsGroup, Set<String> artifactsUUIDGroup,
-            ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts, int labelCounter,
-            boolean shoudLock, boolean inTransaction) {
+            ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts, int labelCounter) {
         Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 
         String artifactUid = "";
@@ -669,14 +742,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(newArtifact.getArtifactType());
             if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET
                     || artifactType == ArtifactTypeEnum.HEAT_VOL) {
-                Either<ArtifactDefinition, ResponseFormat> createHeatEnvPlaceHolder = artifactsBusinessLogic
-                        .createHeatEnvPlaceHolder(newArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME,
+                ArtifactDefinition createHeatEnvPlaceHolder = artifactsBusinessLogic
+                        .createHeatEnvPlaceHolder(createdArtifacts, newArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME,
                                 resource.getUniqueId(), NodeTypeEnum.Resource, resource.getName(),
                                 csarInfo.getModifier(), resource, null);
-                if (createHeatEnvPlaceHolder.isRight()) {
-                    return Either.right(createHeatEnvPlaceHolder.right().value());
-                }
-                artifactEnvUid = createHeatEnvPlaceHolder.left().value().getUniqueId();
+                artifactEnvUid = createHeatEnvPlaceHolder.getUniqueId();
             }
         }else{
             artifactUid = createdArtifact.getUniqueId();
@@ -693,8 +763,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         if (relatedArtifacts != null) {
             for (ArtifactTemplateInfo relatedArtifactTemplateInfo : relatedArtifacts) {
                 resStatus = createDeploymentArtifactFromCsar(csarInfo, artifactPath, resource, artifactsGroup,
-                        artifactsUUIDGroup, relatedArtifactTemplateInfo, createdArtifacts, labelCounter, shoudLock,
-                        inTransaction);
+                        artifactsUUIDGroup, relatedArtifactTemplateInfo, createdArtifacts, labelCounter);
                 if (resStatus.isRight()) {
                     return resStatus;
                 }
@@ -724,7 +793,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName,
                         artifactTemplateInfo.getType(), res.getArtifactType());
                 BeEcompErrorManager.getInstance().logInternalDataError(
-                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                        ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                         ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(
                         ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
@@ -741,16 +810,16 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                                                                                 int label) {
         int updatedlabel = label;
         final String artifactFileName = artifactTemplateInfo.getFileName();
-        Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils
-                .getArtifactsContent(csarInfo.getCsarUUID(), csarInfo.getCsar(), artifactPath + artifactFileName,
+        Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContentStatus = CsarValidationUtils
+                .getArtifactContent(csarInfo.getCsarUUID(), csarInfo.getCsar(), artifactPath + artifactFileName,
                         artifactFileName, componentsUtils);
-        if (artifactContententStatus.isRight()) {
-            return Either.right(artifactContententStatus.right().value());
+        if (artifactContentStatus.isRight()) {
+            return Either.right(artifactContentStatus.right().value());
         }
         updatedlabel += createdArtifacts.size();
 
         Map<String, Object> json = ArtifactUtils.buildJsonForArtifact(artifactTemplateInfo,
-                artifactContententStatus.left().value().getValue(), updatedlabel, true);
+                artifactContentStatus.left().value().getValue(), updatedlabel, true);
 
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = createOrUpdateCsarArtifactFromJson(
                 resource, csarInfo.getModifier(), json,
@@ -789,17 +858,17 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<ArtifactDefinition, ResponseFormat> resStatus = Either.left(currentInfo);
         if (artifactTemplateInfo.getEnv() != null && !artifactTemplateInfo.getEnv().isEmpty()) {
 
-            Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactparamsStatus = CsarValidationUtils
-                    .getArtifactsContent(csarInfo.getCsarUUID(), csarInfo.getCsar(),
+            Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactParamsStatus = CsarValidationUtils
+                    .getArtifactContent(csarInfo.getCsarUUID(), csarInfo.getCsar(),
                             CsarUtils.ARTIFACTS_PATH + artifactTemplateInfo.getEnv(), artifactTemplateInfo.getEnv(),
                             componentsUtils);
-            if (artifactparamsStatus.isRight()) {
-                resStatus = Either.right(artifactparamsStatus.right().value());
+            if (artifactParamsStatus.isRight()) {
+                resStatus = Either.right(artifactParamsStatus.right().value());
                 return resStatus;
             }
             Either<List<HeatParameterDefinition>, ResponseFormat> propsStatus = extractHeatParameters(
                     ArtifactTypeEnum.HEAT_ENV.getType(), artifactTemplateInfo.getEnv(),
-                    artifactparamsStatus.left().value().getValue(), false);
+                    artifactParamsStatus.left().value().getValue(), false);
 
             if (propsStatus.isLeft()) {
                 List<HeatParameterDefinition> updatedHeatEnvParams = propsStatus.left().value();
@@ -811,44 +880,27 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             }
         }
         if (isUpdateEnv) {
-            ComponentParametersView parametersView = new ComponentParametersView();
-            parametersView.disableAll();
-            parametersView.setIgnoreComponentInstances(false);
-            parametersView.setIgnoreUsers(false);
-            parametersView.setIgnoreArtifacts(false);
-            parametersView.setIgnoreGroups(false);
-
-            Either<Resource, StorageOperationStatus> eitherGerResource = toscaOperationFacade
-                    .getToscaElement(updatedResource.getUniqueId(), parametersView);
-
-            if (eitherGerResource.isRight()) {
-                ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(
-                        componentsUtils.convertFromStorageResponse(eitherGerResource.right().value()), updatedResource);
-
-                resStatus = Either.right(responseFormat);
-                return resStatus;
-
-            }
-
-            updatedResource = eitherGerResource.left().value();
             Map<String, ArtifactDefinition> artifacts = updatedResource.getDeploymentArtifacts();
             Optional<ArtifactDefinition> op = artifacts.values().stream().filter(
                     p -> p.getGeneratedFromId() != null && p.getGeneratedFromId().equals(currentInfo.getUniqueId()))
                     .findAny();
             if (op.isPresent()) {
                 ArtifactDefinition artifactInfoHeatEnv = op.get();
-                Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource = artifactToscaOperation
-                        .updateArtifactOnResource(artifactInfoHeatEnv, updatedResource.getUniqueId(),
-                                artifactInfoHeatEnv.getUniqueId(), null, null);
-                if (updateArifactOnResource.isRight()) {
+                artifactInfoHeatEnv.setHeatParamUpdated(true);
+                Either<ArtifactDefinition, StorageOperationStatus> updateArtifactOnResource = artifactToscaOperation
+                        .updateArtifactOnResource(artifactInfoHeatEnv, updatedResource,
+                                artifactInfoHeatEnv.getUniqueId(), null, null,true);
+                if (updateArtifactOnResource.isRight()) {
                     log.debug("Failed to update heat env on CSAR flow for component {} artifact {} label {}",
                             updatedResource.getUniqueId(), artifactInfoHeatEnv.getUniqueId(),
                             artifactInfoHeatEnv.getArtifactLabel());
                     return Either.right(componentsUtils.getResponseFormat(
-                            componentsUtils.convertFromStorageResponse(updateArifactOnResource.right().value())));
+                            componentsUtils.convertFromStorageResponse(updateArtifactOnResource.right().value())));
                 }
-                resStatus = Either.left(updateArifactOnResource.left().value());
+                resource.getDeploymentArtifacts().put(updateArtifactOnResource.left().value().getArtifactLabel(), updateArtifactOnResource.left().value());
+                resStatus = Either.left(updateArtifactOnResource.left().value());
             }
+
         }
         return resStatus;
     }
@@ -908,43 +960,42 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 }
             }
             currentInfo.setListHeatParameters(currentHeatEnvParams);
-            Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource = artifactToscaOperation
-                    .updateArtifactOnResource(currentInfo, resource.getUniqueId(), currentInfo.getUniqueId(),
-                            null, null);
-            if (updateArifactOnResource.isRight()) {
+            Either<ArtifactDefinition, StorageOperationStatus> updateArtifactOnResource = artifactToscaOperation
+                    .updateArtifactOnResource(currentInfo, resource, currentInfo.getUniqueId(),
+                            null, null, true);
+            if (updateArtifactOnResource.isRight()) {
                 log.debug(
-                        "Failed to update heat paratemers of heat on CSAR flow for component {} artifact {} label {}",
+                        "Failed to update heat parameters of heat on CSAR flow for component {} artifact {} label {}",
                         resource.getUniqueId(), currentInfo.getUniqueId(), currentInfo.getArtifactLabel());
                 return Either.right(componentsUtils.getResponseFormat(
-                        componentsUtils.convertFromStorageResponse(updateArifactOnResource.right().value())));
+                        componentsUtils.convertFromStorageResponse(updateArtifactOnResource.right().value())));
             }
-            resStatus = Either.left(updateArifactOnResource.left().value());
+            resource.getDeploymentArtifacts().put(currentInfo.getArtifactLabel(), currentInfo);
+            resStatus = Either.left(updateArtifactOnResource.left().value());
         }
         return resStatus;
     }
-
-
-
 
     public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> createOrUpdateCsarArtifactFromJson(
             Resource resource, User user, Map<String, Object> json, ArtifactOperationInfo operation) {
 
         String jsonStr = gson.toJson(json);
-
-        String origMd5 = GeneralUtility.calculateMD5Base64EncodedByString(jsonStr);
         ArtifactDefinition artifactDefinitionFromJson = RepresentationUtils.convertJsonToArtifactDefinition(jsonStr,
-                ArtifactDefinition.class);
-		
-        String artifactUniqueId = artifactDefinitionFromJson == null ? null : artifactDefinitionFromJson.getUniqueId();
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = artifactsBusinessLogic
-                .validateAndHandleArtifact(resource.getUniqueId(), ComponentTypeEnum.RESOURCE, operation,
-                        artifactUniqueId, artifactDefinitionFromJson, origMd5, jsonStr, null, null, user,
-                        resource, false, true, false);
-        if (uploadArtifactToService.isRight()) {
-            return Either.right(uploadArtifactToService.right().value());
-        }
+                ArtifactDefinition.class, false);
 
-        return Either.left(uploadArtifactToService.left().value());
+        Either<ArtifactDefinition, Operation> result;
+        try {
+             result = artifactsBusinessLogic.handleLoadedArtifact(
+                    resource, user, operation, false, true, ComponentTypeEnum.RESOURCE, artifactDefinitionFromJson);
+        } catch (ComponentException e) {
+            log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, ComponentTypeEnum.RESOURCE, resource.getName());
+            return Either.right(componentsUtils.getResponseFormat(e));
+        } catch (Exception e) {
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+            log.debug("Exception occurred when createOrUpdateCsarArtifactFromJson, error is:{}", e.getMessage(), e);
+            return Either.right(responseFormat);
+        }
+        return Either.left(result);
     }
 
     private void associateMembersToArtifacts(List<ArtifactDefinition> createdArtifacts,
@@ -954,14 +1005,13 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             for (GroupDefinition heatGroup : heatGroups) {
                 List<GroupProperty> grpoupProps = heatGroup.convertToGroupProperties();
                 if (grpoupProps != null) {
-                    associatemembersToVFgroups(createdArtifacts, artifactsFromResource, grpoupProps, artifactsGroup, heatGroup, members);
+                    associateMembersToVFgroups(createdArtifacts, artifactsFromResource, grpoupProps, artifactsGroup, heatGroup, members);
                 }
             }
-
         }
     }
 
-    private void associatemembersToVFgroups(List<ArtifactDefinition> createdArtifacts,List<ArtifactDefinition> artifactsFromResource, List<GroupProperty> grpoupProps, Set<String> artifactsGroup, GroupDefinition heatGroup, Map<String, String> members){
+    private void associateMembersToVFgroups(List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> artifactsFromResource, List<GroupProperty> grpoupProps, Set<String> artifactsGroup, GroupDefinition heatGroup, Map<String, String> members){
         Optional<GroupProperty> op = grpoupProps.stream()
                 .filter(p -> p.getName().equals(Constants.HEAT_FILE_PROPS)).findAny();
         if (op.isPresent()) {
@@ -974,22 +1024,16 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             for (String artifactId : artifactsGroup) {
                 Optional<ArtifactDefinition> opArt = createdArtifacts.stream()
                         .filter(p -> p.getUniqueId().equals(artifactId)).findAny();
-                if (opArt.isPresent()) {
-                    artifacts.add(opArt.get());
-                }
+                opArt.ifPresent(artifacts::add);
                 if (artifactsFromResource != null) {
                     opArt = artifactsFromResource.stream().filter(p -> p.getUniqueId().equals(artifactId))
                             .findAny();
-                    if (opArt.isPresent()) {
-                        artifacts.add(opArt.get());
-                    }
+                    opArt.ifPresent(artifacts::add);
                 }
             }
             Optional<ArtifactDefinition> resOp = artifacts.stream()
                     .filter(p -> heatFileNAme.contains(p.getArtifactName())).findAny();
-            if (resOp.isPresent()) {
-                members.putAll(heatGroup.getMembers());
-            }
+            resOp.ifPresent(artifactDefinition -> members.putAll(heatGroup.getMembers()));
         }
     }
 
@@ -1060,7 +1104,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Map<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> groupArtifact,
             Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup, Set<ArtifactDefinition> artifactsToDelete,
             Map<String, List<ArtifactDefinition>> groupToDelete, Set<ArtifactTemplateInfo> jsonMasterArtifacts,
-            List<ArtifactDefinition> createdDeplymentArtifacts) {
+            List<ArtifactDefinition> createdDeploymentArtifacts) {
         Map<GroupDefinition, MergedArtifactInfo> mergedgroup = new HashMap<>();
         for (Entry<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> groupListEntry : groupArtifact
                 .entrySet()) {
@@ -1068,36 +1112,15 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             boolean isNeedToDeleteGroup = true;
             List<ArtifactDefinition> listToDelete = null;
             for (ArtifactDefinition maserArtifact : createdArtifactMap.keySet()) {
-                listToDelete = createdArtifactMap.get(maserArtifact);
-                for (ArtifactDefinition artToDelete : listToDelete) {
-                    findArtifactToDelete(parsedGroup, artifactsToDelete, artToDelete, createdDeplymentArtifacts);
-                }
+                listToDelete = prepareArtifactsToDelete(parsedGroup, artifactsToDelete, createdDeploymentArtifacts, createdArtifactMap, maserArtifact);
                 if (artifactsToDelete != null && !artifactsToDelete.isEmpty()) {
                     GroupDefinition group = groupListEntry.getKey();
-                    for (ArtifactDefinition artifactDefinition : artifactsToDelete) {
-                        if (CollectionUtils.isNotEmpty(group.getArtifacts())
-                                && group.getArtifacts().contains(artifactDefinition.getUniqueId())) {
-                            group.getArtifacts().remove(artifactDefinition.getUniqueId());
-
-                        }
-                        if (CollectionUtils.isNotEmpty(group.getArtifactsUuid())
-                                && group.getArtifactsUuid().contains(artifactDefinition.getArtifactUUID())) {
-                            group.getArtifactsUuid().remove(artifactDefinition.getArtifactUUID());
-
-                        }
-                    }
+                    deleteArtifacts(artifactsToDelete, group);
 
                 }
 
                 for (ArtifactTemplateInfo jsonMasterArtifact : jsonMasterArtifacts) {
-                    if (maserArtifact.getArtifactName().equalsIgnoreCase(jsonMasterArtifact.getFileName())) {
-                        MergedArtifactInfo mergedGroup = new MergedArtifactInfo();
-                        mergedGroup.setJsonArtifactTemplate(jsonMasterArtifact);
-                        mergedGroup.setCreatedArtifact(createdArtifactMap.get(maserArtifact));
-                        mergedgroup.put(groupListEntry.getKey(), mergedGroup);
-                        isNeedToDeleteGroup = false;
-
-                    }
+                    isNeedToDeleteGroup = isNeedToDeleteGroup(mergedgroup, groupListEntry, createdArtifactMap, isNeedToDeleteGroup, maserArtifact, jsonMasterArtifact);
                 }
 
             }
@@ -1109,20 +1132,62 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         return mergedgroup;
     }
 
+    private boolean isNeedToDeleteGroup(Map<GroupDefinition, MergedArtifactInfo> mergedgroup, Entry<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> groupListEntry, Map<ArtifactDefinition, List<ArtifactDefinition>> createdArtifactMap, boolean isNeedToDeleteGroup, ArtifactDefinition maserArtifact, ArtifactTemplateInfo jsonMasterArtifact) {
+        if (maserArtifact.getArtifactName().equalsIgnoreCase(jsonMasterArtifact.getFileName())) {
+            MergedArtifactInfo mergedGroup = new MergedArtifactInfo();
+            mergedGroup.setJsonArtifactTemplate(jsonMasterArtifact);
+            mergedGroup.setCreatedArtifact(createdArtifactMap.get(maserArtifact));
+            mergedgroup.put(groupListEntry.getKey(), mergedGroup);
+            isNeedToDeleteGroup = false;
+
+        }
+        return isNeedToDeleteGroup;
+    }
+
+    private List<ArtifactDefinition> prepareArtifactsToDelete(Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup, Set<ArtifactDefinition> artifactsToDelete, List<ArtifactDefinition> createdDeploymentArtifacts, Map<ArtifactDefinition, List<ArtifactDefinition>> createdArtifactMap, ArtifactDefinition maserArtifact) {
+        List<ArtifactDefinition> listToDelete;
+        listToDelete = createdArtifactMap.get(maserArtifact);
+        for (ArtifactDefinition artToDelete : listToDelete) {
+            findArtifactToDelete(parsedGroup, artifactsToDelete, artToDelete, createdDeploymentArtifacts);
+        }
+        return listToDelete;
+    }
+
+    private void deleteArtifacts(Set<ArtifactDefinition> artifactsToDelete, GroupDefinition group) {
+        for (ArtifactDefinition artifactDefinition : artifactsToDelete) {
+            if (CollectionUtils.isNotEmpty(group.getArtifacts())
+                    && group.getArtifacts().contains(artifactDefinition.getUniqueId())) {
+                group.getArtifacts().remove(artifactDefinition.getUniqueId());
+
+            }
+            if (CollectionUtils.isNotEmpty(group.getArtifactsUuid())
+                    && group.getArtifactsUuid().contains(artifactDefinition.getArtifactUUID())) {
+                group.getArtifactsUuid().remove(artifactDefinition.getArtifactUUID());
+
+            }
+        }
+    }
+
     private void findArtifactToDelete(Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup,
             Set<ArtifactDefinition> artifactsToDelete, ArtifactDefinition artifact,
-            List<ArtifactDefinition> createdDeplymentArtifacts) {
+            List<ArtifactDefinition> createdDeploymentArtifacts) {
         boolean isNeedToDeleteArtifact = true;
         String artifactType = artifact.getArtifactType();
         ArtifactDefinition generatedFromArt = null;
         if (artifact.getGeneratedFromId() != null && !artifact.getGeneratedFromId().isEmpty()) {
-            Optional<ArtifactDefinition> op = createdDeplymentArtifacts.stream()
+            Optional<ArtifactDefinition> op = createdDeploymentArtifacts.stream()
                     .filter(p -> p.getUniqueId().equals(artifact.getGeneratedFromId())).findAny();
             if (op.isPresent()) {
                 generatedFromArt = op.get();
             }
 
         }
+
+        isNeedToDeleteArtifact(parsedGroup, artifactsToDelete, artifact, isNeedToDeleteArtifact, artifactType, generatedFromArt);
+    }
+
+    private void isNeedToDeleteArtifact(Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup, Set<ArtifactDefinition>
+            artifactsToDelete, ArtifactDefinition artifact, boolean isNeedToDeleteArtifact, String artifactType, ArtifactDefinition generatedFromArt) {
 
         for (Entry<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroupSetEntry : parsedGroup.entrySet()) {
             Set<ArtifactTemplateInfo> artifactsNames = parsedGroupSetEntry.getValue();
@@ -1152,7 +1217,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Map<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> findMasterArtifactInGroup(
-            List<GroupDefinition> groups, Map<String, ArtifactDefinition> deplymentArtifact) {
+            List<GroupDefinition> groups, Map<String, ArtifactDefinition> deploymentArtifact) {
         Map<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> groupArtifact = new HashMap<>();
 
         for (GroupDefinition group : groups) {
@@ -1161,7 +1226,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             List<String> artifactsList = group.getArtifacts();
             if (artifactsList != null && !artifactsList.isEmpty()) {
 
-                ArtifactDefinition masterArtifact = ArtifactUtils.findMasterArtifact(deplymentArtifact, artifacts,
+                ArtifactDefinition masterArtifact = ArtifactUtils.findMasterArtifact(deploymentArtifact, artifacts,
                         artifactsList);
                 if (masterArtifact != null) {
                     gupsMap.put(masterArtifact, artifacts);
@@ -1246,7 +1311,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     private Either<Resource, ResponseFormat> createGroupDeploymentArtifactsFromCsar(CsarInfo csarInfo,
             Resource resource, List<ArtifactTemplateInfo> artifactsTemplateList,
             List<ArtifactDefinition> createdNewArtifacts, List<ArtifactDefinition> artifactsFromResource,
-            int labelCounter, boolean shouldLock, boolean inTransaction) {
+            int labelCounter) {
 
         Resource updatedResource = resource;
 
@@ -1254,7 +1319,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         List<GroupDefinition> createdGroups = updatedResource.getGroups();
         List<GroupDefinition> heatGroups = null;
         if (createdGroups != null && !createdGroups.isEmpty()) {
-            heatGroups = createdGroups.stream().filter(e -> e.getMembers() != null).collect(Collectors.toList());
+            heatGroups = collectGroupsWithMembers(createdGroups);
         }
 
         List<GroupDefinition> needToAdd = new ArrayList<>();
@@ -1264,12 +1329,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Set<String> artifactsUUIDGroup = new HashSet<>();
 
             resStatus = createDeploymentArtifactsFromCsar(csarInfo, updatedResource, artifactsGroup, artifactsUUIDGroup,
-                    groupTemplateInfo, createdNewArtifacts, artifactsFromResource, labelCounter, shouldLock,
-                    inTransaction);
+                    groupTemplateInfo, createdNewArtifacts, artifactsFromResource, labelCounter);
             if (resStatus.isRight()) {
                 return resStatus;
             }
-            if (groupName != null && !groupName.isEmpty()) {
+            if (!StringUtils.isEmpty(groupName)) {
                 Map<String, String> members = new HashMap<>();
                 associateMembersToArtifacts(createdNewArtifacts, artifactsFromResource, heatGroups, artifactsGroup,
                         members);
@@ -1332,8 +1396,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Resource, ResponseFormat> createDeploymentArtifactsFromCsar(CsarInfo csarInfo, Resource resource,
             Set<String> artifactsGroup, Set<String> artifactsUUIDGroup, ArtifactTemplateInfo artifactTemplateInfo,
-            List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> artifactsFromResource, int labelCounter,
-            boolean shoudLock, boolean inTransaction) {
+            List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> artifactsFromResource, int labelCounter) {
         Either<Resource, ResponseFormat> resStatus = Either.left(resource);
         String artifactFileName = artifactTemplateInfo.getFileName();
         String artifactUid = "";
@@ -1351,7 +1414,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                         log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName,
                                 artifactTemplateInfo.getType(), artifactFromResource.getArtifactType());
                         BeEcompErrorManager.getInstance().logInternalDataError(
-                                ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                                ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                                 ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                         return Either.right(componentsUtils.getResponseFormat(
                                 ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
@@ -1375,7 +1438,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                         log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName,
                                 artifactTemplateInfo.getType(), createdArtifact.getArtifactType());
                         BeEcompErrorManager.getInstance().logInternalDataError(
-                                ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                                ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                                 ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                         return Either.right(componentsUtils.getResponseFormat(
                                 ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
@@ -1403,14 +1466,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(newArtifact.getArtifactType());
             if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET
                     || artifactType == ArtifactTypeEnum.HEAT_VOL) {
-                Either<ArtifactDefinition, ResponseFormat> createHeatEnvPlaceHolder = artifactsBusinessLogic
-                        .createHeatEnvPlaceHolder(newArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME,
+                ArtifactDefinition createHeatEnvPlaceHolder = artifactsBusinessLogic
+                        .createHeatEnvPlaceHolder(createdArtifacts, newArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME,
                                 resource.getUniqueId(), NodeTypeEnum.Resource, resource.getName(),
                                 csarInfo.getModifier(), resource, null);
-                if (createHeatEnvPlaceHolder.isRight()) {
-                    return Either.right(createHeatEnvPlaceHolder.right().value());
-                }
-                artifactEnvUid = createHeatEnvPlaceHolder.left().value().getUniqueId();
+                artifactEnvUid = createHeatEnvPlaceHolder.getUniqueId();
             }
         }
 
@@ -1424,8 +1484,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         if (relatedArtifacts != null) {
             for (ArtifactTemplateInfo relatedArtifactTemplateInfo : relatedArtifacts) {
                 resStatus = createDeploymentArtifactsFromCsar(csarInfo, resource, artifactsGroup, artifactsUUIDGroup,
-                        relatedArtifactTemplateInfo, createdArtifacts, artifactsFromResource, labelCounter, shoudLock,
-                        inTransaction);
+                        relatedArtifactTemplateInfo, createdArtifacts, artifactsFromResource, labelCounter);
                 if (resStatus.isRight()) {
                     return resStatus;
                 }
@@ -1436,11 +1495,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private Either<Resource, ResponseFormat> associateAndDissociateArtifactsToGroup(CsarInfo csarInfo,
                                                                                     Resource resource, List<ArtifactDefinition> createdNewArtifacts, int labelCounter,
-                                                                                    boolean inTransaction, List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete,
+                                                                                    List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete,
                                                                                     Map<GroupDefinition, MergedArtifactInfo> mergedgroup, List<ArtifactDefinition> deletedArtifacts) {
         Map<GroupDefinition, List<ArtifactTemplateInfo>> artifactsToAssotiate = new HashMap<>();
         Map<GroupDefinition, List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>> artifactsToUpdateMap = new HashMap<>();
-        Either<Resource, ResponseFormat> resEither = Either.left(resource);
+        Either<Resource, ResponseFormat> resEither;
         for (Entry<GroupDefinition, MergedArtifactInfo> entry : mergedgroup.entrySet()) {
             List<ArtifactDefinition> dissArtifactsInGroup = entry.getValue()
                     .getListToDissotiateArtifactFromGroup(deletedArtifacts);
@@ -1517,7 +1576,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 // in
                 // resource
                 boolean isCreate = true;
-                for (ArtifactDefinition createdArtifact : createdDeplymentArtifactsAfterDelete) {
+                for (ArtifactDefinition createdArtifact : createdDeploymentArtifactsAfterDelete) {
                     if (artifactTemplate.getFileName().equalsIgnoreCase(createdArtifact.getArtifactName())) {
                         arifactsUids.add(createdArtifact.getUniqueId());
                         arifactsUuids.add(createdArtifact.getArtifactUUID());
@@ -1525,10 +1584,10 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                         String heatEnvId = checkAndGetHeatEnvId(createdArtifact);
                         if (!heatEnvId.isEmpty()) {
                             arifactsUids.add(heatEnvId);
-                            Optional<ArtifactDefinition> op = createdDeplymentArtifactsAfterDelete.stream()
+                            Optional<ArtifactDefinition> op = createdDeploymentArtifactsAfterDelete.stream()
                                     .filter(p -> p.getUniqueId().equals(heatEnvId)).findAny();
                             if (op.isPresent()) {
-                                this.artifactToscaOperation.updateHeatEnvPlaceholder(op.get(), resource.getUniqueId(),
+                                this.artifactToscaOperation.updateHeatEnvPlaceholder(op.get(), resource,
                                         resource.getComponentType().getNodeType());
 
                             }
@@ -1566,14 +1625,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(createdArtifact.getArtifactType());
                     if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET
                             || artifactType == ArtifactTypeEnum.HEAT_VOL) {
-                        Either<ArtifactDefinition, ResponseFormat> createHeatEnvPlaceHolder = artifactsBusinessLogic
-                                .createHeatEnvPlaceHolder(createdArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME,
+                        ArtifactDefinition createHeatEnvPlaceHolder = artifactsBusinessLogic
+                                .createHeatEnvPlaceHolder(new ArrayList<>(), createdArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME,
                                         resource.getUniqueId(), NodeTypeEnum.Resource, resource.getName(),
                                         csarInfo.getModifier(), resource, null);
-                        if (createHeatEnvPlaceHolder.isRight()) {
-                            return Either.right(createHeatEnvPlaceHolder.right().value());
-                        }
-                        String heatEnvId = createHeatEnvPlaceHolder.left().value().getUniqueId();
+                        String heatEnvId = createHeatEnvPlaceHolder.getUniqueId();
                         arifactsUids.add(heatEnvId);
                     }
                 }
@@ -1624,7 +1680,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     log.debug("Artifact with name {} and type {} already updated with type  {}", artifactFileName,
                             artifactTemplateInfo.getType(), updatedArtifact.getArtifactType());
                     BeEcompErrorManager.getInstance().logInternalDataError(
-                            ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 + artifactFileName,
+                            ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                             ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                     resStatus = Either.right(componentsUtils.getResponseFormat(
                             ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, artifactFileName,
@@ -1638,7 +1694,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         }
 
         Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils
-                .getArtifactsContent(csarInfo.getCsarUUID(), csarInfo.getCsar(),
+                .getArtifactContent(csarInfo.getCsarUUID(), csarInfo.getCsar(),
                         CsarUtils.ARTIFACTS_PATH + artifactFileName, artifactFileName, componentsUtils);
         if (artifactContententStatus.isRight()) {
             resStatus = Either.right(artifactContententStatus.right().value());
@@ -1658,22 +1714,24 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             resStatus = Either.right(uploadArtifactToService.right().value());
             return resStatus;
         }
+        ArtifactDefinition previousInfo = uploadArtifactToService.left().value().left().value();
         ArtifactDefinition currentInfo = uploadArtifactToService.left().value().left().value();
         updatedArtifacts.add(currentInfo);
 
         Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, csarInfo,
                 artifactTemplateInfo, currentInfo, true);
+
         if (updateEnvEither.isRight()) {
             log.debug("failed to update parameters to artifact {}", artifactFileName);
             resStatus = Either.right(updateEnvEither.right().value());
             return resStatus;
         }
 
+        artifactsBusinessLogic.updateGroupForHeat(previousInfo, updateEnvEither.left().value(), resource);
+
         updatedArtifacts.add(updateEnvEither.left().value());
         resStatus = Either.left(currentInfo);
-
         return resStatus;
-
     }
 
     public Either<Resource, ResponseFormat> deleteVFModules(Resource resource, CsarInfo csarInfo, boolean shouldLock, boolean inTransaction) {
@@ -1681,7 +1739,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         List<GroupDefinition> groupsToDelete = updatedResource.getGroups();
         if(groupsToDelete != null && !groupsToDelete.isEmpty()){
             List<GroupDefinition> vfGroupsToDelete = groupsToDelete.stream().filter(g -> g.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)).collect(Collectors.toList());
-            if(vfGroupsToDelete != null && !vfGroupsToDelete.isEmpty()){
+            if(!vfGroupsToDelete.isEmpty()){
                 for(GroupDefinition gr : vfGroupsToDelete){
                     List<String> artifacts = gr.getArtifacts();
                     for (String artifactId : artifacts) {

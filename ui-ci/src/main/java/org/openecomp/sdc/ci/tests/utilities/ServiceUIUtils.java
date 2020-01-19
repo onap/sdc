@@ -54,11 +54,12 @@ public class ServiceUIUtils {
     public static void fillServiceGeneralPage(final ServiceReqDetails service) {
         SetupCDTest.getExtendTest().log(Status.INFO, "Fill in metadata values in general page");
         ServiceGeneralPage.defineName(service.getName());
-        ResourceGeneralPage.defineDescription(service.getDescription());
-        ResourceGeneralPage.defineCategory(service.getCategories().get(0).getName());
-        ServiceGeneralPage.defineProjectCode(service.getProjectCode());
+        ServiceGeneralPage.defineDescription(service.getDescription());
+        ServiceGeneralPage.defineCategory(service.getCategories().get(0).getName());
+        ServiceGeneralPage.defineServiceFunction(service.getServiceFunction());
+        ServiceGeneralPage.defineNamingPolicy(service.getNamingPolicy());
         defineTagsList2(service.getTags());
-        ResourceGeneralPage.defineContactId(service.getContactId());
+        ServiceGeneralPage.defineContactId(service.getContactId());
         GeneralUIUtils.clickSomewhereOnPage();
     }
 
