@@ -120,8 +120,7 @@ public class CapabilitiesBusinessLogicTest extends BaseBusinessLogicMock {
         user.setLastName("Hendrix");
         user.setRole(Role.ADMIN.name());
 
-        Either<User, ActionStatus> eitherGetUser = Either.left(user);
-        when(mockUserAdmin.getUser("jh0003", false)).thenReturn(eitherGetUser);
+        when(mockUserAdmin.getUser("jh0003", false)).thenReturn(user);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Resource)))
                 .thenReturn(StorageOperationStatus.OK);
 

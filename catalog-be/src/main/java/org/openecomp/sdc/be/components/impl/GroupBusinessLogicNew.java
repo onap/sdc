@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
 import org.openecomp.sdc.be.model.operations.StorageException;
@@ -66,7 +67,7 @@ public class GroupBusinessLogicNew {
         Component component = accessValidations.validateUserCanWorkOnComponent(componentId, componentType, userId, "UPDATE GROUP MEMBERS");
         GroupDefinition groupDefinition = getGroup(component, groupUniqueId);
         groupDefinition.setMembers(buildMembersMap(component, members));
-        groupsOperation.updateGroupOnComponent(componentId, groupDefinition);
+        groupsOperation.updateGroupOnComponent(componentId, groupDefinition, PromoteVersionEnum.MINOR);
         return new ArrayList<>(groupDefinition.getMembers().values());
     }
 
@@ -75,7 +76,7 @@ public class GroupBusinessLogicNew {
         Component component = accessValidations.validateUserCanWorkOnComponent(componentId, componentType, userId, "UPDATE GROUP PROPERTIES");
         GroupDefinition currentGroup = getGroup(component, groupUniqueId);
         validateUpdatedPropertiesAndSetEmptyValues(currentGroup, newProperties);
-        return groupsOperation.updateGroupPropertiesOnComponent(componentId, currentGroup, newProperties)
+        return groupsOperation.updateGroupPropertiesOnComponent(componentId, currentGroup, newProperties, PromoteVersionEnum.MINOR)
                 .left()
                 .on(this::onUpdatePropertyError);
     }

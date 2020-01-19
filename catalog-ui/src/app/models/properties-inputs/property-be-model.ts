@@ -18,8 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import {PropertyInputDetail, SchemaPropertyGroupModel, SchemaProperty, ToscaPresentationData} from "app/models";
-import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
+import { SchemaProperty, SchemaPropertyGroupModel } from '../aschema-property';
+import { ToscaPresentationData } from '../tosca-presentation';
+import { PropertyInputDetail } from './property-input-detail';
+
 export enum DerivedPropertyType {
     SIMPLE,
     LIST,
@@ -29,7 +32,7 @@ export enum DerivedPropertyType {
 export class PropertyPolicyDetail {
     policyId: string;
     propertyName: string;
-    constructor(propertyPolicy?:PropertyPolicyDetail) {
+    constructor(propertyPolicy?: PropertyPolicyDetail) {
         if(propertyPolicy) {
             this.policyId = propertyPolicy.policyId;
             this.propertyName = propertyPolicy.propertyName;
@@ -39,13 +42,13 @@ export class PropertyPolicyDetail {
 
 export class PropertyBEModel {
 
-    constraints: Array<any>;
+    constraints: any[];
     defaultValue: string;
     definition: boolean;
     description: string;
     fromDerived: boolean;
-    getInputValues: Array<PropertyInputDetail>;
-    getPolicyValues: Array<PropertyPolicyDetail>;
+    getInputValues: PropertyInputDetail[];
+    getPolicyValues: PropertyPolicyDetail[];
     name: string;
     origName: string;
     parentUniqueId: string;
@@ -88,54 +91,28 @@ export class PropertyBEModel {
 
         if (!this.schema || !this.schema.property) {
             this.schema = new SchemaPropertyGroupModel(new SchemaProperty());
-        } else { //forcing creating new object, so editing different one than the object in the table
+        } else { // forcing creating new object, so editing different one than the object in the table
             this.schema = new SchemaPropertyGroupModel(new SchemaProperty(this.schema.property));
         }
     }
 
-
-
     public toJSON = (): any => {
-        let temp = angular.copy(this);
-        temp.value = temp.value === "{}" || temp.value === "[]" ? undefined : temp.value;
-        temp.defaultValue = temp.defaultValue === "{}" || temp.defaultValue === "[]" ? undefined : temp.defaultValue;
+        const temp = angular.copy(this);
+        temp.value = temp.value === '{}' || temp.value === '[]' ? undefined : temp.value;
+        temp.defaultValue = temp.defaultValue === '{}' || temp.defaultValue === '[]' ? undefined : temp.defaultValue;
         return temp;
-    };
+    }
 
     public getDerivedPropertyType = () => {
         if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1) {
             return DerivedPropertyType.SIMPLE;
-        } else if (this.type == PROPERTY_TYPES.LIST) {
+        } else if (this.type === PROPERTY_TYPES.LIST) {
             return DerivedPropertyType.LIST;
-        } else if (this.type == PROPERTY_TYPES.MAP) {
+        } else if (this.type === PROPERTY_TYPES.MAP) {
             return DerivedPropertyType.MAP;
         } else {
             return DerivedPropertyType.COMPLEX;
         }
     }
-
 }
 
-
-// EXTRAS FROM CONSTRUCTOR:
-//         this.source = property.source;
-//         this.valueUniqueUid = property.valueUniqueUid;
-//         this.path = property.path;
-//         this.rules = property.rules;
-//         this.resourceInstanceUniqueId = property.resourceInstanceUniqueId;
-//         this.readonly = property.readonly;
-//         this.simpleType = property.simpleType;
-//         this.componentInstanceId = property.componentInstanceId;
-//         this.parentValue = property.parentValue;
-//NEW PROPERTIES MAY NEED:
-// export class PropertyFEModel extends PropertyBEModel {
-//     componentInstanceId: string;
-//     isAlreadySelected: boolean;
-//     filterTerm: string;
-// }
-//FOR INPUTS, BE ALSO INCLUDES:
-//export class InputFEModel extends PropertyBEModel {
-//     hidden: boolean;
-//     label: string;
-//     immutable: boolean;
-// }

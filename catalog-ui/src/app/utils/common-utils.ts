@@ -19,11 +19,12 @@
  */
 
 import * as _ from "lodash";
-import {Module, AttributeModel, ResourceInstance, PropertyModel, InterfaceModel, OperationModel} from "../models";
+import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel, OperationModel} from "../models";
 import {ComponentInstanceFactory} from "./component-instance-factory";
 import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../models/graph/zones/group-instance";
+import { InterfaceModel } from "../models/operation";
 
 export class CommonUtils {
 
@@ -167,7 +168,7 @@ export class CommonUtils {
 
         });
     }
-
+    
     static initInterfaceOperations(interfaces: Array<InterfaceModel>): Array<OperationModel> {
 
         return _.reduce(interfaces, (acc, interf: InterfaceModel) => {
@@ -194,5 +195,6 @@ export class CommonUtils {
 
         }, []);
     }
+
 }
 

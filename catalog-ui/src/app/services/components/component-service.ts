@@ -22,7 +22,7 @@ import * as _ from "lodash";
 import {ArtifactModel, IFileDownload, InstancesInputsPropertiesMap, InputModel, IValidate, RelationshipModel, PropertyModel, Component, ComponentInstance,
     AttributeModel, IAppConfigurtaion, Resource, Module, DisplayModule, ArtifactGroupModel, InputsAndProperties} from "app/models";
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
-import {SharingService} from "../sharing-service";
+import {SharingService} from "app/services-ng2";
 import {ComponentMetadata} from "../../models/component-metadata";
 
 export interface IComponentService {
@@ -683,7 +683,6 @@ export class ComponentService implements IComponentService {
 
 
     public getComponentInstanceProperties = (componentId:string, instanceId:string):ng.IPromise<Array<PropertyModel>> => {
-
         let deferred = this.$q.defer<Array<PropertyModel>>();
         this.restangular.one(componentId).one("componentInstances").one(instanceId).one("properties").get().then((response:any) => {
             console.log("component instance  properties return successfully: ", response);

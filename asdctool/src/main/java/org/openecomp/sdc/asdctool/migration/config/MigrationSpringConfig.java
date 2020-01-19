@@ -27,6 +27,8 @@ import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;
 import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
 import org.openecomp.sdc.asdctool.migration.resolver.SpringBeansMigrationResolver;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
+import org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory;
+import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
@@ -42,12 +44,10 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.config.CatalogBESpringConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.FileSystemResource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +55,8 @@ import java.util.List;
 @Configuration
 @Import({DAOSpringConfig.class, CatalogBESpringConfig.class, CatalogModelSpringConfig.class})
 @ComponentScan({"org.openecomp.sdc.asdctool.migration.tasks",//migration tasks
-        "org.openecomp.sdc.asdctool.migration.config.mocks"
-                })
+        "org.openecomp.sdc.asdctool.migration.config.mocks",
+        "org.openecomp.sdc.be.filters" })
 public class MigrationSpringConfig {
 
     @Autowired(required=false)
@@ -85,14 +85,6 @@ public class MigrationSpringConfig {
         return new MigrationTasksDao(cassandraClient);
     }
 
-    @Bean(name = "elasticsearchConfig")
-    public PropertiesFactoryBean mapper() {
-        String configHome = System.getProperty("config.home");
-        PropertiesFactoryBean bean = new PropertiesFactoryBean();
-        bean.setLocation(new FileSystemResource(configHome + "/elasticsearch.yml"));
-        return bean;
-    }
-
     @Bean(name = "componentsCleanBusinessLogic")
     public ComponentsCleanBusinessLogic componentsCleanBusinessLogic(
         IElementOperation elementDao,
@@ -108,5 +100,12 @@ public class MigrationSpringConfig {
         groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, resourceBusinessLogic,
         serviceBusinessLogic, artifactToscaOperation);
     }
+    
+    @Bean(name = "dmaapClientFactory")
+    public DmaapClientFactory getDmaapClientFactory() {return new DmaapClientFactory();}
 
+    @Bean(name = "healthCheckBusinessLogic")
+    public HealthCheckBusinessLogic getHealthCheckBusinessLogic() {
+        return new HealthCheckBusinessLogic();
+    }
 }

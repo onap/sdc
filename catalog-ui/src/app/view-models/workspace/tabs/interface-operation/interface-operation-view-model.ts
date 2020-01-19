@@ -27,7 +27,6 @@
 * limitations under the License.
 
 */
-
 'use strict';
 
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";

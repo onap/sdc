@@ -25,7 +25,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,16 +67,16 @@ public class ArtifactCassandraDao extends CassandraDao {
 		}
 	}
 
-	public CassandraOperationStatus saveArtifact(ESArtifactData artifact) {
-		return client.save(artifact, ESArtifactData.class, manager);
+	public CassandraOperationStatus saveArtifact(DAOArtifactData artifact) {
+		return client.save(artifact, DAOArtifactData.class, manager);
 	}
 
-	public Either<ESArtifactData, CassandraOperationStatus> getArtifact(String artifactId) {
-		return client.getById(artifactId, ESArtifactData.class, manager);
+	public Either<DAOArtifactData, CassandraOperationStatus> getArtifact(String artifactId) {
+		return client.getById(artifactId, DAOArtifactData.class, manager);
 	}
 
 	public CassandraOperationStatus deleteArtifact(String artifactId) {
-		return client.delete(artifactId, ESArtifactData.class, manager);
+		return client.delete(artifactId, DAOArtifactData.class, manager);
 	}
 
 	/**

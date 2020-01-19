@@ -59,7 +59,6 @@ public class LifeCycleTransitionEnumTest {
 			result = LifeCycleTransitionEnum.getFromDisplayName("mock");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

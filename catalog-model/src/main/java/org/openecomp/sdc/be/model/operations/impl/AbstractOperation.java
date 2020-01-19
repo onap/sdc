@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -35,8 +34,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
@@ -54,7 +51,6 @@ import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
-import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -73,69 +69,6 @@ public abstract class AbstractOperation {
     protected ApplicationDataTypeCache applicationDataTypeCache;
 
     protected DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
-
-    protected <SomeData extends GraphNode, SomeDefenition> Either<SomeData, JanusGraphOperationStatus> addDefinitionToNodeType(SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
-                                                                                                                               Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
-        String defName = defNameGenerator.get();
-        log.debug("Got {} {}", defName, someDefinition);
-
-        SomeData someData = dataBuilder.get();
-
-        log.debug("Before adding {} to graph. data = {}", defName, someData);
-
-        @SuppressWarnings("unchecked")
-        Either<SomeData, JanusGraphOperationStatus> eitherSomeData = janusGraphGenericDao
-            .createNode(someData, (Class<SomeData>) someData.getClass());
-
-        log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
-
-        if (eitherSomeData.isRight()) {
-            JanusGraphOperationStatus operationStatus = eitherSomeData.right().value();
-            log.error("Failed to add {}  to graph. status is {}", defName, operationStatus);
-            return Either.right(operationStatus);
-        }
-        UniqueIdData uniqueIdData = new UniqueIdData(nodeType, nodeUniqueId);
-        log.debug("Before associating {} to {}.", uniqueIdData, defName);
-
-        Either<GraphRelation, JanusGraphOperationStatus> eitherRelations = janusGraphGenericDao
-            .createRelation(uniqueIdData, eitherSomeData.left().value(), edgeType, null);
-        if (eitherRelations.isRight()) {
-            JanusGraphOperationStatus operationStatus = eitherRelations.right().value();
-            BeEcompErrorManager.getInstance().logInternalFlowError("AddDefinitionToNodeType", "Failed to associate" + nodeType.getName() + " " + nodeUniqueId + "to " + defName + "in graph. status is " + operationStatus, ErrorSeverity.ERROR);
-            return Either.right(operationStatus);
-        }
-        return Either.left(eitherSomeData.left().value());
-    }
-
-    protected <SomeData extends GraphNode, SomeDefenition> JanusGraphOperationStatus addDefinitionToNodeType(JanusGraphVertex vertex, SomeDefenition someDefinition, NodeTypeEnum nodeType, String nodeUniqueId, final GraphEdgeLabels edgeType,
-                                                                                                             Supplier<SomeData> dataBuilder, Supplier<String> defNameGenerator) {
-        String defName = defNameGenerator.get();
-        log.debug("Got {} {}", defName, someDefinition);
-
-        SomeData someData = dataBuilder.get();
-
-        log.debug("Before adding {} to graph. data = {}", defName, someData);
-
-        @SuppressWarnings("unchecked")
-        Either<JanusGraphVertex, JanusGraphOperationStatus> eitherSomeData = janusGraphGenericDao.createNode(someData);
-
-        log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
-
-        if (eitherSomeData.isRight()) {
-            JanusGraphOperationStatus operationStatus = eitherSomeData.right().value();
-            log.error("Failed to add {}  to graph. status is {}", defName, operationStatus);
-            return operationStatus;
-        }
-
-        JanusGraphOperationStatus
-            relations = janusGraphGenericDao
-            .createEdge(vertex, eitherSomeData.left().value(), edgeType, null);
-        if (!relations.equals(JanusGraphOperationStatus.OK)) {
-            BeEcompErrorManager.getInstance().logInternalFlowError("AddDefinitionToNodeType", "Failed to associate" + nodeType.getName() + " " + nodeUniqueId + "to " + defName + "in graph. status is " + relations, ErrorSeverity.ERROR);
-            return relations;
-        }
-        return relations;
-    }
 
     interface NodeElementFetcher<ElementDefinition> {
         JanusGraphOperationStatus findAllNodeElements(String nodeId, List<ElementDefinition> listTofill);

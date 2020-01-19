@@ -20,14 +20,16 @@
 
 package org.openecomp.sdc.be.model.catalog;
 
-import com.google.common.collect.ImmutableList;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
+
+import com.google.common.collect.ImmutableList;
 
 public class CatalogComponent {
 
@@ -42,7 +44,59 @@ public class CatalogComponent {
     private String categoryNormalizedName;
     private String subCategoryNormalizedName;
     private String distributionStatus;
+    private String uuid;
+    private String invariantUUID;
+    private String systemName;
+    private String description;
     private List<String> tags;
+    private Boolean isHighestVersion;
+    private String lastUpdaterUserId;
+   
+
+    private List<CategoryDefinition> categories;
+   
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+ 
+    public String getInvariantUUID() {
+        return invariantUUID;
+    }
+
+    public void setInvariantUUID(String invariantUUID) {
+        this.invariantUUID = invariantUUID;
+    }
+
+    public String getSystemName() {
+        return systemName;
+    }
+
+    public void setSystemName(String systemName) {
+        this.systemName = systemName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+  
+    public Boolean getIsHighestVersion() {
+        return isHighestVersion;
+    }
+
+    public void setIsHighestVersion(Boolean isHighestVersion) {
+        this.isHighestVersion = isHighestVersion;
+    }
 
     public String getCategoryNormalizedName() {
         return categoryNormalizedName;
@@ -139,5 +193,21 @@ public class CatalogComponent {
     public void setTags(List<String> tags) {
         requireNonNull(tags);
         this.tags = new ArrayList<>(tags);
+    }
+
+    public List<CategoryDefinition> getCategories() {
+        return categories == null ? Collections.emptyList() : ImmutableList.copyOf(categories);
+    }
+
+    public void setCategories(List<CategoryDefinition> categories) {        
+        this.categories = categories;
+    }
+
+    public String getLastUpdaterUserId() {
+        return lastUpdaterUserId;
+    }
+
+    public void setLastUpdaterUserId(String lastUpdaterUserId) {
+        this.lastUpdaterUserId = lastUpdaterUserId;
     }
 }

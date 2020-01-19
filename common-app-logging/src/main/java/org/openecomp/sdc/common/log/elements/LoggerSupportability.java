@@ -1,26 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
 package org.openecomp.sdc.common.log.elements;
 
-import org.openecomp.sdc.common.log.api.LogConfigurationConstants;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.openecomp.sdc.common.log.api.ILogFieldsHandler;
 import org.openecomp.sdc.common.log.enums.LogLevel;
 import org.openecomp.sdc.common.log.enums.LogMarkers;
@@ -53,23 +33,23 @@ public class LoggerSupportability extends LoggerBase {
     log(action, null, statusCode, message, params);
   }
 
-  private static List<String> mandatoryFields = new ArrayList<>(Arrays.asList(
-      LogConfigurationConstants.MDC_SUPPORTABLITY_ACTION,
-      LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_UUID,
-      LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_VERSION,
-      LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_NAME,
-      LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_UUID,
-      LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_VERSION,
-      LogConfigurationConstants.MDC_SUPPORTABLITY_STATUS_CODE));
+  private static ArrayList<String> mandatoryFields = new ArrayList<>(Arrays.asList(
+      ILogConfiguration.MDC_SUPPORTABLITY_ACTION,
+      ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID,
+      ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION,
+      ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME,
+      ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID,
+      ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION,
+      ILogConfiguration.MDC_SUPPORTABLITY_STATUS_CODE));
 
   private void fillFieldsBeforeLogging(LoggerSupportabilityActions action, Map<String,String> componentMetaData,StatusCode statusCode) {
     clear();
     if (componentMetaData!=null){
-      ecompLogFieldsHandler.setSupportablityCsarUUID(componentMetaData.get(LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_UUID));
-      ecompLogFieldsHandler.setSupportablityCsarVersion(componentMetaData.get(LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_VERSION));
-      ecompLogFieldsHandler.setSupportablityComponentName(componentMetaData.get(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_NAME));
-      ecompLogFieldsHandler.setSupportablityComponentUUID(componentMetaData.get(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_UUID));
-      ecompLogFieldsHandler.setSupportablityComponentVersion(componentMetaData.get(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_VERSION));
+      ecompLogFieldsHandler.setSupportablityCsarUUID(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID));
+      ecompLogFieldsHandler.setSupportablityCsarVersion(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION));
+      ecompLogFieldsHandler.setSupportablityComponentName(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME));
+      ecompLogFieldsHandler.setSupportablityComponentUUID(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID));
+      ecompLogFieldsHandler.setSupportablityComponentVersion(componentMetaData.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION));
     }
     ecompLogFieldsHandler.setSupportablityAction(action.getName());
     ecompLogFieldsHandler.setSupportablityStatusCode(statusCode.getStatusCodeEnum());

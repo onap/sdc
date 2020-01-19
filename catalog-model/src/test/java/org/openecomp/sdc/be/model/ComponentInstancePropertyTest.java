@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.be.model;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
 import java.util.List;
-
 
 public class ComponentInstancePropertyTest {
 

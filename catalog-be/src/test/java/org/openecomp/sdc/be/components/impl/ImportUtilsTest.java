@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import com.google.common.collect.Lists;
 import fj.data.Either;
 import mockit.Mock;
 import org.junit.Test;
@@ -29,8 +30,10 @@ import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -43,12 +46,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static org.junit.Assert.*;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ImportUtilsTest {
@@ -241,6 +238,26 @@ public class ImportUtilsTest {
 
     }
 
+    // @Test
+    // public void testCreateFullHeatParameterModuleWithInvalidType(){
+    //
+    // String name = "fullParameter";
+    // String description = "description_text";
+    //
+    // Map<String, Object> parametersMap = new HashMap<String, Object>();
+    // Map<String, Object> firstParam = createParameterMap("aaa", "aaa",
+    // name, description);
+    // parametersMap.put(ToscaTagNamesEnum.PARAMETERS.getElementName(),
+    // firstParam);
+    //
+    // Either<List<HeatParameterDefinition>,ResultStatusEnum> heatParameters =
+    // ImportUtils.getHeatParameters(parametersMap);
+    // assertTrue(heatParameters.isRight());
+    // assertEquals(ResultStatusEnum.INVALID_PROPERTY_TYPE,
+    // heatParameters.right().value());
+    //
+    // }
+
     @Test
     public void testCreateFullHeatParameterModuleWithMissingType() {
 
@@ -299,6 +316,32 @@ public class ImportUtilsTest {
         Map<String, Map<String, Object>> expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.PROPERTIES);
         compareProperties(expectedProperties, actualProperties.left().value());
 
+    }
+
+    @Test
+    public void testGetPropertiesWithConstraintsFromYml() throws IOException {
+
+        Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("propertyConstraintsTest.yml");
+        Either<Map<String, PropertyDefinition>, ResultStatusEnum> actualProperties = ImportUtils.getProperties(toscaJson);
+        assertTrue(actualProperties.isLeft());
+        Map<String, PropertyDefinition> properties = actualProperties.left().value();
+        assertTrue(properties.containsKey("service_type"));
+        PropertyDefinition property = properties.get("service_type");
+        assertTrue(property.getConstraints()!= null && property.getConstraints().size() == 1);
+        assertTrue(property.getConstraints().get(0) instanceof ValidValuesConstraint);
+        assertTrue(((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues() != null);
+        List<String> validValues = ((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues();
+        assertTrue(validValues.containsAll(Lists.newArrayList("firewall", "analyzer", "source-nat", "loadbalancer")));
+
+        assertTrue(properties.containsKey("service_interface_type_list"));
+        property = properties.get("service_interface_type_list");
+        assertTrue(property.getSchema()!= null && property.getSchema().getProperty() != null);
+        PropertyDefinition innerProperty = new PropertyDefinition(property.getSchema().getProperty());
+        List<PropertyConstraint> innerConstraints = innerProperty.getConstraints();
+        assertTrue(innerConstraints.get(0) instanceof ValidValuesConstraint);
+        assertTrue(((ValidValuesConstraint) innerConstraints.get(0)).getValidValues() != null);
+        validValues = ((ValidValuesConstraint) innerConstraints.get(0)).getValidValues();
+        assertTrue(validValues.containsAll(Lists.newArrayList("management", "left", "right", "other")));
     }
 
     @Test

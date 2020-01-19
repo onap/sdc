@@ -38,6 +38,8 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -62,6 +64,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
+
+import java.io.IOException;
 
 /**
  * Web Servlet for actions on Attributes
@@ -72,10 +77,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @OpenAPIDefinition(info = @Info(title = "Resource Attribute Servlet", description = "Resource Attribute Servlet"))
-@Singleton
+@Controller
 public class AttributeServlet extends AbstractValidationsServlet {
     private static final Logger log = Logger.getLogger(AttributeServlet.class);
-
+    private static final String ATTRIBUTE_CONTENT_IS_INVALID = "Attribute content is invalid - {}";
     @Inject
     public AttributeServlet(UserBusinessLogic userBusinessLogic,
         ComponentInstanceBusinessLogic componentInstanceBL,
@@ -104,11 +109,12 @@ public class AttributeServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Resource attribute already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createAttribute(
             @Parameter(description = "resource id to update with new attribute",
                     required = true) @PathParam("resourceId") final String resourceId,
             @Parameter(description = "Resource attribute to be created", required = true) String data,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         ServletContext context = request.getSession().getServletContext();
 
@@ -122,10 +128,8 @@ public class AttributeServlet extends AbstractValidationsServlet {
 
             buildAttributeFromString(data, attributesWrapper, errorWrapper);
             if (errorWrapper.isEmpty()) {
-                AttributeBusinessLogic businessLogic =
-                        getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-                Either<PropertyDefinition, ResponseFormat> createAttribute =
-                        businessLogic.createAttribute(resourceId, attributesWrapper.getInnerElement(), userId);
+                AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
+                Either<PropertyDefinition, ResponseFormat> createAttribute = businessLogic.createAttribute(resourceId, attributesWrapper.getInnerElement(), userId);
                 if (createAttribute.isRight()) {
                     errorWrapper.setInnerElement(createAttribute.right().value());
                 } else {
@@ -139,8 +143,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
                 response = buildErrorResponse(errorWrapper.getInnerElement());
             } else {
                 PropertyDefinition createdAttDef = attributesWrapper.getInnerElement();
-                log.debug("Attribute {} created successfully with id {}", createdAttDef.getName(),
-                        createdAttDef.getUniqueId());
+                log.debug("Attribute {} created successfully with id {}", createdAttDef.getName(), createdAttDef.getUniqueId());
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.CREATED);
                 response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(createdAttDef));
             }
@@ -150,9 +153,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Attribute");
             log.debug("create property failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
-
+            throw e;
         }
     }
 
@@ -176,13 +177,14 @@ public class AttributeServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource attribute updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateAttribute(
             @Parameter(description = "resource id to update with new attribute",
                     required = true) @PathParam("resourceId") final String resourceId,
             @Parameter(description = "attribute id to update",
                     required = true) @PathParam("attributeId") final String attributeId,
             @Parameter(description = "Resource attribute to update", required = true) String data,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         ServletContext context = request.getSession().getServletContext();
 
@@ -203,10 +205,8 @@ public class AttributeServlet extends AbstractValidationsServlet {
             buildAttributeFromString(data, attributesWrapper, errorWrapper);
 
             if (errorWrapper.isEmpty()) {
-                AttributeBusinessLogic businessLogic =
-                        getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-                Either<PropertyDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic
-                        .updateAttribute(resourceId, attributeId, attributesWrapper.getInnerElement(), userId);
+                AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
+                Either<PropertyDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic.updateAttribute(resourceId, attributeId, attributesWrapper.getInnerElement(), userId);
                 // update property
                 if (eitherUpdateAttribute.isRight()) {
                     errorWrapper.setInnerElement(eitherUpdateAttribute.right().value());
@@ -231,9 +231,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Attribute");
             log.debug("update attribute failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
-
+            throw e;
         }
     }
 
@@ -257,12 +255,13 @@ public class AttributeServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Resource property not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteAttribute(
             @Parameter(description = "resource id of attribute",
                     required = true) @PathParam("resourceId") final String resourceId,
             @Parameter(description = "Attribute id to delete",
                     required = true) @PathParam("attributeId") final String attributeId,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         ServletContext context = request.getSession().getServletContext();
 
@@ -273,10 +272,8 @@ public class AttributeServlet extends AbstractValidationsServlet {
         try {
 
             // delete the property
-            AttributeBusinessLogic businessLogic =
-                    getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-            Either<PropertyDefinition, ResponseFormat> eitherAttribute =
-                    businessLogic.deleteAttribute(resourceId, attributeId, userId);
+            AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
+            Either<PropertyDefinition, ResponseFormat> eitherAttribute = businessLogic.deleteAttribute(resourceId, attributeId, userId);
             if (eitherAttribute.isRight()) {
                 log.debug("Failed to delete Attribute. Reason - ", eitherAttribute.right().value());
                 return buildErrorResponse(eitherAttribute.right().value());
@@ -291,9 +288,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Attribute");
             log.debug("delete attribute failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
-
+            throw e;
         }
     }
 
@@ -303,7 +298,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             final PropertyDefinition attribute = gson.fromJson(data, PropertyDefinition.class);
             if (attribute == null) {
-                log.info("Attribute content is invalid - {}", data);
+                log.info(ATTRIBUTE_CONTENT_IS_INVALID, data);
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
                 errorWrapper.setInnerElement(responseFormat);
             } else {
@@ -313,8 +308,8 @@ public class AttributeServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
             errorWrapper.setInnerElement(responseFormat);
-            log.debug("Attribute content is invalid - {}", data, e);
-            log.info("Attribute content is invalid - {}", data);
+            log.debug(ATTRIBUTE_CONTENT_IS_INVALID, data, e);
+            log.info(ATTRIBUTE_CONTENT_IS_INVALID, data);
         }
     }
 }

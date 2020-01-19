@@ -45,7 +45,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -174,7 +174,7 @@ public class CsarGenerator extends CommonInternalTool {
         
         
         csarArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
-        ESArtifactData artifactData = new ESArtifactData(csarArtifact.getEsId(), decodedPayload);
+        DAOArtifactData artifactData = new DAOArtifactData(csarArtifact.getEsId(), decodedPayload);
         artifactCassandraDao.saveArtifact(artifactData);
         ConsoleWriter.dataLine("Artifact generated and saved into Cassandra ", csarArtifact.getArtifactLabel());
         report(component, csarArtifact);

@@ -28,6 +28,7 @@ import org.openecomp.sdc.be.components.utils.PolicyTypeBuilder;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -52,8 +53,10 @@ public class PolicyTypesEndpointTest extends JerseySpringBaseTest {
     protected ResourceConfig configure() {
         policyTypeBusinessLogic = mock(PolicyTypeBusinessLogic.class);
         componentUtils = mock(ComponentsUtils.class);
+        UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+        ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
         return super.configure()
-                .register(new PolicyTypesEndpoint(policyTypeBusinessLogic));
+                .register(new PolicyTypesEndpoint(userBusinessLogic, componentsUtils, policyTypeBusinessLogic));
     }
 
     @Test

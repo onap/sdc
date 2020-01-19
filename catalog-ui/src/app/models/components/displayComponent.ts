@@ -22,47 +22,42 @@
  */
 
 'use strict';
-import {ComponentType} from "../../utils/constants";
-import {ComponentMetadata} from "../component-metadata";
-import {PolicyMetadata} from "../policy-metadata";
-import {GroupMetadata} from "../group-metadata";
-import {RequirementsGroup} from "../requirement";
-import {CapabilitiesGroup} from "../capability";
+import { ComponentType, SdcElementType } from '../../utils/constants';
+import { ComponentMetadata } from '../component-metadata';
+import { PolicyMetadata } from '../policy-metadata';
+import { GroupMetadata } from '../group-metadata';
+import { RequirementsGroup } from '../requirement';
+import { CapabilitiesGroup } from '../capability';
 
 export enum LeftPaletteMetadataTypes {
-    Component,
-    Group,
-    Policy
+    Component = 'COMPONENT',
+    Group = 'GROUP',
+    Policy = 'POLICY'
 }
 
 export class LeftPaletteComponent {
-    uniqueId:string;
-    type:string;
-    displayName:string;
-    version:string;
-    mainCategory:string;
-    subCategory:string;
-    iconClass:string;
-    componentSubType:string;
-    searchFilterTerms:string;
-    certifiedIconClass:string;
-    icon:string;
-    isDraggable:boolean;
-    isRequirmentAndCapabilitiesLoaded:boolean;
 
-    uuid:string;
-    name:string;
-    lifecycleState:string;
-    allVersions:any;
-    componentType:string;
-    systemName:string;
-
-    invariantUUID:string;
-
-    capabilities:CapabilitiesGroup;
-    requirements:RequirementsGroup;
-
-    categoryType:LeftPaletteMetadataTypes;
+    uniqueId: string;
+    type: string;
+    version: string;
+    mainCategory: string;
+    subCategory: string;
+    componentSubType: string;
+    searchFilterTerms: string;
+    certifiedIconClass: string;
+    isDraggable: boolean;
+    uuid: string;
+    name: string;
+    lifecycleState: string;
+    allVersions: any;
+    componentType: string;
+    systemName: string;
+    invariantUUID: string;
+    capabilities: CapabilitiesGroup;
+    requirements: RequirementsGroup;
+    categoryType: LeftPaletteMetadataTypes;
+    resourceType: string;
+    icon: string;
 
     constructor(metadataType: LeftPaletteMetadataTypes, item: ComponentMetadata | PolicyMetadata | GroupMetadata) {
         if (metadataType === LeftPaletteMetadataTypes.Policy) {
@@ -81,13 +76,10 @@ export class LeftPaletteComponent {
         }
     }
 
-    private initComponent(component:ComponentMetadata): void {
-        this.categoryType = LeftPaletteMetadataTypes.Component;
+    private initComponent(component: ComponentMetadata): void {
 
-        this.icon = component.icon;
         this.version = component.version;
         this.uniqueId = component.uniqueId;
-        this.isRequirmentAndCapabilitiesLoaded = false;
         this.uuid = component.uuid;
         this.name = component.name;
         this.allVersions = component.allVersions;
@@ -95,7 +87,6 @@ export class LeftPaletteComponent {
         this.systemName = component.systemName;
         this.invariantUUID = component.invariantUUID;
         this.isDraggable = true;
-
         if (component.categories && component.categories[0] && component.categories[0].subcategories && component.categories[0].subcategories[0]) {
             this.mainCategory = component.categories[0].name;
             this.subCategory = component.categories[0].subcategories[0].name;
@@ -103,75 +94,43 @@ export class LeftPaletteComponent {
             this.mainCategory = 'Generic';
             this.subCategory = 'Generic';
         }
+        // this.categoryType = LeftPaletteMetadataTypes.Component;
+        // this.componentSubType = component. ? component.resourceType: ComponentType.SERVICE_PROXY;
+        this.searchFilterTerms = (this.name + ' ' + component.description + ' ' + component.tags.join(' ')).toLowerCase() + ' ' + component.version;
+        this.icon = component.icon;
+        this.certifiedIconClass = component.lifecycleState != 'CERTIFIED' ? 'non-certified' : ''; // need to fix after onap fix
 
-        this.componentSubType = component.resourceType ? component.resourceType: 'SERVICE';
-
-        this.initDisplayName(component.name);
-        this.searchFilterTerms = (this.displayName + ' ' + component.description + ' ' + component.tags.join(' ')).toLowerCase() + ' ' + component.version;
-        this.initIconSprite(component.icon);
-        this.certifiedIconClass = component.lifecycleState != 'CERTIFIED' ? 'non-certified' : '';
-        if (component.icon === 'vl' || component.icon === 'cp') {
-            this.certifiedIconClass = this.certifiedIconClass + " " + 'smaller-icon';
-        }
     }
 
-    private initGroup(group:GroupMetadata): void {
+    private initGroup(group: GroupMetadata): void {
         this.categoryType = LeftPaletteMetadataTypes.Group;
-
         this.uniqueId = group.uniqueId;
-        this.displayName = group.name;
-        this.mainCategory = "Groups";
-        this.subCategory = "Groups";
-        this.iconClass = "sprite-group-icons group";
+        this.name = group.name;
+        this.mainCategory = 'Groups';
+        this.subCategory = 'Groups';
         this.version = group.version;
-
         this.type = group.type;
-        this.componentSubType = 'GROUP';
-
+        this.componentSubType = SdcElementType.GROUP;
+        this.icon = SdcElementType.GROUP;
         this.searchFilterTerms = this.type + ' ' + group.name + ' ' + group.version;
         this.isDraggable = false;
     }
 
-    private initPolicy(policy:PolicyMetadata): void {
+    private initPolicy(policy: PolicyMetadata): void {
         this.categoryType = LeftPaletteMetadataTypes.Policy;
-
         this.uniqueId = policy.uniqueId;
-        this.displayName = policy.name;
-        this.mainCategory = "Policies";
-        this.subCategory = "Policies";
-        this.iconClass = "sprite-policy-icons policy";
+        this.name = policy.name;
+        this.mainCategory = 'Policies';
+        this.subCategory = 'Policies';
         this.version = policy.version;
-
         this.type = policy.type;
-        this.componentSubType = 'POLICY';
-
+        this.componentSubType = SdcElementType.POLICY;
+        this.icon = SdcElementType.POLICY;
         this.searchFilterTerms = this.type + ' ' + policy.name + ' ' + policy.version;
         this.isDraggable = false;
     }
 
-    public initDisplayName = (name:string):void => {
-        let newName =
-            _.last(_.last(_.last(_.last(_.last(_.last(_.last(_.last(name.split('tosca.nodes.'))
-                .split('network.')).split('relationships.')).split('org.openecomp.')).split('resource.nfv.'))
-                .split('nodes.module.')).split('cp.')).split('vl.'));
-        if (newName) {
-            this.displayName = newName;
-        } else {
-            this.displayName = name;
-        }
-    };
-
-    public initIconSprite = (icon:string):void => {
-        switch (this.componentSubType) {
-            case ComponentType.SERVICE:
-                this.iconClass = "sprite-services-icons " + icon;
-                break;
-            default:
-                this.iconClass = "sprite-resource-icons " + icon;
-        }
-    }
-
-    public getComponentSubType = ():string => {
+    public getComponentSubType = (): string => {
         return this.componentSubType;
     };
 }

@@ -26,6 +26,8 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { InputFEModel } from "app/models";
 import { ModalService } from "../../../services/modal.service";
 import { InstanceFeDetails } from "app/models/instance-fe-details";
+import { InstanceFePropertiesMap } from "../../../../models/properties-inputs/property-fe-map";
+import { DataTypeService } from "../../../services/data-type.service";
 
 @Component({
     selector: 'inputs-table',
@@ -41,6 +43,8 @@ export class InputsTableComponent {
     @Output() inputChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() deleteInput: EventEmitter<any> = new EventEmitter<any>();
 
+    @Input() fePropertiesMap: InstanceFePropertiesMap;
+    
     sortBy: String;
     reverse: boolean;
     selectedInputToDelete: InputFEModel;    
@@ -74,7 +78,8 @@ export class InputsTableComponent {
     };
 
 
-    constructor(private modalService: ModalService) {
+    constructor(private modalService: ModalService, private dataTypeService: DataTypeService){
+        var x = 5
     }
 
 
@@ -89,8 +94,39 @@ export class InputsTableComponent {
     };
 
     openDeleteModal = (input: InputFEModel) => {
+        console.log('exist inputs: ' + this.inputs)
+        
+        
         this.selectedInputToDelete = input;
         this.modalService.createActionModal("Delete Input", "Are you sure you want to delete this input?", "Delete", this.onDeleteInput, "Close").instance.open();
+    }
+
+    getConstraints(input:InputFEModel): string[]{
+        
+        if (input.inputPath){
+            const pathValuesName = input.inputPath.split('#');
+            const rootPropertyName = pathValuesName[0];
+            const propertyName = pathValuesName[1];
+            let filterredRootPropertyType = _.values(this.fePropertiesMap)[0].filter(property => 
+                property.name == rootPropertyName);
+            if (filterredRootPropertyType.length > 0){
+                let rootPropertyType = filterredRootPropertyType[0].type;
+                return this.dataTypeService.getConstraintsByParentTypeAndUniqueID(rootPropertyType, propertyName);
+            }else{
+                return null;
+            }
+                
+        }
+        // else if(input.constraints.length > 0){
+        //     return input.constraints[0].validValues
+        // }
+        else{
+            return null;
+        }
+    }
+
+    checkInstanceFePropertiesMapIsFilled(){
+        return _.keys(this.fePropertiesMap).length > 0
     }
 }
 

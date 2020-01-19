@@ -49,9 +49,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -341,6 +338,9 @@ public class ArtifactOperationTest extends ModelTestBase {
         assertTrue(result.isLeft());
         Service resultService = result.left().value();
 
+        // assertEquals("check resource unique id",
+        // UniqueIdBuilder.buildServiceUniqueId(serviceName, serviceVersion),
+        // resultService.getUniqueId());
         assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultService.getLifecycleState());
 
         return resultService;

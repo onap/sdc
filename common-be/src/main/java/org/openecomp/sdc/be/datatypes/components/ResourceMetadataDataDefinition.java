@@ -20,7 +20,9 @@
 
 package org.openecomp.sdc.be.datatypes.components;
 
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+
 
 public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
@@ -48,6 +50,16 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
         this.isAbstract = other.isHighestVersion();
         this.resourceType = other.getResourceType();
         this.toscaResourceName = other.getToscaResourceName();
+	}
+
+	public ResourceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
+		super(extractor);
+		this.vendorName = extractor.getVendorName();
+		this.vendorRelease = extractor.getVendorRelease();
+		this.resourceVendorModelNumber = extractor.getResourceVendorModelNumber();
+		this.isAbstract = extractor.isAbstract();
+		this.resourceType = extractor.getResourceType();
+		this.toscaResourceName = extractor.getToscaResourceName();
     }
 
     public String getVendorName() {

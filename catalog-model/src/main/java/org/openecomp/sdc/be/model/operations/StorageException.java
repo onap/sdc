@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations;
 
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
@@ -45,6 +46,11 @@ public class StorageException extends RuntimeException{
     public StorageException(JanusGraphOperationStatus janusGraphOperationStatus, String... params) {
         storageOperationStatus = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
             janusGraphOperationStatus);
+        this.params = params;
+    }
+
+    public StorageException(CassandraOperationStatus cassandraOperationStatus, String... params) {
+        storageOperationStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(cassandraOperationStatus);
         this.params = params;
     }
 

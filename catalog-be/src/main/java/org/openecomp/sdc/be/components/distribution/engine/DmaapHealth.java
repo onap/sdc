@@ -178,7 +178,7 @@ public class DmaapHealth {
                 healthCheckInfo = reachable ? HealthCheckInfoResult.OK.healthCheckInfo : HealthCheckInfoResult.DOWN.healthCheckInfo;
             }
             catch( Exception e ){
-                log.debug("{} | cannot check connectivity -> {}",DMAAP_HEALTH_CHECK_STR, e );
+                log.debug("{} - cannot check connectivity -> {}",DMAAP_HEALTH_CHECK_STR, e );
                 prevIsReachable = lastHealthState.getAndSet(false);
                 healthCheckInfo = HealthCheckInfoResult.UNAVAILABLE.healthCheckInfo;
             }
@@ -196,7 +196,7 @@ public class DmaapHealth {
                 String hostname = getUrlHost(config.getHosts());
                 return InetAddress.getByName( hostname ).isReachable(TIMEOUT);
             }catch( URISyntaxException e ){
-                log.debug("{} | malformed host configuration -> ",DMAAP_HEALTH_CHECK_STR , e);
+                log.debug("{} - malformed host configuration -> ",DMAAP_HEALTH_CHECK_STR , e);
             }
             return false;
         }
@@ -222,10 +222,10 @@ public class DmaapHealth {
             if (validator.isValid(qualifiedHost)){
                 return URIUtils.extractHost(new URI(qualifiedHost)).getHostName();
             }else{
-                log.debug("{} | invalid url format, continuing ", DMAAP_HEALTH_CHECK_STR );
+                log.debug("{} - invalid url format, continuing ", DMAAP_HEALTH_CHECK_STR );
             }
         }catch(URISyntaxException e){
-            log.debug("{} | invalid url format, continuing {} ", DMAAP_HEALTH_CHECK_STR , e);
+            log.debug("{} - invalid url format, continuing {} ", DMAAP_HEALTH_CHECK_STR , e);
         }
         //endregion
 

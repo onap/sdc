@@ -146,9 +146,16 @@ public class Service extends Component {
 		return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
 	}
 
+	public void setServiceFunction(String serviceFunction){
+		getServiceMetadataDefinition().setServiceFunction(serviceFunction);
+	}
 
-	public void validateAndSetInstantiationType() { 
-		if (this.getInstantiationType() == StringUtils.EMPTY) {
+	public String getServiceFunction(){
+		return getServiceMetadataDefinition().getServiceFunction();
+	}
+
+	public void validateAndSetInstantiationType() {
+		if (this.getInstantiationType().equals(StringUtils.EMPTY)) {
 			this.setInstantiationType(InstantiationTypes.A_LA_CARTE.getValue());
 		}
 	}

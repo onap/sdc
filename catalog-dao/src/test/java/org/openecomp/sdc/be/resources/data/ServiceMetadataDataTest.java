@@ -21,7 +21,12 @@
 package org.openecomp.sdc.be.resources.data;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,13 +34,17 @@ import java.util.Map;
 
 public class ServiceMetadataDataTest {
 
+	private static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+			"src/test/resources/config/catalog-dao");
+	private static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+
 	private ServiceMetadataData createTestSubject() {
 		return new ServiceMetadataData();
 	}
 
 	@Test
 	public void testCtor() throws Exception {
-		new ServiceMetadataData(new HashMap());
+		new ServiceMetadataData(new GraphPropertiesDictionaryExtractor(new HashMap<>()));
 		new ServiceMetadataData(new ServiceMetadataDataDefinition());
 	}
 	

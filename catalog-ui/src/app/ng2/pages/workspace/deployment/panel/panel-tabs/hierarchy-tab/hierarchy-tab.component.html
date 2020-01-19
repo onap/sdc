@@ -1,0 +1,119 @@
+<div class="sdc-hierarchy-tab" ng-class="">
+    <sdc-loader [global]="false" [testId]="'hierarchy-tab-loader'" [active]="isLoading" [relative]="true" [size]="'medium'"></sdc-loader>
+    <div class="sdc-hierarchy-tab-title"
+         [attr.data-tests-id]="'tab-header'">{{'DEPLOYMENT_TAB_TITLE' | translate }}</div>
+    <div [ngClass]="{'scroll-module-list': selectedModule}">
+        <div *ngIf="topologyTemplateType != 'SERVICE'; else isService" class="modules-list">
+            <div>
+                <div class="sdc-hierarchy-tab-sub-title" data-tests-id="tab-sub-header">{{topologyTemplateName}}</div>
+                <div *ngFor="let module of modules; index as i">
+                    <sdc-accordion [title]="module.name" [arrow-direction]="'left'"
+                                   [css-class]="'expand-collapse-container'"
+                                   [ngClass]="{'selected': selectedModule !== undefined && selectedModule.uniqueId === module.uniqueId}"
+                                   [testId]="'hierarchy-module-' + i + '-title'" tooltip="{{module.name}}"
+                                   (click)="onModuleSelected(module)">
+                        <div *ngFor="let memberId of getKeys(module.members)">
+                            <div class="expand-collapse-sub-title" tooltip="{{memberId}}">{{memberId}}</div>
+                        </div>
+                    </sdc-accordion>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #isService>
+            <div class="module-list">
+                <div *ngFor="let instance of componentInstances; index as instanceIndex">
+                    <sdc-accordion [title]="instance.name" [arrow-direction]="'left'"
+                                   [css-class]="'expand-collapse-container outer-container'"
+                                   [testId]="'hierarchy-instance-' + instanceIndex + '-title'"
+                                   tooltip="{{instance.name}}">
+                        <div *ngFor="let module of instance.groupInstances; index as moduleIndex">
+                            <sdc-accordion [title]="module.name" [arrow-direction]="'left'"
+                                           [css-class]="'expand-collapse-container inner-container'"
+                                           [ngClass]="{'selected': selectedModule && selectedModule.groupInstanceUniqueId === module.uniqueId}"
+                                           [testId]="'hierarchy-module-' + moduleIndex + '-title'"
+                                           tooltip="{{module.uniqueId}}"
+                                           (click)="onModuleSelected(module, instance.uniqueId)">
+                                <div *ngFor="let memberId of getKeys(module.members)">
+                                    <div class="expand-collapse-sub-title" tooltip="{{memberId}}">{{memberId}}</div>
+                                </div>
+                            </sdc-accordion>
+                        </div>
+                    </sdc-accordion>
+                </div>
+            </div>
+        </ng-template>
+
+        <!--TODO: Add Resizable-->
+        <div *ngIf="selectedModule"class="module-data-container" [attr.data-tests-id]="'selected-module-data'">
+            <div class="module-data">
+                <div class="module-name-container">
+                    <div class="module-name module-text-overflow" [attr.data-tests-id]="'selected-module-name'"
+                         tooltip="{{selectedModule.name}}">{{selectedModule.name}}</div>
+                    <div class="edit-name-container" *ngIf="topologyTemplateType != 'SERVICE'">
+                        <svg-icon name="edit-o" [size]="'medium'" [ngClass]="{'hand-pointer': !isViewOnly}" (click)="openEditModuleNamePopup($event)"></svg-icon>
+                    </div>
+                </div>
+                <div [attr.data-tests-id]="'selected-module-group-uuid'" tooltip="{{selectedModule.groupUUID}}">
+                    <div class="selected-module-property-header">Module ID:</div>
+                    <div class="selected-module-property-value small-font">{{selectedModule.groupUUID}}</div>
+                </div>
+                <div [attr.data-tests-id]="'selected-module-group-customization-uuid'"
+                     *ngIf="topologyTemplateType == 'SERVICE' && isViewOnly"
+                     tooltip="{{selectedModule.customizationUUID}}">
+                    <div class="selected-module-property-header">Customization ID:</div>
+                    <div class="selected-module-property-value small-font">{{selectedModule.customizationUUID}}</div>
+                </div>
+                <div [attr.data-tests-id]="'selected-module-group-invariant-uuid'"
+                     tooltip="{{selectedModule.invariantUUID}}">
+                    <div class="selected-module-property-header">Invariant UUID:</div>
+                    <div class="selected-module-property-value small-font">{{selectedModule.invariantUUID}}</div>
+                </div>
+                <div [attr.data-tests-id]="'selected-module-version'" class="selected-module-property-container">
+                    <div class="selected-module-property-header">Version:</div>
+                    <div class="selected-module-property-value same-row">{{selectedModule.version}}</div>
+                </div>
+                <div data-tests-id="selected-module-is-base" class="selected-module-property-container">
+                    <div class="selected-module-property-header">IsBase:</div>
+                    <div class="selected-module-property-value same-row">{{selectedModule.isBase}}</div>
+                </div>
+
+            </div>
+            <sdc-accordion [title]="'Properties'" [arrow-direction]="'right'"
+                           [css-class]="'expand-collapse-module-data-container'">
+                <div *ngFor="let property of selectedModule.properties | orderBy:['name']:['asc']">
+                    <div class="module-data-list-item">
+                        <div class="module-data-list-item-value property-name"
+                             [attr.data-tests-id]="'selected-module-property-name'">
+                            <span tooltip="{{property.name}}" [ngClass]="{'hand-pointer': !isViewOnly}"
+                                  (click)="!isViewOnly && openEditPropertyModal(property)">{{property.name}}</span>
+                        </div>
+                        <div class="module-data-list-item-value property-info"
+                             [attr.data-tests-id]="'selected-module-property-type'"> Type: {{property.type}}</div>
+                        <div class="module-data-list-item-value property-info"
+                             [attr.data-tests-id]="'selected-module-property-schema-type'">
+                            Value: {{property.value}}</div>
+                    </div>
+                </div>
+            </sdc-accordion>
+            <sdc-accordion [title]="'Artifacts'" [arrow-direction]="'right'"
+                           [css-class]="'expand-collapse-module-data-container'">
+                <div *ngFor="let artifact of selectedModule.artifacts | orderBy:['artifactName']:['asc']">
+                    <div class="module-data-list-item">
+                        <div class="artifact-list-item">
+                            <div class="module-data-list-item-value"
+                                 [attr.data-tests-id]="'selected-module-artifact-name'"
+                                 tooltip="{{artifact.artifactName}}">{{artifact.artifactName}}</div>
+                            <div class="module-data-list-item-value artifact-info"
+                                 [attr.data-tests-id]="'selected-module-artifact-uuid'"
+                                 tooltip="{{artifact.artifactUUID}}">UUID: {{artifact.artifactUUID}}</div>
+                            <div class="module-data-list-item-value artifact-info"
+                                 [attr.data-tests-id]="'selected-module-artifact-version'">
+                                Version: {{artifact.artifactVersion}}</div>
+                        </div>
+                    </div>
+                </div>
+            </sdc-accordion>
+        </div>
+    </div>
+</div>

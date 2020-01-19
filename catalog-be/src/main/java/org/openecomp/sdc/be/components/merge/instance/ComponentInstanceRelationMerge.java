@@ -22,6 +22,8 @@ package org.openecomp.sdc.be.components.merge.instance;
 
 import fj.data.Either;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.merge.utils.CapabilityOwner;
 import org.openecomp.sdc.be.components.merge.utils.ComponentInstanceBuildingBlocks;
 import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
@@ -94,7 +96,7 @@ public class ComponentInstanceRelationMerge implements ComponentInstanceMergeInt
 
 
     @Override
-    public Either<Component, ResponseFormat> mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
+    public Component mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
         Wrapper<Either<Component, ResponseFormat>> resultWrapper = new Wrapper<>();
 
         ContainerRelationsMergeInfo containerRelationsMergeInfo = getRelationsMergeInfo(dataHolder, updatedContainerComponent, resultWrapper);
@@ -113,18 +115,19 @@ public class ComponentInstanceRelationMerge implements ComponentInstanceMergeInt
                 Stream<RequirementCapabilityRelDef> toRelationsInfoStream = getCapabilitiesRelationInfoStream(updatedContainerComponent, newInstanceId, containerRelationsMergeInfo, instanceBuildBlocks);
                 Stream<RequirementCapabilityRelDef> fromRelationsInfoStream = getRequirementRelationsInfoStream(updatedContainerComponent, newInstanceId, containerRelationsMergeInfo, instanceBuildBlocks);
                 List<RequirementCapabilityRelDef> updatedRelations = getUpdatedRelations(toRelationsInfoStream, fromRelationsInfoStream);
-                StorageOperationStatus saveResult = toscaOperationFacade.associateResourceInstances(updatedContainerComponent.getUniqueId(), updatedRelations);
-                if (saveResult == StorageOperationStatus.OK) {
+                Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> listStorageOperationStatusEither = toscaOperationFacade.associateResourceInstances(null, updatedContainerComponent.getUniqueId(), updatedRelations);
+                if (listStorageOperationStatusEither.isLeft()) {
                     resultWrapper.setInnerElement(Either.left(updatedContainerComponent));
                 }
                 else {
-                    log.debug("Failed to associate instances of resource {} status is {}", updatedContainerComponent.getUniqueId(), saveResult);
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(saveResult), updatedContainerComponent.getUniqueId());
-                    resultWrapper.setInnerElement(Either.right(responseFormat));
+                    StorageOperationStatus status = listStorageOperationStatusEither.right().value();
+                    log.debug("Failed to associate instances of resource {} status is {}", updatedContainerComponent.getUniqueId(), status);
+                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), updatedContainerComponent.getUniqueId());
+                    throw new ByResponseFormatComponentException(responseFormat);
                 }
             }
         }
-        return resultWrapper.getInnerElement();
+        return resultWrapper.getInnerElement().left().value();
     }
 
     private Stream<RequirementCapabilityRelDef> getRequirementRelationsInfoStream(Component updatedContainerComponent, String newInstanceId, ContainerRelationsMergeInfo containerRelationsMergeInfo, ComponentInstanceBuildingBlocks instanceBuildBlocks) {

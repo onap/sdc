@@ -1,0 +1,54 @@
+[
+  {
+    "uniqueId": "39be5200-143f-4962-a0ad-52882c2df138.104329b3-49bd-4cfe-bf66-c97122ae7437.childservice_proxy0.contrailv2virtualnetwork0_segmentation_id.policy",
+    "type": "string",
+    "required": false,
+    "definition": true,
+    "defaultValue": "new property",
+    "schema": {
+      "property": {
+        "required": false,
+        "definition": true,
+        "password": false,
+        "hidden": false,
+        "immutable": false,
+        "isDeclaredListInput": false,
+        "getInputProperty": false,
+        "empty": false
+      },
+      "empty": false
+    },
+    "password": false,
+    "name": "contrailv2virtualnetwork0_segmentation_id",
+    "value": "{\"get_policy\":null}",
+    "hidden": false,
+    "immutable": false,
+    "inputPath": "contrailv2virtualnetwork0_segmentation_id",
+    "instanceUniqueId": "39be5200-143f-4962-a0ad-52882c2df138.104329b3-49bd-4cfe-bf66-c97122ae7437.childservice_proxy0",
+    "propertyId": "7246e025-0cd8-43c0-9572-ae9b22722c00.contrailv2virtualnetwork0_segmentation_id",
+    "parentPropertyType": "string",
+    "isDeclaredListInput": false,
+    "getPolicyValues": [
+      {
+        "policyId": "39be5200-143f-4962-a0ad-52882c2df138.104329b3-49bd-4cfe-bf66-c97122ae7437.childservice_proxy0.contrailv2virtualnetwork0_segmentation_id.policy",
+        "propertyName": "contrailv2virtualnetwork0_segmentation_id",
+        "origPropertyValue": "new property"
+      }
+    ],
+    "normalizedName": "contrailv2virtualnetwork0_segmentation_id",
+    "policyTypeName": "string",
+    "isFromCsar": false,
+    "getInputProperty": false,
+    "schemaProperty": {
+      "required": false,
+      "definition": true,
+      "password": false,
+      "hidden": false,
+      "immutable": false,
+      "isDeclaredListInput": false,
+      "getInputProperty": false,
+      "empty": false
+    },
+    "empty": false
+  }
+]

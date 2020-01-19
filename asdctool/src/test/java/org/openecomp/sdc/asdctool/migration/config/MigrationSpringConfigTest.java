@@ -82,13 +82,5 @@ public class MigrationSpringConfigTest {
 		result = testSubject.migrationTasksDao(mock(CassandraClient.class));
 	}
 
-	@Test
-	public void testMapper() throws Exception {
-		MigrationSpringConfig testSubject;
-		PropertiesFactoryBean result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.mapper();
-	}
 }

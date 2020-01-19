@@ -68,14 +68,6 @@ public class UndoCheckoutTest extends LifecycleTestBase {
 
         assertResponse(changeStateResult, ActionStatus.COMPONENT_ALREADY_CHECKED_IN, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
 
-        resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        validateBeforeTransition = undoCheckoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertTrue(validateBeforeTransition.isRight());
-        changeStateResult = Either.right(validateBeforeTransition.right().value());
-        assertTrue(changeStateResult.isRight());
-
-        assertResponse(changeStateResult, ActionStatus.COMPONENT_ALREADY_CHECKED_IN, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-
         resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
         validateBeforeTransition = undoCheckoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFIED);
         assertTrue(validateBeforeTransition.isRight());
@@ -83,15 +75,6 @@ public class UndoCheckoutTest extends LifecycleTestBase {
         assertTrue(changeStateResult.isRight());
 
         assertResponse(changeStateResult, ActionStatus.COMPONENT_ALREADY_CHECKED_IN, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-
-        resource.setLifecycleState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        validateBeforeTransition = undoCheckoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertTrue(validateBeforeTransition.isRight());
-        changeStateResult = Either.right(validateBeforeTransition.right().value());
-        assertTrue(changeStateResult.isRight());
-
-        assertResponse(changeStateResult, ActionStatus.COMPONENT_ALREADY_CHECKED_IN, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-
     }
 
     @Test

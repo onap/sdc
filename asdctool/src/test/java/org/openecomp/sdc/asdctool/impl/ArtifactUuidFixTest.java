@@ -42,10 +42,11 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,11 +186,13 @@ public class ArtifactUuidFixTest {
         .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(list));
 		when(toscaOperationFacade.getToscaElement(ArgumentMatchers.eq(graphVertex.getUniqueId()),any(ComponentParametersView.class)))
 				.thenReturn(Either.left(service));
-		byte[] payload = "value".getBytes();
 
-		ESArtifactData esArtifactData =new ESArtifactData();
-		esArtifactData.setDataAsArray(payload);
-		Either<ESArtifactData, CassandraOperationStatus> artifactfromESres = Either.left(esArtifactData);
+		DAOArtifactData artifactData = new DAOArtifactData();
+		byte[] data = "value".getBytes();
+		ByteBuffer bufferData = ByteBuffer.wrap(data);
+		artifactData.setData(bufferData);
+
+		Either<DAOArtifactData, CassandraOperationStatus> artifactfromESres = Either.left(artifactData);
 		when(artifactCassandraDao.getArtifact(anyString())).thenReturn(artifactfromESres);
 		result = test.doFix(fixComponent, runMode);
 		assertEquals(false, result);

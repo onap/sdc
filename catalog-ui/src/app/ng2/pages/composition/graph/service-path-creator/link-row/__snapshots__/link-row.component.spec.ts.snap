@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`artifact form component should match current snapshot of artifact form component 1`] = `
+<link-row
+  source={[Function Array]}
+  srcCP={[Function Array]}
+  target={[Function Array]}
+  targetCP={[Function Array]}
+>
+  <ui-element-dropdown
+    class="cell link-selector"
+    data-tests-id="linkSrc"
+  /><ui-element-dropdown
+    class="cell link-selector"
+    data-tests-id="linkSrcCP"
+  /><ui-element-dropdown
+    class="cell link-selector"
+    data-tests-id="linkTarget"
+  /><ui-element-dropdown
+    class="cell link-selector"
+    data-tests-id="linkTargetCP"
+  /><div
+    class="cell remove"
+    data-tests-id="removeLnk"
+  >
+    
+  </div>
+</link-row>
+`;

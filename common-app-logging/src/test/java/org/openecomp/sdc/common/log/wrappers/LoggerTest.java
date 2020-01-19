@@ -1,23 +1,3 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
 package org.openecomp.sdc.common.log.wrappers;
 
 import org.junit.Before;
@@ -29,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.openecomp.sdc.common.log.api.LogConfigurationConstants;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.openecomp.sdc.common.log.elements.ErrorLogOptionalData;
 import org.openecomp.sdc.common.log.elements.LoggerError;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -46,14 +26,12 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.REQUEST_ID;
 import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.SERVICE_NAME;
-import static org.openecomp.sdc.common.log.api.LogConfigurationConstants.MDC_ERROR_CATEGORY;
-import static org.openecomp.sdc.common.log.api.LogConfigurationConstants.MDC_ERROR_CODE;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoggerTest {
@@ -63,6 +41,7 @@ public class LoggerTest {
     private final static String serviceName = "testService";
     private final static String message = "Logger message";
     private final static String exceptionMsg= "Exception testing";
+    private final static String missingFieldsMessageFragment = "mandatory parameters for ECOMP logging";
 
     @Mock
     private org.slf4j.Logger logger;
@@ -91,8 +70,8 @@ public class LoggerTest {
 
         verify(logger).error(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.PERMISSION_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.ERROR.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.PERMISSION_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.ERROR.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(targetEntity, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
     }
@@ -104,8 +83,8 @@ public class LoggerTest {
 
         verify(logger).error(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.AVAILABILITY_TIMEOUTS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.ERROR.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.AVAILABILITY_TIMEOUTS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.ERROR.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(targetEntity, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
     }
@@ -117,8 +96,8 @@ public class LoggerTest {
 
         verify(logger).error(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.PERMISSION_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.FATAL.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.PERMISSION_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.FATAL.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(targetEntity, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
     }
@@ -132,8 +111,8 @@ public class LoggerTest {
         commonLogger.warn(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, serviceName,errorLogOptionalData, message);
         verify(logger).warn(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.WARN.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.WARN.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(targetEntity, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
         assertEquals(targetServiceName, MDC.get(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME));
@@ -147,8 +126,8 @@ public class LoggerTest {
         commonLogger.warn(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, serviceName,errorLogOptionalData, message);
         verify(logger).warn(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.WARN.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.WARN.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(null, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
         assertEquals(targetServiceName, MDC.get(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME));
@@ -162,8 +141,8 @@ public class LoggerTest {
         commonLogger.warn(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, serviceName,errorLogOptionalData, message);
         verify(logger).warn(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.WARN.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.WARN.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(targetEntity, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
         assertEquals(null, MDC.get(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME));
@@ -179,8 +158,8 @@ public class LoggerTest {
         commonLogger.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, serviceName,errorLogOptionalData, message);
         verify(logger).error(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.ERROR.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.ERROR.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(targetEntity, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
         assertEquals(targetServiceName, MDC.get(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME));
@@ -194,8 +173,8 @@ public class LoggerTest {
         commonLogger.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, serviceName,errorLogOptionalData, message);
         verify(logger).error(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.ERROR.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.ERROR.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(null, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
         assertEquals(targetServiceName, MDC.get(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME));
@@ -209,8 +188,8 @@ public class LoggerTest {
         commonLogger.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, serviceName,errorLogOptionalData, message);
         verify(logger).error(any(Marker.class), captor.capture(), any(Object[].class));
         assertEquals(message, captor.getValue());
-        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.ERROR.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.ERROR.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals(targetEntity, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(serviceName, MDC.get(SERVICE_NAME));
         assertEquals(null, MDC.get(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME));
@@ -230,8 +209,8 @@ public class LoggerTest {
         commonLogger.error(message);
 
         verify(logger).error(any(Marker.class), eq(message), any(Object[].class));
-        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.ERROR.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.ERROR.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertNull(MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(LoggerError.defaultServiceName, MDC.get(SERVICE_NAME));
     }
@@ -268,13 +247,14 @@ public class LoggerTest {
     @Test
     public void validateErrorLogWithExceptionWhenErrorSettingsProvidedPartially() {
         LoggingThreadLocalsHolder.setUuid("uuid");
+        final String logFieldsNotProvidedMsg = "mandatory parameters for ECOMP logging, missing fields: ServiceName PartnerName";
         when(logger.isWarnEnabled()).thenReturn(true);
         commonLogger.warn(message, new NullPointerException(exceptionMsg));
 
         //the expected warn message
         verify(logger).warn(any(Marker.class), contains(message), any(Object[].class));
-        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(LogConfigurationConstants.MDC_ERROR_CODE));
-        assertEquals(LogLevel.WARN.name(), MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY));
+        assertEquals(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), MDC.get(ILogConfiguration.MDC_ERROR_CODE));
+        assertEquals(LogLevel.WARN.name(), MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY));
         assertEquals("uuid", MDC.get(REQUEST_ID));
         assertNull(MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
         assertEquals(LoggerError.defaultServiceName, MDC.get(SERVICE_NAME));
@@ -310,7 +290,7 @@ public class LoggerTest {
     @Test
     public void verifyMdcValuesAreStoredWhenAuditAndErrorLoggersAreInvokedSequentially() throws URISyntaxException {
         final String uuid = "12345";
-        final String messageInt = "message";
+        final String message = "message";
         when(requestContext.getHeaderString(anyString())).thenReturn("ab2222");
         when(requestContext.getUriInfo()).thenReturn(uriInfo);
         when(logger.isErrorEnabled()).thenReturn(true);
@@ -323,11 +303,11 @@ public class LoggerTest {
         LoggerSdcAudit audit = new LoggerSdcAudit(this.getClass());
         LoggingThreadLocalsHolder.setUuid(uuid);
         audit.startLog(requestContext);
-        audit.logExit("abc.log.com", requestContext, statusType, LogLevel.INFO, Severity.OK, messageInt,
+        audit.logExit("abc.log.com", requestContext, statusType, LogLevel.INFO, Severity.OK, message,
                 MarkerFactory.getMarker(ONAPLogConstants.Markers.EXIT.getName()));
 
-        commonLogger.error(messageInt);
-        verify(logger).error(any(Marker.class), eq(messageInt), any(Object[].class));
+        commonLogger.error(message);
+        verify(logger).error(any(Marker.class), eq(message), any(Object[].class));
         assertEquals(uuid, MDC.get(REQUEST_ID));
         assertEquals("/", MDC.get(SERVICE_NAME));
         assertEquals(LogLevel.ERROR.name(), MDC.get(MDC_ERROR_CATEGORY));
@@ -356,7 +336,7 @@ public class LoggerTest {
     @Test
     public void verifyMdcValuesAreStoredWhenTraceLoggerIsInvokedAfterAuditStart() throws URISyntaxException {
         final String uuid = "12345";
-        final String messageInt = "message";
+        final String message = "message";
         when(requestContext.getHeaderString(anyString())).thenReturn("ab2222");
         when(requestContext.getUriInfo()).thenReturn(uriInfo);
         when(logger.isTraceEnabled()).thenReturn(true);
@@ -368,9 +348,9 @@ public class LoggerTest {
         LoggingThreadLocalsHolder.setUuid(uuid);
         audit.startLog(requestContext);
 
-        commonLogger.trace(messageInt);
+        commonLogger.trace(message);
         verify(logger).trace(any(Marker.class), captor.capture(), eq((Object[])null));
-        assertEquals(messageInt, captor.getValue());
+        assertEquals(message, captor.getValue());
         assertEquals(uuid, MDC.get(REQUEST_ID));
     }
 

@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`composition-panel component should match current snapshot of composition-panel component. 1`] = `
+<ng2-composition-panel
+  activatePreviousActiveTab={[Function Function]}
+  classes={[Function String]}
+  initTabs={[Function Function]}
+  isComponentInstanceSelected={[Function Function]}
+  isConfiguration={[Function Function]}
+  isPNF={[Function Function]}
+  selectedComponentIsServiceProxyInstance={[Function Function]}
+  setActive={[Function Function]}
+  store={[Function Store]}
+  toggleSidebarDisplay={[Function Function]}
+>
+  
+</ng2-composition-panel>
+`;

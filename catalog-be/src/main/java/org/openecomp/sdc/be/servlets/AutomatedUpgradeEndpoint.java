@@ -33,6 +33,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.components.upgrade.UpgradeRequest;
 import org.openecomp.sdc.be.components.upgrade.UpgradeStatus;
@@ -82,6 +85,7 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response autometedUpgrade(@PathParam("componentType") final String componentType,
             @Context final HttpServletRequest request, @PathParam("componentId") final String componentId,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -104,7 +108,7 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
 
         } catch (Exception e) {
             log.error("#autometedUpgrade - Exception occurred during autometed Upgrade", e);
-             return buildGeneralErrorResponse();
+            throw e;
         }
     }
     
@@ -117,6 +121,7 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentDependencies(@PathParam("componentType") final String componentType,
             @Context final HttpServletRequest request, @PathParam("componentId") final String componentId,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -129,7 +134,7 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
                     .either(this::buildOkResponse, this::buildErrorResponse);  
         } catch (Exception e) {
             log.error("#getServicesForComponent - Exception occurred during autometed Upgrade", e);
-            return buildGeneralErrorResponse();
+            throw e;
         }
      
         

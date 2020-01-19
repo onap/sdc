@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoTabComponent can load instance 1`] = `
+<panel-info-tab
+  componentInstanceService={[Function Object]}
+  compositionPaletteService={[Function Object]}
+  compositionService={[Function Object]}
+  eventListenerService={[Function Object]}
+  flatLeftPaletteElementsFromService={[Function Function]}
+  getPathNamesVersionChangeModal={[Function Function]}
+  initEditResourceVersion={[Function Function]}
+  modalService={[Function Object]}
+  onChangeVersion={[Function Function]}
+  sdcMenu={[Function Object]}
+  serviceService={[Function Object]}
+  store={[Function Object]}
+  versioning={[Function Function]}
+  workspaceService={[Function Object]}
+>
+  <ng2-expand-collapse
+    state="0"
+  >
+    <header
+      tooltip="General Information"
+    >
+      General Info
+    </header>
+    <content
+      class="general-info-container"
+    >
+      
+      
+      <div
+        class="component-details-panel-item"
+      >
+        <span
+          class="name"
+        />
+        
+        
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div
+        class="component-details-panel-item description"
+      >
+        <span
+          class="name"
+        />
+        <chars-ellipsis />
+      </div>
+      
+      
+    </content>
+  </ng2-expand-collapse>
+</panel-info-tab>
+`;

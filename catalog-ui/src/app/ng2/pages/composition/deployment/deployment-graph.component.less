@@ -1,0 +1,13 @@
+.sdc-deployment-graph-wrapper {
+   height: 100%;
+   width: 100%;
+
+  ::ng-deep canvas {
+    /*canvas z-index is initialized to 999 while top-nav z-Index is 10, which makes top-nav disappear, so z-Index must be overwritten here*/
+    z-index: 10 !important;
+  }
+ }
+
+::ng-deep .sdc-workspace-container .w-sdc-main-right-container .w-sdc-main-container-body-content.deploy-body-content{
+   padding: 0px;  
+}

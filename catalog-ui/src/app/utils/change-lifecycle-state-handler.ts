@@ -17,18 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
-import {ComponentFactory} from "./component-factory";
-import {Component, Service,IAppMenu, IAppConfigurtaion} from "../models";
-import {IEmailModalModel, IEmailModalModel_Email, IEmailModalModel_Data} from "../view-models/modals/email-modal/email-modal-view-model";
-import {AsdcComment} from "../models/comments";
-import {ModalsHandler} from "./modals-handler";
-import {ServiceServiceNg2} from "../ng2/services/component-services/service.service";
-import {EventBusService} from "../ng2/services/event-bus.service";
-
-/**
- * Created by obarda on 2/11/2016.
- */
+import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
+import { EventBusService } from 'app/ng2/services/event-bus.service';
+import { EVENTS, ValidationUtils } from 'app/utils';
+import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
+import { Component, IAppConfigurtaion, IAppMenu, Service } from '../models';
+import { AsdcComment } from '../models/comments';
+import { CommentModalComponent } from '../ng2/components/modals/comment-modal/comment-modal.component';
+import { EventListenerService } from '../services/event-listener-service';
+import { ComponentFactory } from './component-factory';
+import { ModalsHandler } from './modals-handler';
 
 export class ChangeLifecycleStateHandler {
 
@@ -39,141 +37,25 @@ export class ChangeLifecycleStateHandler {
         '$filter',
         'ModalsHandler',
         'ServiceServiceNg2',
-        'EventBusService'
+        'EventBusService',
+        'ModalServiceSdcUI',
+        'ValidationUtils',
+        'EventListenerService'
     ];
 
-    constructor(private sdcConfig:IAppConfigurtaion,
-                private sdcMenu:IAppMenu,
-                private ComponentFactory:ComponentFactory,
-                private $filter:ng.IFilterService,
-                private ModalsHandler:ModalsHandler,
-                private ServiceServiceNg2:ServiceServiceNg2,
-                private eventBusService:EventBusService) {
-
+    constructor(private sdcConfig: IAppConfigurtaion,
+                private sdcMenu: IAppMenu,
+                private componentFactory: ComponentFactory,
+                private $filter: ng.IFilterService,
+                private modalsHandler: ModalsHandler,
+                private serviceServiceNg2: ServiceServiceNg2,
+                private eventBusService: EventBusService,
+                private modalService: SdcUiServices.ModalService,
+                private validationUtils: ValidationUtils,
+                private eventListenerService: EventListenerService) {
     }
 
-    private actualChangeLifecycleState = (component:Component, data:any, scope:any, onSuccessCallback?:Function, onErrorCallback?:Function):void => {
-
-        let self = this;
-
-        let getContacts = (component:Component):string => {
-            let testers = this.sdcConfig.testers;
-            let result:string = testers[component.componentType][component.categories[0].name] ?
-                testers[component.componentType][component.categories[0].name] :
-                testers[component.componentType]['default'];
-            return result;
-        };
-
-        let onSuccess = (newComponent:Component):void => {
-            //scope.isLoading = false;
-            console.info(component.componentType.toLowerCase + ' change state ', newComponent);
-            if (onSuccessCallback) {
-                onSuccessCallback(self.ComponentFactory.createComponent(newComponent), data.url);
-            }
-        };
-
-        let onError = (error):void => {
-            scope.isLoading = false;
-            console.info('Failed to changeLifecycleState to ', data.url);
-            if (onErrorCallback) {
-                onErrorCallback(error);
-            }
-        };
-
-        let comment:AsdcComment = new AsdcComment();
-        if (data.alertModal) {
-            // Show alert dialog if defined in menu.json
-            //-------------------------------------------------
-            let onOk = (confirmationText):void => {
-                comment.userRemarks = confirmationText;
-                scope.isLoading = true;
-                component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
-            };
-
-            let onCancel = ():void => {
-                console.info('Cancel pressed');
-                scope.isLoading = false;
-            };
-
-            let modalTitle = this.sdcMenu.alertMessages[data.alertModal].title;
-            let modalMessage = this.sdcMenu.alertMessages[data.alertModal].message.format([component.componentType.toLowerCase()]);
-            this.ModalsHandler.openAlertModal(modalTitle, modalMessage).then(onOk, onCancel);
-        } else if (data.confirmationModal) {
-            // Show confirmation dialog if defined in menu.json
-            //-------------------------------------------------
-            let onOk = (confirmationText):void => {
-                comment.userRemarks = confirmationText;
-
-                if (data.url === "lifecycleState/CHECKIN") {
-                    this.eventBusService.notify("CHECK_IN").subscribe(() => {
-                        scope.isLoading = true;
-                        component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
-                    });
-                }
-                else {
-                    scope.isLoading = true;
-                    component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
-                }
-            };
-
-            let onCancel = ():void => {
-                console.info('Cancel pressed');
-                scope.isLoading = false;
-            };
-
-            let modalTitle = this.sdcMenu.confirmationMessages[data.confirmationModal].title;
-            let modalMessage = this.sdcMenu.confirmationMessages[data.confirmationModal].message.format([component.componentType.toLowerCase()]);
-            let modalShowComment = this.sdcMenu.confirmationMessages[data.confirmationModal].showComment;
-            this.ModalsHandler.openConfirmationModal(modalTitle, modalMessage, modalShowComment).then(onOk, onCancel);
-
-        } else if (data.emailModal) {
-            // Show email dialog if defined in menu.json
-            //-------------------------------------------------
-            let onOk = (resource):void => {
-                if (data.url === "lifecycleState/certificationRequest") {
-                    this.eventBusService.notify("SUBMIT_FOR_TESTING").subscribe(() => {
-                        if (resource) {
-                            onSuccess(resource);
-                        } else {
-                            onError("Error changing life cycle state");
-                        }
-                    });
-                }
-                else {
-                    if (resource) {
-                        onSuccess(resource);
-                    } else {
-                        onError("Error changing life cycle state");
-                    }
-                }
-            };
-
-            let onCancel = ():void => {
-                scope.isLoading = false;
-            };
-
-            let emailModel:IEmailModalModel = <IEmailModalModel>{};
-            emailModel.email = <IEmailModalModel_Email>{};
-            emailModel.data = <IEmailModalModel_Data>{};
-            emailModel.title = this.$filter('translate')("EMAIL_MODAL_TITLE");
-            emailModel.email.to = getContacts(component);
-            emailModel.email.subject = this.$filter('translate')("EMAIL_MODAL_SUBJECT", "{'entityName': '" + this.$filter('resourceName')(component.name) + "','entityVersion': '" + component.version + "'}");
-            emailModel.email.message = '';
-            emailModel.data.component = component;
-            emailModel.data.stateUrl = data.url;
-
-            this.ModalsHandler.openEmailModal(emailModel).then(onOk, onCancel);
-
-        } else {
-            // Submit to server only (no modal is shown).
-            scope.isLoading = true;
-            component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
-        }
-
-    }
-
-    public changeLifecycleState = (component:Component, data:any, scope:any, onSuccessCallback?:Function, onErrorCallback?:Function):void => {
-
+    public changeLifecycleState = (component: Component, data: any, scope: any, onSuccessCallback?: Function, onErrorCallback?: Function) => {
         if (data.conformanceLevelModal) {
             this.validateConformanceLevel(component, data, scope, onSuccessCallback, onErrorCallback);
         } else {
@@ -181,25 +63,104 @@ export class ChangeLifecycleStateHandler {
         }
     }
 
-    private validateConformanceLevel = (component:Component, data:any, scope:any, onSuccessCallback?:Function, onErrorCallback?:Function):void => {
+    private actualChangeLifecycleState = (component: Component, data: any, scope: any, onSuccessCallback?: Function, onErrorCallback?: Function) => {
+        const self = this;
+
+        const onSuccess = (newComponent: Component) => {
+            if (onSuccessCallback) {
+                onSuccessCallback(self.componentFactory.createComponent(newComponent), data.url);
+                if (data.url === 'distribution/PROD/activate') {
+                    this.eventListenerService.notifyObservers(EVENTS.ON_DISTRIBUTION_SUCCESS);
+                }
+            }
+        };
+
+        const onError = (error) => {
+            scope.isLoading = false;
+            if (onErrorCallback) {
+                onErrorCallback(error);
+            }
+        };
+
+        const comment: AsdcComment = new AsdcComment();
+        if (data.alertModal) {
+            // Show alert dialog if defined in menu.json
+            const onOk: Function = (confirmationText) => {
+                comment.userRemarks = confirmationText;
+                scope.isLoading = true;
+                component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+            };
+
+            const modalTitle = this.sdcMenu.alertMessages[data.alertModal].title;
+            const modalMessage = this.sdcMenu.alertMessages[data.alertModal].message.format([component.componentType.toLowerCase()]);
+            const modalButton = {
+                testId: 'OK',
+                text: this.sdcMenu.alertMessages.okButton,
+                type: SdcUiCommon.ButtonType.warning,
+                callback: onOk,
+                closeModal: true
+            } as SdcUiComponents.ModalButtonComponent;
+            this.modalService.openWarningModal(modalTitle, modalMessage, 'alert-modal', [modalButton]);
+        } else if (data.confirmationModal) {
+            // Show confirmation dialog if defined in menu.json
+            let commentModalInstance: SdcUiComponents.ModalComponent;
+            const onOk = () => {
+                const confirmationText: string = commentModalInstance.innerModalContent.instance.comment.text;
+                commentModalInstance.closeModal();
+                comment.userRemarks = this.validationUtils.stripAndSanitize(confirmationText);
+
+                if (data.url === 'lifecycleState/CHECKIN') {
+                    this.eventBusService.notify('CHECK_IN').subscribe(() => {
+                        scope.isLoading = true;
+                        component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+                    });
+                } else {
+                    scope.isLoading = true;
+                    component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+                }
+            };
+
+            const modalTitle = this.sdcMenu.confirmationMessages[data.confirmationModal].title;
+            const modalMessage = this.sdcMenu.confirmationMessages[data.confirmationModal].message.format([component.componentType.toLowerCase()]);
+            const modalConfig = {
+                size: 'md',
+                title: modalTitle,
+                type: SdcUiCommon.ModalType.custom,
+                testId: 'confirm-modal',
+                buttons: [
+                    { id: 'OK', text: 'OK', callback: onOk, closeModal: false, testId: 'OK' },
+                    { id: 'cancel', text: 'Cancel', size: 'x-small', type: 'secondary', closeModal: true, testId: 'Cancel' }
+                ] as SdcUiCommon.IModalButtonComponent[]
+            } as SdcUiCommon.IModalConfig;
+            commentModalInstance = this.modalService.openCustomModal(modalConfig, CommentModalComponent, { message: modalMessage });
+            commentModalInstance.innerModalContent.instance.onValidationChange.subscribe((isValid) => {
+                commentModalInstance.getButtonById('OK').disabled = !isValid;
+            });
+        } else {
+            // Submit to server only (no modal is shown).
+            scope.isLoading = true;
+            component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+        }
+    }
+
+    private validateConformanceLevel = (component: Component, data: any, scope: any, onSuccessCallback?: Function, onErrorCallback?: Function) => {
         // Validate conformance level if defined in menu.json
-        //-------------------------------------------------
-        this.ServiceServiceNg2.validateConformanceLevel(<Service>component).subscribe((res:boolean) => {
+        this.serviceServiceNg2.validateConformanceLevel(component as Service).subscribe((res: boolean) => {
             if (res === true) {
-                //conformance level is ok - continue
+                // Conformance level is ok - continue
                 this.actualChangeLifecycleState(component, data, scope, onSuccessCallback, onErrorCallback);
-
             } else {
-                //show warning modal
-                this.ModalsHandler.openConformanceLevelModal()
-                    .then(() => {
-                        //continue distribute
-                        this.actualChangeLifecycleState(component, data, scope, onSuccessCallback, onErrorCallback);
-
-                    }).catch(() => {
-                        //reject distribution
-                        this.actualChangeLifecycleState(component, data.conformanceLevelModal, scope, onSuccessCallback, onErrorCallback);
-                });
+                // Show warning modal
+                const onContinue: Function = () => {
+                    this.actualChangeLifecycleState(component, data, scope, onSuccessCallback, onErrorCallback);
+                };
+                const reject: Function = () => {
+                    this.actualChangeLifecycleState(component, data.conformanceLevelModal, scope, onSuccessCallback, onErrorCallback);
+                };
+                const continueButton = {testId: 'Continue', text: 'Continue', type: SdcUiCommon.ButtonType.primary, callback: onContinue, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+                const rejectButton = {testId: 'Reject', text: 'Reject', type: SdcUiCommon.ButtonType.secondary, callback: reject, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+                this.modalService.openInfoModal(this.$filter('translate')('CONFORMANCE_LEVEL_MODAL_TITLE'),
+                    this.$filter('translate')('CONFORMANCE_LEVEL_MODAL_TEXT'), 'conformance-modal', [continueButton, rejectButton]);
             }
         });
     }

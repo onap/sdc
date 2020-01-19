@@ -24,16 +24,30 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.utils.ComponentUtilities;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import java.util.*;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -42,11 +56,8 @@ public class CapabilityRequirementNameResolver {
     private static final Logger log = Logger.getLogger(CapabilityRequirementNameResolver.class);
     private static final String PATH_DELIMITER = ".";
 
-    private CapabilityRequirementNameResolver() {
-    }
-
     public static void updateNamesOfCalculatedCapabilitiesRequirements(TopologyTemplate toscaElement, String ownerId, String ownerName, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        Map<String, ToscaElement> componentCacheToRepair = new HashMap<>();
+        Map<String,ToscaElement> componentCacheToRepair = new HashMap<>();
         log.debug("#updateNamesOfCalculatedCapabilitiesRequirements");
         updateCalculatedCapabilitiesNames(componentCacheToRepair, toscaElement, ownerId, ownerName, originGetter);
         updateCalculatedRequirementsNames(componentCacheToRepair, toscaElement, ownerId, ownerName, originGetter);
@@ -54,12 +65,12 @@ public class CapabilityRequirementNameResolver {
     }
 
     private static void updateCalculatedCapabilitiesPropertiesKeys(TopologyTemplate toscaElement, String ownerId) {
-        if (calCapPropertiesExist(toscaElement, ownerId)) {
-            MapCapabilityProperty newProps = new MapCapabilityProperty();
+        if(calCapPropertiesExist(toscaElement, ownerId)){
+            MapCapabilityProperty newProps =  new MapCapabilityProperty();
             toscaElement.getCalculatedCapabilitiesProperties().get(ownerId)
                     .getMapToscaDataDefinition()
-                    .forEach((k, v) -> updateAndAddCalculatedCapabilitiesProperties(k, v, toscaElement.getCalculatedCapabilities().get(ownerId), newProps));
-            if (MapUtils.isNotEmpty(newProps.getMapToscaDataDefinition())) {
+                    .forEach((k, v)-> updateAndAddCalculatedCapabilitiesProperties(k, v, toscaElement.getCalculatedCapabilities().get(ownerId), newProps));
+            if(MapUtils.isNotEmpty(newProps.getMapToscaDataDefinition())) {
                 toscaElement.getCalculatedCapabilitiesProperties().put(ownerId, newProps);
             }
         }
@@ -73,20 +84,20 @@ public class CapabilityRequirementNameResolver {
     }
 
     private static void updateCalculatedRequirementsNames(Map<String, ToscaElement> componentCacheToRepair, TopologyTemplate toscaElement, String ownerId, String ownerName, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        if (requirementsExist(toscaElement, ownerId)) {
+        if(requirementsExist(toscaElement, ownerId)){
             String prefix = ownerName + PATH_DELIMITER;
             repairReqNames(componentCacheToRepair, toscaElement, ownerId, originGetter);
             toscaElement.getCalculatedRequirements().get(ownerId)
                     .getMapToscaDataDefinition().values().stream()
                     .flatMap(l -> l.getListToscaDataDefinition().stream())
                     .forEach(r -> {
-                        if (isRequiredToRepair(r.getName())) {
+                        if(isRequiredToRepair(r.getName())){
                             BeEcompErrorManager.getInstance()
                                     .logBeComponentMissingError("The empty name of the requirement was found. Id: " + r.getUniqueId() + ", ownerId: " + ownerId + ", ownerName: " + ownerName,
                                             toscaElement.getComponentType().getValue(), toscaElement.getName());
                         }
-                        if (ComponentUtilities.isNotUpdatedCapReqName(prefix, r.getName(), r.getPreviousName())) {
-                            if (StringUtils.isNotEmpty(r.getPreviousName())) {
+                        if(ComponentUtilities.isNotUpdatedCapReqName(prefix, r.getName(), r.getPreviousName())) {
+                            if(StringUtils.isNotEmpty(r.getPreviousName())){
                                 r.setParentName(r.getPreviousName());
                             }
                             r.setPreviousName(r.getName());
@@ -103,20 +114,20 @@ public class CapabilityRequirementNameResolver {
     }
 
     private static void updateCalculatedCapabilitiesNames(Map<String, ToscaElement> componentCacheToRepair, TopologyTemplate toscaElement, String ownerId, String ownerName, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        if (capabilitiesExist(toscaElement, ownerId)) {
+        if(capabilitiesExist(toscaElement, ownerId)){
             String prefix = ownerName + PATH_DELIMITER;
             repairCapNames(componentCacheToRepair, toscaElement, ownerId, originGetter);
             toscaElement.getCalculatedCapabilities().get(ownerId)
                     .getMapToscaDataDefinition().values().stream()
                     .flatMap(l -> l.getListToscaDataDefinition().stream())
                     .forEach(c -> {
-                        if (isRequiredToRepair(c.getName())) {
+                        if(isRequiredToRepair(c.getName())){
                             BeEcompErrorManager.getInstance()
                                     .logBeComponentMissingError("The empty name of the capability was found. Id: " + c.getUniqueId() + ", ownerId: " + ownerId + ", ownerName: " + ownerName,
                                             toscaElement.getComponentType().getValue(), toscaElement.getName());
                         }
-                        if (ComponentUtilities.isNotUpdatedCapReqName(prefix, c.getName(), c.getPreviousName())) {
-                            if (StringUtils.isNotEmpty(c.getPreviousName())) {
+                        if(ComponentUtilities.isNotUpdatedCapReqName(prefix, c.getName(), c.getPreviousName())) {
+                            if(StringUtils.isNotEmpty(c.getPreviousName())){
                                 c.setParentName(c.getPreviousName());
                             }
                             c.setPreviousName(c.getName());
@@ -146,13 +157,13 @@ public class CapabilityRequirementNameResolver {
 
         ComponentInstanceDataDefinition instance = toscaElement.getComponentInstances() != null ?
                 toscaElement.getComponentInstances().get(ownerId) : null;
-        if (instance != null && emptyNameFound) {
+        if(instance != null && emptyNameFound){
             log.debug("#repairCapNames - Going to repair the name of the capability for the owner {}. ", ownerId);
             toscaElement.getCalculatedCapabilities().get(ownerId)
                     .getMapToscaDataDefinition().values()
                     .stream()
                     .flatMap(l -> l.getListToscaDataDefinition().stream())
-                    .forEach(c -> repairCapName(componentCacheToRepair, instance, c, originGetter));
+                    .forEach(c-> repairCapName(componentCacheToRepair, instance, c, originGetter));
         }
     }
 
@@ -170,18 +181,18 @@ public class CapabilityRequirementNameResolver {
 
         ComponentInstanceDataDefinition instance = toscaElement.getComponentInstances() != null ?
                 toscaElement.getComponentInstances().get(ownerId) : null;
-        if (instance != null && emptyNameFound) {
+        if(instance != null && emptyNameFound){
             log.debug("#repairReqNames - Going to repair the name of the requirement for the owner {}. ", ownerId);
             toscaElement.getCalculatedRequirements().get(ownerId)
                     .getMapToscaDataDefinition().values()
                     .stream()
                     .flatMap(l -> l.getListToscaDataDefinition().stream())
-                    .forEach(r -> repairReqName(componentCacheToRepair, instance, r, originGetter));
+                    .forEach(r-> repairReqName(componentCacheToRepair, instance, r, originGetter));
         }
     }
 
     private static void repairCapName(Map<String, ToscaElement> componentCacheToRepair, ComponentInstanceDataDefinition instance, CapabilityDataDefinition capability, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        if (isRequiredToRepair(capability.getName())) {
+        if(isRequiredToRepair(capability.getName())){
             log.debug("#repairTopologyTemplateCapName - Going to build the name for the capability: ", capability.getUniqueId());
             buildSetCapName(componentCacheToRepair, capability, instance, originGetter);
         }
@@ -189,16 +200,16 @@ public class CapabilityRequirementNameResolver {
 
     private static boolean isRequiredToRepair(String name) {
         boolean isRequiredToRepair = StringUtils.isEmpty(name) || name.endsWith(".null") || name.contains(".null.");
-        if (isRequiredToRepair) {
-            log.debug("#isRequiredToRepair - The name {} should be repaired. ", name);
-        } else {
-            log.debug("#isRequiredToRepair - The name {} should not be repaired. ", name);
+        if(isRequiredToRepair){
+            log.debug("#isRequiredToRepair - The name {} should be repaired. ", name) ;
+        } else{
+            log.debug("#isRequiredToRepair - The name {} should not be repaired. ", name) ;
         }
         return isRequiredToRepair;
     }
 
     private static void repairReqName(Map<String, ToscaElement> componentCacheToRepair, ComponentInstanceDataDefinition instance, RequirementDataDefinition requirement, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        if (isRequiredToRepair(requirement.getName())) {
+        if(isRequiredToRepair(requirement.getName())){
             log.debug("#repairTopologyTemplateCapName - Going to build the name for the requirement: ", requirement.getUniqueId());
             buildSetReqName(componentCacheToRepair, requirement, instance, originGetter);
         }
@@ -210,14 +221,14 @@ public class CapabilityRequirementNameResolver {
         String capName = key[key.length - 1];
         Optional<CapabilityDataDefinition> foundCapOpt = calculatedCapabilities.getMapToscaDataDefinition().get(capType)
                 .getListToscaDataDefinition().stream()
-                .filter(c -> StringUtils.isNotEmpty(c.getPreviousName()) && c.getPreviousName().equals(capName))
+                .filter(c -> StringUtils.isNotEmpty(c.getPreviousName())&& c.getPreviousName().equals(capName))
                 .findFirst();
         foundCapOpt.ifPresent(capabilityDataDefinition -> key[key.length - 1] = capabilityDataDefinition.getName());
-        newProps.put(buildCaLCapPropKey(key), properties);
+        newProps.put(buildCaLCapPropKey(key),properties);
     }
 
     public static void revertNamesOfCalculatedCapabilitiesRequirements(TopologyTemplate toscaElement, String ownerId, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        Map<String, ToscaElement> componentCacheToRepair = new HashMap<>();
+        Map<String,ToscaElement> componentCacheToRepair = new HashMap<>();
         log.debug("#revertNamesOfCalculatedCapabilitiesRequirements");
         revertCalculatedCapabilitiesPropertiesKeys(componentCacheToRepair, toscaElement, ownerId, originGetter);
         revertCalculatedCapabilitiesNames(toscaElement, ownerId);
@@ -226,12 +237,12 @@ public class CapabilityRequirementNameResolver {
 
     private static void revertCalculatedCapabilitiesPropertiesKeys(Map<String, ToscaElement> componentCacheToRepair, TopologyTemplate toscaElement, String ownerId, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
         repairCapNames(componentCacheToRepair, toscaElement, ownerId, originGetter);
-        if (calCapPropertiesExist(toscaElement, ownerId)) {
-            MapCapabilityProperty newProps = new MapCapabilityProperty();
+        if(calCapPropertiesExist(toscaElement, ownerId)){
+            MapCapabilityProperty newProps =  new MapCapabilityProperty();
             toscaElement.getCalculatedCapabilitiesProperties().get(ownerId)
                     .getMapToscaDataDefinition()
-                    .forEach((k, v) -> revertAndAddCalculatedCapabilitiesProperties(k, v, toscaElement.getCalculatedCapabilities().get(ownerId), newProps));
-            if (MapUtils.isNotEmpty(newProps.getMapToscaDataDefinition())) {
+                    .forEach((k,v) -> revertAndAddCalculatedCapabilitiesProperties(k, v, toscaElement.getCalculatedCapabilities().get(ownerId), newProps));
+            if(MapUtils.isNotEmpty(newProps.getMapToscaDataDefinition())) {
                 toscaElement.getCalculatedCapabilitiesProperties().put(ownerId, newProps);
             }
         }
@@ -239,7 +250,7 @@ public class CapabilityRequirementNameResolver {
 
     private static void revertCalculatedRequirementsNames(Map<String, ToscaElement> componentCacheToRepair, TopologyTemplate toscaElement, String ownerId, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
         repairReqNames(componentCacheToRepair, toscaElement, ownerId, originGetter);
-        if (requirementsExist(toscaElement, ownerId)) {
+        if(requirementsExist(toscaElement, ownerId)){
             toscaElement.getCalculatedRequirements().get(ownerId)
                     .getMapToscaDataDefinition().values().stream()
                     .flatMap(l -> l.getListToscaDataDefinition().stream())
@@ -248,14 +259,14 @@ public class CapabilityRequirementNameResolver {
     }
 
     private static void revertReqNames(RequirementDataDefinition requirement) {
-        if (StringUtils.isNotEmpty(requirement.getPreviousName())) {
+        if(StringUtils.isNotEmpty(requirement.getPreviousName())) {
             requirement.setName(requirement.getPreviousName());
             requirement.setPreviousName(requirement.getParentName());
         }
     }
 
     private static void revertCalculatedCapabilitiesNames(TopologyTemplate toscaElement, String ownerId) {
-        if (capabilitiesExist(toscaElement, ownerId)) {
+        if(capabilitiesExist(toscaElement, ownerId)){
             toscaElement.getCalculatedCapabilities().get(ownerId)
                     .getMapToscaDataDefinition().values().stream()
                     .flatMap(l -> l.getListToscaDataDefinition().stream())
@@ -264,7 +275,7 @@ public class CapabilityRequirementNameResolver {
     }
 
     private static void revertCapNames(CapabilityDataDefinition capability) {
-        if (StringUtils.isNotEmpty(capability.getPreviousName())) {
+        if(StringUtils.isNotEmpty(capability.getPreviousName())) {
             capability.setName(capability.getPreviousName());
             capability.setPreviousName(capability.getParentName());
         }
@@ -284,9 +295,9 @@ public class CapabilityRequirementNameResolver {
 
     private static String buildCaLCapPropKey(String[] keyArray) {
         StringBuilder key = new StringBuilder();
-        for (int i = 0; i < keyArray.length; ++i) {
+        for(int i = 0; i< keyArray.length; ++i){
             key.append(keyArray[i]);
-            if (i < keyArray.length - 1) {
+            if(i < keyArray.length - 1){
                 key.append(ModelConverter.CAP_PROP_DELIM);
             }
         }
@@ -294,52 +305,52 @@ public class CapabilityRequirementNameResolver {
     }
 
     private static void buildSetCapName(Map<String, ToscaElement> componentsCache, CapabilityDataDefinition capability, ComponentInstanceDataDefinition instance, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        List<String> reducedPath = capability.getOwnerId() != null ? getReducedPathByOwner(capability.getPath(), capability.getOwnerId()) : getReducedPath(capability.getPath());
+        List<String> reducedPath = capability.getOwnerId() !=null ? getReducedPathByOwner(capability.getPath() , capability.getOwnerId() ) : getReducedPath(capability.getPath()) ;
         log.debug("reducedPath for ownerId {}, reducedPath {} ", capability.getOwnerId(), reducedPath);
         reducedPath.remove(reducedPath.size() - 1);
         ToscaElement originComponent = getOriginComponent(componentsCache, instance, originGetter);
-        String name = isRequiredToRepair(capability.getParentName()) ?
+        String name =  isRequiredToRepair(capability.getParentName()) ?
                 extractNameFromUniqueId(capability.getUniqueId()) : capability.getParentName();
         StringBuilder repairedName = buildSubstitutedName(componentsCache, originComponent, reducedPath, originGetter);
         log.debug("#buildSetCapName - The name for the capability was built: {}", repairedName);
 
         capability.setName(repairedName.append(name).toString());
-        if (isRequiredToRepair(capability.getPreviousName())) {
+        if(isRequiredToRepair(capability.getPreviousName())){
             capability.setPreviousName(capability.getName().substring(capability.getName().indexOf(PATH_DELIMITER) + 1));
         }
-        if (isRequiredToRepair(capability.getParentName())) {
+        if(isRequiredToRepair(capability.getParentName())){
             capability.setParentName(name);
         }
     }
 
     private static void buildSetReqName(Map<String, ToscaElement> componentsCache, RequirementDataDefinition requirement, ComponentInstanceDataDefinition instance, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        List<String> reducedPath = requirement.getOwnerId() != null ? getReducedPathByOwner(requirement.getPath(), requirement.getOwnerId()) : getReducedPath(requirement.getPath());
+        List<String> reducedPath = requirement.getOwnerId() !=null ? getReducedPathByOwner(requirement.getPath() , requirement.getOwnerId() ) : getReducedPath(requirement.getPath()) ;
         log.debug("reducedPath for ownerId {}, reducedPath {} ", requirement.getOwnerId(), reducedPath);
         reducedPath.remove(reducedPath.size() - 1);
         ToscaElement originComponent = getOriginComponent(componentsCache, instance, originGetter);
-        String name = isRequiredToRepair(requirement.getParentName()) ?
+        String name =  isRequiredToRepair(requirement.getParentName()) ?
                 extractNameFromUniqueId(requirement.getUniqueId()) : requirement.getParentName();
 
         StringBuilder repairedName = buildSubstitutedName(componentsCache, originComponent, reducedPath, originGetter);
         log.debug("#buildSetReqName - The name for the capability was built: ", repairedName);
         requirement.setName(repairedName.append(name).toString());
-        if (isRequiredToRepair(requirement.getPreviousName())) {
+        if(isRequiredToRepair(requirement.getPreviousName())){
             requirement.setPreviousName(requirement.getName().substring(requirement.getName().indexOf(PATH_DELIMITER) + 1));
         }
-        if (isRequiredToRepair(requirement.getParentName())) {
+        if(isRequiredToRepair(requirement.getParentName())){
             requirement.setParentName(name);
         }
     }
 
     private static String extractNameFromUniqueId(String uniqueId) {
         String[] uid = uniqueId.split("\\.");
-        return uid[uid.length - 1];
+        return uid [uid.length - 1];
     }
 
     private static StringBuilder buildSubstitutedName(Map<String, ToscaElement> componentsCache, ToscaElement originComponent, List<String> path, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
         StringBuilder substitutedName = new StringBuilder();
         log.debug("#buildSubstitutedName");
-        if (isNotEmpty(path) && isTopologyTemplateNotCvfc(originComponent)) {
+        if(isNotEmpty(path) && isTopologyTemplateNotCvfc(originComponent)){
             log.debug("#buildSubstitutedName");
             List<String> reducedPath = getReducedPath(path);
             Collections.reverse(reducedPath);
@@ -353,7 +364,7 @@ public class CapabilityRequirementNameResolver {
     }
 
     private static ToscaElement getOriginComponent(Map<String, ToscaElement> componentsCache, ComponentInstanceDataDefinition instance, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
-        if (componentsCache.containsKey(getActualComponentUid(instance))) {
+        if(componentsCache.containsKey(getActualComponentUid(instance))){
             return componentsCache.get(getActualComponentUid(instance));
         }
         ToscaElement origin = originGetter.apply(instance);
@@ -371,17 +382,17 @@ public class CapabilityRequirementNameResolver {
 
     private static void appendNameRecursively(Map<String, ToscaElement> componentsCache, ToscaElement originComponent, Iterator<String> instanceIdIter, StringBuilder substitutedName, Function<ComponentInstanceDataDefinition, ToscaElement> originGetter) {
         log.debug("#appendNameRecursively");
-        if (isTopologyTemplateNotCvfc(originComponent)
-                && MapUtils.isNotEmpty(((TopologyTemplate) originComponent).getComponentInstances()) && instanceIdIter.hasNext()) {
+        if(isTopologyTemplateNotCvfc(originComponent)
+                && MapUtils.isNotEmpty(((TopologyTemplate)originComponent).getComponentInstances()) && instanceIdIter.hasNext()){
 
             String ownerId = instanceIdIter.next();
-            Optional<ComponentInstanceDataDefinition> instanceOpt = ((TopologyTemplate) originComponent).getComponentInstances().values().stream().filter(i -> i.getUniqueId().equals(ownerId)).findFirst();
-            if (instanceOpt.isPresent()) {
+            Optional<ComponentInstanceDataDefinition> instanceOpt = ((TopologyTemplate)originComponent).getComponentInstances().values().stream().filter(i -> i.getUniqueId().equals(ownerId)).findFirst();
+            if(instanceOpt.isPresent()){
                 substitutedName.append(instanceOpt.get().getNormalizedName()).append(PATH_DELIMITER);
                 ToscaElement getOriginRes = getOriginComponent(componentsCache, instanceOpt.get(), originGetter);
                 appendNameRecursively(componentsCache, getOriginRes, instanceIdIter, substitutedName, originGetter);
-            } else if (MapUtils.isNotEmpty(((TopologyTemplate) originComponent).getGroups())) {
-                Optional<GroupDataDefinition> groupOpt = ((TopologyTemplate) originComponent).getGroups().values().stream().filter(g -> g.getUniqueId().equals(ownerId)).findFirst();
+            } else if(MapUtils.isNotEmpty(((TopologyTemplate)originComponent).getGroups())){
+                Optional<GroupDataDefinition> groupOpt = ((TopologyTemplate)originComponent).getGroups().values().stream().filter(g -> g.getUniqueId().equals(ownerId)).findFirst();
                 groupOpt.ifPresent(groupDataDefinition -> substitutedName.append(groupDataDefinition.getName()).append(PATH_DELIMITER));
             } else {
                 log.debug("Failed to find an capability owner with uniqueId {} on a component with uniqueId {}", ownerId, originComponent.getUniqueId());
@@ -389,24 +400,23 @@ public class CapabilityRequirementNameResolver {
         }
     }
 
-    private static List<String> getReducedPathByOwner(List<String> path, String ownerId) {
+    private static List<String> getReducedPathByOwner(List<String> path , String ownerId) {
         log.debug("ownerId {}, path {} ", ownerId, path);
-        if (CollectionUtils.isEmpty(path)) {
+        if ( CollectionUtils.isEmpty(path) ){
             log.debug("cannot perform reduce by owner, path to component is empty");
             return path;
         }
-        if (isBlank(ownerId)) {
+        if ( isBlank(ownerId) ){
             log.debug("cannot perform reduce by owner, component owner is empty");
             return path;
         }
         //reduce by owner
-        Map map = path.stream().collect(Collectors.toMap(it -> dropLast(it, PATH_DELIMITER), Function.identity(), (a, b) -> a.endsWith(ownerId) ? a : b));
+        Map map = path.stream().collect( Collectors.toMap( it -> dropLast(it, PATH_DELIMITER) , Function.identity() , (a , b ) ->  a.endsWith(ownerId) ? a : b ));
         //reduce list&duplicates and preserve order
-        return path.stream().distinct().filter(it -> map.values().contains(it)).collect(Collectors.toList());
+        return path.stream().distinct().filter(it -> map.values().contains(it) ).collect(Collectors.toList());
     }
-
-    private static String dropLast(String path, String delimiter) {
-        if (isBlank(path) || isBlank(delimiter)) {
+    private static String dropLast( String path, String delimiter ) {
+        if (isBlank(path) || isBlank(delimiter)){
             return path;
         }
         return path.substring(0, path.lastIndexOf(delimiter));

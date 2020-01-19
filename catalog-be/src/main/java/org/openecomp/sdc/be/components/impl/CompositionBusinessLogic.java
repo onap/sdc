@@ -22,6 +22,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -29,10 +30,11 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.Collection;
 import java.util.Map.Entry;
@@ -47,7 +49,7 @@ import java.util.stream.Collectors;
 @Component("compositionBusinessLogic")
 public class CompositionBusinessLogic {
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-
+    private static final Logger log = Logger.getLogger(CompositionBusinessLogic.class.getName());
     private static final int VFC_CANVAS_ELEMENT_SIZE = 50;
     private static final int CP_CANVAS_ELEMENT_SIZE = 21;
     private static final int CANVAS_WIDTH = 1000;
@@ -73,15 +75,9 @@ public class CompositionBusinessLogic {
             // Set Relative Locations According to Canvas Size
             componentInstanceLocations.entrySet().forEach(this::setRelativePosition);
             // Update in DB
-            componentInstanceBusinessLogic.updateComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME,resource.getUniqueId(),
-                    userId, resource.getComponentInstances(), false)
-                    .left()
-                    .on(this::throwComponentException);
+            componentInstanceBusinessLogic.updateComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME,resource, resource.getUniqueId(),
+                    userId, resource.getComponentInstances(), false);
         }
-    }
-
-    private List<ComponentInstance> throwComponentException(ResponseFormat responseFormat) {
-        throw new ByResponseFormatComponentException(responseFormat);
     }
 
     private void setRelativePosition(Entry<ImmutablePair<Double, Double>, ComponentInstance> entry) {
@@ -284,5 +280,19 @@ public class CompositionBusinessLogic {
         }
         return relativeElementPosition;
     }
+    protected void validateAndSetDefaultCoordinates(ComponentInstance resourceInstance) {
+        int xCenter =  CANVAS_WIDTH / 2;
+        int yCenter = CANVAS_HEIGHT / 2;
+        double leftLimit = -10D;
+        double rightLimit = -1D;
+        double generatedDouble = leftLimit + new SecureRandom().nextDouble() * (rightLimit - leftLimit);
+
+        if (StringUtils.isEmpty(resourceInstance.getPosX())|| StringUtils.isEmpty(resourceInstance.getPosY())){
+            resourceInstance.setPosX(calculateCompositionPosition(xCenter, generatedDouble, resourceInstance));
+            resourceInstance.setPosY(calculateCompositionPosition(yCenter, generatedDouble, resourceInstance));
+            log.debug("Missing Failed PosX/PosY values. new values generated automatically. PosX = {} and PosY = {}", resourceInstance.getPosX(), resourceInstance.getPosY());
+        }
+    }
+
 
 }

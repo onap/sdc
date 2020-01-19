@@ -23,6 +23,12 @@ import {PopoverModule} from "../popover/popover.module";
 import {TooltipModule} from "../tooltip/tooltip.module";
 import {DynamicElementComponent} from "./dynamic-element.component";
 import {FormElementsModule} from "../form-components/form-elements.module";
+// import {SdcUiComponentsModule} from "sdc-ui/lib/angular";
+// import {SdcUiComponentsModule} from "sdc-ui/lib/angular/index";
+// import {SdcUiComponentsModule} from "onap-ui/lib/angular";
+import { SdcUiComponentsModule } from "onap-ui-angular";
+
+import { CommonModule } from '@angular/common';
 
 @NgModule({
     declarations: [
@@ -31,7 +37,9 @@ import {FormElementsModule} from "../form-components/form-elements.module";
     imports: [
         PopoverModule,
         TooltipModule,
-        FormElementsModule
+        FormElementsModule,
+        SdcUiComponentsModule,
+        CommonModule
     ],
     exports: [
         DynamicElementComponent

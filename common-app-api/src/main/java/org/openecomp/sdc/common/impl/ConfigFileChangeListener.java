@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,111 +35,111 @@ import java.util.Map;
 
 public class ConfigFileChangeListener extends FileChangeListener {
 
-    private static Logger log = Logger.getLogger(ConfigFileChangeListener.class.getName());
+	private static Logger log = Logger.getLogger(ConfigFileChangeListener.class.getName());
 
-    private Map<String, List<ConfigurationListener>> fileChangeToCallBack = new HashMap<>();
+	private Map<String, List<ConfigurationListener>> fileChangeToCallBack = new HashMap<>();
 
-    private Object lock = new Object();
+	private Object lock = new Object();
 
-    private YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
+	private YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
 
-    @Override
-    public void onFileChange(File pFile) {
+	@Override
+	public void onFileChange(File pFile) {
 
-        super.onFileChange(pFile);
+		super.onFileChange(pFile);
 
-        if (pFile != null) {
+		if (pFile != null) {
 
-            if (fileChangeToCallBack != null) {
+			if (fileChangeToCallBack != null) {
 
-                String id = findIdFromFileName(pFile.getName());
+				String id = findIdFromFileName(pFile.getName());
 
-                if (id != null) {
+				if (id != null) {
 
-                    List<ConfigurationListener> listeners = fileChangeToCallBack.get(id);
-                    if (listeners != null) {
-                        for (ConfigurationListener configurationListener : listeners) {
+					List<ConfigurationListener> listeners = fileChangeToCallBack.get(id);
+					if (listeners != null) {
+						for (ConfigurationListener configurationListener : listeners) {
 
-                            Class<? extends BasicConfiguration> configClass = configurationListener.getType();
+							Class<? extends BasicConfiguration> configClass = configurationListener.getType();
 
-                            BasicConfiguration basicConfiguration = yamlToObjectConverter.convert(pFile.getAbsolutePath(), configClass);
+							BasicConfiguration basicConfiguration = yamlToObjectConverter.convert(pFile.getAbsolutePath(), configClass);
 
-                            if (basicConfiguration == null) {
-                                log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Cannot update the listeners for file Change since the file content is invalid");
-                                continue;
-                            }
-                            log.debug("Loaded configuration after converting is {}", basicConfiguration);
+							if (basicConfiguration == null) {
+								log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Cannot update the listeners for file Change since the file content is invalid");
+								continue;
+							}
+							log.debug("Loaded configuration after converting is {}", basicConfiguration);
 
 
-                            configurationListener.getCallBack().reconfigure(basicConfiguration);
+							configurationListener.getCallBack().reconfigure(basicConfiguration);
 
-                        }
-                    }
-                } else {
+						}
+					}
+				} else {
 
-                    log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Cannot calculate id from file {}", pFile.getName());
-                }
-            }
+					log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Cannot calculate id from file {}", pFile.getName());
+				}
+			}
 
-        }
+		}
 
-        log.debug("File {} was changed.", pFile);
-    }
+		log.debug("File {} was changed.", pFile);
+	}
 
-    private String findIdFromFileName(String name) {
+	private String findIdFromFileName(String name) {
 
-        String result = null;
-        if (name != null) {
-            int startIndex = 0;
-            int endIndex = name.length();
-            if (name.contains(File.separator)) {
-                startIndex = name.lastIndexOf(File.separator);
-            }
-            // String subNameString = name.substring(startIndex, endIndex);
-            // if (subNameString.contains(".")) {
-            // endIndex = subNameString.indexOf(".");
-            // }
+		String result = null;
+		if (name != null) {
+			int startIndex = 0;
+			int endIndex = name.length();
+			if (name.contains(File.separator)) {
+				startIndex = name.lastIndexOf(File.separator);
+			}
+			// String subNameString = name.substring(startIndex, endIndex);
+			// if (subNameString.contains(".")) {
+			// endIndex = subNameString.indexOf(".");
+			// }
 
-            result = name.substring(startIndex, endIndex);
+			result = name.substring(startIndex, endIndex);
 
-        }
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    public void register(String id, ConfigurationListener configurationListener) {
+	public void register(String id, ConfigurationListener configurationListener) {
 
-        if (configurationListener != null) {
+		if (configurationListener != null) {
 
-            synchronized (lock) {
+			synchronized (lock) {
 
-                List<ConfigurationListener> callbacks = fileChangeToCallBack.get(id);
-                if (callbacks == null) {
-                    callbacks = new ArrayList<>();
-                    fileChangeToCallBack.put(id, callbacks);
-                }
-                callbacks.add(configurationListener);
+				List<ConfigurationListener> callbacks = fileChangeToCallBack.get(id);
+				if (callbacks == null) {
+					callbacks = new ArrayList<>();
+					fileChangeToCallBack.put(id, callbacks);
+				}
+				callbacks.add(configurationListener);
 
-            }
+			}
 
-        }
+		}
 
-    }
+	}
 
-    // public void notify(String id, BasicConfiguration object) {
-    //
-    // if (fileChangeToCallBack != null) {
-    // List<ConfigurationListener> listeners = fileChangeToCallBack
-    // .get(id);
-    // if (listeners != null) {
-    // for (ConfigurationListener configurationListener : listeners) {
-    //
-    // configurationListener.getCallBack().reconfigure(object);
-    //
-    // }
-    // }
-    // }
-    //
-    // }
+	// public void notify(String id, BasicConfiguration object) {
+	//
+	// if (fileChangeToCallBack != null) {
+	// List<ConfigurationListener> listeners = fileChangeToCallBack
+	// .get(id);
+	// if (listeners != null) {
+	// for (ConfigurationListener configurationListener : listeners) {
+	//
+	// configurationListener.getCallBack().reconfigure(object);
+	//
+	// }
+	// }
+	// }
+	//
+	// }
 
 }

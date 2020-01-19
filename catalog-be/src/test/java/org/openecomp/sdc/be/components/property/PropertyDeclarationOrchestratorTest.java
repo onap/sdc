@@ -191,7 +191,7 @@ public class PropertyDeclarationOrchestratorTest {
 		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
 		List<ComponentInstancePropInput> value = new LinkedList<>();
 		componentInstanceProperties.put("mock", value);
-		componentInstInputsMap.setComponentInstanceProperties(componentInstanceProperties);
+		componentInstInputsMap.setComponentInstancePropInput(componentInstanceProperties);
 		PropertyDeclarator result;
 
 		// default test

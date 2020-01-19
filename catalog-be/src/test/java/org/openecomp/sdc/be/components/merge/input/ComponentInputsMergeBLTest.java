@@ -104,6 +104,23 @@ public class ComponentInputsMergeBLTest extends BaseComponentInputsMerge {
     }
 
     @Test
+    public void identifyAlreadyExistingInputsAndDontMergeThemIntoNewComponent() {
+        List<InputDefinition> prevDeclaredInputs = ObjectGenerator.buildInputs("declared1", "declared2", "input1");
+        List<InputDefinition> prevDeclaredInputsNotPresentInCurrent = ObjectGenerator.buildInputs("declared1", "declared2");
+        List<InputDefinition> currInputsPreMerge = new ArrayList<>(currResource.getInputs());
+        when(declaredInputsResolver.getPreviouslyDeclaredInputsToMerge(eq(prevResource), eq(currResource), getInputPropertiesCaptor.capture())).thenReturn(prevDeclaredInputs);
+        List<InputDefinition> expectedInputsToUpdate = union(currInputsPreMerge, prevDeclaredInputsNotPresentInCurrent);
+        when(toscaOperationFacade.updateInputsToComponent(expectedInputsToUpdate, RESOURCE_ID)).thenReturn(Either.left(null));
+        doCallRealMethod().when(inputsValuesMergingBusinessLogic).mergeComponentInputs(Mockito.anyList(), Mockito.anyList());
+        ActionStatus actionStatus = testInstance.mergeComponents(prevResource, currResource);
+        assertThat(actionStatus).isEqualTo(ActionStatus.OK);
+        assertThat(currResource.getInputs()).containsExactlyInAnyOrderElementsOf(expectedInputsToUpdate);
+        verifyCallToMergeComponentInputs(prevResource, currInputsPreMerge);
+        verifyPropertiesPassedToDeclaredInputsResolver();
+    }
+
+
+    @Test
     public void whenFailingToUpdateInputs_propagateTheError() {
         Resource newResource = new ResourceBuilder().setUniqueId(RESOURCE_ID).build();
         when(toscaOperationFacade.updateInputsToComponent(emptyList(), RESOURCE_ID)).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));

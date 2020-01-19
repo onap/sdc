@@ -50,9 +50,9 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.AdditionalInformationOperation;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
@@ -62,7 +62,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -80,7 +79,7 @@ public class AdditionalInformationBusinessLogicTest {
 	@Mock
 	private JanusGraphDao janusGraphDao;
 	@Mock
-	private IAdditionalInformationOperation additionalInformationOperation;
+	private AdditionalInformationOperation additionalInformationOperation;
 	@Mock
 	private Resource resource;
 
@@ -108,7 +107,7 @@ public class AdditionalInformationBusinessLogicTest {
 		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 		configurationManager.setConfiguration(new Configuration());
 		configurationManager.getConfiguration().setAdditionalInformationMaxNumberOfKeys(0);
-		when(additionalInformationBusinessLogic.validateUserExists(anyString(), anyString(), eq(false))).thenReturn(user);
+		when(additionalInformationBusinessLogic.validateUserExists(anyString())).thenReturn(user);
 		when(toscaOperationFacade.getToscaElement(ArgumentMatchers.eq("resourceId"), ArgumentMatchers.eq(JsonParseFlagEnum.ParseMetadata))).thenReturn(Either.left(resource));
 		when(graphLockOperation.lockComponent(resourceId, nodeType)).thenReturn(StorageOperationStatus.OK);
 		when(additionalInformationOperation.getNumberOfAdditionalInformationParameters(nodeType,resourceId,true)).thenReturn(Either.left(0));

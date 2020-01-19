@@ -1,0 +1,14 @@
+{
+  "distributionStatusOfServiceList": [
+    {
+      "distributionID": "d2595f62-ab0f-445a-a3fd-2899489f3fa9",
+      "timestamp": "2019-08-05 12:19:19.043 UTC",
+      "userId": "Aretha Franklin(op0001)",
+      "deployementStatus": "Deployed"
+    },{
+      "distributionID": "9a5b5a9d-5d52-40df-bd62-fe71e7c01b85",
+      "timestamp": "2019-07-25 09:47:55.849 UTC",
+      "userId": "Aretha Franklin(op0001)",
+      "deployementStatus": "Distributed"
+    }]
+}

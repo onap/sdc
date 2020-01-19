@@ -1,0 +1,29 @@
+<div class="edit-module-name">
+    <div class="edit-module-name-label vfInstance-name" data-tests-id="popover-vfinstance-name" sdc-tooltip [tooltip-text]="selectModule.vfInstanceName">{{selectModule.vfInstanceName}}</div>
+    <div class="edit-module-name-heatName">
+        <sdc-input #heatName [maxLength]="50"
+            [(value)]="selectModule.heatName" 
+            [testId]="'popover-heat-name'"
+            [placeHolder]="'Enter Name'">
+        </sdc-input>
+        <sdc-validation [validateElement]="heatName">
+            <sdc-regex-validator [message]="'Special characters not allowed.'" [pattern]="pattern"></sdc-regex-validator>
+        </sdc-validation>
+    </div>
+    <div class="edit-module-name-label module-name" data-tests-id="'popover-module-name'" sdc-tooltip [tooltip-text]="selectModule.moduleName">{{selectModule.moduleName}}</div>
+    <sdc-button class="edit-module-name-btn cancel-button"
+        [text]="'Cancel'"
+        [testId]="'popover-close-button'"
+        [type]="'primary'"
+        [size] = "'small'"
+        (click)="clickButton(false)">
+    </sdc-button>
+    <sdc-button class="edit-module-name-btn save-button"
+        [text]="'Save'"
+        [testId]="'popover-save-button'"
+        [type]="'primary'"
+        [size] = "'small'"
+        (click)="clickButton(true)"
+        [disabled]="selectModule.heatName == originalName">
+    </sdc-button>
+</div>

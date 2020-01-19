@@ -36,7 +36,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     @Input() isMovable: boolean;
     @Input() input: ModalModel;
     @Input() dynamicContent: any;
-    @ViewChild('dynamicContentContainer', { read: ViewContainerRef }) dynamicContentContainer: ViewContainerRef; //Allows for custom component as body instead of simple message. See ModalService.createActionModal for implementation details, and HttpService's catchError() for example.
+    @ViewChild('dynamicContentContainer', { read: ViewContainerRef }) dynamicContentContainer: ViewContainerRef; //Allows for custom component as body instead of simple message. See ModalService.createActionModal for implementation details, and HttpHelperService's catchError() for example.
     private modalElement: JQuery;
 
     constructor( el: ElementRef ) {

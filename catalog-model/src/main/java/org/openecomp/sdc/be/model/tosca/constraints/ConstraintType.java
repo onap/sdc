@@ -27,7 +27,7 @@ public enum ConstraintType {
 
 	EQUAL("equal", "equal"),
 
-	IN_RANGE("inRange","in_range"),
+    IN_RANGE("inRange", "in_range"),
 
     GREATER_THAN("greaterThan", "greater_than"),
 

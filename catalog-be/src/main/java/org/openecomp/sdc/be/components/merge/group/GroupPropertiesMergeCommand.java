@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.GroupDefinition;
@@ -116,7 +117,7 @@ public class GroupPropertiesMergeCommand implements VspComponentsMergeCommand, C
         if (isEmpty(groupsToUpdate)) {
             return ActionStatus.OK;
         }
-        return groupsOperation.updateGroups(currentComponent, groupsToUpdate, false)
+        return groupsOperation.updateGroups(currentComponent, groupsToUpdate, PromoteVersionEnum.MINOR)
                 .either(updatedGroups -> ActionStatus.OK,
                         err -> componentsUtils.convertFromStorageResponse(err, currentComponent.getComponentType()));
     }

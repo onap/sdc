@@ -56,19 +56,6 @@ public class RepresentationUtilsTest  {
         result = RepresentationUtils.toRepresentation(elementToRepresent);
     }
 
-
-
-
-    @Test
-    public void testConvertJsonToArtifactDefinition() throws Exception {
-        String content = "";
-        Class<ArtifactDefinition> clazz = null;
-        ArtifactDefinition result;
-
-        // default test
-        result = RepresentationUtils.convertJsonToArtifactDefinition(content, clazz);
-    }
-
     @Test
     public void checkIsEmptyFiltering() throws Exception {
         HashMap<String, Operation> op = new HashMap<>();

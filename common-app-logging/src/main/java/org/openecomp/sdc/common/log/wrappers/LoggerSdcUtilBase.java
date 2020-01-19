@@ -1,23 +1,3 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
 package org.openecomp.sdc.common.log.wrappers;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +11,12 @@ import java.util.StringTokenizer;
 
 import static java.net.HttpURLConnection.*;
 
+/**
+ * Created by dd4296 on 12/20/2017.
+ *
+ * base class for metric and audit log logging
+ * holding the specific logic for data extraction
+ */
 public class LoggerSdcUtilBase {
 
     protected static Logger log = LoggerFactory.getLogger(LoggerSdcUtilBase.class.getName());
@@ -92,8 +78,9 @@ public class LoggerSdcUtilBase {
             case HTTP_BAD_METHOD:
             case HTTP_PROXY_AUTH:
                 return true;
-            default: return false;
         }
+
+        return false;
     }
 
     private boolean isDataError(int httpResponseCode) {
@@ -106,8 +93,9 @@ public class LoggerSdcUtilBase {
             case HTTP_ENTITY_TOO_LARGE:
             case HTTP_UNSUPPORTED_TYPE:
                 return true;
-            default: return false;
         }
+
+        return false;
     }
 
     private boolean isSchemaError(int httpResponseCode) {
@@ -199,6 +187,9 @@ public class LoggerSdcUtilBase {
     }
 
     private boolean isFound(String value) {
-        return  (StringUtils.isNotEmpty(value));
+        if (StringUtils.isNotEmpty(value)) {
+            return true;
+        }
+        return false;
     }
 }

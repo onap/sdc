@@ -22,7 +22,9 @@ package org.openecomp.sdc.be.components.impl.policy;
 
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.utils.GroupUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -39,7 +41,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 public class PolicyTargetsUpdater {
 
     public void removeTarget(List<PolicyDefinition> policies, String targetId, PolicyTargetType targetType) {
-        policies.forEach(policy -> removePolicyTarget(policy, targetId, targetType));
+        policies.forEach(policy ->removePolicyTarget(policy, targetId, targetType));
     }
 
     public void replaceTarget(List<PolicyDefinition> policies, String oldTargetId, String newTargetId, PolicyTargetType targetType) {
@@ -52,6 +54,7 @@ public class PolicyTargetsUpdater {
             return;
         }
         policyTargets.replaceAll(prevInstanceIdByNewInstanceId(oldTargetId, newTargetId));
+        policyDefinition.setVersion(GroupUtils.updateVersion(PromoteVersionEnum.MINOR, policyDefinition.getVersion()));
     }
 
     private void removePolicyTarget(PolicyDefinition policy, String targetId, PolicyTargetType targetType) {
@@ -59,7 +62,9 @@ public class PolicyTargetsUpdater {
         if (isEmpty(policyTargets)) {
             return;
         }
+        
         policyTargets.remove(targetId);
+        policy.setVersion(GroupUtils.updateVersion(PromoteVersionEnum.MINOR, policy.getVersion()));
     }
 
     private List<String> getTargetsList(PolicyDefinition policyDefinition, PolicyTargetType targetType) {

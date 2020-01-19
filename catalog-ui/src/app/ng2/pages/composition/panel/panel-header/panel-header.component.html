@@ -1,30 +1,23 @@
-<!--
-  ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
- 
-<div class="component-details-panel-header" data-tests-id="w-sdc-designer-sidebar-head">
-    
+<div *ngIf="selectedComponent" class="component-details-panel-header" data-tests-id="w-sdc-designer-sidebar-head">
     <div class="icon">
-        <div class="large {{iconClassName}}">
-            <div [ngClass]="{'non-certified': nonCertified}" tooltip="Not certified"></div>
-        </div>
+        <div *ngIf="iconClassName; else svgIcon" class="large {{iconClassName}}"></div>
+        <ng-template #svgIcon>
+            <sdc-element-icon
+                    [elementType]="selectedComponent.componentType === 'RESOURCE' ? selectedComponent.resourceType: (selectedComponent.originType || selectedComponent.componentType)"
+                    [iconName]="selectedComponent.icon"
+                    [uncertified]="!isTopologyTemplateSelected && selectedComponent.lifecycleState && 'CERTIFIED' !== selectedComponent.lifecycleState"></sdc-element-icon>
+        </ng-template>
     </div>
 
-    <div class="title" data-tests-id="selectedCompTitle" tooltip="&#8203;{{name}}">{{name}}</div>
+    <div class="title" data-tests-id="selectedCompTitle" tooltip="&#8203;{{selectedComponent.name}}">
+        {{selectedComponent.name}}
+    </div>
 
-    <svg-icon-label *ngIf="!isViewOnly" name="edit-file-o" clickable="true" size="small" class="rename-instance" data-tests-id="renameInstance" (click)="renameInstance()"></svg-icon-label>
-    <svg-icon-label *ngIf="!isViewOnly" name="trash-o" clickable="true" size="small" class="delete-instance" data-tests-id="deleteInstance" (click)="deleteInstance()"></svg-icon-label>
-    
+    <svg-icon-label *ngIf="!isViewOnly && !isTopologyTemplateSelected && !selectedComponent.archived" name="edit-file-o"
+                    clickable="true" size="small" class="rename-instance" data-tests-id="renameInstance"
+                    (click)="renameInstance()"></svg-icon-label>
+    <svg-icon-label *ngIf="!isViewOnly && !isTopologyTemplateSelected && !selectedComponent.archived" name="trash-o"
+                    clickable="true" size="small" class="delete-instance" data-tests-id="deleteInstance"
+                    (click)="deleteInstance()"></svg-icon-label>
+
 </div>

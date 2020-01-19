@@ -22,51 +22,18 @@
 @sdcui_color_purple: #9063cd;
 @sdcui_color_light-purple: #caa2dd;
 
-/* override sdc-ui library tabs */
-body.composition {
-
-    .sdc-tabs {
-        .sdc-tab {
-            background-color: @sdcui_color_white;
-            border: 1px solid @sdcui_color_silver;
-            border-left: none;
-            display: inline-block;
-            height: 36px;
-            text-align: center;
-            cursor: pointer;
-            padding: 2px 10px 0 10px;
-            margin: 0;
-    
-    
-            &:first-child {
-                border-left: 1px solid @sdcui_color_silver;
-            }
-            &.sdc-tab-active {
-                background-color: @sdcui_color_silver;
-            }
-            &[disabled] {
-                opacity: 0.3;
-                cursor: default;
-            }
-        }
-        &.sdc-tabs-header {
-            .sdc-tab {
-                font-size: 24px;
-            }
-        }
-        &.sdc-tabs-menu {
-            .sdc-tab {
-                font-size: 14px;
-                padding: 0px 10px 4px 10px;
-            }
-        }
-        .sdc-tab-content {
-            margin-top: 0;
-        }
-    }
-    
+.sdc-modal .sdc-modal__wrapper .sdc-modal__header {
+    height:auto;
 }
 //override sdc-ui version 53 css, used by onboarding. This can be removed after we update past version 42
 sdc-modal {
     position: static !important;
+}
+
+.sdc-modal .sdc-modal__wrapper .sdc-modal__header {
+    height: auto;
+}
+
+.sdc-menu-list {
+    z-index: 9999999;
 }
