@@ -20,29 +20,27 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import java.util.Map;
-import org.onap.sdc.tosca.datatypes.model.ScalarUnitValidator;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+
+import java.util.Map;
 
 public class HeatNumberValidator implements PropertyTypeValidator {
 
     private static HeatNumberValidator numberValidator = new HeatNumberValidator();
 
-    private final FloatValidator floatValidator = FloatValidator.getInstance();
-    private final IntegerValidator integerValidator = IntegerValidator.getInstance();
-    private final ScalarUnitValidator scalarUnitValidator = ScalarUnitValidator.getInstance();
+    private static FloatValidator floatValidator = FloatValidator.getInstance();
+    private static IntegerValidator integerValidator = IntegerValidator.getInstance();
 
     public static HeatNumberValidator getInstance() {
         return numberValidator;
     }
 
     private HeatNumberValidator() {
+
     }
 
     @Override
-    public boolean isValid(final String value,
-                           final String innerType,
-                           final Map<String, DataTypeDefinition> allDataTypes) {
+    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 
         if (value == null || value.isEmpty()) {
             return true;
@@ -53,15 +51,11 @@ public class HeatNumberValidator implements PropertyTypeValidator {
             valid = floatValidator.isValid(value, null, allDataTypes);
         }
 
-        if(!valid) {
-            valid = scalarUnitValidator.isScalarUnit(value);
-        }
-
         return valid;
     }
 
     @Override
-    public boolean isValid(final String value, final String innerType) {
+    public boolean isValid(String value, String innerType) {
         return isValid(value, innerType, null);
     }
 }

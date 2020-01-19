@@ -1,0 +1,11 @@
+<div class="deployment-page">
+    <deployment-graph></deployment-graph>
+    <panel-wrapper-component>
+        <sdc-tabs class="deployment-tabs" [iconsSize]="'large'" [isVertical]="true">
+            <sdc-tab *ngFor="let tab of tabs" [titleIcon]="tab.titleIcon" [active]="tab.isActive"
+                     [tooltipText]="tab.tooltipText">
+                <hierarchy-tab *ngIf="isDataAvailable" [isViewOnly]="(isViewOnly$ | async)"></hierarchy-tab>
+            </sdc-tab>
+        </sdc-tabs>
+    </panel-wrapper-component>
+</div>

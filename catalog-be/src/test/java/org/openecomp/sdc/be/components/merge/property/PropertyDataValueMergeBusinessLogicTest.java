@@ -39,7 +39,11 @@ import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -299,9 +303,20 @@ public class PropertyDataValueMergeBusinessLogicTest {
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         assertEquals("lprop",  "[{\"prop2\":{\"prop4\":45,\"prop3\":true},\"prop1\":\"val1\"},{\"prop2\":{\"prop3\":false},\"prop1\":\"val2\"}]", newProp.getValue());
     }
-    
-    
-    
+
+    @Test
+    public void mergeListOfMapsWithJsonAsInnerType() throws Exception {
+        PropertyDataDefinition oldProp = createProp("value_spec", "list", "json", "[{\"prop1\":\"val1\", \"prop2\":\"prop3\",\"prop4\":44}]");
+        PropertyDataDefinition newProp = createProp("value_spec", "list", "json", "[{\"prop22\":{\"prop221\":45,\"prop222\":\"val222\",\"prop223\":\"false\"}}]");
+
+        Map<String, DataTypeDefinition> dataTypes = buildDataTypes();
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypes));
+        testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
+        assertEquals("value_spec", "[{\"prop22\":{\"prop223\":\"false\",\"prop221\":45,\"prop222\":\"val222\"}}]", newProp.getValue());
+    }
+
+
+
     /*
      * Old Property:                          New Property:                               Expected:                          
      * {                                      {                                           {

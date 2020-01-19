@@ -22,19 +22,14 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-
 import com.google.common.collect.ImmutableSet;
-import java.io.IOException;
 import org.junit.Test;
 import org.onap.sdc.gab.model.GABQuery;
 import org.onap.sdc.gab.model.GABQuery.GABQueryType;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class GenericArtifactBrowserBusinessLogicTest extends BaseBusinessLogicMock {
 

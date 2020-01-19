@@ -42,10 +42,18 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.regex.Pattern;
 
-import static org.openecomp.sdc.be.components.impl.ImportUtils.*;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
 
 public class CsarInfo {
     private static final Logger log = Logger.getLogger(CsarInfo.class);

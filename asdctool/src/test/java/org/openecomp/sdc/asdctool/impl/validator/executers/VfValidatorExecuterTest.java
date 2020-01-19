@@ -20,13 +20,14 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.mock;
 
 public class VfValidatorExecuterTest {
 

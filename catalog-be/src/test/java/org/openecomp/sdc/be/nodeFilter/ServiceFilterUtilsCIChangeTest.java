@@ -16,17 +16,9 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fj.data.Either;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -38,6 +30,15 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ServiceFilterUtilsCIChangeTest extends BaseServiceFilterUtilsTest {
 

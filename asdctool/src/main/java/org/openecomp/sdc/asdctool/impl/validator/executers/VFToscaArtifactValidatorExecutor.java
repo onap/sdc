@@ -27,11 +27,11 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 public class VFToscaArtifactValidatorExecutor extends ArtifactValidatorExecuter implements IArtifactValidatorExecuter{
 	

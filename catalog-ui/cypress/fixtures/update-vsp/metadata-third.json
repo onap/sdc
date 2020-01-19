@@ -1,0 +1,101 @@
+{
+    "artifacts": null,
+    "deploymentArtifacts": null,
+    "toscaArtifacts": null,
+    "categories": null,
+    "creatorUserId": null,
+    "creatorFullName": null,
+    "lastUpdaterUserId": null,
+    "lastUpdaterFullName": null,
+    "componentType": null,
+    "componentInstances": null,
+    "componentInstancesRelations": null,
+    "componentInstancesInputs": null,
+    "componentInstancesProperties": null,
+    "componentInstancesAttributes": null,
+    "capabilities": null,
+    "policies": null,
+    "requirements": null,
+    "inputs": null,
+    "groups": null,
+    "additionalInformation": null,
+    "interfaceOperations": null,
+    "interfaces": null,
+    "metadata": {
+        "uniqueId": "bdd600d5-81c6-400f-8b73-71f0051f4bb6",
+        "name": "test update vsp",
+        "version": "0.3",
+        "isHighestVersion": true,
+        "creationDate": 1572556130687,
+        "lastUpdateDate": 1572556130687,
+        "description": "test update vsp cypress",
+        "lifecycleState": "NOT_CERTIFIED_CHECKOUT",
+        "tags": [
+            "test update vsp"
+        ],
+        "icon": "defaulticon",
+        "normalizedName": "testupdatevsp",
+        "systemName": "TestUpdateVsp",
+        "contactId": "m08740",
+        "allVersions": {
+            "0.1": "92582379-f0d5-4655-a0f1-f92b3038d853",
+            "0.2": "09f56471-cb97-49f9-af25-44eaa1af1f05",
+            "0.3": "bdd600d5-81c6-400f-8b73-71f0051f4bb6"
+        },
+        "isDeleted": null,
+        "csarUUID": "4f66a9dfea784f7cbd3630d8f99bc1be",
+        "csarVersion": "2.0",
+        "importedToscaChecksum": "MTNiN2I2M2U4YWQ0ZWYxYjU2MTdjNWE4MjMxMTVkODE=",
+        "invariantUUID": "36caf708-82d4-432d-94df-b32a677272d9",
+        "componentType": "RESOURCE",
+        "categories": [
+            {
+                "name": "Network L2-3",
+                "normalizedName": "network l2-3",
+                "uniqueId": "resourceNewCategory.network l2-3",
+                "icons": null,
+                "subcategories": [
+                    {
+                        "name": "Gateway",
+                        "normalizedName": "gateway",
+                        "uniqueId": "resourceNewCategory.network l2-3.gateway",
+                        "icons": [
+                            "gateway"
+                        ],
+                        "groupings": null,
+                        "version": null,
+                        "ownerId": null,
+                        "empty": false,
+                        "type": null
+                    }
+                ],
+                "version": null,
+                "ownerId": null,
+                "empty": false,
+                "type": null
+            }
+        ],
+        "creatorUserId": "m08740",
+        "creatorFullName": "Carlos Santana",
+        "lastUpdaterUserId": "m08740",
+        "lastUpdaterFullName": "Carlos Santana",
+        "archiveTime": 0,
+        "vendorName": "test vlm",
+        "vendorRelease": "1.0",
+        "resourceVendorModelNumber": "",
+        "resourceType": "VF",
+        "isAbstract": null,
+        "cost": null,
+        "licenseType": null,
+        "toscaResourceName": "org.openecomp.resource.vf.TestUpdateVsp",
+        "derivedFrom": null,
+        "uuid": "e1696b35-b5b3-48b5-81d7-ba3e610ff0f5",
+        "archived": false,
+        "vspArchived": false
+    },
+    "derivedFrom": null,
+    "derivedList": null,
+    "properties": null,
+    "attributes": null,
+    "defaultCapabilities": null
+}

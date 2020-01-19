@@ -23,11 +23,11 @@
 package org.openecomp.sdc.fe.listen;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.io.Serializable;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.Serializable;
 
 public class MyObjectMapperProviderTest {
 
@@ -50,7 +50,7 @@ public class MyObjectMapperProviderTest {
 			+ "}";
 
 		ObjectMapper objectMapper = new MyObjectMapperProvider().getContext(MyObjectMapperProviderTest.class);
-		String serialized = objectMapper.writeValueAsString(new AnyModel("Field1"));
+		String serialized = objectMapper.writeValueAsString(new AnyModel("Field1")).replace("\r","");
 		Assert.assertEquals(serialized, prettyJson);
 	}
 }

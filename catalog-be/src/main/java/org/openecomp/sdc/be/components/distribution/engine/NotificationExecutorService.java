@@ -24,7 +24,11 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class NotificationExecutorService {
 

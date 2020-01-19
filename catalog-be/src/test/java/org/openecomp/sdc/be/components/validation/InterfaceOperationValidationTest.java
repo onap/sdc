@@ -16,16 +16,6 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.test.utils.InterfaceOperationTestUtils.createMockOperation;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +34,16 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.test.utils.InterfaceOperationTestUtils.createMockOperation;
 
 public class InterfaceOperationValidationTest {
 

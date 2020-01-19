@@ -19,17 +19,18 @@
  */
 package org.openecomp.sdc.be.utils;
 
-import static java.util.Collections.emptyMap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+
+import static java.util.Collections.emptyMap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 public class PropertyDefinitionUtilsTest {
 

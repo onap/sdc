@@ -19,6 +19,12 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.openecomp.sdc.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.ATTACHMENT_VIEW;
@@ -29,12 +35,6 @@ import static org.openecomp.sdc.ci.tests.pages.SoftwareProductOnboarding.XpathSe
 import static org.openecomp.sdc.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.ONBOARDING_LOADER_DIV;
 import static org.openecomp.sdc.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.PAGE_MAIN_DIV;
 import static org.openecomp.sdc.ci.tests.pages.SoftwareProductOnboarding.XpathSelector.SELECTED_NAV_BAR_GROUP_ITEM;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SoftwareProductOnboarding extends AbstractPageObject {
 

@@ -78,7 +78,7 @@ public class DistributionStatusNotification {
     }
 
     public boolean isDistributionCompleteNotification() {
-        return DistributionStatusNotificationEnum.DISTRIBUTION_COMPLETE_OK.equals(status) || DistributionStatusNotificationEnum.DISTRIBUTION_COMPLETE_ERROR.equals(status);
+        return DistributionStatusNotificationEnum.DISTRIBUTION_COMPLETE_OK == status || DistributionStatusNotificationEnum.DISTRIBUTION_COMPLETE_ERROR == status;
     }
 
     @Override

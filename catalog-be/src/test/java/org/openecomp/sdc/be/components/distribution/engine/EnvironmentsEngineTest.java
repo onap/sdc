@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import com.att.nsa.apiClient.credentials.ApiCredential;
 import fj.data.Either;
 import mockit.Deencapsulation;
 import org.apache.http.HttpStatus;
@@ -30,6 +29,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
@@ -43,9 +43,15 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -77,7 +83,7 @@ public class EnvironmentsEngineTest {
         Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> successEither = Either.left(entryList);
         when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED)).thenReturn(successEither);
         when(configurationManager.getDistributionEngineConfiguration()).thenReturn(distributionEngineConfiguration);
-        when(distributionEngineConfiguration.getEnvironments()).thenReturn(Arrays.asList("Env Loaded From Configuration"));
+        when(distributionEngineConfiguration.getEnvironments()).thenReturn(Collections.singletonList("Env Loaded From Configuration"));
         when(distributionEngineConfiguration.getUebPublicKey()).thenReturn("Dummy Public Key");
         when(distributionEngineConfiguration.getUebSecretKey()).thenReturn("Dummy Private Key");
         when(distributionEngineConfiguration.getUebServers()).thenReturn(
@@ -95,13 +101,13 @@ public class EnvironmentsEngineTest {
     @Test
     public void testGetFullOperationalEnvByIdSuccess() {
         String json = getFullOperationalEnvJson();
-        
+
         HttpResponse restResponse = new HttpResponse(json, HttpStatus.SC_OK, "Successfully completed");
         when(aaiRequestHandler.getOperationalEnvById(Mockito.anyString())).thenReturn(restResponse);
-        
+
         Either<OperationalEnvInfo, Integer> response = envEngine.getOperationalEnvById("DummyId");
         assertTrue("The operational environment request ran as not expected", response.isLeft());
-        
+
         OperationalEnvInfo operationalEnvInfo = response.left().value();
 
         assertEquals("The operational environment json is not as expected", operationalEnvInfo.toString(), json);
@@ -110,26 +116,26 @@ public class EnvironmentsEngineTest {
     @Test
     public void testGetPartialOperationalEnvByIdSuccess() {
         String json = getPartialOperationalEnvJson();
-        
+
         HttpResponse<String> restResponse = new HttpResponse<String>(json, HttpStatus.SC_OK, "Successfully completed");
         when(aaiRequestHandler.getOperationalEnvById(Mockito.anyString())).thenReturn(restResponse);
-        
+
         Either<OperationalEnvInfo, Integer> response = envEngine.getOperationalEnvById("DummyId");
         assertTrue("The operational environment request ran as not expected", response.isLeft());
-        
+
         OperationalEnvInfo operationalEnvInfo = response.left().value();
 
         assertEquals("The operational environment json is not as expected", operationalEnvInfo.toString(), json);
     }
 
-    
+
     @Test
     public void testGetOperationalEnvByIdFailedByJsonConvert() {
         String jsonCorrupted = getCorruptedOperationalEnvJson();
-        
+
         HttpResponse<String> restResponse = new HttpResponse<String>(jsonCorrupted, HttpStatus.SC_OK, "Successfully Completed");
         when(aaiRequestHandler.getOperationalEnvById(Mockito.anyString())).thenReturn(restResponse);
-        
+
         Either<OperationalEnvInfo, Integer> response = envEngine.getOperationalEnvById("DummyId");
         assertTrue("The operational environment request ran as not expected", response.isRight());
         assertEquals("The operational environment request status code is not as expected", (Integer)HttpStatus.SC_INTERNAL_SERVER_ERROR, response.right().value());
@@ -140,7 +146,7 @@ public class EnvironmentsEngineTest {
         String json = getFullOperationalEnvJson();
         HttpResponse<String> restResponse = new HttpResponse<String>(json, HttpStatus.SC_NOT_FOUND, "Not Found");
         when(aaiRequestHandler.getOperationalEnvById(Mockito.anyString())).thenReturn(restResponse);
-        
+
         Either<OperationalEnvInfo, Integer> response = envEngine.getOperationalEnvById("DummyId");
         assertTrue("The operational environment request ran as not expected", response.isRight());
         assertEquals("The operational environment request status code is not as expected", (Integer)HttpStatus.SC_NOT_FOUND, response.right().value());
@@ -164,6 +170,50 @@ public class EnvironmentsEngineTest {
         assertTrue(oe == returnedOe);
     }
 
+    @Test
+    public void getEnvironmentByDmaapUebAddressNoProperEnvironment() {
+        OperationalEnvironmentEntry opEnvEntry = createOpEnvEntry("1");
+        opEnvEntry.setDmaapUebAddress(new HashSet<>());
+        envEngine.addToMap(opEnvEntry);
+        assertThatThrownBy(() -> {
+            envEngine.getEnvironmentByDmaapUebAddress(Arrays.asList("11", "22"));})
+                .isInstanceOf(ComponentException.class);
+    }
+
+    @Test
+    public void getEnvironmentByDmaapUebAddressListWithEmptyList() {
+        OperationalEnvironmentEntry opEnvEntry = createOpEnvEntry("1");
+        opEnvEntry.setDmaapUebAddress(new HashSet<>(Arrays.asList("11","22")));
+        OperationalEnvironmentEntry opEnvEntry2 = createOpEnvEntry("2");
+        opEnvEntry2.setDmaapUebAddress(new HashSet<>(Arrays.asList("33","44","55")));
+        envEngine.addToMap(opEnvEntry);
+        envEngine.addToMap(opEnvEntry2);
+        assertThatThrownBy(() -> {
+            envEngine.getEnvironmentByDmaapUebAddress(new ArrayList<>());})
+                .isInstanceOf(ComponentException.class);
+    }
+
+    @Test
+    public void getEnvironmentByDmaapUebAddressList() {
+        OperationalEnvironmentEntry opEnvEntry = createOpEnvEntry("1");
+        opEnvEntry.setDmaapUebAddress(new HashSet<>(Arrays.asList("11","22")));
+        OperationalEnvironmentEntry opEnvEntry2 = createOpEnvEntry("2");
+        opEnvEntry2.setDmaapUebAddress(new HashSet<>(Arrays.asList("33","44","55")));
+        envEngine.addToMap(opEnvEntry);
+        envEngine.addToMap(opEnvEntry2);
+        assertThat(envEngine.getEnvironmentByDmaapUebAddress(Arrays.asList("77","22"))
+                .getEnvironmentId()).isEqualTo("1");
+
+        assertThat(envEngine.getEnvironmentByDmaapUebAddress(Arrays.asList("77","55"))
+                .getEnvironmentId()).isEqualTo("2");
+
+        assertThat(envEngine.getEnvironmentByDmaapUebAddress(Arrays.asList("11","44"))
+                .getEnvironmentId()).isEqualTo("1");
+    }
+
+
+
+
     private String getCorruptedOperationalEnvJson() {
         return "{\"OPERATIONAL-environment-name\":\"Op Env Name\","
                 + "\"OPERATIONAL-environment-type\":\"VNF\","
@@ -183,7 +233,7 @@ public class EnvironmentsEngineTest {
                 "\"relationship-list\":{" +
                 "\"relationship\":[]" +
                 "}" +
-             "}";
+                "}";
     }
 
     private String getFullOperationalEnvJson() {
@@ -213,7 +263,7 @@ public class EnvironmentsEngineTest {
                 "\"property-value\":\"OEname3\"" +
                 "}]}]}}";
     }
-    
+
     private OperationalEnvironmentEntry createOpEnvEntry(String name) {
         OperationalEnvironmentEntry entry = new OperationalEnvironmentEntry();
         entry.setEnvironmentId(name);

@@ -39,17 +39,19 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
-import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
+
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -332,6 +334,14 @@ public abstract class Component implements PropertiesOwner {
         return allArtifacts;
     }
 
+    Optional<ArtifactDefinition> getArtifact(String id) {
+        HashMap<String, ArtifactDefinition> allArtifacts = new HashMap<>();
+        allArtifacts.putAll(Optional.ofNullable(this.artifacts).orElse(emptyMap()));
+        allArtifacts.putAll(Optional.ofNullable(this.deploymentArtifacts).orElse(emptyMap()));
+        allArtifacts.putAll(Optional.ofNullable(this.toscaArtifacts).orElse(emptyMap()));
+        return Optional.ofNullable(allArtifacts.get(id));
+    }
+
     public List<CategoryDefinition> getCategories() {
         return categories;
     }
@@ -430,8 +440,36 @@ public abstract class Component implements PropertiesOwner {
         return componentInstancesProperties == null ? emptyMap() : componentInstancesProperties;
     }
 
+    public Map<String, List<ComponentInstanceProperty>> safeGetUiComponentInstancesProperties() {
+        return componentInstancesProperties == null ? emptyMap() : findUiComponentInstancesProperties();
+    }
+
+    private Map<String,List<ComponentInstanceProperty>> findUiComponentInstancesProperties() {
+        List<String> instancesFromUi = componentInstances.stream()
+                .filter(i->!i.isCreatedFromCsar())
+                .map(ComponentInstance::getUniqueId)
+                .collect(Collectors.toList());
+        return componentInstancesProperties.entrySet().stream()
+                .filter(e -> instancesFromUi.contains(e.getKey()))
+                .collect(Collectors.toMap(e->e.getKey(), e->e.getValue()));
+    }
+
     public Map<String, List<ComponentInstanceInput>> safeGetComponentInstancesInputs() {
         return componentInstancesInputs == null ? emptyMap() : componentInstancesInputs;
+    }
+
+    public Map<String, List<ComponentInstanceInput>> safeGetUiComponentInstancesInputs() {
+        return componentInstancesInputs == null ? emptyMap() : findUiComponentInstancesInputs();
+    }
+
+    private Map<String,List<ComponentInstanceInput>> findUiComponentInstancesInputs() {
+        List<String> instancesFromUi = componentInstances.stream()
+                .filter(i->!i.isCreatedFromCsar())
+                .map(ComponentInstance::getUniqueId)
+                .collect(Collectors.toList());
+        return componentInstancesInputs.entrySet().stream()
+                .filter(e -> instancesFromUi.contains(e.getKey()))
+                .collect(Collectors.toMap(e->e.getKey(), e->e.getValue()));
     }
 
     public List<ComponentInstanceProperty> safeGetComponentInstanceProperties(String cmptInstacneId) {
@@ -1029,5 +1067,17 @@ public abstract class Component implements PropertiesOwner {
     public Boolean isVspArchived() { return componentMetadataDefinition.getMetadataDataDefinition().isVspArchived();	}
 
     public void setVspArchived(Boolean vspArchived) { componentMetadataDefinition.getMetadataDataDefinition().setVspArchived(vspArchived); }
+
+    //supportability log method return map of component metadata teddy.h
+    public Map<String,String> getComponentMetadataForSupportLog(){
+        Map<String,String>componentMetadata=new HashMap<>();
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME,this.getName());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION,this.getVersion());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID,this.getUUID());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID,this.getCsarUUID());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION,this.getCsarVersion());
+        return componentMetadata;
+    }
+
 
 }

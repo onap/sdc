@@ -32,7 +32,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CheckinTest extends LifecycleTestBase {
@@ -44,8 +43,7 @@ public class CheckinTest extends LifecycleTestBase {
 
         super.setup();
         // checkout transition object
-        checkinObj = new CheckinTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
+        checkinObj = new CheckinTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,  janusGraphDao, vesionUpdateHandler);
         checkinObj.setLifeCycleOperation(toscaElementLifecycleOperation);
         checkinObj.setConfigurationManager(configurationManager);
     }

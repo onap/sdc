@@ -17,11 +17,9 @@ from importCommon import *
 #		python importUsers.py [-f <input file> | --ifile=<input file> ]												 				           									#
 #																																		       									#
 #################################################################################################################################################################################
-def import_element(scheme, be_host, be_port, admin_user, exit_on_success, file_dir, url_suffix, element_name,
-                   element_form_name,
+def import_element(scheme, be_host, be_port, admin_user, exit_on_success, file_dir, url_suffix, element_name, element_form_name,
                    with_metadata=False):
-    result = createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_suffix, element_name,
-                                    element_form_name, with_metadata)
+    result = createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_suffix, element_name, element_form_name, with_metadata)
     print_frame_line()
     print_name_and_return_code(result[0], result[1])
     print_frame_line()
@@ -33,6 +31,7 @@ def import_element(scheme, be_host, be_port, admin_user, exit_on_success, file_d
             error_and_exit(0, None)
 
 
+
 def createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_suffix, element_name, element_form_name,
                            with_metadata=False):
     try:
@@ -41,37 +40,35 @@ def createNormativeElement(scheme, be_host, be_port, admin_user, file_dir, url_s
         c = pycurl.Curl()
 
         url = scheme + '://' + be_host + ':' + be_port + url_suffix
-        c.setopt(pycurl.URL, url)
-        c.setopt(pycurl.POST, 1)
+        c.setopt(c.URL, url)
+        c.setopt(c.POST, 1)
 
         admin_header = 'USER_ID: ' + admin_user
         c.setopt(pycurl.HTTPHEADER, [admin_header])
 
         type_file_name = file_dir + "/" + element_name
 
-        multi_part_form_data = create_multipart_form_data(element_form_name, type_file_name, with_metadata,
-                                                          element_name)
+        multi_part_form_data = create_multipart_form_data(element_form_name, type_file_name, with_metadata, element_name)
 
         c.setopt(pycurl.HTTPPOST, multi_part_form_data)
-        c.setopt(pycurl.WRITEFUNCTION, buffer.write)
+        c.setopt(c.WRITEFUNCTION, buffer.write)
 
         if scheme == 'https':
-            # security "man in middle" vulnerability
             c.setopt(pycurl.SSL_VERIFYPEER, 0)
             c.setopt(pycurl.SSL_VERIFYHOST, 0)
 
         c.perform()
 
-        http_res = c.getinfo(pycurl.RESPONSE_CODE)
+        http_res = c.getinfo(c.RESPONSE_CODE)
         if http_res is not None:
             debug("http response=", http_res)
         debug("response buffer", buffer.getvalue())
         c.close()
-        return element_name, http_res, buffer.getvalue()
+        return (element_name, http_res, buffer.getvalue())
 
     except Exception as inst:
         print("ERROR=" + str(inst))
-        return element_name, None, None
+        return (element_name, None, None)
 
 
 def create_multipart_form_data(element_form_name, type_file_name, with_metadata, element_name):

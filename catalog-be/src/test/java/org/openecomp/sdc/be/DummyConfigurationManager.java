@@ -33,8 +33,13 @@ public class DummyConfigurationManager {
     private DistributionEngineConfiguration distributionConfigurationMock = mock(DistributionEngineConfiguration.class);
     private Configuration configurationMock = mock(Configuration.class);
 
+
     public DummyConfigurationManager() {
         new ConfigurationManager(new DummyConfigurationSource());
+    }
+
+    public Configuration getConfigurationMock() {
+        return configurationMock;
     }
 
     public class DummyConfigurationSource implements ConfigurationSource {
@@ -55,6 +60,10 @@ public class DummyConfigurationManager {
         public <T> void addWatchConfiguration(Class<T> className, ConfigurationListener configurationListener) {
 
         }
+    }
+
+    public Configuration getDummyConfiguration() {
+        return configurationMock;
     }
 
 }

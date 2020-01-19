@@ -16,14 +16,15 @@
 
 package org.openecomp.sdc.test.utils;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class InterfaceOperationTestUtils {
 

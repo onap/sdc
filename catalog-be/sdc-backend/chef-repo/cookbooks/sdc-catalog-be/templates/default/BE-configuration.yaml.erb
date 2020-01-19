@@ -25,7 +25,7 @@ beProtocol: http
 beSslPort: <%= @ssl_port %>
 version: 1.1.0
 released: 2012-11-30
-toscaConformanceLevel: 9.0
+toscaConformanceLevel: 11.0
 minToscaConformanceLevel: 3.0
 
 janusGraphCfgFile: /var/lib/jetty/config/catalog-be/janusgraph.properties
@@ -39,7 +39,6 @@ janusGraphHealthCheckReadTimeout: 1
 
 # The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
 
-esReconnectIntervalInSeconds: 3
 uebHealthCheckReconnectIntervalInSeconds: 15
 uebHealthCheckReadTimeout: 4
 
@@ -70,6 +69,21 @@ users:
     tom: passwd
     bob: passwd
 
+# access restriction
+authCookie:
+  securityKey: "sdcaccessrestrictionsecureykey"
+  maxSessionTimeOut: 86400000
+  sessionIdleTimeOut: 3600000
+  cookieName: "AuthenticationCookie"
+  path: /
+  domain: ""
+  isHttpOnly: true
+  # redirect variable name from portal.properties file
+  redirectURL: ""
+  excludedUrls: [<%= node['access_restriction']['excluded_urls'] %>]
+  onboardingExcludedUrls: [<%= node['access_restriction']['excluded_urls_onboarding'] %>]
+
+
 
 cassandraConfig:
     cassandraHosts: [<%= @cassandra_ip %>]
@@ -91,28 +105,7 @@ cassandraConfig:
         - { name: sdccomponent,  replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
         - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
 
-#Application-specific settings of ES
-elasticSearch:
-    # Mapping of index prefix to time-based frame. For example, if below is configured:
-    #
-    # - indexPrefix: auditingevents
-    #    creationPeriod: minute
-    #
-    # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
-    # Another object created on 2015-12-23 13:25:54, will enter "auditingevents-2015-12-23-13-25" index.
-    # If creationPeriod: month, both of the above will enter "auditingevents-2015-12" index.
-    #
-    # PLEASE NOTE: the timestamps are created in UTC/GMT timezone! This is needed so that timestamps will be correctly presented in Kibana.
-    #
-    # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
-    #
-    # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
 
-    indicesTimeFrequency:
-      - indexPrefix: auditingevents
-        creationPeriod: month
-      - indexPrefix: monitoring_events
-        creationPeriod: month
 artifactTypes:
    - CHEF
    - PUPPET
@@ -287,7 +280,10 @@ systemMonitoring:
     enabled: false
     isProxy: false
     probeIntervalInSeconds: 15
-defaultHeatArtifactTimeoutMinutes: 60
+heatArtifactDeploymentTimeout:
+  defaultMinutes: 30
+  minMinutes: 1
+  maxMinutes: 120
 
 serviceDeploymentArtifacts:
     CONTROLLER_BLUEPRINT_ARCHIVE:
@@ -630,12 +626,8 @@ resourceInformationalArtifacts:
 
 resourceInformationalDeployedArtifacts:
 
-
-requirementsToFulfillBeforeCert:
-
-capabilitiesToConsumeBeforeCert:
-
 unLoggedUrls:
+   - /sdc2/rest/monitoring
    - /sdc2/rest/healthCheck
 
 cleanComponentsConfiguration:
@@ -653,10 +645,10 @@ onboarding:
     host: <%= node['ONBOARDING_BE_VIP'] %>
     <% if node[:disableHttp] -%>
     protocol: https
-    port: <%= node['ONBOARDING_BE'][:https_port] %> 
+    port: <%= node['ONBOARDING_BE'][:https_port] %>
     <% else %>
     protocol: http
-    port: <%= node['ONBOARDING_BE'][:http_port] %> 
+    port: <%= node['ONBOARDING_BE'][:http_port] %>
     <% end -%>
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
@@ -712,6 +704,8 @@ toscaValidators:
     stringMaxLength: 2500
 
 disableAudit: false
+
+consumerBusinessLogic: true
 
 vfModuleProperties:
     min_vf_module_instances:
@@ -799,10 +793,50 @@ dmaapConsumerConfiguration:
     credential:
         username: user
         password:
+    aftDme2SslEnable: true
+    aftDme2ClientKeystore: /var/lib/jetty/etc/truststore
+    aftDme2ClientKeystorePassword: ""
+    aftDme2ClientSslCertAlias: certman
 
-dmeConfiguration:
-    dme2Search: DME2SEARCH
-    dme2Resolve: DME2RESOLVE
+dmaapProducerConfiguration:
+    active: true
+    hosts: <%= node['DMAAP']['producer']['host']%>
+    consumerGroup: sdc-<%= node.chef_environment %>-<%= node['DMAAP']['random_id'] %>
+    consumerId: sdc-<%= node.chef_environment %>1-<%= node['DMAAP']['random_id'] %>
+    timeoutMs: 15000
+    limit: 1
+    pollingInterval: 2
+    topic: <%= node['DMAAP']['producer']['topic'] %>
+    latitude: 32.109333
+    longitude: 34.855499
+    version: 1.0
+    serviceName: <%= node['DMAAP']['producer']['serviceName'] %>
+    environment: <%= node['DMAAP']['producer']['environment'] %>
+    partner: BOT_R
+    routeOffer: MR1
+    protocol: <%= node['http_protocol'] %>
+    contenttype: application/json
+    dme2TraceOn: true
+    aftEnvironment: <%= node['DMAAP']['producer']['aftEnvironment']%>
+    aftDme2ConnectionTimeoutMs: 15000
+    aftDme2RoundtripTimeoutMs: 240000
+    aftDme2ReadTimeoutMs: 50000
+    dme2preferredRouterFilePath: <%= node['DMAAP']['producer']['dme2preferredRouterFilePath'] %>
+    timeLimitForNotificationHandleMs: 120000
+    credential:
+        username: <%= node['DMAAP']['producer']['username'] %>
+        password: <%= node['DMAAP']['producer']['password'] %>
+    aftDme2SslEnable: true
+    aftDme2ClientKeystore: /var/lib/jetty/etc/truststore
+    aftDme2ClientKeystorePassword: <%= node['jetty']['dmaap_truststore_pwd'] %>
+    aftDme2ClientSslCertAlias: certman
+
+
+# ToDo: AF - had to remove due to configuration laod class failure
+#dmeConfiguration:
+#    lookupUriFormat: "http://DME2RESOLVE/service=%s/version=1.0.0/envContext=%s/routeOffer=DEFAULT"
+#    dme2Search: DME2SEARCH
+#    dme2Resolve: DME2RESOLVE
 
 excludedPolicyTypesMapping:
    # VF:
@@ -815,21 +849,68 @@ excludedGroupTypesMapping:
     CR:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
+       - org.openecomp.groups.Group
        - tosca.groups.Root
     PNF:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
+       - org.openecomp.groups.Group
        - tosca.groups.Root
     VF:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
+       - org.openecomp.groups.Group
        - tosca.groups.Root
     Service:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
+       - org.openecomp.groups.Group
        - tosca.groups.Root
 
 healthStatusExclude:
    - DE
    - DMAAP
+   - DMAAP_PRODUCER
+   - ON_BOARDING
    - DCAE
+   - PORTAL
+   - External API
+
+#Auto Healing
+enableAutoHealing: false
+appVersion: <%= @app_version %>
+
+artifactGeneratorConfig: Artifact-Generator.properties
+resourcesForUpgrade:
+ 8.0:
+  - org.openecomp.resource.cp.extCP
+  - tosca.nodes.network.Network
+  - tosca.nodes.network.Port
+  - org.openecomp.resource.cp.nodes.network.SubInterface
+skipUpgradeFailedVfs: true
+skipUpgradeVSPs: true
+autoHealingOwner: jh0003
+supportAllottedResourcesAndProxy: true
+deleteLockTimeoutInSeconds: 60
+maxDeleteComponents: 10
+
+# Cadi filter (access restriction) Parameters
+aafNamespace:  <%= node['aafNamespace'] %>
+aafAuthNeeded:  <%= node['access_restriction']['aafAuthNeeded'] %>
+
+cadiFilterParams:
+    AFT_LATITUDE:  "32.780140"
+    AFT_LONGITUDE: "-96.800451"
+    hostname: <%= node['BE_VIP'] %>
+    aaf_id: <%= node['access_restriction']['aaf_id'] %>
+    aaf_env: <%= node['access_restriction']['aaf_env'] %>
+    aaf_url: <%= node['access_restriction']['aaf_url'] %>
+    csp_domain: <%= node['access_restriction']['csp_domain'] %>
+    cadi_keyfile: <%= node['access_restriction']['cadi_keyfile'] %>
+    aaf_password: <%= node['access_restriction']['aaf_password'] %>
+    cadi_loglevel: <%= node['access_restriction']['cadi_loglevel'] %>
+    AFT_ENVIRONMENT: <%= node['access_restriction']['AFT_ENVIRONMENT'] %>
+    cadiX509Issuers: <%= node['access_restriction']['cadiX509Issuers'] %>
+    cadi_truststore: <%= node['access_restriction']['cadi_truststore'] %>
+    cadi_truststore_password: <%= node['access_restriction']['cadi_truststore_password'] %>
+

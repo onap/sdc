@@ -80,14 +80,8 @@ public class ConfigurationManagerTest {
     @Test
     public void testGetDistributionEngineConfiguration() {
         assertEquals(configurationManager.getDistributionEngineConfiguration(),
-                ConfigurationManager.getConfigurationManager().getConfigurations()
+                ConfigurationManager.getConfigurationManager().configurations
                         .get(DistributionEngineConfiguration.class.getSimpleName()));
-    }
-    @Test
-    public void testGetNeo4jErrorsConfiguration() {
-        assertEquals(configurationManager.getNeo4jErrorsConfiguration(),
-                ConfigurationManager.getConfigurationManager().getConfigurations()
-                        .get(Neo4jErrorsConfiguration.class.getSimpleName()));
     }
     private class TestConfiguration extends Configuration{}
     @Test

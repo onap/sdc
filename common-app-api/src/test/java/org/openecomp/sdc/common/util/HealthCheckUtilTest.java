@@ -76,10 +76,9 @@ public class HealthCheckUtilTest {
 
     @Test
     public void validateGetAggregateDescriptionReturnsProperDescription() {
-        final String parentDescription = "";
         when(healthCheckInfo.getHealthCheckStatus()).thenReturn(HealthCheckInfo.HealthCheckStatus.DOWN);
 
-        final String result = healthCheckUtil.getAggregateDescription(healthCheckInfos, parentDescription);
+        final String result = healthCheckUtil.getAggregateDescription(healthCheckInfos );
 
         assertTrue(result.contains(testComponent));
         assertTrue(result.contains("Down"));

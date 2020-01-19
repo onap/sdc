@@ -1,0 +1,4 @@
+https://llth004.chdc.att.com:9427/GRMLWPService/v1
+https://hlth449.hydc.sbc.com:9427/GRMLWPService/v1
+https://llth003.chdc.att.com:9427/GRMLWPService/v1
+https://hlth448.hydc.sbc.com:9427/GRMLWPService/v1

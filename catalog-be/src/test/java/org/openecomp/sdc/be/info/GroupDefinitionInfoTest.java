@@ -21,15 +21,15 @@
  */
 package org.openecomp.sdc.be.info;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.Test;
-
 import com.google.code.beanmatchers.BeanMatchers;
+import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static org.hamcrest.CoreMatchers.is;

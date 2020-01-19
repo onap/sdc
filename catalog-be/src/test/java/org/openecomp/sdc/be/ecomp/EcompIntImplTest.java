@@ -31,91 +31,103 @@ import java.util.List;
 
 public class EcompIntImplTest {
 
-    private EcompIntImpl createTestSubject() {
-        return new EcompIntImpl();
-    }
+	private EcompIntImpl createTestSubject() {
+		return new EcompIntImpl();
+	}
 
-    @Test(expected=PortalAPIException.class)
-    public void testPushUser() throws Exception {
-        EcompIntImpl testSubject;
-        EcompUser user = null;
+	@Test(expected=PortalAPIException.class)
+	public void testPushUser() throws Exception {
+		EcompIntImpl testSubject;
+		EcompUser user = null;
 
-        // default test
-        testSubject = createTestSubject();
-        testSubject.pushUser(user);
-    }
+		// default test
+		testSubject = createTestSubject();
+		testSubject.pushUser(user);
+	}
 
-    @Test(expected=PortalAPIException.class)
-    public void testEditUser() throws Exception {
-        EcompIntImpl testSubject;
-        String loginId = "";
-        EcompUser user = null;
+	@Test(expected=PortalAPIException.class)
+	public void testEditUser() throws Exception {
+		EcompIntImpl testSubject;
+		String loginId = "";
+		EcompUser user = null;
 
-        // default test
-        testSubject = createTestSubject();
-        testSubject.editUser(loginId, user);
-    }
+		// default test
+		testSubject = createTestSubject();
+		testSubject.editUser(loginId, user);
+	}
 
-    @Test(expected=PortalAPIException.class)
-    public void testGetUser() throws Exception {
-        EcompIntImpl testSubject;
-        String loginId = "";
-        EcompUser result;
+	@Test(expected=PortalAPIException.class)
+	public void testGetUser() throws Exception {
+		EcompIntImpl testSubject;
+		String loginId = "";
+		EcompUser result;
 
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getUser(loginId);
-    }
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getUser(loginId);
+	}
 
-    @Test(expected=PortalAPIException.class)
-    public void testGetUsers() throws Exception {
-        EcompIntImpl testSubject;
-        List<EcompUser> result;
+	@Test(expected=PortalAPIException.class)
+	public void testGetUsers() throws Exception {
+		EcompIntImpl testSubject;
+		List<EcompUser> result;
 
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getUsers();
-    }
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getUsers();
+	}
 
-    @Test
-    public void testGetAvailableRoles() throws Exception {
-        EcompIntImpl testSubject;
-        List<EcompRole> result;
+	@Test
+	public void testGetAvailableRoles() throws Exception {
+		EcompIntImpl testSubject;
+		List<EcompRole> result;
 
-        // default test
-        testSubject = createTestSubject();
+		// default test
+		testSubject = createTestSubject();
         result = testSubject.getAvailableRoles("Mock");
-    }
+	}
+
+	/*@Test
+	public void testPushUserRole() throws Exception {
+		EcompIntImpl testSubject;
+		String loginId = "";
+		List<EcompRole> roles = null;
+
+		// test 1
+		testSubject = createTestSubject();
+		roles = null;
+		testSubject.pushUserRole(loginId, roles);
+	}*/
 
     @Test(expected= PortalAPIException.class)
-    public void testGetUserRoles() throws Exception {
-        EcompIntImpl testSubject;
-        String loginId = "";
-        List<EcompRole> result;
+	public void testGetUserRoles() throws Exception {
+		EcompIntImpl testSubject;
+		String loginId = "";
+		List<EcompRole> result;
 
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getUserRoles(loginId);
-    }
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getUserRoles(loginId);
+	}
 
-    @Test
-    public void testIsAppAuthenticated() throws Exception {
-        EcompIntImpl testSubject;
-        boolean result;
+	@Test
+	public void testIsAppAuthenticated() throws Exception {
+		EcompIntImpl testSubject;
+		boolean result;
         HttpServletRequest httpServletRequestImpl = Mockito.mock(HttpServletRequest.class);
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.isAppAuthenticated(httpServletRequestImpl);
-    }
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.isAppAuthenticated(httpServletRequestImpl);
+	}
 
-    @Test
-    public void testGetUserId() throws Exception {
-        EcompIntImpl testSubject;
+	@Test
+	public void testGetUserId() throws Exception {
+		EcompIntImpl testSubject;
         HttpServletRequest httpServletRequestImpl = Mockito.mock(HttpServletRequest.class);
-        String result;
+		String result;
 
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getUserId(httpServletRequestImpl);
-    }
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getUserId(httpServletRequestImpl);
+	}
 }

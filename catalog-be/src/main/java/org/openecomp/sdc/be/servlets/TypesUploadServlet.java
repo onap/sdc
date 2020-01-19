@@ -20,23 +20,18 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.google.gson.reflect.TypeToken;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
@@ -48,6 +43,8 @@ import org.openecomp.sdc.be.components.impl.InterfaceLifecycleTypeImportManager;
 import org.openecomp.sdc.be.components.impl.PolicyTypeImportManager;
 import org.openecomp.sdc.be.components.impl.RelationshipTypeImportManager;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -67,18 +64,24 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-import com.google.gson.reflect.TypeToken;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/uploadType")
@@ -129,6 +132,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Capability Type already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCapabilityType(@Parameter(description = "FileInputStream") @FormDataParam("capabilityTypeZip") File file,
             @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod =
@@ -147,6 +151,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Relationship Type already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadRelationshipType(@Parameter(description = "FileInputStream") @FormDataParam("relationshipTypeZip") File file,
                                            @Context final HttpServletRequest request,
                                            @HeaderParam("USER_ID") String creator) {
@@ -163,6 +168,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Interface Lifecycle Type already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadInterfaceLifecycleType(
             @Parameter(description = "FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file,
             @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
@@ -181,6 +187,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Category already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCategories(@Parameter(description = "FileInputStream") @FormDataParam("categoriesZip") File file,
             @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod =
@@ -198,6 +205,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Data types already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
             @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = this::createDataTypes;
@@ -214,6 +222,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "group types already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadGroupTypes(
             @Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
             @Parameter(description = "FileInputStream") @FormDataParam("groupTypesZip") File file,
@@ -232,6 +241,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "policy types already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadPolicyTypes(
             @Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
             @Parameter(description = "FileInputStream") @FormDataParam("policyTypesZip") File file,
@@ -371,7 +381,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                         Set<Boolean> keySet = collect.keySet();
                         if (keySet.size() == 1) {
                             Boolean isNew = keySet.iterator().next();
-                            if (isNew.booleanValue()) {
+                            if (isNew) {
                                 // all data types created at the first time
                                 status = ActionStatus.CREATED;
                             } else {

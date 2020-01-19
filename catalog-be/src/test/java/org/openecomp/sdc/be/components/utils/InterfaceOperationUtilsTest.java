@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +28,11 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class InterfaceOperationUtilsTest {
 

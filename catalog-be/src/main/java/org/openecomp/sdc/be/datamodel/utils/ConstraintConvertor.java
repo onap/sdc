@@ -22,18 +22,19 @@ package org.openecomp.sdc.be.datamodel.utils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ConstraintConvertor {
 

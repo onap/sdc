@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`home component should match current snapshot 1`] = `
+<home-page
+  $state={[Function Object]}
+  authService={[Function Object]}
+  cacheService={[Function Object]}
+  componentShouldReload={[Function Function]}
+  homeService={[Function Object]}
+  importVSPService={[Function Object]}
+  initFolders={[Function Function]}
+  isDefaultFilter={[Function Function]}
+  loaderService={[Function Object]}
+  modalService={[Function Object]}
+  modalsHandler={[Function Object]}
+  sdcConfig={[Function Object]}
+  sdcMenu={[Function Object]}
+  translateService={[Function Object]}
+  updateFilter={[Function Function]}
+>
+  <div
+    class="sdc-catalog-container"
+  >
+    
+    <top-nav />
+  </div>
+</home-page>
+`;

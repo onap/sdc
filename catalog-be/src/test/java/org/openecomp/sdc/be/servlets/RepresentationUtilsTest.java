@@ -27,7 +27,9 @@ import org.openecomp.sdc.be.model.Operation;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class RepresentationUtilsTest  {
 
@@ -54,19 +56,6 @@ public class RepresentationUtilsTest  {
 
         // default test
         result = RepresentationUtils.toRepresentation(elementToRepresent);
-    }
-
-
-
-
-    @Test
-    public void testConvertJsonToArtifactDefinition() throws Exception {
-        String content = "";
-        Class<ArtifactDefinition> clazz = null;
-        ArtifactDefinition result;
-
-        // default test
-        result = RepresentationUtils.convertJsonToArtifactDefinition(content, clazz);
     }
 
     @Test

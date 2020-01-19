@@ -31,14 +31,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -46,6 +43,14 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class RepresentationUtils {
 
@@ -120,15 +125,28 @@ public class RepresentationUtils {
         return object;
     }
 
-    public static ArtifactDefinition convertJsonToArtifactDefinition(String content, Class<ArtifactDefinition> clazz) {
+    public static ArtifactDefinition convertJsonToArtifactDefinition(String content, Class<ArtifactDefinition> clazz, boolean validateTimeout) {
 
         JsonObject jsonElement = new JsonObject();
         ArtifactDefinition resourceInfo = null;
+
+        if (StringUtils.isEmpty(content)) {
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_BODY);
+        }
 
         try {
             Gson gson = new Gson();
             jsonElement = gson.fromJson(content, jsonElement.getClass());
             JsonElement artifactGroupValue = jsonElement.get(Constants.ARTIFACT_GROUP_TYPE);
+            HashMap<String, JsonElement> elementsToValidate = new HashMap<>();
+            elementsToValidate.put(Constants.ARTIFACT_GROUP_TYPE, artifactGroupValue);
+            elementsToValidate.put(Constants.ARTIFACT_TYPE, jsonElement.get(Constants.ARTIFACT_TYPE));
+            elementsToValidate.put(Constants.ARTIFACT_LABEL, (jsonElement.get(Constants.ARTIFACT_LABEL)));
+            if (validateTimeout) {
+                elementsToValidate.put(Constants.ARTIFACT_TIMEOUT, jsonElement.get(Constants.ARTIFACT_TIMEOUT));
+            }
+            validateMandatoryProperties(elementsToValidate);
+
             if (artifactGroupValue != null && !artifactGroupValue.isJsonNull()) {
                 String groupValueUpper = artifactGroupValue.getAsString().toUpperCase();
                 if (!ArtifactGroupTypeEnum.getAllTypes().contains(groupValueUpper)) {
@@ -158,12 +176,28 @@ public class RepresentationUtils {
             resourceInfo = mapper.readValue(json, clazz);
             resourceInfo.setPayloadData(payload);
 
-        } catch (Exception e) {
+        } catch (ComponentException ce) {
+            BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
+            log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), ce);
+            throw ce;
+        }
+        catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
             log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
         }
 
         return resourceInfo;
+    }
+
+    private static void validateMandatoryProperties(HashMap<String, JsonElement> elementsByName) {
+        elementsByName.forEach((name, element) -> {
+            if (element == null) {
+                throw new ByActionStatusComponentException(ActionStatus.MISSING_MANDATORY_PROPERTY, name);
+            }
+            if (element.isJsonNull()) {
+                throw new ByActionStatusComponentException(ActionStatus.MANDATORY_PROPERTY_MISSING_VALUE, name);
+            }
+        });
     }
 
     public static <T> Object toFilteredRepresentation(T elementToRepresent) throws IOException {

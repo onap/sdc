@@ -16,26 +16,7 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOtherOperationOutputsOfComponent;
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentInput;
-import static org.openecomp.sdc.be.components.utils.PropertiesUtils.isCapabilityProperty;
-
 import com.google.common.collect.Sets;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -53,6 +34,24 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOtherOperationOutputsOfComponent;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentInput;
+import static org.openecomp.sdc.be.components.utils.PropertiesUtils.isCapabilityProperty;
 
 @Component("interfaceOperationValidation")
 public class InterfaceOperationValidation {

@@ -43,8 +43,13 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
-import org.openecomp.sdc.be.model.operations.impl.*;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.GroupTypeData;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -63,10 +68,10 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
 
 public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
@@ -95,7 +100,9 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         GroupTypesEndpoint groupTypesEndpoint() {
-            return new GroupTypesEndpoint(groupTypeBusinessLogic());
+            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+            return new GroupTypesEndpoint(userBusinessLogic, componentsUtils, groupTypeBusinessLogic());
         }
 
         @Bean
@@ -123,7 +130,7 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
     @Before
     public void init() {
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), anyBoolean())).thenReturn(user);
+        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
         when(janusGraphGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class))).thenReturn(Either.left(buildGroupTypeDataList()));
     }
 

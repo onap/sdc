@@ -34,6 +34,7 @@ public class UiServiceMetadata extends UiComponentMetadata {
 	private String serviceRole;
 	private String environmentContext;
 	private String instantiationType;
+	private String serviceFunction;
 
 	public UiServiceMetadata(List<CategoryDefinition> categories, ServiceMetadataDataDefinition metadata) {
 		super(categories, metadata);
@@ -44,6 +45,7 @@ public class UiServiceMetadata extends UiComponentMetadata {
 		this.serviceRole = metadata.getServiceRole();
 		this.environmentContext = metadata.getEnvironmentContext();
 		this.instantiationType = metadata.getInstantiationType();
+		this.serviceFunction = metadata.getServiceFunction();
 	}
 	
 	public String getDistributionStatus() {
@@ -97,4 +99,12 @@ public class UiServiceMetadata extends UiComponentMetadata {
     public String getEnvironmentContext() { return environmentContext; }
 
     public void setEnvironmentContext(String environmentContext) { this.environmentContext = environmentContext; }
+
+	public String getServiceFunction() {
+		return serviceFunction;
+	}
+
+	public void setServiceFunction(String serviceFunction) {
+		this.serviceFunction = serviceFunction;
+	}
 }

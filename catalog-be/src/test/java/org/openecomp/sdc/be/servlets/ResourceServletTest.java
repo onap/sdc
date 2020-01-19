@@ -73,6 +73,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,13 +138,12 @@ public class ResourceServletTest extends JerseyTest {
         user = new User();
         user.setUserId(userId);
         user.setRole(Role.ADMIN.name());
-        Either<User, ActionStatus> eitherUser = Either.left(user);
-        when(userAdmin.getUser(userId, false)).thenReturn(eitherUser);
+        when(userAdmin.getUser(userId)).thenReturn(user);
         when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(userId);
 
         ImmutablePair<Resource, ActionStatus> pair = new ImmutablePair<>(new Resource(), ActionStatus.OK);
-        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> ret = Either.left(pair);
-        when(resourceImportManager.importUserDefinedResource(Mockito.anyString(), Mockito.any(UploadResourceInfo.class), Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(ret);
+        when(resourceImportManager.importUserDefinedResource(Mockito.anyString(), Mockito.any(UploadResourceInfo.class), Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(pair);
+        when(webApplicationContext.getBean(ResourceBusinessLogic.class)).thenReturn(resourceBusinessLogic);
 
     }
 
@@ -1001,7 +1001,7 @@ public class ResourceServletTest extends JerseyTest {
         ret.setVendorRelease("VendorRelease");
         ret.setContactId("AT1234");
         ret.setIcon("router");
-        ret.setTags(Arrays.asList(new String[] { "ciMyCompute" }));
+        ret.setTags(Collections.singletonList("ciMyCompute"));
         ret.setPayloadData(
                 "dG9zY2FfZGVmaW5pdGlvbnNfdmVyc2lvbjogdG9zY2Ffc2ltcGxlX3lhbWxfMV8wXzANCm5vZGVfdHlwZXM6IA0KICBvcmcub3BlbmVjb21wLnJlc291cmNlLk15Q29tcHV0ZToNCiAgICBkZXJpdmVkX2Zyb206IHRvc2NhLm5vZGVzLlJvb3QNCiAgICBhdHRyaWJ1dGVzOg0KICAgICAgcHJpdmF0ZV9hZGRyZXNzOg0KICAgICAgICB0eXBlOiBzdHJpbmcNCiAgICAgIHB1YmxpY19hZGRyZXNzOg0KICAgICAgICB0eXBlOiBzdHJpbmcNCiAgICAgIG5ldHdvcmtzOg0KICAgICAgICB0eXBlOiBtYXANCiAgICAgICAgZW50cnlfc2NoZW1hOg0KICAgICAgICAgIHR5cGU6IHRvc2NhLmRhdGF0eXBlcy5uZXR3b3JrLk5ldHdvcmtJbmZvDQogICAgICBwb3J0czoNCiAgICAgICAgdHlwZTogbWFwDQogICAgICAgIGVudHJ5X3NjaGVtYToNCiAgICAgICAgICB0eXBlOiB0b3NjYS5kYXRhdHlwZXMubmV0d29yay5Qb3J0SW5mbw0KICAgIHJlcXVpcmVtZW50czoNCiAgICAgIC0gbG9jYWxfc3RvcmFnZTogDQogICAgICAgICAgY2FwYWJpbGl0eTogdG9zY2EuY2FwYWJpbGl0aWVzLkF0dGFjaG1lbnQNCiAgICAgICAgICBub2RlOiB0b3NjYS5ub2Rlcy5CbG9ja1N0b3JhZ2UNCiAgICAgICAgICByZWxhdGlvbnNoaXA6IHRvc2NhLnJlbGF0aW9uc2hpcHMuQXR0YWNoZXNUbw0KICAgICAgICAgIG9jY3VycmVuY2VzOiBbMCwgVU5CT1VOREVEXSAgDQogICAgY2FwYWJpbGl0aWVzOg0KICAgICAgaG9zdDogDQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5Db250YWluZXINCiAgICAgICAgdmFsaWRfc291cmNlX3R5cGVzOiBbdG9zY2Eubm9kZXMuU29mdHdhcmVDb21wb25lbnRdIA0KICAgICAgZW5kcG9pbnQgOg0KICAgICAgICB0eXBlOiB0b3NjYS5jYXBhYmlsaXRpZXMuRW5kcG9pbnQuQWRtaW4gDQogICAgICBvczogDQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5PcGVyYXRpbmdTeXN0ZW0NCiAgICAgIHNjYWxhYmxlOg0KICAgICAgICB0eXBlOiB0b3NjYS5jYXBhYmlsaXRpZXMuU2NhbGFibGUNCiAgICAgIGJpbmRpbmc6DQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5uZXR3b3JrLkJpbmRhYmxl");
         return ret;

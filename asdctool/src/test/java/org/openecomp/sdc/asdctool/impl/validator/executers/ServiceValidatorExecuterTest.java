@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import static org.mockito.Mockito.mock;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+
+import static org.mockito.Mockito.mock;
 
 public class ServiceValidatorExecuterTest {
 

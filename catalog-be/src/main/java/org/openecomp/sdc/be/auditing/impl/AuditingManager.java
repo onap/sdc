@@ -22,16 +22,17 @@
 
 package org.openecomp.sdc.be.auditing.impl;
 
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
+import org.openecomp.sdc.common.log.enums.LogLevel;
+import org.openecomp.sdc.common.log.enums.Severity;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,13 +40,10 @@ public class AuditingManager {
 
     private static final Logger log = Logger.getLogger(AuditingManager.class.getName());
 
-    private final AuditingDao auditingDao;
     private final AuditCassandraDao cassandraDao;
     private final ConfigurationProvider configurationProvider;
 
-    @Autowired
-    public AuditingManager(AuditingDao auditingDao, AuditCassandraDao cassandraDao, ConfigurationProvider configurationProvider) {
-        this.auditingDao = auditingDao;
+    public AuditingManager(AuditCassandraDao cassandraDao, ConfigurationProvider configurationProvider) {
         this.cassandraDao = cassandraDao;
         this.configurationProvider = configurationProvider;
     }
@@ -57,23 +55,27 @@ public class AuditingManager {
         String msg = factory.getLogMessage();
         logAuditEvent(msg);
 
-        //TODO - remove this method after we got rid of ES
-        saveEventToElasticSearch(factory);
         saveEventToCassandra(factory.getDbEvent());
         return msg;
     }
 
-    private void saveEventToCassandra(AuditingGenericEvent event) {
-        CassandraOperationStatus result = cassandraDao.saveRecord(event);
-        if (!result.equals(CassandraOperationStatus.OK)) {
-            log.warn("Failed to persist to cassandra auditing event: {}", result.name());
+    public String auditEvent(AuditEventFactory factory, LoggerSdcAudit audit) {
+        String msg = auditEvent(factory);
+        logAuditEvent(msg, audit, factory.getDbEvent().getRequestId());
+        return msg;
+    }
+
+    private void logAuditEvent(String msg, LoggerSdcAudit audit, String requestId) {
+        if(audit != null) {
+            audit.logEntry(LogLevel.INFO, Severity.OK, msg,
+                    MarkerFactory.getMarker(ONAPLogConstants.Markers.ENTRY.getName()), requestId);
         }
     }
 
-    private void saveEventToElasticSearch(AuditEventFactory factory) {
-        ActionStatus addRecordStatus = auditingDao.addRecord(factory.getDbEvent(), factory.getAuditingEsType());
-        if (!addRecordStatus.equals(ActionStatus.OK)) {
-            log.warn("Failed to persist auditing event: {}", addRecordStatus.name());
+    private void saveEventToCassandra(AuditingGenericEvent event) {
+        CassandraOperationStatus result = cassandraDao.saveRecord(event);
+        if (result != CassandraOperationStatus.OK) {
+            log.warn("Failed to persist to cassandra auditing event: {}", result.name());
         }
     }
 

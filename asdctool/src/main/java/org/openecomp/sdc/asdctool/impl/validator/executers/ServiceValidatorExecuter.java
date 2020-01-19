@@ -25,10 +25,10 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by chaya on 7/4/2017.

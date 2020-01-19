@@ -14,11 +14,11 @@
     "recipe[sdc-catalog-be::BE_2_setup_configuration]",
     "recipe[sdc-catalog-be::BE_3_locate_keystore]",
     "recipe[sdc-catalog-be::BE_4_jetty_Modules]",
-    "recipe[sdc-catalog-be::BE_5_setup_elasticsearch]",
     "recipe[sdc-catalog-be::BE_6_setup_portal_and_key_properties]",
     "recipe[sdc-catalog-be::BE_7_logback]",
     "recipe[sdc-catalog-be::BE_8_errors_config]",
-    "recipe[sdc-catalog-be::BE_9_prepareProbeFile]"
+    "recipe[sdc-catalog-be::BE_9_prepareProbeFile]",
+    "recipe[sdc-catalog-be::BE_10_setup_cadi]"
   ],
   "env_run_lists": {
   }

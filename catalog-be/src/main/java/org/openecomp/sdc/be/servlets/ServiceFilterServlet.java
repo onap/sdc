@@ -20,29 +20,22 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -61,16 +54,26 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Path("/v1/catalog/services/{serviceId}/resourceInstances/{resourceInstanceId}/nodeFilter")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -109,6 +112,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Service Filter"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response addServiceFilterConstraint(@Parameter(description = "Service data", required = true) String data,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
@@ -174,6 +178,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Service Filter"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateServiceFilterConstraint(@Parameter(description = "Service data", required = true) String data,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
@@ -244,6 +249,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete Service Filter Constraint"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteServiceFilterConstraint(
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,

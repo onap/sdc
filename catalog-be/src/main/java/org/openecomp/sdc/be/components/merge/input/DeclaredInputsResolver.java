@@ -21,17 +21,17 @@
 package org.openecomp.sdc.be.components.merge.input;
 
 
+import com.google.common.base.Strings;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
 
-import com.google.common.base.Strings;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.openecomp.sdc.be.utils.PropertyDefinitionUtils.resolveGetInputProperties;
@@ -88,6 +88,7 @@ public class DeclaredInputsResolver {
         List<InputDefinition> inputsForRedeclaration = redeclareInputData.declaredInputIds.stream()
                                             .filter(oldInputsById::containsKey)
                                             .map(oldInputsById::get)
+                                            .filter(Objects::nonNull)
                                             .map(InputDefinition::new)
                                             .collect(Collectors.toList());
         

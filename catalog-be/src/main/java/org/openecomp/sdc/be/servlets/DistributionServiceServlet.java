@@ -20,28 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.info.DistributionStatusListResponse;
-import org.openecomp.sdc.be.info.DistributionStatusOfServiceListResponce;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -52,6 +30,31 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.info.DistributionStatusListResponse;
+import org.openecomp.sdc.be.info.DistributionStatusOfServiceListResponce;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Root resource (exposed at "/" path)
@@ -59,7 +62,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @OpenAPIDefinition(info = @Info(title = "Distribution Service Servlet",description = "Distribution Service Servlet"))
-@Singleton
+@Controller
 public class DistributionServiceServlet extends BeGenericServlet {
     private static final Logger log = Logger.getLogger(DistributionServiceServlet.class);
 
@@ -84,6 +87,7 @@ public class DistributionServiceServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Service not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getServiceById(@PathParam("serviceUUID") final String serviceUUID,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
@@ -110,10 +114,7 @@ public class DistributionServiceServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Distribution list for Service");
             log.debug("failed to get service distribution statuses", e);
-            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-
-            response = buildErrorResponse(responseFormat);
-            return response;
+            throw e;
         }
 
     }
@@ -129,6 +130,7 @@ public class DistributionServiceServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Status not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getListOfDistributionStatuses(@PathParam("did") final String did,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
@@ -158,10 +160,7 @@ public class DistributionServiceServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Distribution Status");
             log.debug("failed to get distribution status ", e);
-            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-
-            response = buildErrorResponse(responseFormat);
-            return response;
+            throw e;
         }
 
     }

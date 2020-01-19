@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.asdctool;
 
-import org.janusgraph.core.JanusGraphFactory;
-import org.janusgraph.core.JanusGraph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphFactory;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import javax.ws.rs.core.Response;
@@ -38,7 +38,7 @@ public class Utils {
 
 	private static Logger log = Logger.getLogger(Utils.class.getName());
 
-	public final static String NEW_LINE = System.getProperty("line.separator");
+	public static String NEW_LINE = System.getProperty("line.separator");
 
 	public static Response buildOkResponse(
 			/*

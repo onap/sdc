@@ -20,20 +20,21 @@
 
 package org.openecomp.sdc.fe.servlets;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.common.api.Constants.HEALTH_CHECK_SERVICE_ATTR;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.fe.impl.HealthCheckService;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.common.api.Constants.HEALTH_CHECK_SERVICE_ATTR;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FeHealthCheckServletTest {

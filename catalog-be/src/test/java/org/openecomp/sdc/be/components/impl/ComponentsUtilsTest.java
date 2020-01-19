@@ -36,12 +36,23 @@ import org.openecomp.sdc.be.auditing.impl.externalapi.AuditCreateResourceExterna
 import org.openecomp.sdc.be.auditing.impl.externalapi.AuditCreateServiceExternalApiEventFactory;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.resources.data.auditing.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionDownloadEvent;
+import org.openecomp.sdc.be.resources.data.auditing.EcompOperationalEnvironmentEvent;
+import org.openecomp.sdc.be.resources.data.auditing.ExternalApiEvent;
+import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
+import org.openecomp.sdc.be.resources.data.auditing.UserAdminEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -50,7 +61,42 @@ import javax.servlet.http.HttpServletRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.ARTIFACT_DATA;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.ARTIFACT_UUID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.COMMENT;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.CURRENT_STATE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.CURRENT_VERSION;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DCURR_STATUS;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESCRIPTION;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESC_ERROR;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_CONSUMER_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_RESOURCE_URL;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DPREV_STATUS;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.INVARIANT_UUID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_FIRST_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_LAST_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.MODIFIER_UID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_ACTION;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_TYPE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.PREV_RESOURCE_STATE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.PREV_RESOURCE_VERSION;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REQUEST_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.RESOURCE_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SERVICE_INSTANCE_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_500;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.TENANT_CONTEXT;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.TESTER_USER_ROLE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.TOSCA_NODE_TYPE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.UPDATED_USER_EXTENDED_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_EMAIL;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_FIRST_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_LAST_NAME;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentsUtilsTest {
@@ -70,6 +116,9 @@ public class ComponentsUtilsTest {
 
     @Captor
     private ArgumentCaptor<AuditEventFactory> factoryCaptor;
+
+    @Captor
+    private ArgumentCaptor<LoggerSdcAudit> audit;
 
     @InjectMocks
     private static ComponentsUtils utils;
@@ -281,8 +330,9 @@ public class ComponentsUtilsTest {
 
     @Test
     public void auditEcompOpEnvEvent() {
+
         utils.auditEnvironmentEngine(AuditingActionEnum.CREATE_ENVIRONMENT, OP_ENV_ID, OP_ENV_TYPE, OP_ENV_ACTION, OP_ENV_NAME, TENANT_CONTEXT);
-        verify(manager).auditEvent(factoryCaptor.capture());
+        verify(manager).auditEvent(factoryCaptor.capture(), audit.capture());
         AuditEventFactory factory = factoryCaptor.getValue();
         EcompOperationalEnvironmentEvent event = (EcompOperationalEnvironmentEvent)factory.getDbEvent();
         assertThat(event.getAction()).isEqualTo(AuditingActionEnum.CREATE_ENVIRONMENT.getName());
@@ -438,69 +488,6 @@ public class ComponentsUtilsTest {
         assertThat(event.getResourceType()).isEqualTo(ComponentTypeEnum.RESOURCE.getValue());
     }
 
-    @Test
-    public void auditChangeLifeCycleExternalApiEventWhenComponentIsNotNullAndResponseObjectIsNull() {
-        when(responseFormat.getStatus()).thenReturn(Integer.valueOf(STATUS_500));
-        when(responseFormat.getFormattedMessage()).thenReturn(DESC_ERROR);
-        Component component = new Resource();
-        component.setVersion(PREV_RESOURCE_VERSION);
-        component.setState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        component.setInvariantUUID(INVARIANT_UUID);
-        component.setName(RESOURCE_NAME);
-
-        utils.auditChangeLifecycleAction(responseFormat, ComponentTypeEnum.RESOURCE, REQUEST_ID,
-                component, null, new DistributionData(DIST_CONSUMER_ID, DIST_RESOURCE_URL), modifier);
-
-        verify(manager).auditEvent(factoryCaptor.capture());
-        AuditChangeLifecycleExternalApiEventFactory factory = (AuditChangeLifecycleExternalApiEventFactory)factoryCaptor.getValue();
-
-        ExternalApiEvent event = (ExternalApiEvent)factory.getDbEvent();
-        assertThat(event.getAction()).isEqualTo(AuditingActionEnum.CHANGE_LIFECYCLE_BY_API.getName());
-
-        verifyCommonDataForExternalApiEvent(event, false);
-        verifyPreviousResourceVersionInfoForExternalApiEvent(event, false);
-        verifyDistributionDataForExternalApiEvent(event);
-        assertThat(event.getModifier()).isEqualTo(MODIFIER_UID);
-        assertThat(event.getInvariantUuid()).isEqualTo(INVARIANT_UUID);
-        assertThat(event.getResourceName()).isEqualTo(RESOURCE_NAME);
-        assertThat(event.getResourceType()).isEqualTo(ComponentTypeEnum.RESOURCE.getValue());
-    }
-
-    @Test
-    public void auditChangeLifeCycleExternalApiEventWhenComponentAndResponseObjectAreNotNull() {
-        when(responseFormat.getStatus()).thenReturn(Integer.valueOf(STATUS_OK));
-        when(responseFormat.getFormattedMessage()).thenReturn(DESCRIPTION);
-        Component responseObject = new Resource();
-        responseObject.setVersion(CURRENT_VERSION);
-        responseObject.setState(LifecycleStateEnum.CERTIFIED);
-        responseObject.setInvariantUUID(INVARIANT_UUID);
-        responseObject.setUUID(SERVICE_INSTANCE_ID);
-
-        Component component = new Resource();
-        component.setVersion(PREV_RESOURCE_VERSION);
-        component.setState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        component.setInvariantUUID(INVARIANT_UUID);
-        component.setUUID(SERVICE_INSTANCE_ID);
-        component.setName(RESOURCE_NAME);
-
-        utils.auditChangeLifecycleAction(responseFormat, ComponentTypeEnum.RESOURCE, REQUEST_ID,
-                null, responseObject, new DistributionData(DIST_CONSUMER_ID, DIST_RESOURCE_URL), modifier);
-
-        verify(manager).auditEvent(factoryCaptor.capture());
-        AuditChangeLifecycleExternalApiEventFactory factory = (AuditChangeLifecycleExternalApiEventFactory)factoryCaptor.getValue();
-
-        ExternalApiEvent event = (ExternalApiEvent)factory.getDbEvent();
-        assertThat(event.getAction()).isEqualTo(AuditingActionEnum.CHANGE_LIFECYCLE_BY_API.getName());
-        verifyCommonDataForExternalApiEvent(event, true);
-        verifyPreviousResourceVersionInfoForExternalApiEvent(event, true);
-        verifyCurrentResourceVersionInfoForExternalApiEvent(event, false);
-        verifyDistributionDataForExternalApiEvent(event);
-        assertThat(event.getModifier()).isEqualTo(MODIFIER_UID);
-        assertThat(event.getInvariantUuid()).isEqualTo(INVARIANT_UUID);
-        assertThat(event.getResourceName()).isNull();
-        assertThat(event.getResourceType()).isEqualTo(ComponentTypeEnum.RESOURCE.getValue());
-
-    }
 
     private void verifyDistributionDataForExternalApiEvent(ExternalApiEvent event) {
         assertThat(event.getConsumerId()).isEqualTo(DIST_CONSUMER_ID);
@@ -545,7 +532,6 @@ public class ComponentsUtilsTest {
             assertThat(event.getPrevVersion()).isNull();
         }
         else {
-            assertThat(event.getPrevState()).isEqualTo(LifecycleStateEnum.READY_FOR_CERTIFICATION.name());
             assertThat(event.getPrevVersion()).isEqualTo(PREV_RESOURCE_VERSION);
         }
     }

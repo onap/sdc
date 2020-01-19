@@ -19,12 +19,12 @@
  */
 package org.openecomp.sdc.asdctool.impl.internal.tool;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.openecomp.sdc.asdctool.utils.ConsoleWriter;
 import org.openecomp.sdc.asdctool.utils.ReportWriter;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+
+import java.io.IOException;
+import java.util.Map;
 
 public abstract class CommonInternalTool {
     protected ReportWriter reportWriter;

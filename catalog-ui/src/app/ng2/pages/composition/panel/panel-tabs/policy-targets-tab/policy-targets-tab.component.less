@@ -1,0 +1,61 @@
+@import './../../../../../../../assets/styles/mixins';
+
+
+.expand-collapse-content {
+    padding: 20px;
+}
+
+.component-details-panel-tab-no-data {
+    margin: 0 auto;
+    padding-top: 30px;
+    text-align: center;
+
+    .component-details-panel-tab-no-data-title {
+        font-family: @font-opensans-bold;
+    }
+   
+}
+
+.component-details-panel-large-item {
+    font-family: OpenSans-Semibold, sans-serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 32px;
+    line-height: 32px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &:hover {
+        background-color: #f8f8f8;
+        margin: 0 -20px; /* to fill expand-collapse-content padding */
+        padding: 0 20px;
+        .component-details-panel-item-delete {
+            visibility: visible;
+        }
+    }
+}
+
+.component-details-panel-item-delete {
+    cursor: pointer;
+    visibility: hidden;
+}
+
+/deep/ .w-sdc-designer-sidebar-section-title {
+    color: #5a5a5a;
+    font-family: OpenSans-Semibold, sans-serif;
+    font-size: 14px;
+    background-color: #eaeaea;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+    line-height: 32px;
+    padding: 0 10px 0 20px;
+    margin-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

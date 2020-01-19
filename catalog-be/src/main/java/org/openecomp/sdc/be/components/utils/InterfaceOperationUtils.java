@@ -16,14 +16,6 @@
 
 package org.openecomp.sdc.be.components.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
@@ -37,6 +29,15 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InterfaceOperationUtils {
 

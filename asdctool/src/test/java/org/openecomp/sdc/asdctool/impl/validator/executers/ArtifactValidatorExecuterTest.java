@@ -20,21 +20,21 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import static org.mockito.Mockito.mock;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.testng.Assert;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.testng.Assert;
+
+import static org.mockito.Mockito.mock;
 
 public class ArtifactValidatorExecuterTest {
 

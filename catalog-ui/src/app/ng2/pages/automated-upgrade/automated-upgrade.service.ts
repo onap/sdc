@@ -1,19 +1,15 @@
-import {SdcUiComponents} from "sdc-ui/lib/angular";
-import {Injectable, Inject} from "@angular/core";
-import {IModalConfig} from "sdc-ui/lib/angular/modals/models/modal-config";
-import {AutomatedUpgradeComponent} from "./automated-upgrade.component";
-import {Component} from "../../../models/components/component";
-import {ComponentServiceNg2} from "../../services/component-services/component.service";
-import {GeneralStatus, ComponentType} from "../../../utils/constants";
-import {IDependenciesServerResponse} from "../../services/responses/dependencies-server-response";
-import {AutomatedUpgradeStatusComponent} from "./automated-upgrade-status/automated-upgrade-status.component";
-import {AutomatedUpgradeStatusResponse} from "../../services/responses/automated-upgrade-response";
+import { SdcUiComponents, SdcUiCommon, SdcUiServices } from "onap-ui-angular";
+import { Injectable, ComponentRef } from "@angular/core";
+import { AutomatedUpgradeComponent } from "./automated-upgrade.component";
+import { Component } from "../../../models/components/component";
+import { ComponentServiceNg2 } from "../../services/component-services/component.service";
+import { GeneralStatus, ComponentType } from "../../../utils/constants";
+import { IDependenciesServerResponse } from "../../services/responses/dependencies-server-response";
+import { AutomatedUpgradeStatusComponent } from "./automated-upgrade-status/automated-upgrade-status.component";
+import { AutomatedUpgradeStatusResponse } from "../../services/responses/automated-upgrade-response";
+import { TranslateService, ITranslateArgs } from "../../shared/translator/translate.service";
+import { ServiceContainerToUpgradeUiObject, AllottedResourceInstanceUiObject, VspInstanceUiObject } from "./automated-upgrade-models/ui-component-to-upgrade";
 import Dictionary = _.Dictionary;
-import {TranslateService, ITranslateArgs} from "../../shared/translator/translate.service";
-import {
-    ServiceContainerToUpgradeUiObject,
-    AllottedResourceInstanceUiObject, VspInstanceUiObject
-} from "./automated-upgrade-models/ui-component-to-upgrade";
 
 export interface IAutomatedUpgradeRequestObj {
     serviceId:string;
@@ -30,8 +26,9 @@ export class AutomatedUpgradeService {
     private vspComponent:Component;
     private uiComponentsToUpgrade:Array<ServiceContainerToUpgradeUiObject>;
     private componentType:string;
+    private modalInstance: ComponentRef<SdcUiComponents.ModalComponent>;
 
-    constructor(private modalService:SdcUiComponents.ModalService,
+    constructor(private modalService:SdcUiServices.ModalService,
                 private componentService:ComponentServiceNg2,
                 private translateService:TranslateService) {
     }
@@ -69,21 +66,21 @@ export class AutomatedUpgradeService {
     }
 
     private disabledAllModalButtons = ():void => {
-        this.modalService.getCurrentInstance().innerModalContent.instance.disabled = true;
-        this.modalService.getCurrentInstance().buttons[0].show_spinner = true;
-        this.modalService.getCurrentInstance().buttons[1].disabled = true;
+        this.modalInstance.instance.innerModalContent.instance.disabled = true;
+        this.modalInstance.instance.buttons[0].show_spinner = true;
+        this.modalInstance.instance.buttons[1].disabled = true;
     }
 
     public changeUpgradeButtonState = (isDisabled:boolean):void => {
-        if (this.modalService.getCurrentInstance().buttons[0].disabled !== isDisabled) {
-            this.modalService.getCurrentInstance().buttons[0].disabled = isDisabled;
+        if (this.modalInstance.instance.buttons[0].disabled !== isDisabled) {
+            this.modalInstance.instance.buttons[0].disabled = isDisabled;
         }
     }
 
     //TODO We will need to replace this function after sdc-ui modal new design, this is just a workaround
     public automatedUpgrade = ():void => {
 
-        let selectedServices = this.modalService.getCurrentInstance().innerModalContent.instance.selectedComponentsToUpgrade;
+        let selectedServices = this.modalInstance.instance.innerModalContent.instance.selectedComponentsToUpgrade;
         this.disabledAllModalButtons();
         this.componentService.automatedUpgrade(this.vspComponent.componentType, this.vspComponent.uniqueId, this.convertToServerRequest(selectedServices)).subscribe((automatedUpgradeStatus:any) => {
 
@@ -105,11 +102,11 @@ export class AutomatedUpgradeService {
                 });
 
                 let statusModalTitle = this.getTextByComponentType("_UPGRADE_STATUS_TITLE");
-                this.modalService.getCurrentInstance().setTitle(statusModalTitle);
-                this.modalService.getCurrentInstance().getButtons().splice(0, 1); // Remove the upgrade button
-                this.modalService.getCurrentInstance().buttons[0].disabled = false; // enable close again
-                this.modalService.getCurrentInstance().innerModalContent.destroy();
-                this.modalService.createInnnerComponent(AutomatedUpgradeStatusComponent, {
+                this.modalInstance.instance.setTitle(statusModalTitle);
+                this.modalInstance.instance.getButtons().splice(0, 1); // Remove the upgrade button
+                this.modalInstance.instance.buttons[0].disabled = false; // enable close again
+                this.modalInstance.instance.innerModalContent.destroy();
+                this.modalService.createInnnerComponent(this.modalInstance, AutomatedUpgradeStatusComponent, {
                     upgradedComponentsList: upgradedComponent,
                     upgradeStatusMap: statusMap,
                     statusText: this.getStatusText(statusMap)
@@ -250,10 +247,10 @@ export class AutomatedUpgradeService {
         let modalTitle = this.getTextByComponentType("_UPGRADE_TITLE");
         let certificationText = isAfterCertification ? this.getTextByComponentType("_CERTIFICATION_STATUS_TEXT", {resourceName: this.vspComponent.name}) : undefined;
 
-        let upgradeVspModalConfig:IModalConfig = {
+        let upgradeVspModalConfig = {
             title: modalTitle,
             size: "md",
-            type: "custom",
+            type: SdcUiCommon.ModalType.custom,
             testId: "upgradeVspModal",
             buttons: [
                 {
@@ -266,10 +263,11 @@ export class AutomatedUpgradeService {
 
                 },
                 {text: 'CLOSE', size: 'sm', closeModal: true, type: 'secondary'}
-            ]
-        };
+            ] as SdcUiCommon.IModalButtonComponent[]
+        } as SdcUiCommon.IModalConfig;
 
-        this.modalService.openCustomModal(upgradeVspModalConfig, AutomatedUpgradeComponent, {
+        this.modalInstance = this.modalService.openModal(upgradeVspModalConfig);
+        this.modalService.createInnnerComponent(this.modalInstance, AutomatedUpgradeComponent, {
             componentsToUpgrade: this.uiComponentsToUpgrade,
             informationText: informationalText,
             certificationStatusText: certificationText

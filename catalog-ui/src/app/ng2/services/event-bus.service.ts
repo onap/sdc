@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BasePubSub, IPubSubEvent} from 'sdc-pubsub';
+import {BasePubSub, IPubSubEvent} from "sdc-pubsub";
 
 @Injectable()
 export class EventBusService extends BasePubSub {

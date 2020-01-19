@@ -19,14 +19,7 @@
  */
 package org.openecomp.sdc.be.components.validation;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +35,14 @@ import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnnotationValidatorTest {

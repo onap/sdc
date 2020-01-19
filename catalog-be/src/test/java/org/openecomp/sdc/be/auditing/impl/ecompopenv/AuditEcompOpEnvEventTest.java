@@ -31,11 +31,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditEcompOpEnvEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.EcompOperationalEnvironmentEvent;
@@ -43,10 +40,17 @@ import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_CREATE_OP_ENV_LOG_STR;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_UNKNOWN_NOTIFICATION_OP_ENV_LOG_STR;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_UNSUPPORTED_TYPE_OP_ENV_LOG_STR;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_ACTION;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.OP_ENV_TYPE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.TENANT_CONTEXT;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.init;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditEcompOpEnvEventTest {
@@ -55,18 +59,14 @@ public class AuditEcompOpEnvEventTest {
 
     @Mock
     private static AuditCassandraDao cassandraDao;
-    @Mock
-    private static AuditingDao auditingDao;
-    @Mock
-    private static Configuration.ElasticSearchConfig esConfig;
 
     @Captor
     private ArgumentCaptor<EcompOperationalEnvironmentEvent> eventCaptor;
 
     @Before
     public void setUp() {
-        init(esConfig);
-        auditingManager = new AuditingManager(auditingDao, cassandraDao, new TestConfigurationProvider());
+        init();
+        auditingManager = new AuditingManager(cassandraDao, new TestConfigurationProvider());
     }
 
     @Test
@@ -74,8 +74,6 @@ public class AuditEcompOpEnvEventTest {
         AuditEventFactory factory = new AuditEcompOpEnvEventFactory(AuditingActionEnum.CREATE_ENVIRONMENT,
                 OP_ENV_ID, OP_ENV_NAME, OP_ENV_TYPE, OP_ENV_ACTION, TENANT_CONTEXT);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.CREATE_ENVIRONMENT.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_CREATE_OP_ENV_LOG_STR);
@@ -87,8 +85,6 @@ public class AuditEcompOpEnvEventTest {
         AuditEventFactory factory = new AuditEcompOpEnvEventFactory(AuditingActionEnum.UNSUPPORTED_ENVIRONMENT_TYPE,
                 OP_ENV_ID, OP_ENV_NAME, OP_ENV_TYPE, OP_ENV_ACTION, TENANT_CONTEXT);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.UNSUPPORTED_ENVIRONMENT_TYPE.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_UNSUPPORTED_TYPE_OP_ENV_LOG_STR);
@@ -100,8 +96,6 @@ public class AuditEcompOpEnvEventTest {
         AuditEventFactory factory = new AuditEcompOpEnvEventFactory(AuditingActionEnum.UNKNOWN_ENVIRONMENT_NOTIFICATION,
                 OP_ENV_ID, OP_ENV_NAME, OP_ENV_TYPE, OP_ENV_ACTION, TENANT_CONTEXT);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.UNKNOWN_ENVIRONMENT_NOTIFICATION.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_UNKNOWN_NOTIFICATION_OP_ENV_LOG_STR);

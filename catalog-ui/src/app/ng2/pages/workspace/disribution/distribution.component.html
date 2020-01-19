@@ -1,0 +1,80 @@
+<div *ngIf="!isModal">
+    <div *ngIf="serviceHasDistibutions" class="w-sdc-distribution-view-header">
+        <div class="w-sdc-distribution-view-title" data-tests-id="DistributionsLabel">DISTRIBUTION <span class="blue-font" data-tests-id="totalArtifacts">[{{distributions.length}}]</span></div>
+        <div class="header-spacer"></div>
+        <input type="text" value="GeeksForGeeks" id="inputForCopyToClipboard" [ngStyle]="{'z-index': '-2', 'width': '25px'}">
+        <div class="top-search">
+            <input type="text"
+                   style="width: auto;"
+                   class="search-text"
+                   data-tests-id="searchTextbox"
+                   placeholder="Search"
+                   data-ng-model="searchBind"
+                   ng-model-options="{ debounce: 500 }"
+                   (keyup)="updateFilter($event)"/>
+        </div>
+        <div class="sprite-new refresh-btn" data-tests-id="refreshButton" (click)="refreshDistributions()" title="Refresh"></div>
+    </div>
+    <div class="w-sdc-distribution-view-header w-sdc-distribution-view-title" data-tests-id="noDistributionsLabel" *ngIf="!serviceHasDistibutions">No Distributions To Present</div>
+</div>
+
+<div *ngIf="serviceHasDistibutions">
+    <ngx-datatable
+            [columnMode]="'flex'"
+            [rowHeight]="'auto'"
+            [reorderable]="false"
+            [swapColumns]="false"
+            [scrollbarV]="false"
+            [rows]="distributions"
+            [sorts]="[{prop: 'timestamp', dir: 'desc'}]"
+
+            #distributionTable>
+        <ngx-datatable-row-detail [rowHeight]="'auto'">
+            <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                <app-distribution-component-table [rowDistributionID]=row.distributionID [isModal]="isModal"
+                                                  [statusFilter]="statusFilter"></app-distribution-component-table>
+            </ng-template>
+        </ngx-datatable-row-detail>
+        <ngx-datatable-column [resizeable]="false" [flexGrow]="2" name="Distribution ID">
+            <ng-template ngx-datatable-cell-template let-row="row" let-expanded="expanded" >
+                <div class="expand-collapse-cell">
+                   <a><svg-icon [clickable]="true" class="expand-collapse-icon"
+                              [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
+                              [size]="'medium'" (click)="expandRow(row, expanded)" [attr.data-tests-id]="generateDataTestID('expandIcon_', row.distributionID, isModal)"></svg-icon></a>
+
+                </div>
+                <div class="distributionIDBlock">
+                    <div class = "distributionRowValue" [attr.data-tests-id]="generateDataTestID('distID_', row.distributionID, isModal)">{{ row.distributionID }}</div>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" [flexGrow]="1" name="User id">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div class = "distributionRowValue ellipsisCell" [attr.data-tests-id]="generateDataTestID('userID_', row.distributionID)" sdc-tooltip [tooltip-placement]="3" [tooltip-text]="row.userId">{{ row.userId }}</div>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" [flexGrow]="1" name="Time[UTC]">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div class = "distributionRowValue" [attr.data-tests-id]="generateDataTestID('timeStamp_', row.distributionID)">{{ row.timestamp }} </div>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false"[flexGrow]="1" name="Status" >
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div>
+                    <span class="statusIcon">
+                        <svg-icon [clickable]="true" class="expand-collapse-icon"
+                        [name]= "getIconName(row.deployementStatus)" [mode]="'primary'"
+                        [size]="'medium'"></svg-icon>
+                    </span>
+                    <span class = "distributionRowValue" [attr.data-tests-id]="generateDataTestID('status_', row.distributionID)">
+                        {{ row.deployementStatus }}
+                    </span>
+                    <span class="btnMarkAsDistributed" (click)="markDeploy(row.distributionID, row.deployementStatus)">
+                            <svg-icon [clickable]="true" [name]= "'success'" [mode]="getIconMode(row.deployementStatus)"
+                                      [size]="'medium'"></svg-icon>
+                    </span>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+</div>

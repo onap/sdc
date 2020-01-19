@@ -22,7 +22,8 @@
                 {{menuComponentTitle}}
             </div>
             <div class="i-sdc-designer-sidebar-section-content-item" ng-class="{'selected': isSelected(menuItem)}" ng-repeat="menuItem in leftBarTabs.menuItems track by $index">
-                <div class="expand-collapse-menu-box-item-text" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu" ><button type="button" class="i-sdc-designer-sidebar-section-content-item-service-cat" ng-click="menuItem.callback()" ng-disabled={{menuItem.disabledCategory}}>{{menuItem.text}}</button></div>
+                <!--<div class="expand-collapse-menu-box-item-text" ng-click="menuItem.callback()" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu">{{menuItem.text}}</div>-->
+                <div class="expand-collapse-menu-box-item-text" ng-class="{'disabled': menuItem.isDisabled }"><button data-tests-id="{{menuItem.text}}LeftSideMenu" type="button" class="i-sdc-designer-sidebar-section-content-item-service-cat" ng-click="menuItem.callback()" ng-disabled={{menuItem.disabledCategory}}>{{menuItem.text}}</button></div>
             </div>
         </div>
 
@@ -53,9 +54,11 @@
 
                 <div class="sdc-workspace-top-bar-buttons">
 
-                    <span ng-if="!isCreateMode() && !component.isLatestVersion() && !showChangeStateButton()" [disabled]="unsavedChanges">Switch to the&nbsp;<a ng-click="getLatestVersion()">latest version</a></span>
+                    <span ng-if="!isCreateMode() && !component.isLatestVersion() && !showLatestVersion()" [disabled]="unsavedChanges">Switch to the&nbsp;<a data-tests-id="latest-version" ng-click="getLatestVersion()">latest version</a></span>
+                    
 
                  <button ng-if="isDesigner() && !isCreateMode() && component.lifecycleState === 'CERTIFIED' && (component.isService() || component.getComponentSubType() === 'VF')"
+                            ng-disabled="hasNoDependencies"
                             ng-click="openAutomatedUpgradeModal()"
                             class="tlv-btn blue"
                             data-ng-class="{'disabled' : component.archived}"
@@ -65,13 +68,12 @@
 
                     <button ng-repeat="(key,button) in changeLifecycleStateButtons"
                             ng-click="changeLifecycleState(key)"
-                            ng-if="showChangeStateButton() && key != 'deleteVersion'"
-                            data-ng-disabled="isCreateMode() || button.disabled || disabledButtons || !isValidForm || unsavedChanges || component.archived"
+                            ng-if="key != 'deleteVersion'"
+                            data-ng-disabled="checkDisableButton(button)"
                             class="change-lifecycle-state-btn tlv-btn"
                             ng-class="$first ? 'outline green' : 'grey'"
                             data-tests-id="{{button.text  | testsId}}" prevent-double-click>
                             {{button.text}}
-
                         </button>
 
 
@@ -104,11 +106,11 @@
             </div>
             <div class="w-sdc-main-container-body-content-wrapper">
                 <div class="w-sdc-main-container-body-content-header">
-                    <div class="tab-title" data-ng-if="!isComposition && !isDeployment && !isPlugins">
+                    <div class="workspace-tab-title" data-ng-if="!isComposition && !isDeployment && !isPlugins">
                         {{getTabTitle()}}
                     </div>
                 </div>
-                <div class="w-sdc-main-container-body-content" data-ng-class="{'third-party':thirdParty}" data-ui-view></div>
+                <div class="w-sdc-main-container-body-content"  data-ng-class="{'deploy-body-content': isDeployment}" data-ng-class="{'third-party':thirdParty}" data-ui-view></div>
             </div>
         </div>
     </div>

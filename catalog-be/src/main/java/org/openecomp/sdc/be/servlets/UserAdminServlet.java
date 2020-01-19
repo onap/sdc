@@ -20,12 +20,28 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import com.jcabi.aspects.Loggable;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.eclipse.jetty.http.HttpStatus;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.be.user.UserBusinessLogicExt;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.stereotype.Controller;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -39,51 +55,41 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/user")
 @OpenAPIDefinition(info = @Info(title = "User Administration", description = "User admininstarator operations"))
-@Singleton
+@Controller
 public class UserAdminServlet extends BeGenericServlet {
 
     private static final String UTF_8 = "UTF-8";
-	private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
 	private static final String ROLE_DELIMITER = ",";
     private static final Logger log = Logger.getLogger(UserAdminServlet.class);
     private final UserBusinessLogic userBusinessLogic;
+    private final UserBusinessLogicExt userBusinessLogicExt;
 
-    @Inject
-    public UserAdminServlet(UserBusinessLogic userBusinessLogic,
-        ComponentsUtils componentsUtils) {
-        super(userBusinessLogic, componentsUtils);
-        this.userBusinessLogic = userBusinessLogic;
+    static class UserRole {
+        Role role;
+
+        public Role getRole() {
+            return role;
+        }
+
+        public void setRole(Role role) {
+            this.role = role;
+        }
+
     }
 
-    /***************************************
-     * API start
-     *************************************************************/
-
-    /* User by userId CRUD start */
+    UserAdminServlet(UserBusinessLogic userBusinessLogic,
+                     ComponentsUtils componentsUtils, UserBusinessLogicExt userBusinessLogicExt) {
+        super(userBusinessLogic, componentsUtils);
+        this.userBusinessLogic = userBusinessLogic;
+        this.userBusinessLogicExt = userBusinessLogicExt;
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     // retrieve all user details
@@ -93,37 +99,16 @@ public class UserAdminServlet extends BeGenericServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "retrieve user details", method = "GET",
             summary = "Returns user details according to userId",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns user Ok"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public Response get(
-            @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
-            @Context final HttpServletRequest request) {
-
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}", url);
-
-        try {
-            Either<User, ActionStatus> either = userBusinessLogic.getUser(userId, false);
-
-            if (either.isRight()) {
-                return buildErrorResponse(
-                        getComponentsUtils().getResponseFormatByUserId(either.right().value(), userId));
-            } else {
-                if (either.left().value() != null) {
-                    return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                            either.left().value());
-                } else {
-                    return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-                }
-            }
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get User");
-            log.debug("get user failed with unexpected error: {}", e.getMessage(), e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public User get(
+        @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
+        @Context final HttpServletRequest request) {
+        return userBusinessLogic.getUser(userId, false);
     }
 
     @GET
@@ -137,31 +122,12 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public Response getRole(
-            @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
-            @Context final HttpServletRequest request) {
-
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(getRole) Start handle request of {}", url);
-
-        try {
-            Either<User, ActionStatus> either = userBusinessLogic.getUser(userId, false);
-            if (either.isRight()) {
-                return buildErrorResponse(
-                        getComponentsUtils().getResponseFormatByUserId(either.right().value(), userId));
-            } else {
-                if (either.left().value() != null) {
-                    String roleJson = "{ \"role\" : \"" + either.left().value().getRole() + "\" }";
-                    return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), roleJson);
-                } else {
-                    return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-                }
-            }
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get User Role");
-            log.debug("Get user role failed with unexpected error: {}", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public String getRole(
+        @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
+        @Context final HttpServletRequest request) {
+        User user = userBusinessLogic.getUser(userId, false);
+        return "{ \"role\" : \"" + user.getRole() + "\" }";
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,47 +145,17 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
             @ApiResponse(responseCode = "409", description = "User already exists"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public Response updateUserRole(
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public User updateUserRole(
             @Parameter(description = "userId of user to get",
-                    required = true) @PathParam("userId") final String userIdUpdateUser,
+            required = true) @PathParam("userId") final String userIdUpdateUser,
             @Context final HttpServletRequest request,
-            @Parameter(description = "json describe the update role", required = true) String data,
+            @Parameter(description = "json describe the update role", required = true) UserRole newRole,
             @HeaderParam(value = Constants.USER_ID_HEADER) String modifierUserId) {
 
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug(START_HANDLE_REQUEST_OF, url);
-
-        // get modifier id
-        User modifier = new User();
-        modifier.setUserId(modifierUserId);
-        log.debug("modifier id is {}", modifierUserId);
-
-        Response response = null;
-
-        try {
-            User updateInfoUser = getComponentsUtils().convertJsonToObject(data, modifier, User.class, AuditingActionEnum.UPDATE_USER).left().value();
-            Either<User, ResponseFormat> updateUserResponse = userBusinessLogic.updateUserRole(modifier, userIdUpdateUser, updateInfoUser.getRole());
-
-            if (updateUserResponse.isRight()) {
-                log.debug("failed to update user role");
-                response = buildErrorResponse(updateUserResponse.right().value());
-                return response;
-            }
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), updateUserResponse.left().value());
-            return response;
-
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update User Metadata");
-            log.debug("Update User Role failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
-        }
+        return userBusinessLogic.updateUserRole(modifierUserId, userIdUpdateUser, newRole.getRole().name());
     }
 
-    /* User role CRUD end */
-
-    /* New user CRUD start */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -232,46 +168,16 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409", description = "User already exists"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     public Response createUser(@Context final HttpServletRequest request,
-            @Parameter(description = "json describe the user", required = true) String newUserData,
+            @Parameter(description = "json describe the user", required = true) User newUser,
             @HeaderParam(value = Constants.USER_ID_HEADER) String modifierAttId) {
 
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug(START_HANDLE_REQUEST_OF, url);
-
-        // get modifier id
-        User modifier = new User();
-        modifier.setUserId(modifierAttId);
         log.debug("modifier id is {}", modifierAttId);
-
-        Response response = null;
-
-        try {
-            User newUserInfo = getComponentsUtils().convertJsonToObject(newUserData, modifier, User.class, AuditingActionEnum.ADD_USER).left().value();
-            Either<User, ResponseFormat> createUserResponse = userBusinessLogic.createUser(modifier, newUserInfo);
-
-            if (createUserResponse.isRight()) {
-                log.debug("failed to create user");
-                response = buildErrorResponse(createUserResponse.right().value());
-                return response;
-            }
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), createUserResponse.left().value());
-            return response;
-
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update User Metadata");
-            log.debug("Create User failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
-        }
+        User user = userBusinessLogic.createUser(modifierAttId, newUser);
+        return Response.status(HttpStatus.CREATED_201)
+                .entity(user)
+                .build();
     }
 
-    /* New user CRUD end */
-
-    /* User authorization start */
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // User Authorization
     @GET
     @Path("/authorize")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -280,50 +186,24 @@ public class UserAdminServlet extends BeGenericServlet {
     @Operation(description = "authorize", summary = "authorize user", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Returns user Ok"), @ApiResponse(responseCode = "403", description = "Restricted Access"), @ApiResponse(responseCode = "500", description = "Internal Server Error") })
-    public Response authorize(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @HeaderParam("HTTP_CSP_FIRSTNAME") String firstName, @HeaderParam("HTTP_CSP_LASTNAME") String lastName,
-            @HeaderParam("HTTP_CSP_EMAIL") String email) {
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public User authorize(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                          @HeaderParam("HTTP_CSP_FIRSTNAME") String firstName,
+                          @HeaderParam("HTTP_CSP_LASTNAME") String lastName,
+            @HeaderParam("HTTP_CSP_EMAIL") String email) throws UnsupportedEncodingException {
 
-        try {
-            userId = userId != null ? URLDecoder.decode(userId, UTF_8) : null;
-            firstName = firstName != null ? URLDecoder.decode(firstName, UTF_8) : null;
-            lastName = lastName != null ? URLDecoder.decode(lastName, UTF_8) : null;
-            email = email != null ? URLDecoder.decode(email, UTF_8) : null;
-        } catch (UnsupportedEncodingException e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Authorize User - decode headers");
-            ResponseFormat errorResponseWrapper = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            log.error("#authorize - authorization decoding failed with error: ", e);
-            return buildErrorResponse(errorResponseWrapper);
-        }
-
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug(START_HANDLE_REQUEST_OF, url);
+        userId = userId != null ? URLDecoder.decode(userId, UTF_8) : null;
+        firstName = firstName != null ? URLDecoder.decode(firstName, UTF_8) : null;
+        lastName = lastName != null ? URLDecoder.decode(lastName, UTF_8) : null;
+        email = email != null ? URLDecoder.decode(email, UTF_8) : null;
 
         User authUser = new User();
         authUser.setUserId(userId);
         authUser.setFirstName(firstName);
         authUser.setLastName(lastName);
         authUser.setEmail(email);
-        log.debug("auth user id is {}", userId);
-
-        Response response = null;
-        try {
-            Either<User, ResponseFormat> authorize = userBusinessLogic.authorize(authUser);
-
-            if (authorize.isRight()) {
-                log.debug("authorize user failed");
-                response = buildErrorResponse(authorize.right().value());
-                return response;
-            }
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), authorize.left().value());
-            return response;
-
-        } catch (Exception e) {
-            log.debug("authorize user failed with unexpected error: {}", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
+        return userBusinessLogic.authorize(authUser);
     }
-
-    /* User authorization end */
 
     @GET
     @Path("/admins")
@@ -335,30 +215,9 @@ public class UserAdminServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns user Ok"),
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public Response getAdminsUser(@Context final HttpServletRequest request) {
-
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}", url);
-
-        try {
-            Either<List<User>, ResponseFormat> either = userBusinessLogic.getAllAdminUsers();
-
-            if (either.isRight()) {
-                log.debug("Failed to get all admin users");
-                return buildErrorResponse(either.right().value());
-            } else {
-                if (either.left().value() != null) {
-                    return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                            either.left().value());
-                } else {
-                    return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-                }
-            }
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get All Administrators");
-            log.debug("get all admins failed with unexpected error: {}", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public List<User> getAdminsUser(@Context final HttpServletRequest request) {
+        return userBusinessLogic.getAllAdminUsers();
     }
 
     @GET
@@ -375,7 +234,7 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted Access"),
             @ApiResponse(responseCode = "400", description = "Missing content"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public Response getUsersList(@Context final HttpServletRequest request, @Parameter(
+    public List<User> getUsersList(@Context final HttpServletRequest request, @Parameter(
             description = "Any active user's USER_ID ") @HeaderParam(Constants.USER_ID_HEADER) final String userId,
             @Parameter(
                     description = "TESTER,DESIGNER,PRODUCT_STRATEGIST,OPS,PRODUCT_MANAGER,GOVERNOR, ADMIN OR all users by not typing anything") @QueryParam("roles") final String roles) {
@@ -390,26 +249,9 @@ public class UserAdminServlet extends BeGenericServlet {
                 rolesList.add(role.trim());
             }
         }
-
-        try {
-            Either<List<User>, ResponseFormat> either = userBusinessLogic.getUsersList(userId, rolesList, roles);
-
-            if (either.isRight()) {
-                log.debug("Failed to get ASDC users");
-                return buildErrorResponse(either.right().value());
-            } else {
-                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), either.left().value());
-            }
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get ASDC users");
-            log.debug("get users failed with unexpected error: {}", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
-
+        return userBusinessLogic.getUsersList(userId, rolesList, roles);
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // delete user
     @DELETE
     @Path("/{userId}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -423,33 +265,11 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
             @ApiResponse(responseCode = "409", description = "Restricted operation"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public Response deActivateUser(
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public User deActivateUser(
             @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
             @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userIdHeader) {
-
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {} modifier id is {}", url, userIdHeader);
-
-        User modifier = new User();
-        modifier.setUserId(userIdHeader);
-
-        Response response = null;
-        try {
-            Either<User, ResponseFormat> deactiveUserResponse = userBusinessLogic.deActivateUser(modifier, userId);
-
-            if (deactiveUserResponse.isRight()) {
-                log.debug("Failed to deactivate user");
-                response = buildErrorResponse(deactiveUserResponse.right().value());
-                return response;
-            }
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deactiveUserResponse.left().value());
-            return response;
-
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get ASDC users");
-            log.debug("deactivate user failed with unexpected error: {}", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
+            @HeaderParam(value = Constants.USER_ID_HEADER) String modifierId) {
+        return userBusinessLogicExt.deActivateUser(modifierId, userId);
     }
 }

@@ -126,11 +126,6 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
     }
 
     @Override
-    public String getAuditingEsType() {
-        return this.action.getAuditingEsType();
-    }
-
-    @Override
     public final String getLogMessage() {
        return String.format(getLogPattern(), getLogArgs());
     }

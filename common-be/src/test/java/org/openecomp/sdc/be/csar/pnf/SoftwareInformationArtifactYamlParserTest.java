@@ -19,15 +19,16 @@
 
 package org.openecomp.sdc.be.csar.pnf;
 
+import org.junit.Test;
+import org.openecomp.sdc.be.test.util.TestResourcesHandler;
+
+import java.io.IOException;
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.Optional;
-import org.junit.Test;
-import org.openecomp.sdc.be.test.util.TestResourcesHandler;
 
 public class SoftwareInformationArtifactYamlParserTest {
 

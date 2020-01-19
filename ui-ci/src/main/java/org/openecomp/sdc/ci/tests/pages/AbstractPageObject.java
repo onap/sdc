@@ -19,12 +19,13 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
 
 /**
  * Base UI test object that represents a page or component in a html page

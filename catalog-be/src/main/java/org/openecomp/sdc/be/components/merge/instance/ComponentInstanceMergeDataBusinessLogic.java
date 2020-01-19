@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
 import fj.data.Either;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
@@ -31,11 +31,10 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * Created by chaya on 9/12/2017.
@@ -80,29 +79,18 @@ public class ComponentInstanceMergeDataBusinessLogic {
      * @param newInstanceId
      * @return
      */
-    public Either<Component, ResponseFormat> mergeComponentUserOrigData(User user, DataForMergeHolder dataHolder, org.openecomp.sdc.be.model.Component containerComponent, String newContainerComponentId, String newInstanceId) {
+    public Component mergeComponentUserOrigData(User user, DataForMergeHolder dataHolder, org.openecomp.sdc.be.model.Component containerComponent, String newContainerComponentId, String newInstanceId) {
 
         Either<Component, StorageOperationStatus> componentWithInstancesInputsAndProperties = getComponentWithInstancesMergeEntities(newContainerComponentId);
         if (componentWithInstancesInputsAndProperties.isRight()) {
             log.error("Component with id {} was not found", newContainerComponentId);
             StorageOperationStatus storageOperationStatus = componentWithInstancesInputsAndProperties.right().value();
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(storageOperationStatus, containerComponent.getComponentType());
-            return Either.right(componentsUtils.getResponseFormat(actionStatus));
+            throw new ByActionStatusComponentException(actionStatus);
         }
         Component updatedContainerComponent = componentWithInstancesInputsAndProperties.left().value();
-
-        for (ComponentInstanceMergeInterface compInstMergeBL: componentInstancesMergeBLs) {
-            try {
-                Either<Component, ResponseFormat> compInstanceMergeEither = compInstMergeBL.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, newInstanceId);
-                if (compInstanceMergeEither.isRight()) {
-                    return Either.right(compInstanceMergeEither.right().value());
-                }
-            } catch (ComponentException e) {
-                return Either.right(componentsUtils.getResponseFormat(e));
-            }
-        }
-
-        return Either.left(updatedContainerComponent);
+        componentInstancesMergeBLs.forEach(c-> c.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, newInstanceId));
+        return updatedContainerComponent;
     }
 
     private Either<Component, StorageOperationStatus> getComponentWithInstancesMergeEntities(String containerComponentId) {

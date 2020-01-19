@@ -19,9 +19,9 @@
 
 package org.openecomp.sdc.be.config;
 
-import java.util.Map;
-
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * Represents the non-mano configuration yaml.

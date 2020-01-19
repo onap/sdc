@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.Mockito.mock;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Feature;
 import org.glassfish.grizzly.servlet.HttpSessionImpl;
 import org.glassfish.grizzly.servlet.WebappContext;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -36,6 +30,7 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvi
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
@@ -46,6 +41,13 @@ import org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Feature;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.mockito.Mockito.mock;
 
 public abstract class JerseySpringBaseTest extends JerseyTest {
 
@@ -88,6 +90,7 @@ public abstract class JerseySpringBaseTest extends JerseyTest {
                         bind(request).to(HttpServletRequest.class);
                     }
                 })
+                .register(RolesAllowedDynamicFeature.class)
                 .register(DefaultExceptionMapper.class)
                 .register(ComponentExceptionMapper.class)
                 .register(StorageExceptionMapper.class)

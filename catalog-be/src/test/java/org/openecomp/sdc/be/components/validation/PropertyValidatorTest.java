@@ -19,12 +19,7 @@
  */
 package org.openecomp.sdc.be.components.validation;
 
-import static org.junit.Assert.assertTrue;
-
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +31,12 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PropertyValidatorTest {

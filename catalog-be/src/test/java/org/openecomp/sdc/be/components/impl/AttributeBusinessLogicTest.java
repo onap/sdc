@@ -21,12 +21,7 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +30,11 @@ import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
@@ -43,11 +42,16 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.when;
-
-import fj.data.Either;
 
 
 public class AttributeBusinessLogicTest extends BaseBusinessLogicMock{

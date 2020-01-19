@@ -20,8 +20,6 @@
 
 'use strict';
 
-//import 'restangular';
-//import 'angular-ui-router';
 import * as _ from "lodash";
 import "reflect-metadata";
 import 'ng-infinite-scroll';
@@ -30,34 +28,22 @@ import './modules/utils.ts';
 import './modules/directive-module.ts';
 import './modules/service-module';
 import './modules/view-model-module.ts';
-import {SdcUiComponentsNg1Module} from 'sdc-ui/lib/angular';
-
+import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
 import {
-    DataTypesService,
-    LeftPaletteLoaderService,
-    EcompHeaderService,
+    AngularJSBridge,
     CookieService,
-    ConfigurationUiService,
-    CacheService,
-    SdcVersionService,
-    ICategoryResourceClass,
-    EntityService
+    DataTypesService,
+    EcompHeaderService,
+    LeftPaletteLoaderService
 } from "./services";
-import { UserService } from "./ng2/services/user.service";
-import {forwardRef} from '@angular/core';
-import {UpgradeAdapter} from '@angular/upgrade';
-import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, States, PREVIOUS_CSAR_COMPONENT} from "./utils";
-import {IAppConfigurtaion, IAppMenu, IMainCategory, Resource, IHostedApplication} from "./models";
+import {CacheService, CatalogService, HomeService} from "./services-ng2";
+import {AuthenticationService} from "app/ng2/services/authentication.service";
+import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, PREVIOUS_CSAR_COMPONENT, States} from "./utils";
+import {IAppConfigurtaion, IAppMenu, IHostedApplication, Resource} from "./models";
 import {ComponentFactory} from "./utils/component-factory";
-import {ModalsHandler} from "./utils/modals-handler";
-import {downgradeComponent} from "@angular/upgrade/static";
-
-import {AppModule} from './ng2/app.module';
 import {Component} from "./models/components/component";
-import {ComponentServiceNg2} from "./ng2/services/component-services/component.service";
-import {ComponentMetadata} from "./models/component-metadata";
-import {Categories} from "./models/categories";
 import {IUserProperties} from "./models/user";
+import {WorkspaceService} from "./ng2/pages/workspace/workspace.service";
 
 let moduleName:string = 'sdcApp';
 let viewModelsModuleName:string = 'Sdc.ViewModels';
@@ -100,7 +86,6 @@ let dependentModules:Array<string> = [
     'angular-clipboard',
     'angularResizable',
     'infinite-scroll',
-    SdcUiComponentsNg1Module.name,
     viewModelsModuleName,
     directivesModuleName,
     servicesModuleName,
@@ -181,47 +166,40 @@ ng1appModule.config([
         $translateProvider.preferredLanguage('en_US');
 
         $httpProvider.interceptors.push('Sdc.Services.HeaderInterceptor');
-        $httpProvider.interceptors.push('Sdc.Services.HttpErrorInterceptor');
-        $urlRouterProvider.otherwise('welcome');
+        $urlRouterProvider.otherwise('dashboard');
 
         $stateProvider.state(
             'dashboard', {
                 url: '/dashboard?show&folder&filter.term&filter.status&filter.distributed',
-                templateUrl: "./view-models/dashboard/dashboard-view.html",
-                controller: viewModelsModuleName + '.DashboardViewModel',
-            }
+                template: '<home-page></home-page>',
+                permissions: ['DESIGNER']
+            },
+
         );
 
-        $stateProvider.state(
-            'welcome', {
-                url: '/welcome',
-                templateUrl: "./view-models/welcome/welcome-view.html",
-                controller: viewModelsModuleName + '.WelcomeViewModel'
-            }
-        );
 
-        let componentsParam:Array<any> = ['$stateParams', 'Sdc.Services.EntityService', 'Sdc.Services.CacheService', ($stateParams:any, EntityService:EntityService, cacheService:CacheService) => {
+        let componentsParam:Array<any> = ['$stateParams', 'HomeService', 'CatalogService', 'Sdc.Services.CacheService', ($stateParams:any, HomeService:HomeService, CatalogService:CatalogService, cacheService:CacheService) => {
             if (cacheService.get('breadcrumbsComponentsState') === $stateParams.previousState) {
                 const breadcrumbsComponents = cacheService.get('breadcrumbsComponents');
                 if (breadcrumbsComponents) {
                     return breadcrumbsComponents;
                 }
             } else {
-                let breadcrumbsComponentsPromise;
+                let breadcrumbsComponentsObservable;
                 if ($stateParams.previousState === 'dashboard') {
-                    breadcrumbsComponentsPromise = EntityService.getAllComponents(true);
+                    breadcrumbsComponentsObservable = HomeService.getAllComponents(true);
                 } else if ($stateParams.previousState === 'catalog') {
-                    breadcrumbsComponentsPromise = EntityService.getCatalog();
+                    breadcrumbsComponentsObservable = CatalogService.getCatalog();
                 } else {
                     cacheService.remove('breadcrumbsComponentsState');
                     cacheService.remove('breadcrumbsComponents');
                     return [];
                 }
-                breadcrumbsComponentsPromise.then((components) => {
+                breadcrumbsComponentsObservable.subscribe((components) => {
                     cacheService.set('breadcrumbsComponentsState', $stateParams.previousState);
                     cacheService.set('breadcrumbsComponents', components);
                 });
-                return breadcrumbsComponentsPromise;
+                return breadcrumbsComponentsObservable;
             }
         }];
 
@@ -246,19 +224,20 @@ ng1appModule.config([
                 templateUrl: './view-models/workspace/workspace-view.html',
                 controller: viewModelsModuleName + '.WorkspaceViewModel',
                 resolve: {
-                    injectComponent: ['$stateParams', 'ComponentFactory', 'Sdc.Services.CacheService', 'ComponentServiceNg2', function ($stateParams, ComponentFactory:ComponentFactory, cacheService:CacheService, ComponentServiceNg2:ComponentServiceNg2) {
+                    injectComponent: ['$stateParams', 'ComponentFactory', 'workspaceService', 'Sdc.Services.CacheService', function ($stateParams, ComponentFactory:ComponentFactory, workspaceService:WorkspaceService, cacheService: CacheService) {
 
                         if ($stateParams.id && $stateParams.id.length) { //need to check length in case ID is an empty string
                             return ComponentFactory.getComponentWithMetadataFromServer($stateParams.type.toUpperCase(), $stateParams.id).then(
                                 (component:Component)=> {
-                                if ($stateParams.componentCsar && component.isResource()){
-                                    if((<Resource>component).csarVersion != $stateParams.componentCsar.csarVersion) {
-                                        cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
+                                    if ($stateParams.componentCsar && component.isResource()){
+                                        if((<Resource>component).csarVersion != $stateParams.componentCsar.csarVersion) {
+                                            cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
+                                        }
+                                        component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, <Resource>component);
                                     }
-                                    component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, <Resource>component);
-                                }
-                                return component;
-                            });
+                                    workspaceService.setComponentMetadata(component.componentMetadata);
+                                    return component;
+                                });
                         } else if ($stateParams.componentCsar && $stateParams.componentCsar.csarUUID) {
                             return $stateParams.componentCsar;
                         } else {
@@ -288,36 +267,12 @@ ng1appModule.config([
             }
         );
 
-        $stateProvider.state(
-            States.WORKSPACE_ACTIVITY_LOG, {
-                url: 'activity_log',
-                parent: 'workspace',
-                controller: viewModelsModuleName + '.ActivityLogViewModel',
-                templateUrl: './view-models/workspace/tabs/activity-log/activity-log.html',
-            }
-        );
-
-        $stateProvider.state(
-            States.WORKSPACE_DEPLOYMENT_ARTIFACTS, {
-                url: 'deployment_artifacts',
-                parent: 'workspace',
-                controller: viewModelsModuleName + '.DeploymentArtifactsViewModel',
-                templateUrl: './view-models/workspace/tabs/deployment-artifacts/deployment-artifacts-view.html',
-                data: {
-                    bodyClass: 'deployment_artifacts'
-                }
-            }
-        );
 
         $stateProvider.state(
             States.WORKSPACE_INFORMATION_ARTIFACTS, {
                 url: 'information_artifacts',
                 parent: 'workspace',
-                controller: viewModelsModuleName + '.InformationArtifactsViewModel',
-                templateUrl: './view-models/workspace/tabs/information-artifacts/information-artifacts-view.html',
-                data: {
-                    bodyClass: 'information_artifacts'
-                }
+                template:'<information-artifact-page></information-artifact-page>'
             }
         );
 
@@ -325,11 +280,16 @@ ng1appModule.config([
             States.WORKSPACE_TOSCA_ARTIFACTS, {
                 url: 'tosca_artifacts',
                 parent: 'workspace',
-                controller: viewModelsModuleName + '.ToscaArtifactsViewModel',
-                templateUrl: './view-models/workspace/tabs/tosca-artifacts/tosca-artifacts-view.html',
-                data: {
-                    bodyClass: 'tosca_artifacts'
-                }
+                template:'<tosca-artifact-page></tosca-artifact-page>'
+            }
+        );
+
+
+        $stateProvider.state(
+            States.WORKSPACE_DEPLOYMENT_ARTIFACTS, {
+                url: 'deployment_artifacts',
+                parent: 'workspace',
+                template:'<deployment-artifact-page></deployment-artifact-page>'
             }
         );
 
@@ -368,11 +328,7 @@ ng1appModule.config([
             States.WORKSPACE_ATTRIBUTES, {
                 url: 'attributes',
                 parent: 'workspace',
-                controller: viewModelsModuleName + '.AttributesViewModel',
-                templateUrl: './view-models/workspace/tabs/attributes/attributes-view.html',
-                data: {
-                    bodyClass: 'attributes'
-                }
+                template: '<attributes></attributes>',
             }
         );
 
@@ -380,20 +336,17 @@ ng1appModule.config([
             States.WORKSPACE_REQUIREMENTS_AND_CAPABILITIES, {
                 url: 'req_and_capabilities',
                 parent: 'workspace',
-                controller: viewModelsModuleName + '.ReqAndCapabilitiesViewModel',
-                templateUrl: './view-models/workspace/tabs/req-and-capabilities/req-and-capabilities-view.html',
+                template: '<req-and-capabilities></req-and-capabilities>',
                 data: {
                     bodyClass: 'attributes'
                 }
             }
         );
-
         $stateProvider.state(
             States.WORKSPACE_REQUIREMENTS_AND_CAPABILITIES_EDITABLE, {
                 url: 'req_and_capabilities_editable',
                 parent: 'workspace',
-                controller: viewModelsModuleName + '.ReqAndCapabilitiesViewModel',
-                templateUrl: './view-models/workspace/tabs/req-and-capabilities/req-and-capabilities-editable-view.html',
+                template: '<req-and-capabilities></req-and-capabilities>',
                 data: {
                     bodyClass: 'attributes'
                 }
@@ -419,44 +372,50 @@ ng1appModule.config([
             }
         );
 
-        $stateProvider.state(
-            States.WORKSPACE_DISTRIBUTION, {
-                parent: 'workspace',
-                url: 'distribution',
-                templateUrl: './view-models/workspace/tabs/distribution/distribution-view.html',
-                controller: viewModelsModuleName + '.DistributionViewModel'
-            }
-        );
 
         $stateProvider.state(
             States.WORKSPACE_COMPOSITION, {
                 url: 'composition/',
+                params: {'component': null},
                 parent: 'workspace',
-                controller: viewModelsModuleName + '.CompositionViewModel',
-                templateUrl: './view-models/workspace/tabs/composition/composition-view.html',
+                template: '<composition-page></composition-page>',
+                resolve: {
+                    componentData: ['injectComponent', '$stateParams', function (injectComponent:Component, $stateParams) {
+                        //injectComponent.componentService = null; // this is for not passing the service so no one will use old api and start using new api
+                        $stateParams.component = injectComponent;
+                        return injectComponent;
+                    }],
+                },
                 data: {
                     bodyClass: 'composition'
                 }
             }
         );
 
-        // $stateProvider.state(
-        //     States.WORKSPACE_NG2, {
-        //         url: 'ng2/',
-        //        component: downgradeComponent({component: NG2Example2Component}), //viewModelsModuleName + '.NG2Example',
-        //        templateUrl: './ng2/view-ng2/ng2.example2/ng2.example2.component.html'
-        //     }
-        // );
+        $stateProvider.state(
+            States.WORKSPACE_ACTIVITY_LOG, {
+                url: 'activity_log/',
+                parent: 'workspace',
+                template: '<activity-log></activity-log>',
+            }
+
+        );
+
+        $stateProvider.state(
+            States.WORKSPACE_DISTRIBUTION, {
+                url: 'distribution',
+                parent: 'workspace',
+                template: '<distribution></distribution>',
+            }
+
+        );
 
         $stateProvider.state(
             States.WORKSPACE_DEPLOYMENT, {
                 url: 'deployment/',
                 parent: 'workspace',
-                templateUrl: './view-models/workspace/tabs/deployment/deployment-view.html',
-                controller: viewModelsModuleName + '.DeploymentViewModel',
-                data: {
-                    bodyClass: 'composition'
-                }
+                template: '<deployment-page></deployment-page>',
+
             }
         );
 
@@ -464,85 +423,61 @@ ng1appModule.config([
             'workspace.composition.details', {
                 url: 'details',
                 parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/details/details-view.html',
-                controller: viewModelsModuleName + '.DetailsViewModel'
+                resolve: {
+                    componentData: ['injectComponent', '$stateParams', function (injectComponent:Component, $stateParams) {
+                        $stateParams.component = injectComponent;
+                        return injectComponent;
+                    }],
+                }
+
             }
         );
 
         $stateProvider.state(
             'workspace.composition.properties', {
                 url: 'properties',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/properties-and-attributes/properties-view.html',
-                controller: viewModelsModuleName + '.ResourcePropertiesViewModel'
+                parent: 'workspace.composition'
             }
         );
 
         $stateProvider.state(
             'workspace.composition.artifacts', {
                 url: 'artifacts',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/artifacts/artifacts-view.html',
-                controller: viewModelsModuleName + '.ResourceArtifactsViewModel'
+                parent: 'workspace.composition'
+
             }
         );
 
         $stateProvider.state(
             'workspace.composition.relations', {
                 url: 'relations',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/relations/relations-view.html',
-                controller: viewModelsModuleName + '.RelationsViewModel'
+                parent: 'workspace.composition'
             }
         );
 
         $stateProvider.state(
             'workspace.composition.structure', {
                 url: 'structure',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/structure/structure-view.html',
-                controller: viewModelsModuleName + '.StructureViewModel'
+                parent: 'workspace.composition'
             }
         );
         $stateProvider.state(
             'workspace.composition.lifecycle', {
                 url: 'lifecycle',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/artifacts/artifacts-view.html',
-                controller: viewModelsModuleName + '.ResourceArtifactsViewModel'
+                parent: 'workspace.composition'
             }
         );
 
         $stateProvider.state(
             'workspace.composition.api', {
                 url: 'api',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/artifacts/artifacts-view.html',
-                controller: viewModelsModuleName + '.ResourceArtifactsViewModel'
+                parent: 'workspace.composition'
             }
         );
         $stateProvider.state(
             'workspace.composition.deployment', {
                 url: 'deployment',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/artifacts/artifacts-view.html',
-                controller: viewModelsModuleName + '.ResourceArtifactsViewModel'
-            }
-        );
-        $stateProvider.state(
-            'workspace.composition.consumption', {
-                url: 'consumption',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/service-consumption/service-consumption-view.html',
-                controller: viewModelsModuleName + '.ServiceConsumptionViewModel'
-            }
-        );
-        $stateProvider.state(
-            'workspace.composition.dependencies', {
-                url: 'dependencies',
-                parent: 'workspace.composition',
-                templateUrl: './view-models/workspace/tabs/composition/tabs/service-dependencies/service-dependencies-view.html',
-                controller: viewModelsModuleName + '.ServiceDependenciesViewModel'
+                parent: 'workspace.composition'
             }
         );
 
@@ -562,9 +497,14 @@ ng1appModule.config([
             'workspace.plugins', {
                 url: 'plugins/*path',
                 parent: 'workspace',
-                params: {'queryParams': null},
-                templateUrl: './view-models/workspace/tabs/plugins/plugins-context-view.html',
-                controller: viewModelsModuleName + '.PluginsContextViewModel'
+                template: '<plugin-context-view></plugin-context-view>',
+                resolve: {
+                    componentData: ['injectComponent', '$stateParams', function (injectComponent:Component, $stateParams) {
+                        $stateParams.component = injectComponent;
+                        return injectComponent;
+                    }],
+                }
+
             }
         );
 
@@ -581,15 +521,14 @@ ng1appModule.config([
             'onboardVendor', {
                 url: '/onboardVendor',
                 templateUrl: './view-models/onboard-vendor/onboard-vendor-view.html',
-                controller: viewModelsModuleName + '.OnboardVendorViewModel'//,
+                controller: viewModelsModuleName + '.OnboardVendorViewModel'
             }
         );
 
         $stateProvider.state(
             'plugins', {
                 url: '/plugins/*path',
-                templateUrl: './view-models/plugins/plugins-tab-view.html',
-                controller: viewModelsModuleName + '.PluginsTabViewModel'
+                template: '<plugin-tab-view></plugin-tab-view>'
             }
         );
 
@@ -609,11 +548,10 @@ ng1appModule.config([
         $stateProvider.state(
             'catalog', {
                 url: '/catalog?filter.components&filter.resourceSubTypes&filter.categories&filter.statuses&filter.order&filter.term&filter.active',
-                templateUrl: './view-models/catalog/catalog-view.html',
-                controller: viewModelsModuleName + '.CatalogViewModel',
+                template: '<catalog-page></catalog-page>',
                 resolve: {
-                    auth: ["$q", "UserServiceNg2", ($q:any, userService:UserService) => {
-                        let userInfo:IUserProperties = userService.getLoggedinUser();
+                    auth: ["$q", "AuthenticationServiceNg2", ($q:any, authService:AuthenticationService) => {
+                        let userInfo:IUserProperties = authService.getLoggedinUser();
                         if (userInfo) {
                             return $q.when(userInfo);
                         } else {
@@ -621,14 +559,6 @@ ng1appModule.config([
                         }
                     }]
                 }
-            }
-        );
-
-        $stateProvider.state(
-            'support', {
-                url: '/support',
-                templateUrl: './view-models/support/support-view.html',
-                controller: viewModelsModuleName + '.SupportViewModel'
             }
         );
 
@@ -661,7 +591,6 @@ ng1appModule.value('VendorModelNumberValidationPattern', /^[\x20-\x21\x23-\x29\x
 ng1appModule.value('ServiceTypeAndRoleValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,256}$/);
 ng1appModule.value('ContactIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('UserIdValidationPattern', /^[\s\w-]{1,50}$/);
-ng1appModule.value('ProjectCodeValidationPattern', /^[\s\w-]{5,50}$/);
 ng1appModule.value('LabelValidationPattern', /^[\sa-zA-Z0-9+-]{1,25}$/);
 ng1appModule.value('UrlValidationPattern', /^(https?|ftp):\/\/(((([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([A-Za-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([A-Za-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([A-Za-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([A-Za-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([A-Za-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([A-Za-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/);
 ng1appModule.value('IntegerValidationPattern', /^(([-+]?\d+)|([-+]?0x[0-9a-fA-F]+))$/);
@@ -680,93 +609,42 @@ ng1appModule.run([
     '$http',
     'Sdc.Services.CacheService',
     'Sdc.Services.CookieService',
-    'Sdc.Services.ConfigurationUiService',
-    'UserServiceNg2',
-    'Sdc.Services.CategoryResourceService',
-    'Sdc.Services.SdcVersionService',
+    'AuthenticationServiceNg2',
     '$state',
     '$rootScope',
     '$location',
     'sdcMenu',
-    'ModalsHandler',
     'Sdc.Services.EcompHeaderService',
     'LeftPaletteLoaderService',
     'Sdc.Services.DataTypesService',
     'AngularJSBridge',
     '$templateCache',
+    'ModalServiceSdcUI',
     ($http:ng.IHttpService,
      cacheService:CacheService,
      cookieService:CookieService,
-     ConfigurationUi:ConfigurationUiService,
-     userService:UserService,
-     categoryResourceService:ICategoryResourceClass,
-     sdcVersionService:SdcVersionService,
+     authService:AuthenticationService,
      $state:ng.ui.IStateService,
      $rootScope:ng.IRootScopeService,
      $location:ng.ILocationService,
      sdcMenu:IAppMenu,
-     ModalsHandler:ModalsHandler,
      ecompHeaderService:EcompHeaderService,
      LeftPaletteLoaderService:LeftPaletteLoaderService,
      DataTypesService:DataTypesService,
      AngularJSBridge,
-     $templateCache:ng.ITemplateCacheService):void => {
+     $templateCache:ng.ITemplateCacheService,
+     ModalServiceSdcUI:SdcUiServices.ModalService):void => {
         $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
-        //handle cache data - version
-        let initAsdcVersion:Function = ():void => {
-
-            let onFailed = (response) => {
-                console.info('onFailed initAsdcVersion', response);
-                cacheService.set('version', 'N/A');
-            };
-
-            let onSuccess = (version:any) => {
-                let tmpVerArray = version.version.split(".");
-                let ver = tmpVerArray[0] + "." + tmpVerArray[1] + "." + tmpVerArray[2];
-                cacheService.set('version', ver);
-            };
-
-            sdcVersionService.getVersion().then(onSuccess, onFailed);
-
-        };
-
-        let initEcompMenu:Function = (user):void => {
-            ecompHeaderService.getMenuItems(user.userId).then((data)=> {
-                $rootScope['menuItems'] = data;
-            });
-        };
-
-        let initConfigurationUi:Function = ():void => {
-            ConfigurationUi
-                .getConfigurationUi()
-                .then((configurationUi:any) => {
-                    cacheService.set('UIConfiguration', configurationUi);
-                });
-        };
-
-        let initCategories:Function = ():void => {
-            let onError = ():void => {
-                console.log('Failed to init categories');
-            };
-
-            categoryResourceService.getAllCategories((categories: Categories):void => {
-                cacheService.set('serviceCategories', categories.serviceCategories);
-                cacheService.set('resourceCategories', categories.resourceCategories);
-            }, onError);
-        };
 
         // Add hosted applications to sdcConfig
         sdcConfig.hostedApplications = hostedApplications;
 
         //handle http config
         $http.defaults.withCredentials = true;
-        $http.defaults.headers.common.Authorization = 'Basic YmVlcDpib29w';
+        // $http.defaults.headers.common.Authorization = 'Basic YmVlcDpib29w';
         $http.defaults.headers.common[cookieService.getUserIdSuffix()] = cookieService.getUserId();
 
-        initAsdcVersion();
-        initConfigurationUi();
-       // initLeftPalette();
         DataTypesService.initDataTypes();
 
         //handle stateChangeStart
@@ -794,41 +672,44 @@ ng1appModule.run([
         };
 
         let onNavigateOut:Function = (toState, toParams):void => {
-            let onOk = ():void => {
+            let onOk:Function = ():void => {
                 $state.current.data.unsavedChanges = false;
                 $state.go(toState.name, toParams);
             };
 
             let data = sdcMenu.alertMessages.exitWithoutSaving;
+            const okButton = {
+                testId: "OK",
+                text: sdcMenu.alertMessages.okButton,
+                type: SdcUiCommon.ButtonType.warning,
+                callback: onOk,
+                closeModal: true
+            } as SdcUiComponents.ModalButtonComponent;
             //open notify to user if changes are not saved
-            ModalsHandler.openAlertModal(data.title, data.message).then(onOk);
+            ModalServiceSdcUI.openWarningModal(data.title,
+                data.message,
+                'navigate-modal',
+                [okButton]);
         };
 
         let onStateChangeStart:Function = (event, toState, toParams, fromState, fromParams):void => {
             console.info((new Date()).getTime());
             console.info('$stateChangeStart', toState.name);
+            if (toState.name !== 'error-403' && !authService.getLoggedinUser()) {
 
-            if (toState.name !== 'error-403' && !userService.getLoggedinUser()) {
-                if (toState.name !== 'welcome') {
-                    event.preventDefault();
-                }
 
-                userService.authorize().subscribe((userInfo:IUserProperties) => {
+                authService.authenticate().subscribe((userInfo:IUserProperties) => {
                     if (!doesUserHasAccess(toState, userInfo)) {
                         $state.go('error-403');
                         console.info('User has no permissions');
                         return;
                     }
-                    userService.setLoggedinUser(userInfo);
-                    cacheService.set('user', userInfo);
-                    initCategories();
-                    //   initEcompMenu(userInfo);
+                    authService.setLoggedinUser(userInfo);
                     setTimeout(function () {
 
                         removeLoader();
 
-                        // initCategories();
-                        if (userService.getLoggedinUser().role === 'ADMIN') {
+                        if (authService.getLoggedinUser().role === 'ADMIN') {
                             // toState.name = "adminDashboard";
                             $state.go("adminDashboard", toParams);
                             return;
@@ -850,15 +731,24 @@ ng1appModule.run([
                     $state.go('error-403');
                 });
             }
-            else if (userService.getLoggedinUser()) {
-                if (!doesUserHasAccess(toState, userService.getLoggedinUser())) {
+            else if (authService.getLoggedinUser()) {
+                let user:IUserProperties =  authService.getLoggedinUser();
+                if(!cacheService.contains('user')){
+                    cacheService.set('user', user);
+                }
+
+                if (!doesUserHasAccess(toState, authService.getLoggedinUser())) {
                     event.preventDefault();
                     $state.go('error-403');
                     console.info('User has no permissions');
                 }
-                if (toState.name === "welcome") {
-                    $state.go("dashboard");
+
+                if (authService.getLoggedinUser().role === 'ADMIN') {
+                    // toState.name = "adminDashboard";
+                    $state.go("adminDashboard", toParams);
+                    return;
                 }
+
 
                 //if form is dirty and not save  - notify to user
                 if (fromState.data && fromState.data.unsavedChanges && fromParams.id != toParams.id) {
@@ -920,7 +810,6 @@ ng1appModule.run([
                 onStateChangeSuccess(event, toState, toParams, fromState, fromParams);
             });
         };
-
         registerStateChangeStartWatcher();
     }]);
 

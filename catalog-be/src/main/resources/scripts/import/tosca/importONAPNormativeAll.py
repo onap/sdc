@@ -66,8 +66,8 @@ def main(argv):
 	opts = []
 
 	try:
-		opts, args = getopt.getopt(argv, "i:p:u:d:v:h:s",
-								   ["scheme=", "ip=", "port=", "user=", "debug=", "updateversion="])
+		opts, args = getopt.getopt(argv, "i:p:u:d:v:h:s:",
+                                           ["ip=", "port=", "user=", "debug=", "updateversion=", "scheme="])
 	except getopt.GetoptError:
 		usage()
 		error_and_exit(2, 'Invalid input')

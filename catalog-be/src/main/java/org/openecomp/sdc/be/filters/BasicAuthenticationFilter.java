@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
+import org.onap.sdc.security.Passwords;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -35,7 +36,6 @@ import org.openecomp.sdc.common.log.enums.Severity;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.openecomp.sdc.security.Passwords;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Priority;
@@ -53,6 +53,7 @@ import java.util.StringTokenizer;
 
 @Priority(10)
 public class BasicAuthenticationFilter implements ContainerRequestFilter {
+
 
 	private static LoggerSdcAudit audit = new LoggerSdcAudit(BasicAuthenticationFilter.class);
     private static final Logger log = Logger.getLogger(BasicAuthenticationFilter.class);
@@ -219,12 +220,12 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
 
 	private void abortWith(ContainerRequestContext requestContext, String message, Response response) {
 
-		audit.log(sr.getRemoteAddr(),
+		audit.logEntry(sr.getRemoteAddr(),
 				requestContext,
-				response.getStatusInfo(),
+//				response.getStatusInfo(),
 				LogLevel.ERROR,
 				Severity.WARNING,
-				message);
+				message, null);
 
 		log.error(message);
 		audit.clearMyData();

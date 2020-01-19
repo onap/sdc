@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -44,8 +45,12 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GroupPropertiesMergeCommandTest {
@@ -142,7 +147,7 @@ public class GroupPropertiesMergeCommandTest {
 
     @Test
     public void mergeGroupProperties_updateGroupsAfterMerge_mergeOnlyGroups() {
-        when(groupsOperation.updateGroups(eq(newResource), updatedGroupsCaptor.capture(), eq(false))).thenReturn(Either.left(null));
+        when(groupsOperation.updateGroups(eq(newResource), updatedGroupsCaptor.capture(), any(PromoteVersionEnum.class))).thenReturn(Either.left(null));
         ActionStatus mergeStatus = testInstance.mergeComponents(prevResource, newResource);
         assertThat(mergeStatus).isEqualTo(ActionStatus.OK);
         verify(mergeBusinessLogic).mergeInstanceDataDefinitions(prevGroup1.getProperties(), prevResource.getInputs(), newGroup1.getProperties(), newResource.getInputs());

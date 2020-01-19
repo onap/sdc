@@ -20,18 +20,8 @@
 
 package org.openecomp.sdc.be.distribution.servlet;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -45,6 +35,7 @@ import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.distribution.AuditHandler;
 import org.openecomp.sdc.be.distribution.DistributionBusinessLogic;
@@ -54,13 +45,30 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.api.FilterDecisionEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class DistributionServletTest extends JerseyTest {
 
@@ -72,6 +80,10 @@ public class DistributionServletTest extends JerseyTest {
     public static final ResponseFormat responseFormat = Mockito.mock(ResponseFormat.class);
     public static final DistributionBusinessLogic distributionBusinessLogic = Mockito.mock(DistributionBusinessLogic.class);
     public static final DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
+    private static ConfigurationSource configurationSource = new FSConfigurationSource(
+            ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+
 
     public static final String ENV_NAME = "myEnv";
     public static final String NOTIFICATION_TOPIC = ENV_NAME + "_Notification";
@@ -79,6 +91,7 @@ public class DistributionServletTest extends JerseyTest {
 
     @BeforeClass
     public static void setup() {
+        ThreadLocalsHolder.setApiType(FilterDecisionEnum.EXTERNAL);
         ExternalConfiguration.setAppName("catalog-be");
         when(request.getSession()).thenReturn(session);
         when(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER)).thenReturn("myApplicationInstanceID");
@@ -86,9 +99,12 @@ public class DistributionServletTest extends JerseyTest {
         when(session.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
+        when(webApplicationContext.getBean(DistributionBusinessLogic.class)).thenReturn(distributionBusinessLogic);
         when(distributionBusinessLogic.getDistributionEngine()).thenReturn(distributionEngine);
         when(distributionEngine.isEnvironmentAvailable(ENV_NAME)).thenReturn(StorageOperationStatus.OK);
         when(distributionEngine.isEnvironmentAvailable()).thenReturn(StorageOperationStatus.OK);
+
+        when(request.isUserInRole(anyString())).thenReturn(true);
 
         mockBusinessLogicResponse();
 
@@ -136,7 +152,25 @@ public class DistributionServletTest extends JerseyTest {
     }
 
     @Test
+    public void registerSuccessOnTenantTest() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, Arrays.asList("11","22"),false);
+        Response response = target().path("/v1/registerForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+
+    }
+
+    @Test
     public void unRegisterSuccessTest() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, false);
+        Response response = target().path("/v1/unRegisterForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+
+    }
+
+    @Test
+    public void unRegisterSuccessOnTenantTest() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         RegistrationRequest registrationRequest = new RegistrationRequest("myPublicKey", ENV_NAME, false);
         Response response = target().path("/v1/unRegisterForDistribution").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(registrationRequest)), Response.class);
@@ -153,6 +187,8 @@ public class DistributionServletTest extends JerseyTest {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
+        enable(TestProperties.LOG_TRAFFIC);
+        enable(TestProperties.DUMP_ENTITY);
         return new ResourceConfig(DistributionServlet.class)
                 .register(new AbstractBinder() {
 

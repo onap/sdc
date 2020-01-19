@@ -23,17 +23,19 @@ package org.openecomp.sdc.be.servlets.exception;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
-import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.onap.sdc.security.RepresentationUtils;
+import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.io.IOException;
 
 @Component
 @Provider
@@ -52,9 +54,28 @@ public class ComponentExceptionMapper implements ExceptionMapper<ComponentExcept
         // TODO log this? BeEcompErrorManager.getInstance().logBeRestApiGeneralError(requestURI);
         log.debug("#toResponse - An error occurred: ", exception);
         ResponseFormat responseFormat = exception.getResponseFormat();
+        if (exception.getResponseFormat()==null) {
+            if (exception.getResource() == null) {
+                responseFormat = componentsUtils.getResponseFormat(exception.getActionStatus(), exception.getParams());
+            }
+            else {
+                responseFormat = componentsUtils.getResponseFormatByResource(exception.getActionStatus(), exception.getResource());
+            }
+        }
+
         return Response.status(responseFormat.getStatus())
                 .entity(gson.toJson(responseFormat.getRequestError()))
                 .build();
+    }
+
+    public void writeToResponse(ComponentException ce, HttpServletResponse httpResponse) throws IOException {
+        log.info("Error during request filter= {}", ce.getActionStatus());
+        ResponseFormat responseFormat = ResponseFormatManager.getInstance()
+                .getResponseFormat(ce.getActionStatus(), ce.getParams());
+        httpResponse.setStatus(responseFormat.getStatus());
+        httpResponse.setContentType("application/json");
+        httpResponse.setCharacterEncoding("UTF-8");
+        httpResponse.getWriter().write(RepresentationUtils.toRepresentation(responseFormat.getRequestError()));
     }
 
 }

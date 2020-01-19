@@ -25,11 +25,7 @@ import com.google.common.collect.Lists;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
@@ -46,7 +42,9 @@ import java.util.Map;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ComponentsCleanBusinessLogicTest extends BaseBusinessLogicMock {
 

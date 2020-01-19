@@ -44,7 +44,7 @@ def checkUser(userName):
 
 def createUser( firstName, lastName, userId , email_dom , role ):
     print '[INFO] create first:[' + firstName + '], last:[' + lastName + '], Id:[' + userId + '], email:[' + userId + '@' + email_dom + '], role:[' + role +']'
-    command="curl -k -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" "+PROTOCOL+"://" + BE_IP + ":" + BE_PORT + "/sdc2/rest/v1/user/ -d '{\"firstName\": '" + firstName + "', \"lastName\": '" + lastName + "',\"userId\": '" + userId + "',\"email\": '" + userId + "@" + email_dom + "',\"role\": '" + role + "'}'"
+    command="curl -k -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" "+PROTOCOL+"://" + BE_IP + ":" + BE_PORT + "/sdc2/rest/v1/user/ -d '{\"firstName\": \"" + firstName + "\", \"lastName\": \"" + lastName + "\",\"userId\": \"" + userId + "\",\"email\": \"" + userId + "@" + email_dom + "\",\"role\": \"" + role + "\"}'"
 
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE)
     (out, err) = proc.communicate()

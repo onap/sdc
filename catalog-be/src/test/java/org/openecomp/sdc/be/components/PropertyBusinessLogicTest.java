@@ -38,7 +38,15 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ToscaOperationException;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
@@ -57,7 +65,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -66,8 +78,14 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
@@ -120,14 +138,14 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         user.setLastName("Hendrix");
         user.setRole(Role.ADMIN.name());
 
-        Either<User, ActionStatus> eitherGetUser = Either.left(user);
-        when(mockUserAdmin.getUser("jh003", false)).thenReturn(eitherGetUser);
-        when(userValidations.validateUserExists(eq("jh003"), anyString(), eq(false))).thenReturn(user);
+        when(mockUserAdmin.getUser("jh003", false)).thenReturn(user);
+        when(userValidations.validateUserExists(eq("jh003"))).thenReturn(user);
 
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
         when(servletContext.getAttribute(Constants.PROPERTY_OPERATION_MANAGER)).thenReturn(propertyOperation);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
+//        when(servletContext.getAttribute(Constants.RESOURCE_OPERATION_MANAGER)).thenReturn(resourceOperation);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
     }
 
@@ -271,6 +289,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
 
     private PropertyDefinition createPropertyObject(final String propertyName, final String resourceId) {
         final PropertyDefinition pd = new PropertyDefinition();
+        List<PropertyConstraint> constraints = new ArrayList<>();
         pd.setConstraints(null);
         pd.setDefaultValue("100");
         pd.setDescription("Size of thasdasdasdasde local disk, in Gigabytes (GB), available to applications running on the Compute node");

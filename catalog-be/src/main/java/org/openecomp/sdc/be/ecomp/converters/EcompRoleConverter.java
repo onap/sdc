@@ -20,32 +20,35 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
+import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
 import org.onap.portalsdk.core.restful.domain.EcompRole;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public final class EcompRoleConverter {
-
+    private static final String FAILED_TO_CONVERT_USER = "Failed to convert user";
+    private static final String EDIT_USER = "EditUser";
     private static final Logger log = Logger.getLogger(EcompRoleConverter.class);
 
     private EcompRoleConverter() {
     }
 
-    // TODO Add Either or Exception in case of convertation failure
-    public static String convertEcompRoleToRole(EcompRole ecompRole) {
+    public static String convertEcompRoleToRole(EcompRole ecompRole) throws PortalAPIException {
 
-        log.debug("converting role");
+        log.debug("converting role{}", ecompRole);
         if (ecompRole == null) {
             log.debug("recieved null for roles");
             return null;
         }
 
         for (Role role : Role.values()) {
-            if (role.ordinal() == ecompRole.getId()) {
-                return role.name();
+            if (role.name().toLowerCase().equals(ecompRole.getName().toLowerCase())){
+                return  role.name();
             }
         }
-        log.debug("no roles converted");
-        return null;
+        BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, FAILED_TO_CONVERT_USER, BeEcompErrorManager.ErrorSeverity.INFO);
+        log.debug("Unsupported role for SDC user - role: {}", ecompRole);
+        throw new PortalAPIException("Unsupported role for SDC user");
     }
 }

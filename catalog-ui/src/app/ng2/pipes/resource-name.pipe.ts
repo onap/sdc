@@ -20,15 +20,20 @@
 
 
 import { Pipe, PipeTransform } from '@angular/core';
+import * as _ from 'lodash';
 
 @Pipe({name: 'resourceName'})
 export class ResourceNamePipe implements PipeTransform {
+    
+    public static getDisplayName (value:string): string {
+        const newName:string =
+            _.last(value.split(/tosca\.nodes\..*network\..*relationships\..*org\.openecomp\..*resource\.nfv\..*nodes\.module\..*cp\..*vl\./));
+        return (newName) ? newName : value;
+    }
+
     transform(value) : any {
         if (value) {
-            //newName =  _.last(newName.split('.'));
-            const newName:string =
-                _.last(value.split(/tosca\.nodes\..*network\..*relationships\..*org\.openecomp\..*resource\.nfv\..*nodes\.module\..*cp\..*vl\./));
-            return (newName) ? newName : value;
+           return ResourceNamePipe.getDisplayName(value);
         }
     }
 }

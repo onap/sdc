@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 import java.nio.file.NoSuchFileException;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class GraphJsonValidatorTest {
 

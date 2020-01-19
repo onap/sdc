@@ -21,6 +21,7 @@
 package org.openecomp.sdc.fe.impl;
 
 import com.google.common.annotations.VisibleForTesting;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

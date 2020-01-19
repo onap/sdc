@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import { OpaqueToken } from "@angular/core";
+import { InjectionToken } from "@angular/core";
 
-export const TranslateServiceConfigToken = new OpaqueToken('TranslateServiceConfigToken');
+export const TranslateServiceConfigToken = new InjectionToken('TranslateServiceConfigToken');
 
 export interface ITranslateServiceConfig {
     filePrefix:string;

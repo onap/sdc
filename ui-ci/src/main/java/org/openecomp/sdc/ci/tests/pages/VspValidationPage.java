@@ -17,8 +17,6 @@
 package org.openecomp.sdc.ci.tests.pages;
 
 import com.aventstack.extentreports.Status;
-import java.io.File;
-import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -26,6 +24,9 @@ import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+
+import java.io.File;
+import java.util.List;
 
 public class VspValidationPage extends GeneralPageElements {
 

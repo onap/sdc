@@ -22,7 +22,6 @@ package org.openecomp.sdc.asdctool.impl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.stream.Stream;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.io.IOException;
@@ -31,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 /**
  * simple util class to verify that the janusgraph export json graph is not corrupted

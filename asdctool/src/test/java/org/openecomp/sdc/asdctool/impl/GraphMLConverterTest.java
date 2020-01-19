@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import org.janusgraph.core.JanusGraph;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Element;
+import org.janusgraph.core.JanusGraph;
 import org.junit.Test;
 
 import java.util.List;

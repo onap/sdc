@@ -19,10 +19,11 @@
  */
 package org.openecomp.sdc.be.components.impl.exceptions;
 
-import java.util.Arrays;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.util.Arrays;
 
 public class ByActionStatusComponentException extends ComponentException {
 
@@ -30,6 +31,7 @@ public class ByActionStatusComponentException extends ComponentException {
     private final String[] params;
 
     public ByActionStatusComponentException(ActionStatus actionStatus, String... params) {
+        super(actionStatus, params);
         this.actionStatus = actionStatus;
         this.params = params.clone();
     }

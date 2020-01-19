@@ -22,9 +22,10 @@
 
 package org.openecomp.sdc.be.info;
 
+import org.openecomp.sdc.common.log.wrappers.Logger;
+
 import java.util.Arrays;
 import java.util.Optional;
-import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public enum DistributionStatus {
     DEPLOYED("Deployed", "DEPLOYED");

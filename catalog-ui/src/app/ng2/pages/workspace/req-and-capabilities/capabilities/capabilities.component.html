@@ -1,0 +1,59 @@
+<div class="capabilities-table">
+    <div class="expand-collapse-all-rows">
+        <svg-icon class="selected-all-capabilities" 
+            [mode]="'primary'"  [clickable]="true" [name]="'expand-o'"
+                [size]="'medium'" (click)="capabilitiesTable.rowDetail.expandAllRows()">
+        </svg-icon>
+         <svg-icon class="unselected-all-capabilities"
+            [mode]="'primary'"  [clickable]="true" [name]="'minimize-o'"
+                [size]="'medium'" (click)="capabilitiesTable.rowDetail.collapseAllRows()">
+        </svg-icon>
+    </div>
+    <ngx-datatable #capabilitiesTable 
+        columnMode="flex" 
+        [headerHeight]="40"  
+        [rowHeight]="35" 
+        [rows]="capabilities"
+        (select)="onSelectCapabilities($event)"
+        [selectionType]="'single'">
+        <ngx-datatable-row-detail [rowHeight]="undefiend">
+            <ng-template let-row="row"  ngx-datatable-row-detail-template>
+                <div class="properties-title">Properties</div>
+                <capabilities-properties [capabilitiesProperties]="row.properties"></capabilities-properties>
+            </ng-template>
+        </ngx-datatable-row-detail>
+        <ngx-datatable-column  name="Name" [flexGrow]="1" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row" let-expanded="expanded">
+                <div class="expand-collapse-cell">
+                    <svg-icon [clickable]="true" class="expand-collapse-icon"
+                                [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
+                                [size]="'medium'" (click)="expendRow(row)"></svg-icon>
+                    <span data-tests-id="row.name" sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3" (click)="editCapability(row)">{{row.name}}</span>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Type" [flexGrow]="1" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span data-tests-id="row.type" sdc-tooltip [tooltip-text]="row.type" [tooltip-placement]="3">{{row.type ? row.type.replace("tosca.capabilities.",""): ''}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Description" [flexGrow]="1" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span data-tests-id="row.description" sdc-tooltip [tooltip-text]="row.description" [tooltip-placement]="3">{{row.description}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Valid Source" [flexGrow]="1" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span data-tests-id="row.validSourceTypes.join(',')" sdc-tooltip [tooltip-text]="row.validSourceTypes ? row.validSourceTypes.join(',') : null" [tooltip-placement]="3">
+                    {{row.validSourceTypes ? row.validSourceTypes.join(','): ''}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Occurrences" [flexGrow]="1" [prop]="'minOccurrences'" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span data-tests-id="row.minOccurrences+','+row.maxOccurrences" sdc-tooltip 
+                    [tooltip-text]="row.minOccurrences+','+row.maxOccurrences" [tooltip-placement]="3">
+                    {{row.minOccurrences}},{{row.maxOccurrences}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+</div>

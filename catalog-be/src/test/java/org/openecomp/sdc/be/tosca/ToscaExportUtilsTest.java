@@ -16,12 +16,6 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
@@ -34,6 +28,12 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.utils.ToscaExportUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class ToscaExportUtilsTest {
 

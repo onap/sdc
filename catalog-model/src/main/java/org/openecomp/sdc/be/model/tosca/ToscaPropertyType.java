@@ -30,7 +30,7 @@ import org.openecomp.sdc.be.model.tosca.validators.*;
  */
 public enum ToscaPropertyType {
 
-    Root("tosca.datatypes.Root", null, null, null, true),
+    ROOT("tosca.datatypes.Root", null, null, null, true),
 
     STRING("string", StringValidator.getInstance(), StringConvertor.getInstance(), ToscaStringConvertor.getInstance()),
 
@@ -84,40 +84,20 @@ public enum ToscaPropertyType {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public PropertyTypeValidator getValidator() {
         return validator;
-    }
-
-    public void setValidator(PropertyTypeValidator validator) {
-        this.validator = validator;
     }
 
     public PropertyValueConverter getConverter() {
         return converter;
     }
 
-    public void setConverter(PropertyValueConverter converter) {
-        this.converter = converter;
-    }
-
     public boolean isAbstract() {
         return isAbstract;
     }
 
-    public void setAbstract(boolean isAbstract) {
-        this.isAbstract = isAbstract;
-    }
-
     public ToscaValueConverter getValueConverter() {
         return valueConverter;
-    }
-
-    public void setValueConverter(ToscaValueConverter valueConverter) {
-        this.valueConverter = valueConverter;
     }
 
     public static ToscaPropertyType isValidType(String typeName) {

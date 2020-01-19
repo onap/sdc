@@ -19,13 +19,6 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.ARROW_DROPDOWN;
-import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.MAIN_MENU_ONBOARD_BTN;
-import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.NAV;
-import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.REPOSITORY_ICON;
-import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.SUB_MENU_BUTTON_HOME;
-
-import java.util.List;
 import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
@@ -35,6 +28,14 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.ARROW_DROPDOWN;
+import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.MAIN_MENU_ONBOARD_BTN;
+import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.NAV;
+import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.REPOSITORY_ICON;
+import static org.openecomp.sdc.ci.tests.pages.TopNavComponent.XpathSelector.SUB_MENU_BUTTON_HOME;
 
 /**
  * Handles the Top Navigation Component UI actions

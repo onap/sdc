@@ -19,12 +19,12 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import org.junit.Test;
+import org.openecomp.sdc.be.model.Service;
+
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-import org.openecomp.sdc.be.model.Service;
 
 public class ActivationRequestInformationTest {
 

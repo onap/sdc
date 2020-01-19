@@ -19,11 +19,6 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.openecomp.sdc.ci.tests.pages.ResourceCreatePage.XpathSelector.FORM_LIFE_CYCLE_STATE;
-
 import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
 import org.openecomp.sdc.ci.tests.utilities.LoaderHelper;
 import org.openecomp.sdc.ci.tests.utilities.NotificationHelper;
@@ -34,6 +29,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.openecomp.sdc.ci.tests.pages.ResourceCreatePage.XpathSelector.FORM_LIFE_CYCLE_STATE;
 
 /**
  * Handles the Resource Create Page UI actions

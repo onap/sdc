@@ -16,9 +16,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
@@ -31,6 +28,9 @@ import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
 
 @Component("relationshipTypeImportManager")
 public class RelationshipTypeImportManager {

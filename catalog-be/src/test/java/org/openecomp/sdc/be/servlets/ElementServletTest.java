@@ -22,9 +22,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.google.common.collect.Lists;
 import fj.data.Either;
 import org.apache.commons.text.StrSubstitutor;
+import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -32,7 +32,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
@@ -41,11 +40,11 @@ import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -77,9 +76,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,6 +92,7 @@ public class ElementServletTest extends JerseyTest {
 	public static final HttpSession session = Mockito.mock(HttpSession.class);
 	public static final ResourceImportManager resourceImportManager = Mockito.mock(ResourceImportManager.class);
 	public static final ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
+	public static final BeGenericServlet beGenericServlet =  Mockito.mock(BeGenericServlet.class);
 	public static final Resource resource = Mockito.mock(Resource.class);
 	public static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
 	public static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
@@ -126,6 +127,8 @@ public class ElementServletTest extends JerseyTest {
 	private static User designerUser = new User("designer", "designer", "designer", "designer@email.com", Role.DESIGNER.name(), System
 			.currentTimeMillis());
 
+	private static ConfigurationManager configurationManager;
+
 	@BeforeClass
 	public static void setup() {
 
@@ -157,20 +160,31 @@ public class ElementServletTest extends JerseyTest {
 		when(componentUtils.getResponseFormat(eq(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND), any())).thenReturn(notFoundResponseFormat);
 		when(componentUtils.getResponseFormat(eq(ActionStatus.EXT_REF_NOT_FOUND), any())).thenReturn(notFoundResponseFormat);
 		when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), any())).thenReturn(badRequestResponseFormat);
+		when(request.getSession()).thenReturn(session);
+		when(session.getServletContext()).thenReturn(servletContext);
+		when(beGenericServlet.getElementBL(any())).thenReturn(elementBusinessLogic);
+		when(webApplicationContext.getBean(ElementBusinessLogic.class)).thenReturn(elementBusinessLogic);
+		when(webApplicationContext.getBean(ComponentsUtils.class)).thenReturn(componentUtils);
+		when(beGenericServlet.getComponentsUtils()).thenReturn(componentUtils);
 
 		Either<User, ActionStatus> designerEither = Either.left(designerUser);
 
-		when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerEither);
+		when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerUser);
 
 		String appConfigDir = "src/test/resources/config";
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+		configurationManager = new ConfigurationManager(configurationSource);
 
 		org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
 		configuration.setJanusGraphInMemoryGraph(true);
+		Configuration.HeatDeploymentArtifactTimeout testHeatDeploymentArtifactTimeout = new Configuration.HeatDeploymentArtifactTimeout();
+		testHeatDeploymentArtifactTimeout.setDefaultMinutes(1);
+		configuration.setHeatArtifactDeploymentTimeout(testHeatDeploymentArtifactTimeout);
 
 		configurationManager.setConfiguration(configuration);
 		ExternalConfiguration.setAppName("catalog-be");
+
+
 	}
 
 	@Before
@@ -271,7 +285,7 @@ public class ElementServletTest extends JerseyTest {
 
 	@Test
 	public void getAllCategoriesExceptionDuringProcessingTest() {
-		String path = "/v1/categories";
+		String path = "/v1/setup/ui";
 		when(elementBusinessLogic.getAllCategories(designerUser.getUserId()))
 				.thenThrow(new RuntimeException("Test exception: getAllCategories"));
 
@@ -287,8 +301,16 @@ public class ElementServletTest extends JerseyTest {
 
 	@Test
 	public void getAllCategoriesTest() {
-		String path = "/v1/categories";
+		String path = "/v1/setup/ui";
 		Either<UiCategories, ResponseFormat> getAllCategoriesEither = Either.left(new UiCategories());
+		Either<List<ArtifactType>, ActionStatus> otherEither = Either.left(new ArrayList<>());
+		when(elementBusinessLogic.getDefaultHeatTimeout()).thenReturn(Either.left(configurationManager.getConfiguration().getHeatArtifactDeploymentTimeout()));
+		when(elementBusinessLogic.getAllDeploymentArtifactTypes()).thenReturn(Either.left(new HashMap<String, Object>()));
+		when(elementBusinessLogic.getResourceTypesMap()).thenReturn(Either.left(new HashMap<String, String>()));
+		when(elementBusinessLogic.getAllArtifactTypes(designerUser.getUserId()))
+				.thenReturn(otherEither);
+
+
 
 		when(elementBusinessLogic.getAllCategories(designerUser.getUserId()))
 				.thenReturn(getAllCategoriesEither);
@@ -933,10 +955,12 @@ public class ElementServletTest extends JerseyTest {
 
 	@Test
 	public void configurationNoConfigurationFoundTest() {
-		String path = "/v1/configuration/ui";
+		String path = "/v1/setup/ui";
 
 		Either<List<ArtifactType>, ActionStatus> otherEither = Either.left(new ArrayList<>());
-		Either<Integer, ActionStatus> defaultHeatTimeoutEither = Either.left(1);
+		Configuration.HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new Configuration.HeatDeploymentArtifactTimeout();
+		heatDeploymentArtifactTimeout.setDefaultMinutes(1);
+		Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> defaultHeatTimeoutEither = Either.left(heatDeploymentArtifactTimeout);
 		Either<Map<String, Object>, ActionStatus> deploymentEither = Either.left(new HashMap<>());
 		Either<Map<String, String>, ActionStatus> resourceTypesMapEither = Either.left(new HashMap<>());
 
@@ -956,12 +980,12 @@ public class ElementServletTest extends JerseyTest {
 				.header(Constants.USER_ID_HEADER, designerUser.getUserId())
 				.get();
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 	}
 
 	@Test
 	public void configurationExceptionDuringProcessingTest() {
-		String path = "/v1/configuration/ui";
+		String path = "/v1/setup/ui";
 		when(elementBusinessLogic.getAllArtifactTypes(designerUser.getUserId()))
 				.thenThrow(new RuntimeException("Test exception: artifactTypes"));
 

@@ -19,16 +19,16 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
-import static org.openecomp.sdc.ci.tests.utilities.NotificationHelper.XpathSelector.MAIN_CONTAINER_DIV;
-import static org.openecomp.sdc.ci.tests.utilities.NotificationHelper.XpathSelector.MESSAGE_CONTENT_DIV;
-import static org.openecomp.sdc.ci.tests.utilities.NotificationHelper.XpathSelector.MESSAGE_SUCCESS_DIV;
-
 import org.openecomp.sdc.ci.tests.execute.setup.DriverFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.openecomp.sdc.ci.tests.utilities.NotificationHelper.XpathSelector.MAIN_CONTAINER_DIV;
+import static org.openecomp.sdc.ci.tests.utilities.NotificationHelper.XpathSelector.MESSAGE_CONTENT_DIV;
+import static org.openecomp.sdc.ci.tests.utilities.NotificationHelper.XpathSelector.MESSAGE_SUCCESS_DIV;
 
 public class NotificationHelper {
 

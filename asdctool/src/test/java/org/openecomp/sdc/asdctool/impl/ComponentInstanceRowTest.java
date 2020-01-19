@@ -19,10 +19,10 @@
  */
 package org.openecomp.sdc.asdctool.impl;
 
+import org.junit.Test;
+
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
 
 public class ComponentInstanceRowTest {
     @Test

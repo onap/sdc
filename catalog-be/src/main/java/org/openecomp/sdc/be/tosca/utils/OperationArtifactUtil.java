@@ -16,14 +16,6 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.WordUtils;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
@@ -40,6 +32,14 @@ import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class OperationArtifactUtil {
 
     public static final String BPMN_ARTIFACT_PATH = "BPMN";
@@ -54,7 +54,7 @@ public class OperationArtifactUtil {
      * @param operation     the specific operation name
      * @return the full path including file name for operation's artifacts
      */
-    static String createOperationArtifactPath(Component component, ComponentInstance componentInstance,
+    public static String createOperationArtifactPath(Component component, ComponentInstance componentInstance,
                                               OperationDataDefinition operation, boolean isAssociatedComponent) {
         if (!(component instanceof Resource || component instanceof Service)) {
             return null;

@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
-import static org.junit.Assert.assertEquals;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -47,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

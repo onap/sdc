@@ -34,7 +34,12 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -200,7 +205,7 @@ public class CsarValidationUtils {
         return Either.left(new ImmutablePair<>(CsarUtils.ARTIFACTS_PATH + ARTIFACTS_METADATA_FILE, artifactsFileContents));
     }
 
-    public static Either<ImmutablePair<String, byte[]>, ResponseFormat> getArtifactsContent(String csarUUID, Map<String, byte[]> csar, String artifactPath, String artifactName, ComponentsUtils componentsUtils) {
+    public static Either<ImmutablePair<String, byte[]>, ResponseFormat> getArtifactContent(String csarUUID, Map<String, byte[]> csar, String artifactPath, String artifactName, ComponentsUtils componentsUtils) {
         if (!csar.containsKey(artifactPath)) {
             log.debug("Entry-Definitions entry not found in Artifacts/HEAT.meta file, csar ID {}", csarUUID);
             BeEcompErrorManager.getInstance().logInternalDataError(ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID + csarUUID, CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);

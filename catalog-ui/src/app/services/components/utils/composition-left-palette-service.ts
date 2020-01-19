@@ -32,11 +32,13 @@ import {ComponentMetadata} from "app/models/component-metadata";
 import {GroupMetadata, GroupTpes} from "app/models/group-metadata";
 import {PolicyMetadata, PolicyTpes} from "app/models/policy-metadata";
 import {Resource} from "app/models/components/resource";
+import IHttpPromiseCallbackArg = angular.IHttpPromiseCallbackArg;
 
 export class LeftPaletteLoaderService {
 
     static '$inject' = [
         'Restangular',
+        '$http',
         'sdcConfig',
         '$q',
         'ComponentFactory',
@@ -45,6 +47,7 @@ export class LeftPaletteLoaderService {
     ];
 
     constructor(protected restangular:restangular.IElement,
+                protected $http:ng.IHttpService,
                 protected sdcConfig:IAppConfigurtaion,
                 protected $q:ng.IQService,
                 protected ComponentFactory:ComponentFactory,
@@ -64,7 +67,9 @@ export class LeftPaletteLoaderService {
     private updateLeftPalette = (componentInternalType:string):void => {
 
         /* add components */
-        this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {    
+        const leftPaletteUrl = this.sdcConfig.api.uicache_root + this.sdcConfig.api.GET_uicache_left_palette;
+        this.$http.get(leftPaletteUrl, {params: {'internalComponentType': componentInternalType}}).then((res) => res.data).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
+        // this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
             _.forEach(leftPaletteComponentMetadata, (componentMetadata:ComponentMetadata) => {
                 this.leftPanelComponents.push(new LeftPaletteComponent(LeftPaletteMetadataTypes.Component, componentMetadata));
             });

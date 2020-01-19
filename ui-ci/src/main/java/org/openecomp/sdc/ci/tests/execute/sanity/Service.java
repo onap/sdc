@@ -73,7 +73,7 @@ import org.testng.TestException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.awt.AWTException;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

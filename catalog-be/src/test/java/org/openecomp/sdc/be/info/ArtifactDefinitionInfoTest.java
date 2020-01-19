@@ -21,16 +21,16 @@
  */
 package org.openecomp.sdc.be.info;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ArtifactDefinitionInfoTest {

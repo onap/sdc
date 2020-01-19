@@ -39,7 +39,7 @@ public class HealthCheckBusinessLogicTest {
 
     private final SwitchoverDetector switchoverDetector = Mockito.mock(SwitchoverDetector.class);
 
-    HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic(switchoverDetector);
+    HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
 
     @Test
     public void checkStausUpdated() {
@@ -56,9 +56,25 @@ public class HealthCheckBusinessLogicTest {
         HealthCheckInfo checkInfoJanusGraphUp = new HealthCheckInfo(Constants.HC_COMPONENT_JANUSGRAPH, HealthCheckStatus.UP, null, null);
         HealthCheckInfo checkInfoJanusGraphDown = new HealthCheckInfo(Constants.HC_COMPONENT_JANUSGRAPH, HealthCheckStatus.DOWN, null, null);
 
+        HealthCheckInfo checkInfoDmaapProducerUp = new HealthCheckInfo(Constants.HC_COMPONENT_DMAAP_PRODUCER, HealthCheckStatus.UP, null, null);
+
+        HealthCheckInfo healthCheckInfoCADIUp = new HealthCheckInfo(Constants.HC_COMPONENT_CADI, HealthCheckStatus.UP, null, null);
+
+        /*
+         * HealthCheckInfo checkInfoUebUp = new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.UP, null, null); HealthCheckInfo checkInfoUebDown = new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, null);
+         */
+
         checkInfosLeft.add(checkInfoJanusGraphUp);
 
         checkInfosRight.add(checkInfoJanusGraphUp);
+
+        checkInfosLeft.add(checkInfoDmaapProducerUp);
+
+        checkInfosRight.add(checkInfoDmaapProducerUp);
+
+        checkInfosLeft.add(healthCheckInfoCADIUp);
+
+        checkInfosRight.add(healthCheckInfoCADIUp);
 
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertFalse("check false", statusChanged);
@@ -79,6 +95,11 @@ public class HealthCheckBusinessLogicTest {
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
         assertFalse("check false", statusChanged);
 
+        checkInfosRight.remove(healthCheckInfoCADIUp);
+        statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
+        assertTrue("check true", statusChanged);
+
+        checkInfosRight.add(healthCheckInfoCADIUp);
         statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, null);
         assertTrue("check true", statusChanged);
 

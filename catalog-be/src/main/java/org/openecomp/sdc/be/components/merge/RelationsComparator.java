@@ -41,8 +41,8 @@ public class RelationsComparator {
      * a change in relation is determine by comparing the relations type, node, capability and requirement name
      */
     public boolean isRelationsChanged(Resource oldResource,  Resource newResource) {
-        Map<String, List<RequirementCapabilityRelDef>> oldRelationsByInstance = oldResource.groupRelationsByInstanceName(oldResource);
-        Map<String, List<RequirementCapabilityRelDef>> newRelationsByInstance = newResource.groupRelationsByInstanceName(newResource);
+        Map<String, List<RequirementCapabilityRelDef>> oldRelationsByInstance = oldResource.groupRelationsFromCsarByInstanceName(oldResource);
+        Map<String, List<RequirementCapabilityRelDef>> newRelationsByInstance = newResource.groupRelationsFromCsarByInstanceName(newResource);
         for (Map.Entry<String, List<RequirementCapabilityRelDef>> relationByInst : newRelationsByInstance.entrySet()) {
             List<RequirementCapabilityRelDef> oldRelations = oldRelationsByInstance.get(relationByInst.getKey());
             List<RequirementCapabilityRelDef> newRelations = relationByInst.getValue();
@@ -79,7 +79,7 @@ public class RelationsComparator {
         String newToNodeId = newRelation.getToNode();
         Optional<ComponentInstance> oldRelationToNode = oldResource.getComponentInstanceById(oldToNodeId);
         Optional<ComponentInstance> newRelationToNode = newResource.getComponentInstanceById(newToNodeId);
-        return oldRelationToNode.isPresent() && newRelationToNode.isPresent() && oldRelationToNode.get().getName().equals(newRelationToNode.get().getName());
+        return oldRelationToNode.isPresent() && newRelationToNode.isPresent() && oldRelationToNode.get().getInvariantName().equals(newRelationToNode.get().getInvariantName());
     }
 
     private boolean isRelationEqual(RelationshipInfo oldRelationship, RelationshipInfo newRelationship) {

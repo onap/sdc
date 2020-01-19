@@ -30,7 +30,12 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementLifecycleOperation;
@@ -177,23 +182,10 @@ public class CheckoutTransition extends LifeCycleTransition {
         if (userValidationResponse.isRight()) {
             return userValidationResponse;
         }
-
         // check resource is not locked by another user
         if (oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
             ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CHECKOUT_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
             return Either.right(error);
-        }
-
-        if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)) {
-            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-            return Either.right(error);
-        }
-
-        if (oldState.equals(LifecycleStateEnum.READY_FOR_CERTIFICATION)) {
-            if (!modifier.getRole().equals(Role.DESIGNER.name()) && !modifier.getRole().equals(Role.ADMIN.name())) {
-                ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-                return Either.right(error);
-            }
         }
         return Either.left(true);
     }

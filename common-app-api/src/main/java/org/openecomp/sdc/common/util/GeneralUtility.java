@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,145 +22,194 @@ package org.openecomp.sdc.common.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
+import org.slf4j.MDC;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class GeneralUtility {
 
-    private static final int STRING_LENGTH_MULTIPLIER = 4;
+	public static boolean generateTextFile(String fileName, String fileData) {
+		boolean isSuccessfull = true;
+		try {
+			FileUtils.writeStringToFile(new File(fileName), fileData);
+		} catch (IOException e) {
+			isSuccessfull = false;
+		}
+		return isSuccessfull;
+	}
+	
+	/**
+	 * Use with care, usage is not advised!!!
+	 * The method only checks if String does not contain special characters + length divided by 4 with no remainder.
+	 * The methods contained in other common libraries do the same.
+	 */
+	public static boolean isBase64Encoded(byte[] data) {
+		return Base64.isBase64(data);
+	}
+	
+	/**
+	 *Use with care, usage is not advised!!!
+	 * The method only checks if String does not contain special characters + length divided by 4 with no remainder.
+	 * The methods contained in other common libraries do the same.
+	 */
+	public static boolean isBase64Encoded(String str) {
+		boolean isEncoded = false;
+		try {
+			// checks if the string was properly padded to the
+			isEncoded = ((str.length() % 4 == 0) && (Pattern.matches("\\A[a-zA-Z0-9/+]+={0,2}\\z", str)));
+			if (isEncoded) {
+				// If no exception is caught, then it is possibly a base64
+				// encoded string
+				byte[] data = Base64.decodeBase64(str);
+			}
 
-    public static boolean generateTextFile(String fileName, String fileData) {
-        boolean isSuccessfull = true;
-        try {
-            FileUtils.writeStringToFile(new File(fileName), fileData);
-        } catch (IOException e) {
-            isSuccessfull = false;
-        }
-        return isSuccessfull;
-    }
+		} catch (Exception e) {
+			// If exception is caught, then it is not a base64 encoded string
+			isEncoded = false;
+		}
+		return isEncoded;
+	}
 
-    /**
-     * Use with care, usage is not advised!!!
-     * The method only checks if String does not contain special characters + length divided by 4 with no remainder.
-     * The methods contained in other common libraries do the same.
-     */
-    public static boolean isBase64Encoded(byte[] data) {
-        return Base64.isBase64(data);
-    }
+	/**
+	 * Checks whether the passed string exceeds a limit of number of characters.
+	 * 
+	 * @param str
+	 * @param limit
+	 * @return the result of comparison, or false if str is null.
+	 */
+	public static boolean isExceedingLimit(String str, int limit) {
+		if (str == null) {
+			return false;
+		}
+		return str.length() > limit;
+	}
 
-    /**
-     * Use with care, usage is not advised!!!
-     * The method only checks if String does not contain special characters + length divided by 4 with no remainder.
-     * The methods contained in other common libraries do the same.
-     */
-    public static boolean isBase64Encoded(String str) {
-        boolean isEncoded = false;
-        try {
-            // checks if the string was properly padded to the
-            isEncoded = ((str.length() % STRING_LENGTH_MULTIPLIER == 0) && (Pattern.matches("\\A[a-zA-Z0-9/+]+={0,2}\\z", str)));
-            if (isEncoded) {
-                // If no exception is caught, then it is possibly a base64
-                // encoded string
-                byte[] data = Base64.decodeBase64(str);
-            }
+	/**
+	 * Checks the passed string list whether the cumulative length of strings and delimiters between them exceeds a limit of number of characters. For example for list ("one","two","three") with delimiter "," the length of list is calculated
+	 * 3+1+3+1+5=13
+	 *
+	 * @param strList
+	 * @param limit
+	 * @param delimiterLength
+	 *            - 0 if there is no delimeter.
+	 * @return the result of comparison, or false if strList is null.
+	 */
+	public static boolean isExceedingLimit(List<String> strList, int limit, int delimiterLength) {
+		if (strList == null || strList.isEmpty()) {
+			return false;
+		}
+		int sum = 0;
+		int size = strList.size();
+		for (int i = 0; i < size - 1; i++) {
+			String str = strList.get(i);
+			if (str != null) {
+				sum += str.length();
+			}
+			sum += delimiterLength;
+		}
+		String str = strList.get(size - 1);
+		if (str != null) {
+			sum += str.length();
+		}
+		return sum > limit;
+	}
 
-        } catch (Exception e) {
-            // If exception is caught, then it is not a base64 encoded string
-            isEncoded = false;
-        }
-        return isEncoded;
-    }
+	/**
+	 * Return the extension as the substring from the last dot. For input "kuku.txt", "txt" will be returned. If no dot is found or input is null, empty string is returned.
+	 * 
+	 * @param fileName
+	 * @return extension
+	 */
+	public static String getFilenameExtension(String fileName) {
+		String res = Constants.EMPTY_STRING;
+		if (fileName != null) {
+			int indexOf = fileName.lastIndexOf('.');
+			if (indexOf != -1 && indexOf < (fileName.length() - 1)) {
+				res = fileName.substring(indexOf + 1);
+			}
+		}
+		return res;
+	}
 
-    /**
-     * Checks whether the passed string exceeds a limit of number of characters.
-     *
-     * @param str
-     * @param limit
-     * @return the result of comparison, or false if str is null.
-     */
-    public static boolean isExceedingLimit(String str, int limit) {
-        if (str == null) {
-            return false;
-        }
-        return str.length() > limit;
-    }
+	public static String calculateMD5Base64EncodedByByteArray(byte[] payload) {
+		String decodedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(payload);
+		byte[] encodeMd5 = Base64.encodeBase64(decodedMd5.getBytes());
+		return new String(encodeMd5);
 
-    /**
-     * Checks the passed string list whether the cumulative length of strings and delimiters between them exceeds a limit of number of characters. For example for list ("one","two","three") with delimiter "," the length of list is calculated
-     * 3+1+3+1+5=13
-     *
-     * @param strList
-     * @param limit
-     * @param delimiterLength - 0 if there is no delimeter.
-     * @return the result of comparison, or false if strList is null.
-     */
-    public static boolean isExceedingLimit(List<String> strList, int limit, int delimiterLength) {
-        if (strList == null || strList.isEmpty()) {
-            return false;
-        }
-        int sum = 0;
-        int size = strList.size();
-        for (int i = 0; i < size - 1; i++) {
-            String str = strList.get(i);
-            if (str != null) {
-                sum += str.length();
-            }
-            sum += delimiterLength;
-        }
-        String str = strList.get(size - 1);
-        if (str != null) {
-            sum += str.length();
-        }
-        return sum > limit;
-    }
+	}
 
-    /**
-     * Return the extension as the substring from the last dot. For input "kuku.txt", "txt" will be returned. If no dot is found or input is null, empty string is returned.
-     *
-     * @param fileName
-     * @return extension
-     */
-    public static String getFilenameExtension(String fileName) {
-        String res = Constants.EMPTY_STRING;
-        if (fileName != null) {
-            int indexOf = fileName.lastIndexOf('.');
-            if (indexOf != -1 && indexOf < (fileName.length() - 1)) {
-                res = fileName.substring(indexOf + 1);
-            }
-        }
-        return res;
-    }
+	/**
+	 * 
+	 * @param data
+	 * @return
+	 */
+	public static String calculateMD5Base64EncodedByString(String data) {
+		String calculatedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(data);
 
-    public static String calculateMD5Base64EncodedByByteArray(byte[] payload) {
-        String decodedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(payload);
-        byte[] encodeMd5 = Base64.encodeBase64(decodedMd5.getBytes());
-        return new String(encodeMd5);
-
-    }
-
-    /**
-     * @param data
-     * @return
-     */
-    public static String calculateMD5Base64EncodedByString(String data) {
-        String calculatedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(data);
-
-        // encode base-64 result
-        byte[] encodeBase64 = Base64.encodeBase64(calculatedMd5.getBytes());
-        return new String(encodeBase64);
-    }
-
-
-    /**
-     * @param String
-     * @return String is null or Empty
-     */
-    public static boolean isEmptyString(String str) {
+		// encode base-64 result
+		byte[] encodeBase64 = Base64.encodeBase64(calculatedMd5.getBytes());
+		return new String(encodeBase64);
+	}
+	
+	
+	/**
+	 * 
+	 * @param String
+	 * @return String is null or Empty
+	 */
+	public static boolean isEmptyString(String str) {
         return str == null || str.trim().isEmpty();
     }
+
+	public static String getEcompRequestId() {
+		return MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
+	}
+
+
+
+
+	public static <T extends ICategorizedElement> Map<String,Map<String,List<T>>> getCategorizedComponents(List<T> components) {
+
+		Map<String, Map<String, List<T>>> categorizedMap = new HashMap<>();
+		components.forEach(component -> categorizeComponent(component, categorizedMap));
+		return categorizedMap;
+	}
+
+	private static <T extends ICategorizedElement> void categorizeComponent(T component, Map<String, Map<String, List<T>>> categorizedMap) {
+		if(component.getComponentTypeAsString().equals("SERVICE")){
+			categorizeService(component, categorizedMap);
+		}else if(component.getComponentTypeAsString().equals("RESOURCE")){
+			categorizeResource(component, categorizedMap);
+		}
+	}
+
+	private static <T extends ICategorizedElement> void categorizeResource(T component, Map<String, Map<String, List<T>>> categorizedMap) {
+		String category = component.getCategoryName();
+		String subCategory = component.getSubcategoryName();
+		putComponentToMap(component, categorizedMap, category, subCategory);
+	}
+
+	private static <T extends ICategorizedElement> void categorizeService(T component, Map<String, Map<String, List<T>>> categorizedMap) {
+		String category = "Generic";
+		String subCategory = "Generic";
+		putComponentToMap(component, categorizedMap, category, subCategory);
+	}
+
+	private static <T extends ICategorizedElement> void putComponentToMap(T component, Map<String, Map<String, List<T>>> categorizedMap,
+																		  String category, String subCategory) {
+
+		Map<String, List<T>> categoryMap = categorizedMap.computeIfAbsent(category, k -> new HashMap<>());
+		List<T> subCategoryList = categoryMap.computeIfAbsent(subCategory, k -> new ArrayList<>());
+		subCategoryList.add(component);
+	}
 
 }

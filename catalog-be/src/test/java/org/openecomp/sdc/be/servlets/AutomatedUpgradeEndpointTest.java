@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.upgrade.ServiceInfo;
@@ -44,7 +43,13 @@ import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.UpgradeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -68,10 +73,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
     static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
@@ -143,7 +148,7 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
     @Before
     public void init() {
         prepareComponents();
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), anyBoolean())).thenReturn(user);
+        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
         when(toscaOperationFacade.getToscaFullElement(eq(RESOURCE_ID_PREV))).thenReturn(Either.left(vfPrev));
         when(toscaOperationFacade.getToscaFullElement(eq(RESOURCE_ID_NEW))).thenReturn(Either.left(vfNew));
         when(toscaOperationFacade.getToscaFullElement(eq(SERVICE_ID_PREV))).thenReturn(Either.left(servicePrev));
@@ -154,7 +159,7 @@ public class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
                 eq(true));
 
         when(toscaOperationFacade.getToscaElement(eq(RESOURCE_ID_PREV), any(ComponentParametersView.class))).thenReturn(Either.left(vfPrev));
-        when(componentInstanceBusinessLogic.changeInstanceVersion(any(Service.class), any(ComponentInstance.class), any(ComponentInstance.class), any(User.class), eq(ComponentTypeEnum.SERVICE))).thenReturn(Either.left(istanceNew));
+        when(componentInstanceBusinessLogic.changeInstanceVersion(any(Service.class), any(ComponentInstance.class), any(ComponentInstance.class), any(User.class), eq(ComponentTypeEnum.SERVICE))).thenReturn(istanceNew);
 
         doReturn(Either.left(serviceNewCheckIn)).when(lifecycleBusinessLogic).changeComponentState(eq(ComponentTypeEnum.SERVICE), eq(SERVICE_ID_NEW), any(User.class), eq(LifeCycleTransitionEnum.CHECKIN), any(LifecycleChangeInfoWithAction.class),
                 eq(false), eq(true));

@@ -20,18 +20,16 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.Mockito.mock;
+import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
+import static org.mockito.Mockito.mock;
 
 public class DistributionServiceServletTest {
 

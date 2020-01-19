@@ -21,10 +21,9 @@
 package org.openecomp.sdc.be.externalapi.servlet;
 
 import fj.data.Either;
-import javax.inject.Inject;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ExternalRefsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
@@ -35,7 +34,17 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
 
-import javax.ws.rs.*;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -59,6 +68,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
     @GET
     @Path("/{assetType}/{uuid}/version/{version}/resourceInstances/{componentInstanceName}/externalReferences/{objectType}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response getComponentInstanceExternalRef(
             @PathParam("assetType") String assetType,
             @PathParam("uuid") String uuid,
@@ -84,6 +94,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
     @GET
     @Path("/{assetType}/{uuid}/version/{version}/externalReferences/{objectType}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Map<String, List<String>> getAssetExternalRefByObjectType(
             @PathParam("assetType") String assetType,
             @PathParam("uuid") String uuid,
@@ -109,6 +120,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
     @Path("/{assetType}/{uuid}/resourceInstances/{componentInstanceName}/externalReferences/{objectType}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed({AafPermission.PermNames.WRITE_VALUE})
     public Response addComponentInstanceExternalRef(
             @PathParam("assetType") String assetType,
             @PathParam("uuid") String uuid,
@@ -122,7 +134,9 @@ public class ExternalRefsServlet extends BeGenericServlet {
             return r;
         }
 
-        Either<String, ActionStatus> addResult = this.businessLogic.addExternalReference(ComponentTypeEnum.findByParamName(assetType), userId, uuid, componentInstanceName, objectType, ref);
+        ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+        String uid = this.businessLogic.fetchComponentUniqueIdByUuid(uuid, componentType);
+        Either<String, ActionStatus> addResult = this.businessLogic.addExternalReference(uid, componentType, userId, componentInstanceName, objectType, ref);
         if (addResult.isLeft()) {
             return Response.status(Response.Status.CREATED)
                     .entity(ref)
@@ -136,6 +150,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
     @DELETE
     @Path("/{assetType}/{uuid}/resourceInstances/{componentInstanceName}/externalReferences/{objectType}/{reference}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed({AafPermission.PermNames.DELETE_VALUE})
     public Response deleteComponentInstanceReference(
             @PathParam("assetType") String assetType,
             @PathParam("uuid") String uuid,
@@ -149,8 +164,9 @@ public class ExternalRefsServlet extends BeGenericServlet {
         if (r != null){
             return r;
         }
-
-        Either<String, ActionStatus> deleteStatus = this.businessLogic.deleteExternalReference(ComponentTypeEnum.findByParamName(assetType), userId, uuid, componentInstanceName, objectType, reference);
+        ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+        String uid = this.businessLogic.fetchComponentUniqueIdByUuid(uuid, componentType);
+        Either<String, ActionStatus> deleteStatus = this.businessLogic.deleteExternalReference(uid, componentType, userId, componentInstanceName, objectType, reference);
         if (deleteStatus.isLeft()){
             return this.buildOkResponse(new ExternalRefDTO(reference));
         } else {
@@ -162,6 +178,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
     @Path("/{assetType}/{uuid}/resourceInstances/{componentInstanceName}/externalReferences/{objectType}/{oldRefValue}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PermissionAllowed({AafPermission.PermNames.WRITE_VALUE})
     public Response updateComponentInstanceReference(
             @PathParam("assetType") String assetType,
             @PathParam("uuid") String uuid,
@@ -178,7 +195,9 @@ public class ExternalRefsServlet extends BeGenericServlet {
         }
 
         String newRefValue = newRefValueDTO.getReferenceUUID();
-        Either<String, ActionStatus> updateResult = this.businessLogic.updateExternalReference(ComponentTypeEnum.findByParamName(assetType), userId, uuid, componentInstanceName, objectType, oldRefValue, newRefValue);
+        ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+        String uid = this.businessLogic.fetchComponentUniqueIdByUuid(uuid, componentType);
+        Either<String, ActionStatus> updateResult = this.businessLogic.updateExternalReference(uid, componentType, userId, componentInstanceName, objectType, oldRefValue, newRefValue);
         if (updateResult.isLeft()){
             return this.buildOkResponse(new ExternalRefDTO(newRefValue));
         } else {

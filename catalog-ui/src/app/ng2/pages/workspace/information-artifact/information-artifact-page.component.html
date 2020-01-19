@@ -1,0 +1,82 @@
+<div class="information-artifact-page">
+    <svg-icon-label class="add-artifact-btn" [clickable]="true" [mode]="'primary'" [labelPlacement]="'right'"
+                    [label]="'Add'" [name]="'plus'" [testId]="'add-information-artifact-button'"
+                    (click)="addOrUpdateArtifact()"></svg-icon-label>
+    <ngx-datatable
+            columnMode="flex"
+            [headerHeight]="40"
+            [reorderable]="false"
+            [swapColumns]="false"
+            [rows]="informationArtifacts$ | async"
+            [footerHeight]="'undefined'"
+            [sorts]="[{prop: 'artifactDisplayName', dir: 'desc'}]"
+            #informationArtifactsTable
+            (activate)="onActivate($event)">
+        <ngx-datatable-row-detail [rowHeight]="80">
+            <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                <div [attr.data-tests-id]="row.artifactDisplayName+'Description'">{{row.description}}</div>
+            </ng-template>
+        </ngx-datatable-row-detail>
+        <ngx-datatable-column [resizeable]="false" name="Name" [flexGrow]="3"
+                              [prop]="'artifactDisplayName'">
+            <ng-template ngx-datatable-cell-template let-row="row" let-expanded="expanded">
+                <div class="expand-collapse-cell">
+                    <svg-icon [clickable]="true" class="expand-collapse-icon"
+                              [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
+                              [size]="'medium'"></svg-icon>
+                    <span [attr.data-tests-id]="'artifactDisplayName_' + row.artifactDisplayName">{{row.artifactDisplayName }}</span>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="Type" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{row.artifactType}}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="Version" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{ row.artifactVersion }}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="UUID" [flexGrow]="2">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{ row.artifactUUID }}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div class="download-artifact-button">
+                    <svg-icon class="action-icon" *ngIf="!row.isThirdParty()" [mode]="'primary2'"
+                              [disabled]="isViewOnly$ | async" [name]="'edit-o'"
+                              testId="edit_{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              (click)="addOrUpdateArtifact(row)"></svg-icon>
+                    <svg-icon class="action-icon" *ngIf="!row.isThirdParty()" [mode]="'primary2'"
+                              [disabled]="isViewOnly$ | async" [name]="'trash-o'"
+                              testId="delete_{{row.artifactDisplayName}}" clickable="true" size="medium" (click)="deleteArtifact(row)"></svg-icon>
+                    <download-artifact class="action-icon" [disabled]="isViewOnly$ | async" [artifact]="row"
+                                       [componentId]="componentId"
+                                       [componentType]="componentType"
+                                       testId="download_{{row.artifactDisplayName}}"></download-artifact>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template>
+                <div class="add-artifacts-dynamic-btn-list">
+                    <sdc-button *ngFor="let artifact of informationArtifactsAsButtons$ | async"
+                                class="add-artifacts-dynamic-btn"
+                                testId="add_artifact_{{artifact.artifactDisplayName}}"
+                                [type]="'secondary'"
+                                [size]="'xx-large'"
+                                [text]="'ADD ' + artifact.artifactDisplayName"
+                                [icon_name]="'plus-circle-o'"
+                                [icon_mode] = "'secondary'"
+                                [icon_position]="'left'"
+                                (click)="addOrUpdateArtifact(artifact)">
+                    </sdc-button>
+                </div>
+            </ng-template>
+        </ngx-datatable-footer>
+    </ngx-datatable>
+</div>

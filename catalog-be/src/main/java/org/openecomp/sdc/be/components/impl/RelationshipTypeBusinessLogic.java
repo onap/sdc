@@ -16,8 +16,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.Map;
-
 import fj.data.Either;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -28,6 +26,8 @@ import org.openecomp.sdc.be.model.operations.impl.RelationshipTypeOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component("relationshipTypeBusinessLogic")
 public class RelationshipTypeBusinessLogic {

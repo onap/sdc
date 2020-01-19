@@ -23,7 +23,12 @@ package org.openecomp.sdc.be.components.impl;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 
 import java.util.Collections;
 import java.util.HashMap;

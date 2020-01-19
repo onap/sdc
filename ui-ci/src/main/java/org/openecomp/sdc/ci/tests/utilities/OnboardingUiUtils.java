@@ -22,11 +22,11 @@ package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorLicenseModel;
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
 import org.openecomp.sdc.ci.tests.execute.setup.ArtifactsCorrelationManager;
@@ -59,7 +59,8 @@ public class OnboardingUiUtils {
 
         if (vspFound) {
             List<WebElement> elementsFromTable = GeneralPageElements.getElementsFromTable();
-            elementsFromTable.get(1).click();
+            elementsFromTable.get(0).click();
+            elementsFromTable.get(0).click();
             GeneralUIUtils.waitForLoader();
 
             if (isUpdate) {
@@ -184,7 +185,7 @@ public class OnboardingUiUtils {
 
         validateDeploymentArtifactsVersion(deploymentArtifacts, heatEnvFilesFromCSAR);
 
-        DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
+//        DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
         return createVendorSoftwareProduct;
     }
 

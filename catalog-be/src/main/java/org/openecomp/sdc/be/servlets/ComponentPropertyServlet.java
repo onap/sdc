@@ -16,8 +16,37 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-import java.util.Map;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.resources.data.EntryData;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
@@ -33,31 +62,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.resources.data.EntryData;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
+import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -81,6 +87,8 @@ public class ComponentPropertyServlet extends BeGenericServlet {
   private static final Logger log = LoggerFactory.getLogger(ComponentPropertyServlet.class);
   private static final String CREATE_PROPERTY = "Create Property";
   private static final String DEBUG_MESSAGE = "Start handle request of {} modifier id is {}";
+  private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ComponentPropertyServlet.class.getName());
+
 
     @POST
     @Path("services/{serviceId}/properties")
@@ -93,6 +101,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Service property already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createPropertyInService(
             @Parameter(description = "service id to update with new property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -113,6 +122,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Resource property already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createPropertyInResource(
             @Parameter(description = "Resource id to update with new property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -134,6 +144,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Service property not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyInService(
             @Parameter(description = "service id of property", required = true) @PathParam("serviceId") final String serviceId,
             @Parameter(description = "property id to get", required = true) @PathParam("propertyId") final String propertyId,
@@ -153,6 +164,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Resource property not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyInResource(
             @Parameter(description = "resource id of property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -173,6 +185,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Service property not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyListInService(
             @Parameter(description = "service id of property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -192,6 +205,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Resource property not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyListInResource(
             @Parameter(description = "resource id of property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -211,6 +225,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Service property not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deletePropertyInService(
             @Parameter(description = "service id of property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -232,6 +247,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "Resource property not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deletePropertyInResource(
             @Parameter(description = "resource id of property",
                     required = true) @PathParam("resourceId") final String resourceId,
@@ -252,6 +268,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service property updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updatePropertyInService(
             @Parameter(description = "service id to update with new property",
                     required = true) @PathParam("serviceId") final String serviceId,
@@ -271,18 +288,20 @@ public class ComponentPropertyServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource property updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updatePropertyInResource(
             @Parameter(description = "resource id to update with new property",
                     required = true) @PathParam("resourceId") final String resourceId,
             @Parameter(description = "Resource property to update", required = true) String data,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        return updateProperty(resourceId, data, request, userId);
-    }
+    return updateProperty(resourceId, data, request, userId);
+  }
 
   private Response createProperty(String componentId, String data,  HttpServletRequest request,String userId) {
     String url = request.getMethod() + " " + request.getRequestURI();
     log.debug("Start handle request of {} modifier id is {} data is {}", url, userId, data);
+    loggerSupportability.log(LoggerSupportabilityActions.CREATE_PROPERTIES, StatusCode.STARTED,"CREATE_PROPERTIES by user {} ", userId);
 
     try{
       Either<Map<String, PropertyDefinition>, ActionStatus> propertyDefinition =
@@ -311,6 +330,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         return buildErrorResponse(addPropertyEither.right().value());
       }
 
+      loggerSupportability.log(LoggerSupportabilityActions.CREATE_PROPERTIES, StatusCode.COMPLETE,"CREATE_PROPERTIES by user {} ", userId);
       return buildOkResponse(newPropertyDefinition);
 
     } catch (Exception e) {
@@ -326,6 +346,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
   private Response updateProperty(String componentId, String data, HttpServletRequest request, String userId) {
     String url = request.getMethod() + " " + request.getRequestURI();
     log.debug("Start handle request of {}", url);
+    loggerSupportability.log(LoggerSupportabilityActions.UPDATE_PROPERTIES, StatusCode.STARTED,"UPDATE_PROPERTIES by user {} ", userId);
 
     // get modifier id
     User modifier = new User();
@@ -377,6 +398,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
       }
 
       ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+      loggerSupportability.log(LoggerSupportabilityActions.UPDATE_PROPERTIES, StatusCode.COMPLETE,"UPDATE_PROPERTIES by user {} ", userId);
       return buildOkResponse(responseFormat, properties);
 
     } catch (Exception e) {

@@ -15,14 +15,6 @@
  */
 package org.openecomp.sdc.be.tosca.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil.BPMN_ARTIFACT_PATH;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import org.apache.commons.lang.WordUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -40,6 +32,14 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil.BPMN_ARTIFACT_PATH;
 
 public class OperationArtifactUtilTest {
 

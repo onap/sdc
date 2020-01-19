@@ -19,11 +19,7 @@
 
 package org.openecomp.sdc.ci.tests.flow;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 import com.aventstack.extentreports.Status;
-import java.util.Optional;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.pages.OnboardHomePage;
 import org.openecomp.sdc.ci.tests.pages.PageObject;
@@ -32,6 +28,11 @@ import org.openecomp.sdc.ci.tests.pages.TopNavComponent;
 import org.openecomp.sdc.ci.tests.pages.VspCreationModal;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.WebDriver;
+
+import java.util.Optional;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * UI Flow for VSP creation

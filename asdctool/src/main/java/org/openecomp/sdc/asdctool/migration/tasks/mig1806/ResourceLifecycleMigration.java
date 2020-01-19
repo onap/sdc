@@ -21,6 +21,7 @@
 package org.openecomp.sdc.asdctool.migration.tasks.mig1806;
 
 import fj.data.Either;
+import org.openecomp.sdc.asdctool.enums.LifecycleStateEnum;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
@@ -36,7 +37,6 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;

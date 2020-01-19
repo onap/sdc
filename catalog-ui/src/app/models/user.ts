@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,69 +17,68 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 'use strict';
 
 export enum UserRole {
     ADMIN,
-    DESIGNER,
-    TESTER,
-    GOVERNOR,
-    OPS
+    DESIGNER
 }
 
+// tslint:disable-next-line:interface-name
 export interface IUserManager {
-    isInEditMode:boolean;
-    filterTerm:string;
+    isInEditMode: boolean;
+    filterTerm: string;
 }
 
+// tslint:disable-next-line:interface-name
 export interface IUserProperties extends IUserManager {
-    firstName:string;
-    lastName:string;
-    userId:string;
-    email:string;
-    role:string;
-    tempRole:string;
-    lastLoginTime:string;
-    status:string;
+    firstName: string;
+    lastName: string;
+    userId: string;
+    email: string;
+    role: string;
+    tempRole: string;
+    lastLoginTime: string;
+    status: string;
 }
 
+// tslint:disable-next-line:interface-name
 export interface IUser {
-    userInfo:IUserProperties;
-    getRole():UserRole;
-    getRoleToView():string;
-    getName():string;
-    getFirstName():string;
-    getLastName():string;
+    userInfo: IUserProperties;
+    getRole(): UserRole;
+    getRoleToView(): string;
+    getName(): string;
+    getFirstName(): string;
+    getLastName(): string;
 }
 
 export class User implements IUser {
 
-    constructor(public userInfo:IUserProperties) {
+    constructor(public userInfo: IUserProperties) {
     }
 
     public getLastName = () => {
         return this.userInfo.lastName;
-    };
+    }
 
     public getFirstName = () => {
         return this.userInfo.firstName;
-    };
+    }
 
     public getName = () => {
         return this.userInfo.firstName + ' ' + this.userInfo.lastName;
-    };
+    }
 
     public getLastLogin = () => {
-        if (!this.userInfo.lastLoginTime || this.userInfo.lastLoginTime === "0") {
-            return "";
+        if (!this.userInfo.lastLoginTime || this.userInfo.lastLoginTime === '0') {
+            return '';
         } else {
             return this.userInfo.lastLoginTime;
         }
-    };
+    }
 
-    public getRole = ():UserRole => {
-        let role:UserRole;
+    public getRole = (): UserRole => {
+        let role: UserRole;
         switch (UserRole[this.userInfo.role.toUpperCase()]) {
             case UserRole.ADMIN:
                 role = UserRole.ADMIN;
@@ -87,21 +86,12 @@ export class User implements IUser {
             case UserRole.DESIGNER:
                 role = UserRole.DESIGNER;
                 break;
-            case UserRole.TESTER:
-                role = UserRole.TESTER;
-                break;
-            case UserRole.GOVERNOR:
-                role = UserRole.GOVERNOR;
-                break;
-            case UserRole.OPS:
-                role = UserRole.OPS;
-                break;
         }
         return role;
-    };
+    }
 
-    public getRoleToView = ():string => {
-        let role:string = this.userInfo.role.toLowerCase().replace('governor', 'governance_Rep');
+    public getRoleToView = (): string => {
+        const role: string = this.userInfo.role.toLowerCase().replace('governor', 'governance_Rep');
         return role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' ');
     }
 }

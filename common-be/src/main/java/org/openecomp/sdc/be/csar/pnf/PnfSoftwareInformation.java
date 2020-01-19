@@ -19,13 +19,14 @@
 
 package org.openecomp.sdc.be.csar.pnf;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Represents the Pnf software information non-mano yaml

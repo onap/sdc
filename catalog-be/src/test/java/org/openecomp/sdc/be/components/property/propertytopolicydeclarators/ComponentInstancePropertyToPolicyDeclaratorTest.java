@@ -20,17 +20,7 @@
 
 package org.openecomp.sdc.be.components.property.propertytopolicydeclarators;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import fj.data.Either;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +39,16 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 public class ComponentInstancePropertyToPolicyDeclaratorTest {
 

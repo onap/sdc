@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`catalog component should match current snapshot of catalog component 1`] = `
+<catalog
+  $state={[Function Object]}
+  cacheService={[Function Object]}
+  catalogService={[Function Object]}
+  componentShouldReload={[Function Function]}
+  defaultFilterParams={[Function Object]}
+  getTestIdForCheckboxByText={[Function Function]}
+  initCatalogData={[Function Function]}
+  initLeftSwitch={[Function Function]}
+  initScopeMembers={[Function Function]}
+  isDefaultFilter={[Function Function]}
+  loaderService={[Function Object]}
+  resourceNamePipe={[Function Object]}
+  sdcConfig={[Function Object]}
+  sdcMenu={[Function Object]}
+  updateCatalogItems={[Function Function]}
+>
+  <div
+    class="sdc-catalog-container"
+  >
+    <div
+      class="w-sdc-main-container"
+    >
+      <div
+        class="i-sdc-designer-leftbar-section-left-switch-header"
+      >
+        <div
+          class="i-sdc-designer-leftbar-section-left-switch-header-text"
+        >
+           
+        </div>
+        <div
+          class="i-sdc-designer-leftbar-section-left-switch-header-icon sprite-new arrow-up-small"
+        >
+           
+        </div>
+        
+      </div>
+      <div
+        class="sdc-catalog-body-container w-sdc-left-sidebar i-sdc-designer-left-sidebar"
+        perfectscrollbar=""
+      >
+        <div
+          class="sdc-catalog-leftbar-container"
+        >
+          <div
+            class="sdc-catalog-type-filter-container"
+          >
+            <div
+              class="i-sdc-designer-leftbar-section-title pointer"
+            >
+              <span
+                class="i-sdc-designer-leftbar-section-title-icon"
+              />
+              <span
+                class="i-sdc-designer-leftbar-section-title-text"
+                data-tests-id="typeFilterTitle"
+              >
+                Type
+              </span>
+            </div>
+            <div
+              class="i-sdc-designer-leftbar-section-content"
+            >
+              <sdc-checklist />
+            </div>
+          </div>
+          <div
+            class="sdc-catalog-categories-filter-container"
+          >
+            <div
+              class="i-sdc-designer-leftbar-section-title pointer"
+            >
+              <span
+                class="i-sdc-designer-leftbar-section-title-icon"
+              />
+              <span
+                class="i-sdc-designer-leftbar-section-title-text"
+                data-tests-id="categoriesFilterTitle"
+              >
+                Categories
+              </span>
+            </div>
+            <div
+              class="i-sdc-designer-leftbar-section-content"
+            >
+              <sdc-checklist />
+            </div>
+          </div>
+          <div
+            class="sdc-catalog-status-filter-container"
+          >
+            <div
+              class="i-sdc-designer-leftbar-section-title pointer"
+            >
+              <span
+                class="i-sdc-designer-leftbar-section-title-icon"
+              />
+              <span
+                class="i-sdc-designer-leftbar-section-title-text"
+                data-tests-id="statusFilterTitle"
+              >
+                Status
+              </span>
+            </div>
+            <div
+              class="i-sdc-designer-leftbar-section-content"
+            >
+              <sdc-checklist />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="w-sdc-main-right-container w-sdc-catalog-main"
+        infinitescroll=""
+      >
+        <div
+          class="catalog-top-bar"
+        >
+          <div
+            class="w-sdc-dashboard-catalog-items-header"
+          />
+          <div
+            class="catalog-top-right-bar"
+          >
+            <span
+              class="w-sdc-dashboard-catalog-header-order1"
+            >
+              
+            </span>
+               
+            <a
+              class="w-sdc-dashboard-catalog-sort"
+              data-tests-id="sort-by-last-update"
+            >
+              
+            </a>
+              
+            
+            <a
+              class="w-sdc-dashboard-catalog-sort"
+              data-tests-id="sort-by-alphabetical"
+            >
+              
+            </a>
+              
+            
+          </div>
+        </div>
+        <div
+          class="catalog-elements-list"
+        >
+          
+        </div>
+      </div>
+    </div>
+    <top-nav />
+  </div>
+</catalog>
+`;

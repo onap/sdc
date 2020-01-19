@@ -21,14 +21,12 @@
  */
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ExternalReferencesOperation;
-import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.List;
 import java.util.Map;
@@ -54,7 +52,7 @@ public class ExternalRefsMergeBL implements ComponentInstanceMergeInterface {
     }
 
     @Override
-    public Either<Component, ResponseFormat> mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
+    public Component mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
         Optional<ComponentInstance> componentInstance = updatedContainerComponent.getComponentInstanceById(newInstanceId);
         if (!componentInstance.isPresent()) {
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND,
@@ -65,6 +63,6 @@ public class ExternalRefsMergeBL implements ComponentInstanceMergeInterface {
             externalReferencesOperation.addAllExternalReferences(updatedContainerComponent.getUniqueId(),
                     componentInstance.get().getUniqueId(), savedExternalRefs);
         }
-        return Either.left(updatedContainerComponent);
+        return updatedContainerComponent;
     }
 }

@@ -1,0 +1,12 @@
+<div class="sdc-element-icon">
+    <svg-icon [ngClass]="{'service-proxy': elementType === 'ServiceProxy'}"
+            [type]="elementIcon.type"
+            [name]="elementIcon.iconName"
+            [mode]="elementIcon.color"
+            [size]="elementIcon.size"
+            [backgroundShape]="elementIcon.shape"
+            [backgroundColor]="elementIcon.backgroundColor"></svg-icon>
+    <span *ngIf="uncertified" class="uncertified-icon-wapper">
+        <svg-icon class="element-non-certified" [name]="'alert-circle'" [mode]="'error'"></svg-icon>
+    </span>
+</div>

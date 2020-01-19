@@ -13,8 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
-import {PropertyModel, InputModel, InterfaceModel} from 'app/models';
+import { PropertyModel, InputModel, InterfaceModel} from 'app/models';
 
 export class ServiceInstanceObject {
     id: string;
@@ -23,8 +22,8 @@ export class ServiceInstanceObject {
     inputs: Array<InputModel> = [];
     interfaces: Array<InterfaceModel> = [];
 
-    constructor(input?:any) {
-        if(input) {
+    constructor(input?: any) {
+        if (input) {
             this.id = input.id;
             this.name = input.name;
             this.properties = input.properties;

@@ -28,6 +28,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
+import java.util.List;
+
 public class DistributionEngineMock implements IDistributionEngine {
     @Override
     public boolean isActive() {
@@ -71,6 +73,11 @@ public class DistributionEngineMock implements IDistributionEngine {
 
     @Override
     public OperationalEnvironmentEntry getEnvironmentById(String opEnvId) {
+        return null;
+    }
+
+    @Override
+    public OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
         return null;
     }
 

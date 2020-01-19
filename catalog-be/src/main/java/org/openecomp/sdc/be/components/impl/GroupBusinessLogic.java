@@ -31,6 +31,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.lock.LockingTransactional;
 import org.openecomp.sdc.be.components.impl.policy.PolicyTargetsUpdateHandler;
 import org.openecomp.sdc.be.components.utils.Utils;
@@ -47,12 +48,25 @@ import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.info.ArtifactDefinitionInfo;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.info.GroupDefinitionInfo;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.GroupInstanceProperty;
+import org.openecomp.sdc.be.model.GroupProperty;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition.GroupInstancePropertyValueUpdateBehavior;
 import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -66,13 +80,26 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LogLevel;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -85,7 +112,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
     public static final String GROUP_DELIMITER_REGEX = "\\.\\.";
 
-    public static final String INITIAL_VERSION = "1";
+    public static final String INITIAL_VERSION = "0.0";
 
     private static final String ADDING_GROUP = "AddingGroup";
 
@@ -98,6 +125,8 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     private static final String DELETE_GROUP = "DeleteGroup";
 
     private static final Logger log = Logger.getLogger(GroupBusinessLogic.class);
+
+    public LoggerSupportability loggerSupportability= LoggerSupportability.getLogger(GroupBusinessLogic.class.getName());
 
     private final AccessValidations accessValidations;
     private final PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
@@ -218,22 +247,14 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     public Either<GroupDefinition, ResponseFormat> validateAndUpdateGroupMetadata(String componentId, User user, ComponentTypeEnum componentType, GroupDefinition updatedGroup, boolean inTransaction , boolean shouldLock) {
 
         Either<GroupDefinition, ResponseFormat> result = null;
+        boolean failed = false;
         try {
             // Validate user exist
-            validateUserExists(user.getUserId(), UPDATE_GROUP, inTransaction);
+            validateUserExists(user.getUserId());
             // Validate component exist
-            Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponent = validateComponentExists(componentId, componentType, null);
-            if (validateComponent.isRight()) {
-                result = Either.right(validateComponent.right().value());
-                return result;
-            }
-            org.openecomp.sdc.be.model.Component component = validateComponent.left().value();
+            org.openecomp.sdc.be.model.Component component = validateComponentExists(componentId, componentType, null);
             // validate we can work on component
-            Either<Boolean, ResponseFormat> canWork = validateCanWorkOnComponent(component, user.getUserId());
-            if (canWork.isRight()) {
-                result = Either.right(canWork.right().value());
-                return result;
-            }
+            validateCanWorkOnComponent(component, user.getUserId());
             List<GroupDefinition> currentGroups = component.getGroups();
             if (CollectionUtils.isEmpty(currentGroups)) {
                 log.error("Failed to update the metadata of group {} on component {}. The status is {}. ", updatedGroup.getName(), component.getName(), ActionStatus.GROUP_IS_MISSING);
@@ -249,11 +270,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             }
             GroupDefinition currentGroup = currentGroupOpt.get();
             if ( shouldLock ){
-                Either<Boolean, ResponseFormat> lockResult = lockComponent(componentId, component, "Update GroupDefinition Metadata");
-                if (lockResult.isRight()) {
-                    result = Either.right(lockResult.right().value());
-                    return result;
-                }
+                lockComponent(componentId, component, "Update GroupDefinition Metadata");
             }
             // Validate group type is vfModule
             if (currentGroup.getType().equals(Constants.GROUP_TOSCA_HEAT)) {
@@ -265,8 +282,11 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             result = updateGroupMetadata(component, currentGroup, updatedGroup);
             return result;
 
-        } finally {
-            if (result != null && result.isLeft()) {
+        }catch (ComponentException e){
+            failed = true;
+            throw e;
+        }finally {
+            if (!failed) {
                 janusGraphDao.commit();
             } else {
                 janusGraphDao.rollback();
@@ -293,23 +313,10 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     private Either<GroupDefinition, ResponseFormat> updateGroup(Component component, GroupDefinition updatedGroup, String currentGroupName) {
         Either<GroupDefinition, StorageOperationStatus> handleGroupRes;
         Either<GroupDefinition, ResponseFormat> result = null;
-        if (updatedGroup.getName().equals(currentGroupName)) {
-            handleGroupRes = groupsOperation.updateGroup(component, updatedGroup);
-            if (handleGroupRes.isRight()) {
-                log.debug("Failed to update a metadata of the group {} on component {}. ", updatedGroup.getName(), component.getName());
-                result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(handleGroupRes.right().value())));
-            }
-        } else {
-            StorageOperationStatus deleteStatus = groupsOperation.deleteGroup(component, currentGroupName);
-            if (deleteStatus != StorageOperationStatus.OK) {
-                log.debug("Failed to delete the group {} from component {}. ", updatedGroup.getName(), component.getName());
-                result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteStatus)));
-            }
-            handleGroupRes = groupsOperation.addGroup(component, updatedGroup);
-            if (handleGroupRes.isRight()) {
-                log.debug("Failed to add the group {} to component {}. ", updatedGroup.getName(), component.getName());
-                result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(handleGroupRes.right().value())));
-            }
+        handleGroupRes = groupsOperation.updateGroup(component, updatedGroup);
+        if (handleGroupRes.isRight()) {
+            log.debug("Failed to update a metadata of the group {} on component {}. ", updatedGroup.getName(), component.getName());
+            result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(handleGroupRes.right().value())));
         }
         if (result == null) {
             result = Either.left(updatedGroup);
@@ -424,7 +431,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         Either<GroupDefinitionInfo, ResponseFormat> result = null;
 
         // Validate user exist
-        validateUserExists(userId, GET_GROUP, true);
+        validateUserExists(userId);
         // Validate component exist
         org.openecomp.sdc.be.model.Component component = null;
 
@@ -435,17 +442,12 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             componentParametersView.setIgnoreArtifacts(false);
             componentParametersView.setIgnoreUsers(false);
 
-            Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponent = validateComponentExists(componentId, componentType, componentParametersView);
-            if (validateComponent.isRight()) {
-                result = Either.right(validateComponent.right().value());
-                return result;
-            }
-            component = validateComponent.left().value();
+            component = validateComponentExists(componentId, componentType, componentParametersView);
 
             Either<GroupDefinition, StorageOperationStatus> groupEither = findGroupOnComponent(component, groupId);
 
             if (groupEither.isRight()) {
-                log.debug("Faild to find group {} under component {}", groupId, component.getUniqueId());
+                log.debug("Failed to find group {} under component {}", groupId, component.getUniqueId());
                 BeEcompErrorManager.getInstance().logInvalidInputError(GET_GROUP, "group  " + groupId + " not found under component " + component.getUniqueId(), ErrorSeverity.INFO);
                 String componentTypeForResponse = getComponentTypeForResponse(component);
                 result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_IS_MISSING, groupId, component.getSystemName(), componentTypeForResponse));
@@ -453,18 +455,8 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             }
             GroupDefinition group = groupEither.left().value();
 
-            Boolean isBase = null;
             List<GroupProperty> props = group.convertToGroupProperties();
-            if (props != null && !props.isEmpty()) {
-                Optional<GroupProperty> isBasePropOp = props.stream().filter(p -> p.getName().equals(Constants.IS_BASE)).findAny();
-                if (isBasePropOp.isPresent()) {
-                    GroupProperty propIsBase = isBasePropOp.get();
-                    isBase = Boolean.parseBoolean(propIsBase.getValue());
-
-                } else {
-                    BeEcompErrorManager.getInstance().logInvalidInputError(GET_GROUP, "failed to find prop isBase " + component.getNormalizedName(), ErrorSeverity.INFO);
-                }
-            }
+            Boolean isBase = isBaseProp(component, props);
 
             List<ArtifactDefinitionInfo> artifacts = new ArrayList<>();
             List<ArtifactDefinition> artifactsFromComponent = new ArrayList<>();
@@ -485,12 +477,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                     }
                     artifactsFromComponent.add(deploymentArtifacts.get(id));
                 }
-                if (!artifactsFromComponent.isEmpty()) {
-                    for (ArtifactDefinition artifactDefinition : artifactsFromComponent) {
-                        ArtifactDefinitionInfo artifactDefinitionInfo = new ArtifactDefinitionInfo(artifactDefinition);
-                        artifacts.add(artifactDefinitionInfo);
-                    }
-                }
+                addArtifactsToList(artifacts, artifactsFromComponent);
 
             }
             GroupDefinitionInfo resultInfo = new GroupDefinitionInfo(group);
@@ -503,21 +490,28 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             return result;
 
         } finally {
-
-            if (!inTransaction) {
-
-                if (result == null || result.isRight()) {
-                    log.debug("Going to execute rollback on create group.");
-                    janusGraphDao.rollback();
-                } else {
-                    log.debug("Going to execute commit on create group.");
-                    janusGraphDao.commit();
-                }
-
-            }
-
+            closeTransaction(inTransaction, result);
         }
 
+    }
+
+    private void addArtifactsToList(List<ArtifactDefinitionInfo> artifacts, List<ArtifactDefinition> artifactsFromComponent) {
+        artifactsFromComponent.forEach(a-> artifacts.add(new ArtifactDefinitionInfo(a)));
+    }
+
+    private Boolean isBaseProp(Component component, List<GroupProperty> props) {
+        Boolean isBase = null;
+        if (CollectionUtils.isNotEmpty(props)) {
+            Optional<GroupProperty> isBasePropOp = props.stream().filter(p -> p.getName().equals(Constants.IS_BASE)).findAny();
+            if (isBasePropOp.isPresent()) {
+                GroupProperty propIsBase = isBasePropOp.get();
+                isBase = Boolean.parseBoolean(propIsBase.getValue());
+
+            } else {
+                BeEcompErrorManager.getInstance().logInvalidInputError(GET_GROUP, "failed to find prop isBase " + component.getNormalizedName(), ErrorSeverity.INFO);
+            }
+        }
+        return isBase;
     }
 
     private Either<GroupDefinition, StorageOperationStatus> findGroupOnComponent(Component component, String groupId) {
@@ -591,6 +585,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                 newGroupNameRes = validateGenerateVfModuleGroupName(resourceSystemName, description, counter);
                 if (newGroupNameRes.isRight()) {
                     log.debug("Failed to generate new vf module group name. Status is {} ", newGroupNameRes.right().value());
+                    loggerSupportability.log(LogLevel.INFO,LoggerSupportabilityActions.CREATE_RESOURCE_FROM_YAML.getName(),StatusCode.ERROR.name(),"Failed to generate new vf module group name. Status is: "+newGroupNameRes.right().value());
                     result = Either.right(newGroupNameRes.right().value());
                     break;
                 }
@@ -655,9 +650,9 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         Either<GroupDefinitionInfo, ResponseFormat> result = null;
 
         // Validate user exist
-        validateUserExists(userId, UPDATE_GROUP, true);
+        validateUserExists(userId);
         // Validate component exist
-        org.openecomp.sdc.be.model.Component component = null;
+        org.openecomp.sdc.be.model.Component component;
 
         try {
             ComponentParametersView componentParametersView = new ComponentParametersView();
@@ -666,12 +661,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             componentParametersView.setIgnoreComponentInstances(false);
             componentParametersView.setIgnoreArtifacts(false);
 
-            Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponent = validateComponentExists(componentId, componentType, componentParametersView);
-            if (validateComponent.isRight()) {
-                result = Either.right(validateComponent.right().value());
-                return result;
-            }
-            component = validateComponent.left().value();
+            component = validateComponentExists(componentId, componentType, componentParametersView);
             Either<ImmutablePair<ComponentInstance, GroupInstance>, StorageOperationStatus> findComponentInstanceAndGroupInstanceRes = findComponentInstanceAndGroupInstanceOnComponent(component, componentInstanceId, groupInstId);
 
             if (findComponentInstanceAndGroupInstanceRes.isRight()) {
@@ -683,18 +673,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
             GroupInstance group = findComponentInstanceAndGroupInstanceRes.left().value().getRight();
 
-            Boolean isBase = null;
-            List<? extends GroupProperty> props = group.convertToGroupInstancesProperties();
-            if (props != null && !props.isEmpty()) {
-                Optional<? extends GroupProperty> isBasePropOp = props.stream().filter(p -> p.getName().equals(Constants.IS_BASE)).findAny();
-                if (isBasePropOp.isPresent()) {
-                    GroupProperty propIsBase = isBasePropOp.get();
-                    isBase = Boolean.parseBoolean(propIsBase.getValue());
-
-                } else {
-                    BeEcompErrorManager.getInstance().logInvalidInputError(GET_GROUP, "failed to find prop isBase " + component.getNormalizedName(), ErrorSeverity.INFO);
-                }
-            }
+            Boolean isBase = isBaseProperty(component, group);
 
             List<ArtifactDefinitionInfo> artifacts = new ArrayList<>();
             List<String> artifactsIds = group.getArtifacts();
@@ -702,25 +681,9 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
                 List<ComponentInstance> instances = component.getComponentInstances();
                 if (instances != null) {
-                    Optional<ComponentInstance> findFirst = instances.stream().filter(i -> i.getUniqueId().equals(componentInstanceId)).findFirst();
-                    if (findFirst.isPresent()) {
-                        ComponentInstance ci = findFirst.get();
-                        Map<String, ArtifactDefinition> deploymentArtifacts = ci.getDeploymentArtifacts();
-                        for (String id : artifactsIds) {
-                            Optional<ArtifactDefinition> artOp = deploymentArtifacts.values().stream().filter(a -> a.getUniqueId().equals(id)).findFirst();
-                            if (artOp.isPresent()) {
-                                artifacts.add(new ArtifactDefinitionInfo(artOp.get()));
-                            }
-                        }
-                        List<String> instArtifactsIds = group.getGroupInstanceArtifacts();
-                        for (String id : instArtifactsIds) {
-                            Optional<ArtifactDefinition> artOp = deploymentArtifacts.values().stream().filter(a -> a.getUniqueId().equals(id)).findFirst();
-                            if (artOp.isPresent()) {
-                                artifacts.add(new ArtifactDefinitionInfo(artOp.get()));
-                            }
-                        }
-                    }
-
+                    instances.stream().filter(i -> i.getUniqueId().equals(componentInstanceId))
+                            .findFirst()
+                            .ifPresent(f->getFirstComponentInstance(group, artifacts, artifactsIds, f));
                 }
             }
             GroupDefinitionInfo resultInfo = new GroupDefinitionInfo(group);
@@ -733,19 +696,51 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             return result;
 
         } finally {
+            closeTransaction(inTransaction, result);
+        }
+    }
 
-            if (!inTransaction) {
+    private void getFirstComponentInstance(GroupInstance group, List<ArtifactDefinitionInfo> artifacts, List<String> artifactsIds, ComponentInstance ci) {
+        Map<String, ArtifactDefinition> deploymentArtifacts = ci.getDeploymentArtifacts();
+        artifactsIds.forEach(id -> deploymentArtifacts.values().stream()
+                .filter(a -> a.getUniqueId().equals(id))
+                .findFirst()
+                .ifPresent(g -> artifacts.add(new ArtifactDefinitionInfo(g))));
 
-                if (result == null || result.isRight()) {
-                    log.debug("Going to execute rollback on create group.");
-                    janusGraphDao.rollback();
-                } else {
-                    log.debug("Going to execute commit on create group.");
-                    janusGraphDao.commit();
-                }
+        List<String> instArtifactsIds = group.getGroupInstanceArtifacts();
+        instArtifactsIds.forEach(id -> deploymentArtifacts.values()
+                .stream()
+                .filter(a -> a.getUniqueId().equals(id))
+                .findFirst()
+                .ifPresent(g -> artifacts.add(new ArtifactDefinitionInfo(g))));
+   }
 
+    private Boolean isBaseProperty(Component component, GroupInstance group) {
+
+        Boolean isBase = null;
+        List<? extends GroupProperty> props = group.convertToGroupInstancesProperties();
+        if (props != null && !props.isEmpty()) {
+            Optional<? extends GroupProperty> isBasePropOp = props.stream().filter(p -> p.getName().equals(Constants.IS_BASE)).findAny();
+            if (isBasePropOp.isPresent()) {
+                GroupProperty propIsBase = isBasePropOp.get();
+                isBase = Boolean.parseBoolean(propIsBase.getValue());
+
+            } else {
+                BeEcompErrorManager.getInstance().logInvalidInputError(GET_GROUP, "failed to find prop isBase " + component.getNormalizedName(), ErrorSeverity.INFO);
             }
+        }
+        return isBase;
+    }
 
+    private void closeTransaction(boolean inTransaction, Either<GroupDefinitionInfo, ResponseFormat> result) {
+        if (!inTransaction) {
+            if (result == null || result.isRight()) {
+                log.debug("Going to execute rollback on create group.");
+                    janusGraphDao.rollback();
+            } else {
+                log.debug("Going to execute commit on create group.");
+                    janusGraphDao.commit();
+            }
         }
     }
 
@@ -768,56 +763,51 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private Either<Boolean, ResponseFormat> validateMinMaxAndInitialCountPropertyLogic(Map<PropertyNames, String> newValues, Map<PropertyNames, String> currValues, Map<PropertyNames, String> parentValues) {
+    private Boolean validateMinMaxAndInitialCountPropertyLogic(Map<PropertyNames, String> newValues, Map<PropertyNames, String> currValues, Map<PropertyNames, String> parentValues) {
 
-        Either<Boolean, ResponseFormat> result;
         for (Entry<PropertyNames, String> entry : newValues.entrySet()) {
             PropertyNames currPropertyName = entry.getKey();
             if (currPropertyName == PropertyNames.MIN_INSTANCES) {
                 String minValue = parentValues.get(PropertyNames.MIN_INSTANCES);
-                String maxValue = newValues.containsKey(PropertyNames.INITIAL_COUNT) ? newValues.get(PropertyNames.MAX_INSTANCES) : currValues.get(PropertyNames.INITIAL_COUNT);
-                result = validateValueInRange(new ImmutablePair<>(currPropertyName, entry.getValue()), new ImmutablePair<>(PropertyNames.MIN_INSTANCES, minValue),
+                String maxValue = getMaxValue(newValues, currValues);
+                validateValueInRange(new ImmutablePair<>(currPropertyName, entry.getValue()), new ImmutablePair<>(PropertyNames.MIN_INSTANCES, minValue),
                         new ImmutablePair<>(PropertyNames.MAX_INSTANCES, maxValue));
-                if (result.isRight()) {
-                    return result;
-                }
             } else if (currPropertyName == PropertyNames.INITIAL_COUNT) {
                 String minValue = newValues.containsKey(PropertyNames.MIN_INSTANCES) ? newValues.get(PropertyNames.MIN_INSTANCES) : currValues.get(PropertyNames.MIN_INSTANCES);
                 String maxValue = newValues.containsKey(PropertyNames.MAX_INSTANCES) ? newValues.get(PropertyNames.MAX_INSTANCES) : currValues.get(PropertyNames.MAX_INSTANCES);
-                result = validateValueInRange(new ImmutablePair<>(currPropertyName, entry.getValue()), new ImmutablePair<>(PropertyNames.MIN_INSTANCES, minValue),
+                validateValueInRange(new ImmutablePair<>(currPropertyName, entry.getValue()), new ImmutablePair<>(PropertyNames.MIN_INSTANCES, minValue),
                         new ImmutablePair<>(PropertyNames.MAX_INSTANCES, maxValue));
-                if (result.isRight()) {
-                    return result;
-                }
             } else if (currPropertyName == PropertyNames.MAX_INSTANCES) {
-                String minValue = newValues.containsKey(PropertyNames.INITIAL_COUNT) ? newValues.get(PropertyNames.MIN_INSTANCES) : currValues.get(PropertyNames.INITIAL_COUNT);
+                String minValue = getMinValue(newValues, currValues);
                 String maxValue = parentValues.get(PropertyNames.MAX_INSTANCES);
-                result = validateValueInRange(new ImmutablePair<>(currPropertyName, entry.getValue()), new ImmutablePair<>(PropertyNames.MIN_INSTANCES, minValue),
+                validateValueInRange(new ImmutablePair<>(currPropertyName, entry.getValue()), new ImmutablePair<>(PropertyNames.MIN_INSTANCES, minValue),
                         new ImmutablePair<>(PropertyNames.MAX_INSTANCES, maxValue));
-                if (result.isRight()) {
-                    return result;
-                }
             }
         }
-        return Either.left(true);
+        return true;
     }
 
-    private Either<Boolean, ResponseFormat> validateValueInRange(ImmutablePair<PropertyNames, String> newValue, ImmutablePair<PropertyNames, String> min, ImmutablePair<PropertyNames, String> max) {
-        Either<Boolean, ResponseFormat> result;
+    private String getMaxValue(Map<PropertyNames, String> newValues, Map<PropertyNames, String> currValues) {
+        return newValues.containsKey(PropertyNames.INITIAL_COUNT) ? newValues.get(PropertyNames.MAX_INSTANCES) : currValues.get(PropertyNames.INITIAL_COUNT);
+    }
+
+    private String getMinValue(Map<PropertyNames, String> newValues, Map<PropertyNames, String> currValues) {
+        return newValues.containsKey(PropertyNames.INITIAL_COUNT) ? newValues.get(PropertyNames.MIN_INSTANCES) : currValues.get(PropertyNames.INITIAL_COUNT);
+    }
+
+    private Boolean validateValueInRange(ImmutablePair<PropertyNames, String> newValue, ImmutablePair<PropertyNames, String> min, ImmutablePair<PropertyNames, String> max) {
         final String warnMessage = "Failed to validate {} as property value of {}. It must be not higher than {}, and not lower than {}.";
         int newValueInt = parseIntValue(newValue.getValue(), newValue.getKey());
         int minInt = parseIntValue(min.getValue(), min.getKey());
         int maxInt = parseIntValue(max.getValue(), max.getKey());
         if (newValueInt < 0 || minInt < 0 || maxInt < 0) {
-            result = Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY));
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY);
         } else if (newValueInt < minInt || newValueInt > maxInt) {
             log.debug(warnMessage, newValue.getValue(), newValue.getKey().getPropertyName(), min.getValue(), max.getValue());
-            result = Either
-                    .right(componentsUtils.getResponseFormat(ActionStatus.INVALID_GROUP_MIN_MAX_INSTANCES_PROPERTY_VALUE, newValue.getKey().getPropertyName(), maxInt == Integer.MAX_VALUE ? Constants.UNBOUNDED : max.getValue(), min.getValue()));
-        } else {
-            result = Either.left(true);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_GROUP_MIN_MAX_INSTANCES_PROPERTY_VALUE, newValue.getKey().getPropertyName(),
+                    maxInt == Integer.MAX_VALUE ? Constants.UNBOUNDED : max.getValue(), min.getValue());
         }
-        return result;
+        return true;
     }
 
     private int parseIntValue(String value, PropertyNames propertyName) {
@@ -843,13 +833,9 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 
         Either<GroupInstance, ResponseFormat> actionResult = null;
         Either<GroupInstance, StorageOperationStatus> updateGroupInstanceResult = null;
-        Either<List<GroupInstanceProperty>, ResponseFormat> validateRes = validateReduceGroupInstancePropertiesBeforeUpdate(oldGroupInstance, newProperties);
-        if (validateRes.isRight()) {
-            log.debug("Failed to validate group instance {} properties before update. ", oldGroupInstance.getName());
-            actionResult = Either.right(validateRes.right().value());
-        }
+        List<GroupInstanceProperty> validateRes = validateReduceGroupInstancePropertiesBeforeUpdate(oldGroupInstance, newProperties);
         if (actionResult == null) {
-            List<GroupInstanceProperty> validatedReducedNewProperties = validateRes.left().value();
+            List<GroupInstanceProperty> validatedReducedNewProperties = validateRes;
             updateGroupInstanceResult = groupsOperation.updateGroupInstancePropertyValuesOnGraph(componentId, instanceId, oldGroupInstance, validatedReducedNewProperties);
             if (updateGroupInstanceResult.isRight()) {
                 log.debug("Failed to update group instance {} property values. ", oldGroupInstance.getName());
@@ -862,10 +848,10 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         return actionResult;
     }
 
-    private Either<List<GroupInstanceProperty>, ResponseFormat> validateReduceGroupInstancePropertiesBeforeUpdate(GroupInstance oldGroupInstance, List<GroupInstanceProperty> newProperties) {
+    private List<GroupInstanceProperty> validateReduceGroupInstancePropertiesBeforeUpdate(GroupInstance oldGroupInstance, List<GroupInstanceProperty> newProperties) {
 
-        Either<Boolean, ResponseFormat> validationRes = null;
-        Either<List<GroupInstanceProperty>, ResponseFormat> actionResult;
+        Boolean validationRes = null;
+        List<GroupInstanceProperty> actionResult = null;
         Map<String, GroupInstanceProperty> existingProperties = oldGroupInstance.convertToGroupInstancesProperties().stream().collect(Collectors.toMap(PropertyDataDefinition::getName, p -> p));
         Map<PropertyNames, String> newPropertyValues = new EnumMap<>(PropertyNames.class);
         List<GroupInstanceProperty> reducedProperties = new ArrayList<>();
@@ -874,25 +860,19 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             for (GroupInstanceProperty currNewProperty : newProperties) {
                 currPropertyName = currNewProperty.getName();
                 validationRes = handleAndAddProperty(reducedProperties, newPropertyValues, currNewProperty, existingProperties.get(currPropertyName));
-                if (validationRes.isRight()) {
-                    log.debug("Failed to handle property {} of group instance {}. ", currPropertyName, oldGroupInstance.getName());
-                    break;
-                }
             }
-            if (validationRes == null || validationRes.isLeft()) {
+            if (validationRes == null || validationRes) {
                 Map<PropertyNames, String> existingPropertyValues = new EnumMap<>(PropertyNames.class);
                 Map<PropertyNames, String> parentPropertyValues = new EnumMap<>(PropertyNames.class);
                 fillValuesAndParentValuesFromExistingProperties(existingProperties, existingPropertyValues, parentPropertyValues);
                 validationRes = validateMinMaxAndInitialCountPropertyLogic(newPropertyValues, existingPropertyValues, parentPropertyValues);
             }
-            if (validationRes.isLeft()) {
-                actionResult = Either.left(reducedProperties);
-            } else {
-                actionResult = Either.right(validationRes.right().value());
+            if (validationRes) {
+                actionResult = reducedProperties;
             }
         } catch (Exception e) {
             log.error("Exception occured during validation and reducing group instance properties. The message is {}", e.getMessage(), e);
-            actionResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
         return actionResult;
     }
@@ -907,9 +887,9 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<Boolean, ResponseFormat> handleAndAddProperty(List<GroupInstanceProperty> reducedProperties, Map<PropertyNames, String> newPropertyValues, GroupInstanceProperty currNewProperty, GroupInstanceProperty currExistingProperty) {
+    private Boolean handleAndAddProperty(List<GroupInstanceProperty> reducedProperties, Map<PropertyNames, String> newPropertyValues, GroupInstanceProperty currNewProperty, GroupInstanceProperty currExistingProperty) {
 
-        Either<Boolean, ResponseFormat> validationRes = null;
+        Boolean validationRes = null;
         String currPropertyName = currNewProperty.getName();
         PropertyNames propertyName = PropertyNames.findName(currPropertyName);
         try {
@@ -917,20 +897,15 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                 log.warn("The value of property with the name {} cannot be updated. The property not found on group instance. ", currPropertyName);
             } else if (isUpdatable(propertyName)) {
                 validationRes = validateAndUpdatePropertyValue(currNewProperty, currExistingProperty);
-                if (validationRes.isRight()) {
-                    log.debug("Failed to validate property value {} of property {}. ", currNewProperty.getValue(), currPropertyName);
-                } else {
-                    addPropertyUpdatedValues(reducedProperties, propertyName, newPropertyValues, currNewProperty, currExistingProperty);
-                }
+                addPropertyUpdatedValues(reducedProperties, propertyName, newPropertyValues, currNewProperty, currExistingProperty);
             } else {
                 validateImmutableProperty(currExistingProperty, currNewProperty);
             }
             if (validationRes == null) {
-                validationRes = Either.left(true);
+                validationRes = true;
             }
         } catch (Exception e) {
             log.error("Exception occured during handle and adding property. The message is {}", e.getMessage(), e);
-            validationRes = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         return validationRes;
     }
@@ -970,9 +945,8 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private Either<Boolean, ResponseFormat> validateAndUpdatePropertyValue(GroupInstanceProperty newProperty, GroupInstanceProperty existingProperty) {
+    private Boolean validateAndUpdatePropertyValue(GroupInstanceProperty newProperty, GroupInstanceProperty existingProperty) {
 
-        Either<Boolean, ResponseFormat> validationRes = null;
         String parentValue = existingProperty.getParentValue();
 
         newProperty.setParentValue(parentValue);
@@ -985,12 +959,9 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         StorageOperationStatus status = groupOperation.validateAndUpdatePropertyValue(newProperty);
         if (status != StorageOperationStatus.OK) {
             log.debug("Failed to validate property value {} of property with name {}. Status is {}. ", newProperty.getValue(), newProperty.getName(), status);
-            validationRes = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status)));
+            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status));
         }
-        if (validationRes == null) {
-            validationRes = Either.left(true);
-        }
-        return validationRes;
+        return true;
     }
 
     private void validateImmutableProperty(GroupProperty oldProperty, GroupProperty newProperty) {
@@ -1069,7 +1040,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     private int getNewGroupCounter(Component component) {
         List<String> existingNames = component.getGroups()
                 .stream()
-                .map(GroupDataDefinition::getName)
+                .map(GroupDataDefinition::getInvariantName)
                 .collect(toList());
         List<String> existingIds = component.getGroups()
                 .stream()
@@ -1180,7 +1151,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                     break;
                 }
                 GroupDefinition handledGroup = handleGroupRes.left().value();
-                groups.put(handledGroup.getName(), new GroupDataDefinition(handledGroup));
+                groups.put(handledGroup.getInvariantName(), new GroupDataDefinition(handledGroup));
 
             }
         }
@@ -1196,6 +1167,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (result == null) {
             result = Either.left(groupDefinitions);
         }
+        component.setGroups(groupDefinitions);
         return result;
     }
 
@@ -1258,6 +1230,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
             if (createGroupsResult.isRight()) {
                 result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(createGroupsResult.right().value())));
             }
+            component.addGroups(createGroupsResult.left().value());
         }
         if (result == null) {
             addCalculatedCapabilitiesWithPropertiesToComponent(component, groupDefinitions, fromCsar);
@@ -1278,6 +1251,9 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         } else {
             deleteCalculatedCapabilitiesWithPropertiesFromComponent(component, groupDefinitions);
         }
+        if (component.getGroups()!=null) {
+            component.getGroups().removeAll(deleteGroupsResult.left().value());
+        }
         return Either.left(deleteGroupsResult.left().value());
     }
 
@@ -1291,7 +1267,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         Either<List<GroupDefinition>, ResponseFormat> result = null;
         Either<List<GroupDefinition>, StorageOperationStatus> createGroupsResult;
 
-        createGroupsResult = groupsOperation.updateGroups(component, groupDefinitions.stream().map(GroupDataDefinition::new).collect(toList()), true);
+        createGroupsResult = groupsOperation.updateGroups(component, groupDefinitions.stream().map(GroupDataDefinition::new).collect(toList()), PromoteVersionEnum.MINOR);
         if (createGroupsResult.isRight()) {
             result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(createGroupsResult.right().value())));
         }
@@ -1307,6 +1283,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     private Either<GroupDefinition, ResponseFormat> handleGroup(Component component, GroupDefinition groupDefinition, Map<String, DataTypeDefinition> allDAtaTypes) {
 
         log.trace("Going to create group {}", groupDefinition);
+        loggerSupportability.log(LoggerSupportabilityActions.CREATE_GROUP_POLICY,component.getComponentMetadataForSupportLog(),StatusCode.STARTED,"Start to create group: {}",groupDefinition.getName()+ " for component " + component.getName());
         // 3. verify group not already exist
         String groupDefinitionName = groupDefinition.getName();
         if (groupExistsInComponent(groupDefinitionName, component)) {
@@ -1322,6 +1299,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (getGroupType.isRight()) {
             StorageOperationStatus status = getGroupType.right().value();
             if (status == StorageOperationStatus.NOT_FOUND) {
+                loggerSupportability.log(LoggerSupportabilityActions.CREATE_GROUP_POLICY,component.getComponentMetadataForSupportLog(), StatusCode.ERROR,"group {} cannot be found",groupDefinition.getName());
                 BeEcompErrorManager.getInstance().logInvalidInputError(CREATE_GROUP, "group type " + groupType + " cannot be found", ErrorSeverity.INFO);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_TYPE_IS_INVALID, groupType));
             } else {
@@ -1351,6 +1329,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (CollectionUtils.isNotEmpty(properties)) {
             if (CollectionUtils.isEmpty(groupTypeProperties)) {
                 BeEcompErrorManager.getInstance().logInvalidInputError(ADDING_GROUP, "group type does not have properties", ErrorSeverity.INFO);
+                loggerSupportability.log(LoggerSupportabilityActions.CREATE_GROUP_POLICY,component.getComponentMetadataForSupportLog(), StatusCode.ERROR,"group {} does not have properties ",groupDefinition.getName());
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.MATCH_NOT_FOUND))));
             }
 
@@ -1379,7 +1358,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         groupDefinition.setGroupUUID(UniqueIdBuilder.generateUUID());
         groupDefinition.setVersion(INITIAL_VERSION);
         groupDefinition.setTypeUid(groupTypeDefinition.getUniqueId());
-
+        loggerSupportability.log(LoggerSupportabilityActions.CREATE_GROUP_POLICY,component.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,"group {} has been created ",groupDefinition.getName());
         return Either.left(groupDefinition);
     }
 
@@ -1387,7 +1366,9 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         boolean found = false;
         List<GroupDefinition> groups = component.getGroups();
         if (CollectionUtils.isNotEmpty(groups)) {
-            found = groups.stream().filter(p -> p.getName().equalsIgnoreCase(groupDefinitionName)).findFirst().orElse(null) != null;
+            found = groups.stream().filter(p -> (p.getName().equalsIgnoreCase(groupDefinitionName))
+                    || p.getInvariantName().equalsIgnoreCase(groupDefinitionName))
+                    .findFirst().orElse(null) != null;
         }
         return found;
     }

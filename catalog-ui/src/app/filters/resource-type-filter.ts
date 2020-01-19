@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {CacheService} from "../services/cache-service";
+import {CacheService} from "app/services-ng2";
 
 export class ResourceTypeFilter {
     static '$inject' = ['Sdc.Services.CacheService'];

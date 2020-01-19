@@ -1,1087 +1,1134 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>catalog-be</artifactId>
-  <packaging>war</packaging>
-
-  <parent>
-    <groupId>org.openecomp.sdc</groupId>
-    <artifactId>sdc-main</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
-  </parent>
-
-  <properties>
-    <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
-    <swagger.version>2.0.8</swagger.version>
-    <swagger.jaxrs.version>1.5.22</swagger.jaxrs.version>
-  </properties>
-
-  <dependencies>
-    <!--JSON and YAML Parsing-->
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>${jackson.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openecomp.sdc</groupId>
-      <artifactId>security-utils</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onap.sdc.common</groupId>
-      <artifactId>onap-generic-artifact-browser-service</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- Swagger Dependencies Start -->
-    <dependency>
-      <groupId>io.swagger.core.v3</groupId>
-      <artifactId>swagger-annotations</artifactId>
-      <version>${swagger.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-jersey2-jaxrs</artifactId>
-      <version>${swagger.jaxrs.version}</version>
-    </dependency>
-    <!-- Swagger Dependencies End -->
-
-    <dependency>
-      <groupId>org.openecomp.sdc</groupId>
-      <artifactId>common-app-api</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openecomp.sdc.be</groupId>
-      <artifactId>common-be</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openecomp.sdc.be</groupId>
-      <artifactId>common-be</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openecomp.sdc.be</groupId>
-      <artifactId>catalog-dao</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openecomp.sdc.be</groupId>
-      <artifactId>catalog-model</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- Snake Yaml -->
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- File changes listener -->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-jci-core</artifactId>
-      <version>${commons-jci-core.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- Gson -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>${gson.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- jersey -->
-    <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-json-jackson</artifactId>
-      <version>${jersey-bom.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-servlet-core</artifactId>
-      <version>${jersey-bom.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-multipart</artifactId>
-      <version>${jersey-bom.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.ext</groupId>
-      <artifactId>jersey-spring4</artifactId>
-      <version>${jersey-bom.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-web</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-aop</artifactId>
-        </exclusion>
-        <!-- Transitive dependency of spring-bridge -->
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-        </exclusion>
-      </exclusions>
-
-    </dependency>
-
-    <!--asm-all-repackaged is a jersey dependency. in current version jersey depends on a version that was compiled using java 9 compiler
-        currently our jetty (v9.3.6) does not support java 9. as soon as jetty gets upgraded we will remove this dependency-->
-    <dependency>
-      <groupId>org.glassfish.hk2.external</groupId>
-      <artifactId>asm-all-repackaged</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.ext</groupId>
-      <artifactId>jersey-bean-validation</artifactId>
-    </dependency>
-
-    <!-- http client -->
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>${httpclient.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore</artifactId>
-      <version>${httpcore.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>${commons-logging}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>${commons-codec}</version>
-      <scope>compile</scope>
-    </dependency>
-    <!-- http client END -->
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${servlet-api.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>3.4.1.201406201815-r</version>
-    </dependency>
-
-    <!-- spring - used by A4C -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-expression</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.janino</groupId>
-      <artifactId>janino</artifactId>
-      <version>${janino.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.janino</groupId>
-      <artifactId>commons-compiler</artifactId>
-      <version>${janino.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.janusgraph</groupId>
-      <artifactId>janusgraph-core</artifactId>
-      <version>${janusgraph.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.json</groupId>
-          <artifactId>json</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>slf4j-log4j12</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-collections</artifactId>
-          <groupId>commons-collections</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.thrift</groupId>
-          <artifactId>libthrift</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.janusgraph</groupId>
-      <artifactId>janusgraph-cassandra</artifactId>
-      <version>${janusgraph.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-all</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${lang3.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>${json-simple.version}</version>
-      <scope>compile</scope>
-
-    </dependency>
-
-    <dependency>
-      <groupId>org.elasticsearch</groupId>
-      <artifactId>elasticsearch</artifactId>
-      <version>${elastic-search.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- functional java -->
-    <dependency>
-      <groupId>org.functionaljava</groupId>
-      <artifactId>functionaljava</artifactId>
-      <version>${functionaljava.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- Aspects -->
-    <dependency>
-      <groupId>com.jcabi</groupId>
-      <artifactId>jcabi-aspects</artifactId>
-      <version>${jcabi.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjrt</artifactId>
-      <version>${aspectjrt.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-
-    <!-- CAMBRIA CLIENT for U-EB -->
-    <dependency>
-      <groupId>com.att.nsa</groupId>
-      <artifactId>cambriaClient</artifactId>
-      <version>1.2.1-oss</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.att.nsa</groupId>
-          <artifactId>saClientLibrary</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20131018</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- CASSANDRA -->
-    <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-core</artifactId>
-      <version>${cassandra.driver.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-mapping</artifactId>
-      <version>${cassandra.driver.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.thrift</groupId>
-      <artifactId>libthrift</artifactId>
-      <version>${libthrift.version}</version>
-    </dependency>
-    <!-- CASSANDRA END -->
-
-    <!-- Inserted for ECOMP Portal Integration -->
-    <dependency>
-      <groupId>org.onap.portal.sdk</groupId>
-      <artifactId>epsdk-fw</artifactId>
-      <version>${ecomp.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.att.nsa</groupId>
-          <artifactId>cambriaClient</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>slf4j-log4j12</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!--Jetty Proxy-->
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-proxy</artifactId>
-      <version>${jetty.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlets</artifactId>
-      <version>${jetty.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <!-- System metrics -->
-    <dependency>
-      <groupId>org.fusesource</groupId>
-      <artifactId>sigar</artifactId>
-      <version>${sigar.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
-      <artifactId>dmaapClient</artifactId>
-      <version>1.1.3</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.att.aft</groupId>
-          <artifactId>dme2</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.att.aft</groupId>
-      <artifactId>dme2</artifactId>
-      <version>3.1.200-oss</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.jms</groupId>
-      <artifactId>jms</artifactId>
-      <version>1.1</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- TEST -->
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-      <artifactId>jersey-test-framework-provider-bundle</artifactId>
-      <version>${jersey-bom.version}</version>
-      <type>pom</type>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-client</artifactId>
-      <version>${jersey-bom.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock-standalone</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-webapp</artifactId>
-      <version>${jetty.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-java</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jmockit</groupId>
-      <artifactId>jmockit</artifactId>
-      <version>${jmockit.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.code.bean-matchers</groupId>
-      <artifactId>bean-matchers</artifactId>
-      <version>0.11</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>java-hamcrest</artifactId>
-      <version>${java-hamcrest.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy</artifactId>
-      <version>2.4.8</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-handler</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.sdc.common</groupId>
-      <artifactId>onap-tosca-datatype</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>${commons.collections.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
-      <version>${jackson.mapper.version}</version>
-    </dependency>
-  </dependencies>
-
-  <build>
-
-    <finalName>${project.artifactId}-${project.version}</finalName>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <packagingExcludes>WEB-INF\lib\slf4j-log4j*.jar,
-            WEB-INF/classes/elasticsearch.yml,
-            WEB-INF/classes/portal.properties
-          </packagingExcludes>
-          <archive>
-            <manifestEntries>
-              <SDC-Version>${project.version}</SDC-Version>
-            </manifestEntries>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-            </manifest>
-          </archive>
-
-          <webResources>
-            <resource>
-              <directory>src/main/resources</directory>
-              <directory>src/main/resources/swagger</directory>
-            </resource>
-          </webResources>
-          <attachClasses>true</attachClasses>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.sylvainlaurent.maven</groupId>
-        <artifactId>yaml-json-validator-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>validate</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>validate</goal>
-            </goals>
-            <configuration>
-              <validationSets>
-                <validationSet>
-                  <includes>
-                    <include>src/main/resources/**/*.y*ml</include>
-                    <include>src/test/resources/**/*.y*ml</include>
-                  </includes>
-                  <excludes>
-                    <exclude>src/test/resources/artifacts/pnfSoftwareInformation/**</exclude>
-                  </excludes>
-                </validationSet>
-                <validationSet>
-                  <includes>
-                    <include>src/main/resources/**/*.json</include>
-                    <include>src/test/resources/**/*.json</include>
-                  </includes>
-                </validationSet>
-              </validationSets>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>com.jcabi</groupId>
-        <artifactId>jcabi-maven-plugin</artifactId>
-        <version>${jcabi.maven.plugin.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>ajc</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>normatives</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <finalName>normatives</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>${project.basedir}/normatives.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>clean.sdc.backend.folder</id>
-            <phase>clean</phase>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-            <configuration>
-              <filesets>
-                <!-- static configuration files -->
-                <fileset>
-                  <directory>
-                    ${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default
-                  </directory>
-                  <followSymlinks>false</followSymlinks>
-                  <includes>
-                    <include>error-configuration.yaml</include>
-                    <include>ecomp-error-configuration.yaml</include>
-                    <include>logback.xml</include>
-                  </includes>
-                </fileset>
-                <!-- BE WAR's -->
-                <fileset>
-                  <directory>${project.parent.basedir}/catalog-be/sdc-backend</directory>
-                  <followSymlinks>false</followSymlinks>
-                  <includes>
-                    <include>*.war</include>
-                  </includes>
-                </fileset>
-                <fileset>
-                  <directory>
-                    ${project.basedir}/sdc-backend-init/chef-repo/cookbooks/sdc-normatives/files/default
-                  </directory>
-                  <followSymlinks>false</followSymlinks>
-                  <includes>
-                    <include>normatives.tar.gz</include>
-                  </includes>
-                </fileset>
-
-
-              </filesets>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>clean-static-files</id>
-            <phase>clean</phase>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-            <configuration>
-              <filesets>
-                <!-- tosca files -->
-                <fileset>
-                  <directory>${project.parent.basedir}/asdctool/tosca</directory>
-                  <followSymlinks>false</followSymlinks>
-                </fileset>
-              </filesets>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-static-configuration-files</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>
-                ${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default
-              </outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.parent.basedir}/catalog-be/src/main/resources/config
-                  </directory>
-                  <includes>
-                    <include>error-configuration.yaml</include>
-                    <include>ecomp-error-configuration.yaml</include>
-                    <include>logback.xml</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-tosca-folder</id>
-            <!-- here the phase you need -->
-            <phase>install</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca
-                  </directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>com.github.kongchen</groupId>
-        <artifactId>swagger-maven-plugin</artifactId>
-        <version>3.1.0</version>
-        <configuration>
-          <apiSources>
-            <apiSource>
-              <springmvc>false</springmvc>
-              <schemes>http</schemes>
-              <basePath>/sdc</basePath>
-              <locations>
-                io.swagger.jaxrs.json;org.openecomp.sdc.be.externalapi.servlet;org.openecomp.sdc.be.distribution.servlet;org.openecomp.normative.api
-              </locations>
-              <info>
-                <title>External Rest API</title>
-                <version>v1.0</version>
-                <description>External Rest API Documentation</description>
-                <termsOfService>
-                  http://www.github.com/kongchen/swagger-maven-plugin
-                </termsOfService>
-              </info>
-              <templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
-              <outputPath>${basedir}/target/generated/swagger-ui/api.html</outputPath>
-              <swaggerDirectory>${basedir}/target/generated/swagger-ui
-              </swaggerDirectory>
-              <swaggerApiReader>io.swagger.jaxrs.config.DefaultJaxrsConfig</swaggerApiReader>
-            </apiSource>
-          </apiSources>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-
-    <pluginManagement>
-      <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings
-            only. It has no influence on the Maven build itself. -->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>com.googlecode.maven-download-plugin</groupId>
-                    <artifactId>download-maven-plugin</artifactId>
-                    <versionRange>[1.2.1,)</versionRange>
-                    <goals>
-                      <goal>wget</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>com.jcabi</groupId>
-                    <artifactId>jcabi-maven-plugin</artifactId>
-                    <versionRange>[0.0,)</versionRange>
-                    <goals>
-                      <goal>ajc</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <execute/>
-                  </action>
-                </pluginExecution>
-
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <!-- Swagger Plugins End -->
-  </build>
-
-  <profiles>
-    <profile>
-      <id>docker-staging</id>
-      <properties>
-        <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>docker</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>catalog-be</artifactId>
+    <packaging>war</packaging>
+
+    <parent>
+        <groupId>org.openecomp.sdc</groupId>
+        <artifactId>sdc-main</artifactId>
+        <version>1.6.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
+        <swagger.version>2.0.8</swagger.version>
+        <swagger.jaxrs.version>1.5.22</swagger.jaxrs.version>
+    </properties>
+
+    <dependencies>
+        <!--JSON and YAML Parsing-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>security-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-generic-artifact-browser-service</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Swagger Dependencies Start -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jersey2-jaxrs</artifactId>
+            <version>${swagger.jaxrs.version}</version>
+        </dependency>
+        <!-- Swagger Dependencies End -->
+
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>common-app-api</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>common-be</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>common-be</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>catalog-dao</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openecomp.sdc.be</groupId>
+            <artifactId>catalog-model</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Snake Yaml -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- File changes listener -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jci-core</artifactId>
+            <version>${commons-jci-core.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- jersey -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey-bom.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+            <version>${jersey-bom.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>${jersey-bom.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-spring4</artifactId>
+            <version>${jersey-bom.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <!-- Transitive dependency of spring-bridge -->
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
+
+        </dependency>
+
+        <!--asm-all-repackaged is a jersey dependency. in current version jersey depends on a version that was compiled using java 9 compiler
+            currently our jetty (v9.3.6) does not support java 9. as soon as jetty gets upgraded we will remove this dependency-->
+        <dependency>
+            <groupId>org.glassfish.hk2.external</groupId>
+            <artifactId>asm-all-repackaged</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-bean-validation</artifactId>
+        </dependency>
+
+        <!-- http client -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${httpcore.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- http client END -->
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>3.4.1.201406201815-r</version>
+        </dependency>
+
+        <!-- spring - used by A4C -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Spring integration (optional) -->
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-web</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>${janino.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>commons-compiler</artifactId>
+            <version>${janino.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-core</artifactId>
+            <version>${janusgraph.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.json</groupId>
+                    <artifactId>json</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-collections</artifactId>
+                    <groupId>commons-collections</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.thrift</groupId>
+                    <artifactId>libthrift</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra</artifactId>
+            <version>${janusgraph.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-all</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${lang3.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>${json-simple.version}</version>
+            <scope>compile</scope>
+
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elastic-search.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- functional java -->
+        <dependency>
+            <groupId>org.functionaljava</groupId>
+            <artifactId>functionaljava</artifactId>
+            <version>${functionaljava.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Aspects -->
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-aspects</artifactId>
+            <version>${jcabi.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectjrt.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <!-- CAMBRIA CLIENT for U-EB -->
+        <dependency>
+            <groupId>com.att.nsa</groupId>
+            <artifactId>cambriaClient</artifactId>
+            <version>1.2.1-oss</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.att.nsa</groupId>
+                    <artifactId>saClientLibrary</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20131018</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- CASSANDRA -->
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>${cassandra.driver.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-mapping</artifactId>
+            <version>${cassandra.driver.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${libthrift.version}</version>
+        </dependency>
+        <!-- CASSANDRA END -->
+
+        <!-- Inserted for ECOMP Portal Integration -->
+        <dependency>
+            <groupId>org.onap.portal.sdk</groupId>
+            <artifactId>epsdk-fw</artifactId>
+            <version>${ecomp.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.att.nsa</groupId>
+                    <artifactId>cambriaClient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>powermock-api-mockito</artifactId>
+                    <groupId>org.powermock</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId> org.onap.aaf.authz</groupId>
+                    <artifactId> aaf-cadi-aaf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>aaf-cadi-core</artifactId>
+                    <groupId>org.onap.aaf.authz</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-codec</artifactId>
+                    <groupId>commons-codec</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--Jetty Proxy-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-proxy</artifactId>
+            <version>${jetty.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>${jetty.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- System metrics -->
+        <dependency>
+            <groupId>org.fusesource</groupId>
+            <artifactId>sigar</artifactId>
+            <version>${sigar.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
+            <artifactId>dmaapClient</artifactId>
+            <version>1.1.3</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.att.aft</groupId>
+                    <artifactId>dme2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.att.aft</groupId>
+            <artifactId>dme2</artifactId>
+            <version>3.1.200-oss</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+         <!-- CADI -->
+        <dependency>
+			<groupId>org.onap.aaf.authz</groupId>
+			<artifactId>aaf-cadi-aaf</artifactId>
+   			<version>${cadi.version}</version>
+   			<exclusions>
+                <exclusion>
+                     <groupId>com.datastax.cassandra</groupId>
+                     <artifactId>cassandra-driver-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+             </exclusions>
+		 </dependency>
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+            <artifactId>jersey-test-framework-provider-bundle</artifactId>
+            <version>${jersey-bom.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey-bom.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>${jmockit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.bean-matchers</groupId>
+            <artifactId>bean-matchers</artifactId>
+            <version>0.11</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+            <version>${java-hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>2.4.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.sdc.common</groupId>
+            <artifactId>onap-tosca-datatype</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons.collections.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson.mapper.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.sdc.sdc-be-common</groupId>
+            <artifactId>security-util-lib</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+
+        <finalName>${project.artifactId}-${project.version}</finalName>
+
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-resources-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-resources-apidocs</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                  <outputDirectory>${basedir}/sdc-backend</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>
-                        ${project.parent.basedir}/openecomp-be/tools/swagger-ui/target/api-docs
-                      </directory>
-                      <includes>
-                        <include>api-docs.war</include>
-                      </includes>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
+                    <packagingExcludes>WEB-INF\lib\slf4j-log4j*.jar,
+                        WEB-INF/classes/elasticsearch.yml,
+                        WEB-INF/classes/portal.properties
+                    </packagingExcludes>
+                    <archive>
+                        <manifestEntries>
+                            <SDC-Version>${project.version}</SDC-Version>
+                        </manifestEntries>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
 
-              <execution>
-                <id>copy-resources-be</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${basedir}/sdc-backend</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>${project.parent.basedir}/catalog-be/target</directory>
-                      <includes>
-                        <include>catalog-be-${project.version}.war</include>
-                      </includes>
-                    </resource>
-                    <resource>
-                      <directory>
-                        ${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target
-                      </directory>
-                      <includes>
-                        <include>onboarding-be-${project.version}.war</include>
-                      </includes>
-                    </resource>
-                  </resources>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <directory>src/main/resources/swagger</directory>
+                        </resource>
+                    </webResources>
+                    <attachClasses>true</attachClasses>
                 </configuration>
-              </execution>
-              <execution>
-                <id>copy-normatives</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>
-                    sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default
-                  </outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>${project.parent.basedir}/catalog-be/target</directory>
-                      <includes>
-                        <include>normatives.tar.gz</include>
-                      </includes>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
-            <configuration>
-              <apiVersion>1.23</apiVersion>
-              <registry>nexus3.onap.org:10001</registry>
-              <authConfig>
-                <pull>
-                  <username>docker</username>
-                  <password>docker</password>
-                </pull>
-              </authConfig>
-              <images>
+            </plugin>
+            <plugin>
+                <groupId>com.github.sylvainlaurent.maven</groupId>
+                <artifactId>yaml-json-validator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                        <configuration>
+                            <validationSets>
+                                <validationSet>
+                                    <includes>
+                                        <include>src/main/resources/**/*.y*ml</include>
+                                        <include>src/test/resources/**/*.y*ml</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>src/test/resources/artifacts/pnfSoftwareInformation/**</exclude>
+                                    </excludes>
+                                </validationSet>
+                                <validationSet>
+                                    <includes>
+                                        <include>src/main/resources/**/*.json</include>
+                                        <include>src/test/resources/**/*.json</include>
+                                    </includes>
+                                </validationSet>
+                            </validationSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.jcabi</groupId>
+                <artifactId>jcabi-maven-plugin</artifactId>
+                <version>${jcabi.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>ajc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>normatives</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>normatives</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>${project.basedir}/normatives.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean.sdc.backend.folder</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <!-- static configuration files -->
+                                <fileset>
+                                    <directory>
+                                        ${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default
+                                    </directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+                                        <include>Artifact-Generator.properties</include>
+                                        <include>error-configuration.yaml</include>
+                                        <include>ecomp-error-configuration.yaml</include>
+                                        <include>logback.xml</include>
+                                    </includes>
+                                </fileset>
+                                <!-- BE WAR's -->
+                                <fileset>
+                                    <directory>${project.parent.basedir}/catalog-be/sdc-backend</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+                                        <include>*.war</include>
+                                    </includes>
+                                </fileset>
+                                <fileset>
+                                    <directory>
+                                        ${project.basedir}/sdc-backend-init/chef-repo/cookbooks/sdc-normatives/files/default
+                                    </directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+                                        <include>normatives.tar.gz</include>
+                                    </includes>
+                                </fileset>
 
-                <!-- Build backend image -->
-                <image>
-                  <name>onap/sdc-backend</name>
-                  <alias>sdc-backend</alias>
-                  <build>
-                    <cleanup>try</cleanup>
-                    <dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
-                    <tags>
-                      <tag>${docker.tag}</tag>
-                      <tag>
-                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
-                      </tag>
-                    </tags>
-                  </build>
-                </image>
-                <!-- Build backend-init image -->
-                <image>
-                  <name>onap/sdc-backend-init</name>
-                  <alias>sdc-backend-init</alias>
-                  <build>
-                    <cleanup>try</cleanup>
-                    <dockerFileDir>${project.basedir}/sdc-backend-init</dockerFileDir>
-                    <tags>
-                      <tag>${docker.tag}</tag>
-                      <tag>
-                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
-                      </tag>
-                    </tags>
-                  </build>
-                </image>
-              </images>
-            </configuration>
-            <executions>
-              <execution>
-                <id>clean-images</id>
-                <phase>pre-clean</phase>
-                <goals>
-                  <goal>remove</goal>
-                </goals>
-                <configuration>
-                  <removeAll>true</removeAll>
-                  <image>onap/sdc-backend,onap/sdc-backend-init</image>
-                </configuration>
-              </execution>
 
-              <execution>
-                <id>generate-images</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>build</goal>
-                </goals>
-              </execution>
+                            </filesets>
+                        </configuration>
+                    </execution>
 
-              <execution>
-                <id>push-images</id>
-                <phase>deploy</phase>
-                <goals>
-                  <goal>push</goal>
-                </goals>
+                    <execution>
+                        <id>clean-static-files</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <!-- tosca files -->
+                                <fileset>
+                                    <directory>${project.parent.basedir}/asdctool/tosca</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-static-configuration-files</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.parent.basedir}/catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/config
+                                    </directory>
+                                    <includes>
+                                        <include>Artifact-Generator.properties</include>
+                                        <include>error-configuration.yaml</include>
+                                        <include>ecomp-error-configuration.yaml</include>
+                                        <include>logback.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-tosca-folder</id>
+                        <!-- here the phase you need -->
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca
+                                    </directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
-                  <image>onap/sdc-backend,onap/sdc-backend-init</image>
+                    <apiSources>
+                        <apiSource>
+                            <springmvc>false</springmvc>
+                            <schemes>http</schemes>
+                            <basePath>/sdc</basePath>
+                            <locations>
+                                io.swagger.jaxrs.json;org.openecomp.sdc.be.externalapi.servlet;org.openecomp.sdc.be.distribution.servlet;org.openecomp.normative.api
+                            </locations>
+                            <info>
+                                <title>External Rest API</title>
+                                <version>v1.0</version>
+                                <description>External Rest API Documentation</description>
+                                <termsOfService>
+                                    http://www.github.com/kongchen/swagger-maven-plugin
+                                </termsOfService>
+                            </info>
+                            <templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
+                            <outputPath>${basedir}/target/generated/swagger-ui/api.html</outputPath>
+                            <swaggerDirectory>${basedir}/target/generated/swagger-ui
+                            </swaggerDirectory>
+                            <swaggerApiReader>io.swagger.jaxrs.config.DefaultJaxrsConfig</swaggerApiReader>
+                        </apiSource>
+                    </apiSources>
                 </configuration>
-              </execution>
-            </executions>
-          </plugin>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
-  </profiles>
+
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings
+                    only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.googlecode.maven-download-plugin</groupId>
+                                        <artifactId>download-maven-plugin</artifactId>
+                                        <versionRange>[1.2.1,)</versionRange>
+                                        <goals>
+                                            <goal>wget</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.jcabi</groupId>
+                                        <artifactId>jcabi-maven-plugin</artifactId>
+                                        <versionRange>[0.0,)</versionRange>
+                                        <goals>
+                                            <goal>ajc</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute/>
+                                    </action>
+                                </pluginExecution>
+
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <!-- Swagger Plugins End -->
+    </build>
+
+    <profiles>
+        <profile>
+            <id>docker-staging</id>
+            <properties>
+                <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
+                <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>docker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-resources-apidocs</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-backend</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>
+                                                ${project.parent.basedir}/openecomp-be/tools/swagger-ui/target/api-docs
+                                            </directory>
+                                            <includes>
+                                                <include>api-docs.war</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>copy-resources-be</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-backend</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/catalog-be/target</directory>
+                                            <includes>
+                                                <include>catalog-be-${project.version}.war</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>
+                                                ${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target
+                                            </directory>
+                                            <includes>
+                                                <include>onboarding-be-${project.version}.war</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-normatives</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>
+                                        sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default
+                                    </outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/catalog-be/target</directory>
+                                            <includes>
+                                                <include>normatives.tar.gz</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <apiVersion>1.23</apiVersion>
+                            <registry>nexus3.onap.org:10001</registry>
+                            <authConfig>
+                                <pull>
+                                    <username>docker</username>
+                                    <password>docker</password>
+                                </pull>
+                            </authConfig>
+                            <images>
+
+                                <!-- Build backend image -->
+                                <image>
+                                    <name>onap/sdc-backend</name>
+                                    <alias>sdc-backend</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                                            </tag>
+                                        </tags>
+                                    </build>
+                                </image>
+                                <!-- Build backend-init image -->
+                                <image>
+                                    <name>onap/sdc-backend-init</name>
+                                    <alias>sdc-backend-init</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-backend-init</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                                            </tag>
+                                        </tags>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>clean-images</id>
+                                <phase>pre-clean</phase>
+                                <goals>
+                                    <goal>remove</goal>
+                                </goals>
+                                <configuration>
+                                    <removeAll>true</removeAll>
+                                    <image>onap/sdc-backend,onap/sdc-backend-init</image>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>generate-images</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+
+                            <execution>
+                                <id>push-images</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                                <configuration>
+                                    <image>onap/sdc-backend,onap/sdc-backend-init</image>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

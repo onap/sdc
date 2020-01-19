@@ -22,6 +22,7 @@ package org.openecomp.sdc.fe.servlets;
 
 import com.jcabi.aspects.Loggable;
 import org.openecomp.sdc.common.servlets.BasicServlet;
+import org.openecomp.sdc.fe.impl.HealthCheckService;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

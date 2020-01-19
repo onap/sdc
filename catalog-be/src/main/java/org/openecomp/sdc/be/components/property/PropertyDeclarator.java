@@ -21,12 +21,13 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import java.util.List;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+
+import java.util.List;
 
 public interface PropertyDeclarator {
 

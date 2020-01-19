@@ -23,9 +23,19 @@ package org.openecomp.sdc.be.components.impl;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifact-resolver")
@@ -64,7 +74,7 @@ public class ArtifactResolverImpl implements ArtifactsResolver {
         }
 
         Map<String, ArtifactDefinition> serviceApiArtifacts = Collections.emptyMap();
-        if (componentType.equals(ComponentTypeEnum.SERVICE)) {
+        if (componentType == ComponentTypeEnum.SERVICE) {
             serviceApiArtifacts = Optional.ofNullable(((Service) component).getServiceApiArtifacts()).orElse(Collections.emptyMap());
         }
 

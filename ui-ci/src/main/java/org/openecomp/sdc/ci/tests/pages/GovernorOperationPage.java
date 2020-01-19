@@ -21,13 +21,14 @@
 package org.openecomp.sdc.ci.tests.pages;
 
 import com.aventstack.extentreports.Status;
-import java.io.IOException;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class GovernorOperationPage {
 

@@ -22,12 +22,12 @@
 
 package org.openecomp.sdc.be.components.impl.exceptions;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class ComponentExceptionTest {
 

@@ -21,8 +21,6 @@
 package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
-import java.util.ArrayList;
-import java.util.List;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -30,10 +28,12 @@ import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServiceUIUtils {
 
@@ -54,11 +54,12 @@ public class ServiceUIUtils {
     public static void fillServiceGeneralPage(final ServiceReqDetails service) {
         SetupCDTest.getExtendTest().log(Status.INFO, "Fill in metadata values in general page");
         ServiceGeneralPage.defineName(service.getName());
-        ResourceGeneralPage.defineDescription(service.getDescription());
-        ResourceGeneralPage.defineCategory(service.getCategories().get(0).getName());
-        ServiceGeneralPage.defineProjectCode(service.getProjectCode());
+        ServiceGeneralPage.defineDescription(service.getDescription());
+        ServiceGeneralPage.defineCategory(service.getCategories().get(0).getName());
+        ServiceGeneralPage.defineServiceFunction(service.getServiceFunction());
+        ServiceGeneralPage.defineNamingPolicy(service.getNamingPolicy());
         defineTagsList2(service.getTags());
-        ResourceGeneralPage.defineContactId(service.getContactId());
+        ServiceGeneralPage.defineContactId(service.getContactId());
         GeneralUIUtils.clickSomewhereOnPage();
     }
 

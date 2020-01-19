@@ -15,18 +15,6 @@
  */
 package org.openecomp.sdc.be.components.impl.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +32,18 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PropertiesUtilsTest {

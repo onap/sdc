@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.auditing.impl;
 
-import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.User;
@@ -182,12 +181,6 @@ public class AuditTestUtils {
     public final static String EXPECTED_AUTH_REQUEST_LOG_STR = "ACTION = \"" + AuditingActionEnum.AUTH_REQUEST.getName() + "\" URL = \"" +
             AUTH_URL + "\" USER = \"" + USER_ID + "\" AUTH_STATUS = \"" + AUTH_STATUS + "\" REALM = \"" + REALM + "\"";
 
-    final static String EXPECTED_ADD_ECOMP_USER_CRED_LOG_STR = "ACTION = \"" + AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS.getName() +
-            "\" MODIFIER = \"" + MODIFIER_UID + "\" ECOMP_USER = \"" + USER_ID + "\" STATUS = \"" + STATUS_OK + "\" DESC = \"" + DESCRIPTION + "\"";
-
-    final static String EXPECTED_GET_ECOMP_USER_CRED_LOG_STR = "ACTION = \"" + AuditingActionEnum.GET_ECOMP_USER_CREDENTIALS.getName() +
-            "\" MODIFIER = \"" + MODIFIER_UID + "\" ECOMP_USER = \"" + USER_ID + "\" STATUS = \"" + STATUS_OK + "\" DESC = \"" + DESCRIPTION + "\"";
-
     public final static String EXPECTED_ADD_CATEGORY_LOG_STR = "ACTION = \"" + AuditingActionEnum.ADD_CATEGORY.getName() +
             "\" MODIFIER = \"" + MODIFIER_UID + "\" CATEGORY_NAME = \"" + CATEGORY + "\" SUB_CATEGORY_NAME = \"" + SUB_CATEGORY +
             "\" GROUPING_NAME = \"" + GROUPING_NAME + "\" RESOURCE_TYPE = \"" + RESOURCE_TYPE + "\" STATUS = \"" + STATUS_OK + "\" DESC = \"" + DESCRIPTION + "\"";
@@ -252,12 +245,11 @@ public class AuditTestUtils {
     public static User user;
     public static User modifier;
 
-    public static void init(Configuration.ElasticSearchConfig esConfig) {
+    public static void init() {
         String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
         configurationManager.getConfiguration().setDisableAudit(false);
-        configurationManager.getConfiguration().setElasticSearch(esConfig);
 
         user = new User();
         modifier = new User();

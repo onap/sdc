@@ -36,7 +36,11 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ForwardingPathUtilsTest {
 

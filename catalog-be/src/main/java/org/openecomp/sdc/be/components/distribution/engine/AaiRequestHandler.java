@@ -46,7 +46,7 @@ public class AaiRequestHandler {
 
     private static final Logger logger = Logger.getLogger(AaiRequestHandler.class);
     private ExternalServiceConfig aaiConfig;
-    
+
     protected static final String OPERATIONAL_ENV_RESOURCE_CONFIG_PARAM = "operationalEnvironments";
     protected static final String OPERATIONAL_ENV_RESOURCE = "/operational-environment";
 
@@ -55,27 +55,30 @@ public class AaiRequestHandler {
         logger.debug("AaiRequestHandler has been initialized.");
 
         aaiConfig = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getAaiConfig();
+        aaiConfig.getHttpClientConfig().setEnableMetricLogging(true);
         logger.debug("AaiRequestHandler Configuration={}", aaiConfig);
     }
 
 
     public HttpResponse<String> getOperationalEnvById(String id) {
         Properties headers = createHeaders();
-        String url = String.format("%s%s%s/%s", 
-                aaiConfig.getHttpRequestConfig().getServerRootUrl(), 
-                aaiConfig.getHttpRequestConfig().getResourceNamespaces().get(OPERATIONAL_ENV_RESOURCE_CONFIG_PARAM), 
+        String url = String.format("%s%s%s/%s",
+                aaiConfig.getHttpRequestConfig().getServerRootUrl(),
+                aaiConfig.getHttpRequestConfig().getResourceNamespaces().get(OPERATIONAL_ENV_RESOURCE_CONFIG_PARAM),
                 OPERATIONAL_ENV_RESOURCE, id);
-        
+
         SupplierThrows<HttpResponse<String>, Exception> httpGet = () -> HttpRequest.get(url, headers, aaiConfig.getHttpClientConfig());
         long maxRetries = aaiConfig.getHttpClientConfig().getNumOfRetries();
         try {
             return FunctionalInterfaces.retryMethodOnException(httpGet, this::retryOnException, maxRetries);
-        }
-        catch (Exception e) {
+
+        } catch (Exception e) {
             logger.debug("Request failed with exception {}", getCause(e).getMessage());
             return Responses.INTERNAL_SERVER_ERROR;
         }
     }
+
+
     
 
     private boolean retryOnException(Exception e) {

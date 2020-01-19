@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.be.components.merge.property;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -33,6 +27,12 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class PropertyValueMerger {
@@ -60,7 +60,7 @@ public class PropertyValueMerger {
     
     private Map<String, Object> mergeMapValue(Map<String, Object> oldValMap, Map<String, Object> newValMap, List<String> inputNamesToMerge, String type, String innertType, Map<String, DataTypeDefinition> dataTypes) {
         mergeEntriesExistInOldValue(oldValMap, newValMap, inputNamesToMerge, type, innertType, dataTypes);//continue the recursion
-        if (type != null && !type.equals("map")) {
+        if (type != null && !type.equals("map") && !type.equals("json")) {
             setOldEntriesNotExistInNewValue(oldValMap, newValMap, inputNamesToMerge);
         }
         

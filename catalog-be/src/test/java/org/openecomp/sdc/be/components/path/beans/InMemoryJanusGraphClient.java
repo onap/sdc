@@ -21,24 +21,28 @@
 package org.openecomp.sdc.be.components.path.beans;
 
 
-import org.janusgraph.core.*;
+import fj.data.Either;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.InvalidElementException;
+import org.janusgraph.core.InvalidIDException;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphConfigurationException;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.PropertyKey;
+import org.janusgraph.core.QueryException;
+import org.janusgraph.core.SchemaViolationException;
 import org.janusgraph.core.schema.ConsistencyModifier;
 import org.janusgraph.core.schema.JanusGraphIndex;
 import org.janusgraph.core.schema.JanusGraphManagement;
-import org.janusgraph.core.util.JanusGraphCleanup;
 import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.ResourceUnavailableException;
 import org.janusgraph.diskstorage.locking.PermanentLockingException;
 import org.janusgraph.graphdb.database.idassigner.IDPoolExhaustedException;
-import fj.data.Either;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

@@ -20,20 +20,6 @@
 
 package org.openecomp.sdc.be.components.impl.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
-
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import mockit.Deencapsulation;
 import org.apache.commons.collections.MapUtils;
 import org.assertj.core.util.Lists;
@@ -63,6 +49,21 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
 
 @RunWith(MockitoJUnitRunner.class)
 public class YamlTemplateParsingHandlerTest {

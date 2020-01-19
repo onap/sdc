@@ -37,7 +37,12 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -108,8 +113,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     private boolean isAfterSubmitForTesting(GraphVertex vertex){
-        List allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.READY_FOR_CERTIFICATION.name(),
-                LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.name(), LifecycleStateEnum.CERTIFIED.name()));
+        List allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.CERTIFIED.name()));
         return allowedStates.contains(vertex.getMetadataProperty(GraphPropertyEnum.STATE));
     }
 }

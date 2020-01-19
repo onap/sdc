@@ -26,7 +26,11 @@ import org.openecomp.sdc.asdctool.migration.core.MigrationException;
 import java.io.File;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * scan and instantiate classes of given type in the class path

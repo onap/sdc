@@ -1,23 +1,3 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
 package org.openecomp.sdc.common.log.elements;
 
 import org.junit.After;
@@ -28,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.common.log.enums.LogLevel;
+import org.openecomp.sdc.common.log.enums.Severity;
 import org.openecomp.sdc.common.log.utils.LoggingThreadLocalsHolder;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -39,7 +20,14 @@ import java.util.UUID;
 
 import static org.onap.logging.ref.slf4j.ONAPLogConstants.MDCs.*;
 import static org.onap.logging.ref.slf4j.ONAPLogConstants.ResponseStatus.COMPLETE;
-import static org.openecomp.sdc.common.log.api.LogConfigurationConstants.*;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_CLASS_NAME;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_ELAPSED_TIME;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_END_TIMESTAMP;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_PROCESS_KEY;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_REMOTE_HOST;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_SERVER_IP_ADDRESS;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_SERVICE_INSTANCE_ID;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_TARGET_VIRTUAL_ENTITY;
 import static org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler.hostAddress;
 
 /**

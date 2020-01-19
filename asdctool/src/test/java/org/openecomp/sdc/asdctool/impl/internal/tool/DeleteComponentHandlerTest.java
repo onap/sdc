@@ -29,8 +29,8 @@
  */
 package org.openecomp.sdc.asdctool.impl.internal.tool;
 
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
+import org.janusgraph.core.JanusGraphVertex;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;

@@ -51,11 +51,17 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
+import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.http.client.api.HttpRequestHandler;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -71,7 +77,10 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpgradeMigration1710Test {
@@ -89,7 +98,7 @@ public class UpgradeMigration1710Test {
     @InjectMocks
     private UpgradeMigration1710 migration = new UpgradeMigration1710();
     @Mock
-    private IUserAdminOperation userAdminOperation;
+    private UserAdminOperation userAdminOperation;
     @Mock
     private ToscaOperationFacade toscaOperationFacade;
     @Mock
@@ -117,6 +126,7 @@ public class UpgradeMigration1710Test {
     private static ConfigurationManager configurationManager;
     private static List<String> resources = Stream.of("org.openecomp.resource.cp.extCP").collect(Collectors.toList());
     private static Map<String, List<String>> resourcesForUpgrade;
+    private static Configuration.EnvironmentContext environmentContext = new Configuration.EnvironmentContext();
 
     private Resource resource;
     private Service service;
@@ -148,6 +158,8 @@ public class UpgradeMigration1710Test {
         configurationManager.getConfiguration().setMaxDeleteComponents(5);
         configurationManager.getConfiguration().setEnableAutoHealing(true);
         configurationManager.getConfiguration().setToscaConformanceLevel("5.0");
+        environmentContext.setDefaultValue("General_Revenue-Bearing");
+        configurationManager.getConfiguration().setEnvironmentContext(environmentContext);
         HashMap<String, List<String>> resourcesForUpgrade = new HashMap();
         resourcesForUpgrade.put("5.0", Lists.newArrayList("port"));
         configurationManager.getConfiguration().setResourcesForUpgrade(resourcesForUpgrade);
@@ -169,8 +181,6 @@ public class UpgradeMigration1710Test {
 
         when(responseFormat.getFormattedMessage())
                 .thenReturn("");
-        when(componentUtils.getResponseFormat(any(ActionStatus.class), any()))
-                .thenReturn(responseFormat);
         when(componentUtils.convertFromStorageResponse(any(), any())).thenCallRealMethod();
         mockChangeComponentState();
     }
@@ -525,7 +535,7 @@ public class UpgradeMigration1710Test {
 
         when(janusGraphDao.getByCriteria(any(), any(), any(), any()))
                 .thenReturn(Either.left(components));
-        when(janusGraphDao.getParentVertecies(any(GraphVertex.class), any(EdgeLabelEnum.class), any(JsonParseFlagEnum.class)))
+        when(janusGraphDao.getParentVertices(any(GraphVertex.class), any(EdgeLabelEnum.class), any(JsonParseFlagEnum.class)))
                 //1th node to upgrade
                 .thenReturn(Either.left(components))
                 //parent of the 1th node - stop recursion

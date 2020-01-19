@@ -19,12 +19,11 @@
  */
 package org.openecomp.sdc.be.datatypes.elements;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.junit.Assert.assertThat;
 
 public class ConsumerDataDefinitionTest {
 

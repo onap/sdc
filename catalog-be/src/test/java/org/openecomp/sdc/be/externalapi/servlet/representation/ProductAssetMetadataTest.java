@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
-import java.util.List;
-
 import org.junit.Test;
+
+import java.util.List;
 
 
 public class ProductAssetMetadataTest {

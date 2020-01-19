@@ -20,14 +20,17 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.util.List;
-import java.util.Map;
+
 
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Map;
 
 public class MaxLengthConstraint extends AbstractPropertyConstraint {
 
@@ -60,6 +63,18 @@ public class MaxLengthConstraint extends AbstractPropertyConstraint {
         this.maxLength = maxLength;
     }
 
+
+    @Override
+    public ConstraintType getConstraintType() {
+        return null;
+    }
+
+    @Override
+    public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
+
+    }
+
+
     @Override
     public void validate(Object propertyValue) throws ConstraintViolationException {
         if (propertyValue == null) {
@@ -77,4 +92,5 @@ public class MaxLengthConstraint extends AbstractPropertyConstraint {
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
         return getErrorMessage(toscaType, e, propertyName, "%s maximum length must be [%s]", String.valueOf(maxLength));
     }
+
 }

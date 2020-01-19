@@ -45,6 +45,8 @@ public class ModelTestBase {
     protected static ConfigurationManager configurationManager;
     protected static final String CONTAINER_ID = "containerId";
     protected static final String CONTAINER_NAME = "containerName";
+    static Configuration.EnvironmentContext environmentContext = new Configuration.EnvironmentContext();
+    static Configuration.HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new Configuration.HeatDeploymentArtifactTimeout();
 
     public static void init() {
         String appConfigDir = "src/test/resources/config";
@@ -55,7 +57,11 @@ public class ModelTestBase {
         Configuration configuration = new Configuration();
 
         configuration.setJanusGraphInMemoryGraph(true);
+		environmentContext.setDefaultValue("General_Revenue-Bearing");
+		configuration.setEnvironmentContext(environmentContext);
 
+		heatDeploymentArtifactTimeout.setDefaultMinutes(30);
+		configuration.setHeatArtifactDeploymentTimeout(heatDeploymentArtifactTimeout);
         Map<String, Object> deploymentRIArtifacts = new HashMap<>();
         ArtifactDataDefinition artifactInfo = new ArtifactDataDefinition();
         Object artifactDataObj = new HashMap<String, Object>();

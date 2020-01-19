@@ -44,7 +44,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommonImportManagerTest {

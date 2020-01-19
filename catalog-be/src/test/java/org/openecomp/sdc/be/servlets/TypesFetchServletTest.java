@@ -20,17 +20,23 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.Mockito.mock;
+import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.components.impl.*;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
+import static org.mockito.Mockito.mock;
 
 public class TypesFetchServletTest {
 

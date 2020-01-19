@@ -22,10 +22,6 @@
 
 package org.openecomp.sdc.be.switchover.detector;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -35,6 +31,11 @@ import org.openecomp.sdc.be.config.Configuration.SwitchoverDetectorConfig;
 import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector.SwitchoverDetectorGroup;
 import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector.SwitchoverDetectorScheduledTask;
 import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector.SwitchoverDetectorState;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SwitchoverDetectorTest {

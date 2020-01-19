@@ -22,10 +22,31 @@
 
 package org.openecomp.sdc.be.distribution.servlet;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import com.jcabi.aspects.Loggable;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.servlets.BeGenericServlet;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
@@ -38,28 +59,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
-import org.openecomp.sdc.be.servlets.BeGenericServlet;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This Servlet serves external users to download artifacts.
@@ -122,6 +125,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "404", description = "Specified artifact is  not found - SVC4505"),
             @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response downloadServiceArtifact(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
@@ -138,28 +142,21 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         }
 
         try {
-            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsBusinessLogic
-                .downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
-            if (downloadRsrcArtifactEither.isRight()) {
-                ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
-                getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-            } else {
-                byte[] value = downloadRsrcArtifactEither.left().value();
-                InputStream is = new ByteArrayInputStream(value);
+            byte[] downloadRsrcArtifactEither = artifactsBusinessLogic.downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
+            byte[] value = downloadRsrcArtifactEither;
+            InputStream is = new ByteArrayInputStream(value);
 
-                Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
-                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
-            }
-            return responseWrapper.getInnerElement();
+            Map<String, String> headers = new HashMap<>();
+            headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+            getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
+            return buildOkResponse(responseFormat, is, headers);
 
-        } catch (Exception e) {
+        } catch (ComponentException e) {
+            getComponentsUtils().auditDistributionDownload(e.getResponseFormat(), new DistributionData(instanceIdHeader, requestURI));
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download Murano package artifact for service - external API");
             log.debug(DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION, e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return buildErrorResponse(e.getResponseFormat());
         }
     }
 
@@ -193,7 +190,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     @Operation(description = "Download resource artifact", method  = "GET", summary = "Returns downloaded artifact", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.", 
+            @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -204,6 +201,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "404", description = "Specified artifact is  not found - SVC4505"),
             @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response downloadResourceArtifact(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
@@ -223,28 +221,22 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         }
 
         try {
-            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsBusinessLogic
-                .downloadRsrcArtifactByNames(serviceName, serviceVersion, resourceName, resourceVersion, artifactName);
-            if (downloadRsrcArtifactEither.isRight()) {
-                ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
-                getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-            } else {
-                byte[] value = downloadRsrcArtifactEither.left().value();
-                // Returning 64-encoded as it was received during upload
-                InputStream is = new ByteArrayInputStream(value);
-                Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
-                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
-            }
-            return responseWrapper.getInnerElement();
+            ArtifactsBusinessLogic artifactsLogic = getArtifactBL(request.getSession().getServletContext());
+            byte[] downloadRsrcArtifactEither = artifactsLogic.downloadRsrcArtifactByNames(serviceName, serviceVersion, resourceName, resourceVersion, artifactName);
+            byte[] value = downloadRsrcArtifactEither;
+            // Returning 64-encoded as it was received during upload
+            InputStream is = new ByteArrayInputStream(value);
+            Map<String, String> headers = new HashMap<>();
+            headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+            getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
+            return buildOkResponse(responseFormat, is, headers);
 
-        } catch (Exception e) {
+        } catch (ComponentException e) {
+            getComponentsUtils().auditDistributionDownload(e.getResponseFormat(), new DistributionData(instanceIdHeader, requestURI));
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download interface artifact for resource - external API");
             log.debug(DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION, e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return buildErrorResponse(e.getResponseFormat());
         }
     }
 
@@ -267,7 +259,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     @Operation(description = "Download resource instance artifact", method = "GET", summary = "Returns downloaded artifact", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.", 
+            @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -278,6 +270,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "404", description = "Specified artifact is  not found - SVC4505"),
             @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
             @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+    @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response downloadResourceInstanceArtifactByName(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
             @Parameter(description = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
@@ -296,28 +289,21 @@ public class DistributionCatalogServlet extends BeGenericServlet {
         }
 
         try {
-            Either<byte[], ResponseFormat> downloadRsrcArtifactEither = artifactsBusinessLogic
-                .downloadRsrcInstArtifactByNames(serviceName, serviceVersion, resourceInstanceName, artifactName);
-            if (downloadRsrcArtifactEither.isRight()) {
-                ResponseFormat responseFormat = downloadRsrcArtifactEither.right().value();
-                getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-            } else {
-                byte[] value = downloadRsrcArtifactEither.left().value();
-                // Returning 64-encoded as it was received during upload
-                InputStream is = new ByteArrayInputStream(value);
-                Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
-                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
-                responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
-            }
-            return responseWrapper.getInnerElement();
+            byte[] downloadRsrcArtifactEither = artifactsBusinessLogic.downloadRsrcInstArtifactByNames(serviceName, serviceVersion, resourceInstanceName, artifactName);
+            byte[] value = downloadRsrcArtifactEither;
+            // Returning 64-encoded as it was received during upload
+            InputStream is = new ByteArrayInputStream(value);
+            Map<String, String> headers = new HashMap<>();
+            headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(artifactName));
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+            getComponentsUtils().auditDistributionDownload(responseFormat, new DistributionData(instanceIdHeader, requestURI));
+            return buildOkResponse(responseFormat, is, headers);
 
-        } catch (Exception e) {
+        } catch (ComponentException e) {
+            getComponentsUtils().auditDistributionDownload(e.getResponseFormat(), new DistributionData(instanceIdHeader, requestURI));
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("download interface artifact for resource - external API");
             log.debug(DOWNLOAD_ARTIFACT_FAILED_WITH_EXCEPTION, e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            return buildErrorResponse(e.getResponseFormat());
         }
     }
 }

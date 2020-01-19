@@ -444,7 +444,7 @@ public class ResourceTest extends ModelConfDependentTest{
 		testSubject = createTestSubject();
 		Resource resource = new Resource();
 		resource.setComponentInstancesRelations(new LinkedList<RequirementCapabilityRelDef>());
-		result = testSubject.groupRelationsByInstanceName(resource);
+		result = testSubject.groupRelationsFromCsarByInstanceName(resource);
 	}
 
 	@Test
