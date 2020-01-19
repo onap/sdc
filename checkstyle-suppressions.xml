@@ -40,5 +40,7 @@
     <suppress checks="ParameterName" files="common/onap-tosca-datatype/.*/*.java"/>
     <suppress checks="MethodName" files="common/onap-tosca-datatype/.*/*.java"/>
     <suppress checks="MemberName" files="common/onap-tosca-datatype/.*/*.java"/>
-
+    <!--Should fix below modules-->
+    <suppress checks="." files="[\\/]common-app-logging[\\/].*\.java$"/>
+    <suppress checks="." files="[\\/]common-app-api[\\/].*\.java$"/>
 </suppressions>

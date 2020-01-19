@@ -101,7 +101,7 @@ public final class DataTestIdEnum {
         ADD("Add"),
         DESCRIPTION("description"),
         SUMBIT_FOR_TESTING_MESSAGE("changeLifeCycleMessage"),
-        OK("OK"),
+        OK("confirm-modal-button-ok"),
         CANCEL("Cancel"),
         DELETE_INSTANCE_OK("deleteInstanceModal-button-ok"),
         DELETE_INSTANCE_CANCEL("deleteInstanceModal-button-cancel"),
@@ -418,6 +418,8 @@ public final class DataTestIdEnum {
         DESCRIPTION("description"),
         CATEGORY("selectGeneralCategory"),
         PROJECT_CODE("projectCode"),
+        NAMING_POLICY("namingPolicy"),
+        SERVICE_FUNCTION("serviceFunction"),
         TAGS("i-sdc-tag-input"),
         CONTACT_ID("contactId"),
         ICON(" iconBox"),
@@ -523,7 +525,7 @@ public final class DataTestIdEnum {
         CHANGE_VERSION("changeVersion", Collections.emptyList()),
         DEPLOYMENT_ARTIFACT_TAB("deployment-artifact-tab", Collections.singletonList("Deployment Artifacts")),
         ADD_ARTIFACT("add_Artifact_Button", Collections.emptyList()),
-        SEARCH_ASSET("searchAsset", Collections.emptyList()),
+        SEARCH_ASSET("searchAsset-input", Arrays.asList()),
         PROPERTIES_AND_ATTRIBUTES_TAB("properties-and-attributes-tab", Collections.emptyList()),
         MENU_INPUTS("sub-menu-button-inputs", Collections.emptyList()),
         MENU_ONBOARD("sub-menu-button-onboard", Collections.emptyList()),
@@ -708,7 +710,7 @@ public final class DataTestIdEnum {
     @AllArgsConstructor
     @Getter
     public enum ImportVfRepository {
-        SEARCH("onboarding-search"),
+        SEARCH("onboarding-search-input"),
         IMPORT_VSP("import-csar"),
         DOWNLOAD_CSAR("download-csar"),
         UPDATE_VSP("update-csar");

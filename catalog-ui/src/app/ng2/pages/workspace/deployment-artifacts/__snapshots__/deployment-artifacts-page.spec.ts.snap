@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`deployment artifacts page should match current snapshot of informational artifact pages component 1`] = `
+<deployment-artifact-page
+  addOrUpdateArtifact={[Function Function]}
+  artifactsService={[Function Object]}
+  cacheService={[Function Object]}
+  deleteArtifact={[Function Function]}
+  getEnvArtifact={[Function Function]}
+  modalService={[Function Object]}
+  openGenericArtifactBrowserModal={[Function Function]}
+  openPopOver={[Function Function]}
+  popoverContentComponent="undefined"
+  popoverService={[Function Object]}
+  sortArtifacts={[Function Function]}
+  store={[Function Store]}
+  table="undefined"
+  translateService={[Function Object]}
+  updateEnvParams={[Function Function]}
+  workspaceService={[Function Object]}
+>
+  
+</deployment-artifact-page>
+`;

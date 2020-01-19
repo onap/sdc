@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.*;
@@ -69,18 +70,16 @@ public class ComponentInstanceCapabilitiesPropertiesMergeTest {
         Service currentComponent = new Service();
         when(capabilitiesPropertiesMergeBL.mergeComponentInstanceCapabilities(currentComponent, origInstanceNode, "instId", origInstanceCapabilities))
             .thenReturn(ActionStatus.OK);
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeDataAfterCreate(new User(), mergeHolder, currentComponent, "instId");
-        assertTrue(mergeResult.isLeft());
+        Component mergeResult = testInstance.mergeDataAfterCreate(new User(), mergeHolder, currentComponent, "instId");
+        assertTrue(mergeResult != null);
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void mergeDataAfterCreate_error() {
         Service currentComponent = new Service();
         when(capabilitiesPropertiesMergeBL.mergeComponentInstanceCapabilities(currentComponent, origInstanceNode, "instId", origInstanceCapabilities))
                 .thenReturn(ActionStatus.GENERAL_ERROR);
-        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(new ResponseFormat());
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeDataAfterCreate(new User(), mergeHolder, currentComponent, "instId");
-        assertTrue(mergeResult.isRight());
+        testInstance.mergeDataAfterCreate(new User(), mergeHolder, currentComponent, "instId");
     }
 
     @Test

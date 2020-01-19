@@ -33,9 +33,14 @@ import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
+import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.SoftwareInformationBusinessLogic;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
 import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
+import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -61,14 +66,17 @@ public class CheckoutTest extends LifecycleTestBase {
     private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
     private final CsarBusinessLogic csarBusinessLogic = Mockito.mock(CsarBusinessLogic.class);
     private final PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
-    private final SoftwareInformationBusinessLogic softwareInformationBusinessLogic = Mockito.mock(SoftwareInformationBusinessLogic.class);
+    protected ComponentContactIdValidator componentContactIdValidator = new ComponentContactIdValidator(componentsUtils);
+    protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
 
     @InjectMocks
     ResourceBusinessLogic bl = new ResourceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
         groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
         componentInstanceBusinessLogic, resourceImportManager, inputsBusinessLogic, compositionBusinessLogic,
         resourceDataMergeBusinessLogic, csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils,
-        uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation, propertyBusinessLogic, softwareInformationBusinessLogic);
+        uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation, propertyBusinessLogic,
+        componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
+            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator );
 
     @Before
     public void setup() {
@@ -121,62 +129,6 @@ public class CheckoutTest extends LifecycleTestBase {
     }
 
     @Test
-    public void testCertificationInProgress() {
-        Either<? extends Component, ResponseFormat> changeStateResult;
-        Resource resource = createResourceObject();
-
-        resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        Either<User, ResponseFormat> ownerResponse = checkoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
-        assertTrue(ownerResponse.isLeft());
-        User owner = ownerResponse.left().value();
-        changeStateResult = checkoutObj.changeState(ComponentTypeEnum.RESOURCE, resource, bl, user, owner, false, false);
-
-        Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-        assertTrue(validateBeforeTransition.isRight());
-        changeStateResult = Either.right(validateBeforeTransition.right().value());
-        assertTrue(changeStateResult.isRight());
-
-        assertResponse(changeStateResult, ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-
-    }
-
-    @Test
-    public void testReadyForCertification() {
-        Either<Resource, ResponseFormat> changeStateResult;
-        Resource resource = createResourceObject();
-
-        resource.setLifecycleState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-
-        // if modifier = owner
-        Either<User, ResponseFormat> ownerResponse = checkoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
-        assertTrue(ownerResponse.isLeft());
-        User owner = ownerResponse.left().value();
-        Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertTrue(validateBeforeTransition.isLeft());
-
-        // else
-        User modifier = new User();
-        modifier.setUserId("modifier");
-        modifier.setFirstName("Albert");
-        modifier.setLastName("Einstein");
-
-        // admin
-        modifier.setRole(Role.ADMIN.name());
-        validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertTrue(validateBeforeTransition.isLeft());
-
-        // designer
-        modifier.setRole(Role.TESTER.name());
-        validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-        assertTrue(validateBeforeTransition.isRight());
-        changeStateResult = Either.right(validateBeforeTransition.right().value());
-
-        assertTrue(changeStateResult.isRight());
-        assertResponse(changeStateResult, ActionStatus.RESTRICTED_OPERATION, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
-
-    }
-
-    @Test
     public void testRoles() {
         Either<Resource, ResponseFormat> changeStateResult;
         Resource resource = createResourceObject();
@@ -191,10 +143,14 @@ public class CheckoutTest extends LifecycleTestBase {
         Either<User, ResponseFormat> ownerResponse = checkoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
+        // changeStateResult = checkoutObj.changeStateOperation(resource,
+        // modifier, owner);
         Either<Boolean, ResponseFormat> validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertTrue(validateBeforeTransition.isLeft());
 
         modifier.setRole(Role.TESTER.name());
+        // changeStateResult = checkoutObj.changeStateOperation(resource,
+        // modifier, owner);
         validateBeforeTransition = checkoutObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, modifier, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertTrue(validateBeforeTransition.isRight());
         changeStateResult = Either.right(validateBeforeTransition.right().value());

@@ -69,7 +69,7 @@ public class ComponentValidationUtilsTest {
     public void testCanWorkOnBadResourceAndBadUser() {
         assertFalse(ComponentValidationUtils.canWorkOnResource(resource, BAD_USER_ID));
 
-        resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+        resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertFalse(ComponentValidationUtils.canWorkOnResource(resource, USER_ID));
 
         resource.setIsDeleted(true);
@@ -100,7 +100,7 @@ public class ComponentValidationUtilsTest {
     public void testCanWorkOnBadComponent() {
         // given
         when(component.getLifecycleState())
-            .thenReturn(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+            .thenReturn(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         when(component.getLastUpdaterUserId()).thenReturn(resource.getLastUpdaterUserId());
 
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID),

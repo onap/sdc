@@ -1,0 +1,55 @@
+<form class="artifact-form" novalidate name="artifactForm">
+
+    <onap-file-upload [disabled]="isViewOnly || showTypeFields && !artifact.artifactType" [convertToBase64]="true" [(value)]="artifact.artifactName" (fileUpload)="onUploadFile($event)" [placeHolder]="'Select File'" [label]="'Upload File'" [testId]="'fileUploadElement'" [required]="true">
+
+    </onap-file-upload>
+    <div class="artifact-form-container">
+        <div class="left-form-container" *ngIf="showTypeFields">
+            <sdc-input #artifactLabel
+                       required="true"
+                       [(value)]="artifact.artifactLabel"
+                       [maxLength]="25"
+                       [label]="'Artifact Label'"
+                       [disabled]="isViewOnly || artifact && artifact.uniqueId"
+                       [testId]="'artifactLabel'"
+                       (keyup)="verifyTypeAndFileWereFilled()">
+            </sdc-input>
+            <sdc-validation [validateElement]="artifactLabel" (validityChanged)="onLabelChange($event)">
+                <sdc-required-validator [message]="'ADD_ARTIFACT_ERROR_LABEL_REQUIRED' | translate"></sdc-required-validator>
+                              <sdc-regex-validator [message]="'VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED' | translate"
+                                     [pattern]="validationPatterns['label']"></sdc-regex-validator>
+            </sdc-validation>
+
+            <sdc-dropdown #artifactType [disabled]="isViewOnly || artifact && artifact.uniqueId" label="Type" [required]="true"
+                          [selectedOption]="selectedFileType" placeHolder="Please choose type" (changed)="onTypeChange($event)"
+                          [options]="artifactTypesOptions" [testId]="'artifacttype'"></sdc-dropdown>
+            <sdc-validation [validateElement]="artifactType">
+                <sdc-required-validator
+                        [message]="'ADD_ARTIFACT_ERROR_TYPE_REQUIRED' | translate"></sdc-required-validator>
+            </sdc-validation>
+        </div>
+
+        <div class="right-form-container">
+            <sdc-textarea #artifactDescription
+                          [(value)]="artifact.description"
+                          [required]="true"
+                          testId="description"
+                          [maxLength]="256"
+                          label="Description"
+                          [disabled]="isViewOnly"
+                          (keyup)="verifyTypeAndFileWereFilled()">
+            </sdc-textarea>
+            <sdc-validation [validateElement]="artifactDescription" (validityChanged)="onDescriptionChange($event)">
+                <sdc-required-validator
+                        [message]="'ADD_ARTIFACT_ERROR_DESCRIPTION_REQUIRED' | translate:{'field': 'Message' }"></sdc-required-validator>
+                <sdc-regex-validator [message]="'VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED' | translate"
+                                     [pattern]="validationPatterns['comment']"></sdc-regex-validator>
+            </sdc-validation>
+        </div>
+    </div>
+</form>
+
+<div *ngIf="artifact && artifact.esId">
+    <div>UUID: {{artifact.artifactUUID}}</div>
+    <div>Version: {{artifact.artifactVersion}}</div>
+</div>

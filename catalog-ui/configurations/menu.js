@@ -28,10 +28,10 @@ const SDC_MENU_CONFIG = {
                         }
                     },
                     "SERVICE": {
-                        "submitForTesting": {
-                            "text": "Submit for Testing",
-                            "url": "lifecycleState/certificationRequest",
-                            "emailModal": "lifecycleState/CERTIFICATIONREQUEST"
+                        "certify": {
+                            "text": "Certify",
+                            "url": "lifecycleState/certify",
+                            "confirmationModal": "lifecycleState/certify"
                         },
                         "checkIn": {
                             "text": "Check in",
@@ -64,73 +64,15 @@ const SDC_MENU_CONFIG = {
                         "checkOut": {"text": "Check Out", "url": "lifecycleState/CHECKOUT"}
                     },
                     "SERVICE": {
-                        "submitForTesting": {
-                            "text": "Submit for Testing",
-                            "url": "lifecycleState/certificationRequest",
-                            "emailModal": "lifecycleState/CERTIFICATIONREQUEST"
-                        },
-                        "checkOut": {"text": "Check Out", "url": "lifecycleState/CHECKOUT"}
-                    }
-                }
-            },
-            "folder": [
-                {"text": "Active Projects", "groupname": "IN_PROGRESS"},
-                {"text": "Check Out", "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKOUT"},
-                {"text": "Check In", "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKIN"},
-                {"text": "Followed Projects", "groupname": "FOLLOWING"},
-                {"text": "Ready For Testing", "group": "FOLLOWING", "state": "READY_FOR_CERTIFICATION"},
-                {"text": "In Testing", "group": "FOLLOWING", "state": "CERTIFICATION_IN_PROGRESS"},
-                {"text": "Certified", "group": "FOLLOWING", "state": "CERTIFIED"}
-            ]
-
-        },
-        "TESTER": {
-            "title": "Tester's Workspace",
-            "dashboard": {
-                "showCreateNew": false
-            },
-            "changeLifecycleStateButtons": {
-                "READY_FOR_CERTIFICATION": {
-                    "RESOURCE":{},
-                    "SERVICE":{
-                        "startTesting": {"text": "Start Testing", "url": "lifecycleState/startCertification"}
-                    }
-                },
-                "CERTIFICATION_IN_PROGRESS": {
-                    "RESOURCE":{},
-                    "SERVICE": {
-                        "accept": {
-                            "text": "Accept",
+                        "certify": {
+                            "text": "Certify",
                             "url": "lifecycleState/certify",
                             "confirmationModal": "lifecycleState/certify"
                         },
-                        "reject": {
-                            "text": "Reject",
-                            "url": "lifecycleState/failCertification",
-                            "confirmationModal": "lifecycleState/failCertification"
-                        },
-                        "cancel": {
-                            "text": "Cancel",
-                            "action": "changeLifecycleState",
-                            "url": "lifecycleState/cancelCertification",
-                            "confirmationModal": "lifecycleState/cancel"
-                        }
+                        "checkOut": {"text": "Check Out", "url": "lifecycleState/CHECKOUT"}
                     }
-                }
-            },
-            "folder": [
-                {"text": "Active Projects", "groupname": "FOLLOWING"},
-                {"text": "Ready For Testing", "group": "FOLLOWING", "state": "READY_FOR_CERTIFICATION"},
-                {"text": "In Testing", "group": "FOLLOWING", "state": "CERTIFICATION_IN_PROGRESS"}
-            ]
-        },
-        "OPS": {
-            "title": "Operations Workspace",
-            "dashboard": {
-                "showCreateNew": false
-            },
-            "changeLifecycleStateButtons": {
-                "DISTRIBUTION_APPROVED": {
+                },
+                "DISTRIBUTION_NOT_APPROVED": {
                     "RESOURCE":{},
                     "SERVICE": {
                         "distribute": {
@@ -141,7 +83,7 @@ const SDC_MENU_CONFIG = {
                                 "confirmationModal": "distribution-state/reject"
                             }
                         },
-                        "monitor": {"text": "Monitor", "disabled": true}
+                        "checkOut": {"text": "Check Out", "url": "lifecycleState/CHECKOUT"}
                     }
                 },
                 "DISTRIBUTED": {
@@ -155,103 +97,19 @@ const SDC_MENU_CONFIG = {
                                 "confirmationModal": "distribution-state/reject"
                             }
                         },
-                        "monitor": {"text": "Monitor", "url": "distribution-state/monitor"}
+                        "checkOut": {"text": "Check Out", "url": "lifecycleState/CHECKOUT"}
                     }
                 }
             },
             "folder": [
-                {"text": "Active Projects", "groupname": "FOLLOWING"},
-                {
-                    "text": "Waiting For Distribution",
-                    "group": "FOLLOWING",
-                    "state": "CERTIFIED",
-                    "dist": "DISTRIBUTION_APPROVED"
-                },
-                {"text": "Distributed", "group": "FOLLOWING", "state": "CERTIFIED", "dist": "DISTRIBUTED"}
+                {"text": "Active Projects", "groupname": "IN_PROGRESS"},
+                {"text": "Check Out", "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKOUT"},
+                {"text": "Check In", "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKIN"},
+                {"text": "Followed Projects", "groupname": "FOLLOWING"},
+                {"text": "Certified", "group": "FOLLOWING", "state": "CERTIFIED"},
+                {"text": "Distributed", "group": "FOLLOWING", "state": "DISTRIBUTED"}
             ]
-        },
-        "GOVERNOR": {
-            "title": "Governance Rep's Workspace",
-            "dashboard": {
-                "showCreateNew": false
-            },
-            "changeLifecycleStateButtons": {
-                "DISTRIBUTION_NOT_APPROVED": {
-                "RESOURCE":{},
-                "SERVICE": {                   
-                        "approve": {
-                            "text": "Approve",
-                            "url": "distribution-state/approve",
-                            "confirmationModal": "distribution-state/approve",
-                            "conformanceLevelModal": {
-                                "url": "distribution-state/reject",
-                                "confirmationModal": "distribution-state/reject"
-                            }
-                        },
-                        "reject": {
-                            "text": "Reject",
-                            "url": "distribution-state/reject",
-                            "confirmationModal": "distribution-state/reject"
-                        }
-                    }
-                },
-                "DISTRIBUTION_APPROVED": {
-                    "RESOURCE":{},
-                    "SERVICE": {
-                        "reject": {
-                            "text": "Reject",
-                            "url": "distribution-state/reject",
-                            "confirmationModal": "distribution-state/reject"
-                        }
-                    }
-                },
-                "DISTRIBUTED": {
-                    "RESOURCE":{},
-                    "SERVICE": {
-                        "reject": {
-                            "text": "Reject",
-                            "url": "distribution-state/reject",
-                            "confirmationModal": "distribution-state/reject"
-                        }
-                    }
-                },
-                "DISTRIBUTION_REJECTED": {
-                    "RESOURCE":{},
-                    "SERVICE": {
-                        "approve": {
-                            "text": "Approve",
-                            "url": "distribution-state/approve",
-                            "confirmationModal": "distribution-state/approve",
-                            "conformanceLevelModal": {
-                                "url": "distribution-state/reject",
-                                "confirmationModal": "distribution-state/reject"
-                            }
-                        }
-                    }
-                }
-            },
-            "folder": [
-                {"text": "Active Projects", "groupname": "FOLLOWING"},
-                {
-                    "text": "Waiting For Approval",
-                    "group": "FOLLOWING",
-                    "state": "CERTIFIED",
-                    "dist": "DISTRIBUTION_NOT_APPROVED"
-                },
-                {
-                    "text": "Distribution Rejected",
-                    "group": "FOLLOWING",
-                    "state": "CERTIFIED",
-                    "dist": "DISTRIBUTION_REJECTED"
-                },
-                {
-                    "text": "Distribution Approved",
-                    "group": "FOLLOWING",
-                    "state": "CERTIFIED",
-                    "dist": "DISTRIBUTION_APPROVED,DISTRIBUTED"
-                }
 
-            ]
         }
     },
     "confirmationMessages": {
@@ -269,31 +127,6 @@ const SDC_MENU_CONFIG = {
             "showComment": true,
             "title": "Certification confirmation",
             "message": "Please add comment and confirm test results."
-        },
-        "lifecycleState/cancel": {
-            "showComment": true,
-            "title": "Cancel test",
-            "message": "Please add comment and cancel test."
-        },
-        "lifecycleState/failCertification": {
-            "showComment": true,
-            "title": "Rejection confirmation",
-            "message": "Please add comment and confirm test results."
-        },
-        "lifecycleState/CERTIFICATIONREQUEST": {
-            "showComment": true,
-            "title": "Submit for testing",
-            "message": "Please add comment and submit for testing."
-        },
-        "distribution-state/approve": {
-            "showComment": true,
-            "title": "Distribution confirmation",
-            "message": "Please add comment and confirm %1 approval for distribution."
-        },
-        "distribution-state/reject": {
-            "showComment": true,
-            "title": "Rejection confirmation",
-            "message": "Please add comment and confirm %1 rejection for distribution."
         },
         "updateTemplate": {
             "showComment": false,
@@ -315,7 +148,8 @@ const SDC_MENU_CONFIG = {
             "message": "Switching versions will erase service paths: %1. Are you sure you want to proceed?"
         },
         "deleteInstance": {"title": "Delete Confirmation", "message": "Are you sure you would like to delete %1?"},
-        "deleteInput": {"title": "Delete Confirmation", "message": "Are you sure you would like to delete %1?"}
+        "deleteInput": {"title": "Delete Confirmation", "message": "Are you sure you would like to delete %1?"},
+        "okButton": "OK"
     },
     "statuses": {
         "inDesign": {
@@ -324,14 +158,6 @@ const SDC_MENU_CONFIG = {
                 "NOT_CERTIFIED_CHECKOUT",
                 "NOT_CERTIFIED_CHECKIN"
             ]
-        },
-        "readyForCertification": {
-            "name": "Ready For Testing",
-            "values": ["READY_FOR_CERTIFICATION"]
-        },
-        "inCertification": {
-            "name": "In Testing",
-            "values": ["CERTIFICATION_IN_PROGRESS"]
         },
         "certified": {
             "name": "Certified",
@@ -352,36 +178,14 @@ const SDC_MENU_CONFIG = {
         "DESIGNER": {
             "states": {
                 "NOT_CERTIFIED_CHECKOUT": {
-                    "ANY": [
-                        {
-                            "text": "Submit for Testing",
-                            "action": "changeLifecycleState",
-                            "url": "lifecycleState/certificationRequest",
-                            "emailModal": "lifecycleState/CERTIFICATIONREQUEST"
-                        }
-                    ],
-                    "NOT_OWNER": []
-                },
-                "NOT_CERTIFIED_CHECKIN": {
-                    "ANY": [
-                        {
-                            "text": "Submit for Testing",
-                            "action": "changeLifecycleState",
-                            "url": "lifecycleState/certificationRequest",
-                            "emailModal": "lifecycleState/CERTIFICATIONREQUEST"
-                        }
-                    ]
-                },
-                "READY_FOR_CERTIFICATION": {
                     "ANY": []
                 },
-                "CERTIFICATION_IN_PROGRESS": {
+                "NOT_CERTIFIED_CHECKIN": {
                     "ANY": []
                 },
                 "CERTIFIED": {
                     "ANY": []
                 }
-
             }
         },
         "OTHER": {
@@ -395,14 +199,10 @@ const SDC_MENU_CONFIG = {
     "LifeCycleStatuses": {
         "NOT_CERTIFIED_CHECKOUT": {"text": "In Design Check Out", "icon": "checkout-editable-status-icon"},
         "NOT_CERTIFIED_CHECKIN": {"text": "In Design Check In", "icon": "checkin-status-icon "},
-        "READY_FOR_CERTIFICATION": {"text": "Ready for testing"},
-        "CERTIFICATION_IN_PROGRESS": {"text": "In Testing"},
         "CERTIFIED": {"text": "Certified", "icon": "checkin-status-icon "}
     },
     "DistributionStatuses": {
         "DISTRIBUTION_NOT_APPROVED": {"text": "Waiting For Distribution"},
-        "DISTRIBUTION_APPROVED": {"text": "Distribution Approved"},
-        "DISTRIBUTION_REJECTED": {"text": "Distribution Rejected"},
         "DISTRIBUTED": {"text": "Distributed"}
     },
     "canvas_buttons": {
@@ -411,12 +211,6 @@ const SDC_MENU_CONFIG = {
             "action": "changeLifecycleState",
             "url": "lifecycleState/CHECKIN",
             "confirmationModal": "lifecycleState/CHECKIN"
-        },
-        "submitForTesting": {
-            "text": "Submit for Testing",
-            "action": "changeLifecycleState",
-            "url": "lifecycleState/certificationRequest",
-            "emailModal": "lifecycleState/CERTIFICATIONREQUEST"
         },
         "deleteVersion": {
             "text": "Delete Version",
@@ -461,16 +255,12 @@ const SDC_MENU_CONFIG = {
             {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general"},
             {"text": "Deployment Artifact", "action": "onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text": "Information Artifact", "action": "onMenuItemPressed", "state": "workspace.information_artifacts"},
-            {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},            
+            {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
             {"text": "Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
             {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
-            {
-                "text": "Properties Assignment",
-                "action": "onMenuItemPressed",
-                "state": "workspace.properties_assignment"
-            },
+            {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"},
             {"text": "Req. & Capabilities", "action": "onMenuItemPressed", "state": "workspace.reqAndCapEditable"}
         ],
         "PNF": [
@@ -481,11 +271,7 @@ const SDC_MENU_CONFIG = {
             {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
             {"text": "Operation", "action": "onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
-            {
-                "text": "Properties Assignment",
-                "action": "onMenuItemPressed",
-                "state": "workspace.properties_assignment"
-            },
+            {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"},
             {"text": "Req. & Capabilities", "action": "onMenuItemPressed", "state": "workspace.reqAndCapEditable"}
         ],
         "CR": [
@@ -493,9 +279,11 @@ const SDC_MENU_CONFIG = {
             {"text": "Deployment Artifact", "action": "onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text": "Information Artifact", "action": "onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},
-            {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details"},
+            {"text": "Composition", "action": "onMenuItemPressed", "state": "workspace.composition.details", "disabledCategories":["Partner Domain Service"]},
+            {"text": "Operation", "action":"onMenuItemPressed", "state": "workspace.interface_operation"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
-            {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
+            {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"},
+            {"text": "Req. & Capabilities", "action": "onMenuItemPressed", "state": "workspace.reqAndCapEditable"}
         ],
         "SERVICE": [
             {"text": "General", "action": "onMenuItemPressed", "state": "workspace.general", "hiddenCategories":["Partner Domain Service"]},
@@ -505,14 +293,9 @@ const SDC_MENU_CONFIG = {
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"},
             {"text": "Management Workflow", "action": "onMenuItemPressed", "state": "workspace.management_workflow"},
             {"text": "Network Call Flow ", "action": "onMenuItemPressed", "state": "workspace.network_call_flow"},
-            {"text": "Distribution","action": "onMenuItemPressed","state": "workspace.distribution","disabledRoles": ["ADMIN", "TESTER", "GOVERNOR", "DESIGNER"]},
+            {"text": "Distribution","action": "onMenuItemPressed","state": "workspace.distribution","disabledRoles": ["ADMIN"]},
             {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
-            {
-                "text": "Properties Assignment",
-                "action": "onMenuItemPressed",
-                "state": "workspace.properties_assignment"
-            },
-            {"text": "Req. & Capabilities", "action": "onMenuItemPressed", "state": "workspace.reqAndCapEditable"}
+            {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"}
         ]
     }
 

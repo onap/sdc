@@ -1,0 +1,54 @@
+# Configure AAF
+aaf_locate_url=<%= node['access_restriction']['aaf_locate_url'] %>
+
+aaf_url=<%= node['access_restriction']['aaf_url'] %>
+
+#if you are running aaf service from a docker image you have to use aaf service IP and port number
+aaf_id=<%= node['access_restriction']['aaf_id'] %>
+#Encrypt the password using AAF Jar
+aaf_password=<%= node['access_restriction']['aaf_password'] %>
+# Sample CADI Properties, from CADI 1.4.2
+hostname=<%= node['BE_VIP'] %>
+csp_domain=<%= node['access_restriction']['csp_domain'] %>
+
+# Add Absolute path to Keyfile
+cadi_keyfile=<%= node['access_restriction']['cadi_keyfile'] %>
+
+
+# This is required to accept Certificate Authentication from Certman certificates.
+# can be TEST, IST or PROD
+aaf_env=<%= node['access_restriction']['aaf_env'] %>
+
+# DEBUG prints off all the properties.  Use to get started.
+cadi_loglevel=<%= node['access_restriction']['cadi_loglevel'] %>
+
+
+# Become CSO Poodle Compliant by only allowing sanctioned TLS versions
+# The following is the default
+# cadi_protocols=TLSv1.1,TLSv1.2
+
+# Default TrustStore - REQUIRED for changing PROTOCOL Defaults for DME2
+# Read https://wiki.web.att.com/pages/viewpage.action?pageId=574623569#URGENT:SolvingSSL2-3/TLSv1removalissues-Up-to-dateTruststore
+# Add Absolute path to truststore2020.jks
+cadi_truststore=<%= node['access_restriction']['cadi_truststore'] %>
+# Note: This is the ONLY password that doesn't have to be encrypted. All Java's TrustStores are this passcode by default, because they are public certs
+cadi_truststore_password=<%= node['access_restriction']['cadi_truststore_password'] %>
+
+# how to turn on SSL Logging
+#javax.net.debug=ssl
+
+##
+# Hint
+# Use "maps.bing.com" to get Lat and Long for an Address
+AFT_LATITUDE=32.780140
+AFT_LONGITUDE=-96.800451
+AFT_ENVIRONMENT=<%= node['access_restriction']['AFT_ENVIRONMENT'] %>
+AFT_DME2_CLIENT_IGNORE_SSL_CONFIG=<%= node['access_restriction']['AFT_DME2_CLIENT_IGNORE_SSL_CONFIG'] %>
+DME2.DEBUG=true
+AFT_DME2_HTTP_EXCHANGE_TRACE_ON=<%= node['access_restriction']['AFT_DME2_HTTP_EXCHANGE_TRACE_ON'] %>
+
+cadi_latitude=32.780140
+cadi_longitude=-96.800451
+
+aaf_root_ns=<%= node['aafNamespace'] %>
+aaf_api_version=2.0

@@ -1,27 +1,8 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
 package org.openecomp.sdc.common.log.elements;
 
+
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.openecomp.sdc.common.log.api.LogConfigurationConstants;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.openecomp.sdc.common.log.api.ILogFieldsHandler;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.enums.Severity;
@@ -35,30 +16,30 @@ import java.util.Collections;
 import java.util.List;
 
 public class LoggerAudit extends LoggerBase {
-    private static List<String> mandatoryFields = new ArrayList<>(Arrays.asList(
+    private static ArrayList<String> mandatoryFields = new ArrayList<>(Arrays.asList(
             ONAPLogConstants.MDCs.ENTRY_TIMESTAMP,
-            LogConfigurationConstants.MDC_END_TIMESTAMP,
+            ILogConfiguration.MDC_END_TIMESTAMP,
             ONAPLogConstants.MDCs.REQUEST_ID,
             ONAPLogConstants.MDCs.SERVICE_NAME,
             ONAPLogConstants.MDCs.PARTNER_NAME,
             ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE,
             ONAPLogConstants.MDCs.RESPONSE_CODE,
-            LogConfigurationConstants.MDC_SERVICE_INSTANCE_ID,
+            ILogConfiguration.MDC_SERVICE_INSTANCE_ID,
             ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION,
-            LogConfigurationConstants.MDC_ELAPSED_TIME,
-            LogConfigurationConstants.MDC_SERVER_IP_ADDRESS,
+            ILogConfiguration.MDC_ELAPSED_TIME,
+            ILogConfiguration.MDC_SERVER_IP_ADDRESS,
             ONAPLogConstants.MDCs.SERVER_FQDN));
 
-    private static List<String> optionalFields = new ArrayList<>(Arrays.asList(
+    private static ArrayList<String> optionalFields = new ArrayList<>(Arrays.asList(
             ONAPLogConstants.MDCs.INSTANCE_UUID,
             ONAPLogConstants.MDCs.RESPONSE_SEVERITY,
-            LogConfigurationConstants.MDC_REMOTE_HOST,
-            LogConfigurationConstants.MDC_CLASS_NAME,
-            LogConfigurationConstants.MDC_PROCESS_KEY,
-            LogConfigurationConstants.MDC_OPT_FIELD1,
-            LogConfigurationConstants.MDC_OPT_FIELD2,
-            LogConfigurationConstants.MDC_OPT_FIELD3,
-            LogConfigurationConstants.MDC_OPT_FIELD4));
+            ILogConfiguration.MDC_REMOTE_HOST,
+            ILogConfiguration.MDC_CLASS_NAME,
+            ILogConfiguration.MDC_PROCESS_KEY,
+            ILogConfiguration.MDC_OPT_FIELD1,
+            ILogConfiguration.MDC_OPT_FIELD2,
+            ILogConfiguration.MDC_OPT_FIELD3,
+            ILogConfiguration.MDC_OPT_FIELD4));
 
     LoggerAudit(ILogFieldsHandler ecompMdcWrapper, Logger logger) {
         //TODO Andrey, set default marker
@@ -85,7 +66,7 @@ public class LoggerAudit extends LoggerBase {
     }
 
     public LoggerAudit setOptClassName(String className) {
-        MDC.put(LogConfigurationConstants.MDC_CLASS_NAME, className);
+        MDC.put(ILogConfiguration.MDC_CLASS_NAME, className);
         return this;
     }
 

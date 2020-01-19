@@ -21,22 +21,26 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import com.google.common.collect.Sets;
-
-import java.util.List;
-import java.util.Set;
-
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Set;
+import static java.util.stream.Collectors.toList;
+
 
 public class ValidValuesConstraint extends AbstractPropertyConstraint {
 
     @NotNull
     private List<String> validValues;
     private Set<Object> validValuesTyped;
+    private static final String PROPERTY_TYPE_IS = "> property type is <";
 
     public ValidValuesConstraint(List<String> validValues) {
         this.validValues = validValues;
@@ -55,9 +59,39 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
         for (String value : validValues) {
             if (!propertyType.isValidValue(value)) {
                 throw new ConstraintValueDoNotMatchPropertyTypeException("validValues constraint has invalid value <"
-                        + value + "> property type is <" + propertyType.toString() + ">");
+                        + value + PROPERTY_TYPE_IS + propertyType.toString() + ">");
             } else {
                 validValuesTyped.add(propertyType.convert(value));
+            }
+        }
+    }
+
+    public void validateType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType= ToscaType.getToscaType(propertyType);
+        if(toscaType == null){
+            throw new ConstraintValueDoNotMatchPropertyTypeException("validValues constraint has invalid values <"
+                    + validValues.toString() + PROPERTY_TYPE_IS + propertyType + ">");
+        }
+        if (validValues == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "validValues constraint has invalid value <> property type is <" + propertyType + ">");
+        }
+        for (String value : validValues) {
+            if (!toscaType.isValidValue(value)) {
+                throw new ConstraintValueDoNotMatchPropertyTypeException("validValues constraint has invalid value <"
+                        + value + PROPERTY_TYPE_IS + propertyType + ">");
+            }
+        }
+    }
+
+    @Override
+    public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
+        if(newConstraint.getConstraintType() == getConstraintType()){
+            if(!((ValidValuesConstraint)newConstraint).getValidValues().containsAll(validValues)){
+                throw new PropertyConstraintException("Deletion of exists value is not permitted", null, null, ActionStatus.CANNOT_DELETE_VALID_VALUES, getConstraintType().name(),
+                        validValues.stream()
+                        .filter(v->!((ValidValuesConstraint)newConstraint).getValidValues().contains(v))
+                        .collect(toList()).toString());
             }
         }
     }
@@ -81,8 +115,14 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
     }
 
     @Override
+    public ConstraintType getConstraintType() {
+        return ConstraintType.VALID_VALUES;
+    }
+
+    @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
         return getErrorMessage(toscaType, e, propertyName, "%s valid value must be one of the following: [%s]",
                 String.join(",", validValues));
     }
+
 }

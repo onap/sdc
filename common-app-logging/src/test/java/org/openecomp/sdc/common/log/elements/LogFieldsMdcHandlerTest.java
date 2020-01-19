@@ -26,7 +26,7 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.MDC;
 
 import static org.junit.Assert.*;
-import static org.openecomp.sdc.common.log.api.LogConfigurationConstants.*;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.*;
 
 public class LogFieldsMdcHandlerTest {
 

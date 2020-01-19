@@ -10,6 +10,11 @@ else
 end
 
 
+#Set random ID for DMaap configuration
+if node['DMAAP']['random_id'].nil?
+   node.default['DMAAP']['random_id'] = Time.now.getutc.to_i
+end
+
 
 template "janusgraph.properties" do
    path "#{ENV['JETTY_BASE']}/config/catalog-be/janusgraph.properties"
@@ -54,7 +59,7 @@ template "catalog-be-config" do
       :cassandra_truststore_password => node['cassandra'][:truststore_password],
       :cassandra_ssl_enabled  => "#{ENV['cassandra_ssl_enabled']}",
       :dcae_be_vip            => node['DCAE_BE_VIP'],
-      :dmaap_active => node['DMAAP']['active']
+      :dmaap_active           => node['DMAAP']['active']
    })
 end
 

@@ -71,7 +71,7 @@ public class ComponentInstInputsMapTest {
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setComponentInstanceProperties(componentInstanceProperties);
+		testSubject.setComponentInstancePropertiesToPolicies(componentInstanceProperties);
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class ComponentInstInputsMapTest {
 		testSubject.setComponentInstanceInputsMap(inputs);
 		testSubject.resolvePropertiesToDeclare();
 		testSubject = createTestSubject();
-		testSubject.setComponentInstanceProperties(inputs);
+		testSubject.setComponentInstancePropertiesToPolicies(inputs);
 		testSubject.resolvePropertiesToDeclare();
 		testSubject = createTestSubject();
 		testSubject.setPolicyProperties(inputs);

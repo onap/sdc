@@ -22,8 +22,10 @@
 import {CompositionCiNodeUcpeCp, Module, ModuleNodeBase, CompositionCiNodeVf, CompositionCiNodeVl, CompositionCiNodeCp, CompositionCiNodeConfiguration,
     NodeUcpe, CompositionCiNodeService,CompositionCiNodeServiceProxy, CompositionCiNodeBase, ComponentInstance} from "./../../../models";
 import {ComponentType, ResourceType} from "../../../utils/constants";
-import {ImageCreatorService} from "../../../directives/graphs-v2/image-creator/image-creator.service";
+import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
+import {Injectable} from "@angular/core";
 
+@Injectable()
 export class NodesFactory {
 
     constructor(private imageCreator:ImageCreatorService) {
@@ -54,7 +56,6 @@ export class NodesFactory {
     };
 
     public createModuleNode = (module:Module):ModuleNodeBase => {
-
         return new ModuleNodeBase(module);
     };
 
@@ -64,6 +65,3 @@ export class NodesFactory {
     }
 }
 
-NodesFactory.$inject = [
-    'ImageCreatorService'
-];

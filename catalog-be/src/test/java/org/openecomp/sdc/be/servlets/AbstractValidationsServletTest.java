@@ -69,10 +69,10 @@ public class AbstractValidationsServletTest {
 
         String payloadName = "valid_vf.csar";
         String rootPath = System.getProperty("user.dir");
-        Path path = null;
-        byte[] data = null;
-        String payloadData = null;
-        Either<Map<String, byte[]>, ResponseFormat> returnValue = null;
+        Path path;
+        byte[] data;
+        String payloadData;
+        Map<String, byte[]> returnValue = null;
         try {
             path = Paths.get(rootPath + "/src/test/resources/valid_vf.csar");
             data = Files.readAllBytes(path);
@@ -83,13 +83,11 @@ public class AbstractValidationsServletTest {
             Method privateMethod = null;
             privateMethod = AbstractValidationsServlet.class.getDeclaredMethod("getCsarFromPayload", UploadResourceInfo.class);
             privateMethod.setAccessible(true);
-            returnValue = (Either<Map<String, byte[]>, ResponseFormat>) privateMethod.invoke(servlet, resourceInfo);
+            returnValue = (Map<String, byte[]>) privateMethod.invoke(servlet, resourceInfo);
         } catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
-        assertTrue(returnValue.isLeft());
-        Map<String, byte[]> csar = returnValue.left().value();
-        assertNotNull(csar);
+        assertNotNull(returnValue);
     }
 
     @Test

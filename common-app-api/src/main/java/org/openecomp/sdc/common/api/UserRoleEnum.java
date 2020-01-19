@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,15 +21,15 @@
 package org.openecomp.sdc.common.api;
 
 public enum UserRoleEnum {
-    ADMIN("ADMIN"), DESIGNER("DESIGNER"), TESTER("TESTER"), GOVERNOR("GOVERNOR"), OPS("OPS"), PRODUCT_MANAGER("PRODUCT_MANAGER"), PRODUCT_STRATEGIST("PRODUCT_STRATEGIST");
+	ADMIN("ADMIN"), DESIGNER("DESIGNER"), TESTER("TESTER"), GOVERNOR("GOVERNOR"), OPS("OPS"), PRODUCT_MANAGER("PRODUCT_MANAGER"), PRODUCT_STRATEGIST("PRODUCT_STRATEGIST");
 
-    private String name;
+	private String name;
 
-    UserRoleEnum(String name) {
-        this.name = name;
-    }
+	UserRoleEnum(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 }

@@ -39,7 +39,6 @@ import java.util.List;
 @Component("operational-environment-dao")
 public class OperationalEnvironmentDao extends CassandraDao {
 
-    private static final String OPERATIONAL_ENVIRONMENT_DAO = "OperationalEnvironmentDao";
     private static Logger logger = Logger.getLogger(OperationalEnvironmentDao.class.getName());
     private OperationalEnvironmentsAccessor operationalEnvironmentsAccessor;
 
@@ -59,13 +58,13 @@ public class OperationalEnvironmentDao extends CassandraDao {
                 operationalEnvironmentsAccessor = manager.createAccessor(OperationalEnvironmentsAccessor.class);
                 logger.debug("** OperationalEnvironmentDao created");
             } else {
-                logger.error(EcompLoggerErrorCode.DATA_ERROR, OPERATIONAL_ENVIRONMENT_DAO, OPERATIONAL_ENVIRONMENT_DAO, "** OperationalEnvironmentDao failed");
+                logger.error(EcompLoggerErrorCode.DATA_ERROR, "OperationalEnvironmentDao", "OperationalEnvironmentDao", "** OperationalEnvironmentDao failed");
                 throw new RuntimeException("OperationalEnvironment keyspace [" + keyspace + "] failed to connect with error : "
                         + result.right().value());
             }
         } else {
-            logger.error(EcompLoggerErrorCode.DATA_ERROR, OPERATIONAL_ENVIRONMENT_DAO, OPERATIONAL_ENVIRONMENT_DAO, "** Cassandra client isn't connected");
-            logger.error(EcompLoggerErrorCode.DATA_ERROR, OPERATIONAL_ENVIRONMENT_DAO, OPERATIONAL_ENVIRONMENT_DAO, "** OperationalEnvironmentDao created, but not connected");
+            logger.error(EcompLoggerErrorCode.DATA_ERROR, "OperationalEnvironmentDao", "OperationalEnvironmentDao", "** Cassandra client isn't connected");
+            logger.error(EcompLoggerErrorCode.DATA_ERROR, "OperationalEnvironmentDao", "OperationalEnvironmentDao", "** OperationalEnvironmentDao created, but not connected");
         }
     }
     public CassandraOperationStatus save(OperationalEnvironmentEntry operationalEnvironmentEntry) {

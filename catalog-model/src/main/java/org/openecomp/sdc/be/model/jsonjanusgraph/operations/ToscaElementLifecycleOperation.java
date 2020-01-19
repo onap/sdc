@@ -239,6 +239,15 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 }
                 operation = getToscaElementOperation(currVersionV.getLabel());
                 result = operation.deleteToscaElement(currVersionV);
+                if (result.isRight()) {
+                    return result;
+                }
+                if(preVersionVertex != null){
+                    String uniqueIdPreVer = (String) janusGraphDao.getProperty((JanusGraphVertex) preVersionVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
+                    result = operation.getToscaElement(uniqueIdPreVer);
+                }else{
+                    result = Either.left(null);
+                }
             }
         } catch (Exception e) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during undo checkout tosca element {}. {}", toscaElementId, e.getMessage());
@@ -252,114 +261,6 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         if (StringUtils.isEmpty(version) || "0.1".equals(version))
             hasPreviousVersion = false;
         return hasPreviousVersion;
-    }
-
-    /**
-     * Performs request certification for tosca element
-     * 
-     * @param toscaElementId
-     * @param modifierId
-     * @param ownerId
-     * @return
-     */
-    public Either<ToscaElement, StorageOperationStatus> requestCertificationToscaElement(String toscaElementId, String modifierId, String ownerId) {
-        Either<GraphVertex, StorageOperationStatus> resultUpdate = null;
-        Either<ToscaElement, StorageOperationStatus> result = null;
-        GraphVertex toscaElement = null;
-        GraphVertex modifier = null;
-        GraphVertex owner;
-        try {
-            Either<Map<String, GraphVertex>, JanusGraphOperationStatus> getVerticesRes = janusGraphDao
-                .getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForRequestCertification(toscaElementId, modifierId, ownerId));
-            if (getVerticesRes.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVerticesRes.right().value()));
-            }
-            if (result == null) {
-                toscaElement = getVerticesRes.left().value().get(toscaElementId);
-                modifier = getVerticesRes.left().value().get(modifierId);
-                owner = getVerticesRes.left().value().get(ownerId);
-
-                StorageOperationStatus status = handleRelationsUponRequestForCertification(toscaElement, modifier, owner);
-                if (status != StorageOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to handle relations on certification request for tosca element {}. Status is {}. ", toscaElement.getUniqueId(), status);
-                }
-            }
-            if (result == null) {
-                LifecycleStateEnum nextState = LifecycleStateEnum.READY_FOR_CERTIFICATION;
-
-                toscaElement.addMetadataProperty(GraphPropertyEnum.STATE, nextState.name());
-                toscaElement.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
-
-                resultUpdate = updateToscaElementVertexMetadataPropertiesAndJson(toscaElement);
-                if (resultUpdate.isRight()) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to set lifecycle for tosca elememt {} to state {}, error: {}", toscaElement.getUniqueId(), nextState, resultUpdate.right().value());
-                    result = Either.right(resultUpdate.right().value());
-                }
-            }
-            if (result == null) {
-                ToscaElementOperation operation = getToscaElementOperation(toscaElement.getLabel());
-                result = operation.getToscaElement(toscaElement.getUniqueId());
-            }
-            return result;
-
-        } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during request certification tosca element {}. {}", toscaElementId, e.getMessage());
-        }
-        return result;
-    }
-
-    /**
-     * Starts certification of tosca element
-     * 
-     * @param toscaElementId
-     * @param modifierId
-     * @param ownerId
-     * @return
-     */
-    public Either<ToscaElement, StorageOperationStatus> startCertificationToscaElement(String toscaElementId, String modifierId, String ownerId) {
-        Either<ToscaElement, StorageOperationStatus> result = null;
-        Either<GraphVertex, StorageOperationStatus> resultUpdate = null;
-        GraphVertex toscaElement = null;
-        GraphVertex modifier = null;
-        GraphVertex owner;
-        try {
-            Either<Map<String, GraphVertex>, JanusGraphOperationStatus> getVerticesRes = janusGraphDao
-                .getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForRequestCertification(toscaElementId, modifierId, ownerId));
-            if (getVerticesRes.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVerticesRes.right().value()));
-            }
-            if (result == null) {
-                toscaElement = getVerticesRes.left().value().get(toscaElementId);
-                modifier = getVerticesRes.left().value().get(modifierId);
-                owner = getVerticesRes.left().value().get(ownerId);
-
-                StorageOperationStatus status = handleRelationsUponCertification(toscaElement, modifier, owner);
-                if (status != StorageOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to handle relations during certification of tosca element {}. Status is {}. ", toscaElement.getUniqueId(), status);
-                }
-            }
-            if (result == null) {
-                LifecycleStateEnum nextState = LifecycleStateEnum.CERTIFICATION_IN_PROGRESS;
-
-                toscaElement.addMetadataProperty(GraphPropertyEnum.STATE, nextState.name());
-                toscaElement.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
-
-                resultUpdate = updateToscaElementVertexMetadataPropertiesAndJson(toscaElement);
-                if (resultUpdate.isRight()) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Couldn't set lifecycle for component {} to state {}, error: {}", toscaElement.getUniqueId(), nextState, resultUpdate.right().value());
-                    result = Either.right(resultUpdate.right().value());
-                }
-            }
-            if (result == null) {
-                ToscaElementOperation operation = getToscaElementOperation(toscaElement.getLabel());
-                result = operation.getToscaElement(toscaElement.getUniqueId());
-            }
-        } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during start certification tosca element {}. {}", toscaElementId, e.getMessage());
-        }
-        return result;
     }
 
     public Either<ToscaElement, StorageOperationStatus> certifyToscaElement(String toscaElementId, String modifierId, String ownerId) {
@@ -392,13 +293,12 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 if (cloneRes.isRight()) {
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to clone tosca element during certification. ");
                     result = Either.right(cloneRes.right().value());
-                }
-            }
-            if (result == null) {
-                certifiedToscaElement = cloneRes.left().value();
-                status = handleRelationsOfNewestCertifiedToscaElement(toscaElement, certifiedToscaElement);
-                if (status != StorageOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to handle relations of newest certified tosca element {}. Status is {}. ", certifiedToscaElement.getUniqueId(), status);
+                } else {
+                    certifiedToscaElement = cloneRes.left().value();
+                    status = handleRelationsOfNewestCertifiedToscaElement(toscaElement, certifiedToscaElement);
+                    if (status != StorageOperationStatus.OK) {
+                        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to handle relations of newest certified tosca element {}. Status is {}. ", certifiedToscaElement.getUniqueId(), status);
+                    }
                 }
             }
             if (result == null) {
@@ -410,98 +310,15 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         return result;
     }
 
-    /**
-     * Deletes (marks as deleted) all tosca elements according received name and uuid
-     * 
-     * @param vertexType
-     * @param componentType
-     * @param componentName
-     * @param uuid
-     * @return
-     */
-    public Either<Boolean, StorageOperationStatus> deleteOldToscaElementVersions(VertexTypeEnum vertexType, ComponentTypeEnum componentType, String componentName, String uuid) {
+    private StorageOperationStatus handleRelationsOfNewestCertifiedToscaElement(GraphVertex toscaElement, GraphVertex certifiedToscaElement) {
 
-        Either<Boolean, StorageOperationStatus> result = null;
-        ToscaElementOperation operation = getToscaElementOperation(componentType);
-
-        try {
-            Map<GraphPropertyEnum, Object> properties = new EnumMap<>(GraphPropertyEnum.class);
-            properties.put(GraphPropertyEnum.UUID, uuid);
-            properties.put(GraphPropertyEnum.NAME, componentName);
-            Either<List<GraphVertex>, JanusGraphOperationStatus> getToscaElementsRes = janusGraphDao
-                .getByCriteria(vertexType, properties, JsonParseFlagEnum.ParseMetadata);
-            if (getToscaElementsRes.isRight()) {
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getToscaElementsRes.right().value()));
-            }
-            if (result == null) {
-                result = markToscaElementsAsDeleted(operation, getToscaElementsRes.left().value());
-            }
-            if (result == null) {
-                result = Either.left(true);
-            }
-        } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during deleteng all tosca elements by UUID {} and name {}. {} ", uuid, componentName, e.getMessage());
+        JanusGraphOperationStatus createVersionEdgeStatus = janusGraphDao.createEdge(toscaElement, certifiedToscaElement, EdgeLabelEnum.VERSION, new HashMap<>());
+        if (createVersionEdgeStatus != JanusGraphOperationStatus.OK) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create version edge from last element {} to new certified element {}. status=", toscaElement.getUniqueId(), certifiedToscaElement.getUniqueId(),
+                    createVersionEdgeStatus);
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createVersionEdgeStatus);
         }
-        return result;
-    }
-
-    /**
-     * Performs cancelation or failure of certification for received tosca element
-     * 
-     * @param toscaElementId
-     * @param modifierId
-     * @param ownerId
-     * @param nextState
-     * @return
-     */
-    public Either<ToscaElement, StorageOperationStatus> cancelOrFailCertification(String toscaElementId, String modifierId, String ownerId, LifecycleStateEnum nextState) {
-        Either<ToscaElement, StorageOperationStatus> result = null;
-        StorageOperationStatus status;
-        ToscaElementOperation operation = null;
-        GraphVertex toscaElement = null;
-        GraphVertex modifier = null;
-        try {
-            Either<Map<String, GraphVertex>, JanusGraphOperationStatus> getVerticesRes = janusGraphDao
-                .getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForRequestCertification(toscaElementId, modifierId, ownerId));
-            if (getVerticesRes.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVerticesRes.right().value()));
-            }
-            if (result == null) {
-                toscaElement = getVerticesRes.left().value().get(toscaElementId);
-                modifier = getVerticesRes.left().value().get(modifierId);
-                operation = getToscaElementOperation(toscaElement.getLabel());
-                toscaElement.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
-                toscaElement.setJsonMetadataField(JsonPresentationFields.USER_ID_LAST_UPDATER, modifier.getUniqueId());
-                toscaElement.addMetadataProperty(GraphPropertyEnum.STATE, nextState.name());
-
-                Either<GraphVertex, JanusGraphOperationStatus> updateVertexRes = janusGraphDao.updateVertex(toscaElement);
-                if (updateVertexRes.isRight()) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update vertex {} . Status is {}. ", toscaElementId, updateVertexRes.right().value());
-                    result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateVertexRes.right().value()));
-                }
-            }
-            if (result == null) {
-                // cancel certification process
-                status = handleRelationsUponCancelCertification(toscaElement, nextState);
-                if (status != StorageOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to handle relations upon cancel certification {}. Status is {}. ", toscaElement.getUniqueId(), status);
-                }
-            }
-            if (result == null) {
-                // fail certification
-                status = handleRelationsUponFailCertification(toscaElement, nextState);
-                if (status != StorageOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to handle relations upon fail certification {}. Status is {}. ", toscaElement.getUniqueId(), status);
-                }
-            }
-            if (result == null) {
-                result = operation.getToscaElement(toscaElementId);
-            }
-        } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during cancel or fail certification of tosca element {}. {}. ", toscaElementId, e.getMessage());
-        }
-        return result;
+        return StorageOperationStatus.OK;
     }
 
     public Either<GraphVertex, JanusGraphOperationStatus> findUser(String userId) {
@@ -511,184 +328,13 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
     private Either<Boolean, StorageOperationStatus> markToscaElementsAsDeleted(ToscaElementOperation operation, List<GraphVertex> toscaElements) {
         Either<Boolean, StorageOperationStatus> result = Either.left(true);
         for (GraphVertex resourceToDelete : toscaElements) {
-            if (!((String) resourceToDelete.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE)).equals(LifecycleStateEnum.CERTIFIED.name())) {
+            if (!(resourceToDelete.getJsonMetadataField(JsonPresentationFields.LIFECYCLE_STATE)).equals(LifecycleStateEnum.CERTIFIED.name())) {
                 Either<GraphVertex, StorageOperationStatus> deleteElementRes = operation.markComponentToDelete(resourceToDelete);
                 if (deleteElementRes.isRight()) {
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to delete tosca element {}. Status is {}. ", resourceToDelete.getUniqueId(), deleteElementRes.right().value());
                     result = Either.right(deleteElementRes.right().value());
                     break;
                 }
-            }
-        }
-        return result;
-    }
-
-    private StorageOperationStatus handleRelationsOfNewestCertifiedToscaElement(GraphVertex toscaElement, GraphVertex certifiedToscaElement) {
-        StorageOperationStatus result = null;
-        Edge foundEdge = null;
-        Iterator<Edge> certReqUserEdgeIter = null;
-        // add rfc relation to preserve follower information
-        // get user of certification request
-        certReqUserEdgeIter = toscaElement.getVertex().edges(Direction.IN, GraphEdgeLabels.LAST_STATE.name());
-        if (certReqUserEdgeIter == null || !certReqUserEdgeIter.hasNext()) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to find rfc relation during certification clone. ");
-            result = StorageOperationStatus.NOT_FOUND;
-        }
-        if (result == null) {
-            JanusGraphOperationStatus
-                createVersionEdgeStatus = janusGraphDao
-                .createEdge(toscaElement, certifiedToscaElement, EdgeLabelEnum.VERSION, new HashMap<>());
-            if (createVersionEdgeStatus != JanusGraphOperationStatus.OK) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create version edge from last element {} to new certified element {}. status=", toscaElement.getUniqueId(), certifiedToscaElement.getUniqueId(),
-                        createVersionEdgeStatus);
-                result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createVersionEdgeStatus);
-            }
-        }
-        if (result == null) {
-        	if (certReqUserEdgeIter!=null) {
-	            while (certReqUserEdgeIter.hasNext()) {
-	                Edge edge = certReqUserEdgeIter.next();
-	                if (((String) janusGraphDao.getProperty(edge, EdgePropertyEnum.STATE)).equals(LifecycleStateEnum.READY_FOR_CERTIFICATION.name())) {
-	                    foundEdge = edge;
-	                    break;
-	                }
-	
-	            }
-        	}
-            if (foundEdge == null) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to find rfc relation during certification clone. ");
-                result = StorageOperationStatus.NOT_FOUND;
-            }
-        }
-        if (result == null) {
-            JanusGraphOperationStatus
-                createEdgeRes = janusGraphDao
-                .createEdge(foundEdge.outVertex(), certifiedToscaElement.getVertex(), EdgeLabelEnum.LAST_STATE, foundEdge);
-            if (createEdgeRes != JanusGraphOperationStatus.OK) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create rfc relation for component {}. status=", certifiedToscaElement.getUniqueId(), createEdgeRes);
-                result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createEdgeRes);
-            }
-        }
-        if (result == null) {
-            result = StorageOperationStatus.OK;
-        }
-        return result;
-    }
-
-    private StorageOperationStatus handleRelationsUponFailCertification(GraphVertex toscaElement, LifecycleStateEnum nextState) {
-        StorageOperationStatus result = null;
-        JanusGraphOperationStatus status = null;
-        Edge originEdge;
-        Vertex user = null;
-        if (nextState == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN) {
-            // fail certification
-            // delete relation CERTIFICATION_IN_PROGRESS
-            Map<GraphPropertyEnum, Object> properties = new EnumMap<>(GraphPropertyEnum.class);
-            properties.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-
-            Either<Edge, JanusGraphOperationStatus> deleteResult = janusGraphDao
-                .deleteBelongingEdgeByCriteria(toscaElement, EdgeLabelEnum.STATE, properties);
-            if (deleteResult.isRight()) {
-                status = deleteResult.right().value();
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to delete state edge. Status is {}. ", status);
-                result = StorageOperationStatus.INCONSISTENCY;
-            }
-            if (result == null) {
-                // delete relation READY_FOR_CERTIFICATION
-                properties.put(GraphPropertyEnum.STATE, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-                deleteResult = janusGraphDao
-                    .deleteBelongingEdgeByCriteria(toscaElement, EdgeLabelEnum.LAST_STATE, properties);
-                if (deleteResult.isRight()) {
-                    status = deleteResult.right().value();
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_DELETE_LAST_STATE_EDGE_STATUS_IS, status);
-                    result = StorageOperationStatus.INCONSISTENCY;
-                }
-            }
-            if (result == null) {
-                // delete relation NOT_CERTIFIED_CHECKIN (in order to change to STATE)
-                properties.put(GraphPropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-                deleteResult = janusGraphDao
-                    .deleteBelongingEdgeByCriteria(toscaElement, EdgeLabelEnum.LAST_STATE, properties);
-                if (deleteResult.isRight()) {
-                    status = deleteResult.right().value();
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_DELETE_LAST_STATE_EDGE_STATUS_IS, status);
-                    result = StorageOperationStatus.INCONSISTENCY;
-                }
-            }
-            if (result == null) {
-                // create new STATE relation NOT_CERTIFIED_CHECKIN
-                originEdge = deleteResult.left().value();
-                user = originEdge.outVertex();
-                status = janusGraphDao
-                    .createEdge(user, toscaElement.getVertex(), EdgeLabelEnum.STATE, originEdge);
-                if (status != JanusGraphOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create state edge. Status is {}. ", status);
-                    result = StorageOperationStatus.INCONSISTENCY;
-                }
-            }
-            if (result == null) {
-                // delete relation LAST_MODIFIER (in order to change tester to designer)
-                deleteResult = janusGraphDao
-                    .deleteBelongingEdgeByCriteria(toscaElement, EdgeLabelEnum.LAST_MODIFIER, new HashMap<>());
-                if (status != JanusGraphOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create last modifier edge. Status is {}. ", status);
-                    result = StorageOperationStatus.INCONSISTENCY;
-                }
-            }
-            if (result == null) {
-                // create new LAST_MODIFIER relation
-                originEdge = deleteResult.left().value();
-                status = janusGraphDao.createEdge(user, toscaElement.getVertex(), EdgeLabelEnum.LAST_MODIFIER, originEdge);
-                if (status != JanusGraphOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create last modifier edge. Status is {}. ", status);
-                    result = StorageOperationStatus.INCONSISTENCY;
-                }
-            }
-        }
-        if (result == null) {
-            result = StorageOperationStatus.OK;
-        }
-        return result;
-    }
-
-    private StorageOperationStatus handleRelationsUponCancelCertification(GraphVertex toscaElement, LifecycleStateEnum nextState) {
-        StorageOperationStatus result = null;
-        Edge originEdge;
-        if (nextState == LifecycleStateEnum.READY_FOR_CERTIFICATION) {
-            // delete relation CERTIFICATION_IN_PROGRESS
-            Map<GraphPropertyEnum, Object> properties = new EnumMap<>(GraphPropertyEnum.class);
-            properties.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-            Either<Edge, JanusGraphOperationStatus> deleteResult = janusGraphDao
-                .deleteBelongingEdgeByCriteria(toscaElement, EdgeLabelEnum.STATE, properties);
-
-            if (deleteResult.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to delete state edge. Status is  {}. ", deleteResult.right().value());
-                result = StorageOperationStatus.INCONSISTENCY;
-            }
-            if (result == null) {
-                // delete relation READY_FOR_CERTIFICATION (LAST_STATE)
-                properties.put(GraphPropertyEnum.STATE, nextState);
-                deleteResult = janusGraphDao
-                    .deleteBelongingEdgeByCriteria(toscaElement, EdgeLabelEnum.LAST_STATE, properties);
-
-                if (deleteResult.isRight()) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_DELETE_LAST_STATE_EDGE_STATUS_IS, deleteResult.right().value());
-                    result = StorageOperationStatus.INCONSISTENCY;
-                }
-            }
-            if (result == null) {
-                // create relation READY_FOR_CERTIFICATION (STATE)
-                originEdge = deleteResult.left().value();
-                JanusGraphOperationStatus
-                    status = janusGraphDao
-                    .createEdge(originEdge.outVertex(), toscaElement.getVertex(), EdgeLabelEnum.STATE, originEdge);
-                if (status != JanusGraphOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create state edge. Status is {}. ", status);
-                    result = StorageOperationStatus.INCONSISTENCY;
-                }
-            }
-            if (result == null) {
-                result = StorageOperationStatus.OK;
             }
         }
         return result;
@@ -721,84 +367,6 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 if (res != StorageOperationStatus.OK) {
                     return res;
                 }
-            }
-        }
-        if (result == null) {
-            result = StorageOperationStatus.OK;
-        }
-        return result;
-    }
-
-    private StorageOperationStatus handleRelationsUponRequestForCertification(GraphVertex toscaElement, GraphVertex modifier, GraphVertex owner) {
-        JanusGraphOperationStatus status;
-        StorageOperationStatus result = null;
-
-        if (((String) toscaElement.getMetadataProperty(GraphPropertyEnum.STATE)).equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())) {
-            // remove CHECKOUT relation
-            Either<Edge, JanusGraphOperationStatus> deleteRes = janusGraphDao
-                .deleteEdge(owner, toscaElement, EdgeLabelEnum.STATE);
-            if (deleteRes.isRight()) {
-                status = deleteRes.right().value();
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to delete edge. Status is {}. ", status);
-                result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
-            }
-            if (result == null) {
-                // create CHECKIN relation
-                Map<EdgePropertyEnum, Object> properties = new EnumMap<>(EdgePropertyEnum.class);
-                properties.put(EdgePropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-                status = janusGraphDao
-                    .createEdge(modifier.getVertex(), toscaElement.getVertex(), EdgeLabelEnum.LAST_STATE, properties);
-                if (status != JanusGraphOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create edge. Status is {}", status);
-                    result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
-                }
-            }
-        } else {
-            status = janusGraphDao
-                .replaceEdgeLabel(owner.getVertex(), toscaElement.getVertex(), EdgeLabelEnum.STATE, EdgeLabelEnum.LAST_STATE);
-            if (status != JanusGraphOperationStatus.OK) {
-                result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
-            }
-        }
-        if (result == null) {
-            // create RFC relation
-            Map<EdgePropertyEnum, Object> properties = new EnumMap<>(EdgePropertyEnum.class);
-            properties.put(EdgePropertyEnum.STATE, LifecycleStateEnum.READY_FOR_CERTIFICATION);
-            status = janusGraphDao
-                .createEdge(modifier.getVertex(), toscaElement.getVertex(), EdgeLabelEnum.STATE, properties);
-            if (status != JanusGraphOperationStatus.OK) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create edge. Status is {}", status);
-                result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
-            }
-        }
-        if (result == null) {
-            result = StorageOperationStatus.OK;
-        }
-        return result;
-    }
-
-    private StorageOperationStatus handleRelationsUponCertification(GraphVertex toscaElement, GraphVertex modifier, GraphVertex owner) {
-
-        StorageOperationStatus result = null;
-        JanusGraphOperationStatus status = janusGraphDao
-            .replaceEdgeLabel(owner.getVertex(), toscaElement.getVertex(), EdgeLabelEnum.STATE, EdgeLabelEnum.LAST_STATE);
-        if (status != JanusGraphOperationStatus.OK) {
-            result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
-        }
-        if (result == null) {
-            Map<EdgePropertyEnum, Object> properties = new EnumMap<>(EdgePropertyEnum.class);
-            properties.put(EdgePropertyEnum.STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-            status = janusGraphDao
-                .createEdge(modifier, toscaElement, EdgeLabelEnum.STATE, properties);
-            if (status != JanusGraphOperationStatus.OK) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "failed to create edge. Status is {}", status);
-                result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
-            }
-        }
-        if (result == null) {
-            Either<GraphVertex, StorageOperationStatus> updateRelationsRes = updateLastModifierEdge(toscaElement, owner, modifier);
-            if (updateRelationsRes.isRight()) {
-                result = updateRelationsRes.right().value();
             }
         }
         if (result == null) {
@@ -1208,7 +776,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         nextVersionToscaElementVertex.addMetadataProperty(GraphPropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name());
         nextVersionToscaElementVertex.addMetadataProperty(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
 
-        if (toscaElementVertex.getType() == ComponentTypeEnum.SERVICE && toscaElementVertex.getMetadataProperty(GraphPropertyEnum.STATE).equals(LifecycleStateEnum.CERTIFIED.name())) {
+        if (toscaElementVertex.getType() == ComponentTypeEnum.SERVICE) {
             nextVersionToscaElementVertex.addMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS, DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED.name());
         }
         if (!MapUtils.isEmpty(toscaElementVertex.getMetadataJson())) {
@@ -1348,7 +916,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         nextVersionToscaElementVertex.setJsonMetadataField(JsonPresentationFields.USER_ID_CREATOR, modifierVertex.getUniqueId());
         nextVersionToscaElementVertex.setJsonMetadataField(JsonPresentationFields.USER_ID_LAST_UPDATER, modifierVertex.getUniqueId());
 
-        if (toscaElementVertex.getType() == ComponentTypeEnum.SERVICE && toscaElementVertex.getMetadataProperty(GraphPropertyEnum.STATE).equals(LifecycleStateEnum.CERTIFIED)) {
+        if (toscaElementVertex.getType() == ComponentTypeEnum.SERVICE) {
             nextVersionToscaElementVertex.addMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS, DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED.name());
         }
         if (!MapUtils.isEmpty(toscaElementVertex.getMetadataJson())) {
@@ -1399,27 +967,14 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         LifecycleStateEnum nextState = LifecycleStateEnum.NOT_CERTIFIED_CHECKIN;
         String faileToUpdateStateMsg = "Failed to update state of tosca element {}. Status is  {}";
 
-        if (currState == LifecycleStateEnum.READY_FOR_CERTIFICATION) {
-            // In case of cancel "ready for certification" remove last state edge with "STATE" property equals to "NOT_CERTIFIED_CHECKIN"
-            Map<GraphPropertyEnum, Object> vertexProperties = new EnumMap<>(GraphPropertyEnum.class);
-            vertexProperties.put(GraphPropertyEnum.STATE, nextState);
-            Either<Edge, JanusGraphOperationStatus> deleteResult = janusGraphDao
-                .deleteBelongingEdgeByCriteria(toscaElementVertex, EdgeLabelEnum.LAST_STATE, vertexProperties);
-            if (deleteResult.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, faileToUpdateStateMsg, toscaElementVertex.getUniqueId(), deleteResult.right().value());
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "failed to update last state relation");
-                result = Either.right(StorageOperationStatus.INCONSISTENCY);
-            }
-        }
-        if (result == null) {
-            // Remove CHECKOUT relation
+        // Remove CHECKOUT relation
             Either<Edge, JanusGraphOperationStatus> deleteEdgeResult = janusGraphDao
                 .deleteEdge(ownerVertex, toscaElementVertex, EdgeLabelEnum.STATE);
-            if (deleteEdgeResult.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, faileToUpdateStateMsg, toscaElementVertex.getUniqueId());
+        if (deleteEdgeResult.isRight()) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, faileToUpdateStateMsg, toscaElementVertex.getUniqueId());
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(deleteEdgeResult.right().value()));
-            }
         }
+
         if (result == null) {
             // Create CHECKIN relation
             Map<EdgePropertyEnum, Object> edgeProperties = new EnumMap<>(EdgePropertyEnum.class);

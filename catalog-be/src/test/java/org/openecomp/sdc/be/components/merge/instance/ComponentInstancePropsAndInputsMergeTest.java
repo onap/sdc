@@ -24,6 +24,7 @@ import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -107,33 +108,32 @@ public class ComponentInstancePropsAndInputsMergeTest {
         when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(oldInstInputs, oldInputs, resourceToUpdate, INSTANCE_ID1)).thenReturn(ActionStatus.OK);
         when(componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(oldInstProps, oldInputs, resourceToUpdate, INSTANCE_ID1)).thenReturn(ActionStatus.OK);
         when(componentInstanceInputsRedeclareHandler.redeclareComponentInputsForInstance(resourceToUpdate, INSTANCE_ID1, currInstanceOriginType, oldInputs)).thenReturn(ActionStatus.OK);
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeDataAfterCreate(USER, dataForMergeHolder, resourceToUpdate, INSTANCE_ID1);
-        assertEquals(mergeResult.left().value(), resourceToUpdate);
+        Component mergeResult = testInstance.mergeDataAfterCreate(USER, dataForMergeHolder, resourceToUpdate, INSTANCE_ID1);
+        assertEquals(mergeResult, resourceToUpdate);
         assertComponentFilter(parametersViewCaptor.getValue());
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void mergeDataAfterCreate_failedToMergeComponentInstanceInputs() throws Exception {
         ResponseFormat errorResponse = new ResponseFormat();
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(errorResponse);
         when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.GENERAL_ERROR);
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeDataAfterCreate(USER, new DataForMergeHolder(), new Service(), "inst1");
-        assertEquals(errorResponse, mergeResult.right().value());
+        testInstance.mergeDataAfterCreate(USER, new DataForMergeHolder(), new Service(), "inst1");
         verifyZeroInteractions(componentInstanceInputsRedeclareHandler, componentInstancePropertiesMergeBL, toscaOperationFacade);
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void mergeDataAfterCreate_failedToMergeComponentInstProps() throws Exception {
         ResponseFormat errorResponse = new ResponseFormat();
         when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.OK);
         when(componentInstancePropertiesMergeBL.mergeComponentInstanceProperties(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.GENERAL_ERROR);
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(errorResponse);
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeDataAfterCreate(USER, new DataForMergeHolder(), new Service(), "inst1");
-        assertEquals(errorResponse, mergeResult.right().value());
+        testInstance.mergeDataAfterCreate(USER, new DataForMergeHolder(), new Service(), "inst1");
         verifyZeroInteractions(componentInstanceInputsRedeclareHandler, toscaOperationFacade);
     }
 
-    @Test
+
+    @Test(expected = ComponentException.class)
     public void mergeDataAfterCreate_mergeInputs_FailedToFetchResource() throws Exception {
         ResponseFormat errorResponse = new ResponseFormat();
         when(componentInstanceInputsMergeBL.mergeComponentInstanceInputs(anyList(), anyList(), any(Component.class), anyString())).thenReturn(ActionStatus.OK);
@@ -143,8 +143,7 @@ public class ComponentInstancePropsAndInputsMergeTest {
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(errorResponse);
         DataForMergeHolder dataHolder = new DataForMergeHolder();
         dataHolder.setOrigComponentInputs(ObjectGenerator.buildInputs("input1", "input2"));
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeDataAfterCreate(USER, dataHolder, new Service(), "inst1");
-        assertEquals(errorResponse, mergeResult.right().value());
+        testInstance.mergeDataAfterCreate(USER, dataHolder, new Service(), "inst1");
         verifyZeroInteractions(componentInstanceInputsRedeclareHandler);
     }
 

@@ -1,0 +1,91 @@
+{
+  "resources": [
+    {
+      "distributionStatus": null,
+      "uniqueId": "c2f29c5e-0e4d-42a3-a35c-cad450cc783a",
+      "name": "MyVSP1",
+      "resourceType": "VF",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "defaulticon",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567596408782,
+      "categoryNormalizedName": null,
+      "subCategoryNormalizedName": null,
+      "tags": [
+        "MyVSP1"
+      ],
+      "lastUpdaterUserId": "m08740"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "002e4d67-1150-4e28-89e9-f6631bb5ac7e",
+      "name": "MyVSP1",
+      "resourceType": "VF",
+      "version": "1.1",
+      "lifecycleState": "NOT_CERTIFIED_CHECKOUT",
+      "icon": "defaulticon",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567935219808,
+      "categoryNormalizedName": null,
+      "subCategoryNormalizedName": null,
+      "tags": [
+        "MyVSP1"
+      ],
+      "lastUpdaterUserId": "m08740"
+    }
+  ],
+  "services": [
+    {
+      "distributionStatus": "DISTRIBUTION_NOT_APPROVED",
+      "uniqueId": "2ce5a441-f548-489a-bb90-01a56a01d646",
+      "name": "MyService2",
+      "resourceType": null,
+      "version": "0.2",
+      "lifecycleState": "NOT_CERTIFIED_CHECKOUT",
+      "icon": "defaulticon",
+      "componentType": "SERVICE",
+      "lastUpdateDate": 1567671986741,
+      "categoryNormalizedName": null,
+      "subCategoryNormalizedName": null,
+      "tags": [
+        "MyService2"
+      ],
+      "lastUpdaterUserId": "m08740"
+    },
+    {
+      "distributionStatus": "DISTRIBUTION_NOT_APPROVED",
+      "uniqueId": "6267b324-7e41-4c64-9d2f-30f4faa6ffcd",
+      "name": "MyService1",
+      "resourceType": null,
+      "version": "0.2",
+      "lifecycleState": "NOT_CERTIFIED_CHECKIN",
+      "icon": "defaulticon",
+      "componentType": "SERVICE",
+      "lastUpdateDate": 1567692093466,
+      "categoryNormalizedName": null,
+      "subCategoryNormalizedName": null,
+      "tags": [
+        "MyService1"
+      ],
+      "lastUpdaterUserId": "m08740"
+    },
+    {
+      "distributionStatus": "DISTRIBUTED",
+      "uniqueId": "fr64a441-f548-489a-bb90-01a56a016547",
+      "name": "MyService3",
+      "resourceType": null,
+      "version": "0.2",
+      "lifecycleState": "CERTIFIED",
+      "icon": "defaulticon",
+      "componentType": "SERVICE",
+      "lastUpdateDate": 1567671986745,
+      "categoryNormalizedName": null,
+      "subCategoryNormalizedName": null,
+      "tags": [
+        "MyService3"
+      ],
+      "lastUpdaterUserId": "m08740"
+    }
+  ]
+}

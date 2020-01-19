@@ -23,15 +23,12 @@ package org.openecomp.sdc.asdctool;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Hello world!
  *
  */
 public class App {
-	private static Logger log = LoggerFactory.getLogger(App.class);
 	public static void main(String[] args) {
 
 		String asdcToolPort = "8087";
@@ -55,12 +52,12 @@ public class App {
 		try {
 			jettyServer.start();
 
-			log.info("Server was started on port {}", asdcToolPort);
+			System.out.println("Server was started on port " + asdcToolPort);
 
 			jettyServer.join();
 
 		} catch (Exception e) {
-			log.info("Server failed to start - {}", e);
+			e.printStackTrace();
 			System.exit(1);
 		} finally {
 			jettyServer.destroy();

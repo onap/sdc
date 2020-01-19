@@ -45,7 +45,6 @@ Modifications copyright (c) 2018-2019 Nokia
     <!-- 3rd parties versions -->
     <bean-matcher.version>0.11</bean-matcher.version>
     <lang3.version>3.3.2</lang3.version>
-    <lang3.version>3.3.2</lang3.version>
     <guava.version>18.0</guava.version>
     <janusgraph.version>0.3.1</janusgraph.version>
     <spring.version>4.3.18.RELEASE</spring.version>
@@ -57,14 +56,15 @@ Modifications copyright (c) 2018-2019 Nokia
     <wire-mock.version>2.18.0</wire-mock.version>
     <ecomp.version>2.4.0</ecomp.version>
     <cassandra.unit.version>3.5.0.1</cassandra.unit.version>
+    <cadi.version>2.1.8</cadi.version>
     <lombok.version>1.18.2</lombok.version>
     <commons-beanutils>1.9.3</commons-beanutils>
     <commons-configuration>2.3</commons-configuration>
     <apache-poi.version>4.1.0</apache-poi.version>
-        <onap.logging.version>1.6.1</onap.logging.version>
+    <onap.logging.version>1.6.1</onap.logging.version>
 
     <commons.collections.version>4.1</commons.collections.version>
-        <ws.rs.version>2.0.1</ws.rs.version>
+    <ws.rs.version>2.0.1</ws.rs.version>
 
     <!-- Elastic Search mapper (reference the elastic search version actually). -->
     <elastic-search.version>2.4.0</elastic-search.version>
@@ -152,9 +152,13 @@ Modifications copyright (c) 2018-2019 Nokia
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
     <!--docker tags-->
     <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
+    <!--togglz version-->
+    <togglz.version>2.4.1.Final</togglz.version>
 
     <joda.time.version>2.9.9</joda.time.version>
 
+    <!--sdc-security-utils-->
+    <security.util.version>1.6.0</security.util.version>
     <!--jacoco-->
     <jacoco.version>0.8.1</jacoco.version>
 
@@ -537,8 +541,7 @@ Modifications copyright (c) 2018-2019 Nokia
       </activation>
       <modules>
         <module>onboarding</module>
-                <module>common-app-logging</module>
-        <module>security-utils</module>
+        <module>common-app-logging</module>
         <module>common-app-api</module>
         <module>common-be</module>
         <module>catalog-dao</module>
@@ -561,8 +564,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <activeByDefault>false</activeByDefault>
       </activation>
       <modules>
-        <module>security-utils</module>
-                <module>common-app-logging</module>
+        <module>common-app-logging</module>
         <module>common-app-api</module>
         <module>common-be</module>
         <module>catalog-dao</module>

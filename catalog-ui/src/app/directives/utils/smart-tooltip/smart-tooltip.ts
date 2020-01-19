@@ -43,7 +43,7 @@ export class SmartTooltipDirective implements ng.IDirective {
         }
 
         $elem.bind('mouseenter', () => {
-            if ($elem[0].offsetWidth < $elem[0].scrollWidth && !$elem.attr('tooltips')) {
+            if ((<HTMLElement>$elem[0]).offsetWidth < $elem[0].scrollWidth && !$elem.attr('tooltips')) {
                 $attrs.$set('tooltips', 'tooltips');
                 if ($attrs['sdcSmartTooltip'] && $attrs['sdcSmartTooltip'].length > 0) {
                     $elem.attr('tooltip-content', $attrs['sdcSmartTooltip']);

@@ -20,23 +20,9 @@
 
 package org.openecomp.sdc.be.model.heat;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.openecomp.sdc.be.model.tosca.converters.HeatBooleanConverter;
-import org.openecomp.sdc.be.model.tosca.converters.HeatCommaDelimitedListConverter;
-import org.openecomp.sdc.be.model.tosca.converters.HeatJsonConverter;
-import org.openecomp.sdc.be.model.tosca.converters.HeatNumberConverter;
-import org.openecomp.sdc.be.model.tosca.converters.HeatStringConverter;
-import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
-import org.openecomp.sdc.be.model.tosca.validators.HeatBooleanValidator;
-import org.openecomp.sdc.be.model.tosca.validators.HeatCommaDelimitedListValidator;
-import org.openecomp.sdc.be.model.tosca.validators.HeatNumberValidator;
-import org.openecomp.sdc.be.model.tosca.validators.HeatStringValidator;
-import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
+import org.openecomp.sdc.be.model.tosca.converters.*;
+import org.openecomp.sdc.be.model.tosca.validators.*;
 
-
-@AllArgsConstructor
-@Getter
 public enum HeatParameterType {
 
     STRING("string", HeatStringValidator.getInstance(), HeatStringConverter.getInstance()),
@@ -54,12 +40,30 @@ public enum HeatParameterType {
     private PropertyTypeValidator validator;
     private PropertyValueConverter converter;
 
-    public static HeatParameterType isValidType(final String typeName) {
+    HeatParameterType(String type, PropertyTypeValidator validator, PropertyValueConverter converter) {
+        this.type = type;
+        this.validator = validator;
+        this.converter = converter;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public PropertyTypeValidator getValidator() {
+        return validator;
+    }
+
+    public PropertyValueConverter getConverter() {
+        return converter;
+    }
+
+    public static HeatParameterType isValidType(String typeName) {
         if (typeName == null) {
             return null;
         }
 
-        for (final HeatParameterType type : HeatParameterType.values()) {
+        for (HeatParameterType type : HeatParameterType.values()) {
             if (type.getType().equals(typeName)) {
                 return type;
             }

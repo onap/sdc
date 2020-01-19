@@ -20,12 +20,16 @@
 
 'use strict';
 import * as _ from "lodash";
-import {
-    PROPERTY_TYPES, ModalsHandler, ValidationUtils, PROPERTY_VALUE_CONSTRAINTS, FormState, PROPERTY_DATA} from "app/utils";
-import {DataTypesService} from "app/services";
-import {PropertyModel, DataTypesMap, Component, GroupInstance, PolicyInstance, PropertyBEModel} from "app/models";
-import {ComponentInstance} from "../../../../models/componentsInstances/componentInstance";
+import { PROPERTY_TYPES, ValidationUtils, PROPERTY_VALUE_CONSTRAINTS, FormState, PROPERTY_DATA } from "app/utils";
+import { DataTypesService } from "app/services";
+import { PropertyModel, DataTypesMap, Component, GroupInstance, PolicyInstance, PropertyBEModel, ComponentMetadata } from "app/models";
+import { ComponentInstance } from "../../../../models/componentsInstances/componentInstance";
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
+import { SdcUiCommon, SdcUiServices, SdcUiComponents } from "onap-ui-angular";
+import { CompositionService } from "app/ng2/pages/composition/composition.service";
+import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
+import { Observable } from "rxjs";
+import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
 
 export interface IEditPropertyModel {
     property:PropertyModel;
@@ -44,7 +48,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     propertyNameValidationPattern:RegExp;
     commentValidationPattern:RegExp;
     editPropertyModel:IEditPropertyModel;
-    modalInstanceProperty:ng.ui.bootstrap.IModalServiceInstance;
+    modalInstanceProperty:ng.ui.bootstrap.IModalServiceInstance;    
     currentPropertyIndex:number;
     isLastProperty:boolean;
     myValue:any;
@@ -54,6 +58,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     maxLength:number;
     isPropertyValueOwner:boolean;
     isVnfConfiguration:boolean;
+    constraints:string[];
 
     validateJson(json:string):boolean;
     save(doNotCloseModal?:boolean):void;
@@ -82,17 +87,20 @@ export class PropertyFormViewModel {
         'PropertyNameValidationPattern',
         'CommentValidationPattern',
         'ValidationUtils',
-        'component',
+        // 'component',
         '$filter',
-        'ModalsHandler',
+        'ModalServiceSdcUI',
         'filteredProperties',
         '$timeout',
         'isPropertyValueOwner',
         'propertyOwnerType',
         'propertyOwnerId',
-        'ComponentInstanceServiceNg2'
+        'ComponentInstanceServiceNg2',
+        'TopologyTemplateService',
+        'CompositionService',
+        'workspaceService'
     ];
-
+ 
     private formState:FormState;
 
     constructor(private $scope:IPropertyFormViewModelScope,
@@ -103,17 +111,21 @@ export class PropertyFormViewModel {
                 private PropertyNameValidationPattern:RegExp,
                 private CommentValidationPattern:RegExp,
                 private ValidationUtils:ValidationUtils,
-                private component:Component,
+                // private component:Component,
                 private $filter:ng.IFilterService,
-                private ModalsHandler:ModalsHandler,
+                private modalService:SdcUiServices.ModalService,
                 private filteredProperties:Array<PropertyModel>,
                 private $timeout:ng.ITimeoutService,
                 private isPropertyValueOwner:boolean,
                 private propertyOwnerType:string,
                 private propertyOwnerId:string,
-                private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2) {
+                private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private topologyTemplateService: TopologyTemplateService,
+                private compositionService: CompositionService,
+                private workspaceService: WorkspaceService) {
 
         this.formState = angular.isDefined(property.name) ? FormState.UPDATE : FormState.CREATE;
+
         this.initScope();
     }
 
@@ -121,8 +133,10 @@ export class PropertyFormViewModel {
         this.$scope.editPropertyModel.property = new PropertyModel(this.property);
         this.$scope.editPropertyModel.property.type = this.property.type ? this.property.type : null;
         this.$scope.editPropertyModel.property.value = this.$scope.editPropertyModel.property.value || this.$scope.editPropertyModel.property.defaultValue;
+        this.$scope.constraints = this.property.constraints && this.property.constraints[0] ? this.property.constraints[0]["validValues"]  : null;
+        
         this.setMaxLength();
-        this.initAddOnLabels();
+
     };
 
     //init property add-ons labels that show up at the left side of the input.
@@ -131,22 +145,12 @@ export class PropertyFormViewModel {
             //the server sends back the normalized name. Remove it (to prevent interference with validation) and set the addon label to the component name directly.
             //Note: this cant be done in properties.ts because we dont have access to the component
             if (this.$scope.editPropertyModel.property.value) {
-                let splitProp = this.$scope.editPropertyModel.property.value.split(new RegExp(this.component.normalizedName + '.', "gi"));
+                let splitProp = this.$scope.editPropertyModel.property.value.split(new RegExp(this.workspaceService.metadata.normalizedName + '.', "gi"));
                 this.$scope.editPropertyModel.property.value = splitProp.pop();
             }
-            this.$scope.editPropertyModel.property.addOn = this.component.name;
+            this.$scope.editPropertyModel.property.addOn = this.workspaceService.metadata.name;
         }
     }
-
-    private initEditPropertyModel = ():void => {
-        this.$scope.editPropertyModel = {
-            property: null,
-            types: PROPERTY_DATA.TYPES,
-            simpleTypes: PROPERTY_DATA.SIMPLE_TYPES
-        };
-
-        this.initResource();
-    };
 
     private initForNotSimpleType = ():void => {
         let property = this.$scope.editPropertyModel.property;
@@ -195,20 +199,25 @@ export class PropertyFormViewModel {
         this.$scope.commentValidationPattern = this.CommentValidationPattern;
         this.$scope.isLoading = false;
         this.$scope.isNew = (this.formState === FormState.CREATE);
-        this.$scope.isService = this.component.isService();
+        this.$scope.isService = this.workspaceService.metadata.isService();
         this.$scope.modalInstanceProperty = this.$uibModalInstance;
         this.$scope.currentPropertyIndex = _.findIndex(this.filteredProperties, i=> i.name == this.property.name);
         this.$scope.isLastProperty = this.$scope.currentPropertyIndex == (this.filteredProperties.length - 1);
         this.$scope.dataTypes = this.DataTypesService.getAllDataTypes();
         this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
         this.$scope.propertyOwnerType = this.propertyOwnerType;
-        this.initEditPropertyModel();
+
+        this.$scope.editPropertyModel = {
+            property : new PropertyModel(this.property),
+            types : PROPERTY_DATA.TYPES,
+            simpleTypes : PROPERTY_DATA.SIMPLE_TYPES}; //All simple types
+
 
         //check if property of VnfConfiguration
         this.$scope.isVnfConfiguration = false;
-        if(this.propertyOwnerType == "component" && angular.isArray(this.component.componentInstances)) {
+        if(this.propertyOwnerType == "component" && angular.isArray(this.compositionService.componentInstances)) {
 
-            var componentPropertyOwner:ComponentInstance = this.component.componentInstances.find((ci:ComponentInstance) => {
+            var componentPropertyOwner:ComponentInstance = this.compositionService.componentInstances.find((ci:ComponentInstance) => {
                 return ci.uniqueId === this.property.resourceInstanceUniqueId;
             });
             if (componentPropertyOwner && componentPropertyOwner.componentName === 'vnfConfiguration') {
@@ -219,6 +228,7 @@ export class PropertyFormViewModel {
         this.$scope.nonPrimitiveTypes = _.filter(Object.keys(this.$scope.dataTypes), (type:string)=> {
             return this.$scope.editPropertyModel.types.indexOf(type) == -1;
         });
+        this.initResource();
         this.initForNotSimpleType();
 
 
@@ -263,10 +273,10 @@ export class PropertyFormViewModel {
 
             //Not clean, but doing this as a temporary fix until we update the property right panel modals
             if(this.propertyOwnerType == "group"){
-                this.ComponentInstanceServiceNg2.updateComponentGroupInstanceProperties(this.component, this.propertyOwnerId, [property])
+                this.ComponentInstanceServiceNg2.updateComponentGroupInstanceProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.propertyOwnerId, [property])
                     .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild);
             } else if(this.propertyOwnerType == "policy"){
-                this.ComponentInstanceServiceNg2.updateComponentPolicyInstanceProperties(this.component, this.propertyOwnerId, [property])
+                this.ComponentInstanceServiceNg2.updateComponentPolicyInstanceProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.propertyOwnerId, [property])
                     .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild);
             } else {
                 //in case we have uniqueId we call update method
@@ -275,7 +285,7 @@ export class PropertyFormViewModel {
                         let myValueString:string = JSON.stringify(this.$scope.myValue);
                         property.value = myValueString;
                     }
-                    this.component.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).then((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]), onPropertyFaild);
+                    this.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).subscribe((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]), onPropertyFaild);
                 } else {
                     if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
                         let myValueString:string = JSON.stringify(this.$scope.myValue);
@@ -283,7 +293,7 @@ export class PropertyFormViewModel {
                     } else {
                         this.$scope.editPropertyModel.property.defaultValue = this.$scope.editPropertyModel.property.value;
                     }
-                    this.component.addOrUpdateProperty(property).then(onPropertySuccess, onPropertyFaild);
+                    this.addOrUpdateProperty(property).subscribe(onPropertySuccess, onPropertyFaild);
                 }
             }
         };
@@ -362,14 +372,65 @@ export class PropertyFormViewModel {
         };
 
         this.$scope.delete = (property:PropertyModel):void => {
-            let onOk = ():void => {
-                this.component.deleteProperty(property.uniqueId).then(
+            let onOk: Function = ():void => {
+                this.deleteProperty(property.uniqueId).subscribe(
                     this.$scope.close
                 );
             };
             let title:string = this.$filter('translate')("PROPERTY_VIEW_DELETE_MODAL_TITLE");
             let message:string = this.$filter('translate')("PROPERTY_VIEW_DELETE_MODAL_TEXT", "{'name': '" + property.name + "'}");
-            this.ModalsHandler.openConfirmationModal(title, message, false).then(onOk);
+            const okButton = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+            this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
         };
     }
+
+    private updateInstanceProperties = (componentInstanceId:string, properties:PropertyModel[]):Observable<PropertyModel[]> => {
+
+        return this.ComponentInstanceServiceNg2.updateInstanceProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, componentInstanceId, properties)
+            .map(newProperties => {
+                newProperties.forEach((newProperty) => {
+                    if(newProperty.path[0] === newProperty.resourceInstanceUniqueId) newProperty.path.shift();
+                    // find exist instance property in parent component for update the new value ( find bu uniqueId & path)
+                    let existProperty: PropertyModel = <PropertyModel>_.find(this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
+                        uniqueId: newProperty.uniqueId,
+                        path: newProperty.path
+                    });
+                    let index = this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId].indexOf(existProperty);
+                    this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId][index] = newProperty;
+                });
+                return newProperties;
+            });
+    };
+
+    private addOrUpdateProperty = (property:PropertyModel):Observable<PropertyModel> => {
+        if (!property.uniqueId) {
+            let onSuccess = (property:PropertyModel):PropertyModel => {
+                let newProperty = new PropertyModel(property);
+                this.filteredProperties.push(newProperty);
+                return newProperty;
+            };
+            return this.topologyTemplateService.addProperty(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, property).map(onSuccess);
+        }
+        else {
+            let onSuccess = (newProperty:PropertyModel):PropertyModel => {
+                // find exist instance property in parent component for update the new value ( find bu uniqueId )
+                let existProperty:PropertyModel = <PropertyModel>_.find(this.filteredProperties, {uniqueId: newProperty.uniqueId});
+                let propertyIndex = this.filteredProperties.indexOf(existProperty);
+                this.filteredProperties[propertyIndex] = newProperty;
+                return newProperty;
+            };
+            return this.topologyTemplateService.updateProperty(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, property).map(onSuccess);
+        }
+    };
+
+    public deleteProperty = (propertyId:string):Observable<void> => {
+        let onSuccess = ():void => {
+            console.log("Property deleted");
+            delete _.remove(this.filteredProperties, {uniqueId: propertyId})[0];
+        };
+        let onFailed = ():void => {
+            console.log("Failed to delete property");
+        };
+        return this.topologyTemplateService.deleteProperty(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, propertyId).map(onSuccess, onFailed);
+    };
 }

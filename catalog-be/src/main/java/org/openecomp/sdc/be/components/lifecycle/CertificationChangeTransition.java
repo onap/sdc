@@ -21,10 +21,12 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -40,6 +42,7 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.ToscaUtils;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.Arrays;
@@ -60,36 +63,22 @@ public class CertificationChangeTransition extends LifeCycleTransition {
     private LifeCycleTransitionEnum name;
     private AuditingActionEnum auditingAction;
     private NodeTemplateOperation nodeTemplateOperation;
+    private ServiceBusinessLogic serviceBusinessLogic;
 
-    public CertificationChangeTransition(LifeCycleTransitionEnum name, ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
+    public CertificationChangeTransition(ServiceBusinessLogic serviceBusinessLogic, LifeCycleTransitionEnum name, ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
         super(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
 
         this.name = name;
+        this.serviceBusinessLogic = serviceBusinessLogic;
 
         // authorized roles
-        Role[] certificationChangeRoles = { Role.ADMIN, Role.TESTER };
-        Role[] resourceRoles = { Role.ADMIN, Role.TESTER, Role.DESIGNER};
+        Role[] certificationChangeRoles = { Role.ADMIN, Role.DESIGNER };
+        Role[] resourceRoles = { Role.ADMIN, Role.DESIGNER};
         addAuthorizedRoles(ComponentTypeEnum.RESOURCE, Arrays.asList(resourceRoles));
         addAuthorizedRoles(ComponentTypeEnum.SERVICE, Arrays.asList(certificationChangeRoles));
 
-        //additional authorized roles for resource type
-        switch (this.name) {
-        case CERTIFY:
-            this.auditingAction = AuditingActionEnum.CERTIFICATION_SUCCESS_RESOURCE;
-            this.nextState = LifecycleStateEnum.CERTIFIED;
-            break;
-        case FAIL_CERTIFICATION:
-            this.auditingAction = AuditingActionEnum.FAIL_CERTIFICATION_RESOURCE;
-            nextState = LifecycleStateEnum.NOT_CERTIFIED_CHECKIN;
-            break;
-        case CANCEL_CERTIFICATION:
-            this.auditingAction = AuditingActionEnum.CANCEL_CERTIFICATION_RESOURCE;
-            nextState = LifecycleStateEnum.READY_FOR_CERTIFICATION;
-            break;
-        default:
-            break;
-        }
-
+        this.auditingAction = AuditingActionEnum.CERTIFICATION_SUCCESS_RESOURCE;
+        this.nextState = LifecycleStateEnum.CERTIFIED;
     }
 
     @Override
@@ -129,19 +118,10 @@ public class CertificationChangeTransition extends LifeCycleTransition {
             return userValidationResponse;
         }
 
-        if ( componentType != ComponentTypeEnum.RESOURCE ){
-            if (!oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)  ) {
-                log.debug("oldState={} should be={}",oldState,ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION);
-                ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, componentName, componentType.name().toLowerCase());
-                return Either.right(error);
-            }
-    
-            if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS) && !modifier.getUserId().equals(owner.getUserId()) && !modifier.getRole().equals(Role.ADMIN.name())) {
-                log.debug("oldState={} should not be={}",oldState,ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE);
-                log.debug("&& modifier({})!={}  && modifier.role({})!={}", modifier, owner, modifier.getRole(), owner.getRole());
-                ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-                return Either.right(error);
-            }
+        if (oldState != LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT && oldState != LifecycleStateEnum.NOT_CERTIFIED_CHECKIN) {
+            log.debug("Valid states for certification are NOT_CERTIFIED_CHECKIN and NOT_CERTIFIED_CHECKOUT. {} is invalid state", oldState);
+            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.ILLEGAL_COMPONENT_STATE, componentName, componentType.name().toLowerCase(), oldState.name());
+            return Either.right(error);
         }
         return Either.left(true);
     }
@@ -153,12 +133,9 @@ public class CertificationChangeTransition extends LifeCycleTransition {
         Either<? extends Component, ResponseFormat> result = null;
 
         try {
-            Either<ToscaElement, StorageOperationStatus> certificationChangeResult = Either.right(StorageOperationStatus.GENERAL_ERROR);
-            if (nextState.equals(LifecycleStateEnum.CERTIFIED)) {
-                certificationChangeResult = lifeCycleOperation.certifyToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
-            } else {
-                certificationChangeResult = lifeCycleOperation.cancelOrFailCertification(component.getUniqueId(), modifier.getUserId(), owner.getUserId(), nextState);
-            }
+            handleValidationsAndArtifactsGenerationBeforeCertifying(componentType, component, componentBl, modifier, shouldLock, inTransaction);
+            Either<ToscaElement, StorageOperationStatus> certificationChangeResult =
+                    lifeCycleOperation.certifyToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
 
             if (certificationChangeResult.isRight()) {
                 ResponseFormat responseFormat = formatCertificationError(component, certificationChangeResult.right().value(), componentType);
@@ -166,14 +143,6 @@ public class CertificationChangeTransition extends LifeCycleTransition {
                 return result;
             }
 
-            if (nextState.equals(LifecycleStateEnum.CERTIFIED)) {
-                Either<Boolean, StorageOperationStatus> deleteOldComponentVersions = lifeCycleOperation.deleteOldToscaElementVersions(ModelConverter.getVertexType(component), componentType, component.getComponentMetadataDefinition().getMetadataDataDefinition().getName(),
-                        component.getComponentMetadataDefinition().getMetadataDataDefinition().getUUID());
-                if (deleteOldComponentVersions.isRight()) {
-                    ResponseFormat responseFormat = formatCertificationError(component, deleteOldComponentVersions.right().value(), componentType);
-                    result = Either.right(responseFormat);
-                }
-            }
             ToscaElement certificationResult = certificationChangeResult.left().value();
             Component componentAfterCertification = ModelConverter.convertFromToscaElement(certificationResult);
             if ( result == null || result.isLeft() ){
@@ -210,6 +179,88 @@ public class CertificationChangeTransition extends LifeCycleTransition {
             toscaOperationFacade.updateCapReqPropertiesOwnerId(component.getUniqueId());
         }
     }
+
+    Either<Boolean, ResponseFormat> validateAllResourceInstanceCertified(Component component) {
+        Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
+
+        if (component.isVspArchived()){
+            return Either.right(componentUtils.getResponseFormat(ActionStatus.ARCHIVED_ORIGINS_FOUND, component.getComponentType().name(), component.getName()));
+        }
+
+        List<ComponentInstance> resourceInstance = component.getComponentInstances();
+        if (resourceInstance != null) {
+
+            //Filter components instances with archived origins
+            Optional<ComponentInstance> archivedRIOptional = resourceInstance.stream().filter(ComponentInstanceDataDefinition::isOriginArchived).findAny();
+
+            //RIs with archived origins found, return relevant error
+            if (archivedRIOptional.isPresent()){
+                return Either.right(componentUtils.getResponseFormat(ActionStatus.ARCHIVED_ORIGINS_FOUND, component.getComponentType().name(), component.getName()));
+            }
+
+            //Continue with searching for non certified RIs
+            Optional<ComponentInstance> nonCertifiedRIOptional = resourceInstance.stream().filter(p -> !ValidationUtils.validateCertifiedVersion(p.getComponentVersion())).findAny();
+            // Uncertified Resource Found
+            if (nonCertifiedRIOptional.isPresent()) {
+                ComponentInstance nonCertifiedRI = nonCertifiedRIOptional.get();
+                ResponseFormat resFormat = getRelevantResponseFormatUncertifiedRI(nonCertifiedRI, component.getComponentType());
+                eitherResult = Either.right(resFormat);
+            }
+
+        }
+        return eitherResult;
+    }
+
+    private ResponseFormat getRelevantResponseFormatUncertifiedRI(ComponentInstance nonCertifiedRI, ComponentTypeEnum componentType) {
+
+        Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(nonCertifiedRI.getComponentUid());
+        if (eitherResource.isRight()) {
+            return componentUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+        }
+        ActionStatus actionStatus;
+        Resource resource = eitherResource.left().value();
+        Either<Resource, StorageOperationStatus> status = toscaOperationFacade.findLastCertifiedToscaElementByUUID(resource);
+
+        if (ValidationUtils.validateMinorVersion(nonCertifiedRI.getComponentVersion())) {
+            if (status.isRight() || status.left().value() == null) {
+                actionStatus = ActionStatus.VALIDATED_RESOURCE_NOT_FOUND;
+            } else {
+                actionStatus = ActionStatus.FOUND_ALREADY_VALIDATED_RESOURCE;
+            }
+        } else {
+            if (status.isRight() || status.left().value() == null) {
+                actionStatus = ActionStatus.FOUND_LIST_VALIDATED_RESOURCES;
+            } else {
+                actionStatus = ActionStatus.FOUND_ALREADY_VALIDATED_RESOURCE;
+            }
+        }
+        return componentUtils.getResponseFormat(actionStatus, componentType == ComponentTypeEnum.RESOURCE ? "VF" : "service", resource.getName());
+    }
+
+    private void handleValidationsAndArtifactsGenerationBeforeCertifying(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, boolean shouldLock, boolean inTransaction) {
+        if (component.isTopologyTemplate()) {
+            Either<Boolean, ResponseFormat> statusCert = validateAllResourceInstanceCertified(component);
+            if (statusCert.isRight()) {
+                throw new ByResponseFormatComponentException(statusCert.right().value());
+            }
+        }
+        if (componentType == ComponentTypeEnum.SERVICE) {
+
+            Either<Service, ResponseFormat> generateHeatEnvResult = serviceBusinessLogic.generateHeatEnvArtifacts((Service) component, modifier, shouldLock, inTransaction);
+
+            if (generateHeatEnvResult.isRight()) {
+                throw new ByResponseFormatComponentException(generateHeatEnvResult.right().value());
+            }
+            Either<Service, ResponseFormat> generateVfModuleResult = serviceBusinessLogic.generateVfModuleArtifacts(generateHeatEnvResult.left().value(), modifier, shouldLock, inTransaction);
+            if (generateVfModuleResult.isRight()) {
+                throw new ByResponseFormatComponentException(generateVfModuleResult.right().value());
+            }
+            component = generateVfModuleResult.left().value();
+        }
+
+        componentBl.populateToscaArtifacts(component, modifier, true, inTransaction, shouldLock);
+    }
+
 
     private void updateCalculatedCapabilitiesRequirements(Component certifiedComponent) {
         if(certifiedComponent.getComponentType() == ComponentTypeEnum.SERVICE){

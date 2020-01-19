@@ -46,8 +46,8 @@ public class ServiceUtilsTest {
     public void shouldGetObjectAsMap() {
         TestModel testModel = getTestModel();
         Map<String, Object> objectAsMap = ServiceUtils.getObjectAsMap(testModel);
-        assertEquals(1, objectAsMap.size());
-        assertEquals(OBJ_1, objectAsMap.get(PROP));
+        assertEquals(objectAsMap.size(), 1);
+        assertEquals(objectAsMap.get(PROP), OBJ_1);
     }
 
     @Test

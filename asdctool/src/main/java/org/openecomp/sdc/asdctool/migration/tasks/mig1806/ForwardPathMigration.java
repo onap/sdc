@@ -56,7 +56,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 
-@org.springframework.stereotype.Component
+//@org.springframework.stereotype.Component
 public class ForwardPathMigration implements Migration {
 
     private JanusGraphDao janusGraphDao;

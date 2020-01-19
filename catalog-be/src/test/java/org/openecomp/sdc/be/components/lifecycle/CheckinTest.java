@@ -44,8 +44,7 @@ public class CheckinTest extends LifecycleTestBase {
 
         super.setup();
         // checkout transition object
-        checkinObj = new CheckinTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
+        checkinObj = new CheckinTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,  janusGraphDao, vesionUpdateHandler);
         checkinObj.setLifeCycleOperation(toscaElementLifecycleOperation);
         checkinObj.setConfigurationManager(configurationManager);
     }

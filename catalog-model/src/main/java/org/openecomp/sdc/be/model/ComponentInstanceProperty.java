@@ -62,6 +62,7 @@ public class ComponentInstanceProperty extends PropertyDefinition implements ICo
     }
     public ComponentInstanceProperty(PropertyDataDefinition pd) {
         super(pd);
+        getConstraints();
     }
 
     public ComponentInstanceProperty(PropertyDefinition pd) {

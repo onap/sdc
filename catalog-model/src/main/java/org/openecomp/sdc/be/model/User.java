@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.be.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.resources.data.UserData;
-
+@JsonInclude
 public class User {
+
     public static final String FORCE_DELETE_HEADER_FLAG = "FORCE_DELETE";
 
     private String firstName;
@@ -45,6 +47,10 @@ public class User {
     public User() {
     }
 
+    public User(String userId) {
+        this.userId = userId;
+    }
+
     public User(UserData userDate) {
         this(userDate.getFirstName(), userDate.getLastName(), userDate.getUserId(), userDate.getEmail(),
                 userDate.getRole(), userDate.getLastLoginTime());
@@ -58,7 +64,6 @@ public class User {
         this.email = emailAddress;
         this.role = role;
         this.lastLoginTime = lastLoginTime;
-
     }
 
     public void copyData(User other) {

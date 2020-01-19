@@ -42,13 +42,13 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.operations.api.IArtifactOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
 import org.openecomp.sdc.be.resources.data.HeatParameterData;
 import org.openecomp.sdc.be.resources.data.HeatParameterValueData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
@@ -56,7 +56,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component("artifact-operation")
-public class ArtifactOperation implements IArtifactOperation {
+public class ArtifactOperation {
 
     private static final String THE_RETURNED_ARTIFACT_DEFINTION_IS = "The returned ArtifactDefintion is {}";
 
@@ -93,7 +93,6 @@ public class ArtifactOperation implements IArtifactOperation {
         this.heatParametersOperation = heatParametersOperation;
     }
 
-    @Override
     public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, boolean inTransaction) {
 
         Either<ArtifactData, StorageOperationStatus> status = addArtifactToGraph(artifactInfo, parentId, type, failIfExist);
@@ -118,7 +117,6 @@ public class ArtifactOperation implements IArtifactOperation {
 
     }
 
-    @Override
     public StorageOperationStatus addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, JanusGraphVertex parentVertex) {
 
         StorageOperationStatus status = addArtifactToGraph(artifactInfo, parentId, type, failIfExist, parentVertex);
@@ -291,7 +289,6 @@ public class ArtifactOperation implements IArtifactOperation {
         return propertyDefResult;
     }
 
-    @Override
     public Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource(ArtifactDefinition artifactInfo, String id, String artifactId, NodeTypeEnum type, boolean inTransaction) {
         Either<ArtifactData, StorageOperationStatus> status = updateArtifactOnGraph(artifactInfo, artifactId, type, id);
 
@@ -314,7 +311,6 @@ public class ArtifactOperation implements IArtifactOperation {
         }
     }
 
-    @Override
     public Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromResource(String id, String artifactId, NodeTypeEnum type, boolean deleteMandatoryArtifact, boolean inTransaction) {
         Either<ArtifactData, StorageOperationStatus> status = removeArtifactOnGraph(id, artifactId, type, deleteMandatoryArtifact);
 
@@ -751,7 +747,7 @@ public class ArtifactOperation implements IArtifactOperation {
 
         UUID uuid = UUID.randomUUID();
         artifactData.setArtifactUUID(uuid.toString());
-        MDC.put("serviceInstanceID", uuid.toString());
+        MDC.put(ILogConfiguration.MDC_SERVICE_INSTANCE_ID, uuid.toString());
         updateVersionAndDate(artifactData, oldVesrion);
     }
 

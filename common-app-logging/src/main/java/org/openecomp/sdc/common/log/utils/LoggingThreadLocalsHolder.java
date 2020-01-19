@@ -22,9 +22,6 @@ package org.openecomp.sdc.common.log.utils;
 
 
 public class LoggingThreadLocalsHolder {
-	
-	private LoggingThreadLocalsHolder() {
-	}
 
 	private static final ThreadLocal<String> uuidThreadLocal = new ThreadLocal<>();
 

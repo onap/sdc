@@ -1,0 +1,222 @@
+@import './../../../../../../../../assets/styles/variables.less';
+.sdc-hierarchy-tab {
+  padding: 15px 0 0 0;
+  background-color: #f8f8f8;
+  height: 100%;
+  box-shadow: 0.3px 1px 3px rgba(24, 24, 25, 0.42);
+  display: flex;
+  flex-flow: column;
+
+  .sdc-hierarchy-tab-title {
+    color: @main_color_a;
+    padding: 0 0 15px 20px;
+    border-bottom: 1px solid #d2d2d2;
+  }
+
+  .sdc-hierarchy-tab-sub-title {
+    color: @main_color_a;
+    padding: 15px 20px 15px 20px;
+  }
+
+  .scroll-module-list {
+    overflow-y: auto;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  /deep/ .expand-collapse-container {
+    margin-bottom: 0;
+
+    .sdc-accordion-header {
+      white-space: nowrap;
+      line-height: 22px;
+      background-color: @tlv_color_u;
+      padding: 8px 20px 8px 8px;
+      box-shadow: inset 0px -1px 0px 0px rgba(255, 255, 255, 0.7);
+      height: 40px;
+
+      .title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 215px;
+      }
+    }
+
+    .sdc-accordion-body.open {
+      padding: 0 0 5px 0;
+    }
+
+    .sdc-accordion-header:hover {
+      background-color: @main_color_o;
+    }
+
+    &.outer-container {
+      .sdc-accordion-body {
+        padding-left: 0;
+      }
+    }
+
+    &.inner-container {
+      margin-bottom: 0;
+
+      .sdc-accordion-header {
+        padding: 8px 20px 8px 30px;
+        background-color: @tlv_color_t
+      }
+    }
+  }
+
+  sdc-accordion.selected {
+    /deep/ .expand-collapse-container {
+      .sdc-accordion-header {
+        background-color: @main_color_a;
+        color: @main_color_p;
+
+        .svg-icon {
+          fill: @main_color_p;
+        }
+      }
+    }
+  }
+
+  .expand-collapse-sub-title {
+    max-width: 225px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 10px 0 0 33px;
+  }
+
+  .expand-collapse-content {
+    .expand-collapse-title {
+      padding: 0 10px 0 30px;
+    }
+  }
+
+  .module-data-container {
+    width: 100%;
+    overflow-y: overlay;
+    background-color: @tlv_color_v;
+    border: 1px solid @main_color_a;
+    border-top: 4px solid @main_color_a;
+    box-shadow: 0.3px 1px 2px rgba(24, 24, 25, 0.32);
+    .module-data {
+      color: @main_color_a;
+      padding: 10px 0 10px 0;
+      margin: 0 20px 0 20px;
+
+      .selected-module-property-header {
+        font-weight: bold;
+      }
+
+      .selected-module-property-value {
+        font-family: @font-opensans-regular;
+
+        &.small-font {
+          font-size: 12px;
+        }
+      }
+
+      .module-name-container {
+
+        display: flex;
+        flex-direction: row;
+
+        .module-name {
+          font-size: 14px;
+          width: 75%;
+          max-width: 240px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .edit-name-container {
+          float: right;
+          border-left: 1px solid @main_color_a;
+          height: 20px;
+          padding-left: 12px;
+
+          svg-icon {
+            padding-top: 3px;
+            fill: @main_color_s;
+
+            &.hand-pointer {
+              cursor: pointer;
+            }
+
+          }
+        }
+      }
+    }
+
+    .selected-module-property-container {
+      flex-direction: row;
+      display: flex;
+
+      .selected-module-property-value {
+        text-indent: 2px;
+      }
+    }
+
+    /deep/ .expand-collapse-module-data-container {
+      margin-bottom: 0;
+
+      .sdc-accordion-header {
+        white-space: nowrap;
+        line-height: 22px;
+        padding: 8px 20px 8px 16px;
+        height: 40px;
+        background-color: @tlv_color_w;
+        color: @main_color_l;
+        border-top: 1px solid @main_color_a;
+        border-bottom: 1px solid @main_color_a;
+        width: 100%;
+      }
+
+    }
+
+    .module-data-list-item {
+      padding-bottom: 10px;
+      margin: 0 20px 0 20px;
+
+      .artifact-list-item {
+        color: @main_color_m;
+      }
+
+      .module-data-list-item-value {
+        width: 100%;
+        max-width: 240px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &.artifact-info {
+          font-family: @font-opensans-regular;
+          font-size: 12px;
+        }
+
+        &.property-name {
+          font-weight: 400;
+          color: @main_color_a;
+
+          .hand-pointer {
+            cursor: pointer;
+          }
+        }
+
+        &.property-info {
+          color: @func_color_s;
+          font-family: @font-opensans-regular;
+        }
+      }
+    }
+  }
+}
+
+.modules-list {
+  overflow-y: overlay;
+  flex-grow: 1;
+}

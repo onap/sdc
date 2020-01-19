@@ -38,6 +38,7 @@ public class NodeTypeInfo {
         unmarked.derivedFrom = this.derivedFrom;
         unmarked.isNested = false;
         unmarked.mappedToscaTemplate = this.mappedToscaTemplate;
+        unmarked.isSubstitutionMapping = this.isSubstitutionMapping;
         return unmarked;
     }
 

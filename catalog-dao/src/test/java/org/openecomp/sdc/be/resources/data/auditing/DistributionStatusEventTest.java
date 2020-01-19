@@ -117,7 +117,7 @@ public class DistributionStatusEventTest {
 
 	
 	@Test
-	public void testGetResoureURL() throws Exception {
+	public void testGetResourceURL() throws Exception {
 		DistributionStatusEvent testSubject;
 		String result;
 
@@ -128,13 +128,13 @@ public class DistributionStatusEventTest {
 
 	
 	@Test
-	public void testSetResoureURL() throws Exception {
+	public void testSetResourceURL() throws Exception {
 		DistributionStatusEvent testSubject;
-		String resoureURL = "";
+		String resourceURL = "";
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setResoureURL(resoureURL);
+		testSubject.setResoureURL(resourceURL);
 	}
 
 	

@@ -49,5 +49,6 @@ public interface AuditingTypesConstants {
     String GET_CATEGORY_HIERARCHY_EVENT_TYPE = "getcategoryhierarchyevent";
     String EXTERNAL_API_EVENT_TYPE = "externalapievent";
     String ENVIRONMENT_ENGINE_EVENT_TYPE = "environmentengineevent";
+    String FEATURE_TOGGLE_STATE = "featuretogglestate";
 
 }

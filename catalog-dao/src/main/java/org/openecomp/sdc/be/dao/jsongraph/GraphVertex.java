@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.dao.jsongraph;
 
 import org.janusgraph.core.JanusGraphVertex;
+import com.google.common.base.Strings;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -87,6 +88,13 @@ public class GraphVertex {
 	}
 
 	public ComponentTypeEnum getType() {
+		if(getMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE) == null) {
+			if (getMetadataProperty(GraphPropertyEnum.RESOURCE_TYPE) != null) {
+				return ComponentTypeEnum.RESOURCE;
+			}
+			return null;
+		}
+
         return ComponentTypeEnum.valueOf((String) getMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE));
 	}
 
@@ -121,7 +129,7 @@ public class GraphVertex {
 	public void getOrSetDefaultInstantiationTypeForToscaElementJson(){
 		String toscaVertexJsonInstantiationType;
 		toscaVertexJsonInstantiationType = (String)(this.getJsonMetadataField(JsonPresentationFields.INSTANTIATION_TYPE));
-		if (toscaVertexJsonInstantiationType == StringUtils.EMPTY || toscaVertexJsonInstantiationType == null){
+		if (Strings.isNullOrEmpty(toscaVertexJsonInstantiationType)) {
 			this.setJsonMetadataField(JsonPresentationFields.INSTANTIATION_TYPE, InstantiationTypes.A_LA_CARTE.getValue());
 		};
 	};

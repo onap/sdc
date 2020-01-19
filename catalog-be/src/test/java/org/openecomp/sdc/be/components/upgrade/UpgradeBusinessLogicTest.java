@@ -131,7 +131,7 @@ public class UpgradeBusinessLogicTest {
         resource = new Resource(resourceMetadataDefinition);
         service = new Service(serviceMetadataDefinition);
 
-        when(userValidations.validateUserExists(eq(user.getUserId()), anyString(), anyBoolean()))
+        when(userValidations.validateUserExists(eq(user.getUserId())))
                 .thenReturn(user);
     }
 
@@ -277,7 +277,7 @@ public class UpgradeBusinessLogicTest {
         when(toscaOperationFacade.updateComponentInstancePropsToComponent(any(Map.class), any()))
                 .thenReturn(Either.left(stubComponentInstanceProperties));
         when(componentInstanceBusinessLogic.changeInstanceVersion(any(Component.class), any(ComponentInstance.class), any(ComponentInstance.class), any(User.class), any(ComponentTypeEnum.class)))
-                .thenReturn(Either.left(componentInstance));
+                .thenReturn(componentInstance);
 
         UpgradeStatus status = upgradeBusinessLogic.automatedUpgrade(COMPONENT_ID, getRequests(), user.getUserId());
         Assert.assertEquals(ActionStatus.OK, status.getStatus());

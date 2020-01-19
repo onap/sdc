@@ -20,38 +20,44 @@
 
 import {Injectable, Inject} from '@angular/core';
 import {IAppConfigurtaion, ICookie} from "../../models/app-config";
-import {Response, Headers, RequestOptions, Http} from '@angular/http';
 import {Cookie2Service} from "./cookie.service";
 import { Observable } from 'rxjs/Observable';
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
+import { IUserProperties } from "app/models";
+import { CacheService } from "app/ng2/services/cache.service";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class AuthenticationService {
 
-    constructor(private cookieService:Cookie2Service, private http: Http, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
+    private _loggedinUser:IUserProperties;
+    
+    constructor(private cookieService:Cookie2Service, private http: HttpClient, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig, private cacheService: CacheService) {
         this.cookieService = cookieService;
-        this.http = http;
     }
 
-    private getAuthHeaders():any {
+    private getAuthHeaders():HttpHeaders {
         let cookie:ICookie = this.sdcConfig.cookie;
-        let authHeaders:any = {};
-        authHeaders[cookie.userFirstName] = this.cookieService.getFirstName();
-        authHeaders[cookie.userLastName] = this.cookieService.getLastName();
-        authHeaders[cookie.userEmail] = this.cookieService.getEmail();
-        authHeaders[cookie.userIdSuffix] = this.cookieService.getUserId();
+        let authHeaders: HttpHeaders = new HttpHeaders();
+        authHeaders = authHeaders.set(cookie.userFirstName, this.cookieService.getFirstName())
+        .set(cookie.userLastName, this.cookieService.getLastName())
+        .set(cookie.userEmail, this.cookieService.getEmail())
+        .set(cookie.userIdSuffix, this.cookieService.getUserId())
         return authHeaders;
     }
 
-    public authenticate(): Observable<JSON> {
-        let options = new RequestOptions({
-            headers: new Headers(this.getAuthHeaders())
-        });
-
+    public authenticate(): Observable<IUserProperties> {
         let authUrl = this.sdcConfig.api.root + this.sdcConfig.api.GET_user_authorize;
-        return this.http
-            .get(authUrl, options)
-            .map((res: Response) => res.json());
+        return this.http.get<IUserProperties>(authUrl, {headers: this.getAuthHeaders()});
     }
+
+    public getLoggedinUser():IUserProperties {
+        return this._loggedinUser;
+    }
+
+    public setLoggedinUser(loggedinUser:IUserProperties) {
+        this._loggedinUser = loggedinUser;
+        this.cacheService.set('user', loggedinUser);
+    };
 
 }

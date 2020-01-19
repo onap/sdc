@@ -26,7 +26,7 @@ beProtocol: http
 beSslPort: <%= @ssl_port %>
 version: 1.0
 released: 2012-11-30
-toscaConformanceLevel: 9.0
+toscaConformanceLevel: 11.0
 minToscaConformanceLevel: 3.0
 
 janusGraphCfgFile: <%= @janusgraph_Path %>/janusgraph.properties
@@ -40,7 +40,7 @@ janusGraphHealthCheckReadTimeout: 1
 
 # The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
 
-esReconnectIntervalInSeconds: 3
+
 uebHealthCheckReconnectIntervalInSeconds: 15
 uebHealthCheckReadTimeout: 4
 
@@ -90,28 +90,8 @@ cassandraConfig:
         - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
         - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
 
-#Application-specific settings of ES
-elasticSearch:
-    # Mapping of index prefix to time-based frame. For example, if below is configured:
-    #
-    # - indexPrefix: auditingevents
-    #    creationPeriod: minute
-    #
-    # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
-    # Another object created on 2015-12-23 13:25:54, will enter "auditingevents-2015-12-23-13-25" index.
-    # If creationPeriod: month, both of the above will enter "auditingevents-2015-12" index.
-    #
-    # PLEASE NOTE: the timestamps are created in UTC/GMT timezone! This is needed so that timestamps will be correctly presented in Kibana.
-    #
-    # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
-    #
-    # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
 
-    indicesTimeFrequency:
-      - indexPrefix: auditingevents
-        creationPeriod: month
-      - indexPrefix: monitoring_events
-        creationPeriod: month
+
 
 artifactTypes:
    - CHEF
@@ -285,7 +265,10 @@ systemMonitoring:
     isProxy: false
     probeIntervalInSeconds: 15
 
-defaultHeatArtifactTimeoutMinutes: 60
+heatArtifactDeploymentTimeout:
+  defaultMinutes: 30
+  minMinutes: 1
+  maxMinutes: 120
 
 serviceDeploymentArtifacts:
     CONTROLLER_BLUEPRINT_ARCHIVE:
@@ -608,10 +591,6 @@ resourceInformationalArtifacts:
 
 resourceInformationalDeployedArtifacts:
 
-requirementsToFulfillBeforeCert:
-
-capabilitiesToConsumeBeforeCert:
-
 unLoggedUrls:
    - /sdc2/rest/healthCheck
 
@@ -764,9 +743,7 @@ dmaapConsumerConfiguration:
         username: user
         password:
 
-dmeConfiguration:
-    dme2Search: DME2SEARCH
-    dme2Resolve: DME2RESOLVE
+
 
 excludedPolicyTypesMapping:
    # VF:

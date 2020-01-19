@@ -57,7 +57,7 @@ public class ComponentInstanceHeatEnvMerge implements ComponentInstanceMergeInte
     }
 
     @Override
-    public Either<Component, ResponseFormat> mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
+    public Component mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
         List<ArtifactDefinition> origCompInstHeatEnvArtifacts = dataHolder.getOrigComponentInstanceHeatEnvArtifacts();
         List<ArtifactDefinition> newCompInstHeatEnvArtifacts = updatedContainerComponent.safeGetComponentInstanceHeatArtifacts(newInstanceId);
         List<ArtifactDefinition> artifactsToUpdate = heatEnvArtifactsMergeBusinessLogic.mergeInstanceHeatEnvArtifacts(origCompInstHeatEnvArtifacts, newCompInstHeatEnvArtifacts);
@@ -65,13 +65,9 @@ public class ComponentInstanceHeatEnvMerge implements ComponentInstanceMergeInte
         for (ArtifactDefinition artifactInfo : artifactsToUpdate) {
             Map<String, Object> json = artifactsBusinessLogic.buildJsonForUpdateArtifact(artifactInfo, ArtifactGroupTypeEnum.DEPLOYMENT,  null);
 
-            Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = artifactsBusinessLogic.updateResourceInstanceArtifactNoContent(newInstanceId, updatedContainerComponent, user, json,
+            Either<ArtifactDefinition, Operation> uploadArtifactToService = artifactsBusinessLogic.updateResourceInstanceArtifactNoContent(newInstanceId, updatedContainerComponent, user, json,
                     artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.UPDATE), null);
-            if (uploadArtifactToService.isRight()) {
-                log.error("Failed to update artifact {} on resourceInstance {}", artifactInfo.getArtifactLabel(), newInstanceId);
-                return Either.right(uploadArtifactToService.right().value());
-            }
         }
-        return Either.left(updatedContainerComponent);
+        return updatedContainerComponent;
     }
 }

@@ -43,6 +43,9 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -185,6 +188,6 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     private void auditAndThrowException(Resource resource, User user, AuditingActionEnum auditingAction, ActionStatus status, String... params){
         ResponseFormat errorResponse = componentsUtils.getResponseFormat(status, params);
         componentsUtils.auditResource(errorResponse, user, resource, auditingAction);
-        throw new ByResponseFormatComponentException(errorResponse);
+        throw new ByResponseFormatComponentException(errorResponse, params);
     }
 }

@@ -38,8 +38,7 @@ export class PluginFrameComponent implements OnInit {
             } else {
                 this.onLoadingDone.emit();
             }
-        })
-
+        });
     }
 
     private initPlugin() {

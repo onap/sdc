@@ -299,9 +299,20 @@ public class PropertyDataValueMergeBusinessLogicTest {
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         assertEquals("lprop",  "[{\"prop2\":{\"prop4\":45,\"prop3\":true},\"prop1\":\"val1\"},{\"prop2\":{\"prop3\":false},\"prop1\":\"val2\"}]", newProp.getValue());
     }
-    
-    
-    
+
+    @Test
+    public void mergeListOfMapsWithJsonAsInnerType() throws Exception {
+        PropertyDataDefinition oldProp = createProp("value_spec", "list", "json", "[{\"prop1\":\"val1\", \"prop2\":\"prop3\",\"prop4\":44}]");
+        PropertyDataDefinition newProp = createProp("value_spec", "list", "json", "[{\"prop22\":{\"prop221\":45,\"prop222\":\"val222\",\"prop223\":\"false\"}}]");
+
+        Map<String, DataTypeDefinition> dataTypes = buildDataTypes();
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypes));
+        testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
+        assertEquals("value_spec", "[{\"prop22\":{\"prop223\":\"false\",\"prop221\":45,\"prop222\":\"val222\"}}]", newProp.getValue());
+    }
+
+
+
     /*
      * Old Property:                          New Property:                               Expected:                          
      * {                                      {                                           {

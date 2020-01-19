@@ -51,7 +51,7 @@ export class Requirement implements RequirementCapabilityModel{
     uniqueId:string;
     relationship:string;
     leftOccurrences:string;
-    minOccurrences: number;
+    minOccurrences:string | number;
     maxOccurrences:string;
     //custom
     filterTerm:string;
@@ -99,6 +99,16 @@ export class Requirement implements RequirementCapabilityModel{
 
     public isFulfilled() {
         return parseInt(this.leftOccurrences) === 0;
+    }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class RequirementUI extends Requirement {
+    isCreatedManually: boolean;
+
+    constructor(input: Requirement, componentUniqueId: string) {
+        super(input);
+        this.isCreatedManually = input.ownerId === componentUniqueId;
     }
 }
 

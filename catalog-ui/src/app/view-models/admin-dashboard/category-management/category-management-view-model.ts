@@ -20,7 +20,8 @@
 
 'use strict';
 import {ModalsHandler, ValidationUtils} from "app/utils";
-import {CacheService, ICategoryResource} from "app/services";
+import {ICategoryResource} from "app/services";
+import {CacheService} from "app/services-ng2";
 import {IAppConfigurtaion} from "app/models";
 import {ComponentType} from "../../../utils/constants";
 
@@ -136,58 +137,6 @@ export class CategoryManagementViewModel {
             scope.modalInstance = this.$uibModal.open(modalOptions);
             scope.modalInstance.result.then(onOk, onCancel);
 
-        };
-
-        scope.deleteCategory = (category:ICategoryResource, subCategory:ICategoryResource):void => {
-
-            let onOk = ():void => {
-
-                scope.isLoading = true;
-                let type:string = scope.type;
-
-                let onError = (response):void => {
-                    scope.isLoading = false;
-                    console.info('onFaild', response);
-                };
-
-                let onSuccess = (response:any):void => {
-                    let arr:Array<ICategoryResource>;
-
-                    if (!subCategory) {
-                        arr = this.$scope[type + 'Categories'];
-                        arr.splice(arr.indexOf(category), 1);
-                        if (category === scope.selectedCategory) {
-                            scope.selectedCategory = null;
-                            scope.selectedSubCategory = null;
-                        }
-                    } else {
-                        arr = category.subcategories;
-                        arr.splice(arr.indexOf(subCategory), 1);
-                    }
-
-                    scope.isLoading = false;
-                };
-
-                if (!subCategory) {
-                    category.$delete({
-                            types: type + "s",
-                            categoryId: category.uniqueId
-                        }
-                        , onSuccess, onError);
-                } else {
-                    category.$deleteSubCategory({
-                            types: type + "s",
-                            categoryId: category.uniqueId,
-                            subCategoryId: subCategory.uniqueId,
-                        }
-                        , onSuccess, onError);
-                }
-            };
-            let modelType:string = subCategory ? 'sub category' : 'category';
-            let title:string = this.$filter('translate')("DELETE_CATEGORY_MODAL_HEADER", "{'modelType': '" + modelType + "' }");
-            let message:string = this.$filter('translate')("DELETE_CATEGORY_MODAL_CATEGORY_NAME", "{'modelType': '" + modelType + "' }");
-
-            this.ModalsHandler.openConfirmationModal(title, message, false, 'sdc-xsm').then(onOk);
         };
 
         this.$scope.serviceCategories = this.cacheService.get('serviceCategories');

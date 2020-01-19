@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
+import static org.openecomp.sdc.ci.tests.pages.GeneralPageElements.clickOKButton;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
@@ -34,6 +35,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.ci.tests.data.providers.OnboardingDataProviders;
 import org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
@@ -72,6 +77,7 @@ import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
 import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.utils.general.VendorLicenseModelRestUtils;
@@ -415,28 +421,15 @@ public class OnboardingFlowsUi extends SetupCDTest {
         ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
-        CompositionPage.searchForElement(vspName);
-        final CanvasManager serviceCanvasManager = CanvasManager.getCanvasManager();
-        final CanvasElement vfElement = serviceCanvasManager.createElementOnCanvas(vspName);
-        ArtifactsCorrelationManager.addVNFtoServiceArtifactCorrelation(serviceMetadata.getName(), vspName);
+        Service containerObject = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
+        Resource instanceObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
+        ComponentInstance componentInstanceDetails = AtomicOperationUtils.addComponentInstanceToComponentContainer(instanceObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
 
-        assertNotNull(vfElement);
-        ServiceVerificator.verifyNumOfComponentInstances(serviceMetadata, "0.1", 1, getUser());
-        ExtentTestActions.addScreenshot(Status.INFO, "ServiceComposition_" + vnfFile, "The service topology is as follows: ");
+        GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.LifeCyleChangeButtons.CERTIFY.getValue());
 
-        ServiceGeneralPage.clickSubmitForTestingButton(serviceMetadata.getName());
-
-        reloginWithNewRole(UserRoleEnum.TESTER);
-        GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
-        TesterOperationPage.certifyComponent(serviceMetadata.getName());
-
-        reloginWithNewRole(UserRoleEnum.GOVERNOR);
-        HomePage.waitForElement(PageElement.COMPONENT_PANEL);
-        HomePage.findComponentAndClick(serviceMetadata.getName());
-        GovernorOperationPage.approveService(serviceMetadata.getName());
-
-        runDistributionFlow(serviceMetadata);
-
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.APPROVE_MESSAGE.getValue())
+                .sendKeys("service " + serviceMetadata.getName() + " certified successfully");
+        clickOKButton();
         getExtendTest().log(Status.INFO, String.format("Successfully onboarded the package '%s'", vnfFile));
     }
 

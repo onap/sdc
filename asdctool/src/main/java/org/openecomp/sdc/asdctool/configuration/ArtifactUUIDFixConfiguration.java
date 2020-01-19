@@ -22,6 +22,7 @@ package org.openecomp.sdc.asdctool.configuration;
 
 
 import org.openecomp.sdc.asdctool.impl.ArtifactUuidFix;
+import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.config.CatalogModelSpringConfig;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
@@ -51,13 +52,4 @@ public class ArtifactUUIDFixConfiguration {
         return new ArtifactUuidFix(janusGraphDao, toscaOperationFacade, toscaExportHandler, artifactCassandraDao, csarUtils);
     }
     
-    @Bean(name = "elasticsearchConfig")
-    public PropertiesFactoryBean mapper() {
-        String configHome = System.getProperty("config.home");
-        PropertiesFactoryBean bean = new PropertiesFactoryBean();
-        bean.setLocation(new FileSystemResource(configHome + "/elasticsearch.yml"));
-        return bean;
-    }
-
-
 }

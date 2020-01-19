@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
@@ -37,11 +38,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -57,9 +63,13 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,16 +84,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @OpenAPIDefinition(info = @Info(title = "Input Catalog", description = "Input Servlet"))
 @Path("/v1/catalog")
-@Singleton
+@Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class InputsServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(InputsServlet.class);
+    private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(InputsServlet.class.getName());
+    private static final String START_HANDLE_REQUEST_OF = "(get) Start handle request of {}";
 
     private final DataTypeBusinessLogic businessLogic;
     private final InputsBusinessLogic inputsBusinessLogic;
@@ -113,7 +126,7 @@ public class InputsServlet extends AbstractValidationsServlet {
                     ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId,
             @Parameter(description = "json describe the input", required = true) String data,
-            @Context final HttpServletRequest request) {
+            @Context final HttpServletRequest request) throws JsonProcessingException {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -157,7 +170,7 @@ public class InputsServlet extends AbstractValidationsServlet {
         }
         catch (Exception e) {
             log.error("create and associate RI failed with exception: {}", e.getMessage(), e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
@@ -173,11 +186,11 @@ public class InputsServlet extends AbstractValidationsServlet {
     public Response getComponentInstanceInputs(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
             @PathParam("originComponentUid") final String originComponentUid, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         Response response;
 
         try {
@@ -192,9 +205,7 @@ public class InputsServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Inputs " + componentType);
             log.debug("getInputs failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -209,11 +220,11 @@ public class InputsServlet extends AbstractValidationsServlet {
     public Response getInputPropertiesForComponentInstance(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
             @PathParam("inputId") final String inputId, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(GET) Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         Response response = null;
 
         try {
@@ -227,12 +238,9 @@ public class InputsServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(
-                    "Get Properites by input id: " + inputId + " for instance with id: " + instanceId);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Properites by input id: " + inputId + " for instance with id: " + instanceId);
             log.debug("getInputPropertiesForComponentInstance failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -245,11 +253,11 @@ public class InputsServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getInputsForComponentInput(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         Response response;
         try {
             Either<List<ComponentInstanceInput>, ResponseFormat> inputsRes =
@@ -263,12 +271,9 @@ public class InputsServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(
-                    "Get inputs by input id: " + inputId + " for component with id: " + componentId);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get inputs by input id: " + inputId + " for component with id: " + componentId);
             log.debug("getInputsForComponentInput failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -281,11 +286,11 @@ public class InputsServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getInputsAndPropertiesForComponentInput(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         Response response;
 
         try {
@@ -300,12 +305,9 @@ public class InputsServlet extends AbstractValidationsServlet {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(
-                    "Get inputs by input id: " + inputId + " for component with id: " + componentId);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get inputs by input id: " + inputId + " for component with id: " + componentId);
             log.debug("getInputsForComponentInput failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -375,7 +377,7 @@ public class InputsServlet extends AbstractValidationsServlet {
             log.debug("modifier id is {}", userId);
 
             Either<ComponentInstListInput, ResponseFormat> componentInstInputsMapRes =
-                    parseToComponentInstListInput(componentInstInputsMapObj, modifier);
+                parseToComponentInstListInput(componentInstInputsMapObj, modifier);
             if (componentInstInputsMapRes.isRight()) {
                 log.debug("failed to parse componentInstInputsMap");
                 response = buildErrorResponse(componentInstInputsMapRes.right().value());
@@ -424,25 +426,17 @@ public class InputsServlet extends AbstractValidationsServlet {
 
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(get) Start handle request of {}", url);
-        Response response = null;
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        loggerSupportability.log(LoggerSupportabilityActions.DELETE_INPUTS, StatusCode.STARTED,"Starting to delete Inputs for component {} ",componentId + " by " +  userId );
 
         try {
-            Either<InputDefinition, ResponseFormat> deleteInput =
-                    inputsBusinessLogic.deleteInput(componentId, userId, inputId);
-            if (deleteInput.isRight()) {
-                ResponseFormat deleteResponseFormat = deleteInput.right().value();
-                response = buildErrorResponse(deleteResponseFormat);
-                return response;
-            }
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deleteInput.left().value());
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance()
-                    .logBeRestApiGeneralError("Delete input for service + " + componentId + " + with id: " + inputId);
+            InputDefinition deleteInput = inputsBusinessLogic.deleteInput(componentId, userId, inputId);
+            loggerSupportability.log(LoggerSupportabilityActions.DELETE_INPUTS, StatusCode.COMPLETE,"Ended delete Inputs for component {} ",componentId + " by " +  userId );
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deleteInput);
+        } catch (ComponentException e){
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete input for service + " + componentId + " + with id: " + inputId);
             log.debug("Delete input failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -463,13 +457,13 @@ public class InputsServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "200", description = "Data type found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Data type not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getDataType(
             @PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,
             @PathParam("dataTypeName") final String dataTypeName,
             @Context final HttpServletRequest request
     ) {
-        ComponentsUtils componentsUtils = getComponentsUtils();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(getDataType) Start handle request of {}", url);
         Response response;
@@ -506,6 +500,7 @@ public class InputsServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "200", description = "Data type found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getDataTypes(
             @PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,
@@ -550,6 +545,7 @@ public class InputsServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "200", description = "Data type deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Data type not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteDataType(
             @PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,

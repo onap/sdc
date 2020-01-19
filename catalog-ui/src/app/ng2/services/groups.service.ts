@@ -1,11 +1,11 @@
 import {IZoneInstanceAssignment} from '../../models/graph/zones/zone-instance';
 import {Injectable, Inject} from "@angular/core";
 import {Observable} from "rxjs/Observable";
-import {HttpService} from "./http.service";
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 import {GroupInstance} from '../../models/graph/zones/group-instance';
 import {UiBaseObject} from "../../models/ui-models/ui-base-object";
 import {IZoneService} from "../../models/graph/zones/zone";
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class GroupsService implements IZoneService {
@@ -17,13 +17,13 @@ export class GroupsService implements IZoneService {
         'SERVICE': 'services'
     }
 
-    constructor(private http:HttpService, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
+    constructor(private http: HttpClient, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
         this.baseUrl = sdcConfig.api.root;
     }
 
-    public createGroupInstance(componentType:string, componentUniqueId:string, groupType:string) {
-        return this.http.post(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[componentType.toUpperCase()] + '/' + componentUniqueId + '/groups/' + groupType, {}).map(resp => {
-            return resp.json();
+    public createGroupInstance(componentType:string, componentUniqueId:string, groupType:string): Observable<GroupInstance>{
+        return this.http.post<GroupInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[componentType.toUpperCase()] + '/' + componentUniqueId + '/groups/' + groupType, {}).map(resp => {
+            return new GroupInstance(resp);
         });
     };
 
@@ -40,8 +40,7 @@ export class GroupsService implements IZoneService {
     }
 
     public updateGroupMembers(topologyTemplateType:string, topologyTemplateId:string, groupId:string, members:Array<string>):Observable<Array<string>> {
-        return this.http.post(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId + '/members', members)
-            .map(response => response.json());
+        return this.http.post<Array<string>>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId + '/members', members);
     }
 
     public updateMembers(topologyTemplateType:string, topologyTemplateId:string, groupId:string, members:Array<UiBaseObject>):Observable<Array<string>> {
@@ -50,22 +49,18 @@ export class GroupsService implements IZoneService {
     }
 
     public getSpecificGroup(topologyTemplateType:string, topologyTemplateId:string, groupId:string):Observable<GroupInstance> {
-        return this.http.get(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId)
+        return this.http.get<GroupInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId)
             .map(res => {
-                return new GroupInstance(res.json());
+                return new GroupInstance(res);
             });
     }
 
     public updateName(topologyTemplateType:string, topologyTemplateId:string, groupId:string, newName:string):Observable<GroupInstance> {
-        return this.http.put(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId, {name: newName}).map(resp => {
-            return resp.json();
-        });
+        return this.http.put<GroupInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId, {name: newName});
     };
 
     public deleteGroup(topologyTemplateType:string, topologyTemplateId:string, groupId:string) {
-        return this.http.delete(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId).map(resp => {
-            return resp.json();
-        });
+        return this.http.delete<GroupInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/groups/' + groupId);
     };
 
     public updateZoneInstanceAssignments(topologyTemplateType:string, topologyTemplateId:string, policyId:string, members:Array<IZoneInstanceAssignment>):Observable<any> {
@@ -75,4 +70,6 @@ export class GroupsService implements IZoneService {
     public deleteZoneInstance(topologyTemplateType:string, topologyTemplateId:string, policyId:string):Observable<any> {
         return this.deleteGroup(topologyTemplateType, topologyTemplateId, policyId);
     };
+
+
 }

@@ -444,26 +444,10 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	@DataProvider(name="invalidStatesForService") 
 	public static Object[][] dataProviderInvalidStatesForService() {
 		return new Object[][] {
-			{LifeCycleStatesEnum.CHECKIN, LifeCycleStatesEnum.CHECKIN, COMPONENT_ALREADY_CHECKED_IN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, "409", ActionStatus.COMPONENT_ALREADY_CHECKED_IN, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
-			{LifeCycleStatesEnum.CHECKIN, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
-			{LifeCycleStatesEnum.CHECKIN, LifeCycleStatesEnum.CERTIFY, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
-			
-			{LifeCycleStatesEnum.CHECKOUT, LifeCycleStatesEnum.CHECKOUT, COMPONENT_IN_CHECKOUT_STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, "403", ActionStatus.COMPONENT_IN_CHECKOUT_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
-			{LifeCycleStatesEnum.CHECKOUT, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
-			{LifeCycleStatesEnum.CHECKOUT, LifeCycleStatesEnum.CERTIFY, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
-			
-			{LifeCycleStatesEnum.CERTIFICATIONREQUEST, LifeCycleStatesEnum.CERTIFICATIONREQUEST, COMPONENT_SENT_FOR_CERTIFICATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, "403", ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
-			{LifeCycleStatesEnum.CERTIFICATIONREQUEST, LifeCycleStatesEnum.CERTIFY, RESTRICTED_OPERATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, LifecycleStateEnum.READY_FOR_CERTIFICATION, "409", ActionStatus.RESTRICTED_OPERATION, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
-			
-			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.CHECKIN, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
-			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.CHECKOUT, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
-			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.CERTIFICATIONREQUEST, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
-			{LifeCycleStatesEnum.STARTCERTIFICATION, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_IN_CERT_IN_PROGRESS_STATE, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, "403", ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
-
-			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CHECKIN, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
-			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CERTIFICATIONREQUEST, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.TESTER)},
-			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.STARTCERTIFICATION, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
-			{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CERTIFY, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.TESTER), null},
+				{LifeCycleStatesEnum.CHECKIN, LifeCycleStatesEnum.CHECKIN, COMPONENT_ALREADY_CHECKED_IN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, "409", ActionStatus.COMPONENT_ALREADY_CHECKED_IN, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
+				{LifeCycleStatesEnum.CHECKOUT, LifeCycleStatesEnum.CHECKOUT, COMPONENT_IN_CHECKOUT_STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, "403", ActionStatus.COMPONENT_IN_CHECKOUT_STATE, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
+				{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CHECKIN, COMPONENT_ALREADY_CERTIFIED, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_ALREADY_CERTIFIED, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER)},
+				{LifeCycleStatesEnum.CERTIFY, LifeCycleStatesEnum.CERTIFY, COMPONENT_NOT_READY_FOR_CERTIFICATION, LifecycleStateEnum.CERTIFIED, LifecycleStateEnum.CERTIFIED, "403", ActionStatus.COMPONENT_NOT_READY_FOR_CERTIFICATION, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), null},
 		};
 	}
 	
@@ -472,11 +456,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	public void invalidStatesForService(LifeCycleStatesEnum initState, LifeCycleStatesEnum targetState, int errorCode,
 			LifecycleStateEnum preState, LifecycleStateEnum currState, String status,
 			ActionStatus actionStatus, User user, User operationUser) throws Exception {
-		
-		if(initState.equals(LifeCycleStatesEnum.STARTCERTIFICATION) && targetState.equals(LifeCycleStatesEnum.CHECKIN)){
-			throw new SkipException("Open bug DE270217 or TDP number: 154592");			
-		}
-		
+
 		getExtendTest().log(Status.INFO, String.format("initState: %s, targetState: %s, errorCode: %s,"
 				+ " preState: %s, currState: %s, status: %s, actionStatus: %s, user: %s, operationUser: %s", initState, targetState, errorCode, preState,
 				currState, status, actionStatus, user, operationUser));
@@ -493,10 +473,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 			restResponse = LifecycleRestUtils.checkOutService(service.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CHECKIN)) {
 			restResponse = LifecycleRestUtils.checkInService(service.getUUID(), user);
-		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
-			restResponse = LifecycleRestUtils.certificationRequestService(service.getUUID(), user);
-		} else if(targetState.equals(LifeCycleStatesEnum.STARTCERTIFICATION)) {
-			restResponse = LifecycleRestUtils.startTestingService(service.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFY)) {
 			restResponse = LifecycleRestUtils.certifyService(service.getUUID(), user);
 		}
@@ -540,11 +516,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		getExtendTest().log(Status.INFO, String.format("initState: %s, targetState: %s, errorCode: %s,"
 				+ " preState: %s, currState: %s, status: %s, actionStatus: %s, user: %s, operationUser: %s", initState, targetState, errorCode, preState,
 				currState, status, actionStatus, user, operationUser));
-		
-		if(initState.equals(LifeCycleStatesEnum.STARTCERTIFICATION) && targetState.equals(LifeCycleStatesEnum.CHECKIN)){
-			throw new SkipException("Open bug DE270217 or TDP number: 154592");			
-		}
-		
+
 		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		Component resourceDetails = createdComponent.left().value();
 		
@@ -556,10 +528,6 @@ public class AssetLifeCycle extends ComponentBaseTest {
 			restResponse = LifecycleRestUtils.checkOutResource(resourceDetails.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CHECKIN)) {
 			restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), user);
-		/*} else if(targetState.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
-			restResponse = LifecycleRestUtils.certificationRequestResource(resourceDetails.getUUID(), user);
-		} else if(targetState.equals(LifeCycleStatesEnum.STARTCERTIFICATION)) {
-			restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), user);*/
 		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFY)) {
 			restResponse = LifecycleRestUtils.certifyResource(resourceDetails.getUUID(), user);
 		}

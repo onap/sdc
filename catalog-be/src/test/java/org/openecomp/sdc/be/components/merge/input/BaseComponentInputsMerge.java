@@ -60,9 +60,11 @@ public abstract class BaseComponentInputsMerge {
         prevResource = new ResourceBuilder()
                 .addInput("input1")
                 .addInput("input2")
+                .addComponentInstance("inst1")
                 .build();
 
         currResource = new ResourceBuilder()
+                .addComponentInstance("inst1")
                 .addInstanceProperty("inst1", "prop1")
                 .addInstanceProperty("inst1", "prop2")
                 .addInstanceInput("inst2", "prop3")
