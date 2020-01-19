@@ -20,20 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
-import org.openecomp.sdc.be.mixin.GroupTypeMixin;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.view.ResponseView;
-import org.openecomp.sdc.common.api.Constants;
-import org.springframework.stereotype.Controller;
 import com.jcabi.aspects.Loggable;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,6 +30,25 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.mixin.GroupTypeMixin;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.be.view.ResponseView;
+import org.openecomp.sdc.common.api.Constants;
+import org.springframework.stereotype.Controller;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -51,11 +56,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class GroupTypesEndpoint {
+public class GroupTypesEndpoint extends BeGenericServlet{
 
     private final GroupTypeBusinessLogic groupTypeBusinessLogic;
 
-    public GroupTypesEndpoint(GroupTypeBusinessLogic groupTypeBusinessLogic) {
+    public GroupTypesEndpoint(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils, GroupTypeBusinessLogic groupTypeBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
     }
 
@@ -70,6 +77,7 @@ public class GroupTypesEndpoint {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "500", description = "Internal Error")})
     @ResponseView(mixin = {GroupTypeMixin.class})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<GroupTypeDefinition> getGroupTypes(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @Parameter(
                     description = "An optional parameter to indicate the type of the container from where this call is executed") @QueryParam("internalComponentType") String internalComponentType) {

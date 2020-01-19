@@ -19,9 +19,9 @@
  */
 
 import { Injectable, Inject } from "@angular/core";
-import { Response, Http } from "@angular/http";
-import { Observable, Observer, ConnectableObservable, Subscription } from "rxjs";
 import { ITranslateServiceConfig, TranslateServiceConfigToken } from "./translate.service.config";
+import { Observer, Subscription, Observable, ConnectableObservable } from 'rxjs/Rx';
+import { HttpClient } from "@angular/common/http";
 
 export { ITranslateServiceConfig, TranslateServiceConfigToken };
 
@@ -145,7 +145,7 @@ export class TranslateService {
     private _cacheLanguagesJsons:{[index:string]:ITranslateLanguageJson} = {};
     private _cacheLanguagesLoaders:{[index:string]:Observable<ITranslateLanguageJson>} = {};
 
-    constructor(@Inject(TranslateServiceConfigToken) private config:ITranslateServiceConfig, private http:Http) {
+    constructor(@Inject(TranslateServiceConfigToken) private config:ITranslateServiceConfig, private http: HttpClient) {
         this.initLanguageObservable();
         this.loadAndActivateLanguage(this.config.defaultLanguage);
     }
@@ -176,8 +176,7 @@ export class TranslateService {
 
         if (!(language in this._cacheLanguagesLoaders)) {
             const filePath = `${this.config.filePrefix}${language}${this.config.fileSuffix}`;
-            this._cacheLanguagesLoaders[language] = this.http.get(filePath)
-                .map<Response, ITranslateLanguageJson>(resp => resp.json())
+            this._cacheLanguagesLoaders[language] = this.http.get<ITranslateLanguageJson>(filePath)
                 .catch(() => Observable.throw(`Failed to load language file for "${language}"`))
                 .publish();
             (<ConnectableObservable<ITranslateLanguageJson>>this._cacheLanguagesLoaders[language]).connect();
@@ -204,12 +203,12 @@ export class TranslateService {
         return false;
     }
 
-    public loadAndActivateLanguage(language:string) : Observable<ITranslateLanguageJson> {
+    public loadAndActivateLanguage(language:string) : void {
+
         const loadLanguageObservable = this.loadLanguageJsonFile(language, false);
         loadLanguageObservable.subscribe(() => {
             this.activateLanguage(language);
         }, () => {});
-        return loadLanguageObservable;
     }
 
     public translate(phraseKey:string, args:ITranslateArgs={}, language:string=this._activeLanguage) : string {

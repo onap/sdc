@@ -17,11 +17,7 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import fj.data.Either;
-import java.util.Objects;
 import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
@@ -36,13 +32,17 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-
-import java.util.Map;
-import java.util.Set;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PolicyUtilsTest extends BeConfDependentTest{
 

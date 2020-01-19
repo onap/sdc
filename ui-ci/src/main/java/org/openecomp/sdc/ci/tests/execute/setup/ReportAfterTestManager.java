@@ -20,18 +20,19 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.addScreenshot;
-import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.addTag;
-import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.log;
-
 import com.aventstack.extentreports.Status;
-import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentManager.suiteNameXml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
+
+import java.io.IOException;
+
+import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.addScreenshot;
+import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.addTag;
+import static org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions.log;
 
 public class ReportAfterTestManager {
 

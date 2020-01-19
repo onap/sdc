@@ -23,12 +23,23 @@ package org.openecomp.sdc.be.components.merge.instance;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -37,7 +48,8 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ComponentInstanceMergeDataBusinessLogicTest {
 
@@ -79,14 +91,14 @@ public class ComponentInstanceMergeDataBusinessLogicTest {
         User user = new User();
         DataForMergeHolder dataHolder = new DataForMergeHolder();
         when(toscaOperationFacade.getToscaElement(Mockito.eq("newContainerId"), componentsFilterCapture.capture())).thenReturn(Either.left(persistedService));
-        when(componentInstanceMergeInterfaceMock1.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(Either.left(persistedService));
-        when(componentInstanceMergeInterfaceMock2.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(Either.left(persistedService));
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeComponentUserOrigData(user, dataHolder, new Service(), "newContainerId", "instId");
-        assertEquals(persistedService, mergeResult.left().value());
+        when(componentInstanceMergeInterfaceMock1.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(persistedService);
+        when(componentInstanceMergeInterfaceMock2.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(persistedService);
+        Component mergeResult = testInstance.mergeComponentUserOrigData(user, dataHolder, new Service(), "newContainerId", "instId");
+        assertEquals(persistedService, mergeResult);
         assertComponentFilter(componentsFilterCapture.getValue());
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void mergeComponentUserOrigData_failToGetPersistedComponent_doNotTryToMerge() throws Exception {
         User user = new User();
         DataForMergeHolder dataHolder = new DataForMergeHolder();
@@ -95,22 +107,18 @@ public class ComponentInstanceMergeDataBusinessLogicTest {
         when(toscaOperationFacade.getToscaElement(Mockito.eq("newContainerId"), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.GENERAL_ERROR, ComponentTypeEnum.SERVICE)).thenReturn(ActionStatus.GENERAL_ERROR);
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(rf);
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeComponentUserOrigData(user, dataHolder, container, "newContainerId", "instId");
-        assertEquals(rf, mergeResult.right().value());
-        verifyZeroInteractions(componentInstanceMergeInterfaceMock1, componentInstanceMergeInterfaceMock2);
+        testInstance.mergeComponentUserOrigData(user, dataHolder, container, "newContainerId", "instId");
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void mergeComponentUserOrigData_failOnOneMerge_doNotCallOtherMerge() throws Exception {
         Service persistedService = new Service();
         User user = new User();
         DataForMergeHolder dataHolder = new DataForMergeHolder();
         ResponseFormat rf = new ResponseFormat();
         when(toscaOperationFacade.getToscaElement(Mockito.eq("newContainerId"), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(persistedService));
-        when(componentInstanceMergeInterfaceMock1.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(Either.right(rf));
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeComponentUserOrigData(user, dataHolder, new Service(), "newContainerId", "instId");
-        assertEquals(rf, mergeResult.right().value());
-        verifyZeroInteractions(componentInstanceMergeInterfaceMock2);
+        when(componentInstanceMergeInterfaceMock1.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenThrow(new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR));
+        testInstance.mergeComponentUserOrigData(user, dataHolder, new Service(), "newContainerId", "instId");
     }
 
     private void assertComponentFilter(ComponentParametersView value) {

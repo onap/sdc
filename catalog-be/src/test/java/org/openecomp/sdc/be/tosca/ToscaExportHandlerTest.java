@@ -21,13 +21,6 @@
 package org.openecomp.sdc.be.tosca;
 
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import mockit.Deencapsulation;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -88,8 +81,16 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
 
-import static org.junit.Assert.assertThat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class ToscaExportHandlerTest extends BeConfDependentTest {
 	private static final String COMPONENT_PROPERTY_NAME = "prop1";

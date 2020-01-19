@@ -1,4 +1,5 @@
 import {Component, Input} from '@angular/core';
+import {PROPERTY_DATA} from "app/utils";
 import {DataTypeService} from "app/ng2/services/data-type.service";
 import {OperationModel, OperationParameter, InputBEModel, DataTypeModel, Capability} from 'app/models';
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
@@ -36,7 +37,7 @@ export class ParamRowComponent {
     filteredInputProps: Array<DropdownValue> = [];
     filteredCapabilitiesProps: Array<{capabilityName: string, properties: Array<DropdownValueType>}> = [];
 
-    constructor(private dataTypeService: DataTypeService) {}
+    constructor(private dataTypeService:DataTypeService) {}
 
     ngOnInit() {
         if (this.isInputParam) {

@@ -19,9 +19,6 @@
  */
 package org.openecomp.sdc.fe.servlets;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +30,10 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigMgrServletTest {

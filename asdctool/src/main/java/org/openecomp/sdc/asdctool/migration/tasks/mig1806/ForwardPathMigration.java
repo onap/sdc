@@ -17,33 +17,23 @@
 package org.openecomp.sdc.asdctool.migration.tasks.mig1806;
 
 import com.google.common.collect.ImmutableSet;
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -56,7 +46,18 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 
-@org.springframework.stereotype.Component
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+//@org.springframework.stereotype.Component
 public class ForwardPathMigration implements Migration {
 
     private JanusGraphDao janusGraphDao;

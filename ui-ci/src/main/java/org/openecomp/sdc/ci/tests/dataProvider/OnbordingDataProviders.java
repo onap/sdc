@@ -20,15 +20,16 @@
 
 package org.openecomp.sdc.ci.tests.dataProvider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.openecomp.sdc.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class OnbordingDataProviders {
 

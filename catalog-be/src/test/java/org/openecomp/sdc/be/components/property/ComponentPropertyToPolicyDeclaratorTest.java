@@ -21,13 +21,7 @@
 package org.openecomp.sdc.be.components.property;
 
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +38,13 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentPropertyToPolicyDeclaratorTest extends PropertyDeclaratorTestBase {

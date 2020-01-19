@@ -30,11 +30,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionEngineEvent;
@@ -45,10 +42,22 @@ import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESCRIPTION;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_API_KEY;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_CONSUMER_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_ENV_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_NOTIFY_TOPIC;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_ROLE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DIST_STATUS_TOPIC;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_DIST_ADD_KEY_ENGINE_LOG_STR;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_DIST_CREATE_TOPIC_ENGINE_LOG_STR;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.EXPECTED_DIST_REG_ENGINE_LOG_STR;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.REQUEST_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.SERVICE_INSTANCE_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.STATUS_OK;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.init;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditDistributionEngineFuncTest {
@@ -56,18 +65,14 @@ public class AuditDistributionEngineFuncTest {
 
     @Mock
     private static AuditCassandraDao cassandraDao;
-    @Mock
-    private static AuditingDao auditingDao;
-    @Mock
-    private static Configuration.ElasticSearchConfig esConfig;
 
     @Captor
     private ArgumentCaptor<DistributionEngineEvent> eventCaptor;
 
     @Before
     public void setUp() {
-        init(esConfig);
-        auditingManager = new AuditingManager(auditingDao, cassandraDao, new TestConfigurationProvider());
+        init();
+        auditingManager = new AuditingManager(cassandraDao, new TestConfigurationProvider());
         ThreadLocalsHolder.setUuid(REQUEST_ID);
     }
 
@@ -87,8 +92,6 @@ public class AuditDistributionEngineFuncTest {
                         .build(),
                 DIST_API_KEY, DIST_ENV_NAME, DIST_ROLE);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.ADD_KEY_TO_TOPIC_ACL.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DIST_ADD_KEY_ENGINE_LOG_STR);
@@ -110,8 +113,6 @@ public class AuditDistributionEngineFuncTest {
                         .build(),
                 DIST_API_KEY, DIST_ENV_NAME, DIST_ROLE);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.CREATE_DISTRIBUTION_TOPIC.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DIST_CREATE_TOPIC_ENGINE_LOG_STR);
@@ -134,8 +135,6 @@ public class AuditDistributionEngineFuncTest {
                         .build(),
                 DIST_CONSUMER_ID, DIST_API_KEY, DIST_ENV_NAME);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.DISTRIBUTION_REGISTER.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DIST_REG_ENGINE_LOG_STR);

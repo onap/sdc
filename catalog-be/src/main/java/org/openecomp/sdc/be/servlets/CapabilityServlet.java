@@ -16,26 +16,22 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-import java.util.Optional;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -49,24 +45,32 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Optional;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @OpenAPIDefinition(info = @Info(title = "Capability Servlet", description = "Capability Servlet"))
-@Singleton
+@Controller
 public class CapabilityServlet extends AbstractValidationsServlet {
     private static final Logger LOGGER = Logger.getLogger(CapabilityServlet.class);
     private final CapabilitiesBusinessLogic capabilitiesBusinessLogic;
@@ -93,6 +97,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Capability already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createCapabilitiesOnResource(
             @Parameter(description = "Capability to create", required = true) String data,
             @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
@@ -112,6 +117,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Capabilities"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateCapabilitiesOnResource(
             @Parameter(description = "Capabilities to update", required = true) String data,
             @Parameter(description = "Component Id") @PathParam("resourceId") String resourceId,
@@ -131,6 +137,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "GET Capability"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCapabilityOnResource(
             @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
             @Parameter(description = "Capability Id") @PathParam("capabilityId") String capabilityId,
@@ -150,6 +157,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete capability"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteCapabilityOnResource(
             @Parameter(description = "capability Id") @PathParam("capabilityId") String capabilityId,
             @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
@@ -169,6 +177,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Capability already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createCapabilitiesOnService(
             @Parameter(description = "Capability to create", required = true) String data,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
@@ -188,6 +197,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Capabilities"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateCapabilitiesOnService(
             @Parameter(description = "Capabilities to update", required = true) String data,
             @Parameter(description = "Component Id") @PathParam("serviceId") String serviceId,
@@ -207,6 +217,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "GET Capability"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCapabilityOnService(
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Parameter(description = "Capability Id") @PathParam("capabilityId") String capabilityId,
@@ -226,6 +237,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete capability"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteCapabilityOnService(
             @Parameter(description = "capability Id") @PathParam("capabilityId") String capabilityId,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
@@ -239,6 +251,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
                                      String userId,
                                      boolean isUpdate,
                                      String errorContext) {
+        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();
@@ -277,6 +290,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
 
     private Response get (String capabilityIdToGet,  String componentId,
                           HttpServletRequest request, String userId){
+        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();
@@ -304,6 +318,7 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     private Response delete (String capabilityId, String componentId, HttpServletRequest
             request, String userId){
 
+        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
 
         User modifier = new User();

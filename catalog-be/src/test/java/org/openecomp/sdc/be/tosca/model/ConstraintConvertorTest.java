@@ -15,15 +15,16 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ConstraintConvertorTest {
 

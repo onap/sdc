@@ -16,15 +16,16 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Set;
 import org.junit.Test;
 import org.openecomp.sdc.be.impl.ServiceFilterUtils;
 import org.openecomp.sdc.be.model.InputDefinition;
+
+import java.util.Arrays;
+import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ServiceFilterUtilsServiceInputTest extends BaseServiceFilterUtilsTest {
 

@@ -21,20 +21,6 @@
 package org.openecomp.sdc.asdctool.impl;
 
 import com.google.gson.Gson;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Element;
@@ -53,6 +39,21 @@ import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class GraphMLConverter {
 
@@ -95,6 +96,7 @@ public class GraphMLConverter {
             return importJsonGraph(graph, inputFile, propertiesCriteriaToDelete);
 
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("import graph failed ", e);
             return false;
         } finally {
@@ -121,6 +123,7 @@ public class GraphMLConverter {
 
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export graph failed ", e);
             return false;
         } finally {
@@ -145,6 +148,7 @@ public class GraphMLConverter {
 
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export exportGraphMl failed ", e);
             return null;
         } finally {
@@ -172,6 +176,7 @@ public class GraphMLConverter {
 
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("find Error In Json Graph failed ", e);
             return false;
         } finally {
@@ -208,8 +213,10 @@ public class GraphMLConverter {
             result = outputFile;
 
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export Json Graph failed ", e);
             graph.tx().rollback();
+				e.printStackTrace();
         }
         return result;
 
@@ -227,6 +234,7 @@ public class GraphMLConverter {
             graph.tx().commit();
         } catch (Exception e) {
             graph.tx().rollback();
+			e.printStackTrace();
             log.info("export Graph Ml failed ", e);
         }
         return result;
@@ -278,7 +286,9 @@ public class GraphMLConverter {
 
         } catch (Exception e) {
             log.info("Failed to import graph ", e);
+			e.printStackTrace();
             graph.tx().rollback();
+				e.printStackTrace();
         }
         return result;
 
@@ -306,8 +316,10 @@ public class GraphMLConverter {
             graph.tx().rollback();
 
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("find Error In Json Graph failed ", e);
             graph.tx().rollback();
+				e.printStackTrace();
         }
         return result;
 
@@ -355,8 +367,10 @@ public class GraphMLConverter {
             result = outputFile;
 
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export Users failed ", e);
             graph.tx().rollback();
+				e.printStackTrace();
         }
         return result;
 
@@ -397,6 +411,7 @@ public class GraphMLConverter {
 
             log.info(EXPORTED_FILE, result);
         } catch (Exception e) {
+			e.printStackTrace();
             log.info("export Users failed ", e);
             return false;
         } finally {

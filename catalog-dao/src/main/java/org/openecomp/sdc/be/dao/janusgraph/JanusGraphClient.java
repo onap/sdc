@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.*;
@@ -58,6 +59,13 @@ public class JanusGraphClient {
 	public JanusGraphClient() {
 	}
 
+	@PreDestroy
+	public void closeSession(){
+		if ( graph.isOpen() ){
+			graph.close();
+			logger.info("** JanusGraphClient session closed");
+		}
+	}
 	private class HealthCheckTask implements Callable<Vertex> {
 		@Override
 		public Vertex call() {

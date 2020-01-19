@@ -1,0 +1,485 @@
+{
+  "boolean": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1564057674310,
+      "modificationTime": 1564057674310,
+      "toscaPresentation": {}
+    },
+    "name": "boolean",
+    "uniqueId": "boolean.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1564057674470,
+    "modificationTime": 1564057674470,
+    "toscaPresentation": {}
+  },
+  "float": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1564057674310,
+      "modificationTime": 1564057674310,
+      "toscaPresentation": {}
+    },
+    "name": "float",
+    "uniqueId": "float.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1564057674479,
+    "modificationTime": 1564057674479,
+    "toscaPresentation": {}
+  },
+  "integer": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1564057674310,
+      "modificationTime": 1564057674310,
+      "toscaPresentation": {}
+    },
+    "name": "integer",
+    "uniqueId": "integer.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1564057674371,
+    "modificationTime": 1564057674371,
+    "toscaPresentation": {}
+  },
+  "string": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1564057674310,
+      "modificationTime": 1564057674310,
+      "toscaPresentation": {}
+    },
+    "name": "string",
+    "uniqueId": "string.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1564057674455,
+    "modificationTime": 1564057674455,
+    "toscaPresentation": {}
+  },
+  "scalar-unit.frequency": {
+    "derivedFrom": {
+      "derivedFrom": {
+        "name": "tosca.datatypes.Root",
+        "uniqueId": "tosca.datatypes.Root.datatype",
+        "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+        "creationTime": 1542023268209,
+        "modificationTime": 1542023268209,
+        "toscaPresentation": {}
+      },
+      "name": "scalar-unit",
+      "uniqueId": "scalar-unit.datatype",
+      "derivedFromName": "tosca.datatypes.Root",
+      "creationTime": 1542023270388,
+      "modificationTime": 1542023270388,
+      "toscaPresentation": {}
+    },
+    "name": "scalar-unit.frequency",
+    "uniqueId": "scalar-unit.frequency.datatype",
+    "derivedFromName": "scalar-unit",
+    "creationTime": 1542023271125,
+    "modificationTime": 1542023271125,
+    "toscaPresentation": {}
+  },
+  "org.openecomp.datatypes.network.VlanRequirements": {
+    "derivedFrom": {
+      "derivedFrom": {
+        "name": "tosca.datatypes.Root",
+        "uniqueId": "tosca.datatypes.Root.datatype",
+        "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+        "creationTime": 1542023268209,
+        "modificationTime": 1542023268209,
+        "toscaPresentation": {}
+      },
+      "properties": [
+        {
+          "uniqueId": "org.openecomp.datatypes.Root.datatype.supplemental_data",
+          "type": "map",
+          "required": false,
+          "definition": false,
+          "description": "A placeholder for missing properties that would be included in future ecomp model versions. fromat <key>:<value>\n",
+          "schema": {
+            "property": {
+              "type": "string",
+              "required": false,
+              "definition": false,
+              "description": "A placeholder for missing properties that would be included in future ecomp model versions. fromat <key>:<value>\n",
+              "password": false,
+              "hidden": false,
+              "immutable": false,
+              "toscaPresentation": {}
+            },
+            "toscaPresentation": {}
+          },
+          "password": false,
+          "name": "supplemental_data",
+          "hidden": false,
+          "immutable": false,
+          "toscaPresentation": {}
+        }
+      ],
+      "name": "org.openecomp.datatypes.Root",
+      "uniqueId": "org.openecomp.datatypes.Root.datatype",
+      "derivedFromName": "tosca.datatypes.Root",
+      "description": "The ECOMP root Data Type all other Data Types derive from\n",
+      "creationTime": 1542023272834,
+      "modificationTime": 1542023272849,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "constraints": [
+          {
+            "validValues": [
+              "c-tag",
+              "s-tag"
+            ]
+          }
+        ],
+        "uniqueId": "org.openecomp.datatypes.network.VlanRequirements.datatype.vlan_type",
+        "type": "string",
+        "required": true,
+        "definition": false,
+        "description": "identifies the vlan type (e.g., c-tag)",
+        "password": false,
+        "name": "vlan_type",
+        "hidden": false,
+        "immutable": false,
+        "propertyConstraints": [
+          "{\"validValues\":[\"c-tag\",\"s-tag\"]}"
+        ],
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.network.VlanRequirements.datatype.vlan_range_plan",
+        "type": "string",
+        "required": true,
+        "definition": false,
+        "description": "reference to a vlan range plan",
+        "password": false,
+        "name": "vlan_range_plan",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.network.VlanRequirements.datatype.vlan_count",
+        "type": "integer",
+        "required": true,
+        "definition": false,
+        "description": "identifies the number of vlan tags to assign to the CP from the plan",
+        "password": false,
+        "name": "vlan_count",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "org.openecomp.datatypes.network.VlanRequirements",
+    "uniqueId": "org.openecomp.datatypes.network.VlanRequirements.datatype",
+    "derivedFromName": "org.openecomp.datatypes.Root",
+    "creationTime": 1542023273097,
+    "modificationTime": 1542023273111,
+    "toscaPresentation": {}
+  },
+  "tosca.datatypes.nfv.VnfTerminateOperationConfiguration": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1542023268209,
+      "modificationTime": 1542023268209,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "tosca.datatypes.nfv.VnfTerminateOperationConfiguration.datatype.min_graceful_termination_timeout",
+        "type": "integer",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "min_graceful_termination_timeout",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "tosca.datatypes.nfv.VnfTerminateOperationConfiguration.datatype.max_recommended_graceful_termination_timeout",
+        "type": "integer",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "max_recommended_graceful_termination_timeout",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "tosca.datatypes.nfv.VnfTerminateOperationConfiguration",
+    "uniqueId": "tosca.datatypes.nfv.VnfTerminateOperationConfiguration.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1542023274009,
+    "modificationTime": 1542023274018,
+    "toscaPresentation": {}
+  },
+  "tosca.datatypes.nfv.InstantiationLevel": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1542023268209,
+      "modificationTime": 1542023268209,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "tosca.datatypes.nfv.InstantiationLevel.datatype.vdu_levels",
+        "type": "map",
+        "required": true,
+        "definition": false,
+        "schema": {
+          "property": {
+            "type": "tosca.datatypes.nfv.VduLevel",
+            "required": false,
+            "definition": false,
+            "password": false,
+            "hidden": false,
+            "immutable": false,
+            "toscaPresentation": {}
+          },
+          "toscaPresentation": {}
+        },
+        "password": false,
+        "name": "vdu_levels",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "tosca.datatypes.nfv.InstantiationLevel.datatype.description",
+        "type": "string",
+        "required": true,
+        "definition": false,
+        "password": false,
+        "name": "description",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "tosca.datatypes.nfv.InstantiationLevel.datatype.scale_info",
+        "type": "map",
+        "required": false,
+        "definition": false,
+        "schema": {
+          "property": {
+            "type": "tosca.datatypes.nfv.ScaleInfo",
+            "required": false,
+            "definition": false,
+            "password": false,
+            "hidden": false,
+            "immutable": false,
+            "toscaPresentation": {}
+          },
+          "toscaPresentation": {}
+        },
+        "password": false,
+        "name": "scale_info",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "tosca.datatypes.nfv.InstantiationLevel",
+    "uniqueId": "tosca.datatypes.nfv.InstantiationLevel.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1542023273964,
+    "modificationTime": 1542023273975,
+    "toscaPresentation": {}
+  },
+  "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1542023268209,
+      "modificationTime": 1542023268209,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet.datatype.network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "Network ipam refs data ipam subnets ip prefix len",
+        "password": false,
+        "name": "network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet.datatype.network_ipam_refs_data_ipam_subnets_subnet_ip_prefix",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "Network ipam refs data ipam subnets ip prefix",
+        "password": false,
+        "name": "network_ipam_refs_data_ipam_subnets_subnet_ip_prefix",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet",
+    "uniqueId": "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "description": "Network Ipam Ref Data Subnet",
+    "creationTime": 1542023272535,
+    "modificationTime": 1542023272555,
+    "toscaPresentation": {}
+  },
+  "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1542023268209,
+      "modificationTime": 1542023268209,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp.datatype.ip_prefix",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "description": "IP Prefix.",
+        "password": false,
+        "name": "ip_prefix",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp.datatype.ip_prefix_len",
+        "type": "integer",
+        "required": false,
+        "definition": false,
+        "description": "IP Prefix Len.",
+        "password": false,
+        "name": "ip_prefix_len",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp",
+    "uniqueId": "org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "description": "Virtual Machine Sub Interface Address Pair IP.",
+    "creationTime": 1542023273230,
+    "modificationTime": 1542023273240,
+    "toscaPresentation": {}
+  },
+  "tosca.datatypes.nfv.Qos": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1542023268209,
+      "modificationTime": 1542023268209,
+      "toscaPresentation": {}
+    },
+    "properties": [
+      {
+        "uniqueId": "tosca.datatypes.nfv.Qos.datatype.latency",
+        "type": "integer",
+        "required": true,
+        "definition": false,
+        "password": false,
+        "name": "latency",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "tosca.datatypes.nfv.Qos.datatype.packet_loss_ratio",
+        "type": "float",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "packet_loss_ratio",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "tosca.datatypes.nfv.Qos.datatype.packet_delay_variation",
+        "type": "integer",
+        "required": true,
+        "definition": false,
+        "password": false,
+        "name": "packet_delay_variation",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "tosca.datatypes.nfv.Qos",
+    "uniqueId": "tosca.datatypes.nfv.Qos.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1542023273784,
+    "modificationTime": 1542023273838,
+    "toscaPresentation": {}
+  },
+  "tosca.datatypes.nfv.ext.LocationInfo": {
+    "properties": [
+      {
+        "uniqueId": "tosca.datatypes.nfv.ext.LocationInfo.datatype.availability_zone",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "availability_zone",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "tosca.datatypes.nfv.ext.LocationInfo.datatype.vimid",
+        "type": "integer",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "vimid",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      },
+      {
+        "uniqueId": "tosca.datatypes.nfv.ext.LocationInfo.datatype.tenant",
+        "type": "string",
+        "required": false,
+        "definition": false,
+        "password": false,
+        "name": "tenant",
+        "hidden": false,
+        "immutable": false,
+        "toscaPresentation": {}
+      }
+    ],
+    "name": "tosca.datatypes.nfv.ext.LocationInfo",
+    "uniqueId": "tosca.datatypes.nfv.ext.LocationInfo.datatype",
+    "creationTime": 1542023273669,
+    "modificationTime": 1542023273679,
+    "toscaPresentation": {}
+  }
+}

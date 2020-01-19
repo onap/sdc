@@ -32,10 +32,18 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class PropertyConvertorTest {
     private PropertyDefinition property;
@@ -161,29 +169,6 @@ public class PropertyConvertorTest {
                 .build();
         ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, PropertyConvertor.PropertyType.PROPERTY);
         assertThat(toscaProperty.getDefaultp()).isEqualTo("/");
-    }
-    
-    @Test
-    public void testConvertToToscaObject() {
-		dataTypes.put(ToscaPropertyType.Root.getType(), new DataTypeDefinition());
-    	
-    	PropertyConvertor.getInstance().convertToToscaObject(ToscaPropertyType.Root.getType(), "", "innerType", dataTypes,true);
-    }
-    
-    @Test
-    public void testConvertToToscaObjectWhenPropertyTypeAndInnerTypeNull() {
-    	dataTypes.put(ToscaPropertyType.Root.getType(), new DataTypeDefinition());
-    	
-    	PropertyConvertor.getInstance().convertToToscaObject(null, "value", null, dataTypes,true);
-    }
-    
-    @Test
-    public void testConvertToToscaObjectWhenIsScalarTypeIsNotNull() {
-    	DataTypeDefinition def = new DataTypeDefinition();
-    	def.setName("integer");
-    	dataTypes.put("type", def);
-    	
-    	PropertyConvertor.getInstance().convertToToscaObject("type", "value", "innerType", dataTypes,true);
     }
 
 }

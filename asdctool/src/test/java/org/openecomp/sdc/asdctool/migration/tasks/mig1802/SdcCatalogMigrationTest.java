@@ -23,8 +23,8 @@ package org.openecomp.sdc.asdctool.migration.tasks.mig1802;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 
 public class SdcCatalogMigrationTest {

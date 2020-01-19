@@ -58,12 +58,10 @@ import org.openecomp.sdc.be.resources.data.GraphNodeLock;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.validation.constraints.NotNull;
 public class JanusGraphGenericDao {
 
-	private static final String FAILED_TO_RETRIEVE_GRAPH_STATUS_IS = "Failed to retrieve graph. status is {}";
-    private static final String NO_EDGES_IN_GRAPH_FOR_CRITERIA = "No edges in graph for criteria";
-    private static final String FAILED_TO_CREATE_EDGE_FROM_TO = "Failed to create edge from [{}] to [{}]";
-    private JanusGraphClient janusGraphClient;
+	private JanusGraphClient janusGraphClient;
 	private static Logger log = Logger.getLogger(JanusGraphGenericDao.class.getName());
 	private static final String LOCK_NODE_PREFIX = "lock_";
 
@@ -108,7 +106,7 @@ public class JanusGraphGenericDao {
 	 * @return
 	 */
 	public <T extends GraphNode> Either<T, JanusGraphOperationStatus> createNode(T node, Class<T> clazz) {
-		log.debug("try to create node for ID [{}]", node.getKeyValueId());
+		log.debug("try to create node for ID [{}]", node.getKeyValueIdForLog());
 		Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
 		if (graph.isLeft()) {
 			T newNode;
@@ -126,7 +124,7 @@ public class JanusGraphGenericDao {
 				Map<String, Object> newProps = getProperties(vertex);
 				newNode = GraphElementFactory.createElement(node.getLabel(), GraphElementTypeEnum.Node, newProps, clazz);
 				log.debug("created node for props : {}", newProps);
-				log.debug("Node was created for ID [{}]", node.getKeyValueId());
+				log.debug("Node was created for ID [{}]", node.getKeyValueIdForLog());
 				return Either.left(newNode);
 
 			} catch (Exception e) {
@@ -135,7 +133,7 @@ public class JanusGraphGenericDao {
 			}
 
 		} else {
-			log.debug("Failed to create Node for ID [{}]  {}", node.getKeyValueId(), graph.right().value());
+			log.debug("Failed to create Node for ID [{}]  {}", node.getKeyValueIdForLog(), graph.right().value());
 			return Either.right(graph.right().value());
 		}
 	}
@@ -229,8 +227,8 @@ public class JanusGraphGenericDao {
 
 				return Either.left(newRelation);
 			} catch (Exception e) {
-				log.debug(FAILED_TO_CREATE_EDGE_FROM_TO, from, to, e);
-				return Either.right(JanusGraphClient.handleJanusGraphException(e));
+				log.debug("Failed to create edge from [{}] to [{}]", from, to, e);
+				return Either.right(janusGraphClient.handleJanusGraphException(e));
 			}
 		} else {
 			log.debug("Failed to create edge from [{}] to [{}]   {}", from, to, graph.right().value());
@@ -242,8 +240,8 @@ public class JanusGraphGenericDao {
 		try {
 			Edge edge = addEdge(vertexOut, vertexIn, type, properties);
 		} catch (Exception e) {
-			log.debug(FAILED_TO_CREATE_EDGE_FROM_TO, vertexOut, vertexIn, e);
-			return JanusGraphClient.handleJanusGraphException(e);
+			log.debug("Failed to create edge from [{}] to [{}]", vertexOut, vertexIn, e);
+			return janusGraphClient.handleJanusGraphException(e);
 		}
 		return JanusGraphOperationStatus.OK;
 
@@ -279,8 +277,8 @@ public class JanusGraphGenericDao {
 			Edge edge = addEdge(vertexOut, vertexIn, type, properties);
 			return Either.left(edge);
 		} catch (Exception e) {
-			log.debug(FAILED_TO_CREATE_EDGE_FROM_TO, vertexOut, vertexIn, e);
-			return Either.right(JanusGraphClient.handleJanusGraphException(e));
+			log.debug("Failed to create edge from [{}] to [{}]", vertexOut, vertexIn, e);
+			return Either.right(janusGraphClient.handleJanusGraphException(e));
 		}
 
 	}
@@ -471,7 +469,7 @@ public class JanusGraphGenericDao {
 		Edge matchingEdge = null;
 		Iterable<JanusGraphEdge> edges = query.edges();
 		if (edges == null) {
-			log.debug(NO_EDGES_IN_GRAPH_FOR_CRITERIA);
+			log.debug("No edges in graph for criteria");
 			return Either.right(JanusGraphOperationStatus.NOT_FOUND);
 		}
 		Iterator<JanusGraphEdge> eIter = edges.iterator();
@@ -480,7 +478,7 @@ public class JanusGraphGenericDao {
 		}
 
 		if (matchingEdge == null) {
-			log.debug(NO_EDGES_IN_GRAPH_FOR_CRITERIA);
+			log.debug("No edges in graph for criteria");
 			return Either.right(JanusGraphOperationStatus.NOT_FOUND);
 		}
 		return Either.left(matchingEdge);
@@ -495,7 +493,7 @@ public class JanusGraphGenericDao {
 				if (vertexFrom.isRight()) {
 					return Either.right(vertexFrom.right().value());
 				}
-				Iterable<JanusGraphEdge> edges = vertexFrom.left().value().query().labels(label).edges();
+				Iterable<JanusGraphEdge> edges = ((JanusGraphVertex) vertexFrom.left().value()).query().labels(label).edges();
 				Iterator<JanusGraphEdge> eIter = edges.iterator();
 				while (eIter.hasNext()) {
 					Edge edge = eIter.next();
@@ -925,7 +923,7 @@ public class JanusGraphGenericDao {
 	 * @return
 	 */
 	public <T extends GraphNode> Either<T, JanusGraphOperationStatus> updateNode(GraphNode node, Class<T> clazz) {
-		log.debug("Try to update node for {}", node.getKeyValueId());
+		log.debug("Try to update node for {}", node.getKeyValueIdForLog());
 
 		ImmutablePair<String, Object> keyValueId = node.getKeyValueId();
 		Either<Vertex, JanusGraphOperationStatus> vertexByProperty = getVertexByPropertyAndLabel(keyValueId.getKey(), keyValueId.getValue(), node.getLabel());
@@ -958,7 +956,7 @@ public class JanusGraphGenericDao {
 			}
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed to update node for {} error :{}", node.getKeyValueId(), vertexByProperty.right().value());
+				log.debug("Failed to update node for {} error :{}", node.getKeyValueIdForLog(), vertexByProperty.right().value());
 			}
 			return Either.right(vertexByProperty.right().value());
 		}
@@ -1314,7 +1312,7 @@ public class JanusGraphGenericDao {
 
 		Either<JanusGraph, JanusGraphOperationStatus> graphRes = janusGraphClient.getGraph();
 		if (graphRes.isRight()) {
-			log.error(FAILED_TO_RETRIEVE_GRAPH_STATUS_IS, graphRes);
+			log.error("Failed to retrieve graph. status is {}", graphRes);
 			return Either.right(graphRes.right().value());
 		}
 
@@ -1362,7 +1360,7 @@ public class JanusGraphGenericDao {
 
 		Either<JanusGraph, JanusGraphOperationStatus> graphRes = janusGraphClient.getGraph();
 		if (graphRes.isRight()) {
-			log.error(FAILED_TO_RETRIEVE_GRAPH_STATUS_IS, graphRes);
+			log.error("Failed to retrieve graph. status is {}", graphRes);
 			return Either.right(graphRes.right().value());
 		}
 
@@ -1487,7 +1485,7 @@ public class JanusGraphGenericDao {
 
 		Either<JanusGraph, JanusGraphOperationStatus> graphRes = janusGraphClient.getGraph();
 		if (graphRes.isRight()) {
-			log.error(FAILED_TO_RETRIEVE_GRAPH_STATUS_IS, graphRes);
+			log.error("Failed to retrieve graph. status is {}", graphRes);
 			return Either.right(graphRes.right().value());
 		}
 
@@ -1610,7 +1608,7 @@ public class JanusGraphGenericDao {
 		Edge matchingEdge = null;
 		Iterable<JanusGraphEdge> edges = query.edges();
 		if (edges == null) {
-			log.debug(NO_EDGES_IN_GRAPH_FOR_CRITERIA);
+			log.debug("No edges in graph for criteria");
 			return Either.right(JanusGraphOperationStatus.NOT_FOUND);
 		}
 		Iterator<JanusGraphEdge> eIter = edges.iterator();
@@ -1619,7 +1617,7 @@ public class JanusGraphGenericDao {
 		}
 
 		if (matchingEdge == null) {
-			log.debug(NO_EDGES_IN_GRAPH_FOR_CRITERIA);
+			log.debug("No edges in graph for criteria");
 			return Either.right(JanusGraphOperationStatus.NOT_FOUND);
 		}
 		return Either.left(matchingEdge);
@@ -1732,7 +1730,7 @@ public class JanusGraphGenericDao {
 		return Either.left(result);
 	}
 
-	public Either<List<Edge>, JanusGraphOperationStatus> getOutgoingEdgesByCriteria(Vertex vertexFrom, GraphEdgeLabels label, Map<String, Object> props) {
+	public @NotNull Either<List<Edge>, JanusGraphOperationStatus> getOutgoingEdgesByCriteria(Vertex vertexFrom, GraphEdgeLabels label, Map<String, Object> props) {
 
 		List<Edge> edgesResult = new ArrayList<>();
 
@@ -1749,9 +1747,9 @@ public class JanusGraphGenericDao {
 
 		Iterable<JanusGraphEdge> edges = query.edges();
 		Iterator<JanusGraphEdge> eIter = edges.iterator();
-		if (edges == null || !eIter.hasNext()) {
+		if (!eIter.hasNext()) {
 			log.debug("No edges found in graph for criteria (label = {} properties={})", label.getProperty(), props);
-			return Either.right(JanusGraphOperationStatus.NOT_FOUND);
+			return Either.left(edgesResult);
 		}
 
 		while (eIter.hasNext()) {

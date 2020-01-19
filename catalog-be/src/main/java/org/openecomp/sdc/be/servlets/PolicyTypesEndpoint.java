@@ -20,21 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
-import org.openecomp.sdc.be.mixin.PolicyTypeMixin;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.view.ResponseView;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.stereotype.Controller;
 import com.jcabi.aspects.Loggable;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,6 +30,26 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.mixin.PolicyTypeMixin;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.be.view.ResponseView;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.stereotype.Controller;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -52,13 +57,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class PolicyTypesEndpoint {
+public class PolicyTypesEndpoint extends BeGenericServlet{
 
     private static final Logger log = Logger.getLogger(PolicyTypesEndpoint.class);
 
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
 
-    public PolicyTypesEndpoint(PolicyTypeBusinessLogic policyTypeBusinessLogic) {
+    public PolicyTypesEndpoint(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils, PolicyTypeBusinessLogic policyTypeBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
         this.policyTypeBusinessLogic = policyTypeBusinessLogic;
     }
 
@@ -70,6 +77,7 @@ public class PolicyTypesEndpoint {
                             @ApiResponse(responseCode = "403", description = "Restricted operation"),
                             @ApiResponse(responseCode = "500", description = "The GET request failed due to internal SDC problem.")})
     @ResponseView(mixin = {PolicyTypeMixin.class})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<PolicyTypeDefinition> getPolicyTypes(@Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed")
                                    @QueryParam("internalComponentType") String internalComponentType,
                                    @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {

@@ -20,13 +20,14 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
-import org.openecomp.sdc.asdctool.impl.validator.executers.*;
+import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceToscaArtifactsValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.VFToscaArtifactValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
@@ -35,10 +36,15 @@ import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+
+import java.util.ArrayList;
 
 import static org.mockito.Mockito.mock;
 

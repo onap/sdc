@@ -19,13 +19,13 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.openecomp.sdc.ci.tests.pages.OnboardHomePage.XpathSelector.ADD_NEW_VLM_BTN;
-import static org.openecomp.sdc.ci.tests.pages.OnboardHomePage.XpathSelector.ADD_NEW_VSP_BTN;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import static org.openecomp.sdc.ci.tests.pages.OnboardHomePage.XpathSelector.ADD_NEW_VLM_BTN;
+import static org.openecomp.sdc.ci.tests.pages.OnboardHomePage.XpathSelector.ADD_NEW_VSP_BTN;
 
 /**
  * Handles the Onboard Home Page UI test actions

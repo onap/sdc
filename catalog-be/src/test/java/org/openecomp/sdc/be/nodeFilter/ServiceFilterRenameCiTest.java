@@ -16,15 +16,16 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.impl.ServiceFilterUtils;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ServiceFilterRenameCiTest extends BaseServiceFilterUtilsTest {
 

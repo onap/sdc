@@ -21,14 +21,15 @@
  */
 package org.openecomp.sdc.be.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TypeUtilsTest {

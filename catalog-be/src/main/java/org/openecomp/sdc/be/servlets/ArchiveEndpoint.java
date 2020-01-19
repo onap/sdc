@@ -27,16 +27,30 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.inject.Inject;
-import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.catalog.CatalogComponent;
-import org.openecomp.sdc.common.api.Constants;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import javax.ws.rs.*;
+import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.catalog.CatalogComponent;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
@@ -51,12 +65,16 @@ import java.util.Map;
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ArchiveEndpoint {
+public class ArchiveEndpoint extends BeGenericServlet{
 
+    private static final String COMPONENT_ID = "Component ID= ";
     private final ArchiveBusinessLogic archiveBusinessLogic;
+    private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ArchiveEndpoint.class.getName());
 
     @Inject
-    public ArchiveEndpoint(ArchiveBusinessLogic archiveBusinessLogic) {
+    public ArchiveEndpoint(UserBusinessLogic userBusinessLogic,
+                           ComponentsUtils componentsUtils, ArchiveBusinessLogic archiveBusinessLogic) {
+        super(userBusinessLogic, componentsUtils);
         this.archiveBusinessLogic = archiveBusinessLogic;
     }
 
@@ -71,8 +89,11 @@ public class ArchiveEndpoint {
             @ApiResponse(responseCode = "404", description = "Resource not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")
     })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response archiveResources(@PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE,StatusCode.STARTED,"Archive Resource " + COMPONENT_ID + " " + componentId + " by "+ userId);
         archiveBusinessLogic.archiveComponent(ComponentTypeEnum.RESOURCE_PARAM_NAME, userId, componentId);
+        loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE,StatusCode.COMPLETE,"Archive Resource " + COMPONENT_ID + " " + componentId + " by "+ userId);
         return Response.ok().build();
     }
 
@@ -87,8 +108,11 @@ public class ArchiveEndpoint {
             @ApiResponse(responseCode = "404", description = "Resource not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")
     })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response restoreResource(@PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE,StatusCode.STARTED,"Restore resource from archive " + COMPONENT_ID + " " + componentId + " by "+ userId);
         archiveBusinessLogic.restoreComponent(ComponentTypeEnum.RESOURCE_PARAM_NAME, userId, componentId);
+        loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE,StatusCode.COMPLETE,"Restore resource from archive " + COMPONENT_ID + " " + componentId + " by "+ userId);
         return Response.ok().build();
     }
 
@@ -103,8 +127,11 @@ public class ArchiveEndpoint {
             @ApiResponse(responseCode = "404", description = "Service not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")
     })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response archiveService(@PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE, StatusCode.STARTED, "Archive Service for " + COMPONENT_ID + " " + componentId + " by " + userId);
         archiveBusinessLogic.archiveComponent(ComponentTypeEnum.SERVICE_PARAM_NAME, userId, componentId);
+        loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE,StatusCode.COMPLETE, "Archive Service for " + COMPONENT_ID + " " + componentId + " by " + userId);
         return Response.ok().build();
     }
 
@@ -120,8 +147,11 @@ public class ArchiveEndpoint {
             @ApiResponse(responseCode = "404", description = "Service not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")
     })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response restoreService(@PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE,StatusCode.STARTED,"Restore service from archive " + COMPONENT_ID + " " + componentId + " by "+ userId);
         archiveBusinessLogic.restoreComponent(ComponentTypeEnum.SERVICE_PARAM_NAME, userId, componentId);
+        loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE,StatusCode.COMPLETE,"Restore service from archive " + COMPONENT_ID + " " + componentId + " by "+ userId);
         return Response.ok().build();
     }
 
@@ -135,6 +165,7 @@ public class ArchiveEndpoint {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "500", description = "Internal Error")
     })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Map<String, List<CatalogComponent>> getArchivedComponents(@HeaderParam(value = Constants.USER_ID_HEADER) String userId){
         return this.archiveBusinessLogic.getArchiveComponents(userId, new LinkedList<>());
     }
@@ -148,6 +179,7 @@ public class ArchiveEndpoint {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "500", description = "Internal Error. A list of the failed CSAR IDs may be returned.")
     })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response onVspArchived(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, @RequestBody List<String> csarIds){
         List<String> failedCsarIds = this.archiveBusinessLogic.onVspArchive(userId, csarIds);
         if (!failedCsarIds.isEmpty()){
@@ -170,6 +202,7 @@ public class ArchiveEndpoint {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "500", description = "Internal Error. A list of the failed CSAR IDs may be returned.")
     })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response onVspRestored(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, @RequestBody List<String> csarIds){
         List<String> failedCsarIds = this.archiveBusinessLogic.onVspRestore(userId, csarIds);
         if (!failedCsarIds.isEmpty()){

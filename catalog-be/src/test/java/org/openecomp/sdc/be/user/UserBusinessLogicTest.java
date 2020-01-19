@@ -20,859 +20,735 @@
 
 package org.openecomp.sdc.be.user;
 
+import com.google.common.collect.Lists;
 import fj.data.Either;
-import mockit.Deencapsulation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedEdge;
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
+import org.openecomp.sdc.be.facade.operations.UserOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.UserRoleEnum;
-import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.common.datastructure.UserContext;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 
-import javax.servlet.ServletContext;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class UserBusinessLogicTest {
 
-	@InjectMocks
-	UserBusinessLogic testSubject;
-	@Mock
-	private IUserAdminOperation userAdminOperation;
-	@Mock
-	private ComponentsUtils componentsUtils;
-	@Mock
-	private JanusGraphGenericDao janusGraphDao;
-
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
-
-	@Test
-	public void testGetUser() throws Exception {
-		String userId = "";
-		boolean inTransaction = false;
-		Either<User, ActionStatus> result;
-
-		// default test
-		result = testSubject.getUser(userId, inTransaction);
-	}
-
-	@Test
-	public void testCreateUser() throws Exception {
-		User modifier = new User();
-		User newUser = new User();
-		Either<User, ResponseFormat> result;
-
-		// default test
-		result = testSubject.createUser(modifier, newUser);
-	}
-
-	@Test
-	public void testCreateUserErrorGetUser() throws Exception {
-		User modifier = new User();
-		User newUser = new User();
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.right(ActionStatus.USER_NOT_FOUND);
-		Mockito.when(userAdminOperation.getUserData(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(value);
-
-		// default test
-		modifier.setUserId("mock");
-		result = testSubject.createUser(modifier, newUser);
-	}
-
-	@Test
-	public void testCreateUserErrorUserNotAdmin() throws Exception {
-		User modifier = new User();
-		User newUser = new User();
-		Either<User, ResponseFormat> result;
-
-		User userFromDb = new User();
-		userFromDb.setRole(UserRoleEnum.DESIGNER.getName());
-		Either<User, ActionStatus> value = Either.left(userFromDb);
-		Mockito.when(userAdminOperation.getUserData(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(value);
-
-		// default test
-		modifier.setUserId("mock");
-		result = testSubject.createUser(modifier, newUser);
-	}
-
-	@Test
-	public void testCreateErrorCheckingNewUser() throws Exception {
-		User modifier = new User();
-		User newUser = new User();
-		Either<User, ResponseFormat> result;
-
-		User userFromDb = new User();
-		userFromDb.setRole(UserRoleEnum.ADMIN.getName());
-		Either<User, ActionStatus> value = Either.left(userFromDb);
-		Either<User, ActionStatus> value2 = Either.right(ActionStatus.AUTH_REQUIRED);
-		Mockito.when(userAdminOperation.getUserData("mockModif", false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData("mockNewUs", false)).thenReturn(value2);
-
-		// default test
-		modifier.setUserId("mockModif");
-		newUser.setUserId("mockNewUs");
-		result = testSubject.createUser(modifier, newUser);
-	}
-
-	@Test
-	public void testCreateErrorCheckingNewUser2() throws Exception {
-		User modifier = new User();
-		User newUser = new User();
-		Either<User, ResponseFormat> result;
-
-		User userFromDb = new User();
-		userFromDb.setRole(UserRoleEnum.ADMIN.getName());
-		Either<User, ActionStatus> value = Either.left(userFromDb);
-		Either<User, ActionStatus> value2 = Either.right(ActionStatus.USER_ALREADY_EXIST);
-		Mockito.when(userAdminOperation.getUserData("mockModif", false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData("mockNewUs", false)).thenReturn(value2);
-
-		// default test
-		modifier.setUserId("mockModif");
-		newUser.setUserId("mockNewUs");
-		result = testSubject.createUser(modifier, newUser);
-	}
-
-	@Test
-	public void testCreate2() throws Exception {
-		User modifier = new User();
-		User newUser = new User();
-		Either<User, ResponseFormat> result;
-
-		modifier.setUserId("mockModif");
-		newUser.setUserId("mockNewUs");
-
-		User userFromDb = new User();
-		userFromDb.setRole(UserRoleEnum.ADMIN.getName());
-		Either<User, ActionStatus> value = Either.left(userFromDb);
-
-		User userFromDb2 = new User();
-		Either<User, ActionStatus> value2 = Either.left(userFromDb2);
-		Mockito.when(userAdminOperation.getUserData("mockModif", false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData("mockNewUs", false)).thenReturn(value2);
-
-		// default test
-		result = testSubject.createUser(modifier, newUser);
-	}
-
-	@Test
-	public void testCreateInvalidMail() throws Exception {
-		User modifier = new User();
-		User newUser = new User();
-		Either<User, ResponseFormat> result;
-
-		modifier.setUserId("mockModif");
-		newUser.setUserId("mockNewUs");
-		newUser.setEmail("mock");
-
-		User userFromDbAdmin = new User();
-		userFromDbAdmin.setRole(UserRoleEnum.ADMIN.getName());
-		Either<User, ActionStatus> value = Either.left(userFromDbAdmin);
-
-		User userFromDbNew = new User();
-		userFromDbNew.setStatus(UserStatusEnum.INACTIVE);
-		Either<User, ActionStatus> value2 = Either.left(userFromDbNew);
-		Mockito.when(userAdminOperation.getUserData("mockModif", false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData("mockNewUs", false)).thenReturn(value2);
-
-		// default test
-		result = testSubject.createUser(modifier, newUser);
-	}
-
-	@Test
-	public void testCreateInvalidRole() throws Exception {
-		User modifier = new User();
-		User newUser = new User();
-		Either<User, ResponseFormat> result;
-
-		modifier.setUserId("mockModif");
-		newUser.setUserId("mockNewUs");
-		newUser.setEmail("mock@mock.mock");
-		newUser.setRole("mock");
-
-		User userFromDbAdmin = new User();
-		userFromDbAdmin.setRole(UserRoleEnum.ADMIN.getName());
-		Either<User, ActionStatus> value = Either.left(userFromDbAdmin);
-
-		User userFromDbNew = new User();
-		userFromDbNew.setStatus(UserStatusEnum.INACTIVE);
-		Either<User, ActionStatus> value2 = Either.left(userFromDbNew);
-		Mockito.when(userAdminOperation.getUserData("mockModif", false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData("mockNewUs", false)).thenReturn(value2);
-
-		// default test
-		result = testSubject.createUser(modifier, newUser);
-	}
-
-	@Test
-	public void testUpdateUserRoleNoId() throws Exception {
-		User modifier = new User();
-		String userIdToUpdate = "";
-		String userRole = "";
-		Either<User, ResponseFormat> result;
-
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRoleNotFound() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		String userIdToUpdate = "";
-		String userRole = "";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.right(ActionStatus.USER_NOT_FOUND);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRoleModifWrongRole() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		modifier.setRole(UserRoleEnum.DESIGNER.getName());
-		String userIdToUpdate = "";
-		String userRole = "";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRoleSameId() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userIdToUpdate = "mock";
-		String userRole = "";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRoleUpdatedNotFound() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userIdToUpdate = "mock1";
-		String userRole = "";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Either<User, ActionStatus> value2 = Either.right(ActionStatus.ECOMP_USER_NOT_FOUND);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(value2);
-
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRoleUpdatedToInvalidRole() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userIdToUpdate = "mock1";
-		String userRole = "";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(value);
-
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRolePendingTaskFailed() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userIdToUpdate = "mock1";
-		String userRole = UserRoleEnum.DESIGNER.getName();
-		Either<User, ResponseFormat> result;
-
-		User updatedUser = new User();
-		updatedUser.setUserId(userIdToUpdate);
-		updatedUser.setRole(UserRoleEnum.TESTER.getName());
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Either<User, ActionStatus> value2 = Either.left(updatedUser);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(value2);
-
-		Either<List<Edge>, StorageOperationStatus> value3 = Either.right(StorageOperationStatus.INCONSISTENCY);
-		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
-
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRoleListOfTasksNotEmpty() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userIdToUpdate = "mock1";
-		String userRole = UserRoleEnum.DESIGNER.getName();
-		Either<User, ResponseFormat> result;
-
-		User updatedUser = new User();
-		updatedUser.setUserId(userIdToUpdate);
-		updatedUser.setRole(UserRoleEnum.TESTER.getName());
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Either<User, ActionStatus> value2 = Either.left(updatedUser);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(value2);
-		List<Edge> list = new LinkedList<>();
-
-		list.add(new DetachedEdge("sdas", "fdfs", new HashMap<>(),"sadas","sadasd",
-				"sadas","sadasd" ));
-		Either<List<Edge>, StorageOperationStatus> value3 = Either.left(list);
-		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
-
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRoleFailToUpdate() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userIdToUpdate = "mock1";
-		String userRole = UserRoleEnum.DESIGNER.getName();
-		Either<User, ResponseFormat> result;
-
-		User updatedUser = new User();
-		updatedUser.setUserId(userIdToUpdate);
-		updatedUser.setRole(UserRoleEnum.TESTER.getName());
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Either<User, ActionStatus> value2 = Either.left(updatedUser);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(value2);
-		List<Edge> list = new LinkedList<>();
-
-		Either<List<Edge>, StorageOperationStatus> value3 = Either.left(list);
-		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
-		Either<User, StorageOperationStatus> value4 = Either.right(StorageOperationStatus.INCONSISTENCY);
-		Mockito.when(userAdminOperation.updateUserData(Mockito.any())).thenReturn(value4);
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testUpdateUserRole() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mock");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userIdToUpdate = "mock1";
-		String userRole = UserRoleEnum.DESIGNER.getName();
-		Either<User, ResponseFormat> result;
-
-		User updatedUser = new User();
-		updatedUser.setUserId(userIdToUpdate);
-		updatedUser.setRole(UserRoleEnum.TESTER.getName());
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Either<User, ActionStatus> value2 = Either.left(updatedUser);
-		Mockito.when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(value);
-		Mockito.when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(value2);
-		List<Edge> list = new LinkedList<>();
-
-		Either<List<Edge>, StorageOperationStatus> value3 = Either.left(list);
-		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
-		Either<User, StorageOperationStatus> value4 = Either.left(updatedUser);
-		Mockito.when(userAdminOperation.updateUserData(Mockito.any())).thenReturn(value4);
-		// default test
-		result = testSubject.updateUserRole(modifier, userIdToUpdate, userRole);
-	}
-
-	@Test
-	public void testGetAllAdminUsers() throws Exception {
-		ServletContext context = null;
-		Either<List<User>, ResponseFormat> result;
-
-		Either<List<User>, ActionStatus> response = Either.left(new LinkedList<>());
-		Mockito.when(userAdminOperation.getAllUsersWithRole(Mockito.anyString(), Mockito.nullable(String.class)))
-				.thenReturn(response);
-		// default test
-		result = testSubject.getAllAdminUsers();
-	}
-
-	@Test
-	public void testGetAllAdminUsersFail() throws Exception {
-		ServletContext context = null;
-		Either<List<User>, ResponseFormat> result;
-
-		Either<List<User>, ActionStatus> response = Either.right(ActionStatus.NOT_ALLOWED);
-		Mockito.when(userAdminOperation.getAllUsersWithRole(Mockito.anyString(), Mockito.nullable(String.class)))
-				.thenReturn(response);
-		// default test
-		result = testSubject.getAllAdminUsers();
-	}
-
-	@Test
-	public void testGetUsersList1() throws Exception {
-		String modifierAttId = "";
-		List<String> roles = null;
-		String rolesStr = "";
-		Either<List<User>, ResponseFormat> result;
-
-		// test 1
-		modifierAttId = null;
-		result = testSubject.getUsersList(modifierAttId, roles, rolesStr);
-	}
-
-	@Test
-	public void testGetUsersListFail() throws Exception {
-		String modifierAttId = "mockMod";
-		List<String> roles = null;
-		String rolesStr = "";
-		Either<List<User>, ResponseFormat> result;
-
-		Either<User, ActionStatus> value3 = Either.right(ActionStatus.ILLEGAL_COMPONENT_STATE);
-		Mockito.when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
-
-		result = testSubject.getUsersList(modifierAttId, roles, rolesStr);
-	}
-
-	@Test
-	public void testGetUsersListFail2() throws Exception {
-		String modifierAttId = "mockMod";
-		List<String> roles = null;
-		String rolesStr = "";
-		Either<List<User>, ResponseFormat> result;
-
-		Either<User, ActionStatus> value3 = Either.right(ActionStatus.USER_NOT_FOUND);
-		Mockito.when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
-
-		result = testSubject.getUsersList(modifierAttId, roles, rolesStr);
-	}
-
-	
-	@Test
-	public void testGetUsersList() throws Exception {
-		String modifierAttId = "mockMod";
-		List<String> roles = new LinkedList<>();
-		String rolesStr = "";
-		Either<List<User>, ResponseFormat> result;
-
-		User a = new User();
-		Either<User, ActionStatus> value3 = Either.left(a);
-		Mockito.when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
-		Either<List<User>, ActionStatus> value = Either.left(new LinkedList<>());
-		Mockito.when(userAdminOperation.getAllUsersWithRole(Mockito.nullable(String.class), Mockito.anyString()))
-				.thenReturn(value);
-
-		result = testSubject.getUsersList(modifierAttId, roles, rolesStr);
-	}
-
-	@Test
-	public void testGetUsersListInvalidRole() throws Exception {
-		String modifierAttId = "mockMod";
-		List<String> roles = new LinkedList<>();
-		roles.add("mock");
-		String rolesStr = "";
-		Either<List<User>, ResponseFormat> result;
-
-		User a = new User();
-		Either<User, ActionStatus> value3 = Either.left(a);
-		Mockito.when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
-		Either<List<User>, ActionStatus> value = Either.left(new LinkedList<>());
-		Mockito.when(userAdminOperation.getAllUsersWithRole(Mockito.nullable(String.class), Mockito.anyString()))
-				.thenReturn(value);
-
-		result = testSubject.getUsersList(modifierAttId, roles, rolesStr);
-	}
-
-	@Test
-	public void testGetUsersList2() throws Exception {
-		String modifierAttId = "mockMod";
-		List<String> roles = new LinkedList<>();
-		roles.add(UserRoleEnum.DESIGNER.name());
-		String rolesStr = "";
-		Either<List<User>, ResponseFormat> result;
-
-		User a = new User();
-		Either<User, ActionStatus> value3 = Either.left(a);
-		Mockito.when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
-		Either<List<User>, ActionStatus> value = Either.left(new LinkedList<>());
-		Mockito.when(userAdminOperation.getAllUsersWithRole(Mockito.nullable(String.class), Mockito.anyString()))
-				.thenReturn(value);
-
-		result = testSubject.getUsersList(modifierAttId, roles, rolesStr);
-	}
-
-
-	@Test
-	public void testDeActivateUserMissingID() throws Exception {
-		User modifier = new User();
-		modifier.setUserId(null);
-		String userUniuqeIdToDeactive = "";
-		Either<User, ResponseFormat> result;
-
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUserModifierNotFound() throws Exception {
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		String userUniuqeIdToDeactive = "";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.right(ActionStatus.USER_NOT_FOUND);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUserModNotAdmin() throws Exception {
-
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		modifier.setRole(UserRoleEnum.DESIGNER.getName());
-		String userUniuqeIdToDeactive = "";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUserDeacUserNotFound() throws Exception {
-
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userUniuqeIdToDeactive = "mockDU";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-		Either<User, ActionStatus> value2 = Either.right(ActionStatus.USER_NOT_FOUND);
-		Mockito.when(userAdminOperation.getUserData("mockDU", false)).thenReturn(value2);
-
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUserDeacAndModSame() throws Exception {
-
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userUniuqeIdToDeactive = "mockMod";
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-		Either<User, ActionStatus> value2 = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockDU", false)).thenReturn(value2);
-
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUserAlreadyInactive() throws Exception {
-
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userUniuqeIdToDeactive = "mockDU";
-		User deacUser = new User();
-		deacUser.setStatus(UserStatusEnum.INACTIVE);
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-		Either<User, ActionStatus> value2 = Either.left(deacUser);
-		Mockito.when(userAdminOperation.getUserData("mockDU", false)).thenReturn(value2);
-
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUserFailToGetTasks() throws Exception {
-
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userUniuqeIdToDeactive = "mockDU";
-		User deacUser = new User();
-		deacUser.setStatus(UserStatusEnum.ACTIVE);
-		deacUser.setRole(UserRoleEnum.DESIGNER.name());
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-		Either<User, ActionStatus> value2 = Either.left(deacUser);
-		Mockito.when(userAdminOperation.getUserData("mockDU", false)).thenReturn(value2);
-		Either<List<Edge>, StorageOperationStatus> value3 = Either.right(StorageOperationStatus.INCONSISTENCY);
-		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
-
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUserWithPendingTasks() throws Exception {
-
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userUniuqeIdToDeactive = "mockDU";
-		User deacUser = new User();
-		deacUser.setStatus(UserStatusEnum.ACTIVE);
-		deacUser.setRole(UserRoleEnum.DESIGNER.name());
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-		Either<User, ActionStatus> value2 = Either.left(deacUser);
-		Mockito.when(userAdminOperation.getUserData("mockDU", false)).thenReturn(value2);
-		LinkedList<Edge> a = new LinkedList<>();
-		a.add(new DetachedEdge(userUniuqeIdToDeactive, userUniuqeIdToDeactive, new HashMap<>(),
-				"dsfds","dsfds", "dsfds", "dsfds"));
-		Either<List<Edge>, StorageOperationStatus> value3 = Either.left(a);
-		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
-
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUserDeacFail() throws Exception {
-
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userUniuqeIdToDeactive = "mockDU";
-		User deacUser = new User();
-		deacUser.setStatus(UserStatusEnum.ACTIVE);
-		deacUser.setRole(UserRoleEnum.DESIGNER.name());
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-		Either<User, ActionStatus> value2 = Either.left(deacUser);
-		Mockito.when(userAdminOperation.getUserData("mockDU", false)).thenReturn(value2);
-		Either<List<Edge>, StorageOperationStatus> value3 = Either.left(new LinkedList<>());
-		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
-		Either<User, StorageOperationStatus> value4 = Either.right(StorageOperationStatus.BAD_REQUEST);
-		Mockito.when(userAdminOperation.deActivateUser(deacUser)).thenReturn(value4);
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testDeActivateUser() throws Exception {
-
-		User modifier = new User();
-		modifier.setUserId("mockMod");
-		modifier.setRole(UserRoleEnum.ADMIN.getName());
-		String userUniuqeIdToDeactive = "mockDU";
-		User deacUser = new User();
-		deacUser.setStatus(UserStatusEnum.ACTIVE);
-		deacUser.setRole(UserRoleEnum.DESIGNER.name());
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(modifier);
-		Mockito.when(userAdminOperation.getUserData("mockMod", false)).thenReturn(value);
-		Either<User, ActionStatus> value2 = Either.left(deacUser);
-		Mockito.when(userAdminOperation.getUserData("mockDU", false)).thenReturn(value2);
-		Either<List<Edge>, StorageOperationStatus> value3 = Either.left(new LinkedList<>());
-		Mockito.when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(value3);
-		Either<User, StorageOperationStatus> value4 = Either.left(deacUser);
-		Mockito.when(userAdminOperation.deActivateUser(deacUser)).thenReturn(value4);
-		// default test
-		result = testSubject.deActivateUser(modifier, userUniuqeIdToDeactive);
-	}
-
-	@Test
-	public void testAuthorizeMissingId() throws Exception {
-		User authUser = new User();
-		Either<User, ResponseFormat> result;
-
-		// default test
-		result = testSubject.authorize(authUser);
-	}
-
-	@Test
-	public void testAuthorizeFail1() throws Exception {
-		User authUser = new User();
-		authUser.setUserId("mockAU");
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.right(ActionStatus.USER_NOT_FOUND);
-		Mockito.when(userAdminOperation.getUserData("mockAU", false)).thenReturn(value);
-		// default test
-		result = testSubject.authorize(authUser);
-	}
-
-	@Test
-	public void testAuthorizeFail2() throws Exception {
-		User authUser = new User();
-		authUser.setUserId("mockAU");
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.right(ActionStatus.AAI_ARTIFACT_GENERATION_FAILED);
-		Mockito.when(userAdminOperation.getUserData("mockAU", false)).thenReturn(value);
-		// default test
-		result = testSubject.authorize(authUser);
-	}
-
-	@Test
-	public void testAuthorizeFail3() throws Exception {
-		User authUser = new User();
-		authUser.setUserId("mockAU");
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(null);
-		Mockito.when(userAdminOperation.getUserData("mockAU", false)).thenReturn(value);
-		// default test
-		result = testSubject.authorize(authUser);
-	}
-
-
-	@Test
-	public void testAuthorize5() throws Exception {
-		User authUser = new User();
-		authUser.setUserId("mockAU");
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(authUser);
-		Mockito.when(userAdminOperation.getUserData("mockAU", false)).thenReturn(value);
-		Either<User, StorageOperationStatus> value2 = Either.left(authUser);
-		Mockito.when(userAdminOperation.updateUserData(Mockito.any(User.class))).thenReturn(value2);
-		// default test
-		result = testSubject.authorize(authUser);
-	}
-
-	@Test
-	public void testUpdateUserCredentialsMissingId() throws Exception {
-		User updatedUserCred = new User();
-		updatedUserCred.setUserId(null);
-		Either<User, ResponseFormat> result;
-
-		// default test
-		result = testSubject.updateUserCredentials(updatedUserCred);
-	}
-
-	@Test
-	public void testUpdateUserCredentialsFailedToGet() throws Exception {
-		User updatedUserCred = new User();
-		updatedUserCred.setUserId("mock");
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.right(ActionStatus.USER_NOT_FOUND);
-		Mockito.when(userAdminOperation.getUserData("mock", false)).thenReturn(value);
-
-		// default test
-		result = testSubject.updateUserCredentials(updatedUserCred);
-	}
-
-	@Test
-	public void testUpdateUserCredentialsFailedToGet2() throws Exception {
-		User updatedUserCred = new User();
-		updatedUserCred.setUserId("mock");
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.right(ActionStatus.ADDITIONAL_INFORMATION_ALREADY_EXISTS);
-		Mockito.when(userAdminOperation.getUserData("mock", false)).thenReturn(value);
-
-		// default test
-		result = testSubject.updateUserCredentials(updatedUserCred);
-	}
-
-	@Test
-	public void testUpdateUserCredentialsFailedToGet3() throws Exception {
-		User updatedUserCred = new User();
-		updatedUserCred.setUserId("mock");
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(null);
-		Mockito.when(userAdminOperation.getUserData("mock", false)).thenReturn(value);
-
-		// default test
-		result = testSubject.updateUserCredentials(updatedUserCred);
-	}
-
-	@Test
-	public void testUpdateUserCredentials() throws Exception {
-		User updatedUserCred = new User();
-		updatedUserCred.setUserId("mock");
-		Either<User, ResponseFormat> result;
-
-		Either<User, ActionStatus> value = Either.left(updatedUserCred);
-		Mockito.when(userAdminOperation.getUserData("mock", false)).thenReturn(value);
-
-		Either<User, StorageOperationStatus> value2 = Either.left(updatedUserCred);
-		Mockito.when(userAdminOperation.updateUserData(Mockito.any(User.class))).thenReturn(value2);
-
-		// default test
-		result = testSubject.updateUserCredentials(updatedUserCred);
-	}
-
-	@Test
-	public void testGetPendingUserPendingTasksWithCommit() throws Exception {
-		Either<List<Edge>, StorageOperationStatus> result;
-		User user = new User();
-		for (UserRoleEnum iterable_element : UserRoleEnum.values()) {
-			user.setRole(iterable_element.name());
-			result = Deencapsulation.invoke(testSubject, "getPendingUserPendingTasksWithCommit", user);
-		}
-
-	}
-
-	@Test
-	public void testGetUserPendingTaskStatusByRole() throws Exception {
-		String result;
-		for (UserRoleEnum iterable_element : UserRoleEnum.values()) {
-			result = Deencapsulation.invoke(testSubject, "getUserPendingTaskStatusByRole", iterable_element);
-		}
-	}
+    private static final String MOCK_MAIL = "mock@mock.mock";
+    private static final String MOCK_MODIFIER = "mockModif";
+    private static final String MOCK_NEW_USER = "mockNewUs";
+    @Mock
+    private UserAdminOperation userAdminOperation;
+    @Mock
+    private ComponentsUtils componentsUtils;
+    @Mock
+    private UserOperation facadeUserOperation;
+    @Mock
+    private User user;
+    @Mock
+    private User userNull;
+    @InjectMocks
+    private UserBusinessLogic testSubject;
+
+    static ResponseFormatManager responseFormatManager = new ResponseFormatManager();
+    private static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+
+    @Before
+    public void setUp() {
+        doThrow(new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR)).when(componentsUtils).auditAdminUserActionAndThrowException(any(), any(), any(), any(), any(), any());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testCreateUserErrorGetUser() {
+        User newUser = new User();
+        when(userAdminOperation.getUserData(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
+        // default test
+        testSubject.createUser("mock", newUser);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+//    @Test(expected = ComponentException.class)
+//    public void testGetUserContextNull() {
+//        testSubject.getUser("userId");
+//    }
+
+    @Test(expected = ComponentException.class)
+    public void testGetUserContextIdEmpty() {
+        UserContext userContext = new UserContext(null);
+        ThreadLocalsHolder.setUserContext(userContext);
+
+        testSubject.getUser(null);
+    }
+
+    @Test
+    public void testGetUserContext() {
+        UserContext originalUserContext = ThreadLocalsHolder.getUserContext();
+        String userId = "userId";
+        Set<String> userRoles = new HashSet<>();
+        userRoles.add(Role.DESIGNER.name());
+        UserContext userContext = new UserContext(userId, userRoles, "test" ,"User");
+
+        User user = new User();
+        user.setUserId(userId);
+        user.setRole(Role.DESIGNER.name());
+        user.setStatus(UserStatusEnum.ACTIVE);
+        user.setFirstName("test");
+        user.setLastName("User");
+
+        getAndValidateUser(originalUserContext, userId, userContext, user);
+    }
+
+    private void getAndValidateUser(UserContext originalUserContext, String userId, UserContext userContext, User user) {
+        try {
+            ThreadLocalsHolder.setUserContext(userContext);
+            User convertedUser = testSubject.getUser(userId);
+            assertThat(convertedUser).isEqualTo(user);
+        }
+        finally {
+            ThreadLocalsHolder.setUserContext(originalUserContext);
+        }
+    }
+
+    @Test
+    public void testGetUserContextInActive() {
+        UserContext originalUserContext = ThreadLocalsHolder.getUserContext();
+        String userId = "userId";
+        //Set<String> userRoles = new HashSet<>();
+        //userRoles.add(Role.DESIGNER.name());
+        UserContext userContext = new UserContext(userId, null, "test" ,"User");
+
+        User user = new User();
+        user.setUserId(userId);
+        user.setRole(null);
+        user.setStatus(UserStatusEnum.INACTIVE);
+        user.setFirstName("test");
+        user.setLastName("User");
+
+        getAndValidateUser(originalUserContext, userId, userContext, user);
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testCreateUserErrorUserNotAdmin() {
+        User newUser = new User();
+        User userFromDb = new User();
+        userFromDb.setRole(UserRoleEnum.DESIGNER.getName());
+        when(userAdminOperation.getUserData(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.left(userFromDb));
+        testSubject.createUser("mock", newUser);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testCreateErrorCheckingNewUser() {
+        User newUser = new User(MOCK_NEW_USER);
+        User modifierFromDb = new User(MOCK_MODIFIER);
+        modifierFromDb.setRole(UserRoleEnum.ADMIN.getName());
+        when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(modifierFromDb));
+        when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(Either.right(ActionStatus.AUTH_REQUIRED));
+
+        // default test
+        testSubject.createUser(MOCK_MODIFIER, newUser);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testCreateErrorCheckingNewUser2() {
+        User newUser = new User(MOCK_NEW_USER);
+        User modifierFromDb = new User(MOCK_MODIFIER);
+        modifierFromDb.setRole(UserRoleEnum.ADMIN.getName());
+        when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(modifierFromDb));
+        when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(Either.right(ActionStatus.USER_ALREADY_EXIST));
+
+        // default test
+        testSubject.createUser(MOCK_MODIFIER, newUser);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testCreate_userExists_fails() {
+        User newUser = new User(MOCK_NEW_USER);
+        User modifierFromDb = new User(MOCK_MODIFIER);
+        modifierFromDb.setRole(UserRoleEnum.ADMIN.getName());
+        User userFromDb2 = new User();
+        when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(modifierFromDb));
+        when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(Either.left(userFromDb2));
+        testSubject.createUser(MOCK_MODIFIER, newUser);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testCreateInvalidMail() {
+        User newUser = new User(MOCK_NEW_USER);
+        newUser.setEmail("mock");
+
+        User userFromDbAdmin = new User(MOCK_MODIFIER);
+        userFromDbAdmin.setRole(UserRoleEnum.ADMIN.getName());
+
+        User userFromDbNew = new User();
+        userFromDbNew.setStatus(UserStatusEnum.INACTIVE);
+        when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(userFromDbAdmin));
+        when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(Either.left(userFromDbNew));
+        testSubject.createUser(MOCK_MODIFIER, newUser);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testCreateInvalidRole() {
+        User newUser = new User(MOCK_NEW_USER);
+        newUser.setEmail(MOCK_MAIL);
+        newUser.setRole("mock");
+
+        User userFromDbAdmin = new User(MOCK_MODIFIER);
+        userFromDbAdmin.setRole(UserRoleEnum.ADMIN.getName());
+        User userFromDbNew = new User();
+        userFromDbNew.setStatus(UserStatusEnum.INACTIVE);
+        when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(Either.left(userFromDbAdmin));
+        when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(Either.left(userFromDbNew));
+        testSubject.createUser(MOCK_MODIFIER, newUser);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test
+    public void testCreateValidUser() throws Exception {
+        User newUser = new User();
+        newUser.setUserId(MOCK_NEW_USER);
+        newUser.setEmail(MOCK_MAIL);
+        newUser.setRole(UserRoleEnum.DESIGNER.name());
+
+        User userFromDbAdmin = new User();
+        userFromDbAdmin.setUserId(MOCK_MODIFIER);
+        userFromDbAdmin.setRole(UserRoleEnum.ADMIN.getName());
+        Either<User, ActionStatus> value = Either.left(userFromDbAdmin);
+
+        User userFromDbNew = new User();
+        userFromDbNew.setStatus(UserStatusEnum.INACTIVE);
+        Either<User, ActionStatus> value2 = Either.right(ActionStatus.USER_NOT_FOUND);
+        when(userAdminOperation.getUserData(MOCK_MODIFIER, false)).thenReturn(value);
+        when(userAdminOperation.getUserData(MOCK_NEW_USER, false)).thenReturn(value2);
+        when(userAdminOperation.saveUserData(newUser)).thenReturn(newUser);
+
+        // test
+        User resultUser = testSubject.createUser(MOCK_MODIFIER, newUser);
+        assertThat(resultUser).isEqualTo(newUser);
+
+        verify(facadeUserOperation).updateUserCache(UserOperationEnum.CREATE, newUser.getUserId(), newUser.getRole());
+    }
+
+    @Test(expected =  ComponentException.class)
+    public void testUpdateUserRoleNotFound() {
+        User modifier = new User(MOCK_MODIFIER);
+        String userIdToUpdate = "";
+        String userRole = "";
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected =  ComponentException.class)
+    public void testUpdateUserRoleModifierWrongRole() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.DESIGNER.getName());
+        String userIdToUpdate = "";
+        String userRole = "";
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected =  ComponentException.class)
+    public void testUpdateUserRoleSameId() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userRole = "";
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        testSubject.updateUserRole(MOCK_MODIFIER, MOCK_MODIFIER, userRole);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected =  ComponentException.class)
+    public void testUpdateUserRoleUpdatedNotFound() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userIdToUpdate = "mock1";
+        String userRole = "";
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.right(ActionStatus.ECOMP_USER_NOT_FOUND));
+
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected =  ComponentException.class)
+    public void testUpdateUserRoleUpdatedToInvalidRole() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userIdToUpdate = "mock1";
+        String userRole = "";
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(modifier));
+
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected =  StorageException.class)
+    public void testUpdateUserRolePendingTaskFetchFailed() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userIdToUpdate = "mock1";
+        String userRole = UserRoleEnum.DESIGNER.getName();
+
+        User updatedUser = new User();
+        updatedUser.setUserId(userIdToUpdate);
+        updatedUser.setRole(UserRoleEnum.TESTER.getName());
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
+        when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenThrow(new StorageException(StorageOperationStatus.INCONSISTENCY));
+
+        // default test
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test
+    public void testUpdateTesterRole_taskStateCriteriaShouldBeEmpty_shouldSucceed() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userIdToUpdate = "mock1";
+        String userRole = UserRoleEnum.DESIGNER.getName();
+
+        User updatedUser = new User(userIdToUpdate);
+        updatedUser.setRole(UserRoleEnum.TESTER.getName());
+
+        User newUser = new User();
+        newUser.setUserId(userIdToUpdate);
+        newUser.setRole(UserRoleEnum.DESIGNER.getName());
+        List<Object> testerState = new ArrayList<>();
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
+        when(userAdminOperation.getUserPendingTasksList(eq(updatedUser), eq(testerState))).thenReturn(new LinkedList<>());
+        when(userAdminOperation.updateUserData(newUser)).thenReturn(updatedUser);
+
+        // default test
+        User user = testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+        assertThat(user).isEqualToComparingFieldByField(updatedUser);
+
+        verify(facadeUserOperation).updateUserCache(UserOperationEnum.CHANGE_ROLE, userIdToUpdate, UserRoleEnum.TESTER.name());
+    }
+
+    @Test(expected =  ComponentException.class)
+    public void testUpdateDesignerRoleListOfTasksNotEmpty_shouldFail() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userIdToUpdate = "mock1";
+        String userRole = UserRoleEnum.TESTER.getName();
+
+        User updatedUser = new User();
+        updatedUser.setUserId(userIdToUpdate);
+        updatedUser.setRole(UserRoleEnum.DESIGNER.getName());
+
+        List<Object> designerState = new ArrayList<>();
+        designerState.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name());
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
+        List<Edge> list = new LinkedList<>();
+        list.add(new DetachedEdge("sdas", "fdfs", new HashMap<>(), Pair.with("sadas", "sadasd"), "",
+                Pair.with("sadas", "sadasd"), ""));
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test(expected =  StorageException.class)
+    public void testUpdateUserRoleStorageError_shouldFail() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userIdToUpdate = "mock1";
+        String userRole = UserRoleEnum.DESIGNER.getName();
+
+        User updatedUser = new User(userIdToUpdate);
+        updatedUser.setRole(UserRoleEnum.TESTER.getName());
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
+        when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(new LinkedList<>());
+        when(userAdminOperation.updateUserData(Mockito.any())).thenThrow(new StorageException(StorageOperationStatus.INCONSISTENCY));
+        // default test
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+
+        verify(facadeUserOperation, never()).updateUserCache(any(UserOperationEnum.class), anyString(), anyString());
+    }
+
+    @Test
+    public void testUpdateUserRoleEmptyTaskList_shouldSucceed() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userIdToUpdate = "mock1";
+        String userRole = UserRoleEnum.DESIGNER.getName();
+
+        User updatedUser = new User();
+        updatedUser.setUserId(userIdToUpdate);
+        updatedUser.setRole(UserRoleEnum.TESTER.getName());
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
+        when(userAdminOperation.getUserPendingTasksList(Mockito.any(), Mockito.any())).thenReturn(new LinkedList<>());
+        when(userAdminOperation.updateUserData(Mockito.any())).thenReturn(updatedUser);
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+
+        verify(facadeUserOperation).updateUserCache(UserOperationEnum.CHANGE_ROLE, userIdToUpdate, UserRoleEnum.TESTER.name());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testUpdateRoleToTester_shouldFail() {
+        User modifier = new User(MOCK_MODIFIER);
+        modifier.setRole(UserRoleEnum.ADMIN.getName());
+        String userIdToUpdate = "mock1";
+        String userRole = UserRoleEnum.TESTER.getName();
+
+        User updatedUser = new User();
+        updatedUser.setUserId(userIdToUpdate);
+        updatedUser.setRole(UserRoleEnum.TESTER.getName());
+
+        when(userAdminOperation.getUserData(modifier.getUserId(), false)).thenReturn(Either.left(modifier));
+        when(userAdminOperation.getUserData(userIdToUpdate, false)).thenReturn(Either.left(updatedUser));
+        testSubject.updateUserRole(MOCK_MODIFIER, userIdToUpdate, userRole);
+    }
+
+    @Test
+    public void testGetAllAdminUsers() {
+        Either<List<User>, ActionStatus> response = Either.left(new LinkedList<>());
+        when(userAdminOperation.getAllUsersWithRole(anyString(), Mockito.nullable(String.class)))
+                .thenReturn(response);
+        assertEquals(0, testSubject.getAllAdminUsers().size());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testGetAllAdminUsersFail() {
+        Either<List<User>, ActionStatus> response = Either.right(ActionStatus.NOT_ALLOWED);
+        when(userAdminOperation.getAllUsersWithRole(anyString(), Mockito.nullable(String.class)))
+                .thenReturn(response);
+        testSubject.getAllAdminUsers();
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testGetUsersList1() {
+        // test 1
+        testSubject.getUsersList(null, null, "");
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testGetUsersListFail() {
+        String modifierAttId = "mockMod";
+        String rolesStr = "";
+
+        Either<User, ActionStatus> value3 = Either.right(ActionStatus.ILLEGAL_COMPONENT_STATE);
+        when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
+        testSubject.getUsersList(modifierAttId, null, rolesStr);
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testGetUsersListFail2() {
+        String modifierAttId = "mockMod";
+        String rolesStr = "";
+
+        Either<User, ActionStatus> value3 = Either.right(ActionStatus.USER_NOT_FOUND);
+        when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
+        testSubject.getUsersList(modifierAttId, null, rolesStr);
+    }
+
+
+    @Test
+    public void testGetUsersList() {
+        String modifierAttId = "mockMod";
+        List<String> roles = new LinkedList<>();
+        String rolesStr = "";
+
+        User a = new User();
+        Either<User, ActionStatus> value3 = Either.left(a);
+        when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
+        Either<List<User>, ActionStatus> value = Either.left(new LinkedList<>());
+        when(userAdminOperation.getAllUsersWithRole(Mockito.nullable(String.class), anyString()))
+                .thenReturn(value);
+
+        assertEquals(0, testSubject.getUsersList(modifierAttId, roles, rolesStr).size());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testGetUsersListInvalidRole() {
+        String modifierAttId = "mockMod";
+        List<String> roles = new LinkedList<>();
+        roles.add("mock");
+        String rolesStr = "";
+
+        User a = new User();
+        Either<User, ActionStatus> value3 = Either.left(a);
+        when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
+        testSubject.getUsersList(modifierAttId, roles, rolesStr);
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testAuthorizeMissingId() {
+        User authUser = new User();
+        testSubject.authorize(authUser);
+    }
+
+    @Test
+    public void testGetUsersList2() {
+        String modifierAttId = "mockMod";
+        List<String> roles = new LinkedList<>();
+        roles.add(UserRoleEnum.DESIGNER.name());
+        String rolesStr = "";
+
+        User a = new User();
+        Either<User, ActionStatus> value3 = Either.left(a);
+        when(userAdminOperation.getUserData(modifierAttId, false)).thenReturn(value3);
+        Either<List<User>, ActionStatus> value = Either.left(new LinkedList<>());
+        when(userAdminOperation.getAllUsersWithRole(Mockito.nullable(String.class), anyString()))
+                .thenReturn(value);
+
+        assertEquals(0, testSubject.getUsersList(modifierAttId, roles, rolesStr).size());
+    }
+
+
+    @Test(expected = ComponentException.class)
+    public void testAuthorizeFail1() {
+        User authUser = new User();
+        authUser.setUserId("mockAU");
+
+        Either<User, ActionStatus> value = Either.right(ActionStatus.USER_NOT_FOUND);
+        when(userAdminOperation.getUserData("mockAU", false)).thenReturn(value);
+        testSubject.authorize(authUser);
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testAuthorizeFail2() {
+        User authUser = new User();
+        authUser.setUserId("mockAU");
+
+        Either<User, ActionStatus> value = Either.right(ActionStatus.AAI_ARTIFACT_GENERATION_FAILED);
+        when(userAdminOperation.getUserData("mockAU", false)).thenReturn(value);
+        testSubject.authorize(authUser);
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testAuthorizeFail3() {
+        User authUser = new User();
+        authUser.setUserId("mockAU");
+
+        Either<User, ActionStatus> value = Either.left(null);
+        when(userAdminOperation.getUserData("mockAU", false)).thenReturn(value);
+        testSubject.authorize(authUser);
+    }
+
+
+    @Test
+    public void testAuthorize5() {
+        User authUser = new User();
+        authUser.setUserId("mockAU");
+
+        Either<User, ActionStatus> value = Either.left(authUser);
+        when(userAdminOperation.getUserData("mockAU", false)).thenReturn(value);
+        when(userAdminOperation.updateUserData(Mockito.any(User.class))).thenReturn(authUser);
+        assertEquals(authUser.getUserId(), testSubject.authorize(authUser).getUserId());
+    }
+
+    @Test
+    public void testUpdateUserCredentialsMissingId() {
+        User updatedUserCred = new User();
+        updatedUserCred.setUserId(null);
+        assertTrue(testSubject.updateUserCredentials(updatedUserCred).isRight());
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testUpdateUserCredentialsFailedToGet() {
+        User updatedUserCred = new User();
+        updatedUserCred.setUserId("mock");
+
+        Either<User, ActionStatus> value = Either.right(ActionStatus.USER_NOT_FOUND);
+        when(userAdminOperation.getUserData("mock", false)).thenReturn(value);
+        testSubject.updateUserCredentials(updatedUserCred);
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testUpdateUserCredentialsFailedToGet2() {
+        User updatedUserCred = new User();
+        updatedUserCred.setUserId("mock");
+
+        Either<User, ActionStatus> value = Either.right(ActionStatus.ADDITIONAL_INFORMATION_ALREADY_EXISTS);
+        when(userAdminOperation.getUserData("mock", false)).thenReturn(value);
+        testSubject.updateUserCredentials(updatedUserCred);
+    }
+
+    @Test(expected = ComponentException.class)
+    public void testUpdateUserCredentialsFailedToGet3() {
+        User updatedUserCred = new User();
+        updatedUserCred.setUserId("mock");
+
+        Either<User, ActionStatus> value = Either.left(null);
+        when(userAdminOperation.getUserData("mock", false)).thenReturn(value);
+        testSubject.updateUserCredentials(updatedUserCred);
+    }
+
+    @Test
+    public void testUpdateUserCredentials() {
+        User updatedUserCred = new User();
+        updatedUserCred.setUserId("mock");
+
+        Either<User, ActionStatus> value = Either.left(updatedUserCred);
+        when(userAdminOperation.getUserData("mock", false)).thenReturn(value);
+
+        when(userAdminOperation.updateUserData(Mockito.any(User.class))).thenReturn(updatedUserCred);
+        assertEquals(updatedUserCred.getUserId(),
+                testSubject.updateUserCredentials(updatedUserCred).left().value().getUserId());
+    }
+
+    @Test
+    public void getUsersPerRoleWhenListIsEmpty() {
+        when(userAdminOperation.getAllUsersWithRole(any(), any()))
+                .thenReturn(Either.left(Lists.newArrayList()));
+        assertEquals(0, testSubject.getUsersPerRole("all", user, "").left().value().size());
+    }
+
+    @Test
+    public void getUsersPerRoleWhenListHasMixedElements() {
+        List<User> users = Lists.newArrayList(user, userNull);
+        when(user.getUserId()).thenReturn("123");
+        when(userNull.getUserId()).thenReturn(null);
+        when(userAdminOperation.getAllUsersWithRole(any(), any()))
+                .thenReturn(Either.left(users));
+        List<User> result = testSubject.getUsersPerRole("all", user, "").left().value();
+
+        assertEquals(1, result.size());
+        assertTrue(StringUtils.isNotEmpty(result.get(0).getUserId()));
+    }
+
+    @Test
+    public void getUsersPerRoleWhenListHasNoneNullElements() {
+        List<User> users = Lists.newArrayList(user, user);
+        when(user.getUserId()).thenReturn("123");
+        when(userAdminOperation.getAllUsersWithRole(any(), any()))
+                .thenReturn(Either.left(users));
+        List<User> result = testSubject.getUsersPerRole("all", user, "").left().value();
+
+        assertEquals(2, result.size());
+        assertTrue(StringUtils.isNotEmpty(result.get(0).getUserId()) && StringUtils.isNotEmpty(result.get(1).getUserId()));
+    }
+
+    @Test
+    public void getUsersPerRoleWhenListHasNullElements() {
+        List<User> users = Lists.newArrayList(userNull);
+        when(userNull.getUserId()).thenReturn(null);
+        when(userAdminOperation.getAllUsersWithRole(any(), any()))
+                .thenReturn(Either.left(users));
+        List<User> result = testSubject.getUsersPerRole("all", user, "").left().value();
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testHasActiveUserTrue() {
+        UserContext originalUserContext = null;
+        try {
+            originalUserContext = ThreadLocalsHolder.getUserContext();
+            String userId = "mock";
+            Set<String> userRoles = new HashSet<>();
+            userRoles.add(Role.DESIGNER.name());
+            UserContext userContext = new UserContext(userId, userRoles, "test" ,"User");
+            ThreadLocalsHolder.setUserContext(userContext);
+
+            assertThat(testSubject.hasActiveUser(userId)).isTrue();
+        } finally {
+            ThreadLocalsHolder.setUserContext(originalUserContext);
+        }
+    }
+
+    @Test
+    public void testHasActiveUserFalseNoRoles() {
+        UserContext originalUserContext = null;
+        try {
+            originalUserContext = ThreadLocalsHolder.getUserContext();
+            String userId = "mock";
+            Set<String> userRoles = new HashSet<>();
+            UserContext userContext = new UserContext(userId, userRoles, "test" ,"User");
+            ThreadLocalsHolder.setUserContext(userContext);
+
+            assertThat(testSubject.hasActiveUser(userId)).isFalse();
+        } finally {
+            ThreadLocalsHolder.setUserContext(originalUserContext);
+        }
+    }
+
+    @Test
+    public void testHasActiveUserFalseNullUserContext() {
+        UserContext originalUserContext = null;
+        try {
+            originalUserContext = ThreadLocalsHolder.getUserContext();
+            ThreadLocalsHolder.setUserContext(null);
+
+            assertThat(testSubject.hasActiveUser(null)).isFalse();
+        } finally {
+            ThreadLocalsHolder.setUserContext(originalUserContext);
+        }
+    }
 }

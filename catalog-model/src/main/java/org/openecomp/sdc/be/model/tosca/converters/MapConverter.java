@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
+import com.google.common.base.Strings;
 import com.google.gson.*;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -64,7 +65,7 @@ public class MapConverter implements PropertyValueConverter {
     public Either<String, Boolean> convertWithErrorResult(String value, String innerType,
             Map<String, DataTypeDefinition> dataTypes) {
 
-        if (value == null || value == "" || innerType == null) {
+        if (Strings.isNullOrEmpty(value) || innerType == null) {
             return Either.left(value);
         }
 

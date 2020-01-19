@@ -1,0 +1,10 @@
+{
+  "82589d3e-6772-4ab7-8256-7f9887de2103": [
+    {
+      "inputId": "7246e025-0cd8-43c0-9572-ae9b22722c00.contrailv2virtualnetwork0_segmentation_id",
+      "source": "Static",
+      "value": "update property",
+      "type": "string"
+    }
+  ]
+}

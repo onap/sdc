@@ -21,17 +21,18 @@
  */
 package org.openecomp.sdc.be.info;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MergedArtifactInfoTest {
 

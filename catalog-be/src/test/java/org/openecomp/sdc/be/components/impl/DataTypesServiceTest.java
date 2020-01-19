@@ -24,19 +24,16 @@ import fj.data.Either;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 
-
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Mockito.when;
 
 public class DataTypesServiceTest {
     ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);

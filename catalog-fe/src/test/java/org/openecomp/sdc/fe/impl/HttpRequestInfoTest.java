@@ -22,12 +22,6 @@
 
 package org.openecomp.sdc.fe.impl;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,6 +29,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HttpRequestInfoTest {

@@ -25,7 +25,6 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -35,15 +34,10 @@ import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.DistributionStatusListResponse;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
 import org.openecomp.sdc.exception.ResponseFormat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +45,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMock {
@@ -87,7 +79,7 @@ public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMo
         ditributionId = "did";
         serviceId = "serviceId";
 
-        when(userValidations.validateUserExists(Mockito.eq(uId), eq(ditributionId), anyBoolean()))
+        when(userValidations.validateUserExists(Mockito.eq(uId)))
                 .thenReturn(user);
     }
 

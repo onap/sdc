@@ -27,7 +27,11 @@ import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.common.api.Constants;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class VfModuleArtifactPayload {

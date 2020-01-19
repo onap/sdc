@@ -30,18 +30,38 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.utils.ComponentUtilities;
 import org.openecomp.sdc.be.tosca.ToscaUtils.SubstitutionEntry;
-import org.openecomp.sdc.be.tosca.model.*;
+import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
+import org.openecomp.sdc.be.tosca.model.ToscaCapability;
+import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
+import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
+import org.openecomp.sdc.be.tosca.model.ToscaProperty;
+import org.openecomp.sdc.be.tosca.model.ToscaRequirement;
+import org.openecomp.sdc.be.tosca.model.ToscaTemplateCapability;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -62,6 +82,7 @@ public class CapabilityRequirementConverter {
     private static CapabilityRequirementConverter instance;
     private static final Logger logger = Logger.getLogger(CapabilityRequirementConverter.class);
     private static final String PATH_DELIMITER = ".";
+    private static final String FAILED_TO_FIND_CI_IN_PATH ="Failed to find ci in the path is {} component {}";
 
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
@@ -366,7 +387,7 @@ public class CapabilityRequirementConverter {
         Optional<ComponentInstance> ci =
                 component.safeGetComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
         if(!ci.isPresent()){
-            logger.debug("Failed to find ci in the path is {} component {}", path, component.getUniqueId());
+            logger.debug(FAILED_TO_FIND_CI_IN_PATH, path, component.getUniqueId());
 
             Collections.reverse(path);
 
@@ -390,7 +411,7 @@ public class CapabilityRequirementConverter {
             entry.setFullName(fullName);
             entry.setSourceName(sourceName);
         } else {
-            logger.debug("Failed to find ci in the path is {} component {}", path, component.getUniqueId());
+            logger.debug(FAILED_TO_FIND_CI_IN_PATH, path, component.getUniqueId());
             return false;
         }
         return true;
@@ -578,7 +599,7 @@ public class CapabilityRequirementConverter {
         }
         Optional<ComponentInstance> ci = component.safeGetComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
         if(!ci.isPresent()){
-            logger.debug("Failed to find ci in the path is {} component {}", path, component.getUniqueId());
+            logger.debug(FAILED_TO_FIND_CI_IN_PATH, path, component.getUniqueId());
 
             Collections.reverse(path);
 

@@ -21,7 +21,7 @@ export class ServiceContainerToUpgradeUiObject extends UiBaseObject {
         this.icon = componentToUpgrade.icon;
         this.version = componentToUpgrade.version;
         this.isAlreadyUpgrade = true;
-        this.isLock = componentToUpgrade.state === ComponentState.CERTIFICATION_IN_PROGRESS || componentToUpgrade.state === ComponentState.NOT_CERTIFIED_CHECKOUT;
+        this.isLock = componentToUpgrade.state === ComponentState.NOT_CERTIFIED_CHECKOUT;
         this.vspInstances = [];
     }
 

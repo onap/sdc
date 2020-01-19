@@ -19,13 +19,13 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.openecomp.sdc.ci.tests.pages.ResourceLeftSideMenu.XpathSelector.MAIN_DIV;
-import static org.openecomp.sdc.ci.tests.pages.ResourceLeftSideMenu.XpathSelector.PROPERTIES_ASSIGNMENT_MENU;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import static org.openecomp.sdc.ci.tests.pages.ResourceLeftSideMenu.XpathSelector.MAIN_DIV;
+import static org.openecomp.sdc.ci.tests.pages.ResourceLeftSideMenu.XpathSelector.PROPERTIES_ASSIGNMENT_MENU;
 
 /**
  * Handles the Resource Page Left Side Menu UI actions

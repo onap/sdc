@@ -16,11 +16,6 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
@@ -30,6 +25,12 @@ import org.openecomp.sdc.be.tosca.model.CapabilityFilter;
 import org.openecomp.sdc.be.tosca.model.NodeFilter;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UINodeFilter;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NodeFilterConverter {
 

@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.asdctool.migration.tasks.mig1806;
 
-import static org.junit.Assert.assertThat;
-import java.math.BigInteger;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
@@ -33,6 +31,10 @@ import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
+
+import java.math.BigInteger;
+
+import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ResourceLifecycleMigrationTest {

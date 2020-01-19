@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.resources.data;
 
 import com.google.gson.reflect.TypeToken;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
 import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
@@ -39,17 +40,11 @@ public class ProductMetadataData extends ComponentMetadataData {
 		super(NodeTypeEnum.Product, metadataDataDefinition);
 	}
 
-	public ProductMetadataData(Map<String, Object> properties) {
-		super(NodeTypeEnum.Product, new ProductMetadataDataDefinition(), properties);
-		((ProductMetadataDataDefinition) metadataDataDefinition)
-				.setFullName((String) properties.get(GraphPropertiesDictionary.FULL_NAME.getProperty()));
-		Type listType = new TypeToken<List<String>>() {
-		}.getType();
-		List<String> contactsfromJson = getGson()
-				.fromJson((String) properties.get(GraphPropertiesDictionary.CONTACTS.getProperty()), listType);
-		((ProductMetadataDataDefinition) metadataDataDefinition).setContacts(contactsfromJson);
-		((ProductMetadataDataDefinition) metadataDataDefinition)
-				.setIsActive((Boolean) properties.get(GraphPropertiesDictionary.IS_ACTIVE.getProperty()));
+	public ProductMetadataData(GraphPropertiesDictionaryExtractor extractor) {
+		super(NodeTypeEnum.Product, new ProductMetadataDataDefinition(), extractor);
+		((ProductMetadataDataDefinition) metadataDataDefinition).setFullName(extractor.getFullName());
+		((ProductMetadataDataDefinition) metadataDataDefinition).setContacts(extractor.getContacts());
+		((ProductMetadataDataDefinition) metadataDataDefinition).setIsActive(extractor.isActive());
 	}
 
 	@Override

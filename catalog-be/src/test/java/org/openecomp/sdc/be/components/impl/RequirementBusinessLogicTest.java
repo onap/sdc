@@ -30,9 +30,8 @@ import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.validation.RequirementValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -45,16 +44,10 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.RequirementOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -116,8 +109,7 @@ public class RequirementBusinessLogicTest extends BaseBusinessLogicMock {
         user.setLastName("Hendrix");
         user.setRole(Role.ADMIN.name());
 
-        Either<User, ActionStatus> eitherGetUser = Either.left(user);
-        when(mockUserAdmin.getUser("jh0003", false)).thenReturn(eitherGetUser);
+        when(mockUserAdmin.getUser("jh0003", false)).thenReturn(user);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Resource)))
                 .thenReturn(StorageOperationStatus.OK);
 

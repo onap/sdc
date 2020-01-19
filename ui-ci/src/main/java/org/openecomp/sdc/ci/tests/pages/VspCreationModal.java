@@ -19,15 +19,15 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.openecomp.sdc.ci.tests.pages.VspCreationModal.XpathSelector.METHOD_RADIO;
-import static org.openecomp.sdc.ci.tests.pages.VspCreationModal.XpathSelector.MODAL_XPATH;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.openecomp.sdc.ci.tests.pages.VspCreationModal.XpathSelector.METHOD_RADIO;
+import static org.openecomp.sdc.ci.tests.pages.VspCreationModal.XpathSelector.MODAL_XPATH;
 
 /**
  * Handles the VSP Creation Modal UI actions

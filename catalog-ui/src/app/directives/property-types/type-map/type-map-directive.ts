@@ -39,6 +39,7 @@ export interface ITypeMapScope extends ng.IScope {
     readOnly:boolean;
     mapDefaultValue:any;
     maxLength:number;
+    constraints:string[];
 
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
@@ -65,7 +66,9 @@ export class TypeMapDirective implements ng.IDirective {
         fieldsPrefixName: '=',//prefix for form fields names
         readOnly: '=',//is form read only
         defaultValue: '@',//this map default value
-        maxLength: '='
+        maxLength: '=',
+        constraints: '='
+        
     };
 
     restrict = 'E';

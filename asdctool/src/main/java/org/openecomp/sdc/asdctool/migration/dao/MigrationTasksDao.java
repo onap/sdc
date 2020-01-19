@@ -27,6 +27,7 @@ import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.cassandra.CassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -38,6 +39,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MigrationTasksDao extends CassandraDao {
@@ -77,9 +81,25 @@ public class MigrationTasksDao extends CassandraDao {
         try {
             ResultSet latestMinorVersion = migrationTasksAccessor.getLatestMinorVersion(majorVersion.longValue());
             Row minorVersionRow = latestMinorVersion.one();
-            return minorVersionRow == null ? BigInteger.valueOf(Long.MIN_VALUE) : BigInteger.valueOf(minorVersionRow.getLong(0));
+            return minorVersionRow == null ? DBVersion.DEFAULT_VERSION.getMinor() : BigInteger.valueOf(minorVersionRow.getLong(0));
         } catch (RuntimeException e) {
             logger.error("failed to get latest minor version for major version {}", majorVersion,  e);
+            throw e;
+        }
+    }
+
+    public BigInteger getLatestMajorVersion() {
+        try {
+            ResultSet latestMajorVersion = migrationTasksAccessor.getLatestMajorVersion();
+            List<Row> all = latestMajorVersion.all();
+            Long majorVersionRow = null;
+            if (all.size() != 0){
+                List<Long> majorVersions = all.stream().map(p -> p.getLong(0)).collect(Collectors.toList());
+                majorVersionRow = Collections.max(majorVersions);
+            }
+            return majorVersionRow == null ? DBVersion.DEFAULT_VERSION.getMajor() : BigInteger.valueOf(majorVersionRow);
+        } catch (RuntimeException e) {
+            logger.error("failed to get latest major version ",  e);
             throw e;
         }
     }

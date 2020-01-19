@@ -20,18 +20,18 @@
 
 package org.openecomp.sdc.be.components.merge.input;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import org.junit.Before;
+import org.junit.Test;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.model.InputDefinition;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.openecomp.sdc.be.dao.utils.MapUtil;
-import org.openecomp.sdc.be.model.InputDefinition;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 public class InputsValuesMergingBusinessLogicTest {
 
     private static final String INPUT_DEFUALT_TYPE = "string";

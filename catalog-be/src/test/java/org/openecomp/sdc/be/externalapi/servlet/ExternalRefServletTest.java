@@ -39,12 +39,12 @@ import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
 import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
-import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -52,7 +52,14 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArchiveOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CategoryOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ExternalReferencesOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.IdMapper;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
@@ -297,7 +304,7 @@ public class ExternalRefServletTest extends JerseyTest {
             .currentTimeMillis());
     private static User otherDesignerUser = new User("otherDesigner", "otherDesigner", "otherDesigner", "otherDesigner@email.com", Role.DESIGNER
             .name(), System.currentTimeMillis());
-    private static User otherUser = new User("other", "other", "other", "other@email.com", Role.OPS.name(), System.currentTimeMillis());
+    private static User otherUser = new User("other", "other", "other", "other@email.com", Role.DESIGNER.name(), System.currentTimeMillis());
 
 
     @BeforeClass
@@ -317,9 +324,9 @@ public class ExternalRefServletTest extends JerseyTest {
         String[] params = {otherDesignerUser.getUserId()};
         when(ce.getResponseFormat()).thenReturn(responseFormat);
         doThrow(ce).when(accessValidationsMock)
-                   .validateUserCanWorkOnComponent(any(), eq(otherDesignerUser.getUserId()), any());
+                .validateUserCanWorkOnComponent(any(), any(), eq(otherDesignerUser.getUserId()), any());
         doThrow(ce).when(accessValidationsMock)
-                   .validateUserCanWorkOnComponent(any(), eq(otherUser.getUserId()), any());
+                .validateUserCanWorkOnComponent(any(), any(), eq(otherUser.getUserId()), any());
 
         //Needed for error configuration
         when(notFoundResponseFormat.getStatus()).thenReturn(HttpStatus.NOT_FOUND.value());
@@ -329,15 +336,9 @@ public class ExternalRefServletTest extends JerseyTest {
         when(componentUtils.getResponseFormat(eq(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND), (String[]) any())).thenReturn(notFoundResponseFormat);
         when(componentUtils.getResponseFormat(eq(ActionStatus.EXT_REF_NOT_FOUND), (String[]) any())).thenReturn(notFoundResponseFormat);
         when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), (String[]) any())).thenReturn(badRequestResponseFormat);
-
-
-        Either<User, ActionStatus> adminEither = Either.left(adminUser);
-        Either<User, ActionStatus> designerEither = Either.left(designerUser);
-        Either<User, ActionStatus> otherEither = Either.left(otherUser);
-
-        when(userAdmin.getUser(adminUser.getUserId(), false)).thenReturn(adminEither);
-        when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerEither);
-        when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherEither);
+        when(userAdmin.getUser(adminUser.getUserId(), false)).thenReturn(adminUser);
+        when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerUser);
+        when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
         String appConfigDir = "src/test/resources/config";
@@ -346,7 +347,9 @@ public class ExternalRefServletTest extends JerseyTest {
 
         org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
         configuration.setJanusGraphInMemoryGraph(true);
-
+        org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout();
+        heatDeploymentArtifactTimeout.setDefaultMinutes(30);;
+        configuration.setHeatArtifactDeploymentTimeout(heatDeploymentArtifactTimeout);
         configurationManager.setConfiguration(configuration);
         ExternalConfiguration.setAppName("catalog-be");
     }

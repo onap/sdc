@@ -28,9 +28,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-
 public class ConfigurationTest {
-	@Test
 	public void validateBean() {
 		assertThat(Configuration.class, allOf(
 				hasValidBeanConstructor(),
@@ -41,13 +39,6 @@ public class ConfigurationTest {
 						"skipUpgradeVSPsFlag",
 						"supportAllottedResourcesAndProxy",
 						"supportAllottedResourcesAndProxyFlag")
-		));
-	}
-	@Test
-	public void validateBeanForElasticSearchConfig() {
-		assertThat(Configuration.ElasticSearchConfig.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSettersExcluding()
 		));
 	}
 	@Test

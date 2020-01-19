@@ -115,6 +115,7 @@ public class ComponentCapabilitiesPropertiesMergeBL implements VspComponentsMerg
         propertiesCapabilitiesFilter.setIgnoreCapabiltyProperties(false);
         propertiesCapabilitiesFilter.setIgnoreComponentInstances(false);
         propertiesCapabilitiesFilter.setIgnoreCapabilities(false);
+        propertiesCapabilitiesFilter.setIgnoreGroups(false);
         return toscaOperationFacade.getToscaElement(cmptId, propertiesCapabilitiesFilter)
                 .right()
                 .map(err -> {

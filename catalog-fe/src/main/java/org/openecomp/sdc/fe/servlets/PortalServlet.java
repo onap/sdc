@@ -22,13 +22,14 @@ package org.openecomp.sdc.fe.servlets;
 
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.portalsdk.core.onboarding.util.CipherUtil;
+import org.onap.sdc.security.AuthenticationCookie;
+import org.onap.sdc.security.RepresentationUtils;
 import org.openecomp.sdc.common.impl.MutableHttpServletRequest;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.fe.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -49,11 +50,13 @@ import java.util.List;
 @Path("/")
 public class PortalServlet extends HttpServlet {
 
-    private static Logger log = LoggerFactory.getLogger(PortalServlet.class.getName());
+    private static Logger log = Logger.getLogger(PortalServlet.class.getName());
     private static final long serialVersionUID = 1L;
+
     public static final String MISSING_HEADERS_MSG = "Missing Headers In Request";
     private static final String AUTHORIZATION_ERROR_MSG = "Autherization error";
     private static final String NEW_LINE = System.getProperty("line.separator");
+
 
     /**
      * Entry point from ECOMP portal
@@ -91,6 +94,8 @@ public class PortalServlet extends HttpServlet {
 
         // Check if we got header from webseal
         String userId = request.getHeader(Constants.WEBSEAL_USER_ID_HEADER);
+		String firstNameFromCookie = "";
+		String lastNameFromCookie  = "";
         if (null == userId) {
             // Authentication via ecomp portal
             try {
@@ -109,6 +114,10 @@ public class PortalServlet extends HttpServlet {
         // Replace webseal header with open source header
         mutableRequest.putHeader(Constants.USER_ID, userId);
 
+
+
+
+		
         // Getting identification headers from configuration.yaml
         // (identificationHeaderFields) and setting them to new request
         // mutableRequest
@@ -139,12 +148,49 @@ public class PortalServlet extends HttpServlet {
         if (allHeadersExist) {
             addCookies(response, mutableRequest, getMandatoryHeaders(request));
             addCookies(response, mutableRequest, getOptionalHeaders(request));
+			firstNameFromCookie  = getValueFromCookie(request, Constants.HTTP_CSP_FIRSTNAME );
+			lastNameFromCookie = getValueFromCookie(request, Constants.HTTP_CSP_LASTNAME);
+
+			addAuthCookie(response, userId, firstNameFromCookie, lastNameFromCookie);
             RequestDispatcher rd = request.getRequestDispatcher("index.html");
             rd.forward(mutableRequest, response);
         } else {
             response.sendError(HttpServletResponse.SC_USE_PROXY, MISSING_HEADERS_MSG);
         }
     }
+
+	boolean addAuthCookie(HttpServletResponse response, String userId, String firstName, String lastName) throws IOException {
+		boolean isBuildCookieCompleted = true;
+		AuthenticationCookie authenticationCookie = null;
+		Cookie authCookie = null;
+		Configuration.CookieConfig confCookie =
+				ConfigurationManager.getConfigurationManager().getConfiguration().getAuthCookie();
+
+		//create authentication and send it to encryption
+
+		String encryptedCookie = "";
+		try {
+			authenticationCookie = new AuthenticationCookie(userId, firstName, lastName);
+			String cookieAsJson = RepresentationUtils.toRepresentation(authenticationCookie);
+			encryptedCookie = org.onap.sdc.security.CipherUtil.encryptPKC(cookieAsJson, confCookie.getSecurityKey());
+		} catch (Exception e) {
+			isBuildCookieCompleted=false;
+			log.error(" Cookie Encryption failed ", e);
+		}
+
+		authCookie = new Cookie(confCookie.getCookieName(), encryptedCookie);
+		authCookie.setPath(confCookie.getPath());
+		authCookie.setDomain(confCookie.getDomain());
+		authCookie.setHttpOnly(true);
+
+		// add generated cookie to response
+		if (isBuildCookieCompleted) {
+			response.addCookie(authCookie);
+			return true;
+		}
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, AUTHORIZATION_ERROR_MSG);
+		return false;
+	}
 
     /**
      * Print all request headers to the log
@@ -182,6 +228,7 @@ public class PortalServlet extends HttpServlet {
 
     /**
      * Add cookies (that where set in the new request headers) in the response
+     * Using DefaultHTTPUtilities Object to prevent CRLF injection in HTTP headers.
      *
      * @param response
      * @param request
@@ -292,6 +339,22 @@ public class PortalServlet extends HttpServlet {
             userId = CipherUtil.decrypt(userIdcookie.getValue());
         }
         return userId;
+	}
 
+	private static String getValueFromCookie(HttpServletRequest request, String cookieName) {
+		String value = "";
+		Cookie[] cookies = request.getCookies();
+		Cookie valueFromCookie = null;
+		if (cookies != null)
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().endsWith(cookieName)) {
+					valueFromCookie = cookie;
+				}
+			}
+		if (valueFromCookie != null) {
+			value = valueFromCookie.getValue();
+		}
+
+		return value;
     }
 }

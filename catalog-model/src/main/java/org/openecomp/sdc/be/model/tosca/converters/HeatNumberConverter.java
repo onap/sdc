@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import org.onap.sdc.tosca.datatypes.model.ScalarUnitValidator;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 
 import java.math.BigDecimal;
@@ -34,21 +33,15 @@ public class HeatNumberConverter implements PropertyValueConverter {
         return numberConverter;
     }
 
-    private final ScalarUnitValidator scalarUnitValidator = ScalarUnitValidator.getInstance();
-
-
     private HeatNumberConverter() {
 
     }
 
     @Override
     public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+
         if (original == null || original.isEmpty()) {
             return null;
-        }
-
-        if (scalarUnitValidator.isScalarUnit(original)) {
-            return original;
         }
 
         return new BigDecimal(original).toPlainString();

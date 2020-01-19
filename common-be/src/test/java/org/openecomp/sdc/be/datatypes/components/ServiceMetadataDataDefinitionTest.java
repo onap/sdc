@@ -21,11 +21,33 @@
 package org.openecomp.sdc.be.datatypes.components;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.utils.DummyConfigurationManager;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class ServiceMetadataDataDefinitionTest {
+
+	private Configuration.EnvironmentContext environmentContext = mock(Configuration.EnvironmentContext.class);
+	private static final String DEFAULT_ENVIRONMENT = "General_Revenue-Bearing";
+	@BeforeClass
+	public static void setup() {
+        new DummyConfigurationManager();
+    }
+
+    @Before
+	public void beforeTest() {
+		when(environmentContext.getDefaultValue()).thenReturn(DEFAULT_ENVIRONMENT);
+		when(ConfigurationManager.getConfigurationManager().getConfiguration().getEnvironmentContext())
+		.thenReturn(environmentContext);
+	}
 
 	private ServiceMetadataDataDefinition createTestSubject() {
 		return new ServiceMetadataDataDefinition();

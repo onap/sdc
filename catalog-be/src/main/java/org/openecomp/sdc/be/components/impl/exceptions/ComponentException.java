@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- * Modifications copyright (c) 2019 Nokia
- * ================================================================================
  */
+
 package org.openecomp.sdc.be.components.impl.exceptions;
 
+import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-/**
- * This class will be initialized either by action status and params or by ResponseFormat
- */
-public abstract class ComponentException extends RuntimeException {
+import javax.annotation.Nullable;
 
-    public abstract ResponseFormat getResponseFormat();
+public class ComponentException extends RuntimeException {
 
-    @Override
-    public String getMessage() {
-        return this.toString();
+    /**
+     * This class will be initialized either by action status and params or by ResponseFormat
+     */
+
+    private final transient ResponseFormat responseFormat;
+    private final ActionStatus actionStatus;
+    private final String[] params;
+
+    public Resource getResource() {
+        return resource;
     }
+
+    private final Resource resource;
+
+    public ComponentException(ResponseFormat responseFormat) {
+        this(responseFormat, ActionStatus.OK, null);
+    }
+
+    public ComponentException(ActionStatus actionStatus, String... params) {
+        this(ResponseFormatManager.getInstance().getResponseFormat(actionStatus, params), actionStatus, null, params);
+    }
+
+    public ComponentException(ActionStatus actionStatus, Resource resource, String... params) {
+        this(ResponseFormatManager.getInstance().getResponseFormat(actionStatus, params), actionStatus, resource, params);
+    }
+
+    private ComponentException(ResponseFormat responseFormat, ActionStatus actionStatus, Resource resource, String... params) {
+        this.actionStatus = actionStatus;
+        this.params = params.clone();
+        this.responseFormat = responseFormat;
+        this.resource = resource;
+    }
+
+    @Nullable
+    public ResponseFormat getResponseFormat() {
+        return responseFormat;
+    }
+
+    public ActionStatus getActionStatus() {
+        return actionStatus;
+    }
+
+    public String[] getParams() {
+        return params.clone();
+    }
+
+
 }

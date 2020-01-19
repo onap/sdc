@@ -20,17 +20,7 @@
 
 package org.openecomp.sdc.be.components.property;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +41,16 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.PolicyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)

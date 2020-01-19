@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
+import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 
 public class ReportManagerHelper {
 

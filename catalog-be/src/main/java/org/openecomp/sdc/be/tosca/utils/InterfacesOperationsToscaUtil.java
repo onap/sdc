@@ -19,12 +19,6 @@ package org.openecomp.sdc.be.tosca.utils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -40,6 +34,11 @@ import org.openecomp.sdc.be.tosca.model.ToscaInterfaceNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class InterfacesOperationsToscaUtil {

@@ -21,11 +21,6 @@
 package org.openecomp.sdc.be.components.validation;
 
 import fj.data.Either;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +37,12 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class NodeFilterValidationTest {
 

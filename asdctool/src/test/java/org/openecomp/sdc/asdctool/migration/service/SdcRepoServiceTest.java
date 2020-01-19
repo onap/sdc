@@ -51,18 +51,11 @@ public class SdcRepoServiceTest {
 
     @Test
     public void testGetLatestVersion_noMinorVersionForCurrentVersion() {
-        when(migrationTasksDaoMock.getLatestMinorVersion(DBVersion.CURRENT_VERSION.getMajor())).thenReturn(null);
+        when(migrationTasksDaoMock.getLatestMajorVersion()).thenReturn(DBVersion.DEFAULT_VERSION.getMajor());
+        when(migrationTasksDaoMock.getLatestMinorVersion(migrationTasksDaoMock.getLatestMajorVersion())).thenReturn(BigInteger.valueOf(0));
         DBVersion latestDBVersion = testInstance.getLatestDBVersion();
-        assertEquals(latestDBVersion.getMajor(), DBVersion.CURRENT_VERSION.getMajor());
-        assertEquals(latestDBVersion.getMinor(), BigInteger.valueOf(Integer.MIN_VALUE));
-    }
-
-    @Test
-    public void testGetLatestVersion() {
-        when(migrationTasksDaoMock.getLatestMinorVersion(DBVersion.CURRENT_VERSION.getMajor())).thenReturn(BigInteger.TEN);
-        DBVersion latestDBVersion = testInstance.getLatestDBVersion();
-        assertEquals(latestDBVersion.getMajor(), DBVersion.CURRENT_VERSION.getMajor());
-        assertEquals(latestDBVersion.getMinor(), BigInteger.TEN);
+        assertEquals(latestDBVersion.getMajor(), DBVersion.DEFAULT_VERSION.getMajor());
+        assertEquals(latestDBVersion.getMinor(), BigInteger.valueOf(0));
     }
 
     @Test

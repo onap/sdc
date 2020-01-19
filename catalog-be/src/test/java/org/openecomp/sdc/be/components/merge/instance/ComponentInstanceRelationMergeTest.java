@@ -29,6 +29,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.ExceptionUtils;
 import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
@@ -37,17 +38,37 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.RelationshipImpl;
+import org.openecomp.sdc.be.model.RelationshipInfo;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -223,9 +244,9 @@ public class ComponentInstanceRelationMergeTest {
 
         when(toscaOperationFacade.getToscaElement("SRV1.VF1")).thenReturn(Either.left(newInstanceOriginVf));
         when(dataHolder.getContainerRelationsMergeInfo()).thenReturn(relationsMergeInfo);
-        when(toscaOperationFacade.associateResourceInstances(Mockito.anyString(), Mockito.anyList())).thenReturn(StorageOperationStatus.OK);
-        Either<Component, ResponseFormat> mergeResult = compInstanceRelationMerge.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, "SRV1.VF1.VFI_2");
-        assertTrue(mergeResult.isLeft());
+        when(toscaOperationFacade.associateResourceInstances(any(), Mockito.anyString(), Mockito.anyList())).thenReturn(Either.left(resourceInstancesRelations));
+        Component mergeResult = compInstanceRelationMerge.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, "SRV1.VF1.VFI_2");
+        assertTrue(mergeResult != null);
         List<RequirementCapabilityRelDef> relations = updatedContainerComponent.getComponentInstancesRelations();
         assertThat(relations)
                 .containsExactlyInAnyOrder(requirementDef1, capabilityDef2, capabilityDef3)
@@ -237,7 +258,7 @@ public class ComponentInstanceRelationMergeTest {
     }
     
     
-    @Test
+    @Test(expected = ComponentException.class)
     public void testMergeDataAfterCreate_FailedToAssociateResourceInstances() {
         Resource vf = new Resource();
 
@@ -277,15 +298,13 @@ public class ComponentInstanceRelationMergeTest {
         List<RequirementCapabilityRelDef> resourceInstancesRelations = new ArrayList<>();
         updatedContainerComponent.setComponentInstancesRelations(resourceInstancesRelations);
         
-        when(toscaOperationFacade.associateResourceInstances(Mockito.anyString(), Mockito.anyList())).thenReturn(StorageOperationStatus.GENERAL_ERROR);
+        when(toscaOperationFacade.associateResourceInstances(any(), Mockito.anyString(), Mockito.anyList())).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         when(componentsUtils.convertFromStorageResponse(Mockito.any())).thenReturn(ActionStatus.GENERAL_ERROR);
         
-        ResponseFormat expectedRresponseFormat = new ResponseFormat();
-        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR, updatedContainerComponent.getUniqueId())).thenReturn(expectedRresponseFormat );
+        ResponseFormat expectedResponseFormat = new ResponseFormat();
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR, updatedContainerComponent.getUniqueId())).thenReturn(expectedResponseFormat );
 
-        Either<Component, ResponseFormat> result = compInstanceRelationMerge.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, "SRV1.VF1.VFI_2");
-        assertTrue(result.isRight());
-        assertEquals(expectedRresponseFormat, result.right().value());
+        compInstanceRelationMerge.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, "SRV1.VF1.VFI_2");
     }
     
     @Test
@@ -302,9 +321,8 @@ public class ComponentInstanceRelationMergeTest {
         
         when(dataHolder.getContainerRelationsMergeInfo()).thenReturn(relationsMergeInfo);
         
-        Either<Component, ResponseFormat> result = compInstanceRelationMerge.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, "SRV1.VF1.VFI_2");
-        assertTrue(result.isLeft());
-        assertEquals(updatedContainerComponent, result.left().value());
+        Component result = compInstanceRelationMerge.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, "SRV1.VF1.VFI_2");
+        assertEquals(updatedContainerComponent, result);
     }
     
     @Test
@@ -347,12 +365,12 @@ public class ComponentInstanceRelationMergeTest {
         List<RequirementCapabilityRelDef> resourceInstancesRelations = new ArrayList<>();
         updatedContainerComponent.setComponentInstancesRelations(resourceInstancesRelations);
         
-        when(toscaOperationFacade.associateResourceInstances(Mockito.anyString(), Mockito.anyList())).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.associateResourceInstances(any(),Mockito.anyString(), Mockito.anyList())).thenReturn(Either.left(resourceInstancesRelations));
         
         compInstanceRelationMerge.mergeDataAfterCreate(user, dataHolder, updatedContainerComponent, "SRV1.VF1.VFI_2");
         
         verify(dataHolder).getContainerRelationsMergeInfo();
-        verify(toscaOperationFacade).associateResourceInstances(Mockito.anyString(), Mockito.anyList());
+        verify(toscaOperationFacade).associateResourceInstances(any(), Mockito.anyString(), Mockito.anyList());
         
         List<RequirementCapabilityRelDef> relations = updatedContainerComponent.getComponentInstancesRelations();
         assertEquals("Expected 2 relations", 2, relations.size());

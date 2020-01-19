@@ -169,7 +169,7 @@ public class ResourceAdminEvent extends AuditingGenericEvent {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), timestamp1.getTime());
     }
 
     public String getResourceName() {

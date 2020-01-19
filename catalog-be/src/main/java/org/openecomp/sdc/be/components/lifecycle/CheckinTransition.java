@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.version.VesionUpdateHandler;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -49,9 +50,11 @@ public class CheckinTransition extends LifeCycleTransition {
 
     private static final Logger log = Logger.getLogger(CheckinTransition.class);
 
-    public CheckinTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao) {
-        super(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
+    private VesionUpdateHandler vesionUpdateHandler;
 
+    public CheckinTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, JanusGraphDao janusGraphDao,  VesionUpdateHandler groupUpdateHandler) {
+        super(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
+        this.vesionUpdateHandler = groupUpdateHandler;
         // authorized roles
         Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
         Role[] productCheckoutRoles = { Role.ADMIN, Role.PRODUCT_MANAGER };
@@ -93,7 +96,11 @@ public class CheckinTransition extends LifeCycleTransition {
             }
             else {
                 updateCalculatedCapabilitiesRequirements(checkinResourceResult.left().value());
-                result =  Either.left(ModelConverter.convertFromToscaElement(checkinResourceResult.left().value()));
+                Component r = ModelConverter.convertFromToscaElement(checkinResourceResult.left().value());
+                updateGroupsAndPolicesVersion(r);
+                result =  Either.left(r);
+
+
             }
         } finally {
             if (result == null || result.isRight()) {
@@ -112,6 +119,10 @@ public class CheckinTransition extends LifeCycleTransition {
         return result;
     }
 
+    private void updateGroupsAndPolicesVersion(Component container) {
+        vesionUpdateHandler.doPostChangeVersionCommand(container);
+    }
+
     @Override
     public Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo) {
         String componentName = component.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
@@ -123,11 +134,9 @@ public class CheckinTransition extends LifeCycleTransition {
             return userValidationResponse;
         }
 
-        if (!oldState.equals(LifecycleStateEnum.READY_FOR_CERTIFICATION) && !oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
+        if (!oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
             ActionStatus action = ActionStatus.COMPONENT_ALREADY_CHECKED_IN;
-            if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)){
-                action = ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION;
-            } else if (oldState.equals(LifecycleStateEnum.CERTIFIED)){
+            if (oldState.equals(LifecycleStateEnum.CERTIFIED)){
                 action = ActionStatus.COMPONENT_ALREADY_CERTIFIED;
             }
             ResponseFormat error = componentUtils.getResponseFormat(action, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
@@ -136,11 +145,6 @@ public class CheckinTransition extends LifeCycleTransition {
 
         if (oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT) && !modifier.getUserId().equals(owner.getUserId()) && !modifier.getRole().equals(Role.ADMIN.name())) {
             ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_CHECKOUT_BY_ANOTHER_USER, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
-            return Either.right(error);
-        }
-
-        if (oldState.equals(LifecycleStateEnum.READY_FOR_CERTIFICATION) && !modifier.equals(owner) && !modifier.getRole().equals(Role.ADMIN.name())) {
-            ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
             return Either.right(error);
         }
 

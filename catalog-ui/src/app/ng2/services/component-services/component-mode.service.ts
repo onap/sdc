@@ -24,7 +24,7 @@
 import { Injectable } from '@angular/core';
 import {WorkspaceMode, ComponentState, Role} from "../../../utils/constants";
 import { Component as ComponentData } from "app/models";
-import { CacheService } from "app/services/cache-service"
+import { CacheService } from "app/services-ng2";
 
 @Injectable()
 

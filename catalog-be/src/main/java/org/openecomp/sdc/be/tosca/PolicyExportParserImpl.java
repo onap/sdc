@@ -26,7 +26,11 @@ import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundExcept
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.tosca.model.IToscaMetadata;
 import org.openecomp.sdc.be.tosca.model.ToscaMetadata;

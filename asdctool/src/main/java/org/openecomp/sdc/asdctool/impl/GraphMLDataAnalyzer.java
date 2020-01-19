@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -37,6 +31,13 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.util.IteratorIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class GraphMLDataAnalyzer {
 

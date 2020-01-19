@@ -31,6 +31,9 @@ public interface MigrationTasksAccessor {
     @Query("SELECT minor_version FROM sdcrepository.migrationTasks WHERE major_version = :majorVersion order by minor_version desc limit 1")
     ResultSet getLatestMinorVersion(@Param("majorVersion") Long majorVersion);
 
+    @Query("SELECT major_version FROM sdcrepository.migrationTasks")
+    ResultSet getLatestMajorVersion();
+
     @Query("DELETE FROM sdcrepository.migrationTasks WHERE major_version = :majorVersion")
     void deleteTasksForMajorVersion(@Param("majorVersion") Long majorVersion);
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,16 +30,34 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
 import org.apache.commons.lang3.StringUtils;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
-import org.openecomp.sdc.be.auditing.impl.*;
+import org.openecomp.sdc.be.auditing.impl.AuditAuthRequestEventFactory;
+import org.openecomp.sdc.be.auditing.impl.AuditConsumerEventFactory;
+import org.openecomp.sdc.be.auditing.impl.AuditEcompOpEnvEventFactory;
+import org.openecomp.sdc.be.auditing.impl.AuditGetUebClusterEventFactory;
+import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.auditing.impl.category.AuditCategoryEventFactory;
 import org.openecomp.sdc.be.auditing.impl.category.AuditGetCategoryHierarchyEventFactory;
-import org.openecomp.sdc.be.auditing.impl.distribution.*;
-import org.openecomp.sdc.be.auditing.impl.externalapi.*;
+import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionDeployEventFactory;
+import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionDownloadEventFactory;
+import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionEngineEventFactoryManager;
+import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionNotificationEventFactory;
+import org.openecomp.sdc.be.auditing.impl.distribution.AuditDistributionStatusEventFactory;
+import org.openecomp.sdc.be.auditing.impl.distribution.AuditRegUnregDistributionEngineEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditActivateServiceExternalApiEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditAssetExternalApiEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditAssetListExternalApiEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditChangeLifecycleExternalApiEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditCreateResourceExternalApiEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditCreateServiceExternalApiEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditCrudExternalApiArtifactEventFactory;
+import org.openecomp.sdc.be.auditing.impl.externalapi.AuditDownloadArtifactExternalApiEventFactory;
 import org.openecomp.sdc.be.auditing.impl.resourceadmin.AuditResourceEventFactoryManager;
 import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditGetUsersListEventFactory;
 import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditUserAccessEventFactory;
 import org.openecomp.sdc.be.auditing.impl.usersadmin.AuditUserAdminEventFactory;
+import org.openecomp.sdc.be.components.distribution.engine.DmaapConsumer;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
@@ -54,36 +72,61 @@ import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ConsumerDefinition;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserializer;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.openecomp.sdc.be.resources.data.auditing.model.*;
+import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
+import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
+import org.openecomp.sdc.be.resources.data.auditing.model.OperationalEnvAuditData;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
+import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.tosca.ToscaError;
+import org.openecomp.sdc.be.ui.model.UiLeftPaletteComponent;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.enums.LogLevel;
+import org.openecomp.sdc.common.log.enums.Severity;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.MarkerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("componentUtils")
 public class ComponentsUtils {
 
     private static final String CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE = "convert storage response {} to action response {}";
-	private static final String INSIDE_AUDITING_FOR_AUDIT_ACTION = "Inside auditing for audit action {}";
-	private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
-	private static final String CONVERT_JSON_TO_OBJECT = "convertJsonToObject";
-	private static final Logger log = Logger.getLogger(ComponentsUtils.class);
+    private static final String INSIDE_AUDITING_FOR_AUDIT_ACTION = "Inside auditing for audit action {}";
+    private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
+    private static final String CONVERT_JSON_TO_OBJECT = "convertJsonToObject";
+    private static final Logger log = Logger.getLogger(ComponentsUtils.class);
+    private static final String PARTNER_NAME = "UNKNOWN";
     private final AuditingManager auditingManager;
     private final ResponseFormatManager responseFormatManager;
+    private static LoggerSdcAudit audit = new LoggerSdcAudit(DmaapConsumer.class);
 
     @Autowired
     public ComponentsUtils(AuditingManager auditingManager) {
@@ -122,9 +165,11 @@ public class ComponentsUtils {
     }
 
     public <T> Either<T, ResponseFormat> convertJsonToObjectUsingObjectMapper(String data, User user, Class<T> clazz, AuditingActionEnum actionEnum, ComponentTypeEnum typeEnum) {
-        T component = null;
+        T component;
         ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+
         try {
             log.trace("convert json to object. json=\n{}", data);
 
@@ -151,14 +196,14 @@ public class ComponentsUtils {
     public ResponseFormat getResponseFormat(ActionStatus actionStatus, String... params) {
         return responseFormatManager.getResponseFormat(actionStatus, params);
     }
-   
+
     public ResponseFormat getResponseFormat(StorageOperationStatus storageStatus, String... params) {
         return responseFormatManager.getResponseFormat(this.convertFromStorageResponse(storageStatus), params);
     }
 
     public <T> Either<List<T>, ResponseFormat> convertToResponseFormatOrNotFoundErrorToEmptyList(StorageOperationStatus storageOperationStatus) {
         return storageOperationStatus.equals(StorageOperationStatus.NOT_FOUND) ? Either.left(Collections.emptyList()) :
-                                                                                 Either.right(getResponseFormat(storageOperationStatus));
+                Either.right(getResponseFormat(storageOperationStatus));
     }
 
     /**
@@ -258,7 +303,7 @@ public class ComponentsUtils {
      * @param user
      * @return
      */
-    public ResponseFormat getResponseFormatByUser(ActionStatus actionStatus, User user) {
+    ResponseFormat getResponseFormatByUser(ActionStatus actionStatus, User user) {
         if (user == null) {
             return getResponseFormat(actionStatus);
         }
@@ -324,12 +369,21 @@ public class ComponentsUtils {
         return responseFormat;
     }
 
+    public ResponseFormat getInvalidContentErrorAndAudit(User user, AuditingActionEnum actionEnum) {
+        ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
+        log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
+        auditAdminUserAction(actionEnum, user, null, null, responseFormat);
+        return responseFormat;
+    }
+
     public ResponseFormat getInvalidContentErrorAndAudit(User user, String resourceName, AuditingActionEnum actionEnum) {
         ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
         log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
         auditResource(responseFormat, user, resourceName, actionEnum);
         return responseFormat;
     }
+
+
 
     public ResponseFormat getInvalidContentErrorForConsumerAndAudit(User user, ConsumerDefinition consumer, AuditingActionEnum actionEnum) {
         ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
@@ -338,14 +392,7 @@ public class ComponentsUtils {
         return responseFormat;
     }
 
-    public ResponseFormat getInvalidContentErrorAndAudit(User user, AuditingActionEnum actionEnum) {
-        ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
-        log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
-        auditAdminUserAction(actionEnum, user, null, null, responseFormat);
-        return responseFormat;
-    }
-
-    public ResponseFormat getInvalidContentErrorAndAuditComponent(User user, AuditingActionEnum actionEnum, ComponentTypeEnum typeEnum) {
+    private ResponseFormat getInvalidContentErrorAndAuditComponent(User user, AuditingActionEnum actionEnum, ComponentTypeEnum typeEnum) {
         ResponseFormat responseFormat = responseFormatManager.getResponseFormat(ActionStatus.INVALID_CONTENT);
         log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
         auditComponentAdmin(responseFormat, user, null,  actionEnum, typeEnum);
@@ -444,8 +491,8 @@ public class ComponentsUtils {
                         .description(message)
                         .requestId(ThreadLocalsHolder.getUuid())
                         .build(),
-                        distributionData);
-                getAuditingManager().auditEvent(factory);
+                distributionData);
+        getAuditingManager().auditEvent(factory);
     }
 
     public void auditExternalGetAsset(ResponseFormat responseFormat, AuditingActionEnum actionEnum, DistributionData distributionData,
@@ -472,7 +519,7 @@ public class ComponentsUtils {
                         .status(responseFormat.getStatus())
                         .description(getMessageString(responseFormat))
                         .requestId(requestId)
-                         .build(),
+                        .build(),
                 distributionData);
 
         getAuditingManager().auditEvent(factory);
@@ -513,11 +560,11 @@ public class ComponentsUtils {
         }
         AuditEventFactory factory = new AuditChangeLifecycleExternalApiEventFactory(
                 CommonAuditData.newBuilder()
-                    .serviceInstanceId(serviceInstanceId)
-                    .requestId(requestId)
-                    .description(getMessageString(responseFormat))
-                    .status(responseFormat.getStatus())
-                    .build(),
+                        .serviceInstanceId(serviceInstanceId)
+                        .requestId(requestId)
+                        .description(getMessageString(responseFormat))
+                        .status(responseFormat.getStatus())
+                        .build(),
                 resourceCommonInfo, distributionData,
                 prevResourceVersionInfo, currResourceVersionInfo,
                 invariantUuid, modifier);
@@ -559,10 +606,10 @@ public class ComponentsUtils {
         }
         AuditEventFactory factory = new AuditCrudExternalApiArtifactEventFactory(actionEnum,
                 CommonAuditData.newBuilder()
-                    .status(responseFormat.getStatus())
-                    .description(getMessageString(responseFormat))
-                    .requestId(requestId)
-                    .build(),
+                        .status(responseFormat.getStatus())
+                        .description(getMessageString(responseFormat))
+                        .requestId(requestId)
+                        .build(),
                 resourceCommonInfo, distributionData, ResourceVersionInfo.newBuilder().build(), currResourceVersionInfo,
                 null, modifier, artifactData);
 
@@ -644,11 +691,11 @@ public class ComponentsUtils {
     public void auditExternalActivateService(ResponseFormat responseFormat, DistributionData distributionData, String requestId, String serviceInstanceUuid, User modifier) {
         AuditEventFactory factory = new AuditActivateServiceExternalApiEventFactory(
                 CommonAuditData.newBuilder()
-                    .serviceInstanceId(serviceInstanceUuid)
-                    .description(getMessageString(responseFormat))
-                    .status(responseFormat.getStatus())
-                    .requestId(requestId)
-                    .build(),
+                        .serviceInstanceId(serviceInstanceUuid)
+                        .description(getMessageString(responseFormat))
+                        .status(responseFormat.getStatus())
+                        .requestId(requestId)
+                        .build(),
                 new ResourceCommonInfo(ComponentTypeEnum.SERVICE.name()), distributionData, "", modifier);
         getAuditingManager().auditEvent(factory);
     }
@@ -723,79 +770,79 @@ public class ComponentsUtils {
             return responseEnum;
         }
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case CONNECTION_FAILURE:
-        case GRAPH_IS_LOCK:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
-        case BAD_REQUEST:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case ENTITY_ALREADY_EXISTS:
-            responseEnum = ActionStatus.COMPONENT_NAME_ALREADY_EXIST;
-            break;
-        case PARENT_RESOURCE_NOT_FOUND:
-            responseEnum = ActionStatus.PARENT_RESOURCE_NOT_FOUND;
-            break;
-        case MULTIPLE_PARENT_RESOURCE_FOUND:
-            responseEnum = ActionStatus.MULTIPLE_PARENT_RESOURCE_FOUND;
-            break;
-        case NOT_FOUND:
-            if (ComponentTypeEnum.RESOURCE == type) {
-                responseEnum = ActionStatus.RESOURCE_NOT_FOUND;
-            } else if (ComponentTypeEnum.PRODUCT == type) {
-                responseEnum = ActionStatus.PRODUCT_NOT_FOUND;
-            } else {
-                responseEnum = ActionStatus.SERVICE_NOT_FOUND;
-            }
-            break;
-        case FAILED_TO_LOCK_ELEMENT:
-            responseEnum = ActionStatus.COMPONENT_IN_USE;
-            break;
-        case ARTIFACT_NOT_FOUND:
-            responseEnum = ActionStatus.ARTIFACT_NOT_FOUND;
-            break;
-        case DISTR_ENVIRONMENT_NOT_AVAILABLE:
-            responseEnum = ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE;
-            break;
-        case DISTR_ENVIRONMENT_NOT_FOUND:
-            responseEnum = ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_FOUND;
-            break;
-        case DISTR_ENVIRONMENT_SENT_IS_INVALID:
-            responseEnum = ActionStatus.DISTRIBUTION_ENVIRONMENT_INVALID;
-            break;
-        case INVALID_TYPE:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case INVALID_VALUE:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case CSAR_NOT_FOUND:
-            responseEnum = ActionStatus.CSAR_NOT_FOUND;
-            break;
-        case PROPERTY_NAME_ALREADY_EXISTS:
-            responseEnum = ActionStatus.PROPERTY_NAME_ALREADY_EXISTS;
-            break;
-        case MATCH_NOT_FOUND:
-            responseEnum = ActionStatus.COMPONENT_SUB_CATEGORY_NOT_FOUND_FOR_CATEGORY;
-            break;
-        case CATEGORY_NOT_FOUND:
-            responseEnum = ActionStatus.COMPONENT_CATEGORY_NOT_FOUND;
-            break;
-        case INVALID_PROPERTY:
-            responseEnum = ActionStatus.INVALID_PROPERTY;
-            break;
-        case COMPONENT_IS_ARCHIVED:
-            responseEnum = ActionStatus.COMPONENT_IS_ARCHIVED;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case CONNECTION_FAILURE:
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case ENTITY_ALREADY_EXISTS:
+                responseEnum = ActionStatus.COMPONENT_NAME_ALREADY_EXIST;
+                break;
+            case PARENT_RESOURCE_NOT_FOUND:
+                responseEnum = ActionStatus.PARENT_RESOURCE_NOT_FOUND;
+                break;
+            case MULTIPLE_PARENT_RESOURCE_FOUND:
+                responseEnum = ActionStatus.MULTIPLE_PARENT_RESOURCE_FOUND;
+                break;
+            case NOT_FOUND:
+                if (ComponentTypeEnum.RESOURCE == type) {
+                    responseEnum = ActionStatus.RESOURCE_NOT_FOUND;
+                } else if (ComponentTypeEnum.PRODUCT == type) {
+                    responseEnum = ActionStatus.PRODUCT_NOT_FOUND;
+                } else {
+                    responseEnum = ActionStatus.SERVICE_NOT_FOUND;
+                }
+                break;
+            case FAILED_TO_LOCK_ELEMENT:
+                responseEnum = ActionStatus.COMPONENT_IN_USE;
+                break;
+            case ARTIFACT_NOT_FOUND:
+                responseEnum = ActionStatus.ARTIFACT_NOT_FOUND;
+                break;
+            case DISTR_ENVIRONMENT_NOT_AVAILABLE:
+                responseEnum = ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE;
+                break;
+            case DISTR_ENVIRONMENT_NOT_FOUND:
+                responseEnum = ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_FOUND;
+                break;
+            case DISTR_ENVIRONMENT_SENT_IS_INVALID:
+                responseEnum = ActionStatus.DISTRIBUTION_ENVIRONMENT_INVALID;
+                break;
+            case INVALID_TYPE:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case INVALID_VALUE:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case CSAR_NOT_FOUND:
+                responseEnum = ActionStatus.CSAR_NOT_FOUND;
+                break;
+            case PROPERTY_NAME_ALREADY_EXISTS:
+                responseEnum = ActionStatus.PROPERTY_NAME_ALREADY_EXISTS;
+                break;
+            case MATCH_NOT_FOUND:
+                responseEnum = ActionStatus.COMPONENT_SUB_CATEGORY_NOT_FOUND_FOR_CATEGORY;
+                break;
+            case CATEGORY_NOT_FOUND:
+                responseEnum = ActionStatus.COMPONENT_CATEGORY_NOT_FOUND;
+                break;
+            case INVALID_PROPERTY:
+                responseEnum = ActionStatus.INVALID_PROPERTY;
+                break;
+            case COMPONENT_IS_ARCHIVED:
+                responseEnum = ActionStatus.COMPONENT_IS_ARCHIVED;
+                break;
         case DECLARED_INPUT_USED_BY_OPERATION:
             responseEnum = ActionStatus.DECLARED_INPUT_USED_BY_OPERATION;
             break;
-       default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
@@ -820,96 +867,96 @@ public class ComponentsUtils {
     }
 
     public ActionStatus convertFromStorageResponseForCapabilityType(StorageOperationStatus storageResponse) {
-        ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
+        ActionStatus responseEnum;
 
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case CONNECTION_FAILURE:
-        case GRAPH_IS_LOCK:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
-        case BAD_REQUEST:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case ENTITY_ALREADY_EXISTS:
-            responseEnum = ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST;
-            break;
-        case SCHEMA_VIOLATION:
-            responseEnum = ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST;
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case CONNECTION_FAILURE:
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case ENTITY_ALREADY_EXISTS:
+                responseEnum = ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST;
+                break;
+            case SCHEMA_VIOLATION:
+                responseEnum = ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
     public ActionStatus convertFromStorageResponseForLifecycleType(StorageOperationStatus storageResponse) {
-        ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
+        ActionStatus responseEnum;
 
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case CONNECTION_FAILURE:
-        case GRAPH_IS_LOCK:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
-        case BAD_REQUEST:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case ENTITY_ALREADY_EXISTS:
-            responseEnum = ActionStatus.LIFECYCLE_TYPE_ALREADY_EXIST;
-            break;
-        case SCHEMA_VIOLATION:
-            responseEnum = ActionStatus.LIFECYCLE_TYPE_ALREADY_EXIST;
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case CONNECTION_FAILURE:
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case ENTITY_ALREADY_EXISTS:
+                responseEnum = ActionStatus.LIFECYCLE_TYPE_ALREADY_EXIST;
+                break;
+            case SCHEMA_VIOLATION:
+                responseEnum = ActionStatus.LIFECYCLE_TYPE_ALREADY_EXIST;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
     public ActionStatus convertFromStorageResponseForResourceInstance(StorageOperationStatus storageResponse, boolean isRelation) {
-        ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
+        ActionStatus responseEnum;
 
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case INVALID_ID:
-            responseEnum = ActionStatus.RESOURCE_INSTANCE_BAD_REQUEST;
-            break;
-        case INVALID_PROPERTY:
-            responseEnum = ActionStatus.INVALID_PROPERTY;
-            break;
-        case GRAPH_IS_LOCK:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
-        case BAD_REQUEST:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case MATCH_NOT_FOUND:
-            responseEnum = ActionStatus.RESOURCE_INSTANCE_MATCH_NOT_FOUND;
-            break;
-        case SCHEMA_VIOLATION:
-            responseEnum = ActionStatus.RESOURCE_INSTANCE_ALREADY_EXIST;
-            break;
-        case NOT_FOUND:
-            if (isRelation) {
-                responseEnum = ActionStatus.RESOURCE_INSTANCE_RELATION_NOT_FOUND;
-            } else {
-                responseEnum = ActionStatus.RESOURCE_INSTANCE_NOT_FOUND;
-            }
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case INVALID_ID:
+                responseEnum = ActionStatus.RESOURCE_INSTANCE_BAD_REQUEST;
+                break;
+            case INVALID_PROPERTY:
+                responseEnum = ActionStatus.INVALID_PROPERTY;
+                break;
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case MATCH_NOT_FOUND:
+                responseEnum = ActionStatus.RESOURCE_INSTANCE_MATCH_NOT_FOUND;
+                break;
+            case SCHEMA_VIOLATION:
+                responseEnum = ActionStatus.RESOURCE_INSTANCE_ALREADY_EXIST;
+                break;
+            case NOT_FOUND:
+                if (isRelation) {
+                    responseEnum = ActionStatus.RESOURCE_INSTANCE_RELATION_NOT_FOUND;
+                } else {
+                    responseEnum = ActionStatus.RESOURCE_INSTANCE_NOT_FOUND;
+                }
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
@@ -939,33 +986,33 @@ public class ComponentsUtils {
     }
 
     public ActionStatus convertFromStorageResponseForResourceInstanceProperty(StorageOperationStatus storageResponse) {
-        ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
+        ActionStatus responseEnum;
 
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case INVALID_ID:
-            responseEnum = ActionStatus.RESOURCE_INSTANCE_BAD_REQUEST;
-            break;
-        case GRAPH_IS_LOCK:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
-        case BAD_REQUEST:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case MATCH_NOT_FOUND:
-            responseEnum = ActionStatus.RESOURCE_INSTANCE_MATCH_NOT_FOUND;
-            break;
-        case SCHEMA_VIOLATION:
-            responseEnum = ActionStatus.RESOURCE_INSTANCE_ALREADY_EXIST;
-            break;
-        case NOT_FOUND:
-            responseEnum = ActionStatus.RESOURCE_INSTANCE_NOT_FOUND;
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case INVALID_ID:
+                responseEnum = ActionStatus.RESOURCE_INSTANCE_BAD_REQUEST;
+                break;
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case MATCH_NOT_FOUND:
+                responseEnum = ActionStatus.RESOURCE_INSTANCE_MATCH_NOT_FOUND;
+                break;
+            case SCHEMA_VIOLATION:
+                responseEnum = ActionStatus.RESOURCE_INSTANCE_ALREADY_EXIST;
+                break;
+            case NOT_FOUND:
+                responseEnum = ActionStatus.RESOURCE_INSTANCE_NOT_FOUND;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
@@ -1065,7 +1112,7 @@ public class ComponentsUtils {
     }
 
 
-     public void auditDistributionEngine(AuditingActionEnum action, String environmentName, DistributionTopicData distributionTopicData, String role, String apiKey, String status) {
+    public void auditDistributionEngine(AuditingActionEnum action, String environmentName, DistributionTopicData distributionTopicData, String role, String apiKey, String status) {
         AuditEventFactory factory = AuditDistributionEngineEventFactoryManager.createDistributionEngineEventFactory(action,
                 environmentName, distributionTopicData, role, apiKey, status);
         getAuditingManager().auditEvent(factory);
@@ -1076,7 +1123,10 @@ public class ComponentsUtils {
                                        String environmentType, String action, String environmentName, String tenantContext) {
         AuditEventFactory factory = new AuditEcompOpEnvEventFactory(actionEnum, environmentID, environmentName,
                 environmentType, action, tenantContext);
-        getAuditingManager().auditEvent(factory);
+        audit.startAuditFetchLog(PARTNER_NAME, DmaapConsumer.class.getName());
+        audit.logEntry(LogLevel.INFO, Severity.OK, null,
+                MarkerFactory.getMarker(ONAPLogConstants.Markers.ENTRY.getName()), environmentID);
+        getAuditingManager().auditEvent(factory, audit);
     }
 
     public void auditDistributionNotification(String serviceUUID, String resourceName, String resourceType, String currVersion, User modifier, String environmentName, String currState,
@@ -1084,16 +1134,16 @@ public class ComponentsUtils {
 
         AuditEventFactory factory = new AuditDistributionNotificationEventFactory(
                 CommonAuditData.newBuilder()
-                    .serviceInstanceId(serviceUUID)
-                    .status(status)
-                    .description(description)
-                    .requestId(ThreadLocalsHolder.getUuid())
-                    .build(),
+                        .serviceInstanceId(serviceUUID)
+                        .status(status)
+                        .description(description)
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .build(),
                 new ResourceCommonInfo(resourceName, resourceType),
                 ResourceVersionInfo.newBuilder()
-                    .state(currState)
-                    .version(currVersion)
-                    .build(),
+                        .state(currState)
+                        .version(currVersion)
+                        .build(),
                 distributionId, modifier, topicName,
                 new OperationalEnvAuditData(environmentName, workloadContext, tenant));
 
@@ -1103,25 +1153,25 @@ public class ComponentsUtils {
     public void auditAuthEvent(String url, String user, String authStatus, String realm) {
         AuditEventFactory factory = new AuditAuthRequestEventFactory(
                 CommonAuditData.newBuilder()
-                .requestId(ThreadLocalsHolder.getUuid())
-                .build(),
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .build(),
                 user, url, realm, authStatus);
         getAuditingManager().auditEvent(factory);
     }
 
-    public void auditDistributionStatusNotification(String distributionId, String consumerId, String topicName, String resourceUrl, String statusTime, String status, String errorReason) {
-        ThreadLocalsHolder.setUuid(distributionId);
-
+    public void auditDistributionStatusNotification(String distributionId, String consumerId, String topicName,
+                                                    String resourceUrl, String statusTime, String status,
+                                                    String errorReason, LoggerSdcAudit audit) {
         AuditEventFactory factory =  new AuditDistributionStatusEventFactory(
                 CommonAuditData.newBuilder()
-                .description(errorReason)
-                .status(status)
-                .requestId(distributionId)
-                .build(),
+                        .description(errorReason)
+                        .status(status)
+                        .requestId(distributionId)
+                        .build(),
                 new DistributionData(consumerId, resourceUrl),
                 distributionId, topicName, statusTime);
 
-        getAuditingManager().auditEvent(factory);
+        getAuditingManager().auditEvent(factory, audit);
     }
 
     public void auditGetUebCluster(String consumerId, String status, String description) {
@@ -1150,13 +1200,13 @@ public class ComponentsUtils {
 
         AuditEventFactory factory = new AuditRegUnregDistributionEngineEventFactory(action,
                 CommonAuditData.newBuilder()
-                    .requestId(ThreadLocalsHolder.getUuid())
-                    .status(appliedStatus)
-                    .build(),
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .status(appliedStatus)
+                        .build(),
                 DistributionTopicData.newBuilder()
-                    .statusTopic(statusTopicName)
-                    .notificationTopic(notifTopicName)
-                    .build(),
+                        .statusTopic(statusTopicName)
+                        .notificationTopic(notifTopicName)
+                        .build(),
                 consumerId, apiPublicKey, envName);
 
         getAuditingManager().auditEvent(factory);
@@ -1166,11 +1216,11 @@ public class ComponentsUtils {
 
         AuditEventFactory factory = new AuditDistributionDeployEventFactory(
                 CommonAuditData.newBuilder()
-                    .requestId(ThreadLocalsHolder.getUuid())
-                    .serviceInstanceId(serviceUUID)
-                    .status(status)
-                    .description(desc)
-                    .build(),
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .serviceInstanceId(serviceUUID)
+                        .status(status)
+                        .description(desc)
+                        .build(),
                 new ResourceCommonInfo(serviceName, "Service"),
                 distributionId,
                 modifier,
@@ -1183,10 +1233,10 @@ public class ComponentsUtils {
     public void auditConsumerCredentialsEvent(AuditingActionEnum actionEnum, ConsumerDefinition consumer, ResponseFormat responseFormat, User modifier) {
         AuditEventFactory factory = new AuditConsumerEventFactory(actionEnum,
                 CommonAuditData.newBuilder()
-                .description(getMessageString(responseFormat))
-                .status(responseFormat.getStatus())
-                .requestId(ThreadLocalsHolder.getUuid())
-                .build(),
+                        .description(getMessageString(responseFormat))
+                        .status(responseFormat.getStatus())
+                        .requestId(ThreadLocalsHolder.getUuid())
+                        .build(),
                 modifier, consumer);
 
         getAuditingManager().auditEvent(factory);
@@ -1204,6 +1254,13 @@ public class ComponentsUtils {
         getAuditingManager().auditEvent(factory);
     }
 
+    public void auditAdminUserActionAndThrowException(AuditingActionEnum actionEnum, User modifier, User userBefore,
+                                                      User userAfter, ActionStatus status, String... params) {
+        ResponseFormat responseFormat = getResponseFormat(status, params);
+        auditAdminUserAction(actionEnum, modifier, userBefore, userAfter, responseFormat);
+        throw new ByResponseFormatComponentException(responseFormat);
+    }
+
     public void auditAdminUserAction(AuditingActionEnum actionEnum, User modifier, User userBefore, User userAfter, ResponseFormat responseFormat) {
 
         AuditEventFactory factory = new AuditUserAdminEventFactory(actionEnum,
@@ -1215,6 +1272,10 @@ public class ComponentsUtils {
                 modifier, userBefore, userAfter);
 
         getAuditingManager().auditEvent(factory);
+    }
+
+    public void auditUserAccess(User user, ActionStatus status, String... params) {
+        auditUserAccess(user, getResponseFormat(status, params));
     }
 
     public void auditUserAccess(User user, ResponseFormat responseFormat) {
@@ -1232,10 +1293,10 @@ public class ComponentsUtils {
     public void auditGetCategoryHierarchy(User user, String details, ResponseFormat responseFormat) {
 
         AuditEventFactory factory = new AuditGetCategoryHierarchyEventFactory(CommonAuditData.newBuilder()
-                        .description(getMessageString(responseFormat))
-                        .status(responseFormat.getStatus())
-                        .requestId(ThreadLocalsHolder.getUuid())
-                        .build(),
+                .description(getMessageString(responseFormat))
+                .status(responseFormat.getStatus())
+                .requestId(ThreadLocalsHolder.getUuid())
+                .build(),
                 user, details);
 
         getAuditingManager().auditEvent(factory);
@@ -1278,18 +1339,18 @@ public class ComponentsUtils {
         ActionStatus responseEnum;
 
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case ENTITY_ALREADY_EXISTS:
-            responseEnum = ActionStatus.COMPONENT_NAME_ALREADY_EXIST;
-            break;
-        case INVALID_ID:
-            responseEnum = ActionStatus.ADDITIONAL_INFORMATION_NOT_FOUND;
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case ENTITY_ALREADY_EXISTS:
+                responseEnum = ActionStatus.COMPONENT_NAME_ALREADY_EXIST;
+                break;
+            case INVALID_ID:
+                responseEnum = ActionStatus.ADDITIONAL_INFORMATION_NOT_FOUND;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
@@ -1298,24 +1359,24 @@ public class ComponentsUtils {
     public ActionStatus convertFromResultStatusEnum(ResultStatusEnum resultStatus, JsonPresentationFields elementType) {
         ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
         switch (resultStatus) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case ELEMENT_NOT_FOUND:
-            if(elementType!= null && elementType == JsonPresentationFields.PROPERTY){
-                responseEnum = ActionStatus.PROPERTY_NOT_FOUND;
-            }
-        break;
-        case INVALID_PROPERTY_DEFAULT_VALUE:
-        case INVALID_PROPERTY_TYPE:
-        case INVALID_PROPERTY_VALUE:
-        case INVALID_PROPERTY_NAME:
-        case MISSING_ENTRY_SCHEMA_TYPE:
-            responseEnum = ActionStatus.INVALID_PROPERTY;
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case ELEMENT_NOT_FOUND:
+                if(elementType!= null && elementType == JsonPresentationFields.PROPERTY){
+                    responseEnum = ActionStatus.PROPERTY_NOT_FOUND;
+                }
+                break;
+            case INVALID_PROPERTY_DEFAULT_VALUE:
+            case INVALID_PROPERTY_TYPE:
+            case INVALID_PROPERTY_VALUE:
+            case INVALID_PROPERTY_NAME:
+            case MISSING_ENTRY_SCHEMA_TYPE:
+                responseEnum = ActionStatus.INVALID_PROPERTY;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         return responseEnum;
     }
@@ -1368,87 +1429,87 @@ public class ComponentsUtils {
         ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
 
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case CONNECTION_FAILURE:
-        case GRAPH_IS_LOCK:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
-        case BAD_REQUEST:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case ENTITY_ALREADY_EXISTS:
-            responseEnum = ActionStatus.CONSUMER_ALREADY_EXISTS;
-            break;
-        case SCHEMA_VIOLATION:
-            responseEnum = ActionStatus.CONSUMER_ALREADY_EXISTS;
-            break;
-        case NOT_FOUND:
-            responseEnum = ActionStatus.ECOMP_USER_NOT_FOUND;
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case CONNECTION_FAILURE:
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case ENTITY_ALREADY_EXISTS:
+                responseEnum = ActionStatus.CONSUMER_ALREADY_EXISTS;
+                break;
+            case SCHEMA_VIOLATION:
+                responseEnum = ActionStatus.CONSUMER_ALREADY_EXISTS;
+                break;
+            case NOT_FOUND:
+                responseEnum = ActionStatus.ECOMP_USER_NOT_FOUND;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
     public ActionStatus convertFromStorageResponseForGroupType(StorageOperationStatus storageResponse) {
-        ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
+        ActionStatus responseEnum;
 
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case CONNECTION_FAILURE:
-        case GRAPH_IS_LOCK:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
-        case BAD_REQUEST:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case ENTITY_ALREADY_EXISTS:
-            responseEnum = ActionStatus.GROUP_TYPE_ALREADY_EXIST;
-            break;
-        case SCHEMA_VIOLATION:
-            responseEnum = ActionStatus.GROUP_TYPE_ALREADY_EXIST;
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case CONNECTION_FAILURE:
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case ENTITY_ALREADY_EXISTS:
+                responseEnum = ActionStatus.GROUP_TYPE_ALREADY_EXIST;
+                break;
+            case SCHEMA_VIOLATION:
+                responseEnum = ActionStatus.GROUP_TYPE_ALREADY_EXIST;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
 
     public ActionStatus convertFromStorageResponseForDataType(StorageOperationStatus storageResponse) {
-        ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
+        ActionStatus responseEnum;
 
         switch (storageResponse) {
-        case OK:
-            responseEnum = ActionStatus.OK;
-            break;
-        case CONNECTION_FAILURE:
-        case GRAPH_IS_LOCK:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
-        case BAD_REQUEST:
-            responseEnum = ActionStatus.INVALID_CONTENT;
-            break;
-        case ENTITY_ALREADY_EXISTS:
-            responseEnum = ActionStatus.DATA_TYPE_ALREADY_EXIST;
-            break;
-        case SCHEMA_VIOLATION:
-            responseEnum = ActionStatus.DATA_TYPE_ALREADY_EXIST;
-            break;
-        case CANNOT_UPDATE_EXISTING_ENTITY:
-            responseEnum = ActionStatus.DATA_TYPE_CANNOT_BE_UPDATED_BAD_REQUEST;
-            break;
-        default:
-            responseEnum = ActionStatus.GENERAL_ERROR;
-            break;
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case CONNECTION_FAILURE:
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case ENTITY_ALREADY_EXISTS:
+                responseEnum = ActionStatus.DATA_TYPE_ALREADY_EXIST;
+                break;
+            case SCHEMA_VIOLATION:
+                responseEnum = ActionStatus.DATA_TYPE_ALREADY_EXIST;
+                break;
+            case CANNOT_UPDATE_EXISTING_ENTITY:
+                responseEnum = ActionStatus.DATA_TYPE_CANNOT_BE_UPDATED_BAD_REQUEST;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
         }
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
@@ -1593,4 +1654,18 @@ public class ComponentsUtils {
         log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
         return responseEnum;
     }
+
+    public ResponseFormat getResponseFormat(StorageException exception) {
+        ActionStatus status = convertFromStorageResponse(exception.getStorageOperationStatus());
+        return getResponseFormat(status, exception.getParams());
+    }
+
+
+    public List<UiLeftPaletteComponent> convertComponentToUiLeftPaletteComponentObject(List<Component> components) {
+        List<UiLeftPaletteComponent> uiLeftPaletteComponents = new ArrayList<>();
+        components.forEach(c-> uiLeftPaletteComponents.add(new UiLeftPaletteComponent(c)));
+        return uiLeftPaletteComponents;
+    }
+
+
 }

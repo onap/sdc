@@ -22,13 +22,14 @@
 
 package org.openecomp.sdc.asdctool.main;
 
+import org.openecomp.sdc.asdctool.impl.GraphJsonValidator;
+import org.openecomp.sdc.asdctool.impl.GraphMLConverter;
+import org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.openecomp.sdc.asdctool.impl.GraphJsonValidator;
-import org.openecomp.sdc.asdctool.impl.GraphMLConverter;
-import org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer;
 
 public class ExportImportMenu {
 

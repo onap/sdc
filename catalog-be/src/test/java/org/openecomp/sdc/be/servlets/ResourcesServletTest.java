@@ -20,17 +20,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Equivalence.Wrapper;
+import fj.data.Either;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -41,9 +34,12 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import com.google.common.base.Equivalence.Wrapper;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.mockito.Mockito.mock;
 
 public class ResourcesServletTest {
 

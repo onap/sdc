@@ -19,17 +19,18 @@
 
 package org.openecomp.sdc.ci.tests.flow;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
-
 import com.aventstack.extentreports.Status;
-import java.util.List;
-import java.util.Optional;
 import org.openecomp.sdc.ci.tests.pages.PageObject;
 import org.openecomp.sdc.ci.tests.pages.ResourceLeftSideMenu;
 import org.openecomp.sdc.ci.tests.pages.ResourcePropertiesAssignmentPage;
 import org.openqa.selenium.WebDriver;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
 
 /**
  * UI Flow for checking the software version property in a resource

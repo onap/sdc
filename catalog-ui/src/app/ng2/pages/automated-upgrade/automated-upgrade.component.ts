@@ -29,8 +29,7 @@ import {AutomatedUpgradeService} from "./automated-upgrade.service";
 @Component({
     selector: 'upgrade-vsp',
     templateUrl: './automated-upgrade.component.html',
-    styleUrls: ['./automated-upgrade.component.less'],
-    providers: [TranslateService]
+    styleUrls: ['./automated-upgrade.component.less']
 })
 export class AutomatedUpgradeComponent {
 

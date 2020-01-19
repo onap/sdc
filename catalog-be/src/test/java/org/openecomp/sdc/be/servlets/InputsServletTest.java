@@ -21,11 +21,9 @@
 package org.openecomp.sdc.be.servlets;
 
 import fj.data.Either;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Application;
+import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,7 +35,10 @@ import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
@@ -53,17 +54,23 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -75,7 +82,12 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class InputsServletTest extends JerseyTest {
 
@@ -106,6 +118,10 @@ public class InputsServletTest extends JerseyTest {
     private static ResourceImportManager resourceImportManager;
     private static HttpServletRequest request;
 
+    String appConfigDir = "src/test/resources/config/catalog-be";
+    ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+    ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+
     @BeforeClass
     public static void configureMocks() {
         request = mock(HttpServletRequest.class);
@@ -120,6 +136,8 @@ public class InputsServletTest extends JerseyTest {
         componentsUtils = mock(ComponentsUtils.class);
         servletUtils = mock(ServletUtils.class);
         resourceImportManager = mock(ResourceImportManager.class);
+
+
     }
 
     @Before
@@ -152,6 +170,7 @@ public class InputsServletTest extends JerseyTest {
             servletUtils, resourceImportManager, dataTypeBusinessLogic);
         ResourceConfig resourceConfig = new ResourceConfig()
             .register(inputsServlet)
+            .register(new ComponentExceptionMapper(componentsUtils))
             .register(new AbstractBinder() {
                 @Override
                 protected void configure() {
@@ -163,6 +182,9 @@ public class InputsServletTest extends JerseyTest {
         resourceConfig.property("contextConfig", context);
         return resourceConfig;
     }
+
+
+
 
     private InputDefinition setUpListInput() {
         InputDefinition listInput = new InputDefinition();
@@ -390,7 +412,7 @@ public class InputsServletTest extends JerseyTest {
     @Test
     public void test_deleteInput_success() throws Exception {
         when(inputsBusinessLogic.deleteInput(RESOURCE_ID, USER_ID, LISTINPUT_NAME))
-                .thenReturn(Either.left(new InputDefinition()));
+                .thenReturn(new InputDefinition());
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
 
         // invoke delete call
@@ -407,28 +429,9 @@ public class InputsServletTest extends JerseyTest {
 
     @Test
     public void test_deleteInput_failure_deleteInput() throws Exception {
-        doReturn(Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()))).when(inputsBusinessLogic)
-            .deleteInput(RESOURCE_ID, USER_ID, LISTINPUT_NAME);
-
-        ResponseFormat responseFormat = new ResponseFormat(HttpStatus.OK_200.getStatusCode());
-        doReturn(responseFormat).when(componentsUtils).getResponseFormat(ActionStatus.OK);
-
-        // invoke delete call
-        Response response = target("/v1/catalog/services/{id}/delete/{inputId}/input")
-                .resolveTemplate("id", RESOURCE_ID)
-                .resolveTemplate("inputId", LISTINPUT_NAME)
-                .request(MediaType.APPLICATION_JSON)
-                .header(Constants.USER_ID_HEADER, USER_ID)
-                .delete();
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST_400.getStatusCode());
-        verify(componentsUtils, never()).getResponseFormat(ActionStatus.OK);
-    }
-
-
-    @Test
-    public void test_deleteInput_failure_exception() throws Exception {
-        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.OK_200.getStatusCode()));
-        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode()));
+        ComponentException componentException = new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
+        when(inputsBusinessLogic.deleteInput(RESOURCE_ID, USER_ID, LISTINPUT_NAME))
+                .thenThrow(componentException);
 
         // invoke delete call
         Response response = target("/v1/catalog/services/{id}/delete/{inputId}/input")

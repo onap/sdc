@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.be.components.property;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.openecomp.sdc.common.api.Constants.GET_INPUT;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.Before;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
@@ -34,6 +27,13 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.openecomp.sdc.common.api.Constants.GET_INPUT;
 
 public class PropertyDeceleratorTestBase {
 

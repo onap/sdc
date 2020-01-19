@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.MockGenerator;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
@@ -53,9 +54,9 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
@@ -81,26 +82,19 @@ import org.openecomp.sdc.be.model.ResourceMetadataDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -114,15 +108,19 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -137,19 +135,21 @@ import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_V
 
 public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
-    public static final User USER = new User("John", "Doh", "jh0003", "jh0003@gmail.com", "ADMIN",
+    private static final User USER = new User("John", "Doh", "jh0003", "jh0003@gmail.com", "ADMIN",
             System.currentTimeMillis());
-    public static final String RESOURCE_NAME = "My-Resource_Name with   space";
+    private final static String RESOURCE_INSTANCE_NAME = "Service-111";
+    private final static String INSTANCE_ID = "S-123-444-ghghghg";
+
+    private final static String ARTIFACT_NAME = "service-Myservice-template.yml";
+    private final static String ARTIFACT_LABEL = "assettoscatemplate";
+    private final static String ES_ARTIFACT_ID = "123123dfgdfgd0";
+    private final static byte[] PAYLOAD = "some payload".getBytes();
+    private static final String RESOURCE_NAME = "My-Resource_Name with   space";
+    private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
+    private static final String RESOURCE_SUBCATEGORY = "Router";
     public static final String RESOURCE_CATEGORY = "Network Layer 2-3/Router";
-    public static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
-    public static final String RESOURCE_SUBCATEGORY = "Router";
     public static final Resource resource = Mockito.mock(Resource.class);
-    private static final String RESOURCE_INSTANCE_NAME = "Service-111";
-    private static final String INSTANCE_ID = "S-123-444-ghghghg";
-    private static final String ARTIFACT_NAME = "service-Myservice-template.yml";
-    private static final String ARTIFACT_LABEL = "assettoscatemplate";
-    private static final String ES_ARTIFACT_ID = "123123dfgdfgd0";
-    private static final byte[] PAYLOAD = "some payload".getBytes();
+
     static ConfigurationSource configurationSource = new FSConfigurationSource(
             ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
@@ -173,7 +173,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     @Mock
     private IInterfaceLifecycleOperation lifecycleOperation;
     @Mock
-    private IUserAdminOperation userOperation;
+    private UserAdminOperation userOperation;
     @Mock
     private IElementOperation elementOperation;
     @Mock
@@ -195,7 +195,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static List<ArtifactType> getAllTypes() {
-        List<ArtifactType> artifactTypes = new ArrayList<>();
+        List<ArtifactType> artifactTypes = new ArrayList<ArtifactType>();
         List<String> artifactTypesList = ConfigurationManager.getConfigurationManager().getConfiguration()
                 .getArtifactTypes();
         for (String artifactType : artifactTypesList) {
@@ -224,9 +224,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         when(lifecycleOperation.getAllInterfacesOfResource(Mockito.anyString(), Mockito.anyBoolean()))
                 .thenReturn(notFoundInterfaces);
 
-        Either<User, ActionStatus> getUserResult = Either.left(USER);
-
-        when(userOperation.getUserData("jh0003", false)).thenReturn(getUserResult);
+		when(userOperation.getUserData("jh0003", false)).thenReturn(Either.left(USER));
 
         Either<List<ArtifactType>, ActionStatus> getType = Either.left(getAllTypes());
         when(elementOperation.getAllArtifactTypes()).thenReturn(getType);
@@ -245,7 +243,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         Either<Resource, StorageOperationStatus> eitherCreate = Either.left(resourceResponse);
         when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
         when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(StorageOperationStatus.OK);
-        Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
+        Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
@@ -274,7 +272,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         }
 
         ArtifactDefinition afterConvert = RepresentationUtils.convertJsonToArtifactDefinition(jsonArtifact,
-                ArtifactDefinition.class);
+                ArtifactDefinition.class, false);
         assertEquals(ad, afterConvert);
     }
 
@@ -320,6 +318,209 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     }
 
     @Test
+    public void testUpdateCIDeploymentArtifactTimeout() {
+        ArtifactDefinition heatArtifact = new ArtifactDefinition();
+        ArtifactDefinition envArtifact = new ArtifactDefinition();
+        ArtifactDefinition origEnvArtifact = new ArtifactDefinition();
+        ComponentInstance ci = new ComponentInstance();
+        ci.setUniqueId("ciid");
+        ci.setDeploymentArtifacts(fillDeploymentArtifacts(heatArtifact,envArtifact, origEnvArtifact));
+        GroupInstance groupInstance = new GroupInstance();
+        groupInstance.setGroupInstanceArtifacts(new ArrayList<>(Arrays.asList(heatArtifact.getUniqueId(), envArtifact.getUniqueId())));
+        groupInstance.setCustomizationUUID("custUid");
+        groupInstance.setUniqueId("guid");
+        List<GroupInstance> groupInstances = new ArrayList<>();
+        groupInstances.addAll(Arrays.asList(groupInstance));
+        ci.setGroupInstances(groupInstances);
+        Service service = new Service();
+        service.setComponentInstances(Collections.singletonList(ci));
+        service.setUniqueId("suid");
+
+        when (artifactToscaOperation.updateArtifactOnResource(heatArtifact, service,
+                heatArtifact.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE.getNodeType(), ci.getUniqueId(), false)).thenReturn(Either.left(heatArtifact));
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstance(service.getUniqueId(), ci.getUniqueId()))
+                .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateGroupInstancesOnComponent(eq(service),eq(ci.getUniqueId()), any(List.class)))
+                .thenReturn(Either.left(new ArrayList()));
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstanceGroup(service.getUniqueId(), ci.getUniqueId(), new ArrayList<>(Arrays.asList("guid"))))
+                .thenReturn(StorageOperationStatus.OK);
+        artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+                "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
+        assertThat(ci.getDeploymentArtifacts().get("HEAT").getTimeout()).isEqualTo(envArtifact.getTimeout());
+        assertThat(ci.getDeploymentArtifacts().get("HEAT_ENV").getTimeout()).isEqualTo(origEnvArtifact.getTimeout());
+    }
+
+    @Test
+    public void testUpdateCIDeploymentTimeout_invalidTimeout() {
+        ArtifactDefinition heatArtifact = new ArtifactDefinition();
+        ArtifactDefinition envArtifact = new ArtifactDefinition();
+        ArtifactDefinition origEnvArtifact = new ArtifactDefinition();
+        ComponentInstance ci = new ComponentInstance();
+        ci.setUniqueId("ciid");
+        ci.setDeploymentArtifacts(fillDeploymentArtifacts(heatArtifact,envArtifact, origEnvArtifact));
+        GroupInstance groupInstance = new GroupInstance();
+        groupInstance.setGroupInstanceArtifacts(new ArrayList<>(Arrays.asList(heatArtifact.getUniqueId(), envArtifact.getUniqueId())));
+        groupInstance.setCustomizationUUID("custUid");
+        groupInstance.setUniqueId("guid");
+        List<GroupInstance> groupInstances = new ArrayList<>();
+        groupInstances.addAll(Arrays.asList(groupInstance));
+        ci.setGroupInstances(groupInstances);
+        Service service = new Service();
+        service.setComponentInstances(Collections.singletonList(ci));
+        service.setUniqueId("suid");
+        envArtifact.setTimeout(130);
+
+        when (artifactToscaOperation.updateArtifactOnResource(heatArtifact, service,
+                heatArtifact.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE.getNodeType(), ci.getUniqueId(), false)).thenReturn(Either.left(heatArtifact));
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstance(service.getUniqueId(), ci.getUniqueId()))
+                .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateGroupInstancesOnComponent(eq(service),eq(ci.getUniqueId()), any(List.class)))
+                .thenReturn(Either.left(new ArrayList()));
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstanceGroup(service.getUniqueId(), ci.getUniqueId(), new ArrayList<>(Arrays.asList("guid"))))
+                .thenReturn(StorageOperationStatus.OK);
+        try {
+            artifactBL.handleUpdate(ci.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE, artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+                    "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
+        } catch (ComponentException exp) {
+            assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.ARTIFACT_INVALID_TIMEOUT);
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void testUpdateCIDeploymentTimeout_negativeTimeout() {
+        ArtifactDefinition heatArtifact = new ArtifactDefinition();
+        ArtifactDefinition envArtifact = new ArtifactDefinition();
+        ArtifactDefinition origEnvArtifact = new ArtifactDefinition();
+        ComponentInstance ci = new ComponentInstance();
+        ci.setUniqueId("ciid");
+        ci.setDeploymentArtifacts(fillDeploymentArtifacts(heatArtifact,envArtifact, origEnvArtifact));
+        GroupInstance groupInstance = new GroupInstance();
+        groupInstance.setGroupInstanceArtifacts(new ArrayList<>(Arrays.asList(heatArtifact.getUniqueId(), envArtifact.getUniqueId())));
+        groupInstance.setCustomizationUUID("custUid");
+        groupInstance.setUniqueId("guid");
+        List<GroupInstance> groupInstances = new ArrayList<>();
+        groupInstances.addAll(Arrays.asList(groupInstance));
+        ci.setGroupInstances(groupInstances);
+        Service service = new Service();
+        service.setComponentInstances(Collections.singletonList(ci));
+        service.setUniqueId("suid");
+        envArtifact.setTimeout(-1);
+
+        when (artifactToscaOperation.updateArtifactOnResource(heatArtifact, service,
+                heatArtifact.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE.getNodeType(), ci.getUniqueId(), false)).thenReturn(Either.left(heatArtifact));
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstance(service.getUniqueId(), ci.getUniqueId()))
+                .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateGroupInstancesOnComponent(eq(service),eq(ci.getUniqueId()), any(List.class)))
+                .thenReturn(Either.left(new ArrayList()));
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstanceGroup(service.getUniqueId(), ci.getUniqueId(), new ArrayList<>(Arrays.asList("guid"))))
+                .thenReturn(StorageOperationStatus.OK);
+        try {
+            artifactBL.handleUpdate(ci.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE, artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+                    "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
+        } catch (ComponentException exp) {
+            assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.ARTIFACT_INVALID_TIMEOUT);
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void testUpdateCIDeploymentArtifactTimeout_noUpdate() {
+        ArtifactDefinition heatArtifact = new ArtifactDefinition();
+        ArtifactDefinition envArtifact = new ArtifactDefinition();
+        ArtifactDefinition origEnvArtifact = new ArtifactDefinition();
+        ComponentInstance ci = new ComponentInstance();
+        ci.setUniqueId("ciid");
+        ci.setDeploymentArtifacts(fillDeploymentArtifacts(heatArtifact,envArtifact, origEnvArtifact));
+        envArtifact.setTimeout(heatArtifact.getTimeout());
+        GroupInstance groupInstance = new GroupInstance();
+        groupInstance.setGroupInstanceArtifacts(new ArrayList<>(Arrays.asList(heatArtifact.getUniqueId(), envArtifact.getUniqueId())));
+        groupInstance.setCustomizationUUID("custUid");
+        groupInstance.setUniqueId("guid");
+        List<GroupInstance> groupInstances = new ArrayList<>();
+        groupInstances.addAll(Arrays.asList(groupInstance));
+        ci.setGroupInstances(groupInstances);
+        Service service = new Service();
+        service.setComponentInstances(Collections.singletonList(ci));
+        service.setUniqueId("suid");
+
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstance(service.getUniqueId(), ci.getUniqueId()))
+                .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateGroupInstancesOnComponent(eq(service),eq(ci.getUniqueId()), any(List.class)))
+                .thenReturn(Either.left(new ArrayList()));
+        artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+                "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
+        assertThat(ci.getDeploymentArtifacts().get("HEAT").getTimeout()).isEqualTo(origEnvArtifact.getTimeout());
+    }
+
+    @Test
+    public void testUpdateCIDeploymentArtifactTimeout_nonExistingArtifact() {
+        ArtifactDefinition heatArtifact = new ArtifactDefinition();
+        ArtifactDefinition envArtifact = new ArtifactDefinition();
+        ArtifactDefinition origEnvArtifact = new ArtifactDefinition();
+        envArtifact.setTimeout(heatArtifact.getTimeout());
+        envArtifact.setArtifactType("HEAT_ENV");
+        envArtifact.setGeneratedFromId("uid1");
+        ComponentInstance ci = new ComponentInstance();
+        ci.setUniqueId("ciid");
+        ci.setDeploymentArtifacts(new HashMap<>());
+        Service service = new Service();
+        service.setComponentInstances(Collections.singletonList(ci));
+        service.setUniqueId("suid");
+
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstance(service.getUniqueId(), ci.getUniqueId()))
+                .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateGroupInstancesOnComponent(eq(service),eq(ci.getUniqueId()), any(List.class)))
+                .thenReturn(Either.left(new ArrayList()));
+
+        assertThatThrownBy(() -> {
+            artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+                    "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
+        }).isInstanceOf(ComponentException.class);
+    }
+
+    @Test
+    public void testUpdateCIDeploymentArtifactTimeout_invalidArtifactType() {
+        ArtifactDefinition envArtifact = new ArtifactDefinition();
+        envArtifact.setArtifactType("invalid");
+
+        try {
+            artifactBL.handleUpdate("uid", ComponentTypeEnum.RESOURCE_INSTANCE, artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+                    "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, null, true);
+            fail();
+        } catch(ComponentException exp) {
+            assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED);
+            assertThat(exp.getParams()[0]).isEqualTo("invalid");
+        }
+    }
+
+    private Map<String, ArtifactDefinition> fillDeploymentArtifacts(ArtifactDefinition heatArtifact, ArtifactDefinition envArtifact, ArtifactDefinition origEnvArtifact) {
+        heatArtifact.setArtifactType("HEAT");
+        heatArtifact.setTimeout(60);
+        heatArtifact.setEsId("es");
+        heatArtifact.setArtifactUUID("uuid1");
+        heatArtifact.setUniqueId("uid1");
+        envArtifact.setArtifactUUID("uuid2");
+        envArtifact.setArtifactType("HEAT_ENV");
+        envArtifact.setTimeout(30);
+        envArtifact.setGenerated(true);
+        envArtifact.setGeneratedFromId("uid1");
+        envArtifact.setUniqueId("uid2");
+        origEnvArtifact.setUniqueId("uid2");
+        origEnvArtifact.setGeneratedFromId("uid1");
+        origEnvArtifact.setArtifactType("HEAT_ENV");
+        origEnvArtifact.setTimeout(60);
+        origEnvArtifact.setGenerated(true);
+        Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap<>();
+        deploymentArtifacts.put(heatArtifact.getArtifactType(), heatArtifact);
+        //deploymentArtifacts.put(envArtifact.getArtifactType(), envArtifact);
+        deploymentArtifacts.put(envArtifact.getArtifactType(), origEnvArtifact);
+        return  deploymentArtifacts;
+    }
+
+    @Test
     public void testInvalidStringGroupType() {
         ArtifactDefinition ad = new ArtifactDefinition();
         ad.setArtifactName("artifact1");
@@ -329,10 +530,23 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         JsonElement jsonArtifact = gson.toJsonTree(ad);
         jsonArtifact.getAsJsonObject().addProperty("artifactGroupType", "www");
+        jsonArtifact.getAsJsonObject().addProperty("artifactLabel", " label");
+        jsonArtifact.getAsJsonObject().addProperty("timeout", " 80");
+        jsonArtifact.getAsJsonObject().addProperty("artifactType", " HEAT");
 
         ArtifactDefinition afterConvert = RepresentationUtils.convertJsonToArtifactDefinition(jsonArtifact.toString(),
-                ArtifactDefinition.class);
+                ArtifactDefinition.class, false);
         assertNull(afterConvert);
+    }
+
+    @Test
+    public void testUpdateArtifactWithEmptyBody() {
+        try {
+            RepresentationUtils.convertJsonToArtifactDefinition("", ArtifactDefinition.class, true);
+            fail();
+        } catch (ComponentException exp) {
+            assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.MISSING_BODY);
+        }
     }
 
     @Test
@@ -345,11 +559,72 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         JsonElement jsonArtifact = gson.toJsonTree(ad);
         jsonArtifact.getAsJsonObject().addProperty("artifactGroupType", 123);
+        jsonArtifact.getAsJsonObject().addProperty("artifactLabel", " label");
+        jsonArtifact.getAsJsonObject().addProperty("timeout", " 80");
+        jsonArtifact.getAsJsonObject().addProperty("artifactType", " HEAT");
 
         ArtifactDefinition afterConvert = RepresentationUtils.convertJsonToArtifactDefinition(jsonArtifact.toString(),
-                ArtifactDefinition.class);
+                ArtifactDefinition.class, false);
         assertNull(afterConvert);
     }
+
+    @Test
+    public void testMissingArtifactTypeValue() {
+        ArtifactDefinition ad = new ArtifactDefinition();
+
+        JsonElement jsonArtifact = gson.toJsonTree(ad);
+        jsonArtifact.getAsJsonObject().addProperty("artifactGroupType", ArtifactGroupTypeEnum.DEPLOYMENT.toString());
+        jsonArtifact.getAsJsonObject().addProperty("artifactLabel", " label");
+        jsonArtifact.getAsJsonObject().addProperty("timeout", " 80");
+        jsonArtifact.getAsJsonObject().add("artifactType", null);
+        try {
+            RepresentationUtils.convertJsonToArtifactDefinition(jsonArtifact.toString(),
+                    ArtifactDefinition.class, true);
+            fail();
+        } catch (ComponentException exp) {
+            assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.MANDATORY_PROPERTY_MISSING_VALUE);
+            assertThat(exp.getParams()[0]).isEqualTo("artifactType");
+        }
+    }
+
+    @Test
+    public void testMissingArtifactLabel() {
+        ArtifactDefinition ad = new ArtifactDefinition();
+
+        JsonElement jsonArtifact = gson.toJsonTree(ad);
+        jsonArtifact.getAsJsonObject().addProperty("artifactGroupType", ArtifactGroupTypeEnum.DEPLOYMENT.toString());
+        jsonArtifact.getAsJsonObject().addProperty("timeout", " 80");
+        jsonArtifact.getAsJsonObject().addProperty("artifactType", " HEAT");
+
+        try {
+            RepresentationUtils.convertJsonToArtifactDefinition(jsonArtifact.toString(),
+                    ArtifactDefinition.class, false);
+            fail();
+        } catch (ComponentException exp) {
+            assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.MISSING_MANDATORY_PROPERTY);
+            assertThat(exp.getParams()[0]).isEqualTo("artifactLabel");
+        }
+    }
+
+    @Test
+    public void testMissingArtifactTimeout() {
+        ArtifactDefinition ad = new ArtifactDefinition();
+
+        JsonElement jsonArtifact = gson.toJsonTree(ad);
+        jsonArtifact.getAsJsonObject().addProperty("artifactGroupType", ArtifactGroupTypeEnum.DEPLOYMENT.toString());
+        jsonArtifact.getAsJsonObject().addProperty("artifactLabel", " label");
+        jsonArtifact.getAsJsonObject().addProperty("artifactType", " HEAT");
+
+        try {
+            RepresentationUtils.convertJsonToArtifactDefinition(jsonArtifact.toString(),
+                    ArtifactDefinition.class, true);
+            fail();
+        } catch (ComponentException exp) {
+            assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.MISSING_MANDATORY_PROPERTY);
+            assertThat(exp.getParams()[0]).isEqualTo("timeout");
+        }
+    }
+
 
     @Test
     public void testInvalidGroupTypeWithSpace() {
@@ -361,9 +636,12 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         JsonElement jsonArtifact = gson.toJsonTree(ad);
         jsonArtifact.getAsJsonObject().addProperty("artifactGroupType", " DEPLOYMENT");
+        jsonArtifact.getAsJsonObject().addProperty("artifactLabel", " label");
+        jsonArtifact.getAsJsonObject().addProperty("timeout", " 80");
+        jsonArtifact.getAsJsonObject().addProperty("artifactType", " HEAT");
 
         ArtifactDefinition afterConvert = RepresentationUtils.convertJsonToArtifactDefinition(jsonArtifact.toString(),
-                ArtifactDefinition.class);
+                ArtifactDefinition.class, false);
         assertNull(afterConvert);
     }
 
@@ -377,9 +655,12 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         JsonElement jsonArtifact = gson.toJsonTree(ad);
         jsonArtifact.getAsJsonObject().addProperty("timeout", "dfsdf15");
+        jsonArtifact.getAsJsonObject().addProperty("artifactLabel", " label");
+        jsonArtifact.getAsJsonObject().addProperty("artifactGroupType", " DEPLOYMENT");
+        jsonArtifact.getAsJsonObject().addProperty("artifactType", " HEAT");
 
         ArtifactDefinition afterConvert = RepresentationUtils.convertJsonToArtifactDefinition(jsonArtifact.toString(),
-                ArtifactDefinition.class);
+                ArtifactDefinition.class, true);
         assertNull(afterConvert);
     }
 
@@ -420,20 +701,19 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         toscaArtifacts.put(artifactLabel, toscaTemplateArtifact);
         service.setToscaArtifacts(toscaArtifacts);
 
-        ESArtifactData esArtifactData = new ESArtifactData(esArtifactId);
-        esArtifactData.setDataAsArray(payload);
-        Either<ESArtifactData, CassandraOperationStatus> artifactfromESres = Either.left(esArtifactData);
+        DAOArtifactData DAOArtifactData = new DAOArtifactData(esArtifactId);
+        DAOArtifactData.setDataAsArray(payload);
+        Either<DAOArtifactData, CassandraOperationStatus> artifactfromESres = Either.left(DAOArtifactData);
         when(artifactCassandraDao.getArtifact(esArtifactId)).thenReturn(artifactfromESres);
         List<org.openecomp.sdc.be.model.Component> serviceList = new ArrayList<>();
         serviceList.add(service);
         Either<List<org.openecomp.sdc.be.model.Component>, StorageOperationStatus> getServiceRes = Either
                 .left(serviceList);
         when(toscaOperationFacade.getBySystemName(ComponentTypeEnum.SERVICE, serviceName)).thenReturn(getServiceRes);
-        Either<byte[], ResponseFormat> downloadServiceArtifactByNamesRes = artifactBL
+        byte[] downloadServiceArtifactByNamesRes = artifactBL
                 .downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
-        assertTrue(downloadServiceArtifactByNamesRes.isLeft());
-        assertTrue(downloadServiceArtifactByNamesRes.left().value() != null
-                && downloadServiceArtifactByNamesRes.left().value().length == payload.length);
+        assertTrue(downloadServiceArtifactByNamesRes != null
+                && downloadServiceArtifactByNamesRes.length == payload.length);
     }
 
     @Test
@@ -444,15 +724,14 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         Resource component = new Resource();
         component.setComponentType(ComponentTypeEnum.RESOURCE);
-        when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
+		when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(USER);
         when(artifactToscaOperation.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class),
-                eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
+                eq(component), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
                 .thenReturn(Either.left(new ArtifactDefinition()));
-        Either<ArtifactDefinition, ResponseFormat> heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(
-                heatArtifact, HEAT_VF_ENV_NAME, "parentId", NodeTypeEnum.Resource, "parentName", USER, component,
+        ArtifactDefinition heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(
+                new ArrayList<>(), heatArtifact, HEAT_VF_ENV_NAME, "parentId", NodeTypeEnum.Resource, "parentName", USER, component,
                 Collections.emptyMap());
-        assertTrue(heatEnvPlaceHolder.isLeft());
-        assertNull(heatEnvPlaceHolder.left().value().getListHeatParameters());
+        assertNull(heatEnvPlaceHolder.getListHeatParameters());
     }
 
     @Test
@@ -466,17 +745,16 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         Resource component = new Resource();
 
-        when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
+		when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(USER);
         when(artifactToscaOperation.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class),
-                eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
+                eq(component), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
                 .thenReturn(Either.left(new ArtifactDefinition()));
 
-        Either<ArtifactDefinition, ResponseFormat> heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(
-                heatArtifact, HEAT_ENV_NAME, "parentId", NodeTypeEnum.ResourceInstance, "parentName", USER, component,
+        ArtifactDefinition heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(
+                new ArrayList<>(), heatArtifact, HEAT_ENV_NAME, "parentId", NodeTypeEnum.ResourceInstance, "parentName", USER, component,
                 Collections.emptyMap());
 
-        assertTrue(heatEnvPlaceHolder.isLeft());
-        ArtifactDefinition heatEnvArtifact = heatEnvPlaceHolder.left().value();
+        ArtifactDefinition heatEnvArtifact = heatEnvPlaceHolder;
         List<HeatParameterDefinition> listHeatParameters = heatEnvArtifact.getListHeatParameters();
         assertEquals(listHeatParameters.size(), 3);
         verifyHeatParam(listHeatParameters.get(0), heatParam1);
@@ -496,7 +774,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
-                any(NodeTypeEnum.class), any(String.class))).thenReturn(Either.left(artifactDefinition));
+                any(NodeTypeEnum.class), any(String.class), eq(true))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
         artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD),
@@ -515,7 +793,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
-                any(NodeTypeEnum.class), any(String.class))).thenReturn(Either.left(artifactDefinition));
+                any(NodeTypeEnum.class), any(String.class), eq(true))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
         artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD),
@@ -534,7 +812,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), any(),
-                any(NodeTypeEnum.class), any(String.class))).thenReturn(Either.left(artifactDefinition));
+                any(NodeTypeEnum.class), any(String.class), eq(true))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
         artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD),
@@ -548,6 +826,9 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         assertNull(heatEnvParam.getCurrentValue());
     }
 
+    //////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////new tests///////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////
     private ArtifactsBusinessLogic createTestSubject() {
         return getTestSubject();
     }
@@ -576,6 +857,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         result = Deencapsulation.invoke(testSubject, "checkArtifactInComponent",
                 new Object[]{component, artifactId});
     }
+
 
     @Test
     public void testCheckCreateFields() throws Exception {
@@ -655,6 +937,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
                 artifactId, component, artifacts);
     }
 
+
     @Test
     public void testValidateArtifact() throws Exception {
         ArtifactsBusinessLogic testSubject;
@@ -667,14 +950,12 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         AuditingActionEnum auditingAction = AuditingActionEnum.ADD_CATEGORY;
 
         Component component = createResourceObject(true);
-        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         boolean shouldLock = false;
         boolean inTransaction = false;
-        ArtifactDefinition result;
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateArtifact", new Object[]{componentId, componentType, operation, artifactId, artifactInfo, auditingAction, user, component, component, errorWrapper, shouldLock, inTransaction});
+        testSubject.validateArtifact(componentId, componentType, operation, artifactId, artifactInfo, auditingAction, user, component, shouldLock, inTransaction);
     }
 
     @Test
@@ -685,15 +966,13 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         Component component = createResourceObject(true);
         ArtifactDefinition artifactInfo = buildArtifactPayload();
-        Either<ArtifactDefinition, ResponseFormat> validateArtifact = Either.left(artifactInfo);
-        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         boolean shouldLock = false;
         boolean inTransaction = false;
 
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "handleHeatEnvDownload", componentId, componentType, user, component, validateArtifact, errorWrapper, shouldLock, inTransaction);
+        testSubject.handleHeatEnvDownload(componentId, componentType, user, component, artifactInfo, shouldLock, inTransaction);
     }
 
     @Test
@@ -716,12 +995,10 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         ArtifactDefinition artAfterUpdate = null;
         Component component = createResourceObject(true);
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
-        ActionStatus result;
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "updateGroupForHeat", new Object[]{artifactInfo,
-                artifactInfo, component, componentType});
+        testSubject.updateGroupForHeat(artifactInfo, artifactInfo, component);
     }
 
     @Test
@@ -730,14 +1007,13 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         ArtifactDefinition artifactInfo = buildArtifactPayload();
         Component component = createResourceObject(true);
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
-        ActionStatus result;
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "updateGroupForHeat",
-                new Object[]{artifactInfo, artifactInfo, artifactInfo,
-                        artifactInfo, component, componentType});
+        testSubject.updateGroupForHeat(artifactInfo, artifactInfo, artifactInfo,
+                artifactInfo, component);
     }
+
 
     @Test
     public void testHandleAuditing() throws Exception {
@@ -791,6 +1067,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
                 componentType, parentId, operation, artifactId});
     }
 
+
     @Test
     public void testValidateInformationalArtifact() throws Exception {
         ArtifactsBusinessLogic testSubject;
@@ -832,6 +1109,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         result = Deencapsulation.invoke(testSubject, "getUpdatedGroupInstances", new Object[]{artifactId, artifactInfo, groups});
     }
 
+
     @Test
     public void testFindArtifact_1() throws Exception {
         ArtifactsBusinessLogic testSubject;
@@ -858,7 +1136,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "fetchArtifactsFromInstance", artifactId, artifacts, instance);
+        Deencapsulation.invoke(testSubject, "fetchArtifactsFromInstance", new Object[]{artifactId, artifacts, instance});
     }
 
 
@@ -891,18 +1169,15 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     }
 
 
-    @Test
-    public void testValidateDeploymentArtifactConf() throws Exception {
+    @Test(expected= ComponentException.class)
+    public void testDeploymentArtifactTypeIsLegalForParent_shouldThrowException() throws Exception {
         ArtifactsBusinessLogic testSubject;
         ArtifactDefinition artifactInfo = buildArtifactPayload();
-        Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         ArtifactTypeEnum artifactType = ArtifactTypeEnum.AAI_SERVICE_MODEL;
         Map<String, ArtifactTypeConfig> resourceDeploymentArtifacts = new HashMap<>();
-
-
         // test 1
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "validateDeploymentArtifactConf", artifactInfo, responseWrapper, artifactType, resourceDeploymentArtifacts);
+        testSubject.validateDeploymentArtifactTypeIsLegalForParent(artifactInfo, artifactType, resourceDeploymentArtifacts);
     }
 
 
@@ -927,7 +1202,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        testSubject.validateArtifactTypeExists(responseWrapper, artifactInfo);
+        testSubject.getValidArtifactType(artifactInfo);
     }
 
 
@@ -945,19 +1220,16 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     }
 
 
-    @Test
-    public void testValidateHeatEnvDeploymentArtifact() throws Exception {
+    @Test(expected= ComponentException.class)
+    public void testValidateHeatEnvDeploymentArtifact_shouldThrowException() throws Exception {
         ArtifactsBusinessLogic testSubject;
         Component component = createResourceObject(true);
         String parentId = "";
         ArtifactDefinition artifactInfo = buildArtifactPayload();
         NodeTypeEnum parentType = NodeTypeEnum.AdditionalInfoParameters;
-        Either<Boolean, ResponseFormat> result;
-
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateHeatEnvDeploymentArtifact",
-                new Object[]{component, parentId, artifactInfo, parentType});
+        testSubject.validateHeatEnvDeploymentArtifact(component, parentId, artifactInfo, parentType);
     }
 
     @Test
@@ -969,20 +1241,10 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        testSubject.fillArtifactPayloadValidation(errorWrapper, payloadWrapper, artifactDefinition);
+        testSubject.fillArtifactPayload(payloadWrapper, artifactDefinition);
     }
 
-    @Test
-    public void testValidateValidYaml() throws Exception {
-        ArtifactsBusinessLogic testSubject;
-        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-        ArtifactDefinition artifactInfo = buildArtifactPayload();
 
-
-        // default test
-        testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "validateValidYaml", errorWrapper, artifactInfo);
-    }
 
     @Test
     public void testIsValidXml() throws Exception {
@@ -996,17 +1258,16 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     }
 
     @Test
-    public void testValidateSingleDeploymentArtifactName() throws Exception {
+    public void testHeatTimeoutValue() throws Exception {
         ArtifactsBusinessLogic testSubject;
-        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-        String artifactName = "";
-        Component component = createResourceObject(true);
-        NodeTypeEnum parentType = null;
-
+        boolean isCreate = false;
+        ArtifactDefinition artifactInfo = buildArtifactPayload();
+        ArtifactDefinition currentArtifact = null;
+        Either<Boolean, ResponseFormat> result;
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "validateSingleDeploymentArtifactName", errorWrapper, artifactName, component, NodeTypeEnum.class);
+        testSubject.validateHeatTimeoutValue(isCreate, artifactInfo, artifactInfo);
     }
 
     @Test
@@ -1019,12 +1280,12 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateHeatDeploymentArtifact",
-                new Object[]{isCreate, artifactInfo, artifactInfo});
+        testSubject.validateHeatTimeoutValue(isCreate, artifactInfo, artifactInfo);
     }
 
-    @Test
-    public void testValidateResourceType() throws Exception {
+
+    @Test(expected= ComponentException.class)
+    public void testValidateResourceType_shouldThrowException() throws Exception {
         ArtifactsBusinessLogic testSubject;
         ResourceTypeEnum resourceType = ResourceTypeEnum.VF;
         ArtifactDefinition artifactInfo = buildArtifactPayload();
@@ -1033,12 +1294,13 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // test 1
         testSubject = createTestSubject();
+        testSubject.validateResourceType(resourceType, artifactInfo, typeList);
         result = Deencapsulation.invoke(testSubject, "validateResourceType", new Object[]{resourceType, artifactInfo, typeList});
     }
 
 
     @Test
-    public void testValidateAndConvertHeatParamers() throws Exception {
+    public void testValidateAndConvertHeatParameters() throws Exception {
         ArtifactsBusinessLogic testSubject;
         ArtifactDefinition artifactInfo = buildArtifactPayload();
         String artifactType = "";
@@ -1046,8 +1308,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateAndConvertHeatParamers",
-                new Object[]{artifactInfo, artifactType});
+        testSubject.validateAndConvertHeatParameters(artifactInfo, artifactType);
     }
 
     @Test
@@ -1062,6 +1323,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         testSubject = createTestSubject();
         result = testSubject.getDeploymentArtifacts(component, parentType, ciId);
     }
+
 
     @Test
     public void testValidateFirstUpdateHasPayload() throws Exception {
@@ -1084,8 +1346,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateAndSetArtifactname",
-                new Object[]{artifactInfo});
+        testSubject.validateAndSetArtifactName(artifactInfo);
     }
 
     @Test
@@ -1139,7 +1400,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "checkAndSetUnupdatableHeatParams", heatParameters, currentParameters);
+        Deencapsulation.invoke(testSubject, "checkAndSetUnupdatableHeatParams", new Object[]{heatParameters, currentParameters});
     }
 
     @Test
@@ -1162,16 +1423,20 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         ArtifactsBusinessLogic testSubject = getTestSubject();
 
         Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
-                new Object[]{artifactInfo, isArtifactMetadataUpdate});
+                new Object[] { artifactInfo, isArtifactMetadataUpdate });
         assertArrayEquals(payload, result.left().value());
     }
 
+
+
+
+
     @Test
-    public void testGivenInValidVesEventsArtifactPayload_WhenHandlePayload_ThenResultIsInvalidYaml() {
-        final int expectedStatus = 100;
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_YAML), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
-        final byte[] payload = "invalidYaml".getBytes();
-        ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
+	public void testGivenInValidVesEventsArtifactPayload_WhenHandlePayload_ThenResultIsInvalidYaml() {
+		final int expectedStatus = 100;
+		when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_YAML), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
+		final byte[] payload = "invalidYaml".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
 
         final boolean isArtifactMetadataUpdate = false;
         ArtifactsBusinessLogic testSubject = getTestSubject();
@@ -1185,11 +1450,11 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     }
 
     @Test
-    public void testGivenEmptyVesEventsArtifactPayload_WhenHandlePayload_ThenResultIsMissingData() {
-        final int expectedStatus = 101;
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.MISSING_DATA), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
-        final byte[] payload = "".getBytes();
-        ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
+	public void testGivenEmptyVesEventsArtifactPayload_WhenHandlePayload_ThenResultIsMissingData() {
+		final int expectedStatus = 101;
+		when(componentsUtils.getResponseFormat(eq(ActionStatus.MISSING_DATA), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
+		final byte[] payload = "".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "ves_events_file.yaml", ArtifactTypeEnum.VES_EVENTS);
 
         final boolean isArtifactMetadataUpdate = false;
         ArtifactsBusinessLogic testSubject = getTestSubject();
@@ -1198,15 +1463,15 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         Either<byte[], ResponseFormat> result = Deencapsulation.invoke(testSubject, "handlePayload",
                 new Object[]{artifactInfo, isArtifactMetadataUpdate});
 
-        int status = result.right().value().getStatus();
-        assertEquals(expectedStatus, status);
+		int status = result.right().value().getStatus();
+		assertEquals(expectedStatus, status);
     }
 
 
     @Test
-    public void testGivenValidHeatArtifactPayload_WhenHandlePayload_ThenResultIsDecodedPayload() {
-        final byte[] payload = "heat_template_version: 1.0".getBytes();
-        ArtifactDefinition artifactInfo = createArtifactInfo(payload, "heat_template.yaml", ArtifactTypeEnum.HEAT);
+	public void testGivenValidHeatArtifactPayload_WhenHandlePayload_ThenResultIsDecodedPayload() {
+		final byte[] payload = "heat_template_version: 1.0".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "heat_template.yaml", ArtifactTypeEnum.HEAT);
 
         final boolean isArtifactMetadataUpdate = false;
         ArtifactsBusinessLogic testSubject = getTestSubject();
@@ -1217,11 +1482,11 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     }
 
     @Test
-    public void testGivenInValidHeatArtifactPayload_WhenHandlePayload_ThenResultIsInvalidYaml() {
-        final int expectedStatus = 1000;
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_DEPLOYMENT_ARTIFACT_HEAT), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
-        final byte[] payload = "validYaml: butNoHeatTemplateVersion".getBytes();
-        ArtifactDefinition artifactInfo = createArtifactInfo(payload, "heat_template.yaml", ArtifactTypeEnum.HEAT);
+	public void testGivenInValidHeatArtifactPayload_WhenHandlePayload_ThenResultIsInvalidYaml() {
+		final int expectedStatus = 1000;
+		when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_DEPLOYMENT_ARTIFACT_HEAT), any(String.class))).thenReturn(new ResponseFormat(expectedStatus));
+		final byte[] payload = "validYaml: butNoHeatTemplateVersion".getBytes();
+		ArtifactDefinition artifactInfo = createArtifactInfo(payload, "heat_template.yaml", ArtifactTypeEnum.HEAT);
 
         final boolean isArtifactMetadataUpdate = false;
         ArtifactsBusinessLogic testSubject = getTestSubject();
@@ -1276,17 +1541,19 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
                 new Object[]{operation, origMd5});
     }
 
+
     @Test
     public void testCreateEsArtifactData() throws Exception {
         ArtifactsBusinessLogic testSubject;
         ArtifactDataDefinition artifactInfo = buildArtifactPayload();
         byte[] artifactPayload = new byte[]{' '};
-        ESArtifactData result;
+        DAOArtifactData result;
 
         // default test
         testSubject = createTestSubject();
         result = testSubject.createEsArtifactData(artifactInfo, artifactPayload);
     }
+
 
     @Test
     public void testIsArtifactMetadataUpdate() throws Exception {
@@ -1332,7 +1599,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         ArtifactsBusinessLogic testSubject;
         ArtifactDefinition artifactDefinition = buildArtifactPayload();
         String payloadStr = "";
-        Either<ESArtifactData, ResponseFormat> result;
+        Either<DAOArtifactData, ResponseFormat> result;
 
         // default test
         testSubject = createTestSubject();
@@ -1352,11 +1619,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // test 1
         testSubject = createTestSubject();
-        prevUUID = "";
-        result = Deencapsulation.invoke(testSubject, "updateArtifactOnGroupInstance",
-                new Object[]{componentType, component, instanceId, prevUUID, artifactInfo,
-                        artifactInfo});
-
+        testSubject.updateArtifactOnGroupInstance(component, instanceId, prevUUID, artifactInfo, artifactInfo);
     }
 
     @Test
@@ -1370,6 +1633,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         result = Deencapsulation.invoke(testSubject, "generateHeatEnvPayload",
                 new Object[]{artifactDefinition});
     }
+
 
     @Test
     public void testBuildJsonForUpdateArtifact() throws Exception {
@@ -1406,6 +1670,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
                 label, displayName, description, artifactContent, updatedRequiredArtifacts, heatParameters);
     }
 
+
     @Test
     public void testReplaceCurrHeatValueWithUpdatedValue() throws Exception {
         ArtifactsBusinessLogic testSubject;
@@ -1415,8 +1680,9 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "replaceCurrHeatValueWithUpdatedValue", currentHeatEnvParams, updatedHeatEnvParams);
+        Deencapsulation.invoke(testSubject, "replaceCurrHeatValueWithUpdatedValue", new Object[]{currentHeatEnvParams, updatedHeatEnvParams});
     }
+
 
     @Test
     public void testExtractArtifactDefinition() throws Exception {
@@ -1429,6 +1695,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         testSubject = createTestSubject();
         result = testSubject.extractArtifactDefinition(eitherArtifact);
     }
+
 
     @Test
     public void testSetHeatCurrentValuesOnHeatEnvDefaultValues() throws Exception {
@@ -1452,7 +1719,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "buildHeatEnvFileName", artifactInfo, artifactInfo, placeHolderData);
+        Deencapsulation.invoke(testSubject, "buildHeatEnvFileName", new Object[]{artifactInfo, artifactInfo, placeHolderData});
     }
 
     @Test
@@ -1478,11 +1745,11 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         boolean shouldLock = false;
         boolean inTransaction = false;
-        Either<List<ArtifactDefinition>, ResponseFormat> result;
+        List<ArtifactDefinition> result;
 
         // default test
         testSubject = createTestSubject();
-        result = testSubject.handleArtifactsRequestForInnerVfcComponent(artifactsToHandle, component, user,
+        result = testSubject.handleArtifactsForInnerVfcComponent(artifactsToHandle, component, user,
                 vfcsNewCreatedArtifacts, operation, shouldLock, inTransaction);
     }
 
@@ -1553,7 +1820,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         user.setRole(Role.ADMIN.name());
 
-        when(userValidations.validateUserExists(Mockito.eq("userId"), any(), anyBoolean()))
+        when(userValidations.validateUserExists(Mockito.eq("userId")))
                 .thenReturn(user);
         when(toscaOperationFacade.getToscaFullElement(any()))
                 .thenReturn(Either.left(resource));
@@ -1563,23 +1830,23 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
                 .thenReturn(artifactDefinition);
         when(graphLockOperation.lockComponent(eq(resource.getUniqueId()), any(NodeTypeEnum.class)))
                 .thenReturn(StorageOperationStatus.OK);
-        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), anyString(), any(NodeTypeEnum.class), any()))
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(), anyString(), any(NodeTypeEnum.class), any(), anyBoolean()))
                 .thenReturn(Either.left(artifactDefinition));
-        when(artifactCassandraDao.saveArtifact(any(ESArtifactData.class)))
+        when(artifactCassandraDao.saveArtifact(any(DAOArtifactData.class)))
                 .thenReturn(CassandraOperationStatus.OK);
         when(toscaOperationFacade.getToscaElement(anyString()))
                 .thenReturn(Either.left(resource));
         when(interfaceOperation.updateInterfaces(anyString(), anyList()))
                 .thenReturn(Either.left(interfaceDefinitionsList));
+        when(artifactToscaOperation.getAllInstanceArtifacts(resource.getUniqueId(), componentId)).thenReturn(Either.left(artifactDefinitionMap));
+        when(toscaOperationFacade.generateCustomizationUUIDOnInstance(any(), any())).thenReturn(StorageOperationStatus.OK);
 
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result = artifactBL.handleArtifactRequest(componentId, user.getUserId(), ComponentTypeEnum.RESOURCE_INSTANCE
+        Either<ArtifactDefinition, Operation> result = artifactBL.handleArtifactRequest(componentId, user.getUserId(), ComponentTypeEnum.RESOURCE_INSTANCE
                 , operationInfo, artifactDefinition.getUniqueId(), artifactDefinition, requestMd5, "data", "iuuid",
-                "ouuid", componentId, "resources");
+                null, componentId, "resources");
 
-        Assert.assertTrue(result.isLeft());
-        Either<ArtifactDefinition, Operation> leftResult = result.left().value();
-        assertTrue(leftResult.isLeft());
-        ArtifactDefinition leftValue = leftResult.left().value();
+        assertTrue(result.isLeft());
+        ArtifactDefinition leftValue = result.left().value();
         assertEquals(artifactDefinition.getArtifactName(), leftValue.getArtifactName());
     }
 
@@ -1603,19 +1870,17 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         when(csarUtils.createCsar(any(Component.class), anyBoolean(), anyBoolean()))
                 .thenReturn(Either.left(csar));
-        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), anyString(), anyString(), any(NodeTypeEnum.class), anyString()))
+        when(artifactToscaOperation.updateArtifactOnResource(any(ArtifactDefinition.class), any(Component.class), anyString(), any(NodeTypeEnum.class), anyString(), anyBoolean()))
                 .thenReturn(Either.left(artifactDefinition));
-        when(artifactCassandraDao.saveArtifact(any(ESArtifactData.class)))
+        when(artifactCassandraDao.saveArtifact(any(DAOArtifactData.class)))
                 .thenReturn(CassandraOperationStatus.OK);
 
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result
+        Either<ArtifactDefinition, Operation> result
                 = artifactBL.generateAndSaveToscaArtifact(artifactDefinition, resource, user, inCertificationRequest,
                 shouldLock, inTransaction, fetchTemplatesFromDB);
 
-        Assert.assertTrue(result.isLeft());
-        Either<ArtifactDefinition, Operation> leftResult = result.left().value();
 
-        Assert.assertEquals(artifactDefinition.getUniqueId(), leftResult.left().value().getUniqueId());
+        Assert.assertEquals(artifactDefinition.getUniqueId(), result.left().value().getUniqueId());
     }
 
     @Test
@@ -1634,11 +1899,10 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         when(csarUtils.createCsar(any(Component.class), anyBoolean(), anyBoolean()))
                 .thenReturn(Either.left(generatedCsar));
 
-        Either<ImmutablePair<String, byte[]>, ResponseFormat> result =
+        ImmutablePair<String, byte[]> result =
                 testSubject.handleDownloadToscaModelRequest(resource, csarArtifact);
 
-        ImmutablePair<String, byte[]> leftResult = result.left().value();
-        assertEquals(csarArtifact.getArtifactName(), leftResult.getKey());
+        assertEquals(csarArtifact.getArtifactName(), result.getKey());
     }
 
     @Test
@@ -1647,7 +1911,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         String artifactId = "artifactId";
         String parentId = "parentId";
 
-        ESArtifactData esArtifactData = new ESArtifactData();
+        DAOArtifactData daoArtifactData = new DAOArtifactData();
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
         Operation operation = new Operation();
@@ -1659,7 +1923,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         artifactDefinition.setUniqueId(artifactId);
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
-        esArtifactData.setDataAsArray("data".getBytes());
+        daoArtifactData.setDataAsArray("data".getBytes());
 
         Resource resource = new Resource();
         resource.setUniqueId("resourceId");
@@ -1676,20 +1940,20 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         User user = new User();
         user.setUserId("userId");
 
-        when(userValidations.validateUserExists(eq(user.getUserId()), any(), anyBoolean()))
+        when(userValidations.validateUserExists(eq(user.getUserId())))
                 .thenReturn(user);
         when(toscaOperationFacade.getToscaFullElement(eq(componentId)))
                 .thenReturn(Either.left(resource));
         when(artifactToscaOperation.getArtifactById(anyString(), anyString(), any(ComponentTypeEnum.class), anyString()))
                 .thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.getArtifact(any()))
-                .thenReturn(Either.left(esArtifactData));
+                .thenReturn(Either.left(daoArtifactData));
+        when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
 
-        Either<ImmutablePair<String, byte[]>, ResponseFormat> result =
+        ImmutablePair<String, byte[]> result =
                 artifactBL.handleDownloadRequestById(componentId, artifactId, user.getUserId(), ComponentTypeEnum.RESOURCE,
                         parentId, null);
-        ImmutablePair<String, byte[]> leftResult = result.left().value();
-        Assert.assertEquals(artifactDefinition.getArtifactName(), leftResult.getKey());
+        Assert.assertEquals(artifactDefinition.getArtifactName(), result.getKey());
     }
 
     @Test
@@ -1698,10 +1962,15 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         String userId = null;
         String artifactId = "artifactId";
 
-        Either<ImmutablePair<String, byte[]>, ResponseFormat> result =
-                artifactBL.handleDownloadRequestById(componentId, artifactId, userId, ComponentTypeEnum.RESOURCE, componentId
-                        , null);
-        Assert.assertTrue(result.isRight());
+        try {
+            ImmutablePair<String, byte[]> result =
+                    artifactBL.handleDownloadRequestById(componentId, artifactId, userId, ComponentTypeEnum.RESOURCE, componentId
+                            , null);
+        } catch (ComponentException e) {
+            assertEquals(e.getActionStatus(), ActionStatus.MISSING_INFORMATION);
+            return;
+        }
+        fail();
     }
 
     @Test
@@ -1727,11 +1996,10 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         when(artifactToscaOperation.getArtifacts(any(), any(NodeTypeEnum.class), any(ArtifactGroupTypeEnum.class), any()))
                 .thenReturn(Either.left(artifactDefinitionMap));
 
-        Either<Map<String, ArtifactDefinition>, ResponseFormat> result =
+        Map<String, ArtifactDefinition> result =
                 artifactBL.handleGetArtifactsByType(ComponentTypeEnum.SERVICE.name(), parentId, ComponentTypeEnum.SERVICE,
                         componentId, artifactGroupType, userId);
-        Map<String, ArtifactDefinition> leftResult = result.left().value();
-        Assert.assertEquals(artifactDefinition.getArtifactName(), leftResult.get("artifact1").getArtifactName());
+        Assert.assertEquals(artifactDefinition.getArtifactName(), result.get("artifact1").getArtifactName());
     }
 
     @Test
@@ -1809,13 +2077,15 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         String resourceName = "resource";
         String resourceVersion = "1.0";
         String artifactName = "artifactName";
-        ResponseFormat responseFormat = new ResponseFormat();
-        responseFormat.setStatus(007);
 
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_CONTENT)))
-                .thenReturn(responseFormat);
-        Either<byte[], ResponseFormat> result = artifactBL.downloadRsrcArtifactByNames(serviceName, serviceVersion, resourceName, resourceVersion, artifactName);
-        assertEquals(responseFormat.getStatus(), result.right().value().getStatus());
+        try{
+            artifactBL.downloadRsrcArtifactByNames(serviceName, serviceVersion, resourceName, resourceVersion, artifactName);
+        } catch(ComponentException e) {
+            assertEquals(ActionStatus.INVALID_CONTENT, e.getActionStatus());
+            return;
+        }
+        fail();
+
     }
 
     @Test
@@ -1837,7 +2107,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setEsId("esId");
 
-        ESArtifactData esArtifactData = new ESArtifactData();
+        DAOArtifactData esArtifactData = new DAOArtifactData();
         esArtifactData.setDataAsArray("test".getBytes());
 
         artifactDefinition.setArtifactName(artifactName);
@@ -1854,9 +2124,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         when(artifactCassandraDao.getArtifact(any()))
                 .thenReturn(Either.left(esArtifactData));
 
-        Either<byte[], ResponseFormat> result = artifactBL.downloadRsrcArtifactByNames(serviceName, version, resourceName, version, artifactName);
-        byte[] data = result.left().value();
-        Assert.assertEquals(esArtifactData.getDataAsArray(), data);
+        byte[] result = artifactBL.downloadRsrcArtifactByNames(serviceName, version, resourceName, version, artifactName);
+        Assert.assertEquals(esArtifactData.getDataAsArray(), result);
     }
 
     private ArtifactsBusinessLogic getTestSubject() {

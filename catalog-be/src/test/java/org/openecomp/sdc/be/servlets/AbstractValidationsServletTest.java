@@ -20,12 +20,10 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.externalapi.servlet.ArtifactExternalServlet;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -34,7 +32,6 @@ import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.exception.ResponseFormat;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -69,10 +66,10 @@ public class AbstractValidationsServletTest {
 
         String payloadName = "valid_vf.csar";
         String rootPath = System.getProperty("user.dir");
-        Path path = null;
-        byte[] data = null;
-        String payloadData = null;
-        Either<Map<String, byte[]>, ResponseFormat> returnValue = null;
+        Path path;
+        byte[] data;
+        String payloadData;
+        Map<String, byte[]> returnValue = null;
         try {
             path = Paths.get(rootPath + "/src/test/resources/valid_vf.csar");
             data = Files.readAllBytes(path);
@@ -83,13 +80,11 @@ public class AbstractValidationsServletTest {
             Method privateMethod = null;
             privateMethod = AbstractValidationsServlet.class.getDeclaredMethod("getCsarFromPayload", UploadResourceInfo.class);
             privateMethod.setAccessible(true);
-            returnValue = (Either<Map<String, byte[]>, ResponseFormat>) privateMethod.invoke(servlet, resourceInfo);
+            returnValue = (Map<String, byte[]>) privateMethod.invoke(servlet, resourceInfo);
         } catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
-        assertTrue(returnValue.isLeft());
-        Map<String, byte[]> csar = returnValue.left().value();
-        assertNotNull(csar);
+        assertNotNull(returnValue);
     }
 
     @Test

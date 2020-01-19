@@ -17,8 +17,6 @@
 
 package org.openecomp.sdc.be.datamodel;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.junit.Before;
@@ -27,8 +25,8 @@ import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
-import org.openecomp.sdc.be.components.utils.PolicyDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.InputsBuilder;
+import org.openecomp.sdc.be.components.utils.PolicyDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.components.utils.ServiceBuilder;
@@ -37,20 +35,21 @@ import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
 import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
 
-
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -20,11 +20,12 @@
 
 package org.openecomp.sdc;
 
-import static org.junit.Assert.assertArrayEquals;
-
-import java.io.InputStream;
-import javax.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
+
+import javax.ws.rs.core.Response;
+import java.io.InputStream;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class TestUtils {
     public static boolean downloadedPayloadMatchesExpected(final Response response, final byte[] expected) {

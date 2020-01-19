@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.switchover.detector;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -35,7 +34,12 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.net.InetAddress;
 import java.util.Properties;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 @Component("switchover-detector")
 public class SwitchoverDetector {
@@ -117,13 +121,6 @@ public class SwitchoverDetector {
         return queryGss(switchoverDetectorConfig.getgFeFqdn(), switchoverDetectorConfig.getFeVip(), maxFeQueryAttempts);
     }
 
-    private void setAuthorizationProperties() {
-        String userInfo = switchoverDetectorConfig.getChangePriorityUser() + ":" + switchoverDetectorConfig.getChangePriorityPassword();
-        String auth = "Basic " + new String(new Base64().encode(userInfo.getBytes()));
-        authHeader = new Properties();
-        authHeader.put("Authorization", auth);
-    }
-
     private void initializeSiteMode() {
         while (siteMode.equals(SwitchoverDetectorState.UNKNOWN.getState())) {
 
@@ -183,9 +180,10 @@ public class SwitchoverDetector {
                 return;
             }
 
-            Boolean updateRequired = siteMode == SwitchoverDetectorState.STANDBY.getState() && (beRes || feRes) && (beMatch != beRes || feMatch != feRes);
+            Boolean updateRequired = siteMode.equals(SwitchoverDetectorState.STANDBY.getState()) && (beRes || feRes) && (beMatch != beRes || feMatch != feRes);
+            Boolean prevModeStandby = siteMode.equals(SwitchoverDetectorState.STANDBY.getState());
 
-            updateSiteModeAndPriority(beRes && feRes, siteMode == SwitchoverDetectorState.STANDBY.getState(), updateRequired);
+            updateSiteModeAndPriority(beRes && feRes, prevModeStandby, updateRequired);
 
             beMatch = beRes;
             feMatch = feRes;
@@ -279,7 +277,6 @@ public class SwitchoverDetector {
             maxFeQueryAttempts = maxAttempts.intValue();
         }
 
-        setAuthorizationProperties();
         logger.info("switchover detector service is enabled, interval is {} seconds", detectorInterval);
 
         this.switchoverDetectorScheduledTask = new SwitchoverDetectorScheduledTask();

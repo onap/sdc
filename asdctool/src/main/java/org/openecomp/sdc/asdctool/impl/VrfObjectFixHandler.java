@@ -42,7 +42,11 @@ import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;

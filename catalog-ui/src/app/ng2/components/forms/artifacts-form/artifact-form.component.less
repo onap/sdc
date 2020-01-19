@@ -1,0 +1,23 @@
+.artifact-form {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
+  .artifact-form-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    .left-form-container {
+      flex: 1;
+      padding-right: 10px;
+    }
+
+    .right-form-container {
+      flex: 1;
+
+      /deep/.sdc-textarea .sdc-textarea__textarea{
+        min-height: 110px;
+      }
+    }
+  }
+}

@@ -25,7 +25,13 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.Constants;
 
 import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.DESIGNER_USER_ROLE;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_EMAIL;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_EXTENDED_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_FIRST_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_ID;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_LAST_NAME;
+import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.USER_UID;
 
 public class AuditBaseEventFactoryTest {
 

@@ -30,7 +30,16 @@ import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentDependency;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.UpgradeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -39,7 +48,11 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("upgradeBusinessLogic")
@@ -80,7 +93,7 @@ public class UpgradeBusinessLogic {
      */
     public UpgradeStatus automatedUpgrade(String componentId, List<UpgradeRequest> upgradeRequest, String userId) {
         UpgradeStatus status = new UpgradeStatus();
-        User user = userValidations.validateUserExists(userId, "automated upgrade", false);
+        User user = userValidations.validateUserExists(userId);
 
         Either<Component, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaFullElement(componentId);
         if (storageStatus.isRight()) {
@@ -126,7 +139,7 @@ public class UpgradeBusinessLogic {
      */
     public Either<List<ComponentDependency>, ResponseFormat> getComponentDependencies(String componentId, String userId) {
 
-        User user = userValidations.validateUserExists(userId, "get Component Dependencies for automated upgrade", false);
+        User user = userValidations.validateUserExists(userId);
         try {
             return upgradeOperation.getComponentDependencies(componentId)
                     .right()
@@ -426,12 +439,8 @@ public class UpgradeBusinessLogic {
         LOGGER.debug("In Service {} change instance version {} to version {}", service.getName(), ci.getName(), newVersionComponent.getVersion());
         ComponentInstance newComponentInstance = new ComponentInstance();
         newComponentInstance.setComponentUid(newVersionComponent.getUniqueId());
-        Either<ComponentInstance, ResponseFormat> changeInstanceVersion = componentInstanceBusinessLogic.changeInstanceVersion(service, ci, newComponentInstance, user, service.getComponentType());
-        if (changeInstanceVersion.isLeft()) {
-            return ActionStatus.OK;
-        } else {
-            return ActionStatus.GENERAL_ERROR;
-        }
+        ComponentInstance changeInstanceVersion = componentInstanceBusinessLogic.changeInstanceVersion(service, ci, newComponentInstance, user, service.getComponentType());
+        return ActionStatus.OK;
     }
 
     private boolean matchInstance(ComponentInstance ci, Component newVersionComponent) {

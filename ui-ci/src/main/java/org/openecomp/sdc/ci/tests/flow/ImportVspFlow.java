@@ -20,13 +20,14 @@
 package org.openecomp.sdc.ci.tests.flow;
 
 import com.aventstack.extentreports.Status;
-import java.util.Optional;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.pages.PageObject;
 import org.openecomp.sdc.ci.tests.pages.ResourceCreatePage;
 import org.openecomp.sdc.ci.tests.pages.TopNavComponent;
 import org.openecomp.sdc.ci.tests.pages.VspRepositoryModalComponent;
 import org.openqa.selenium.WebDriver;
+
+import java.util.Optional;
 
 /**
  * UI Flow for importing a VSP

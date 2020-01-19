@@ -17,10 +17,11 @@
 package org.openecomp.sdc.be.tosca.model;
 
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.collections.CollectionUtils;
 
 
 

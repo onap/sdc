@@ -21,7 +21,6 @@
 package org.openecomp.sdc.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
-import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;

@@ -26,9 +26,19 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.distribution.servlet.DistributionCatalogServlet;
-import org.openecomp.sdc.be.externalapi.servlet.representation.*;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ArtifactMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetDetailedMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceInstanceMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetDetailedMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetMetadata;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -36,7 +46,11 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @org.springframework.stereotype.Component("asset-metadata-utils")
 public class AssetMetadataConverter {

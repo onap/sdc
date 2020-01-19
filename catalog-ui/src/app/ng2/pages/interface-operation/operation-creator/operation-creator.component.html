@@ -180,6 +180,9 @@
                         <span class="bold-message">{{ 'EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_1' | translate }}</span>
                         <span>{{ 'EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_2' | translate }}</span>
                     </div>
+                    <div *ngIf="!workflows.length">
+                        Only <span class="bold-message">certified</span> workflow versions can be assigned to an operation
+                    </div>
                 </div>
             </div>
 

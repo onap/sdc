@@ -20,15 +20,15 @@
 
 package org.openecomp.sdc.asdctool.impl.validator;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
-
-import java.util.LinkedList;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+import static org.mockito.Mockito.mock;
 
 public class ArtifactToolBLTest {
 

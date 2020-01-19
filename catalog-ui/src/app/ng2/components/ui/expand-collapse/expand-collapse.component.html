@@ -14,16 +14,15 @@
   ~ limitations under the License.
   -->
   
-<h1 class="w-sdc-designer-sidebar-section-title"
-    tooltip="{{titleTooltip}}"
-    [ngClass]="{'expanded': state == 0, 'collapsed': state == 1}"
-    (click)="toggleState()">
-    {{caption}}<span class="w-sdc-designer-sidebar-section-title-icon"></span>
-    <ng-content select="header"></ng-content>
-    <span class="w-sdc-designer-sidebar-section-title-icon"></span>
-</h1>
+<div class="expand-collapse-container">
+    <h1 class="expand-collapse-title" [ngClass]="{'expanded': state == 0, 'collapsed': state == 1}"
+        tooltip="{{titleTooltip}}" (click)="toggleState()">{{caption}}
+        <ng-content select="header"></ng-content>
+        <svg-icon name="caret1-down-o" mode="info" size="small" class="expand-collapse-title-icon"></svg-icon>
+    </h1>
 
-<div class="expand-collapse-content" [ngClass]="{'visible': state === 0, 'hidden': state === 1}">
-    <ng-content></ng-content>
-    <ng-content select="content"></ng-content>
+    <div class="expand-collapse-content" [ngClass]="{'expanded': state === 0, 'collapsed': state === 1}">
+        <ng-content></ng-content>
+        <ng-content select="content"></ng-content>
+    </div>
 </div>

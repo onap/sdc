@@ -1,14 +1,14 @@
 import * as _ from "lodash";
-import {Component, Input, Output, ComponentRef, Inject} from '@angular/core';
-import {Component as IComponent} from 'app/models/components/component';
+import { Component, Input, Output, ComponentRef, Inject } from '@angular/core';
+import {Component as IComponent } from 'app/models/components/component';
 
-import {SdcConfigToken, ISdcConfig} from "app/ng2/config/sdc-config.config";
-import {TranslateService} from "app/ng2/shared/translator/translate.service";
+import { SdcConfigToken, ISdcConfig } from "app/ng2/config/sdc-config.config";
+import {TranslateService } from "app/ng2/shared/translator/translate.service";
 
-import {Observable} from "rxjs/Observable";
+import {Observable } from "rxjs/Observable";
 
-import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
-import {ModalService} from 'app/ng2/services/modal.service';
+import {ModalComponent } from 'app/ng2/components/ui/modal/modal.component';
+import {ModalService } from 'app/ng2/services/modal.service';
 import {
     InputBEModel,
     OperationModel,
@@ -18,15 +18,19 @@ import {
     Capability
 } from 'app/models';
 
-import {IModalConfig, IModalButtonComponent} from "sdc-ui/lib/angular/modals/models/modal-config";
-import {SdcUiComponents} from "sdc-ui/lib/angular";
-import {ModalButtonComponent} from "sdc-ui/lib/angular/components";
+// import {SdcUiComponents } from 'sdc-ui/lib/angular';
+// import {ModalButtonComponent } from 'sdc-ui/lib/angular/components';
+// import { IModalButtonComponent, IModalConfig } from 'sdc-ui/lib/angular/modals/models/modal-config';
 
-import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
-import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
-import {PluginsService} from "app/ng2/services/plugins.service";
+import {ComponentServiceNg2 } from 'app/ng2/services/component-services/component.service';
+import {PluginsService } from 'app/ng2/services/plugins.service';
+import {WorkflowServiceNg2 } from 'app/ng2/services/workflow.service';
 
-import {OperationCreatorComponent, OperationCreatorInput} from 'app/ng2/pages/interface-operation/operation-creator/operation-creator.component';
+import { OperationCreatorComponent, OperationCreatorInput } from 'app/ng2/pages/interface-operation/operation-creator/operation-creator.component';
+import { IModalButtonComponent } from 'onap-ui-angular';
+import { ModalButtonComponent } from 'onap-ui-angular';
+import { IModalConfig } from 'onap-ui-angular';
+import { SdcUiServices } from 'onap-ui-angular';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -61,6 +65,7 @@ export class UIOperationModel extends OperationModel {
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 class ModalTranslation {
     CREATE_TITLE: string;
     EDIT_TITLE: string;
@@ -74,7 +79,7 @@ class ModalTranslation {
     constructor(private TranslateService: TranslateService) {
         this.TranslateService.languageChangedObservable.subscribe(lang => {
             this.CREATE_TITLE = this.TranslateService.translate("INTERFACE_CREATE_TITLE");
-            this.EDIT_TITLE = this.TranslateService.translate("INTERFACE_EDIT_TITLE");
+            this.EDIT_TITLE = this.TranslateService.translate('INTERFACE_EDIT_TITLE');
             this.DELETE_TITLE = this.TranslateService.translate("INTERFACE_DELETE_TITLE");
             this.CANCEL_BUTTON = this.TranslateService.translate("INTERFACE_CANCEL_BUTTON");
             this.SAVE_BUTTON = this.TranslateService.translate("INTERFACE_SAVE_BUTTON");
@@ -85,6 +90,7 @@ class ModalTranslation {
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class UIInterfaceModel extends InterfaceModel {
     isCollapsed: boolean = false;
 
@@ -92,7 +98,7 @@ export class UIInterfaceModel extends InterfaceModel {
         super(interf);
         this.operations = _.map(
             this.operations,
-            operation => new UIOperationModel(operation)
+            (operation) => new UIOperationModel(operation)
         );
     }
 
@@ -101,6 +107,7 @@ export class UIInterfaceModel extends InterfaceModel {
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 @Component({
     selector: 'interface-operation',
     templateUrl: './interface-operation.page.component.html',
@@ -110,16 +117,16 @@ export class UIInterfaceModel extends InterfaceModel {
 
 export class InterfaceOperationComponent {
 
-    interfaces: Array<UIInterfaceModel>;
+    interfaces: UIInterfaceModel[];
     modalInstance: ComponentRef<ModalComponent>;
     openOperation: OperationModel;
     enableWorkflowAssociation: boolean;
-    inputs: Array<InputBEModel>;
+    inputs: InputBEModel[];
     isLoading: boolean;
-    interfaceTypes:{ [interfaceType: string]: Array<string> };
+    interfaceTypes: { [interfaceType: string]: string[] };
     modalTranslation: ModalTranslation;
     workflowIsOnline: boolean;
-    workflows: Array<any>;
+    workflows: any[];
     capabilities: CapabilitiesGroup;
 
     @Input() component: IComponent;
@@ -135,7 +142,8 @@ export class InterfaceOperationComponent {
         private ComponentServiceNg2: ComponentServiceNg2,
         private WorkflowServiceNg2: WorkflowServiceNg2,
         private ModalServiceNg2: ModalService,
-        private ModalServiceSdcUI: SdcUiComponents.ModalService
+        private ModalServiceSdcUI: SdcUiServices.ModalService
+        
     ) {
         this.enableWorkflowAssociation = sdcConfig.enableWorkflowAssociation;
         this.modalTranslation = new ModalTranslation(TranslateService);
@@ -146,11 +154,11 @@ export class InterfaceOperationComponent {
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
 
         Observable.forkJoin(
-            this.ComponentServiceNg2.getInterfaces(this.component),
+            this.ComponentServiceNg2.getInterfaceOperations(this.component),
             this.ComponentServiceNg2.getComponentInputs(this.component),
             this.ComponentServiceNg2.getInterfaceTypes(this.component),
             this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId)
-        ).subscribe((response: Array<any>) => {
+        ).subscribe((response: any[]) => {
             const callback = (workflows) => {
                 this.isLoading = false;
                 this.initInterfaces(response[0].interfaces);
@@ -174,36 +182,36 @@ export class InterfaceOperationComponent {
         });
     }
 
-    initInterfaces(interfaces: Array<InterfaceModel>): void {
-        this.interfaces = _.map(interfaces, interf => new UIInterfaceModel(interf));
+    initInterfaces(interfaces: InterfaceModel[]): void {
+        this.interfaces = _.map(interfaces, (interf) => new UIInterfaceModel(interf));
     }
 
     sortInterfaces(): void {
-        this.interfaces = _.filter(this.interfaces, interf => interf.operations && interf.operations.length > 0); // remove empty interfaces
+        this.interfaces = _.filter(this.interfaces, (interf) => interf.operations && interf.operations.length > 0); // remove empty interfaces
         this.interfaces.sort((a, b) => a.type.localeCompare(b.type)); // sort interfaces alphabetically
-        _.forEach(this.interfaces, interf => {
+        _.forEach(this.interfaces, (interf) => {
             interf.operations.sort((a, b) => a.name.localeCompare(b.name)); // sort operations alphabetically
         });
     }
 
     collapseAll(value: boolean = true): void {
-        _.forEach(this.interfaces, interf => {
+        _.forEach(this.interfaces, (interf) => {
             interf.isCollapsed = value;
         });
     }
 
     isAllCollapsed(): boolean {
-        return _.every(this.interfaces, interf => interf.isCollapsed);
+        return _.every(this.interfaces, (interf) => interf.isCollapsed);
     }
 
     isAllExpanded(): boolean {
-        return _.every(this.interfaces, interf => !interf.isCollapsed);
+        return _.every(this.interfaces, (interf) => !interf.isCollapsed);
     }
 
     isListEmpty(): boolean {
         return _.filter(
             this.interfaces,
-            interf => interf.operations && interf.operations.length > 0
+            (interf) => interf.operations && interf.operations.length > 0
         ).length === 0;
     }
 
@@ -291,11 +299,6 @@ export class InterfaceOperationComponent {
 
     }
 
-    private enableOrDisableSaveButton = (shouldEnable: boolean): void => {
-        let saveButton: ModalButtonComponent = this.ModalServiceSdcUI.getCurrentInstance().getButtonById('saveButton');
-        saveButton.disabled = !shouldEnable;
-    }
-
     onRemoveOperation = (event: Event, operation: OperationModel): void => {
         event.stopPropagation();
 
@@ -303,11 +306,11 @@ export class InterfaceOperationComponent {
             this.ComponentServiceNg2
                 .deleteInterfaceOperation(this.component, operation)
                 .subscribe(() => {
-                    const curInterf = _.find(this.interfaces, interf => interf.type === operation.interfaceType);
-                    const index = _.findIndex(curInterf.operations, el => el.uniqueId === operation.uniqueId);
+                    const curInterf = _.find(this.interfaces, (interf) => interf.type === operation.interfaceType);
+                    const index = _.findIndex(curInterf.operations, (el) => el.uniqueId === operation.uniqueId);
                     curInterf.operations.splice(index, 1);
                     if (!curInterf.operations.length) {
-                        const interfIndex = _.findIndex(this.interfaces, interf => interf.type === operation.interfaceType);
+                        const interfIndex = _.findIndex(this.interfaces, (interf) => interf.type === operation.interfaceType);
                         this.interfaces.splice(interfIndex, 1);
                     }
                 });
@@ -322,13 +325,18 @@ export class InterfaceOperationComponent {
         );
     }
 
+    private enableOrDisableSaveButton = (shouldEnable: boolean): void => {
+        const saveButton: ModalButtonComponent = this.ModalServiceSdcUI.getCurrentInstance().getButtonById('saveButton');
+        saveButton.disabled = !shouldEnable;
+    }
+
     private createOperation = (operation: OperationModel): void => {
         this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: OperationModel) => {
             this.openOperation = null;
 
             let curInterf = _.find(
                 this.interfaces,
-                interf => interf.type === operation.interfaceType
+                (interf) => interf.type === operation.interfaceType
             );
 
             if (!curInterf) {
@@ -358,18 +366,19 @@ export class InterfaceOperationComponent {
         this.ComponentServiceNg2.updateInterfaceOperation(this.component, operation).subscribe((newOperation: OperationModel) => {
             this.openOperation = null;
 
-            let oldOpIndex, oldInterf;
-            _.forEach(this.interfaces, interf => {
-                _.forEach(interf.operations, op => {
+            let oldOpIndex;
+            let oldInterf;
+            _.forEach(this.interfaces, (interf) => {
+                _.forEach(interf.operations, (op) => {
                     if (op.uniqueId === newOperation.uniqueId) {
                         oldInterf = interf;
-                        oldOpIndex = _.findIndex(interf.operations, el => el.uniqueId === op.uniqueId);
+                        oldOpIndex = _.findIndex(interf.operations, (el) => el.uniqueId === op.uniqueId);
                     }
                 })
             });
             oldInterf.operations.splice(oldOpIndex, 1);
 
-            const newInterf = _.find(this.interfaces, interf => interf.type === operation.interfaceType);
+            const newInterf = _.find(this.interfaces, (interf) => interf.type === operation.interfaceType);
             const newOpModel = new UIOperationModel(newOperation);
             newInterf.operations.push(newOpModel);
             this.sortInterfaces();

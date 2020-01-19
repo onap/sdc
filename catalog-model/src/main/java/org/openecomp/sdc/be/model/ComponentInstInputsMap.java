@@ -20,17 +20,14 @@
 
 package org.openecomp.sdc.be.model;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 
-@Getter
-@Setter
 public class ComponentInstInputsMap {
 
     private Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap;
@@ -70,4 +67,63 @@ public class ComponentInstInputsMap {
         Map.Entry<String, List<ComponentInstancePropInput>> singleEntry = propertiesMap.entrySet().iterator().next();
         return Pair.of(singleEntry.getKey(), singleEntry.getValue());
     }
+
+    public Map<String, List<ComponentInstancePropInput>> getComponentInstanceInputsMap() {
+        return componentInstanceInputsMap == null ? new HashMap<>() : componentInstanceInputsMap;
+    }
+
+    public void setComponentInstanceInputsMap(Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap) {
+        this.componentInstanceInputsMap = componentInstanceInputsMap;
+    }
+
+    public Map<String, List<ComponentInstancePropInput>> getComponentInstanceProperties() {
+        return componentInstanceProperties == null ? new HashMap<>() : componentInstanceProperties;
+    }
+
+    public void setComponentInstancePropInput(Map<String, List<ComponentInstancePropInput>> componentInstanceProperties) {
+        this.componentInstanceProperties = componentInstanceProperties;
+    }
+
+    public Map<String, List<ComponentInstancePropInput>> getPolicyProperties() {
+        return policyProperties == null ? new HashMap<>() : policyProperties;
+    }
+
+    public void setPolicyProperties(Map<String, List<ComponentInstancePropInput>> policyProperties) {
+        this.policyProperties = policyProperties;
+    }
+
+    public Map<String, List<ComponentInstancePropInput>> getServiceProperties() {
+        return serviceProperties;
+    }
+
+    public void setServiceProperties(
+        Map<String, List<ComponentInstancePropInput>> serviceProperties) {
+        this.serviceProperties = serviceProperties;
+    }
+
+    public Map<String, List<ComponentInstancePropInput>> getGroupProperties() {
+        return groupProperties == null ? new HashMap<>() : groupProperties;
+    }
+
+    public void setGroupProperties(Map<String, List<ComponentInstancePropInput>> groupProperties) {
+        this.groupProperties = groupProperties;
+    }
+
+    public Map<String, List<ComponentInstancePropInput>> getComponentPropertiesToPolicies() {
+        return componentPropertiesToPolicies;
+    }
+
+    public void setComponentPropertiesToPolicies(Map<String, List<ComponentInstancePropInput>> componentPropertiesToPolicies) {
+        this.componentPropertiesToPolicies = componentPropertiesToPolicies;
+    }
+
+    public Map<String, List<ComponentInstancePropInput>> getComponentInstancePropertiesToPolicies() {
+        return componentInstancePropertiesToPolicies;
+    }
+
+    public void setComponentInstancePropertiesToPolicies(Map<String, List<ComponentInstancePropInput>> componentInstancePropertiesToPolicies) {
+        this.componentInstancePropertiesToPolicies = componentInstancePropertiesToPolicies;
+    }
+
+
 }

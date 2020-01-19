@@ -22,20 +22,22 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
+import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -48,8 +50,8 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.Component;
@@ -89,13 +91,31 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
-    protected final ArtifactsBusinessLogic artifactsBusinessLogic;
+    protected ArtifactsBusinessLogic artifactsBusinessLogic;
 
     protected final GroupBusinessLogic groupBusinessLogic;
 
-    private GenericTypeBusinessLogic genericTypeBusinessLogic;
+    protected GenericTypeBusinessLogic genericTypeBusinessLogic;
+
+    protected ComponentDescriptionValidator componentDescriptionValidator;
+    protected ComponentProjectCodeValidator componentProjectCodeValidator;
+
+    protected CatalogOperation catalogOperations;
+    protected ComponentIconValidator componentIconValidator;
+
+    protected ComponentValidator componentValidator;
+    protected ComponentTagsValidator componentTagsValidator;
+    protected ComponentNameValidator componentNameValidator;
+    protected ComponentContactIdValidator componentContactIdValidator;
 
     public ComponentBusinessLogic(IElementOperation elementDao,
         IGroupOperation groupOperation,
@@ -105,12 +125,52 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         InterfaceOperation interfaceOperation,
         InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
         ArtifactsBusinessLogic artifactsBusinessLogic,
-        ArtifactsOperations artifactToscaOperation) {
+        ArtifactsOperations artifactToscaOperation,
+        ComponentContactIdValidator componentContactIdValidator,
+        ComponentNameValidator componentNameValidator,
+        ComponentTagsValidator componentTagsValidator,
+        ComponentValidator componentValidator,
+        ComponentIconValidator componentIconValidator,
+        ComponentProjectCodeValidator componentProjectCodeValidator,
+        ComponentDescriptionValidator componentDescriptionValidator){
+
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
         this.artifactsBusinessLogic = artifactsBusinessLogic;
         this.groupBusinessLogic = groupBusinessLogic;
+        this.componentContactIdValidator = componentContactIdValidator;
+        this.componentNameValidator = componentNameValidator;
+        this.componentTagsValidator = componentTagsValidator;
+        this.componentValidator = componentValidator;
+        this.componentIconValidator = componentIconValidator;
+        this.componentProjectCodeValidator = componentProjectCodeValidator;
+        this.componentDescriptionValidator = componentDescriptionValidator;
     }
+
+    public void setComponentDescriptionValidator(ComponentDescriptionValidator componentDescriptionValidator) {
+        this.componentDescriptionValidator = componentDescriptionValidator;
+    }
+
+    public void setComponentProjectCodeValidator(ComponentProjectCodeValidator componentProjectCodeValidator) {
+        this.componentProjectCodeValidator = componentProjectCodeValidator;
+    }
+
+    public void setComponentIconValidator(ComponentIconValidator componentIconValidator) {
+        this.componentIconValidator = componentIconValidator;
+    }
+
+    public void setComponentContactIdValidator(ComponentContactIdValidator componentContactIdValidator) {
+        this.componentContactIdValidator = componentContactIdValidator;
+    }
+
+    public void setComponentTagsValidator(ComponentTagsValidator componentTagsValidator) {
+        this.componentTagsValidator = componentTagsValidator;
+    }
+
+    public void setComponentNameValidator(ComponentNameValidator componentNameValidator) {
+        this.componentNameValidator = componentNameValidator;
+    }
+
 
     @Autowired
     public void setGenericTypeBusinessLogic(GenericTypeBusinessLogic genericTypeBusinessLogic) {
@@ -135,12 +195,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
      */
     public abstract  Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String componentId, List<String> dataParamsToReturn);
 
-    protected User validateUser(User user, String ecompErrorContext, Component component, AuditingActionEnum auditAction, boolean inTransaction) {
+    User validateUser(User user, String ecompErrorContext, Component component, AuditingActionEnum auditAction, boolean inTransaction) {
         User validatedUser;
         ResponseFormat responseFormat;
         try {
             validateUserNotEmpty(user, ecompErrorContext);
-            validatedUser = validateUserExists(user, ecompErrorContext, inTransaction);
+            validatedUser = validateUserExists(user);
         } catch(ByActionStatusComponentException e){
             if(e.getActionStatus() == ActionStatus.MISSING_INFORMATION){
                 user.setUserId("UNKNOWN");
@@ -179,7 +239,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         String commentStr = null;
         String distrStatus = null;
         ComponentTypeEnum componentType = component.getComponentType();
-        if (componentType.equals(ComponentTypeEnum.SERVICE)) {
+            if (componentType == ComponentTypeEnum.SERVICE) {
             distrStatus = ((ServiceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getDistributionStatus();
             commentStr = comment;
         }
@@ -188,119 +248,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             ResourceVersionInfo.newBuilder().distributionStatus(distrStatus).build(),
             commentStr, null, null);
     }
-
-    protected void validateComponentName(User user, Component component, AuditingActionEnum actionEnum) {
-        ComponentTypeEnum type = component.getComponentType();
-        String componentName = component.getName();
-        if (!ValidationUtils.validateStringNotEmpty(componentName)) {
-            log.debug("component name is empty");
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_COMPONENT_NAME, type.getValue());
-            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ByActionStatusComponentException(ActionStatus.MISSING_COMPONENT_NAME, type.getValue());
-        }
-
-        if (!ValidationUtils.validateComponentNameLength(componentName)) {
-            log.debug("Component name exceeds max length {} ", ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
-            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT,type.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
-        }
-
-        if (!validateTagPattern(componentName)) {
-            log.debug("Component name {} has invalid format", componentName);
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPONENT_NAME, type.getValue());
-            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ByActionStatusComponentException(ActionStatus.INVALID_COMPONENT_NAME, type.getValue());
-        }
-        component.setNormalizedName(ValidationUtils.normaliseComponentName(componentName));
-        component.setSystemName(ValidationUtils.convertToSystemName(componentName));
-    }
-
-    protected void validateDescriptionAndCleanup(User user, Component component, AuditingActionEnum actionEnum) {
-        ComponentTypeEnum type = component.getComponentType();
-        String description = component.getDescription();
-        if (!ValidationUtils.validateStringNotEmpty(description)) {
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_DESCRIPTION, type.getValue());
-            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_DESCRIPTION, type.getValue());
-        }
-
-        description = cleanUpText(description);
-        try {
-            validateComponentDescription(description, type);
-        } catch(ByActionStatusComponentException e){
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
-            throw e;
-        } catch(ByResponseFormatComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat();
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
-            throw e;
-        }
-        component.setDescription(description);
-    }
-
-    private void validateComponentDescription(String description, ComponentTypeEnum type) {
-        if (description != null) {
-            if (!ValidationUtils.validateDescriptionLength(description)) {
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
-            }
-
-            if (!ValidationUtils.validateIsEnglish(description)) {
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_DESCRIPTION, type.getValue());
-            }
-        }
-    }
-
-    protected Either<Boolean, ResponseFormat> validateComponentNameUnique(User user, Component component, AuditingActionEnum actionEnum) {
-        log.debug("validate component name uniqueness for: {}", component.getName());
-        ComponentTypeEnum type = component.getComponentType();
-        ResourceTypeEnum resourceType = null;
-        if(component instanceof Resource){
-            resourceType = ((Resource)component).getResourceType();
-        }
-        Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateComponentNameExists(component.getName(), resourceType, type);
-
-        if (dataModelResponse.isLeft()) {
-            if ( !dataModelResponse.left().value()) {
-                return Either.left(true);
-            } else {
-                log.info("Component with name {} already exists", component.getName());
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, type.getValue(), component.getName());
-                componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-                return Either.right(errorResponse);
-            }
-        }
-        BeEcompErrorManager.getInstance().logBeSystemError("validateComponentNameUnique");
-        log.debug("Error while validateComponentNameUnique for component: {}", component.getName());
-        ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-        componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-        return Either.right(errorResponse);
-    }
-
-    protected void validateContactId(User user, Component component, AuditingActionEnum actionEnum) {
-        log.debug("validate component contactId");
-        ComponentTypeEnum type = component.getComponentType();
-        String contactId = component.getContactId();
-
-        if (!ValidationUtils.validateStringNotEmpty(contactId)) {
-            log.info("contact is missing.");
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT, type.getValue());
-            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_CONTACT, type.getValue());
-        }
-       validateContactId(contactId, user, component, actionEnum, type);
-    }
-
-    private void validateContactId(String contactId, User user, Component component, AuditingActionEnum actionEnum, ComponentTypeEnum type) {
-        if (contactId != null && !ValidationUtils.validateContactId(contactId)) {
-            log.info("contact is invalid.");
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_CONTACT, type.getValue());
-            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_CONTACT, type.getValue());
-        }
-    }
-
 
     public Either<Boolean, ResponseFormat> validateConformanceLevel(String componentUuid, ComponentTypeEnum componentTypeEnum, String userId) {
         log.trace("validate conformance level");
@@ -311,7 +258,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return Either.right(errorResponse);
         }
 
-        validateUserExists(userId, "validateConformanceLevel", false);
+        validateUserExists(userId);
 
         Either<ComponentMetadataData, StorageOperationStatus> eitherComponent = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, null);
         if (eitherComponent.isRight()) {
@@ -342,149 +289,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return Either.left(result);
     }
 
-    protected void validateIcon(User user, Component component, AuditingActionEnum actionEnum) {
-        log.debug("validate Icon");
-        ComponentTypeEnum type = component.getComponentType();
-        String icon = component.getIcon();
-        if (!ValidationUtils.validateStringNotEmpty(icon)) {
-            log.info("icon is missing.");
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_ICON, type.getValue());
-            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_ICON, type.getValue());
-        }
-        try {
-            validateIcon(icon, type);
-        } catch(ByActionStatusComponentException e){
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
-            throw e;
-        } catch(ByResponseFormatComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat();
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, type);
-            throw e;
-        }
-    }
-
-    private void validateIcon(String icon, ComponentTypeEnum type) {
-        if (icon != null) {
-            if (!ValidationUtils.validateIconLength(icon)) {
-                log.debug("icon exceeds max length");
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, type.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
-            }
-
-            if (!ValidationUtils.validateIcon(icon)) {
-                log.info("icon is invalid.");
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_ICON, type.getValue());
-            }
-        }
-    }
-
-    protected void validateTagsListAndRemoveDuplicates(User user, Component component, AuditingActionEnum actionEnum) {
-        List<String> tagsList = component.getTags();
-        try {
-            validateComponentTags(tagsList, component.getName(), component.getComponentType(), user, component, actionEnum);
-        } catch(ByActionStatusComponentException e){
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, component.getComponentType());
-            throw e;
-        } catch(ByResponseFormatComponentException e){
-            ResponseFormat responseFormat = e.getResponseFormat();
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, component.getComponentType());
-            throw e;
-        }
-        ValidationUtils.removeDuplicateFromList(tagsList);
-    }
-
-    protected void validateComponentTags(List<String> tags, String name, ComponentTypeEnum componentType, User user, Component component, AuditingActionEnum action) {
-        log.debug("validate component tags");
-        boolean includesComponentName = false;
-        int tagListSize = 0;
-        ResponseFormat responseFormat;
-        if (tags != null && !tags.isEmpty()) {
-            for (String tag : tags) {
-                if (!ValidationUtils.validateTagLength(tag)) {
-                    log.debug("tag length exceeds limit {}", ValidationUtils.TAG_MAX_LENGTH);
-                    responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
-                    componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
-                }
-                if (validateTagPattern(tag)) {
-                    if (!includesComponentName) {
-                        includesComponentName = name.equals(tag);
-                    }
-                } else {
-                    log.debug("invalid tag {}", tag);
-                    responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_FIELD_FORMAT, componentType.getValue(), TAG_FIELD_LABEL);
-                    componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-                    throw new ByActionStatusComponentException(ActionStatus.INVALID_FIELD_FORMAT, componentType.getValue(), TAG_FIELD_LABEL);
-                }
-                tagListSize += tag.length() + 1;
-            }
-            if (tagListSize > 0) {
-                tagListSize--;
-            }
-
-            if (!includesComponentName) {
-                log.debug("tags must include component name");
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
-                componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
-            }
-            if (!ValidationUtils.validateTagListLength(tagListSize)) {
-                log.debug("overall tags length exceeds limit {}", ValidationUtils.TAG_LIST_MAX_LENGTH);
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
-                componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
-            }
-        } else {
-            responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_TAGS);
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, action, componentType);
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_TAGS);
-        }
-    }
-
-    protected boolean validateTagPattern(String tag) {
-        return ValidationUtils.validateComponentNamePattern(tag);
-    }
-
-    protected Either<Boolean, ResponseFormat> validateProjectCode(User user, Component component, AuditingActionEnum actionEnum) {
-        if (ComponentTypeEnum.RESOURCE.equals(component.getComponentType())) {
-            return Either.left(true);
-        }
-        log.debug("validate ProjectCode name ");
-        String projectCode = component.getProjectCode();
-
-        if (!ValidationUtils.validateStringNotEmpty(projectCode)) {
-            log.info("projectCode is missing.");
-            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_PROJECT_CODE);
-            componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, component.getComponentType(),
-                    ResourceVersionInfo.newBuilder()
-                            .build());
-            return Either.right(errorResponse);
-        }
-
-        Either<Boolean, ResponseFormat> validateProjectCodeResponse = validateProjectCode(projectCode);
-        if (validateProjectCodeResponse.isRight()) {
-            ResponseFormat responseFormat = validateProjectCodeResponse.right().value();
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, actionEnum, component.getComponentType(),
-                    ResourceVersionInfo.newBuilder()
-                            .build());
-        }
-        return validateProjectCodeResponse;
-
-    }
-
-    private Either<Boolean, ResponseFormat> validateProjectCode(String projectCode) {
-        if (projectCode != null) {
-            if (!ValidationUtils.validateProjectCode(projectCode)) {
-                log.info("projectCode  is not valid.");
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROJECT_CODE);
-                return Either.right(errorResponse);
-            }
-            return Either.left(true);
-        }
-        return Either.left(false);
-    }
 
     protected void checkComponentFieldsForOverrideAttempt(Component component) {
         if (component.getLifecycleState() != null) {
@@ -520,46 +324,28 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    protected void validateComponentFieldsBeforeCreate(User user, Component component, AuditingActionEnum actionEnum) {
-        // validate component name uniqueness
-        log.debug("validate component name ");
-        validateComponentName(user, component, actionEnum);
-        // validate description
-        log.debug("validate description");
-        validateDescriptionAndCleanup(user, component, actionEnum);
-        // validate tags
-        log.debug("validate tags");
-        validateTagsListAndRemoveDuplicates(user, component, actionEnum);
-        // validate contact info
-        log.debug("validate contact info");
-        validateContactId(user, component, actionEnum);
-        // validate icon
-        log.debug("validate icon");
-        validateIcon(user, component, actionEnum);
-    }
+    public CapReqDef getRequirementsAndCapabilities(String componentId, ComponentTypeEnum componentTypeEnum, String userId) {
 
-    public Either<CapReqDef, ResponseFormat> getRequirementsAndCapabilities(String componentId, ComponentTypeEnum componentTypeEnum, String userId) {
-
-        validateUserExists(userId, "create Component Instance", false);
-        Either<CapReqDef, ResponseFormat> eitherRet = null;
+        validateUserExists(userId);
         ComponentParametersView filter = new ComponentParametersView(true);
         filter.setIgnoreCapabilities(false);
         filter.setIgnoreRequirements(false);
         filter.setIgnoreComponentInstances(false);
-        Either<Component, ResponseFormat> eitherComponent = validateComponentExists(componentId, componentTypeEnum, filter);
-        if (eitherComponent.isLeft()) {
-            eitherRet = Either.left(new CapReqDef(eitherComponent.left().value().getRequirements(), eitherComponent.left().value().getCapabilities()));
-        } else {
+
+        try {
+            Component component = validateComponentExists(componentId, componentTypeEnum, filter);
+            return new CapReqDef(component.getRequirements(), component.getCapabilities());
+        }catch (ComponentException e){
             BeEcompErrorManager.getInstance().logBeComponentMissingError("getRequirementsAndCapabilities", componentTypeEnum.getValue(), componentId);
-            eitherRet = Either.right(eitherComponent.right().value());
+            throwComponentException(e.getResponseFormat());
         }
-        return eitherRet;
+        return null;
     }
 
     public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponents(boolean isAbstractAbstract, ComponentTypeEnum componentTypeEnum, String internalComponentType, List<String> componentUids,
                                                                                          String userId) {
         try{
-            validateUserExists(userId, "get Latest Version Not Abstract Components", false);
+            validateUserExists(userId);
             List<Component> result = new ArrayList<>();
             List<String> componentsUidToFetch = new ArrayList<>();
             componentsUidToFetch.addAll(componentUids);
@@ -602,12 +388,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         ResponseFormat responseFormat = null;
 
         try{
-            validateUserExists(userId, "get Latest Version Not Abstract Components", false);
+            validateUserExists(userId);
             Boolean isHighest = isHighest(highestFilter);
             Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = toscaOperationFacade.getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType);
 
             if (nonCheckoutCompResponse.isLeft()) {
-                log.debug("Retrived Resource successfully.");
+                log.debug("Retrieved Resource successfully.");
                 return Either.left(nonCheckoutCompResponse.left().value());
             }
             responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value()));
@@ -643,27 +429,30 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         component.setToscaArtifacts(artifactMap);
     }
 
-    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> populateToscaArtifacts(Component component, User user, boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock) {
-        return populateToscaArtifacts(component, user, isInCertificationRequest, inTransaction, shouldLock, true);
+    public Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user, boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock) {
+        return populateToscaArtifacts(component, user, isInCertificationRequest, inTransaction, shouldLock, true, true);
     }
 
-    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> populateToscaArtifacts(Component component, User user, boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock, boolean fetchTemplatesFromDB) {
-        Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaFullElement(component.getUniqueId());
-        if ( toscaElement.isRight() ){
-            ResponseFormat response = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(toscaElement.right().value(), component.getComponentType()));
-            return Either.right(response);
+    public Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user, boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock, boolean retrieveResource) {
+        return populateToscaArtifacts(component, user, isInCertificationRequest, inTransaction, shouldLock, true, retrieveResource);
+    }
+
+    private Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user, boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock, boolean fetchTemplatesFromDB, boolean retrieveResource) {
+        if (retrieveResource) {
+            Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaFullElement(component.getUniqueId());
+            if ( toscaElement.isRight() ){
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(toscaElement.right().value(), component.getComponentType()));
+            }
+            component = toscaElement.left().value();
         }
-        component = toscaElement.left().value();
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> generateToscaRes = null;
+
+        Either<ArtifactDefinition, Operation> generateToscaRes = null;
         if (component.getToscaArtifacts() != null && !component.getToscaArtifacts().isEmpty()) {
             ArtifactDefinition toscaArtifact = component.getToscaArtifacts().values().stream()
                     .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType()))
                     .findAny().get();
             generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest, shouldLock, inTransaction, fetchTemplatesFromDB);
-            if (generateToscaRes.isRight()) {
-                return generateToscaRes;
-            }
-            toscaArtifact = generateToscaRes.left().value().left().value();
+            toscaArtifact = generateToscaRes.left().value();
             component.getToscaArtifacts().put(toscaArtifact.getArtifactLabel(), toscaArtifact);
             if(!isAbstractResource(component)){
                 toscaArtifact = component.getToscaArtifacts().values().stream()
@@ -673,7 +462,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
                 if (generateToscaRes.isRight()) {
                     return generateToscaRes;
                 }
-                toscaArtifact = generateToscaRes.left().value().left().value();
+                toscaArtifact = generateToscaRes.left().value();
                 component.getToscaArtifacts().put(toscaArtifact.getArtifactLabel(), toscaArtifact);
             }
         }
@@ -684,18 +473,17 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return component.getComponentType() == ComponentTypeEnum.RESOURCE && ((Resource)component).isAbstract();
     }
 
-    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> saveToscaArtifactPayload(ArtifactDefinition artifactDefinition, org.openecomp.sdc.be.model.Component component, User user, boolean isInCertificationRequest, boolean shouldLock,
-            boolean inTransaction, boolean fetchTemplatesFromDB) {
+    private Either<ArtifactDefinition, Operation> saveToscaArtifactPayload(ArtifactDefinition artifactDefinition, org.openecomp.sdc.be.model.Component component, User user, boolean isInCertificationRequest, boolean shouldLock,
+                                                                                                   boolean inTransaction, boolean fetchTemplatesFromDB) {
         return artifactsBusinessLogic.generateAndSaveToscaArtifact(artifactDefinition, component, user, isInCertificationRequest, shouldLock, inTransaction, fetchTemplatesFromDB);
     }
 
-    public Either<ImmutablePair<String, byte[]>, ResponseFormat> getToscaModelByComponentUuid(ComponentTypeEnum componentType, String uuid, ResourceCommonInfo resourceCommonInfo) {
+    public ImmutablePair<String, byte[]> getToscaModelByComponentUuid(ComponentTypeEnum componentType, String uuid, ResourceCommonInfo resourceCommonInfo) {
 
         Either<List<Component>, StorageOperationStatus> latestVersionEither = toscaOperationFacade.getComponentListByUuid(uuid, null);
 
         if (latestVersionEither.isRight()) {
-            ResponseFormat response = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(latestVersionEither.right().value(), componentType));
-            return Either.right(response);
+            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(latestVersionEither.right().value(), componentType));
         }
 
         List<Component> components = latestVersionEither.left().value();
@@ -706,14 +494,13 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
 
         if(component == null){
-            ResponseFormat response = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND, componentType));
-            return Either.right(response);
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND, componentType)));
         }
         resourceCommonInfo.setResourceName(component.getName());
         // TODO remove after migration - handle artifact not found(no
         // placeholder)
         if (null == component.getToscaArtifacts() || component.getToscaArtifacts().isEmpty()) {
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ArtifactTypeEnum.TOSCA_CSAR.name()));
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ArtifactTypeEnum.TOSCA_CSAR.name()));
         }
         ArtifactDefinition csarArtifact = component.getToscaArtifacts().values().stream()
                 .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType()))
@@ -736,6 +523,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return markResourceToDelete;
         } else {
             log.debug("Component {}  of type {} was marked as deleted", uniqueId, componentType);
+            updateCatalog(component, ChangeTypeEnum.DELETE);
             return StorageOperationStatus.OK;
         }
     }
@@ -744,7 +532,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         String descriptionUpdated = updatedComponent.getDescription();
         String descriptionCurrent = currentComponent.getDescription();
         if (descriptionUpdated != null && !descriptionCurrent.equals(descriptionUpdated)) {
-            validateDescriptionAndCleanup(user, updatedComponent, auditingAction);
+            componentDescriptionValidator.validateAndCorrectField(user, updatedComponent, auditingAction);
             currentComponent.setDescription(updatedComponent.getDescription());
         }
         return Either.left(true);
@@ -754,9 +542,10 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         String projectCodeUpdated = updatedComponent.getProjectCode();
         String projectCodeCurrent = currentComponent.getProjectCode();
         if (projectCodeUpdated != null && !projectCodeCurrent.equals(projectCodeUpdated)) {
-            Either<Boolean, ResponseFormat> validatProjectCodeResponse = validateProjectCode(user, updatedComponent, null);
-            if (validatProjectCodeResponse.isRight()) {
-                ResponseFormat errorRespons = validatProjectCodeResponse.right().value();
+            try {
+                componentProjectCodeValidator.validateAndCorrectField(user, updatedComponent, null);
+            } catch (ComponentException exp) {
+                ResponseFormat errorRespons = exp.getResponseFormat();
                 return Either.right(errorRespons);
             }
             currentComponent.setProjectCode(updatedComponent.getProjectCode());
@@ -769,7 +558,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         String iconCurrent = currentComponent.getIcon();
         if (iconUpdated != null && !iconCurrent.equals(iconUpdated)) {
             if (!hasBeenCertified) {
-                validateIcon(user, updatedComponent, null);
+                componentIconValidator.validateAndCorrectField(user, updatedComponent, null);
                 currentComponent.setIcon(updatedComponent.getIcon());
             } else {
                 log.info("icon {} cannot be updated once the component has been certified once.", iconUpdated);
@@ -800,7 +589,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         List<ArtifactDefinition> artifacts = new ArrayList<>();
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse = artifactToscaOperation.getArtifacts(parentId);
         if (artifactsResponse.isRight()) {
-            if (!artifactsResponse.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+            if (artifactsResponse.right().value() != StorageOperationStatus.NOT_FOUND) {
                 log.debug("failed to retrieve artifacts for {} {}", parentType, parentId);
                 return Either.right(artifactsResponse.right().value());
             }
@@ -821,7 +610,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     public Either<UiComponentDataTransfer, ResponseFormat> getComponentDataFilteredByParams(String componentId, User user, List<String> dataParamsToReturn) {
 
         if (user != null) {
-            validateUserExists(user, "Get Component by filtered by ui params", false);
+            validateUserExists(user);
         }
 
         UiComponentDataTransfer result =  new UiComponentDataTransfer();
@@ -885,7 +674,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
                 response = Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
             if (userId != null && response == null) {
-                validateUserExists(userId, "Get filtered component instance properties", false);
+                validateUserExists(userId);
             }
             if(response == null){
                 getResourceRes = toscaOperationFacade.getToscaElement(componentId);
@@ -920,23 +709,31 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             for(ComponentInstance instance : filteredInstances){
                 if(component.getComponentInstancesProperties()!=null &&component.getComponentInstancesProperties().containsKey(instance.getUniqueId())){
                     List<IComponentInstanceConnectedElement> currProperties =  getFilteredComponentInstanceProperties(component.getComponentInstancesProperties().get(instance.getUniqueId()), propertyNameFragment, searchByFragment);
-                    if(CollectionUtils.isNotEmpty(currProperties)){
-                        filteredProperties.put(instance.getUniqueId(), currProperties);
-                    }
+                    setFilteredProperties(filteredProperties, instance, currProperties);
                 }
                 if(component.getComponentInstancesInputs()!=null && component.getComponentInstancesInputs().containsKey(instance.getUniqueId())){
                     List<IComponentInstanceConnectedElement> currInputs =  getFilteredComponentInstanceInputs(component.getComponentInstancesInputs().get(instance.getUniqueId()), propertyNameFragment, searchByFragment);
                     if(CollectionUtils.isNotEmpty(currInputs)){
-                        if(filteredProperties.get(instance.getUniqueId())!=null){
-                            filteredProperties.get(instance.getUniqueId()).addAll(currInputs);
-                        } else {
-                            filteredProperties.put(instance.getUniqueId(), currInputs);
-                        }
+                        checkFilteredProperties(filteredProperties, instance, currInputs);
                     }
                 }
             }
         }
         return result;
+    }
+
+    private void setFilteredProperties(Map<String, List<IComponentInstanceConnectedElement>> filteredProperties, ComponentInstance instance, List<IComponentInstanceConnectedElement> currProperties) {
+        if(CollectionUtils.isNotEmpty(currProperties)){
+            filteredProperties.put(instance.getUniqueId(), currProperties);
+        }
+    }
+
+    private void checkFilteredProperties(Map<String, List<IComponentInstanceConnectedElement>> filteredProperties, ComponentInstance instance, List<IComponentInstanceConnectedElement> currInputs) {
+        if(filteredProperties.get(instance.getUniqueId())!=null){
+            filteredProperties.get(instance.getUniqueId()).addAll(currInputs);
+        } else {
+            filteredProperties.put(instance.getUniqueId(), currInputs);
+        }
     }
 
     private List<IComponentInstanceConnectedElement> getFilteredComponentInstanceInputs(List<ComponentInstanceInput> inputs, String propertyNameFragment, boolean searchByFragment) {
@@ -996,18 +793,23 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         dataTypeProperties = currentProperty.getProperties();
 
         if(CollectionUtils.isNotEmpty(dataTypeProperties)){
-            for(PropertyDefinition prop : dataTypeProperties){
-                if(isMatchingComplexPropertyByRecursively(prop, propertyNameFragment, searchByFragment)){
-                    return true;
-                }
+            if (isMatchingComplexProperty(propertyNameFragment, searchByFragment, dataTypeProperties)){
+                return true;
             }
         }
         dataTypeProperties = currentProperty.getDerivedFrom().getProperties();
         if(CollectionUtils.isNotEmpty(dataTypeProperties)){
-            for(PropertyDefinition prop : dataTypeProperties){
-                if(isMatchingComplexPropertyByRecursively(prop, propertyNameFragment, searchByFragment)){
-                    return true;
-                }
+            if (isMatchingComplexProperty(propertyNameFragment, searchByFragment, dataTypeProperties)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isMatchingComplexProperty(String propertyNameFragment, boolean searchByFragment, List<PropertyDefinition> dataTypeProperties) {
+        for(PropertyDefinition prop : dataTypeProperties){
+            if(isMatchingComplexPropertyByRecursively(prop, propertyNameFragment, searchByFragment)){
+                return true;
             }
         }
         return false;
@@ -1120,22 +922,34 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return isMatchingType;
     }
 
-    String cleanUpText(String text){
-        text = ValidationUtils.removeNoneUtf8Chars(text);
-        text = ValidationUtils.normaliseWhitespace(text);
-        text = ValidationUtils.stripOctets(text);
-        text = ValidationUtils.removeHtmlTagsOnly(text);
-        return text;
-    }
-
     public Either<Component, ActionStatus> shouldUpgradeToLatestDerived(Component clonedComponent) {
         //general implementation. Must be error for service, VF . In ResourceBuisnessLogic exist override
         return Either.right(ActionStatus.GENERAL_ERROR);
     }
 
+    protected Either<Component, ResponseFormat>  updateCatalog(Component component, ChangeTypeEnum changeStatus){
+        log.debug("update Catalog start with Component Type {} And Componet Name {} with change status {}", component.getComponentType().name(), component.getName(), changeStatus.name());
+        ActionStatus status =  catalogOperations.updateCatalog(changeStatus,component);
+        if(status != ActionStatus.OK){
+            return Either.right( componentsUtils.getResponseFormat(status));
+        }
+
+       return Either.left(component);
+    }
+
+    public CatalogOperation getCatalogOperations() {
+        return catalogOperations;
+    }
+
+    @Autowired
+    public void setCatalogOperations(CatalogOperation catalogOperations) {
+        this.catalogOperations = catalogOperations;
+    }
+
     public List<GroupDefinition> throwComponentException(ResponseFormat responseFormat) {
         throw new ByResponseFormatComponentException(responseFormat);
     }
+
 }
 
 

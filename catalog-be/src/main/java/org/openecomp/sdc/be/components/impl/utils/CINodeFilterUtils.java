@@ -16,9 +16,6 @@
 
 package org.openecomp.sdc.be.components.impl.utils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
@@ -27,6 +24,10 @@ import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CINodeFilterUtils {
 

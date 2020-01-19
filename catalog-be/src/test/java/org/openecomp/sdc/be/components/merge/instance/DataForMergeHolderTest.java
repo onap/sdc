@@ -21,7 +21,12 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.InputDefinition;
 
 import java.util.LinkedList;
 import java.util.List;

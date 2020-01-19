@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.Test;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ConfigServletTest {
 

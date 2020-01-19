@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentInstance, CompositionCiNodeBase} from "app/models";
-import {ImageCreatorService} from "app/directives/graphs-v2/image-creator/image-creator.service";
-import {ImagesUrl, GraphUIObjects} from "app/utils";
+import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
+import {ComponentInstance, CompositionCiNodeBase} from "../../../../models";
+import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
 export class CompositionCiNodeServiceProxy extends CompositionCiNodeBase {
     private isDependent: boolean;
     private originalImg: string;
@@ -50,7 +50,6 @@ export class CompositionCiNodeServiceProxy extends CompositionCiNodeBase {
         }
 
     }
-
     public initUncertifiedDependentImage(node:Cy.Collection, nodeMinSize:number):string {
         return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified_dependent.png');
     }
@@ -58,5 +57,4 @@ export class CompositionCiNodeServiceProxy extends CompositionCiNodeBase {
     public initDependentImage(node:Cy.Collection, nodeMinSize:number):string {
         return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'dependent.png');
     }
-
 }

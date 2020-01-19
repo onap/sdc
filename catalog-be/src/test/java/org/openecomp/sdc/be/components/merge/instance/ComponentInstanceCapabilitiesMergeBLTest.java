@@ -40,7 +40,11 @@ import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -57,7 +61,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentInstanceCapabilitiesMergeBLTest {
@@ -134,6 +142,7 @@ public class ComponentInstanceCapabilitiesMergeBLTest {
         getCapabilitiesPropsFilter.setIgnoreComponentInstances(false);
         getCapabilitiesPropsFilter.setIgnoreCapabilities(false);
         getCapabilitiesPropsFilter.setIgnoreCapabiltyProperties(false);
+        getCapabilitiesPropsFilter.setIgnoreGroups(false);
 
         ExternalConfiguration.setAppName("catalog-be");
         String appConfigDir = "src/test/resources/config/catalog-be";

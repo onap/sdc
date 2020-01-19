@@ -185,6 +185,6 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     private void auditAndThrowException(Resource resource, User user, AuditingActionEnum auditingAction, ActionStatus status, String... params){
         ResponseFormat errorResponse = componentsUtils.getResponseFormat(status, params);
         componentsUtils.auditResource(errorResponse, user, resource, auditingAction);
-        throw new ByResponseFormatComponentException(errorResponse);
+        throw new ByResponseFormatComponentException(errorResponse, params);
     }
 }

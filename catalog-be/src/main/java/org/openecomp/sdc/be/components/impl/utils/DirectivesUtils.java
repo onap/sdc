@@ -17,10 +17,11 @@
 package org.openecomp.sdc.be.components.impl.utils;
 
 import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
+import java.util.Optional;
 
 public class DirectivesUtils {
 

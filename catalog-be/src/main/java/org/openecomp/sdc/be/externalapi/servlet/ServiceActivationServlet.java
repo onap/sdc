@@ -20,23 +20,21 @@
 
 package org.openecomp.sdc.be.externalapi.servlet;
 
-import java.io.IOException;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
@@ -52,29 +50,36 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 /**
  * Created by chaya on 10/17/2017.
  */
+@SuppressWarnings("ALL")
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @OpenAPIDefinition(info = @Info(title = "Service Activation External Servlet", description = "This Servlet serves external users for activating a specific service"))
-@Singleton
+@Controller
 public class ServiceActivationServlet extends AbstractValidationsServlet {
 
     @Context
     private HttpServletRequest request;
 
     private static final Logger log = Logger.getLogger(ServiceActivationServlet.class);
+
     private final ServiceBusinessLogic serviceBusinessLogic;
 
     @Inject
@@ -87,15 +92,8 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
         this.serviceBusinessLogic = serviceBusinessLogic;
     }
 
-
     /**
      * Activates a service on a specific environment
-     *
-     * @param serviceUUID
-     * @param opEnvId
-     * @param userId
-     * @param instanceIdHeader
-     * @return
      */
     @POST
     @Path("/services/{serviceUUID}/distribution/{opEnvId}/activate")
@@ -124,6 +122,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "409", description = "Service state is invalid for this action"),
             @ApiResponse(responseCode = "502",
                     description = "The server was acting as a gateway or proxy and received an invalid response from the upstream server")})
+    @PermissionAllowed({AafPermission.PermNames.WRITE_VALUE})
     public Response activateServiceExternal(
             @Parameter(description = "Determines the format of the body of the request",
                     required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
@@ -141,7 +140,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
                     required = true) @PathParam("serviceUUID") final String serviceUUID,
             @Parameter(description = "The operational environment on which to activate the service on",
                     required = true) @PathParam("opEnvId") final String opEnvId,
-            String data) {
+            String data) throws IOException {
 
         init();
 
@@ -161,8 +160,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
                 log.debug("modifier id is {}", userId);
 
                 ServiceDistributionReqInfo reqMetadata = convertJsonToActivationMetadata(data);
-                Either<String, ResponseFormat> distResponse = serviceBusinessLogic
-                        .activateServiceOnTenantEnvironment(serviceUUID, opEnvId, modifier, reqMetadata);
+                Either<String, ResponseFormat> distResponse = serviceBusinessLogic.activateServiceOnTenantEnvironment(serviceUUID, opEnvId, modifier, reqMetadata);
 
                 if (distResponse.isRight()) {
                     log.debug("failed to activate service distribution");
@@ -181,8 +179,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Activate Distribution");
             log.debug("activate distribution failed with exception", e);
-            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
+            throw e;
         } finally {
             getComponentsUtils().auditExternalActivateService(responseFormat,
                     new DistributionData(instanceIdHeader, requestURI), requestId, serviceUUID, modifier);

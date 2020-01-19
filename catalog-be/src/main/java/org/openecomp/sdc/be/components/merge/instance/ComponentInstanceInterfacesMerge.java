@@ -20,10 +20,9 @@
 
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
-import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -34,8 +33,9 @@ import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @org.springframework.stereotype.Component("ComponentInstanceInterfacesMerge")
 public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeInterface {
@@ -53,10 +53,15 @@ public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeI
     }
 
     @Override
-    public Either<Component, ResponseFormat> mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
+    public Component mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
         List<ComponentInstanceInterface> origInstanceInterfaces = dataHolder.getOrigComponentInstanceInterfaces();
         ActionStatus mergeStatus = mergeComponentInstanceInterfaces(updatedContainerComponent, newInstanceId, origInstanceInterfaces);
-        return Either.iif(!ActionStatus.OK.equals(mergeStatus), () -> componentsUtils.getResponseFormat(mergeStatus), () -> updatedContainerComponent);
+        if (!ActionStatus.OK.equals(mergeStatus)){
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(mergeStatus));
+        }
+        else {
+            return updatedContainerComponent;
+        }
     }
 
     private ActionStatus mergeComponentInstanceInterfaces(Component currentComponent, String instanceId, List<ComponentInstanceInterface> prevInstanceInterfaces) {

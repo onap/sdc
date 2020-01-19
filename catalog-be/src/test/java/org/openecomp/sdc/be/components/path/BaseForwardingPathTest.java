@@ -28,19 +28,20 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.path.beans.JanusGraphTestSetup;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
+import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -50,16 +51,23 @@ import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.tosca.CapabilityRequirementConverter;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.datastructure.UserContext;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public abstract class BaseForwardingPathTest extends BeConfDependentTest implements ForwardingPathTestUtils {
 
@@ -78,7 +86,10 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
 
     @Autowired
     protected ServiceBusinessLogic bl;
+    
+    private CatalogOperation catalogOperation = mock(CatalogOperation.class);
 
+    private ServiceValidator serviceValidator = mock(ServiceValidator.class);
     @Autowired
     protected IElementOperation elementDao;
 
@@ -103,6 +114,11 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
         user.setFirstName("Jimmi");
         user.setLastName("Hendrix");
         user.setRole(Role.ADMIN.name());
+        Set<String> userRole = new HashSet<>();
+        userRole.add(user.getRole());
+        UserContext userContext = new UserContext(user.getUserId(), userRole, user.getFirstName() ,user.getLastName());
+        ThreadLocalsHolder.setUserContext(userContext);
+        bl.setServiceValidator(serviceValidator);
     }
 
 
@@ -135,6 +151,9 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
     }
 
     private Service createTestService() {
+        when(catalogOperation.updateCatalog(any(), any())).thenReturn(ActionStatus.OK);
+        bl.setCatalogOperations(catalogOperation);
+        bl.setServiceValidator(serviceValidator);
         createCategory();
         createServiceCategory(CATEGORY_NAME);
         initGraph();
@@ -153,7 +172,6 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
         categories.add(cd);
         service.setCategories(categories);
         service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_APPROVED);
         return service;
     }
 
@@ -203,7 +221,8 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
     }
 
     Service createService() {
-        Either<Service, ResponseFormat> serviceCreateResult = bl.createService(createTestService(), user);
+        Either<Service, ResponseFormat> serviceCreateResult;
+        serviceCreateResult = bl.createService(createTestService(), user);
         assertTrue("Failed to create service", serviceCreateResult.isLeft());
         return serviceCreateResult.left().value();
     }

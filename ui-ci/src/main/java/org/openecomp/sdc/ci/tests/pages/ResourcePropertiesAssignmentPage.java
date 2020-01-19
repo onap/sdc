@@ -19,19 +19,20 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.openecomp.sdc.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.MAIN_DIV;
 import static org.openecomp.sdc.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.NO_DATA_MESSAGE;
 import static org.openecomp.sdc.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.PROPERTIES_TABLE;
 import static org.openecomp.sdc.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.SOFTWARE_VERSION_INPUT;
 import static org.openecomp.sdc.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.SOFTWARE_VERSION_PROPERTY_CHECKBOX;
 import static org.openecomp.sdc.ci.tests.pages.ResourcePropertiesAssignmentPage.XpathSelector.TITLE_DIV;
-
-import java.util.ArrayList;
-import java.util.List;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * Handles the Resource Properties Assignment Page UI actions

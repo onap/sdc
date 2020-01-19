@@ -49,7 +49,6 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IInputsOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -63,7 +62,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("component-instance-operation")
-public class ComponentInstanceOperation extends AbstractOperation implements IComponentInstanceOperation {
+public class ComponentInstanceOperation extends AbstractOperation {
 
     public ComponentInstanceOperation() {
         super();
@@ -89,7 +88,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
         this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
-    @Override
     public Either<Integer, StorageOperationStatus> increaseAndGetResourceInstanceSpecificCounter(String resourceInstanceId, GraphPropertiesDictionary counterType, boolean inTransaction) {
 
         Either<Integer, StorageOperationStatus> result = null;
@@ -556,7 +554,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
     }
 
-    @Override
     public Either<ComponentInstanceProperty, StorageOperationStatus> addAttributeValueToResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId, Integer index, boolean inTransaction) {
         Either<ComponentInstanceProperty, StorageOperationStatus> result = null;
 
@@ -590,7 +587,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
         return new ComponentInstanceProperty(hidden, resourceInstanceAttribute, uid);
     }
 
-    @Override
     public Either<ComponentInstanceProperty, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId, boolean inTransaction) {
 
         Either<ComponentInstanceProperty, StorageOperationStatus> result = null;
@@ -619,7 +615,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
     }
 
-    @Override
     public Either<ComponentInstanceInput, StorageOperationStatus> addInputValueToResourceInstance(ComponentInstanceInput resourceInstanceInput, String resourceInstanceId, Integer index, boolean inTransaction) {
 
         /// #RULES SUPPORT
@@ -672,12 +667,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
     }
 
-    @Override
     public Either<ComponentInstanceInput, StorageOperationStatus> updateInputValueInResourceInstance(ComponentInstanceInput input, String resourceInstanceId, boolean b) {
         return null;
     }
 
-    @Override
     public StorageOperationStatus updateCustomizationUUID(String componentInstanceId) {
         Either<JanusGraphVertex, JanusGraphOperationStatus> vertexByProperty = janusGraphGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), componentInstanceId);
         if (vertexByProperty.isRight()) {
@@ -691,7 +684,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
         return StorageOperationStatus.OK;
     }
 
-    @Override
     public Either<ComponentInstanceData, StorageOperationStatus> updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(ComponentInstance componentInstance, NodeTypeEnum componentInstanceType, Long modificationTime, boolean inTransaction) {
 
         log.debug("Going to update modification time of component instance {}. ", componentInstance.getName());

@@ -27,7 +27,12 @@ import org.apache.http.entity.StringEntity;
 import org.eclipse.jetty.util.URIUtil;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionStatusNotificationEnum;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.common.http.client.api.*;
+import org.openecomp.sdc.common.http.client.api.HttpExecuteException;
+import org.openecomp.sdc.common.http.client.api.HttpRequest;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
+import org.openecomp.sdc.common.http.client.api.Responses;
+import org.openecomp.sdc.common.http.client.api.RestUtils;
+import org.openecomp.sdc.common.http.client.api.RetryHandlers;
 import org.openecomp.sdc.common.http.config.BasicAuthorization;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
@@ -52,6 +57,7 @@ public class MSORestClient {
         if ( numOfRetries > 0 ) {
             httpClientConfig.setRetryHandler(RetryHandlers.getDefault(numOfRetries));
         }
+        serviceConfig.getHttpClientConfig().setEnableMetricLogging(true);
     }
 
     public HttpResponse<String> notifyDistributionComplete(String distributionId, DistributionStatusNotificationEnum distributionStatusEnum, String errReason) {
@@ -67,7 +73,6 @@ public class MSORestClient {
     private HttpResponse<String> doNotifyDistributionComplete(String distributionId, DistributionStatusNotificationEnum distributionStatusEnum, String errReason) throws HttpExecuteException {
         StringEntity entity = new StringEntity(gson.toJson(new DistributionStatusRequest(distributionStatusEnum.name(), errReason)), ContentType.APPLICATION_JSON);
         HttpResponse<String> response = HttpRequest.patch(buildMsoDistributionUrl(distributionId), buildReqHeader(), entity, serviceConfig.getHttpClientConfig());
-        logger.info("response from mso - status code: {}, status description: {}, response: {}, ", response.getStatusCode(), response.getDescription(), response.getResponse());
         return response;
     }
 

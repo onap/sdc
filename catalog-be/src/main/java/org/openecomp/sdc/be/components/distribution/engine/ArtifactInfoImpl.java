@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -77,7 +76,6 @@ public class ArtifactInfoImpl implements IArtifactInfo {
                 ret.add(artifactInfoImpl);
             }
         }
-        ret.stream().forEach(ArtifactInfoImpl::updateArtifactTimeout);
         return ret;
 
     }
@@ -194,12 +192,6 @@ public class ArtifactInfoImpl implements IArtifactInfo {
 
     public void setGeneratedFromUUID(String generatedFromUUID) {
         this.generatedFromUUID = generatedFromUUID;
-    }
-    
-    public void updateArtifactTimeout(){
-        int currentConfigTimeout = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getCurrentArtifactInstallationTimeout();
-        if(artifactTimeout == null || artifactTimeout < currentConfigTimeout)
-            artifactTimeout = currentConfigTimeout;
     }
 
 }

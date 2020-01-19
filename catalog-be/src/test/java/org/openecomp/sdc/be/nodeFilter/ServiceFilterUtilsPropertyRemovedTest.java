@@ -16,11 +16,11 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.impl.ServiceFilterUtils;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ServiceFilterUtilsPropertyRemovedTest extends BaseServiceFilterUtilsTest {
 

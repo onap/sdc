@@ -34,7 +34,11 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.core.annotation.Order;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;

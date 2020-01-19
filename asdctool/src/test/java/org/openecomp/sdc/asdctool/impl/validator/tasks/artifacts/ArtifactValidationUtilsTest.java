@@ -21,13 +21,29 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,32 +53,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
-import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
-import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import fj.data.Either;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)

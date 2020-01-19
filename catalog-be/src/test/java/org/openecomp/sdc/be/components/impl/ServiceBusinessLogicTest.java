@@ -7,17 +7,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- * Modifications copyright (c) 2019 Nokia
- * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -27,176 +25,56 @@ import com.google.common.collect.Maps;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.sdc.ElementOperationMock;
-import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
-import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
-import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
-import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
-import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
-import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
-import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
-import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
-import org.openecomp.sdc.be.components.validation.UserValidations;
-import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
 import org.openecomp.sdc.be.user.Role;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
+public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup {
 
-    private static final String SERVICE_CATEGORY = "Mobility";
-    private static final String INSTANTIATION_TYPE = "A-la-carte";
+    private final static String DEFAULT_ICON = "defaulticon";
     private static final String ALREADY_EXIST = "alreadyExist";
     private static final String DOES_NOT_EXIST = "doesNotExist";
-    private final ServletContext servletContext = Mockito.mock(ServletContext.class);
-    private UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
-    private WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-    private WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-    private ServiceBusinessLogic bl;
-    private ResponseFormatManager responseManager = null;
-    private ComponentsUtils componentsUtils;
-    private AuditCassandraDao auditingDao = Mockito.mock(AuditCassandraDao.class);
-    private ArtifactsBusinessLogic artifactBl = Mockito.mock(ArtifactsBusinessLogic.class);
-    private GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
-    private JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
-    private ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-    private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
-    private UserValidations userValidations = Mockito.mock(UserValidations.class);
-    private ResourceAdminEvent auditArchive1 = Mockito.mock(ResourceAdminEvent.class);
-    private ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
-    private ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
-
-    private final IDistributionEngine distributionEngine = Mockito.mock(IDistributionEngine.class);
-    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    private final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
-    private final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
-    private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    private final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
-    private final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
-
-    private User user = null;
-    private Resource genericService = null;
-
-    private static final String CERTIFIED_VERSION = "1.0";
-    private static final String UNCERTIFIED_VERSION = "0.2";
-    private static final String COMPONNET_ID = "myUniqueId";
-    private static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
-
-    @Before
-    public void setup() {
-
-        ExternalConfiguration.setAppName("catalog-be");
-        // init Configuration
-        String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-        componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
-
-        // Elements
-        IElementOperation mockElementDao = new ElementOperationMock();
-
-        // User data and management
-        user = new User();
-        user.setUserId("jh0003");
-        user.setFirstName("Jimmi");
-        user.setLastName("Hendrix");
-        user.setRole(Role.ADMIN.name());
-
-        Either<User, ActionStatus> eitherGetUser = Either.left(user);
-        when(mockUserAdmin.getUser("jh0003", false)).thenReturn(eitherGetUser);
-        when(userValidations.validateUserExists(eq("jh0003"), anyString(), eq(false))).thenReturn(user);
-        when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(user);
-        when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
-        when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
-        when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
-        when(graphLockOperation.lockComponent(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Service))).thenReturn(StorageOperationStatus.OK);
-        when(graphLockOperation.lockComponentByName(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Service))).thenReturn(StorageOperationStatus.OK);
-
-        // artifact bussinesslogic
-        ArtifactDefinition artifactDef = new ArtifactDefinition();
-        when(artifactBl.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class), Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
-
-        // createService
-        Service serviceResponse = createServiceObject(true);
-        Either<Component, StorageOperationStatus> eitherCreate = Either.left(serviceResponse);
-        when(toscaOperationFacade.createToscaComponent(Mockito.any(Component.class))).thenReturn(eitherCreate);
-        Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
-        when(toscaOperationFacade.validateComponentNameExists("Service", null, ComponentTypeEnum.SERVICE)).thenReturn(eitherCount);
-        Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(true);
-        when(toscaOperationFacade.validateComponentNameExists(ALREADY_EXIST, null, ComponentTypeEnum.SERVICE)).thenReturn(eitherCountExist);
-
-        genericService = setupGenericServiceMock();
-        Either<Resource, StorageOperationStatus> findLatestGeneric = Either.left(genericService);
-        when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_SERVICE_NAME)).thenReturn(findLatestGeneric);
-
-
-        bl = new ServiceBusinessLogic(mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactBl, distributionEngine,
-            componentInstanceBusinessLogic, serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
-            serviceFilterOperation, serviceFilterValidator, artifactToscaOperation);
-
-        bl.setUserAdmin(mockUserAdmin);
-        bl.setGraphLockOperation(graphLockOperation);
-        bl.setJanusGraphDao(mockJanusGraphDao);
-        bl.setToscaOperationFacade(toscaOperationFacade);
-        bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
-        bl.setComponentsUtils(componentsUtils);
-        bl.setCassandraAuditingDao(auditingDao);
-        bl.setUserValidations(userValidations);
-
-        mockAuditingDaoLogic();
-
-        responseManager = ResponseFormatManager.getInstance();
-
-    }
 
     @Test
     public void testGetComponentAuditRecordsCertifiedVersion() {
@@ -215,6 +93,33 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
     @Test
     public void testHappyScenario() {
         Service service = createServiceObject(false);
+        validateUserRoles(Role.ADMIN, Role.DESIGNER);
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
+        Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+
+        if (createResponse.isRight()) {
+            assertEquals(new Integer(200), createResponse.right().value().getStatus());
+        }
+        assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
+    }
+    @Test
+    public void testHappyScenarioCRNullProjectCode() {
+        Service service = createServiceObject(false);
+        service.setProjectCode(null);
+        validateUserRoles(Role.ADMIN, Role.DESIGNER);
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
+        Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+
+        if (createResponse.isRight()) {
+            assertEquals(new Integer(200), createResponse.right().value().getStatus());
+        }
+        assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
+    }
+    @Test
+    public void testHappyScenarioCREmptyStringProjectCode() {
+        createServiceValidator();
+        Service service = createServiceObject(false);
+        service.setProjectCode("");
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
@@ -249,29 +154,14 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         assertEquals(origService.getTags(), newService.getTags());
     }
 
-    private void assertResponse(Either<Service, ResponseFormat> createResponse, ActionStatus expectedStatus, String... variables) {
-        assertResponse(createResponse.right().value(), expectedStatus, variables);
-    }
 
-    private void assertComponentException(ByActionStatusComponentException e, ActionStatus expectedStatus, String... variables) {
-        ResponseFormat actualResponse = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-        assertResponse(actualResponse, expectedStatus, variables);
-    }
-
-    private void assertComponentException(ByResponseFormatComponentException e, ActionStatus expectedStatus, String... variables) {
-        ResponseFormat actualResponse = e.getResponseFormat();
-        assertResponse(actualResponse, expectedStatus, variables);
-    }
-
-    private void assertResponse(ResponseFormat actualResponse, ActionStatus expectedStatus, String... variables) {
-        ResponseFormat expectedResponse = responseManager.getResponseFormat(expectedStatus, variables);
-        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
-        assertEquals("assert error description", expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
-    }
+    /* CREATE validations - start ***********************/
+    // Service name - start
 
 
     @Test
     public void testFailedServiceValidations() {
+
         testServiceNameAlreadyExists();
         testServiceNameEmpty();
         testServiceNameWrongFormat();
@@ -282,7 +172,6 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         testServiceIconEmpty();
         testServiceIconMissing();
         testResourceIconInvalid();
-        testResourceIconExceedsLimit();
         testTagsNoServiceName();
         testInvalidTag();
         testServiceTagNotExist();
@@ -297,7 +186,6 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         testResourceContactIdMissing();
         testServiceCategoryExist();
         testServiceBadCategoryCreate();
-        testMissingProjectCode();
     }
 
     private void testServiceNameAlreadyExists() {
@@ -309,9 +197,13 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         tgs.add(serviceName);
         serviceExccedsNameLimit.setTags(tgs);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        Either<Service, ResponseFormat> createResponse = bl.createService(serviceExccedsNameLimit, user);
-        assertTrue(createResponse.isRight());
-        assertResponse(createResponse, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.SERVICE.getValue(), serviceName);
+        try {
+            bl.createService(serviceExccedsNameLimit, user);
+        } catch (ComponentException exp) {
+            assertResponse(exp.getResponseFormat(), ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.SERVICE.getValue(), serviceName);
+            return;
+        }
+        fail();
     }
 
     private void testServiceNameEmpty() {
@@ -319,31 +211,39 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         serviceExccedsNameLimit.setName(null);
         try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch(ByActionStatusComponentException e){
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     private void testServiceNameWrongFormat() {
         Service service = createServiceObject(false);
         // contains :
-        String nameWrongFormat = "ljg\fd";
+        String nameWrongFormat = "ljg\\fd";
         service.setName(nameWrongFormat);
         try{
             bl.createService(service, user);
-        } catch(ByActionStatusComponentException e){
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
+    // Service name - end
+    // Service description - start
     private void testServiceDescriptionEmpty() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setDescription("");
         try{
             bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e){
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     private void testServiceDescriptionMissing() {
@@ -351,9 +251,11 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         serviceExist.setDescription(null);
         try{
             bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e){
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     private void testServiceDescExceedsLimitCreate() {
@@ -371,9 +273,11 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         serviceExccedsDescLimit.setDescription(tooLongServiceDesc);
         try{
             bl.createService(serviceExccedsDescLimit, user);
-        } catch(ByActionStatusComponentException e){
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.SERVICE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
+            return;
         }
+        fail();
     }
 
     private void testServiceDescNotEnglish() {
@@ -383,9 +287,11 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         notEnglish.setDescription(tooLongServiceDesc);
         try{
             bl.createService(notEnglish, user);
-        } catch(ByActionStatusComponentException e){
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     // Service description - stop
@@ -393,41 +299,25 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
     private void testServiceIconEmpty() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setIcon("");
-        try{
-            bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_MISSING_ICON, ComponentTypeEnum.SERVICE.getValue());
-        }
+        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(serviceExist,user,AuditingActionEnum.CREATE_SERVICE);
+        assertThat(service.left().value().getIcon()).isEqualTo(DEFAULT_ICON);
+
     }
 
     private void testServiceIconMissing() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setIcon(null);
-        try{
-            bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_MISSING_ICON, ComponentTypeEnum.SERVICE.getValue());
-        }
+        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(serviceExist,user,AuditingActionEnum.CREATE_SERVICE);
+        assertThat(service.left().value().getIcon()).isEqualTo(DEFAULT_ICON);
     }
 
     private void testResourceIconInvalid() {
         Service resourceExist = createServiceObject(false);
         resourceExist.setIcon("kjk3453^&");
-        try{
-            bl.createService(resourceExist, user);
-        } catch(ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_INVALID_ICON, ComponentTypeEnum.SERVICE.getValue());
-        }
-    }
 
-    private void testResourceIconExceedsLimit() {
-        Service resourceExist = createServiceObject(false);
-        resourceExist.setIcon("dsjfhskdfhskjdhfskjdhkjdhfkshdfksjsdkfhsdfsdfsdfsfsdfsf");
-        try{
-            bl.createService(resourceExist, user);
-        } catch(ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, "Service", "25");
-        }
+        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(resourceExist, user, AuditingActionEnum.CREATE_RESOURCE);
+        assertThat(service.left().value().getIcon()).isEqualTo(DEFAULT_ICON);
+
     }
 
     private void testTagsNoServiceName() {
@@ -438,9 +328,11 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         serviceExccedsNameLimit.setTags(tagsList);
         try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch(ByActionStatusComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
+            return;
         }
+        fail();
     }
 
     private void testInvalidTag() {
@@ -451,29 +343,27 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         serviceExccedsNameLimit.setTags(tagsList);
         try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch(ByActionStatusComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_FIELD_FORMAT, "Service", "tag");
+            return;
         }
+        fail();
     }
 
     private void testServiceTagNotExist() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setTags(null);
-        try{
-            bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_MISSING_TAGS);
-        }
+
+        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(serviceExist, user, AuditingActionEnum.CREATE_RESOURCE);
+        assertThat(service.left().value().getTags().get(0)).isEqualTo(serviceExist.getName());
     }
 
     private void testServiceTagEmpty() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setTags(new ArrayList<>());
-        try{
-            bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_MISSING_TAGS);
-        }
+
+        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(serviceExist, user, AuditingActionEnum.CREATE_RESOURCE);
+        assertThat(service.left().value().getTags().get(0)).isEqualTo(serviceExist.getName());
     }
 
     // Service tags - stop
@@ -485,9 +375,11 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         serviceContactId.setContactId(contactIdTooLong);
         try{
             bl.createService(serviceContactId, user);
-        } catch(ByActionStatusComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     private void testContactIdWrongFormatCreate() {
@@ -497,9 +389,11 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         serviceContactId.setContactId(contactIdTooLong);
         try{
             bl.createService(serviceContactId, user);
-        } catch(ByActionStatusComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     private void testResourceContactIdMissing() {
@@ -507,9 +401,11 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         resourceExist.setContactId(null);
         try{
             bl.createService(resourceExist, user);
-        } catch(ByActionStatusComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     // Service contactId - stop
@@ -519,9 +415,11 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         serviceExist.setCategories(null);
         try{
             bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.SERVICE.getValue());
+        } catch(ComponentException e) {
+            assertComponentException(e, ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     @Test
@@ -562,7 +460,7 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         setupBeforeDeploy(notifyAction, requestAction, did);
         List<Role> roles = new ArrayList<>();
         roles.add(Role.ADMIN);
-        roles.add(Role.OPS);
+        roles.add(Role.DESIGNER);
         Either<Service, ResponseFormat> markDeployed = bl.markDistributionAsDeployed(did, did, user);
         assertTrue(markDeployed.isLeft());
     }
@@ -592,14 +490,17 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         Service serviceExist = createServiceObject(false);
         CategoryDefinition category = new CategoryDefinition();
         category.setName("koko");
+        category.setIcons(Arrays.asList(DEFAULT_ICON));
         List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(category);
         serviceExist.setCategories(categories);
         try{
             bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
+            return;
         }
+        fail();
     }
 
     // Service category - stop
@@ -609,11 +510,15 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         Service serviceExist = createServiceObject(false);
         serviceExist.setProjectCode("koko!!");
 
-        Either<Service, ResponseFormat> createResponse = bl.createService(serviceExist, user);
-        assertTrue(createResponse.isRight());
-
-        assertResponse(createResponse, ActionStatus.INVALID_PROJECT_CODE);
+        try {
+            bl.createService(serviceExist, user);
+        } catch(ComponentException exp) {
+           assertComponentException(exp, ActionStatus.INVALID_PROJECT_CODE);
+            return;
+        }
+        fail();
     }
+
 
     private void testProjectCodeTooLong() {
 
@@ -621,32 +526,28 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         String tooLongProjectCode = "thisNameIsVeryLongAndExeccedsTheNormalLengthForProjectCode";
         serviceExist.setProjectCode(tooLongProjectCode);
 
-        Either<Service, ResponseFormat> createResponse = bl.createService(serviceExist, user);
-        assertTrue(createResponse.isRight());
-
-        assertResponse(createResponse, ActionStatus.INVALID_PROJECT_CODE);
+        try {
+            bl.createService(serviceExist, user);
+        } catch(ComponentException exp) {
+            assertComponentException(exp, ActionStatus.INVALID_PROJECT_CODE);
+            return;
+        }
+        fail();
     }
+
 
     private void testProjectCodeTooShort() {
 
         Service serviceExist = createServiceObject(false);
         serviceExist.setProjectCode("333");
 
-        Either<Service, ResponseFormat> createResponse = bl.createService(serviceExist, user);
-        assertTrue(createResponse.isRight());
-
-        assertResponse(createResponse, ActionStatus.INVALID_PROJECT_CODE);
-    }
-
-    private void testMissingProjectCode() {
-
-        Service serviceExist = createServiceObject(false);
-        serviceExist.setProjectCode(null);
-        try{
+        try {
             bl.createService(serviceExist, user);
-        } catch(ByActionStatusComponentException e) {
-            assertComponentException(e, ActionStatus.MISSING_PROJECT_CODE);
+        } catch(ComponentException exp) {
+            assertComponentException(exp, ActionStatus.INVALID_PROJECT_CODE);
+            return;
         }
+        fail();
     }
 
     @Test
@@ -679,139 +580,6 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
 
     }
 
-    private Service createServiceObject(boolean afterCreate) {
-        Service service = new Service();
-        service.setUniqueId("sid");
-        service.setName("Service");
-        CategoryDefinition category = new CategoryDefinition();
-        category.setName(SERVICE_CATEGORY);
-        List<CategoryDefinition> categories = new ArrayList<>();
-        categories.add(category);
-        service.setCategories(categories);
-        service.setInstantiationType(INSTANTIATION_TYPE);
-
-        service.setDescription("description");
-        List<String> tgs = new ArrayList<>();
-        tgs.add(service.getName());
-        service.setTags(tgs);
-        service.setIcon("MyIcon");
-        service.setContactId("aa1234");
-        service.setProjectCode("12345");
-
-        if (afterCreate) {
-            service.setVersion("0.1");
-            service.setUniqueId(service.getName() + ":" + service.getVersion());
-            service.setCreatorUserId(user.getUserId());
-            service.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
-        }
-        return service;
-    }
-
-    private void mockAuditingDaoLogic() {
-        final ResourceAdminEvent createResourceAudit = new ResourceAdminEvent();
-        createResourceAudit.setModifier("Carlos Santana(cs0008)");
-        createResourceAudit.setCurrState("NOT_CERTIFIED_CHECKOUT");
-        createResourceAudit.setCurrVersion("0.1");
-        createResourceAudit.setServiceInstanceId("82eddd99-0bd9-4742-ab0a-1bdb5e262a05");
-        createResourceAudit.setRequestId("3e65cea1-7403-4bc7-b461-e2544d83799f");
-        createResourceAudit.setDesc("OK");
-        createResourceAudit.setResourceType("Resource");
-        createResourceAudit.setStatus("201");
-        createResourceAudit.setPrevVersion("");
-        createResourceAudit.setAction("Create");
-        // fields.put("TIMESTAMP", "2015-11-22 09:19:12.977");
-        createResourceAudit.setPrevState("");
-        createResourceAudit.setResourceName("MyTestResource");
-        // createResourceAudit.setFields(fields);
-
-        final ResourceAdminEvent checkInResourceAudit = new ResourceAdminEvent();
-        checkInResourceAudit.setModifier("Carlos Santana(cs0008)");
-        checkInResourceAudit.setCurrState("NOT_CERTIFIED_CHECKIN");
-        checkInResourceAudit.setCurrVersion("0.1");
-        checkInResourceAudit.setServiceInstanceId("82eddd99-0bd9-4742-ab0a-1bdb5e262a05");
-        checkInResourceAudit.setRequestId("ffacbf5d-eeb1-43c6-a310-37fe7e1cc091");
-        checkInResourceAudit.setDesc("OK");
-        checkInResourceAudit.setComment("Stam");
-        checkInResourceAudit.setResourceType("Resource");
-        checkInResourceAudit.setStatus("200");
-        checkInResourceAudit.setPrevVersion("0.1");
-        checkInResourceAudit.setAction("Checkin");
-        // fields.put("TIMESTAMP", "2015-11-22 09:25:03.797");
-        checkInResourceAudit.setPrevState("NOT_CERTIFIED_CHECKOUT");
-        checkInResourceAudit.setResourceName("MyTestResource");
-
-        final ResourceAdminEvent checkOutResourceAudit = new ResourceAdminEvent();
-        checkOutResourceAudit.setModifier("Carlos Santana(cs0008)");
-        checkOutResourceAudit.setCurrState("NOT_CERTIFIED_CHECKOUT");
-        checkOutResourceAudit.setCurrVersion("0.2");
-        checkOutResourceAudit.setServiceInstanceId("82eddd99-0bd9-4742-ab0a-1bdb5e262a05");
-        checkOutResourceAudit.setRequestId("7add5078-4c16-4d74-9691-cc150e3c96b8");
-        checkOutResourceAudit.setDesc("OK");
-        checkOutResourceAudit.setComment("");
-        checkOutResourceAudit.setResourceType("Resource");
-        checkOutResourceAudit.setStatus("200");
-        checkOutResourceAudit.setPrevVersion("0.1");
-        checkOutResourceAudit.setAction("Checkout");
-        // fields.put("TIMESTAMP", "2015-11-22 09:39:41.024");
-        checkOutResourceAudit.setPrevState("NOT_CERTIFIED_CHECKIN");
-        checkOutResourceAudit.setResourceName("MyTestResource");
-        List<ResourceAdminEvent> list = new ArrayList<ResourceAdminEvent>() {
-            {
-                add(createResourceAudit);
-                add(checkInResourceAudit);
-                add(checkOutResourceAudit);
-            }
-        };
-        Either<List<ResourceAdminEvent>, ActionStatus> result = Either.left(list);
-        Mockito.when(auditingDao.getByServiceInstanceId(Mockito.anyString())).thenReturn(result);
-
-        List<ResourceAdminEvent> listPrev = new ArrayList<>();
-        Either<List<ResourceAdminEvent>, ActionStatus> resultPrev = Either.left(listPrev);
-        Mockito.when(auditingDao.getAuditByServiceIdAndPrevVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(resultPrev);
-
-        List<ResourceAdminEvent> listCurr = new ArrayList<ResourceAdminEvent>() {
-            {
-                add(checkOutResourceAudit);
-            }
-        };
-        Either<List<ResourceAdminEvent>, ActionStatus> resultCurr = Either.left(listCurr);
-        Mockito.when(auditingDao.getAuditByServiceIdAndCurrVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(resultCurr);
-
-        Either<List<ResourceAdminEvent>, ActionStatus> archiveAuditList = Either.left(Arrays.asList(auditArchive1, auditArchive2));
-        when(auditingDao.getArchiveAuditByServiceInstanceId(anyString())).thenReturn(archiveAuditList);
-
-        Either<List<ResourceAdminEvent>, ActionStatus> restoreAuditList = Either.left(Arrays.asList(auditRestore));
-        when(auditingDao.getRestoreAuditByServiceInstanceId(anyString())).thenReturn(restoreAuditList);
-
-    }
-
-    private void setupBeforeDeploy(String notifyAction, String requestAction, String did) {
-
-        DistributionNotificationEvent notifyEvent = new DistributionNotificationEvent();
-        notifyEvent.setAction(notifyAction);
-        notifyEvent.setDid(did);
-        notifyEvent.setStatus("200");
-
-        ResourceAdminEvent requestEvent = new ResourceAdminEvent();
-        requestEvent.setAction(requestAction);
-        requestEvent.setDid(did);
-        requestEvent.setStatus("200");
-
-        List<DistributionNotificationEvent> notifyResults = Collections.singletonList(notifyEvent);
-        Either<List<DistributionNotificationEvent>, ActionStatus> eitherNotify = Either.left(notifyResults);
-
-        Mockito.when(auditingDao.getDistributionNotify(Mockito.anyString(), Mockito.eq(notifyAction))).thenReturn(eitherNotify);
-
-        List<ResourceAdminEvent> requestResults = Collections.singletonList(requestEvent);
-        Either<List<ResourceAdminEvent>, ActionStatus> eitherRequest = Either.left(requestResults);
-        Mockito.when(auditingDao.getDistributionRequest(Mockito.anyString(), Mockito.eq(requestAction))).thenReturn(eitherRequest);
-
-        Either<Component, StorageOperationStatus> eitherService = Either.left(createServiceObject(true));
-        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
-
-        Either<List<DistributionDeployEvent>, ActionStatus> emptyEventList = Either.left(Collections.emptyList());
-        Mockito.when(auditingDao.getDistributionDeployByStatus(Mockito.anyString(), Mockito.eq("DResult"), Mockito.anyString())).thenReturn(emptyEventList);
-    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
@@ -886,7 +654,7 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         return service;
     }
 
-    private Service createNewService() {
+    protected Service createNewService() {
         return (Service)createNewComponent();
     }
 
@@ -919,6 +687,42 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
     }
 
     @Test
+    public void testUpdateMetadataToEmptyProjectCode() {
+        Service currentService = createServiceObject(true);
+        Service newService = createServiceObject(false);
+        currentService.setProjectCode("12345");
+        newService.setProjectCode("");
+        Either<Service, ResponseFormat> resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService);
+        assertThat(resultOfUpdate.isLeft()).isTrue();
+        Service updatedService = resultOfUpdate.left().value();
+        assertThat(updatedService.getProjectCode()).isEmpty();
+    }
+
+    @Test
+    public void testUpdateMetadataFromEmptyProjectCode() {
+        Service currentService = createServiceObject(true);
+        Service newService = createServiceObject(false);
+        currentService.setProjectCode("");
+        newService.setProjectCode("12345");
+        Either<Service, ResponseFormat> resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService);
+        assertThat(resultOfUpdate.isLeft()).isTrue();
+        Service updatedService = resultOfUpdate.left().value();
+        assertThat(updatedService.getProjectCode()).isEqualTo("12345");
+    }
+
+    @Test
+    public void testUpdateMetadataProjectCode() {
+        Service currentService = createServiceObject(true);
+        Service newService = createServiceObject(false);
+        currentService.setProjectCode("33333");
+        newService.setProjectCode("12345");
+        Either<Service, ResponseFormat> resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService);
+        assertThat(resultOfUpdate.isLeft()).isTrue();
+        Service updatedService = resultOfUpdate.left().value();
+        assertThat(updatedService.getProjectCode()).isEqualTo("12345");
+    }
+
+    @Test
     public void testUpdateMetadataServiceType() {
         Service currentService = createServiceObject(true);
         Service newService = createServiceObject(false);
@@ -939,33 +743,76 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
         assertThat(resultOfUpdate.isRight()).isTrue();
     }
 
-    private Resource setupGenericServiceMock(){
-        Resource genericService = new Resource();
-        genericService.setVersion("1.0");
-        genericService.setToscaResourceName(GENERIC_SERVICE_NAME);
-        return genericService;
+    @Test
+    public void testCreateDefaultMetadataServiceFunction() {
+        Service currentService = createServiceObject(true);
+        assertThat(currentService.getServiceFunction()).isEqualTo("");
     }
 
     @Test
-    public void testValidateServiceNameDoesExistTest() {
-        when(toscaOperationFacade.validateComponentNameUniqueness(ALREADY_EXIST, null, ComponentTypeEnum.SERVICE))
-                .thenReturn(Either.left(true));
-        Either<Map<String, Boolean>, ResponseFormat> actionResponse =
-                bl.validateServiceNameExists(ALREADY_EXIST, user.getUserId());
-        Assert.assertTrue(actionResponse.isLeft());
-        Map<String,Boolean> result = actionResponse.left().value();
-        Assert.assertEquals(true, result.get(ServiceBusinessLogic.IS_VALID));
+    public void testCreateCustomMetadataServiceFunction() {
+        String customServiceFunctionName = "customName";
+        Service currentService = createServiceObject(true);
+        currentService.setServiceFunction(customServiceFunctionName);
+        assertThat(currentService.getServiceFunction()).isEqualTo(customServiceFunctionName);
     }
 
     @Test
-    public void testValidateServiceNameDoesNotExist() {
-        when(toscaOperationFacade.validateComponentNameUniqueness(DOES_NOT_EXIST, null, ComponentTypeEnum.SERVICE))
-                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        Either<Map<String, Boolean>, ResponseFormat> actionResponse =
-                bl.validateServiceNameExists(DOES_NOT_EXIST, user.getUserId());
-        Assert.assertTrue(actionResponse.isRight());
-        ResponseFormat responseFormat = actionResponse.right().value();
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), responseFormat.getStatus().intValue());
+    public void testUpdateMetadataServiceFunction() {
+        Service currentService = createServiceObject(true);
+        Service newService = createServiceObject(false);
+        currentService.setServiceFunction("alice");
+        //valid English word
+        newService.setServiceFunction("bob");
+        Either<Service, ResponseFormat> resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService);
+        assertThat(resultOfUpdate.isLeft()).isTrue();
+        Service updatedService = resultOfUpdate.left().value();
+        assertThat(updatedService.getServiceFunction()).isEqualToIgnoringCase("bob");
+        //empty string is valid
+        newService.setServiceFunction("");
+        resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService);
+        assertThat(resultOfUpdate.isLeft()).isTrue();
+        //null is valid and assigner to ""
+        newService.setServiceFunction(null);
+        resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService);
+        assertThat(resultOfUpdate.isLeft()).isTrue();
+        assertThat(updatedService.getServiceFunction()).isEqualTo("");
+    }
+
+
+
+    @Test
+    public void testServiceFunctionExceedLength() {
+        String serviceName = "Service";
+        String serviceFunction = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        Service serviceFunctionExceedLength = createServiceObject(false);
+        serviceFunctionExceedLength.setName(serviceName);
+        serviceFunctionExceedLength.setServiceFunction(serviceFunction);
+        List<String> tgs = new ArrayList<>();
+        tgs.add(serviceName);
+        serviceFunctionExceedLength.setTags(tgs);
+        try {
+            serviceFunctionValidator.validateAndCorrectField(user, serviceFunctionExceedLength, AuditingActionEnum.CREATE_SERVICE);
+        } catch (ComponentException exp) {
+            assertResponse(exp.getResponseFormat(), ActionStatus.PROPERTY_EXCEEDS_LIMIT, SERVICE_FUNCTION);
+        }
+    }
+
+    @Test
+    public void testServiceFunctionInvalidCharacter(){
+        String serviceName = "Service";
+        String serviceFunction = "a?";
+        Service serviceFunctionExceedLength = createServiceObject(false);
+        serviceFunctionExceedLength.setName(serviceName);
+        serviceFunctionExceedLength.setServiceFunction(serviceFunction);
+        List<String> tgs = new ArrayList<>();
+        tgs.add(serviceName);
+        serviceFunctionExceedLength.setTags(tgs);
+        try {
+            serviceFunctionValidator.validateAndCorrectField(user, serviceFunctionExceedLength, AuditingActionEnum.CREATE_SERVICE);
+        } catch (ComponentException exp) {
+            assertResponse(exp.getResponseFormat(), ActionStatus.INVALID_PROPERY, SERVICE_FUNCTION);
+        }
     }
 
     @Test
@@ -981,14 +828,14 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
 
     @Test
     public void testAddPropertyServiceConsumptionParentServiceIsEmpty() {
-        Either<Component, StorageOperationStatus> eitherService = Either.left(createServiceObject(true));
+        Either<Component, StorageOperationStatus> eitherService = Either.left(createNewComponent());
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
 
         Either<Operation, ResponseFormat> operationEither =
                 bl.addPropertyServiceConsumption("1", "2", "3",
                         user.getUserId(), new ServiceConsumptionData());
         Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), operationEither.right().value().getStatus().intValue());
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test
@@ -1003,7 +850,7 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
                 bl.addPropertyServiceConsumption("1", weirdUniqueServiceInstanceId, "3",
                         user.getUserId(), new ServiceConsumptionData());
         Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), operationEither.right().value().getStatus().intValue());
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test
@@ -1017,7 +864,7 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
                 bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
                         user.getUserId(), new ServiceConsumptionData());
         Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), operationEither.right().value().getStatus().intValue());
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test
@@ -1038,7 +885,7 @@ public class ServiceBusinessLogicTest extends ComponentBusinessLogicMock {
                 bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
                         user.getUserId(), new ServiceConsumptionData());
         Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), operationEither.right().value().getStatus().intValue());
+        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test

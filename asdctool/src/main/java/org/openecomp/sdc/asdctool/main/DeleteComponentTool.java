@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.asdctool.main;
 
-import java.util.Scanner;
-
 import org.openecomp.sdc.asdctool.configuration.ConfigurationUploader;
 import org.openecomp.sdc.asdctool.configuration.InternalToolConfiguration;
 import org.openecomp.sdc.asdctool.impl.internal.tool.DeleteComponentHandler;
 import org.openecomp.sdc.asdctool.utils.ConsoleWriter;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.Scanner;
 
 public class DeleteComponentTool extends SdcInternalTool{
     private static final String PSW = "ItIsTimeToDelete";
@@ -38,11 +38,6 @@ public class DeleteComponentTool extends SdcInternalTool{
         }
         String appConfigDir = args[0];
         String password = args[1];
-        
-        if ( !PSW.equals(password) ){
-            ConsoleWriter.dataLine("Wrong password");
-            System.exit(1);
-        }
         
         disableConsole();
         ConsoleWriter.dataLine("STARTED... ");

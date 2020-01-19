@@ -27,8 +27,6 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.utils.PolicyDefinitionBuilder;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -55,8 +53,6 @@ public class ComponentServletTest extends JerseySpringBaseTest{
     private static final String USER_ID = "userId";
     private static final String RESOURCE_ID = "resourceId";
     private ResourceBusinessLogic resourceBusinessLogic;
-    private UserBusinessLogic userBusinessLogic;
-    private ComponentsUtils componentsUtils;
     private PolicyDefinition policy1, policy2;
 
     @Override
@@ -70,10 +66,9 @@ public class ComponentServletTest extends JerseySpringBaseTest{
     @Override
     protected ResourceConfig configure() {
         resourceBusinessLogic = mock(ResourceBusinessLogic.class);
-        userBusinessLogic = mock(UserBusinessLogic.class);
-        componentsUtils = mock(ComponentsUtils.class);
-        ComponentServlet componentServlet = new ComponentServlet(userBusinessLogic, componentsUtils,
-            new ComponentBusinessLogicProvider(resourceBusinessLogic, null, null));
+        UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+        ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+        ComponentServlet componentServlet = new ComponentServlet(userBusinessLogic, componentsUtils, new ComponentBusinessLogicProvider(resourceBusinessLogic, null, null));
         return super.configure().register(componentServlet);
     }
 

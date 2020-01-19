@@ -13,21 +13,7 @@
  */
 package org.openecomp.sdc.be.components.property;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 import fj.data.Either;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +33,21 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 public class PropertyDeclarationOrchestratorTest {
 
@@ -191,7 +192,7 @@ public class PropertyDeclarationOrchestratorTest {
 		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
 		List<ComponentInstancePropInput> value = new LinkedList<>();
 		componentInstanceProperties.put("mock", value);
-		componentInstInputsMap.setComponentInstanceProperties(componentInstanceProperties);
+		componentInstInputsMap.setComponentInstancePropInput(componentInstanceProperties);
 		PropertyDeclarator result;
 
 		// default test

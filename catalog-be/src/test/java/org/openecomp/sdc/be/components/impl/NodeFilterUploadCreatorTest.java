@@ -16,18 +16,19 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class NodeFilterUploadCreatorTest {
 

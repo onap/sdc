@@ -19,14 +19,14 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.openecomp.sdc.ci.tests.pages.OnboardHeaderComponent.XpathSelector.MAIN_DIV;
-import static org.openecomp.sdc.ci.tests.pages.OnboardHeaderComponent.XpathSelector.ONBOARD_TAB_DIV;
-import static org.openecomp.sdc.ci.tests.pages.OnboardHeaderComponent.XpathSelector.WORKSPACE_TAB_DIV;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import static org.openecomp.sdc.ci.tests.pages.OnboardHeaderComponent.XpathSelector.MAIN_DIV;
+import static org.openecomp.sdc.ci.tests.pages.OnboardHeaderComponent.XpathSelector.ONBOARD_TAB_DIV;
+import static org.openecomp.sdc.ci.tests.pages.OnboardHeaderComponent.XpathSelector.WORKSPACE_TAB_DIV;
 
 /**
  * Handles the Onboard Header Component UI test actions

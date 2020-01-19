@@ -30,14 +30,27 @@
 
 package org.openecomp.sdc.be.components.csar;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 import fj.data.Either;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
+import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -48,25 +61,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
-import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
-import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.common.zip.ZipUtils;
-import org.openecomp.sdc.common.zip.exception.ZipException;
-import org.openecomp.sdc.exception.ResponseFormat;
 
 public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
+    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+
 
     private CsarOperation csarOperation = Mockito.mock(CsarOperation.class);
     private ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
@@ -177,8 +184,9 @@ public class CsarBusinessLogicTest extends BaseBusinessLogicMock {
     @Test(expected = ComponentException.class)
     public void testValidateCsarBeforeCreate_Fail() {
         Resource resource = new Resource();
-
-        when(toscaOperationFacade.validateCsarUuidUniqueness(CSAR_UUID)).thenReturn(StorageOperationStatus.EXEUCTION_FAILED);
+        String csarUUID = "csarUUID";
+        when(toscaOperationFacade.validateCsarUuidUniqueness(csarUUID)).thenReturn(StorageOperationStatus.EXEUCTION_FAILED);
+        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.EXEUCTION_FAILED)).thenReturn(ActionStatus.GENERAL_ERROR);
         test.validateCsarBeforeCreate(resource, AuditingActionEnum.ARTIFACT_DOWNLOAD, user, "csarUUID");
     }
 

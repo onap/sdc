@@ -22,13 +22,6 @@ package org.openecomp.sdc.be.components.impl;
 
 import com.google.gson.JsonElement;
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Supplier;
-import javax.servlet.ServletContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -72,6 +65,15 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.ServletContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+
 @org.springframework.stereotype.Component("propertyBusinessLogic")
 public class PropertyBusinessLogic extends BaseBusinessLogic {
 
@@ -101,7 +103,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
         return webApplicationContext.getBean(class1);
     }
 
-    public Either<Map<String, DataTypeDefinition>, ResponseFormat> getAllDataTypes() {
+    public Map<String, DataTypeDefinition> getAllDataTypes() {
         return getAllDataTypes(applicationDataTypeCache);
     }
 
@@ -121,7 +123,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
                                                                                                 String userId) {
         Either<EntryData<String, PropertyDefinition>, ResponseFormat> result = null;
 
-        validateUserExists(userId, "create Property", false);
+        validateUserExists(userId);
 
         Either<Component, StorageOperationStatus> serviceElement =
                 toscaOperationFacade.getToscaElement(componentId);
@@ -160,16 +162,10 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 
             } else {
 
-                Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(applicationDataTypeCache);
-                if (allDataTypes.isRight()) {
-                    result = Either.right(allDataTypes.right().value());
-                    return result;
-                }
-
-                Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
+                Map<String, DataTypeDefinition> allDataTypes = getAllDataTypes(applicationDataTypeCache);
 
                 // validate property default values
-                Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue(newPropertyDefinition, dataTypes);
+                Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue(newPropertyDefinition, allDataTypes);
                 if (defaultValuesValidation.isRight()) {
                     result = Either.right(defaultValuesValidation.right().value());
                     return result;
@@ -191,7 +187,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
                         String convertedValue = null;
                         if (newPropertyDefinition.getDefaultValue() != null) {
                             convertedValue = converter.convert(
-                                newPropertyDefinition.getDefaultValue(), innerType, allDataTypes.left().value());
+                                newPropertyDefinition.getDefaultValue(), innerType, allDataTypes);
                             newPropertyDefinition.setDefaultValue(convertedValue);
                         }
                     }
@@ -208,16 +204,13 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
                     return result;
                 }
             }
-
             result = Either.left(new EntryData<>(propertyName, newPropertyDefinition));
             return result;
-
         } finally {
             commitOrRollback(result);
             // unlock component
             graphLockOperation.unlockComponent(componentId, nodeType);
         }
-
     }
 
     /**
@@ -300,7 +293,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 
     public Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> getComponentProperty(String componentId, String propertyId, String userId) {
 
-        validateUserExists(userId, "create Component Instance", false);
+        validateUserExists(userId);
         // Get the resource from DB
         Either<Component, StorageOperationStatus> status =
             toscaOperationFacade.getToscaElement(componentId);
@@ -324,7 +317,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<PropertyDefinition>, ResponseFormat> getPropertiesList(String componentId,
                                                                               String userId) {
-        validateUserExists(userId, "create Component Instance", false);
+        validateUserExists(userId);
 
         // Get the resource from DB
         ComponentParametersView filter = new ComponentParametersView(true);
@@ -354,7 +347,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 
         Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> result = null;
 
-        validateUserExists(userId, "delete Property", false);
+        validateUserExists(userId);
 
         // Get the resource from DB
         Either<Component, StorageOperationStatus> getComponentRes = toscaOperationFacade.getToscaElement(componentId);
@@ -605,8 +598,8 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
         }
 
         Optional<PropertyDefinition> propertyCandidate =
-            properties.stream().filter(property -> property.getName().equals(propertyName))
-                .findAny();
+                properties.stream().filter(property -> property.getName().equals(propertyName))
+                        .findAny();
 
         return propertyCandidate.isPresent();
     }

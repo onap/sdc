@@ -23,36 +23,43 @@ package org.openecomp.sdc.be.servlets;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
+import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GenericArtifactBrowserBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.RequirementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
+import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
+import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.DeclarationTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
@@ -65,11 +72,26 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class BeGenericServlet extends BasicServlet {
 
@@ -110,6 +132,13 @@ public class BeGenericServlet extends BasicServlet {
             .build();
     }
 
+    public HttpServletRequest getServletRequest() {
+        return servletRequest;
+    }
+
+    @VisibleForTesting
+    public void setRequestServlet(HttpServletRequest request) {this.servletRequest = request;}
+
     protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity) {
         return buildOkResponse(errorResponseWrapper, entity, null);
     }
@@ -136,17 +165,74 @@ public class BeGenericServlet extends BasicServlet {
 
     /*******************************************************************************************************/
     protected Either<User, ResponseFormat> getUser(final HttpServletRequest request, String userId) {
-        Either<User, ActionStatus> eitherCreator = userAdminManager.getUser(userId, false);
-        if (eitherCreator.isRight()) {
+        User user;
+        try {
+            user = getUserAdminManager(request.getSession().getServletContext()).getUser(userId, false);
+            return Either.left(user);
+        } catch (ComponentException ce) {
             log.info("createResource method - user is not listed. userId= {}", userId);
-            ResponseFormat errorResponse = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_INFORMATION);
-            User user = new User("", "", userId, "", null, null);
-
+            ResponseFormat errorResponse = getComponentsUtils().getResponseFormat(ce);
+            user = new User("", "", userId, "", null, null);
             getComponentsUtils().auditResource(errorResponse, user, "", AuditingActionEnum.CHECKOUT_RESOURCE);
             return Either.right(errorResponse);
         }
-        return Either.left(eitherCreator.left().value());
+    }
 
+    UserBusinessLogic getUserAdminManager(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> UserBusinessLogic.class);
+    }
+
+    protected GenericArtifactBrowserBusinessLogic getGenericArtifactBrowserBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> GenericArtifactBrowserBusinessLogic.class);
+    }
+
+    protected ResourceBusinessLogic getResourceBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
+    }
+
+    InterfaceOperationBusinessLogic getInterfaceOperationBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> InterfaceOperationBusinessLogic.class);
+    }
+
+    protected CapabilitiesBusinessLogic getCapabilitiesBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> CapabilitiesBusinessLogic.class);
+    }
+
+    protected RelationshipTypeBusinessLogic getRelationshipTypeBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> RelationshipTypeBusinessLogic.class);
+    }
+    protected RequirementBusinessLogic getRequirementBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> RequirementBusinessLogic.class);
+    }
+    ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
+    }
+
+    protected ServiceBusinessLogic getServiceBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ServiceBusinessLogic.class);
+    }
+
+    ProductBusinessLogic getProductBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ProductBusinessLogic.class);
+    }
+
+    protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
+    }
+    protected UpgradeBusinessLogic getUpgradeBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> UpgradeBusinessLogic.class);
+    }
+
+    protected ElementBusinessLogic getElementBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> ElementBusinessLogic.class);
+    }
+
+    protected AssetMetadataConverter getAssetUtils(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> AssetMetadataConverter.class);
+    }
+
+    protected LifecycleBusinessLogic getLifecycleBL(ServletContext context) {
+        return getClassFromWebAppContext(context, () -> LifecycleBusinessLogic.class);
     }
 
     <T> T getClassFromWebAppContext(ServletContext context, Supplier<Class<T>> businessLogicClassGen) {
@@ -155,8 +241,25 @@ public class BeGenericServlet extends BasicServlet {
         return webApplicationContext.getBean(businessLogicClassGen.get());
     }
 
+    GroupBusinessLogic getGroupBL(ServletContext context) {
+
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(GroupBusinessLogic.class);
+    }
+
+    protected ComponentInstanceBusinessLogic getComponentInstanceBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(ComponentInstanceBusinessLogic.class);
+    }
+
     protected ComponentsUtils getComponentsUtils() {
-        return componentsUtils;
+        ServletContext context = this.servletRequest.getSession().getServletContext();
+
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        return webApplicationContext.getBean(ComponentsUtils.class);
     }
 
     /**
@@ -179,7 +282,31 @@ public class BeGenericServlet extends BasicServlet {
         return new StringBuilder().append("attachment; filename=\"").append(artifactFileName).append("\"").toString();
     }
 
-    <T> void convertJsonToObjectOfClass(String json, Wrapper<T> policyWrapper, Class<T> clazz, Wrapper<Response> errorWrapper) {
+
+
+    protected ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum, ServletContext context) {
+        ComponentBusinessLogic businessLogic;
+        switch (componentTypeEnum) {
+            case RESOURCE:
+                businessLogic = getResourceBL(context);
+                break;
+            case SERVICE:
+                businessLogic = getServiceBL(context);
+                break;
+            case PRODUCT:
+                businessLogic = getProductBL(context);
+                break;
+            case RESOURCE_INSTANCE:
+                businessLogic = getResourceBL(context);
+                break;
+            default:
+                BeEcompErrorManager.getInstance().logBeSystemError("getComponentBL");
+                throw new IllegalArgumentException("Illegal component type:" + componentTypeEnum.getValue());
+        }
+        return businessLogic;
+    }
+
+    <T> T convertJsonToObjectOfClass(String json, Class<T> clazz) {
         T object = null;
         ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -193,16 +320,16 @@ public class BeGenericServlet extends BasicServlet {
 
             object = mapper.readValue(json, clazz);
             if (object != null) {
-                policyWrapper.setInnerElement(object);
+                return object;
             } else {
                 BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
                 log.debug("The object of class {} is null after converting from json. ", clazz);
-                errorWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
-            log.debug("The exception {} occured upon json to object convertation. Json=\n{}", e, json);
-            errorWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT)));
+            log.debug("The exception {} occurred upon json to object convertation. Json=\n{}", e, json);
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
         }
     }
 
@@ -358,6 +485,13 @@ public class BeGenericServlet extends BasicServlet {
             return Either.right(ActionStatus.INVALID_CONTENT);
         }
 
+    }
+
+    protected PropertyBusinessLogic getPropertyBL(ServletContext context) {
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+        PropertyBusinessLogic propertytBl = webApplicationContext.getBean(PropertyBusinessLogic.class);
+        return propertytBl;
     }
 
     protected InputsBusinessLogic getInputBL(ServletContext context) {

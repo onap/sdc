@@ -18,10 +18,6 @@ package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -33,6 +29,11 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @org.springframework.stereotype.Component
 public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Component, PropertyDataDefinition> {

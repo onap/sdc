@@ -19,18 +19,18 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.COMMIT_AND_SUBMIT_BTN;
-import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.COMMIT_COMMENT_TXT;
-import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.MODAL_CANCEL_BTN;
-import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.MODAL_DIV;
-import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.SUCCESS_MODAL_DIV;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.COMMIT_AND_SUBMIT_BTN;
+import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.COMMIT_COMMENT_TXT;
+import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.MODAL_CANCEL_BTN;
+import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.MODAL_DIV;
+import static org.openecomp.sdc.ci.tests.pages.VspCommitModal.XpathSelector.SUCCESS_MODAL_DIV;
 
 /**
  * Handles the VSP Commit Modal UI actions

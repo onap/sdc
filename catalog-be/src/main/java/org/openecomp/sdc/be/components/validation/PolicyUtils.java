@@ -20,17 +20,7 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import static org.apache.commons.collections.MapUtils.isEmpty;
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.openecomp.sdc.common.api.Constants.GROUP_POLICY_NAME_DELIMETER;
-
 import fj.data.Either;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -43,6 +33,17 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.apache.commons.collections.MapUtils.isEmpty;
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.openecomp.sdc.common.api.Constants.GROUP_POLICY_NAME_DELIMETER;
 
 /**
  * Provides specific functionality for policy

@@ -38,7 +38,11 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 @Component("categoriesImportManager")
@@ -80,25 +84,9 @@ public class CategoriesImportManager {
                 List<SubCategoryDefinition> newsubcategories = new ArrayList<>();
                 List<SubCategoryDefinition> subcategories = category.getSubcategories();
                 if (subcategories != null) {
-                    for (SubCategoryDefinition subcategory : subcategories) {
-                        Either<SubCategoryDefinition, ResponseFormat> createdSubCategory = createSubCategorieDeo(entry, newcategory, subcategory, nodeTypeSubCategory);
-                        if (createdSubCategory.isRight()) {
-                            return Either.right(createdCategoryRes.right().value());
-                        }
-                        SubCategoryDefinition newsubcategory = createdSubCategory.left().value();
-                        List<GroupingDefinition> groupings = subcategory.getGroupings();
-                        if (groupings != null) {
-                            List<GroupingDefinition> newgroupings = new ArrayList<>();
-                            for (GroupingDefinition grouping : groupings) {
-                                Either<GroupingDefinition, ResponseFormat> createdGrouping = createGroupingDeo(entry, grouping, subcategory, category, nodeTypeGroup);
-                                if (createdGrouping.isRight()) {
-                                    return Either.right(createdCategoryRes.right().value());
-                                }
-                                newgroupings.add(createdGrouping.left().value());
-                            }
-                            newsubcategory.setGroupings(newgroupings);
-                        }
-                        newsubcategories.add(newsubcategory);
+                    boolean createdNewSubCategory = isCreatedNewSubCategory(entry, nodeTypeSubCategory, nodeTypeGroup, category, newcategory, newsubcategories, subcategories);
+                    if (!createdNewSubCategory) {
+                        return Either.right(createdCategoryRes.right().value());
                     }
                     newcategory.setSubcategories(newsubcategories);
                 }
@@ -109,12 +97,36 @@ public class CategoriesImportManager {
         return Either.left(result);
     }
 
+    private boolean isCreatedNewSubCategory(Entry<String, List<CategoryDefinition>> entry, NodeTypeEnum nodeTypeSubCategory, NodeTypeEnum nodeTypeGroup, CategoryDefinition category, CategoryDefinition newcategory, List<SubCategoryDefinition> newsubcategories, List<SubCategoryDefinition> subcategories) {
+        for (SubCategoryDefinition subcategory : subcategories) {
+            Either<SubCategoryDefinition, ResponseFormat> createdSubCategory = createSubCategorieDeo(entry, newcategory, subcategory, nodeTypeSubCategory);
+            if (createdSubCategory.isRight()) {
+                return false;
+            }
+            SubCategoryDefinition newsubcategory = createdSubCategory.left().value();
+            List<GroupingDefinition> groupings = subcategory.getGroupings();
+            if (groupings != null) {
+                List<GroupingDefinition> newgroupings = new ArrayList<>();
+                for (GroupingDefinition grouping : groupings) {
+                    Either<GroupingDefinition, ResponseFormat> createdGrouping = createGroupingDeo(entry, grouping, subcategory, category, nodeTypeGroup);
+                    if (createdGrouping.isRight()) {
+                        return false;
+                    }
+                    newgroupings.add(createdGrouping.left().value());
+                }
+                newsubcategory.setGroupings(newgroupings);
+            }
+            newsubcategories.add(newsubcategory);
+        }
+        return true;
+    }
+
     private Either<GroupingDefinition, ResponseFormat> createGroupingDeo(Map.Entry<String, List<CategoryDefinition>> entry, GroupingDefinition grouping, SubCategoryDefinition subcategory, CategoryDefinition category, NodeTypeEnum nodeTypeGroup) {
 
         log.debug("createGroupingDeo: creating grouping  {}", grouping);
         Either<GroupingDefinition, ActionStatus> createdGrouping = elementOperation.createGrouping(subcategory.getUniqueId(), grouping, nodeTypeGroup);
         if (createdGrouping.isRight()) {
-            if (ActionStatus.COMPONENT_GROUPING_EXISTS_FOR_SUB_CATEGORY.equals(createdGrouping.right().value())) {
+            if (ActionStatus.COMPONENT_GROUPING_EXISTS_FOR_SUB_CATEGORY == createdGrouping.right().value()) {
                 log.debug(" create grouping for {}  group {} already exists ", entry.getKey(), grouping.getName());
                 String groupingId = UniqueIdBuilder.buildGroupingUid(grouping.getUniqueId(), grouping.getNormalizedName());
                 createdGrouping = elementOperation.getGroupingUniqueForType(nodeTypeGroup, groupingId);
@@ -139,7 +151,7 @@ public class CategoriesImportManager {
         log.debug("createSubCategorieDeo: creating subcategory  {}", subcategory);
         Either<SubCategoryDefinition, ActionStatus> createdSubCategory = elementOperation.createSubCategory(newcategory.getUniqueId(), subcategory, nodeTypeSubCategory);
         if (createdSubCategory.isRight()) {
-            if (ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY.equals(createdSubCategory.right().value())) {
+            if (ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY == createdSubCategory.right().value()) {
                 log.debug(" create subcategory for {}  category {} subcategory {} already exists retrieving", entry.getKey(), newcategory.getName(), subcategory.getName());
                 String subCategoryId = UniqueIdBuilder.buildSubCategoryUid(newcategory.getUniqueId(), subcategory.getNormalizedName());
                 createdSubCategory = elementOperation.getSubCategory(nodeTypeSubCategory, subCategoryId);
@@ -162,7 +174,7 @@ public class CategoriesImportManager {
         Either<CategoryDefinition, ActionStatus> createdCategory = elementOperation.createCategory(category, nodeTypeCategory);
         if (createdCategory.isRight()) {
             log.debug("Failed to create category for {}  {} error {}", entry.getKey(), category.getName(), createdCategory.right().value());
-            if (!ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS.equals(createdCategory.right().value())) {
+            if (ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS != createdCategory.right().value()) {
                 return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
             } else {
                 log.debug("createCategorieDeo: category exists {} retriving.", category);

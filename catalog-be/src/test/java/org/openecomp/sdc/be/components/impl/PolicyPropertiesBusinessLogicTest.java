@@ -21,15 +21,7 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import fj.data.Either;
-import java.util.List;
-import javax.ws.rs.core.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +50,14 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import javax.ws.rs.core.Response;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyPropertiesBusinessLogicTest {
@@ -128,7 +128,7 @@ public class PolicyPropertiesBusinessLogicTest {
     public void getPolicyProperties_userIdIsNull() {
         String userId = null;
         ComponentException forbiddenException = new ByActionStatusComponentException(ActionStatus.AUTH_FAILED);
-        when(userValidations.validateUserExists(eq(userId), anyString(), eq(false))).thenThrow(forbiddenException);
+        when(userValidations.validateUserExists(eq(userId))).thenThrow(forbiddenException);
         try{
             testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, POLICY_ID, null);
         } catch(ByActionStatusComponentException e){
@@ -136,45 +136,41 @@ public class PolicyPropertiesBusinessLogicTest {
         }
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void getPolicyProperties_componentNotFound() {
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(new User());
+        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(new User());
         ArgumentCaptor<ComponentParametersView> filterCaptor = ArgumentCaptor.forClass(ComponentParametersView.class);
         when(toscaOperationFacade.getToscaElement(eq(RESOURCE_ID), filterCaptor.capture())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND, ComponentTypeEnum.RESOURCE)).thenCallRealMethod();
         ResponseFormat notFoundResponse = new ResponseFormat(Response.Status.NOT_FOUND.getStatusCode());
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), anyString())).thenReturn(notFoundResponse);
-        Either<List<PropertyDataDefinition>, ResponseFormat> policyProperties = testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, POLICY_ID, USER_ID);
-        assertThat(policyProperties.right().value()).isSameAs(notFoundResponse);
+        testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, POLICY_ID, USER_ID);
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void getPolicyProperties_policyNotExist() {
         doPolicyValidations();
         ResponseFormat notFoundResponse = new ResponseFormat(Response.Status.NOT_FOUND.getStatusCode());
-        when(componentsUtils.getResponseFormat(ActionStatus.POLICY_NOT_FOUND_ON_CONTAINER, "nonExistingPolicy", RESOURCE_ID)).thenReturn(notFoundResponse);
-        Either<List<PropertyDataDefinition>, ResponseFormat> policyProperties = testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, "nonExistingPolicy", USER_ID);
-        assertThat(policyProperties.right().value()).isEqualTo(notFoundResponse);
+        testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, "nonExistingPolicy", USER_ID);
     }
 
     @Test
     public void getPolicyProperties_noPropertiesOnPolicy() {
         doPolicyValidations();
-        Either<List<PropertyDataDefinition>, ResponseFormat> policyProperties = testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, NO_PROPS_POLICY, USER_ID);
-        assertThat(policyProperties.left().value()).isNull();
+        List<PropertyDataDefinition> policyProperties = testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, NO_PROPS_POLICY, USER_ID);
+        assertThat(policyProperties).isNull();
     }
 
     @Test
     public void getPolicyProperties() {
         doPolicyValidations();
-        Either<List<PropertyDataDefinition>, ResponseFormat> policyProperties = testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, POLICY_ID, USER_ID);
-        assertThat(policyProperties.left().value())
+        List<PropertyDataDefinition> policyProperties = testInstance.getPolicyProperties(ComponentTypeEnum.RESOURCE, RESOURCE_ID, POLICY_ID, USER_ID);
+        assertThat(policyProperties)
                 .usingElementComparatorOnFields("uniqueId")
                 .containsExactly(prop1, prop2);
     }
 
     private void doPolicyValidations() {
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(false))).thenReturn(new User());
+        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(new User());
         ArgumentCaptor<ComponentParametersView> filterCaptor = ArgumentCaptor.forClass(ComponentParametersView.class);
         when(toscaOperationFacade.getToscaElement(eq(RESOURCE_ID), filterCaptor.capture())).thenReturn(Either.left(resource));
     }

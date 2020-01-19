@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.listen;
 
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.monitoring.BeMonitoringService;
 import org.openecomp.sdc.common.api.Constants;
@@ -53,9 +52,6 @@ public class BEAppContextListener extends AppContextListener implements ServletC
 
         WebAppContextWrapper webAppContextWrapper = new WebAppContextWrapper();
         context.getServletContext().setAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR, webAppContextWrapper);
-
-        DownloadArtifactLogic downloadArtifactLogic = new DownloadArtifactLogic();
-        context.getServletContext().setAttribute(Constants.DOWNLOAD_ARTIFACT_LOGIC_ATTR, downloadArtifactLogic);
 
         context.getServletContext().setAttribute(Constants.ASDC_RELEASE_VERSION_ATTR, getVersionFromManifest(context));
 

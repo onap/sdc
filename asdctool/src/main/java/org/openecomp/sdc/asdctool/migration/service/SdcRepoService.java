@@ -35,13 +35,13 @@ public class SdcRepoService {
     }
 
     public DBVersion getLatestDBVersion() {
-        BigInteger currentMajorVersion = DBVersion.CURRENT_VERSION.getMajor();
+        BigInteger currentMajorVersion = migrationTasksDao.getLatestMajorVersion();
         BigInteger latestMinorVersion = migrationTasksDao.getLatestMinorVersion(currentMajorVersion);
-        return latestMinorVersion == null ? DBVersion.from(currentMajorVersion, BigInteger.valueOf(Integer.MIN_VALUE)) : DBVersion.from(currentMajorVersion, latestMinorVersion);
+        return DBVersion.from(currentMajorVersion, latestMinorVersion);
     }
 
     public void clearTasksForCurrentMajor() {
-        BigInteger currentMajorVersion = DBVersion.CURRENT_VERSION.getMajor();
+        BigInteger currentMajorVersion = DBVersion.DEFAULT_VERSION.getMajor();
         migrationTasksDao.deleteAllTasksForVersion(currentMajorVersion);
     }
 

@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,6 +34,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExternalRefDTO {
+    @JsonInclude
     private String referenceUUID;
 
 }

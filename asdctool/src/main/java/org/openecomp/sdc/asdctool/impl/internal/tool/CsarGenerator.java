@@ -19,6 +19,30 @@
  */
 package org.openecomp.sdc.asdctool.impl.internal.tool;
 
+import org.openecomp.sdc.asdctool.utils.ConsoleWriter;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
+import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.GeneralUtility;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -28,30 +52,6 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import org.openecomp.sdc.asdctool.utils.ConsoleWriter;
-import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
-import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
-import org.openecomp.sdc.be.tosca.CsarUtils;
-import org.openecomp.sdc.be.tosca.ToscaExportHandler;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.util.GeneralUtility;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("csarGenerator")
 public class CsarGenerator extends CommonInternalTool {
@@ -174,7 +174,7 @@ public class CsarGenerator extends CommonInternalTool {
         
         
         csarArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
-        ESArtifactData artifactData = new ESArtifactData(csarArtifact.getEsId(), decodedPayload);
+        DAOArtifactData artifactData = new DAOArtifactData(csarArtifact.getEsId(), decodedPayload);
         artifactCassandraDao.saveArtifact(artifactData);
         ConsoleWriter.dataLine("Artifact generated and saved into Cassandra ", csarArtifact.getArtifactLabel());
         report(component, csarArtifact);

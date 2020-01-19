@@ -24,11 +24,15 @@ import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IArtifactOperation;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -54,7 +58,7 @@ public class ServiceDistributionArtifactsBuilder {
     InterfaceLifecycleOperation interfaceLifecycleOperation;
 
     @javax.annotation.Resource
-    IArtifactOperation artifactOperation;
+    ArtifactOperation artifactOperation;
 
     private final ToscaOperationFacade toscaOperationFacade;
 
@@ -164,7 +168,6 @@ public class ServiceDistributionArtifactsBuilder {
 
     private List<ArtifactInfoImpl> convertToArtifactsInfoImpl(Service service, ComponentInstance resourceInstance) {
         List<ArtifactInfoImpl> artifacts = ArtifactInfoImpl.convertToArtifactInfoImpl(service, resourceInstance, getArtifactsWithPayload(resourceInstance));
-        artifacts.stream().forEach(ArtifactInfoImpl::updateArtifactTimeout);
         return artifacts;
     }
 

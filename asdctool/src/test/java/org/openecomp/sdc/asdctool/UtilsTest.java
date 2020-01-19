@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.asdctool;
 
-import org.janusgraph.core.JanusGraph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
+import org.janusgraph.core.JanusGraph;
 import org.junit.Assert;
 import org.junit.Test;
 

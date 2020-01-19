@@ -41,8 +41,9 @@
         </div>
         <div data-ng-if="!isSchemaTypeDataType" class="i-sdc-form-item map-item-field" data-ng-class="{error:(parentFormObj['mapValue'+fieldsPrefixName+$index].$dirty && parentFormObj['mapValue'+fieldsPrefixName+$index].$invalid)}">
             <label class="i-sdc-form-label required">Value</label>
+        
             <input class="i-sdc-form-input"
-                   ng-if="!((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
+                   ng-if="!constraints && !((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
                    data-ng-readonly="readOnly"
                    data-ng-model="valueObjRef[mapKeys[$index]]"
                    type="text"
@@ -57,7 +58,7 @@
                    autofocus />
             <select class="i-sdc-form-select"
                     data-tests-id="mapValue{{fieldsPrefixName}}{{$index}}"
-                    ng-if="(schemaProperty.simpleType||schemaProperty.type) == 'boolean'"
+                    ng-if="!constraints && (schemaProperty.simpleType||schemaProperty.type) == 'boolean'"
                     data-ng-disabled="readOnly"
                     name="mapValue{{fieldsPrefixName}}{{$index}}"
                     data-ng-model="valueObjRef[mapKeys[$index]]"
@@ -65,6 +66,24 @@
                 <option value="true">true</option>
                 <option value="false">false</option>
             </select>
+
+
+            <select class="i-sdc-form-select"
+                data-tests-id="constraints"
+                ng-if="constraints"
+                data-ng-disabled="readOnly"
+                data-ng-model="valueObjRef[mapKeys[$index]]">
+
+                <!-- Get the saved value for the relevant key -->
+                <option ng-if = "valueObjRef[mapKeys[$index]]" value = "{{valueObjRef[mapKeys[$index]]}}" name = "{{valueObjRef[mapKeys[$index]]}}" hidden selected>
+                        {{valueObjRef[mapKeys[$index]]}}
+                </option> 
+                <!-- add all constratint to Select list -->
+                <option ng-repeat='value in constraints' value="{{value}}" name="{{value}}">
+                    {{value}}
+                </option> 
+            </select>
+
             <div class="input-error" data-ng-show="parentFormObj['mapValue'+fieldsPrefixName+$index].$dirty && parentFormObj['mapValue'+fieldsPrefixName+$index].$invalid">
                 <span ng-show="parentFormObj['mapValue'+fieldsPrefixName+$index].$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Value' }"></span>
                 <span ng-show="parentFormObj['mapValue'+fieldsPrefixName+$index].$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>

@@ -19,9 +19,6 @@
  */
 package org.openecomp.sdc.be.auditing.impl;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,12 +26,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.test.utils.TestConfigurationProvider;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditingManagerTest {
@@ -46,21 +44,16 @@ public class AuditingManagerTest {
     @Mock
     private AuditingGenericEvent auditEvent;
     @Mock
-    private AuditingDao auditingDao;
-    @Mock
     private AuditCassandraDao cassandraDao;
     @Mock
     private AuditEventFactory eventFactory;
 
     @Before
     public void setUp() throws Exception {
-        auditingManager = new AuditingManager(auditingDao, cassandraDao, new TestConfigurationProvider());
+        auditingManager = new AuditingManager(cassandraDao, new TestConfigurationProvider());
         Mockito.when(eventFactory.getLogMessage()).thenReturn(msg);
         Mockito.when(eventFactory.getDbEvent()).thenReturn(auditEvent);
-        Mockito.when(eventFactory.getAuditingEsType()).thenReturn(MSG);
         Mockito.when(cassandraDao.saveRecord(auditEvent)).thenReturn(CassandraOperationStatus.OK);
-        Mockito.when(auditingDao.addRecord(auditEvent, MSG)).thenReturn(
-            ActionStatus.OK);
     }
 
     @Test
@@ -68,7 +61,6 @@ public class AuditingManagerTest {
         String result = auditingManager.auditEvent(eventFactory);
         assertThat(result, is(msg));
         Mockito.verify(cassandraDao).saveRecord(auditEvent);
-        Mockito.verify(auditingDao).addRecord(auditEvent, MSG);
     }
 
 

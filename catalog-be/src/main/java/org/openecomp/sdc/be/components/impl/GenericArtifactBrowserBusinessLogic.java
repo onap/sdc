@@ -27,8 +27,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.io.IOException;
-import java.lang.reflect.Type;
 import org.onap.sdc.gab.GABService;
 import org.onap.sdc.gab.GABServiceImpl;
 import org.onap.sdc.gab.model.GABQuery;
@@ -42,6 +40,9 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
 
 @org.springframework.stereotype.Component
 public class GenericArtifactBrowserBusinessLogic extends BaseBusinessLogic {
