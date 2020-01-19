@@ -15,9 +15,9 @@ import {
     Capability
 } from 'app/models';
 
-import {IDropDownOption} from "sdc-ui/lib/angular/form-elements/dropdown/dropdown-models";
 import {Tabs, Tab} from "app/ng2/components/ui/tabs/tabs.component";
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
+import { IDropDownOption } from 'onap-ui-angular';
 
 export class DropDownOption implements IDropDownOption {
     value: string;

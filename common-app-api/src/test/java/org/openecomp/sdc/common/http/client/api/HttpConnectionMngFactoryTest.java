@@ -22,8 +22,8 @@ package org.openecomp.sdc.common.http.client.api;
 
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.junit.Test;
+import org.onap.sdc.security.SecurityUtil;
 import org.openecomp.sdc.common.http.config.ClientCertificate;
-import org.openecomp.sdc.security.SecurityUtil;
 
 import static org.junit.Assert.assertNotNull;
 

@@ -13,7 +13,9 @@ import { TopNavComponent } from "./top-nav/top-nav.component";
         FormsModule,
         TranslateModule
     ],
-    exports: [],
+    exports: [
+        TopNavComponent
+    ],
     entryComponents: [ //need to add anything that will be dynamically created
         TopNavComponent
     ],

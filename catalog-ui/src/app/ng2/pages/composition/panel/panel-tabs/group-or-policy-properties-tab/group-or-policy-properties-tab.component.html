@@ -1,0 +1,39 @@
+<!--
+  ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+ 
+<ng2-expand-collapse state="0">
+    <header tooltip="Properties">Properties</header>
+    <content>
+        <ul>
+            <li *ngFor="let property of component.properties; let i = index"
+                class="i-sdc-designer-sidebar-section-content-item-property-and-attribute" data-tests-id="propertyRow">
+                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label hand"
+                     [attr.data-tests-id]="'propertyName_'+property.name"
+                     tooltip="{{property.name}}"
+                     (click)="!isViewOnly && editProperty(property)">{{property.name}}
+                </div>
+                <div class="i-sdc-designer-sidebar-section-content-item-property-value"
+                     [attr.data-tests-id]="'value_'+property.name"
+                     tooltip="{{property.value || property.defaultValue}}">{{property.value || property.defaultValue}}
+                </div>
+            </li>
+        </ul>
+
+        <div *ngIf="!component.properties || component.properties.length===0" class="component-details-panel-tab-no-data">
+            <div class="component-details-panel-tab-no-data-title">No properties to display</div>
+        </div>
+    </content>
+</ng2-expand-collapse>

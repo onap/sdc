@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -28,12 +29,12 @@ import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.operations.api.*;
+import org.openecomp.sdc.be.model.operations.impl.*;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.ConsumerOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.ConsumerData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -61,12 +62,12 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
     public ConsumerBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        ArtifactsOperations artifactToscaOperation) {
+                                 IGroupOperation groupOperation,
+                                 IGroupInstanceOperation groupInstanceOperation,
+                                 IGroupTypeOperation groupTypeOperation,
+                                 InterfaceOperation interfaceOperation,
+                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+                                 ArtifactsOperations artifactToscaOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
     }
@@ -135,8 +136,10 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
             return Either.right(responseFormat);
         }
         log.debug("get user from DB");
-        Either<User, ActionStatus> eitherCreator = userAdmin.getUser(user.getUserId(), false);
-        if (eitherCreator.isRight() || eitherCreator.left().value() == null) {
+        User userFromDB;
+        try {
+            userFromDB = userAdmin.getUser(user.getUserId(), false);
+        }catch (ByActionStatusComponentException e){
             log.debug("createEcompUser method - user is not listed. userId= {}", user.getUserId());
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_ACCESS);
             log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
@@ -144,7 +147,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
             return Either.right(responseFormat);
         }
 
-        user = eitherCreator.left().value();
+        user = userFromDB;
         // validate user role
         log.debug("validate user role");
         if (!user.getRole().equals(Role.ADMIN.name())) {

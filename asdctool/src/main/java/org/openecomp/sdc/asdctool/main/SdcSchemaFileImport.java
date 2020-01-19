@@ -39,7 +39,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum;
-import org.openecomp.sdc.asdctool.impl.EsToCassandraDataMigrationConfig;
+import org.openecomp.sdc.asdctool.configuration.SdcSchemaFileImportConfiguration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
@@ -106,10 +106,11 @@ public class SdcSchemaFileImport {
 		//Loop over schema file list and create each yaml file from /import/tosca folder 
 		SchemaZipFileEnum[] schemaFileList = SchemaZipFileEnum.values();
 		for (SchemaZipFileEnum schemaZipFileEnum : schemaFileList) {
-			String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
-			try(InputStream input = new FileInputStream(new File(pathname));) {
+			try {
 				//get the source yaml file
+				String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
 				System.out.println("Processing file "+pathname+"....");
+				InputStream input = new FileInputStream(new File(pathname));
 				//Convert the content of file to yaml 
 				Yaml yamlFileSource = new Yaml();
 			    Object content = yamlFileSource.load(input);
@@ -275,6 +276,6 @@ public class SdcSchemaFileImport {
 	private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 		new ConfigurationManager(configurationSource);
-		return  new AnnotationConfigApplicationContext(EsToCassandraDataMigrationConfig.class);
+		return  new AnnotationConfigApplicationContext(SdcSchemaFileImportConfiguration.class);
 	}
 }

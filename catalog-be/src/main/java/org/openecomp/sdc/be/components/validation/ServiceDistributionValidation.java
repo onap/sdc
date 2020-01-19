@@ -126,11 +126,11 @@ public class ServiceDistributionValidation {
         }
     }
     private void validateUserExists(String userId) {
-        userValidations.validateUserExists(userId, "activate Distribution", false);
+        userValidations.validateUserExists(userId);
     }
 
     private void validateDistributionServiceLifeCycleState(Service serviceToActivate) {
         validateServiceState(serviceToActivate,
-                Arrays.asList(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFIED));
+                Arrays.asList(LifecycleStateEnum.CERTIFIED));
     }
 }

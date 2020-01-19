@@ -33,6 +33,7 @@ public class ResourceDataMergeBusinessLogic implements MergeResourceBusinessLogi
 
     private static final Logger log = Logger.getLogger(ResourceDataMergeBusinessLogic.class);
     public static final int FIRST_COMMAND = 0;
+    public static final int PENULTIMATE_COMMAND = Integer.MAX_VALUE - 1;
     public static final int LAST_COMMAND = Integer.MAX_VALUE;
     public static final int ANY_ORDER_COMMAND = 1;
 
@@ -56,7 +57,7 @@ public class ResourceDataMergeBusinessLogic implements MergeResourceBusinessLogi
         for (ComponentsMergeCommand componentMergeCommand : componentMergingCommands) {
             ActionStatus mergeStatus = componentMergeCommand.mergeComponents(oldResource, newResource);
             if (mergeStatus != ActionStatus.OK) {
-                log.error("failed on merge command {} of resource {} status is {}", componentMergeCommand.description(), newResource.getUniqueId(), mergeStatus);
+                log.debug("failed on merge command {} of resource {} status is {}", componentMergeCommand.description(), newResource.getUniqueId(), mergeStatus);
                 return mergeStatus;
             }
         }

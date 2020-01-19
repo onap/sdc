@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`from-node-step component should match current snapshot 1`] = `
+<from-node-step
+  connectWizardService={[Function Object]}
+  preventBack={[Function Function]}
+  preventNext={[Function Function]}
+  updateSelectedReqOrCap={[Function Function]}
+>
+  <select-requirement-or-capability />
+</from-node-step>
+`;

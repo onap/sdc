@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,7 @@ export class Service extends Component {
     public namingPolicy:string;
     public serviceType:string;
     public serviceRole:string;
+    public serviceFunction:string;
     public environmentContext:string;
     public instantiationType:string;
     public forwardingPaths:{ [key:string]:ForwardingPath } = {};
@@ -52,6 +53,7 @@ export class Service extends Component {
             this.namingPolicy = component.namingPolicy;
             this.serviceType = component.serviceType;
             this.serviceRole = component.serviceRole;
+            this.serviceFunction = component.serviceFunction;
             this.instantiationType = component.instantiationType;
             this.environmentContext = component.environmentContext;
             if (component.categories && component.categories[0]) {
@@ -168,6 +170,7 @@ export class Service extends Component {
         this.namingPolicy = componentMetadata.namingPolicy;
         this.serviceType = componentMetadata.serviceType;
         this.serviceRole = componentMetadata.serviceRole;
+        this.serviceFunction = componentMetadata.serviceFunction;
         this.environmentContext = componentMetadata.environmentContext;
         this.instantiationType = componentMetadata.instantiationType;
         this.setComponentDisplayData();
@@ -195,6 +198,7 @@ export class Service extends Component {
         temp.selectedCategory = undefined;
         temp.modules = undefined;
         temp.groupInstances = undefined;
+        temp.policies = undefined;
         return temp;
     };
 }

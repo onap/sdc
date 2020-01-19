@@ -32,9 +32,7 @@ Modifications copyright (c) 2018 Nokia
   <aop:aspectj-autoproxy proxy-target-class="true" />
 
   <context:component-scan
-    base-package="org.openecomp.sdc.be.dao.impl,	   
-		org.openecomp.sdc.be.dao.es,
-		org.openecomp.sdc.be.resources.impl,			
+    base-package="org.openecomp.sdc.be.dao.impl,
 		org.openecomp.sdc.be.dao.neo4j,
 		org.openecomp.sdc.be.model.operations.impl,
 		org.openecomp.sdc.be.model.cache,
@@ -46,8 +44,9 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.components.merge,
 		org.openecomp.sdc.be.components.property,
 		org.openecomp.sdc.be.components.distribution.engine,
+		org.openecomp.sdc.be.facade.operations,
 		org.openecomp.sdc.be.distribution,
-		org.openecomp.sdc.be.components.validation
+		org.openecomp.sdc.be.components.validation,
 		org.openecomp.sdc.be.switchover.detector,
 		org.openecomp.sdc.be.tosca,
 		org.openecomp.sdc.be.model.operations.impl,
@@ -62,7 +61,7 @@ Modifications copyright (c) 2018 Nokia
   <bean id="tosca-operation-facade" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathToscaOperationFacade" />
   <bean id="janusgraph-client" class="org.openecomp.sdc.be.components.path.beans.InMemoryJanusGraphClient" />
   <bean id="lifecycleBusinessLogic" class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic" />
-  <bean id="transactionManager" class="org.openecomp.sdc.common.transaction.mngr.TransactionManager" />
+  <bean id="userBusinessLogicExt" class="org.openecomp.sdc.be.user.UserBusinessLogicExt" />
   <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter" />
   <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
   <bean id="cassandra-client" class="org.openecomp.sdc.be.components.path.beans.CassandraClientMock" />
@@ -74,6 +73,12 @@ Modifications copyright (c) 2018 Nokia
   <bean id="forwardingPathValidator" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathValidatorMock" />
   <bean id="dataTypeValidatorConverter" class="org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter" />
   <bean id="sdcSchemaUtils" class="org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils" />
-  <util:properties id="elasticsearchConfig" location="paths/elasticsearch.yml" />
+  <bean id="dmaapProducer" class="org.openecomp.sdc.be.catalog.impl.DmaapProducer" />
+  <bean id="catalogOperation" class="org.openecomp.sdc.be.facade.operations.CatalogOperation" />
+  <bean id="userOperation" class="org.openecomp.sdc.be.facade.operations.UserOperation" />
+  <bean id="dmaapProducerHealth" class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth" />
+  <bean id="feature_toggle_dao" class="org.openecomp.sdc.be.components.path.beans.FeatureToggleDaoMock" />
+  <bean name="httpClient" class="org.apache.http.impl.client.HttpClients" factory-method="createDefault" >
+  </bean>
 
 </beans>

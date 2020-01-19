@@ -22,7 +22,7 @@ package org.openecomp.sdc.be.impl;
 
 import com.google.gson.Gson;
 import org.junit.Test;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 public class ServletUtilsTest {
 
@@ -53,7 +53,7 @@ public class ServletUtilsTest {
 	@Test
 	public void testGetUserAdmin() throws Exception {
 		ServletUtils testSubject;
-		IUserBusinessLogic result;
+		UserBusinessLogic result;
 
 		// default test
 		testSubject = createTestSubject();

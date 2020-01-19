@@ -35,33 +35,37 @@
         <div class="no-data" *ngIf="!inputs || !inputs.length">No data to display</div>
         <div>
             <div class="table-row" *ngFor="let input of inputs" (click)="selectedInputId = input.path" [ngClass]="{'selected': selectedInputId && selectedInputId === input.path}">
+                <!-- Property Name -->
                 <div class="table-cell col1">
                     <div class="inner-cell-div" tooltip="{{input.name}}"><span class="property-name">{{input.name}}</span></div>
                     <span *ngIf="input.description"
                           class="property-description-icon sprite-new show-desc"
                           tooltip="{{input.description}}" tooltipDelay="0"></span>
                 </div>
+                <!-- From Instance -->
                 <div class="table-cell col3">
                     <div class="inner-cell-div" tooltip="{{instanceNamesMap[input.instanceUniqueId]?.name}}">
                         <span>{{instanceNamesMap[input.instanceUniqueId]?.name}}</span>
                     </div>
                 </div>
+                <!-- Type -->
                 <div class="table-cell col2">
                     <div class="inner-cell-div" tooltip="{{input.type | contentAfterLastDot}}">
                         <span>{{input.type | contentAfterLastDot}}</span>
                     </div>
                 </div>
+                <!-- Value -->
                 <div class="table-cell valueCol input-value-col" [class.inner-table-container]="input.childrenProperties || !input.isSimpleType">
                     <dynamic-element class="value-input"
-                                     *ngIf="input.isSimpleType"
+                                     *ngIf="checkInstanceFePropertiesMapIsFilled() && input.isSimpleType"
                                      pattern="validationUtils.getValidationPattern(input.type)"
                                      [value]="input.defaultValueObj"
                                      [type]="input.type"
-                                     [constraints]="input.constraints"
                                      [name]="input.name"
                                      (elementChanged)="onInputChanged(input, $event)"
                                      [readonly]="readonly"
-                                     [testId]="'input-' + input.name">
+                                     [testId]="'input-' + input.name"
+                                     [constraints] = "getConstraints(input)">
                     </dynamic-element>
                     <div class="delete-button-container">
                         <span *ngIf="input.instanceUniqueId && !readonly" class="sprite-new delete-btn" (click)="openDeleteModal(input)" data-tests-id="delete-input-button"></span>

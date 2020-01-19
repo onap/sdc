@@ -54,7 +54,7 @@ public class OperationArtifactUtil {
      * @param operation     the specific operation name
      * @return the full path including file name for operation's artifacts
      */
-    static String createOperationArtifactPath(Component component, ComponentInstance componentInstance,
+    public static String createOperationArtifactPath(Component component, ComponentInstance componentInstance,
                                               OperationDataDefinition operation, boolean isAssociatedComponent) {
         if (!(component instanceof Resource || component instanceof Service)) {
             return null;

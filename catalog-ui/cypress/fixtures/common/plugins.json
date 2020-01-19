@@ -1,0 +1,35 @@
+[
+  {
+    "pluginId": "DCAED",
+    "pluginDiscoveryUrl": "http://192.168.33.10:8183/dcaed/",
+    "pluginSourceUrl": "http://192.168.33.10:8183/dcaed/#/home",
+    "pluginStateUrl": "dcaed",
+    "pluginDisplayOptions": {
+      "context": {
+        "displayName": "Monitoring",
+        "displayContext": [
+          "SERVICE"
+        ],
+        "displayRoles": [
+          "DESIGNER"
+        ]
+      }
+    },
+    "isOnline": false
+  },
+  {
+    "pluginId": "DCAE-DS",
+    "pluginDiscoveryUrl": "http://192.168.33.10:8446/dcae/#/home",
+    "pluginSourceUrl": "http://192.168.33.10:8446/dcae/#/home",
+    "pluginStateUrl": "dcae-ds",
+    "pluginDisplayOptions": {
+      "tab": {
+        "displayName": "DCAE-DS",
+        "displayRoles": [
+          "DESIGNER"
+        ]
+      }
+    },
+    "isOnline": false
+  }
+]

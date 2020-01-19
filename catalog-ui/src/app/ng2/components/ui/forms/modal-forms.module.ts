@@ -1,15 +1,11 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from '@angular/common';
-import { SdcUiComponentsModule } from "sdc-ui/lib/angular";
-import { ValueEditComponent } from './value-edit/value-edit.component';
+import { SdcUiComponentsModule } from "onap-ui-angular";
 import { UnsavedChangesComponent } from "./unsaved-changes/unsaved-changes.component";
 import { UiElementsModule } from "../ui-elements.module";
 
-
-
 @NgModule({
     declarations: [
-        ValueEditComponent,
         UnsavedChangesComponent
     ],
     imports: [
@@ -17,7 +13,7 @@ import { UiElementsModule } from "../ui-elements.module";
         SdcUiComponentsModule,
         UiElementsModule
     ],
-    exports: [ValueEditComponent, UnsavedChangesComponent],
+    exports: [UnsavedChangesComponent],
     entryComponents: [ UnsavedChangesComponent
     ],
     providers: []

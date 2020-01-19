@@ -23,7 +23,6 @@ export interface IEllipsisScope extends ng.IScope {
     ellipsis:string;
     maxChars:number;
     toggleText():void;
-    onMoreLessClick(event): void;
     collapsed:boolean;
     actualText:string;
 

@@ -4,7 +4,7 @@
 import { NgModule } from "@angular/core";
 import {MultiStepsWizardComponent} from "./multi-steps-wizard.component";
 import {CommonModule} from "@angular/common";
-import {ConnectionWizardModule} from "../../../pages/connection-wizard/connection-wizard.module";
+import {ConnectionWizardModule} from "app/ng2/pages/composition/graph/connection-wizard/connection-wizard.module";
 
 @NgModule({
     declarations: [

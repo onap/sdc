@@ -58,6 +58,7 @@ public enum JsonPresentationFields {
     DISTRIBUTION_STATUS("distributionStatus", GraphPropertyEnum.DISTRIBUTION_STATUS),
     DERIVED_FROM_GENERIC_TYPE("derivedFromGenericType", null),
     DERIVED_FROM_GENERIC_VERSION("derivedFromGenericVersion", null),
+    SERVICE_FUNCTION("serviceFunction", null),
 
     ////Inputs
     ANNOTATIONS("annotations", null),
@@ -221,9 +222,18 @@ public enum JsonPresentationFields {
     IS_VSP_ARCHIVED("isVspArchived", GraphPropertyEnum.IS_VSP_ARCHIVED),
     CI_IS_ORIGIN_ARCHIVED("isOriginArchived", null),
 
-    //Interface Operation
-    IO_WORKFLOW_ID("workflowId", null),
-    IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
+	//Interface Operation
+	IO_OPERATION_TYPE("operationType",null),
+	IO_INPUT_PARAMETERS("inputParams",null),
+	IO_OUTPUT_PARAMETERS("outputParams",null),
+    IO_PARAM_NAME("paramName", null),
+    IO_PARAM_ID("paramId", null),
+    IO_NAME("name", null),
+	IO_MANDATORY("mandatory", null),
+	IO_TYPE("type", null),
+	IO_PROPERTY("property", null),
+	IO_WORKFLOW_ID("workflowId", null),
+	IO_WORKFLOW_VERSION_ID("workflowVersionId", null),
     IO_WORKFLOW_ASSOCIATION_TYPE("workflowAssociationType", null),
 
     //Interface

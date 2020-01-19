@@ -1,0 +1,23 @@
+pluginsList:
+   - pluginId: DCAE
+     pluginDiscoveryUrl: http://localhost:8702/dcae
+     pluginSourceUrl: http://localhost:8702/dcae
+     pluginStateUrl: "dcae"
+     pluginDisplayOptions:
+        context:
+            displayName: "Monitor"
+            displayContext: ["VF", "SERVICE"]
+            displayRoles: ["DESIGNER"]
+   - pluginId: WORKFLOW
+     pluginDiscoveryUrl: http://localhost:9527/
+     pluginSourceUrl: http://localhost:9527/
+     pluginStateUrl: "workflowDesigner"
+     pluginDisplayOptions:
+        top:
+            displayName: "WORKFLOW"
+        context:
+            displayName: "Workflow Designer"
+            displayContext: ["VF", "SERVICE"]
+            displayRoles: ["DESIGNER", "TESTER"]
+
+connectionTimeout: 1000

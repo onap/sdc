@@ -79,13 +79,14 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 
     private List<GetPolicyValueDataDefinition> getPolicyValues;
 
+    private List<String> propertyConstraints;
+
     public PropertyDataDefinition() {
         super();
     }
 
     public PropertyDataDefinition(Map<String, Object> pr) {
         super(pr);
-
     }
 
     public PropertyDataDefinition(PropertyDataDefinition propertyDataDefinition) {
@@ -93,6 +94,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setUniqueId(propertyDataDefinition.getUniqueId());
         this.setRequired(propertyDataDefinition.isRequired());
         this.setDefaultValue(propertyDataDefinition.getDefaultValue());
+        this.setDefinition(propertyDataDefinition.getDefinition());
         this.setDescription(propertyDataDefinition.getDescription());
         this.setSchema(propertyDataDefinition.getSchema());
         this.setPassword(propertyDataDefinition.isPassword());
@@ -116,6 +118,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.subPropertyInputPath = propertyDataDefinition.getSubPropertyInputPath();
         if (isNotEmpty(propertyDataDefinition.annotations)) {
             this.setAnnotations(propertyDataDefinition.annotations);
+        }
+        if(isNotEmpty(propertyDataDefinition.getPropertyConstraints())){
+            setPropertyConstraints(new ArrayList<>(propertyDataDefinition.getPropertyConstraints()));
         }
         this.setIsDeclaredListInput(propertyDataDefinition.getIsDeclaredListInput());
     }
@@ -168,6 +173,10 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     public void setDefinition(boolean definition) {
         this.definition = definition;
     }
+
+	public boolean getDefinition() {
+		return definition;
+	}
 
     public String getType() {
         return type;
@@ -575,4 +584,11 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
     }
 
+	public List<String> getPropertyConstraints() {
+		return propertyConstraints;
+	}
+
+	public void setPropertyConstraints(List<String> constraints) {
+		this.propertyConstraints = constraints;
+	}
 }

@@ -23,6 +23,7 @@ import * as _ from "lodash";
 import {IAppConfigurtaion, User, IUser} from "app/models";
 import {IUserProperties} from "../../models/user";
 import {UserService} from "../../ng2/services/user.service";
+import { AuthenticationService } from "../../ng2/services/authentication.service";
 
 export class MenuItem {
     menuId:number;
@@ -57,7 +58,8 @@ export class EcompHeaderDirective implements ng.IDirective {
 
     constructor(private $http:ng.IHttpService,
                 private sdcConfig:IAppConfigurtaion,
-                private userService:UserService) {
+                private userService:UserService,
+                private authService:AuthenticationService) {
 
     }
 
@@ -92,7 +94,7 @@ export class EcompHeaderDirective implements ng.IDirective {
 
         let initUser = ():void => {
             let defaultUserId:string;
-            let userInfo:IUserProperties = this.userService.getLoggedinUser();
+            let userInfo:IUserProperties = this.authService.getLoggedinUser();
             if (!userInfo) {
                 defaultUserId = this.$http.defaults.headers.common[this.sdcConfig.cookie.userIdSuffix];
                 this.userService.getUser(defaultUserId).subscribe((defaultUserInfo):void => {
@@ -137,8 +139,9 @@ export class EcompHeaderDirective implements ng.IDirective {
 
     public static factory = ($http:ng.IHttpService,
                              sdcConfig:IAppConfigurtaion,
-                             userService:UserService)=> {
-        return new EcompHeaderDirective($http, sdcConfig, userService);
+                             userService:UserService, 
+                             authService:AuthenticationService)=> {
+        return new EcompHeaderDirective($http, sdcConfig, userService, authService);
     };
 
 }
@@ -231,7 +234,7 @@ export class EcompHeaderController {
     };
 }
 
-EcompHeaderDirective.factory.$inject = ['$http', 'sdcConfig', 'UserServiceNg2'];
+EcompHeaderDirective.factory.$inject = ['$http', 'sdcConfig', 'UserServiceNg2', 'AuthenticationServiceNg2'];
 
 
 

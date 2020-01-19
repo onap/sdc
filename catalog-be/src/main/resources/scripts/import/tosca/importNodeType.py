@@ -56,7 +56,8 @@ def createUserNormativeType(scheme, beHost, bePort, adminUser, fileDir, ELEMENT_
 
 		c.setopt(c.WRITEFUNCTION, buffer.write)
 		if scheme == 'https':
-			c.setopt(c.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYPEER, 0)
+			c.setopt(pycurl.SSL_VERIFYHOST, 0)
 
 		res = c.perform()
 	

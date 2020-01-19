@@ -1,0 +1,62 @@
+<div class="status-page">
+  <ngx-datatable
+          class="material"
+          [columnMode]="'standard'"
+          [rowHeight]="'auto'"
+          [reorderable]="false"
+          [swapColumns]="false"
+          [rows]="artifacts"
+          [scrollbarH]="true"
+           #statusTable>
+    <ngx-datatable-row-detail [rowHeight]="'auto'">
+      <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+          <div *ngFor="let status of row.statuses">
+            <span class = "status" [attr.data-tests-id]="generateDataTestID('statusTimeStamp_',componentName, row.name, status.status)">{{ status.timeStamp | date:'short':'UTC'}}</span>
+            <span class = "status" [attr.data-tests-id]="generateDataTestID('statusValue_',componentName, row.name, status.status)">{{ status.status }}</span>
+          </div>
+      </ng-template>
+    </ngx-datatable-row-detail>
+    <ngx-datatable-column name="Component ID" [resizeable]="false" [width]="250">
+      <ng-template ngx-datatable-cell-template let-row="row" let-expanded="expanded" >
+        <div>
+          <span class="urlValue">
+            <svg-icon [clickable]="true" class="expand-collapse-icon"
+            [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
+            [size]="'medium'" (click)="expandRow(row)" [attr.data-tests-id]="generateDataTestID('expandIcon_compID_', componentName, row.name)"></svg-icon>
+          </span>
+          <span class="urlValue ellipsisCell" [attr.data-tests-id]="generateDataTestID('compID_',componentName, row.name)" sdc-tooltip [tooltip-placement]="3" [tooltip-text]="componentName">
+            {{ componentName }}
+          </span>
+        </div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column [resizeable]="false" [width]="280" name="Artifact Name">
+      <ng-template ngx-datatable-cell-template let-row="row">
+        <div class = "distributionRowValue ellipsisCell" [attr.data-tests-id]="generateDataTestID('artName_',componentName, row.name)" sdc-tooltip [tooltip-placement]="3" [tooltip-text]="row.name">{{ row.name }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column [resizeable]="false" [width]="380" name="URL">
+      <ng-template ngx-datatable-cell-template let-row="row">
+        <div>
+          <span class="urlValue ellipsisCell" id="urlCell" [attr.data-tests-id]="generateDataTestID('url_',componentName, row.name)">{{ row.url }}</span>
+          <span class="urlCopyIcon" title="Copy URL">
+              <svg-icon-label [clickable]="true" [mode]="'primary'" [labelPlacement]="'right'"
+              [label]="" [name]="'copy-o'" [testId]="'copyToClipboard'"
+              (click)="copyToClipboard(row.url)">
+              </svg-icon-label>
+          </span>
+        </div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column [resizeable]="false" [width]="180" name="Time(UTC)">
+      <ng-template ngx-datatable-cell-template let-row="row">
+        <div class = "distributionRowValue ellipsisCell" [attr.data-tests-id]="generateDataTestID('time_',componentName, row.name)" sdc-tooltip [tooltip-placement]="3" [tooltip-text]="getLatestArtifact(row.name).timeStamp | date:'short':'UTC'">{{ getLatestArtifact(row.name).timeStamp | date:'short':'UTC'}}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column [resizeable]="false" [width]="280" name="Status">
+      <ng-template ngx-datatable-cell-template let-row="row">
+        <div class = "distributionRowValue ellipsisCell" [attr.data-tests-id]="generateDataTestID('status_',componentName, row.name)" sdc-tooltip [tooltip-placement]="3" [tooltip-text]="getLatestArtifact(row.name).status">{{ getLatestArtifact(row.name).status }}</div>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+</div>

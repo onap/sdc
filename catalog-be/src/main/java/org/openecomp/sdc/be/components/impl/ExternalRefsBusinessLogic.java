@@ -21,13 +21,14 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.lock.LockingTransactional;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ExternalReferencesOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -82,62 +83,53 @@ public class ExternalRefsBusinessLogic {
         }
     }
 
-    public Either<String, ActionStatus> addExternalReference(ComponentTypeEnum componentType, String userId, String uuid, String componentInstanceName, String objectType, ExternalRefDTO ref) {
-        return this.doAction(componentType, userId, "POST", uuid, componentInstanceName, objectType, ref.getReferenceUUID(), "");
+    @LockingTransactional
+    public Either<String, ActionStatus> addExternalReference(String componentId, ComponentTypeEnum componentType, String userId, String componentInstanceName, String objectType, ExternalRefDTO ref) {
+        return this.doAction(componentId, componentType, userId, "POST", componentId, componentInstanceName, objectType, ref.getReferenceUUID(), "");
     }
 
-    public Either<String, ActionStatus> deleteExternalReference(ComponentTypeEnum componentType, String userId, String uuid, String componentInstanceName, String objectType, String reference) {
-        return this.doAction(componentType, userId, "DELETE", uuid, componentInstanceName, objectType, reference, "");
+    @LockingTransactional
+    public Either<String, ActionStatus> deleteExternalReference(String componentId, ComponentTypeEnum componentType, String userId, String componentInstanceName, String objectType, String reference) {
+        return this.doAction(componentId, componentType, userId, "DELETE", componentId, componentInstanceName, objectType, reference, "");
     }
 
-    public Either<String, ActionStatus> updateExternalReference(ComponentTypeEnum componentType, String userId, String uuid, String componentInstanceName, String objectType, String oldRefValue, String newRefValue) {
-        return this.doAction(componentType, userId, "PUT", uuid, componentInstanceName, objectType, oldRefValue, newRefValue);
+    @LockingTransactional
+    public Either<String, ActionStatus> updateExternalReference(String componentId, ComponentTypeEnum componentType, String userId, String componentInstanceName, String objectType, String oldRefValue, String newRefValue) {
+        return this.doAction(componentId, componentType, userId, "PUT", componentId, componentInstanceName, objectType, oldRefValue, newRefValue);
     }
 
-    private Either<String, ActionStatus> doAction(ComponentTypeEnum componentType, String userId, String action, String uuid, String componentInstanceName, String objectType, String ref1, String ref2){
+    public String fetchComponentUniqueIdByUuid(String uuid, ComponentTypeEnum componentType){
         Either<Component, StorageOperationStatus> latestServiceByUuid = toscaOperationFacade.getLatestComponentByUuid(uuid, createPropsToMatch(componentType));
         if (latestServiceByUuid == null || latestServiceByUuid.isRight()){
-            return Either.right(ActionStatus.RESOURCE_NOT_FOUND);
+            throw new ByActionStatusComponentException(ActionStatus.RESOURCE_NOT_FOUND, uuid);
         }
 
         //Get Component Unique ID
         Component component = latestServiceByUuid.left().value();
-        String uniqueId = component.getUniqueId();
+        return component.getUniqueId();
+    }
 
-        //Lock Asset
-        this.componentLocker.lock(component);
-        this.accessValidations.validateUserCanWorkOnComponent(component, userId, action + " EXTERNAL REF");
 
-        Either<String, ActionStatus> opResult = Either.right(ActionStatus.GENERAL_ERROR);
-        try {
-            switch (action) {
-                case "POST":
-                    opResult = this.externalReferencesOperation.addExternalReferenceWithCommit(uniqueId, componentInstanceName, objectType, ref1);
-                    break;
-                case "PUT":
-                    opResult = this.externalReferencesOperation.updateExternalReferenceWithCommit(uniqueId, componentInstanceName, objectType, ref1, ref2);
-                    break;
-                case "DELETE":
-                    opResult = this.externalReferencesOperation.deleteExternalReferenceWithCommit(uniqueId, componentInstanceName, objectType, ref1);
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            opResult = Either.right(ActionStatus.GENERAL_ERROR);
-            log.error("Failed to execute external ref action:{} on asset:{} component:{} objectType:{}", action, uuid, componentInstanceName, objectType);
-            log.error("Cause is:" , e);
-        } finally {
-            //Unlock Asset
-            this.componentLocker.unlock(uniqueId, componentType);
+    public Either<String, ActionStatus> doAction(String componentId, ComponentTypeEnum componentType, String userId, String action, String uuid, String componentInstanceName, String objectType, String ref1, String ref2){
+
+        accessValidations.validateUserCanWorkOnComponent(componentId, componentType, userId, action + " EXTERNAL REF");
+
+        switch (action) {
+            case "POST":
+                return this.externalReferencesOperation.addExternalReferenceWithCommit(componentId, componentInstanceName, objectType, ref1);
+            case "PUT":
+                return this.externalReferencesOperation.updateExternalReferenceWithCommit(componentId, componentInstanceName, objectType, ref1, ref2);
+            case "DELETE":
+                return this.externalReferencesOperation.deleteExternalReferenceWithCommit(componentId, componentInstanceName, objectType, ref1);
+            default:
+                return Either.right(ActionStatus.GENERAL_ERROR);
         }
-        return opResult;
+
     }
 
     private Map<GraphPropertyEnum, Object> createPropsToMatch(ComponentTypeEnum componentType) {
         Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
-        propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         return propertiesToMatch;
     }
 

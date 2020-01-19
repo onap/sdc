@@ -1,0 +1,1281 @@
+{
+  "configuration": {
+    "resourceTypes": {
+      "VF": "VF",
+      "VFC": "VFC",
+      "Configuration": "Configuration ()",
+      "ServiceProxy": "ServiceProxy ()",
+      "VL": "VL",
+      "VFCMT": "VFCMT",
+      "PNF": "PNF",
+      "CP": "CP",
+      "ABSTRACT": "Abstract (Generic VFC/VF/PNF/Service Type)",
+      "CR": "CR",
+      "CVFC": "CVFC"
+    },
+    "environmentContext": {
+      "defaultValue": "General_Revenue-Bearing",
+      "validValues": [
+        "Critical_Revenue-Bearing",
+        "Vital_Revenue-Bearing",
+        "Essential_Revenue-Bearing",
+        "Important_Revenue-Bearing",
+        "Needed_Revenue-Bearing",
+        "Useful_Revenue-Bearing",
+        "General_Revenue-Bearing",
+        "Critical_Non-Revenue",
+        "Vital_Non-Revenue",
+        "Essential_Non-Revenue",
+        "Important_Non-Revenue",
+        "Needed_Non-Revenue",
+        "Useful_Non-Revenue",
+        "General_Non-Revenue"
+      ]
+    },
+    "heatDeploymentTimeout": {
+      "defaultMinutes": 30,
+      "minMinutes": 2,
+      "maxMinutes": 150
+    },
+    "roles": [
+      "ADMIN",
+      "DESIGNER",
+      "PRODUCT_MANAGER",
+      "PRODUCT_STRATEGIST"
+    ],
+    "componentTypes": [
+      "services",
+      "resources",
+      "products"
+    ],
+    "artifacts": {
+      "other": [
+        {
+          "name": "CHEF"
+        },
+        {
+          "name": "PUPPET"
+        },
+        {
+          "name": "SHELL"
+        },
+        {
+          "name": "YANG"
+        },
+        {
+          "name": "YANG_XML"
+        },
+        {
+          "name": "HEAT"
+        },
+        {
+          "name": "BPEL"
+        },
+        {
+          "name": "DG_XML"
+        },
+        {
+          "name": "MURANO_PKG"
+        },
+        {
+          "name": "WORKFLOW"
+        },
+        {
+          "name": "NETWORK_CALL_FLOW"
+        },
+        {
+          "name": "TOSCA_TEMPLATE"
+        },
+        {
+          "name": "TOSCA_CSAR"
+        },
+        {
+          "name": "AAI_SERVICE_MODEL"
+        },
+        {
+          "name": "AAI_VF_MODEL"
+        },
+        {
+          "name": "AAI_VF_MODULE_MODEL"
+        },
+        {
+          "name": "AAI_VF_INSTANCE_MODEL"
+        },
+        {
+          "name": "OTHER"
+        },
+        {
+          "name": "SNMP_POLL"
+        },
+        {
+          "name": "SNMP_TRAP"
+        },
+        {
+          "name": "GUIDE"
+        }
+      ],
+      "deployment": {
+        "resourceDeploymentArtifacts": {
+          "HEAT": {
+            "acceptedTypes": [
+              "yaml",
+              "yml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "HEAT_VOL": {
+            "acceptedTypes": [
+              "yaml",
+              "yml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "HEAT_NET": {
+            "acceptedTypes": [
+              "yaml",
+              "yml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "HEAT_NESTED": {
+            "acceptedTypes": [
+              "yaml",
+              "yml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "HEAT_ARTIFACT": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "YANG_XML": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "VNF_CATALOG": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "VF_LICENSE": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "VENDOR_LICENSE": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "MODEL_INVENTORY_PROFILE": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "MODEL_QUERY_SPEC": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "LIFECYCLE_OPERATIONS": {
+            "acceptedTypes": [
+              "yaml",
+              "yml"
+            ],
+            "validForResourceTypes": [
+              "VF",
+              "VFC"
+            ]
+          },
+          "VES_EVENTS": {
+            "acceptedTypes": [
+              "yaml",
+              "yml"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "PERFORMANCE_COUNTER": {
+            "acceptedTypes": [
+              "csv"
+            ],
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "APPC_CONFIG": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VF"
+            ]
+          },
+          "DCAE_TOSCA": {
+            "acceptedTypes": [
+              "yml",
+              "yaml"
+            ],
+            "validForResourceTypes": [
+              "VF",
+              "VFCMT"
+            ]
+          },
+          "DCAE_JSON": {
+            "acceptedTypes": [
+              "json"
+            ],
+            "validForResourceTypes": [
+              "VF",
+              "VFCMT"
+            ]
+          },
+          "DCAE_POLICY": {
+            "acceptedTypes": [
+              "emf"
+            ],
+            "validForResourceTypes": [
+              "VF",
+              "VFCMT"
+            ]
+          },
+          "DCAE_DOC": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VF",
+              "VFCMT"
+            ]
+          },
+          "DCAE_EVENT": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VF",
+              "VFCMT"
+            ]
+          },
+          "AAI_VF_MODEL": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": [
+              "VF"
+            ]
+          },
+          "AAI_VF_MODULE_MODEL": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": [
+              "VF"
+            ]
+          },
+          "OTHER": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "SNMP_POLL": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "SNMP_TRAP": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          }
+        },
+        "serviceDeploymentArtifacts": {
+          "YANG_XML": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": null
+          },
+          "VNF_CATALOG": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": null
+          },
+          "MODEL_INVENTORY_PROFILE": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": null
+          },
+          "MODEL_QUERY_SPEC": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": null
+          },
+          "AAI_SERVICE_MODEL": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": null
+          },
+          "AAI_VF_MODULE_MODEL": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": null
+          },
+          "AAI_VF_INSTANCE_MODEL": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": null
+          },
+          "UCPE_LAYER_2_CONFIGURATION": {
+            "acceptedTypes": [
+              "xml"
+            ],
+            "validForResourceTypes": null
+          },
+          "OTHER": {
+            "acceptedTypes": null,
+            "validForResourceTypes": null
+          }
+        },
+        "resourceInstanceDeploymentArtifacts": {
+          "HEAT_ENV": {
+            "acceptedTypes": [
+              "env"
+            ],
+            "validForResourceTypes": null
+          },
+          "VF_MODULES_METADATA": {
+            "acceptedTypes": [
+              "json"
+            ],
+            "validForResourceTypes": null
+          },
+          "VES_EVENTS": {
+            "acceptedTypes": [
+              "yaml",
+              "yml"
+            ],
+            "validForResourceTypes": null
+          },
+          "PERFORMANCE_COUNTER": {
+            "acceptedTypes": [
+              "csv"
+            ],
+            "validForResourceTypes": null
+          },
+          "DCAE_INVENTORY_TOSCA": {
+            "acceptedTypes": [
+              "yml",
+              "yaml"
+            ],
+            "validForResourceTypes": null
+          },
+          "DCAE_INVENTORY_JSON": {
+            "acceptedTypes": [
+              "json"
+            ],
+            "validForResourceTypes": null
+          },
+          "DCAE_INVENTORY_POLICY": {
+            "acceptedTypes": [
+              "emf"
+            ],
+            "validForResourceTypes": null
+          },
+          "DCAE_INVENTORY_DOC": {
+            "acceptedTypes": null,
+            "validForResourceTypes": null
+          },
+          "DCAE_INVENTORY_BLUEPRINT": {
+            "acceptedTypes": null,
+            "validForResourceTypes": null
+          },
+          "DCAE_INVENTORY_EVENT": {
+            "acceptedTypes": null,
+            "validForResourceTypes": null
+          },
+          "SNMP_POLL": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          },
+          "SNMP_TRAP": {
+            "acceptedTypes": null,
+            "validForResourceTypes": [
+              "VFC",
+              "CP",
+              "VL",
+              "VF",
+              "CR",
+              "VFCMT",
+              "Abstract",
+              "CVFC"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "categories": {
+    "resourceCategories": [
+      {
+        "name": "Generic",
+        "normalizedName": "generic",
+        "uniqueId": "resourceNewCategory.generic",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "Network Elements",
+            "normalizedName": "network elements",
+            "uniqueId": "resourceNewCategory.generic.network elements",
+            "icons": [
+              "network",
+              "connector"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Network Service",
+            "normalizedName": "network service",
+            "uniqueId": "resourceNewCategory.generic.network service",
+            "icons": [
+              "network"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Abstract",
+            "normalizedName": "abstract",
+            "uniqueId": "resourceNewCategory.generic.abstract",
+            "icons": [
+              "objectStorage",
+              "compute"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Infrastructure",
+            "normalizedName": "infrastructure",
+            "uniqueId": "resourceNewCategory.generic.infrastructure",
+            "icons": [
+              "connector"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Database",
+            "normalizedName": "database",
+            "uniqueId": "resourceNewCategory.generic.database",
+            "icons": [
+              "database"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Rules",
+            "normalizedName": "rules",
+            "uniqueId": "resourceNewCategory.generic.rules",
+            "icons": [
+              "networkrules",
+              "securityrules"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Network L2-3",
+        "normalizedName": "network l2-3",
+        "uniqueId": "resourceNewCategory.network l2-3",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "WAN Connectors",
+            "normalizedName": "wan connectors",
+            "uniqueId": "resourceNewCategory.network l2-3.wan connectors",
+            "icons": [
+              "network",
+              "connector",
+              "port"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Infrastructure",
+            "normalizedName": "infrastructure",
+            "uniqueId": "resourceNewCategory.network l2-3.infrastructure",
+            "icons": [
+              "ucpe"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "LAN Connectors",
+            "normalizedName": "lan connectors",
+            "uniqueId": "resourceNewCategory.network l2-3.lan connectors",
+            "icons": [
+              "network",
+              "connector",
+              "port"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Gateway",
+            "normalizedName": "gateway",
+            "uniqueId": "resourceNewCategory.network l2-3.gateway",
+            "icons": [
+              "gateway"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Router",
+            "normalizedName": "router",
+            "uniqueId": "resourceNewCategory.network l2-3.router",
+            "icons": [
+              "router",
+              "vRouter"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "DCAE Component",
+        "normalizedName": "dcae component",
+        "uniqueId": "resourceNewCategory.dcae component",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "Microservice",
+            "normalizedName": "microservice",
+            "uniqueId": "resourceNewCategory.dcae component.microservice",
+            "icons": [
+              "dcae_microservice"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Utility",
+            "normalizedName": "utility",
+            "uniqueId": "resourceNewCategory.dcae component.utility",
+            "icons": [
+              "dcae_utilty"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Database",
+            "normalizedName": "database",
+            "uniqueId": "resourceNewCategory.dcae component.database",
+            "icons": [
+              "dcae_database"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Source",
+            "normalizedName": "source",
+            "uniqueId": "resourceNewCategory.dcae component.source",
+            "icons": [
+              "dcae_source"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Machine Learning",
+            "normalizedName": "machine learning",
+            "uniqueId": "resourceNewCategory.dcae component.machine learning",
+            "icons": [
+              "dcae_machineLearning"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Collector",
+            "normalizedName": "collector",
+            "uniqueId": "resourceNewCategory.dcae component.collector",
+            "icons": [
+              "dcae_collector"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Analytics",
+            "normalizedName": "analytics",
+            "uniqueId": "resourceNewCategory.dcae component.analytics",
+            "icons": [
+              "dcae_analytics"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Policy",
+            "normalizedName": "policy",
+            "uniqueId": "resourceNewCategory.dcae component.policy",
+            "icons": [
+              "dcae_policy"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Application L4+",
+        "normalizedName": "application l4+",
+        "uniqueId": "resourceNewCategory.application l4+",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "Call Control",
+            "normalizedName": "call control",
+            "uniqueId": "resourceNewCategory.application l4+.call control",
+            "icons": [
+              "call_controll"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Border Element",
+            "normalizedName": "border element",
+            "uniqueId": "resourceNewCategory.application l4+.border element",
+            "icons": [
+              "borderElement"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Web Server",
+            "normalizedName": "web server",
+            "uniqueId": "resourceNewCategory.application l4+.web server",
+            "icons": [
+              "applicationServer"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Load Balancer",
+            "normalizedName": "load balancer",
+            "uniqueId": "resourceNewCategory.application l4+.load balancer",
+            "icons": [
+              "loadBalancer"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Database",
+            "normalizedName": "database",
+            "uniqueId": "resourceNewCategory.application l4+.database",
+            "icons": [
+              "database"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Application Server",
+            "normalizedName": "application server",
+            "uniqueId": "resourceNewCategory.application l4+.application server",
+            "icons": [
+              "applicationServer"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Firewall",
+            "normalizedName": "firewall",
+            "uniqueId": "resourceNewCategory.application l4+.firewall",
+            "icons": [
+              "firewall"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Media Servers",
+            "normalizedName": "media servers",
+            "uniqueId": "resourceNewCategory.application l4+.media servers",
+            "icons": [
+              "applicationServer"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Configuration",
+        "normalizedName": "configuration",
+        "uniqueId": "resourceNewCategory.configuration",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "Configuration",
+            "normalizedName": "configuration",
+            "uniqueId": "resourceNewCategory.configuration.configuration",
+            "icons": [
+              "pmc"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Template",
+        "normalizedName": "template",
+        "uniqueId": "resourceNewCategory.template",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "Base Monitoring Template",
+            "normalizedName": "base monitoring template",
+            "uniqueId": "resourceNewCategory.template.base monitoring template",
+            "icons": [
+              "monitoring_template"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Monitoring Template",
+            "normalizedName": "monitoring template",
+            "uniqueId": "resourceNewCategory.template.monitoring template",
+            "icons": [
+              "monitoring_template"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Network Connectivity",
+        "normalizedName": "network connectivity",
+        "uniqueId": "resourceNewCategory.network connectivity",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "Connection Points",
+            "normalizedName": "connection points",
+            "uniqueId": "resourceNewCategory.network connectivity.connection points",
+            "icons": [
+              "cp"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Virtual Links",
+            "normalizedName": "virtual links",
+            "uniqueId": "resourceNewCategory.network connectivity.virtual links",
+            "icons": [
+              "vl"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Network L4+",
+        "normalizedName": "network l4+",
+        "uniqueId": "resourceNewCategory.network l4+",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "Common Network Resources",
+            "normalizedName": "common network resources",
+            "uniqueId": "resourceNewCategory.network l4+.common network resources",
+            "icons": [
+              "network"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Allotted Resource",
+        "normalizedName": "allotted resource",
+        "uniqueId": "resourceNewCategory.allotted resource",
+        "icons": null,
+        "subcategories": [
+          {
+            "name": "Service Admin",
+            "normalizedName": "service admin",
+            "uniqueId": "resourceNewCategory.allotted resource.service admin",
+            "icons": [
+              "service_admin"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Security Zone",
+            "normalizedName": "security zone",
+            "uniqueId": "resourceNewCategory.allotted resource.security zone",
+            "icons": [
+              "security_zone"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "IP Mux Demux",
+            "normalizedName": "ip mux demux",
+            "uniqueId": "resourceNewCategory.allotted resource.ip mux demux",
+            "icons": [
+              "ip_mux_demux"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Allotted Resource",
+            "normalizedName": "allotted resource",
+            "uniqueId": "resourceNewCategory.allotted resource.allotted resource",
+            "icons": [
+              "allotted_resource"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Contrail Route",
+            "normalizedName": "contrail route",
+            "uniqueId": "resourceNewCategory.allotted resource.contrail route",
+            "icons": [
+              "contrail_route"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          },
+          {
+            "name": "Tunnel XConnect",
+            "normalizedName": "tunnel xconnect",
+            "uniqueId": "resourceNewCategory.allotted resource.tunnel xconnect",
+            "icons": [
+              "tunnel_x_connect"
+            ],
+            "groupings": null,
+            "version": null,
+            "ownerId": null,
+            "empty": false,
+            "type": null
+          }
+        ],
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      }
+    ],
+    "serviceCategories": [
+      {
+        "name": "E2E Service",
+        "normalizedName": "e2e service",
+        "uniqueId": "serviceNewCategory.e2e service",
+        "icons": [
+          "network_l_1-3"
+        ],
+        "subcategories": null,
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "VoIP Call Control",
+        "normalizedName": "voip call control",
+        "uniqueId": "serviceNewCategory.voip call control",
+        "icons": [
+          "call_controll"
+        ],
+        "subcategories": null,
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Network L1-3",
+        "normalizedName": "network l1-3",
+        "uniqueId": "serviceNewCategory.network l1-3",
+        "icons": [
+          "network_l_1-3"
+        ],
+        "subcategories": null,
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Network L4+",
+        "normalizedName": "network l4+",
+        "uniqueId": "serviceNewCategory.network l4+",
+        "icons": [
+          "network_l_4"
+        ],
+        "subcategories": null,
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Network Service",
+        "normalizedName": "network service",
+        "uniqueId": "serviceNewCategory.network service",
+        "icons": [
+          "network_l_1-3"
+        ],
+        "subcategories": null,
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      },
+      {
+        "name": "Mobility",
+        "normalizedName": "mobility",
+        "uniqueId": "serviceNewCategory.mobility",
+        "icons": [
+          "mobility"
+        ],
+        "subcategories": null,
+        "version": null,
+        "ownerId": null,
+        "empty": false,
+        "type": null
+      }
+    ],
+    "productCategories": []
+  },
+  "version": "1.3.0-SNAPSHOT"
+}

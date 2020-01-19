@@ -19,43 +19,45 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { TranslateService, ITranslateArgs } from "./translate.service";
+import { ITranslateArgs, TranslateService } from './translate.service';
 
+// tslint:disable-next-line:interface-name
+interface ITranslateParams {
+    phrase: string;
+    args: ITranslateArgs;
+    language: string;
+}
 
 @Pipe({
     name: 'translate',
     pure: false
 })
 export class TranslatePipe implements PipeTransform {
-    private translated:string;
-    private lastParams: {
-        phrase: string;
-        args: {[index: string]: any};
-        language: string;
-    } = {
+    private translated: string;
+    private lastParams: ITranslateParams = {
         phrase: undefined,
         args: undefined,
         language: undefined
     };
 
-    constructor(private translateService:TranslateService) {
+    constructor(private translateService: TranslateService) {
     }
 
-    private shouldUpdate(curParams:{[index:string]: any}) : boolean {
-        return (
-            curParams.language !== this.lastParams.language ||
-            curParams.args !== this.lastParams.args ||
-            curParams.phrase !== this.lastParams.phrase
-        );
-    }
-
-    public transform(phrase:string, args:ITranslateArgs, language:string=this.translateService.activeLanguage) : string {
-        const curParams = { phrase, args, language };
+    public transform(phrase: string, args: ITranslateArgs, language: string = this.translateService.activeLanguage): string {
+        const curParams: ITranslateParams = { phrase, args, language };
         if (this.shouldUpdate(curParams)) {
             this.lastParams = curParams;
             this.translated = this.translateService.translate(phrase, args, language);
         }
 
         return this.translated;
+    }
+
+    private shouldUpdate(curParams: ITranslateParams): boolean {
+        return (
+            curParams.language !== this.lastParams.language ||
+            curParams.args !== this.lastParams.args ||
+            curParams.phrase !== this.lastParams.phrase
+        );
     }
 }

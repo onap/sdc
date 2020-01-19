@@ -19,14 +19,17 @@
  */
 
 import * as _ from "lodash";
-import {Component, Inject, Input, Output, EventEmitter} from "@angular/core";
+import {Component, Inject, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges} from "@angular/core";
 import {IHostedApplication, IUserProperties} from "app/models";
 import {MenuItemGroup, MenuItem} from "app/utils";
-import {UserService} from "../../../services/user.service";
+import {AuthenticationService} from "../../../services/authentication.service";
 import {SdcConfigToken, ISdcConfig} from "../../../config/sdc-config.config";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {PluginsConfiguration, Plugin} from "app/models";
-
+import { Subscription } from "rxjs";
+// import { Store } from "@ngrx/store";
+// import { AppState } from "app/ng2/store/app.state";
+// import * as unsavedChangesReducer from 'app/ng2/store/reducers/unsaved-changes.reducer';
 
 declare const window:any;
 @Component({
@@ -34,7 +37,7 @@ declare const window:any;
     templateUrl: './top-nav.component.html',
     styleUrls:['./top-nav.component.less']
 })
-export class TopNavComponent {
+export class TopNavComponent implements OnInit, OnChanges {
     @Input() public version:string;
     @Input() public menuModel:Array<MenuItemGroup>;
     @Input() public topLvlSelectedIndex:number;
@@ -48,15 +51,18 @@ export class TopNavComponent {
         this.searchTermChange.emit(event);
     }
 
+    private subscription: Subscription;
+    private hasUnsavedChanges: boolean;
     public topLvlMenu:MenuItemGroup;
     public user:IUserProperties;
     private topNavPlugins: Array<Plugin>;
 
     constructor(private translateService:TranslateService,
                 @Inject('$state') private $state:ng.ui.IStateService,
-                private userService:UserService,
+                private authService:AuthenticationService,
                 @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
         window.nav = this;
+
     }
 
     private _getTopLvlSelectedIndexByState = ():number => {
@@ -112,7 +118,7 @@ export class TopNavComponent {
 
     ngOnInit() {
         console.log('Nav is init!', this.menuModel);
-        this.user = this.userService.getLoggedinUser();
+        this.user = this.authService.getLoggedinUser();
         this.topNavPlugins = _.filter(PluginsConfiguration.plugins, (plugin: Plugin) => {
             return plugin.pluginDisplayOptions["tab"] !== undefined;
         });
@@ -142,7 +148,6 @@ export class TopNavComponent {
 
             this.topLvlMenu = new MenuItemGroup(0, tmpArray, true);
             this.topLvlMenu.selectedIndex = isNaN(this.topLvlSelectedIndex) ? this._getTopLvlSelectedIndexByState() : this.topLvlSelectedIndex;
-
             this.generateMenu();
         });
     }
@@ -159,6 +164,7 @@ export class TopNavComponent {
             resolve(true);
         });
     }
+
 
     menuItemClick(itemGroup:MenuItemGroup, item:MenuItem) {
 

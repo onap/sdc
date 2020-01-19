@@ -41,90 +41,89 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class PluginStatusBLTest {
 
-	final static CloseableHttpClient httpClient = Mockito.mock(CloseableHttpClient.class);
-	PluginStatusBL pluginStatusBL = new PluginStatusBL(httpClient);
-	private static  Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    final static CloseableHttpClient httpClient = Mockito.mock(CloseableHttpClient.class);
+    PluginStatusBL pluginStatusBL = new PluginStatusBL(httpClient);
+    private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-	final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
-	final static PluginsConfiguration pluginsConfiguration = Mockito.mock(PluginsConfiguration.class);
-	final static Plugin offlinePlugin = new Plugin();
-	final static Plugin onlinePlugin = new Plugin();
-	final static CloseableHttpResponse httpResponse = Mockito.mock(CloseableHttpResponse.class);
-	final static StatusLine statusLine = Mockito.mock(StatusLine.class); 
-	static List<Plugin> testPluginsList = new ArrayList<>();
-	static List<Plugin> assertPluginList = new ArrayList<>();
+    final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
+    final static PluginsConfiguration pluginsConfiguration = Mockito.mock(PluginsConfiguration.class);
+    final static Plugin offlinePlugin = new Plugin();
+    final static Plugin onlinePlugin = new Plugin();
+    final static CloseableHttpResponse httpResponse = Mockito.mock(CloseableHttpResponse.class);
+    final static StatusLine statusLine = Mockito.mock(StatusLine.class);
+    static List<Plugin> testPluginsList = new ArrayList<>();
+    static List<Plugin> assertPluginList = new ArrayList<>();
 
-	final static String offlinePluginsDisplayName = "offlinePlugin";
-	final static String offlinePluginDiscoveryPath = "http://192.168.10.1:1000/offline";
+    final static String offlinePluginsDisplayName = "offlinePlugin";
+    final static String offlinePluginDiscoveryPath = "http://192.168.10.1:1000/offline";
 
-	final static String onlinePluginDisplayName = "onlinePlugin";
-	final static String onlinePluginDiscoveryPath = "http://192.168.10.1:2000/online";
+    final static String onlinePluginDisplayName = "onlinePlugin";
+    final static String onlinePluginDiscoveryPath = "http://192.168.10.1:2000/online";
 
-	@BeforeClass
-	public static void beforeClass() {
-		ConfigurationManager.setTestInstance(configurationManager);
-		when(configurationManager.getPluginsConfiguration()).thenReturn(pluginsConfiguration);
-		
-		offlinePlugin.setPluginId(offlinePluginsDisplayName);
-		offlinePlugin.setPluginDiscoveryUrl(offlinePluginDiscoveryPath);
+    @BeforeClass
+    public static void beforeClass() {
+        ConfigurationManager.setTestInstance(configurationManager);
+        when(configurationManager.getPluginsConfiguration()).thenReturn(pluginsConfiguration);
 
-		onlinePlugin.setPluginId(onlinePluginDisplayName);
-		onlinePlugin.setPluginDiscoveryUrl(onlinePluginDiscoveryPath);
-	}
+        offlinePlugin.setPluginId(offlinePluginsDisplayName);
+        offlinePlugin.setPluginDiscoveryUrl(offlinePluginDiscoveryPath);
 
-	@Before
-	public void beforeTest() {
-		testPluginsList = new ArrayList<>();
-		assertPluginList = new ArrayList<>();
-	}
+        onlinePlugin.setPluginId(onlinePluginDisplayName);
+        onlinePlugin.setPluginDiscoveryUrl(onlinePluginDiscoveryPath);
+    }
 
-	@Test
-	public void TestPluginsConfigurationListReturnsWithWantedPlugins() {
-		testPluginsList.add(offlinePlugin);
-		testPluginsList.add(onlinePlugin);
-		when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
+    @Before
+    public void beforeTest() {
+        testPluginsList = new ArrayList<>();
+        assertPluginList = new ArrayList<>();
+    }
 
-		assertPluginList.add(offlinePlugin);
-		assertPluginList.add(onlinePlugin);
+    @Test
+    public void TestPluginsConfigurationListReturnsWithWantedPlugins() {
+        testPluginsList.add(offlinePlugin);
+        testPluginsList.add(onlinePlugin);
+        when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
 
-		String result = gson.toJson(assertPluginList);
-		String actualResult = pluginStatusBL.getPluginsList();
+        assertPluginList.add(offlinePlugin);
+        assertPluginList.add(onlinePlugin);
 
-		assertEquals(actualResult, result);
-	}
+        String result = gson.toJson(assertPluginList);
+        String actualResult = pluginStatusBL.getPluginsList();
 
-	@Test
-	public void TestGetPluginAvailabilityShouldReturnFalseWhenPluginIsOffline() throws ClientProtocolException, IOException {
-		testPluginsList.add(offlinePlugin);
-		when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
-		
-		when(statusLine.getStatusCode()).thenReturn(404);		
-		when(httpResponse.getStatusLine()).thenReturn(statusLine);		
-		when(httpClient.execute(Mockito.any(HttpHead.class))).thenReturn(httpResponse);
+        assertEquals(actualResult, result);
+    }
 
-		String result = gson.toJson(false);
-		String actualResult = pluginStatusBL.getPluginAvailability(offlinePlugin.getPluginId());
+    @Test
+    public void TestGetPluginAvailabilityShouldReturnFalseWhenPluginIsOffline() throws ClientProtocolException, IOException {
+        testPluginsList.add(offlinePlugin);
+        when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
 
-		assertEquals(actualResult, result);
-	}
-	
-	@Test
-	public void TestOnlinePluginBeingReturnedWithIsOnlineValueTrue() throws ClientProtocolException, IOException {
-		testPluginsList.add(onlinePlugin);
-		when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
-		
-		when(statusLine.getStatusCode()).thenReturn(200);		
-		when(httpResponse.getStatusLine()).thenReturn(statusLine);		
-		when(httpClient.execute(Mockito.any())).thenReturn(httpResponse);
+        when(statusLine.getStatusCode()).thenReturn(404);
+        when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        when(httpClient.execute(Mockito.any(HttpHead.class))).thenReturn(httpResponse);
 
-		String result = gson.toJson(true);
-		String actualResult = pluginStatusBL.getPluginAvailability(onlinePlugin.getPluginId());
+        String result = gson.toJson(false);
+        String actualResult = pluginStatusBL.getPluginAvailability(offlinePlugin.getPluginId());
 
-		assertEquals(actualResult, result);
-	}
+        assertEquals(actualResult, result);
+    }
+
+    @Test
+    public void TestOnlinePluginBeingReturnedWithIsOnlineValueTrue() throws ClientProtocolException, IOException {
+        testPluginsList.add(onlinePlugin);
+        when(pluginsConfiguration.getPluginsList()).thenReturn(testPluginsList);
+
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        when(httpClient.execute(Mockito.any())).thenReturn(httpResponse);
+
+        String result = gson.toJson(true);
+        String actualResult = pluginStatusBL.getPluginAvailability(onlinePlugin.getPluginId());
+
+        assertEquals(actualResult, result);
+    }
 }

@@ -119,9 +119,8 @@ public class UpgradeOperationTest extends ModelTestBase {
     private void initGraphForTest() {
 
         user = new User("Jim", "Tom", "jt123a", "1@mail.com", "DESIGNER", System.currentTimeMillis());
-        Either<User, StorageOperationStatus> saveUserData = userAdminOperation.saveUserData(user);
-        assertThat(saveUserData.isLeft()).isTrue();
-        
+        userAdminOperation.saveUserData(user);
+
         GraphTestUtils.createRootCatalogVertex(janusGraphDao);
         resourceCategory = createResourceCategories();
         serviceCategory = createServiceCategory(); 

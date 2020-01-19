@@ -19,14 +19,28 @@
  */
 package org.openecomp.sdc.be.components.impl.exceptions;
 
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 public class ByResponseFormatComponentException extends ComponentException {
 
     private final transient ResponseFormat responseFormat;
+    private final ActionStatus actionStatus;
+    private final String[] params;
 
-    public ByResponseFormatComponentException(ResponseFormat responseFormat) {
+    public ByResponseFormatComponentException(ResponseFormat responseFormat, String... params) {
+        super(responseFormat);
         this.responseFormat = responseFormat;
+        this.params = params.clone();
+        this.actionStatus = ActionStatus.OK;
+    }
+
+    public String[] getParams() {
+        return params.clone();
+    }
+
+    public ActionStatus getActionStatus(){
+        return actionStatus;
     }
 
     @Override

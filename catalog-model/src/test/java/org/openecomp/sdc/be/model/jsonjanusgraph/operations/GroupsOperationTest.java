@@ -117,7 +117,7 @@ public class GroupsOperationTest extends ModelTestBase {
     private GroupDefinition createGroupDefinition(String id) {
         GroupDefinition groupDefinition = new GroupDefinition();
         groupDefinition.setUniqueId(id);
-        groupDefinition.setName("name" + id);
+        groupDefinition.setInvariantName("name" + id);
         return groupDefinition;
     }
 

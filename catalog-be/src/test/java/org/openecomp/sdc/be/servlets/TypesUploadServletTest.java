@@ -31,6 +31,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -65,7 +66,6 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class TypesUploadServletTest extends JerseyTest {
@@ -94,8 +94,7 @@ public class TypesUploadServletTest extends JerseyTest {
         User user = new User();
         user.setUserId(userId);
         user.setRole(Role.ADMIN.name());
-        Either<User, ActionStatus> eitherUser = Either.left(user);
-        when(userAdmin.getUser(userId, false)).thenReturn(eitherUser);
+        when(userAdmin.getUser(userId)).thenReturn(user);
         when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(userId);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.CREATED_201);
         when(componentUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(responseFormat);
@@ -112,7 +111,7 @@ public class TypesUploadServletTest extends JerseyTest {
 
         Response response = target().path("/v1/catalog/uploadType/capability").request(MediaType.APPLICATION_JSON).post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
 
-        assertEquals(HttpStatus.CREATED_201, response.getStatus());
+        assertEquals(response.getStatus(), HttpStatus.CREATED_201);
 
     }
 

@@ -87,7 +87,7 @@ public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMo
         ditributionId = "did";
         serviceId = "serviceId";
 
-        when(userValidations.validateUserExists(Mockito.eq(uId), eq(ditributionId), anyBoolean()))
+        when(userValidations.validateUserExists(Mockito.eq(uId)))
                 .thenReturn(user);
     }
 

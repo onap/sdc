@@ -33,7 +33,7 @@ public class EcompRoleConverterTest {
 
 		// test 1
 		for (Role iterable_element : Role.values()) {
-			ecompRole.setId(new Long(iterable_element.ordinal()));
+			ecompRole.setName(iterable_element.name());
 			EcompRoleConverter.convertEcompRoleToRole(ecompRole);
 		}
 		

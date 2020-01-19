@@ -62,7 +62,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -130,6 +130,10 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         CapabilityTypeDefinition capabilityTypeDefinition = createCapabilityTypeDef("tosca.capabilities.Container2", "desc1", "derivedFrom");
 
         Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        // assertEquals("check capability type parent not exist",
+        // StorageOperationStatus.INVALID_ID,
+        // addCapabilityType1.right().value());
+        // TODO: esofer change to INVALID_ID
         assertEquals("check capability type parent not exist", StorageOperationStatus.NOT_FOUND, addCapabilityType1.right().value());
     }
 
@@ -510,4 +514,5 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
             return false;
         }
     }
+
 }

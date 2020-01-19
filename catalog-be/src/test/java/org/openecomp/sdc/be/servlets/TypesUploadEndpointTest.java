@@ -49,6 +49,7 @@ import org.openecomp.sdc.be.model.operations.impl.CommonTypeOperations;
 import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.AnnotationTypeData;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -86,7 +87,9 @@ public class TypesUploadEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         TypesUploadEndpoint typesUploadEndpoint() {
-            return new TypesUploadEndpoint(commonImportManager(), annotationTypeOperations(), accessValidations);
+            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+            return new TypesUploadEndpoint(userBusinessLogic, componentsUtils, commonImportManager(), annotationTypeOperations(), accessValidations);
         }
 
         @Bean

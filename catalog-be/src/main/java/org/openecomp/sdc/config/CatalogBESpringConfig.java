@@ -21,12 +21,19 @@
  */
 package org.openecomp.sdc.config;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
+import org.onap.sdc.security.PortalClient;
 import org.openecomp.sdc.be.auditing.impl.ConfigurationProvider;
 import org.openecomp.sdc.be.components.impl.ComponentLocker;
+import org.openecomp.sdc.be.components.impl.aaf.RoleAuthorizationHandler;
 import org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
-import org.openecomp.sdc.common.transaction.mngr.TransactionManager;
+import org.openecomp.sdc.be.filters.FilterConfiguration;
+import org.openecomp.sdc.be.filters.PortalConfiguration;
+import org.openecomp.sdc.be.filters.ThreadLocalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,19 +42,26 @@ import org.springframework.core.annotation.Order;
 
 @Configuration
 @ComponentScan({"org.openecomp.sdc.be.user",
+        "org.openecomp.sdc.be.facade.operations",
         "org.openecomp.sdc.be.impl",
         "org.openecomp.sdc.be.auditing.impl",
         "org.openecomp.sdc.be.distribution",
         "org.openecomp.sdc.be.switchover.detector",
         "org.openecomp.sdc.be.tosca",
         "org.openecomp.sdc.be.components.validation",
+        "org.openecomp.sdc.be.catalog.impl",
         "org.openecomp.sdc.be.components.impl",
         "org.openecomp.sdc.be.components.path",
         "org.openecomp.sdc.be.components.merge",
         "org.openecomp.sdc.be.components.csar",
         "org.openecomp.sdc.be.components.property",
         "org.openecomp.sdc.be.datamodel.utils",
-        "org.openecomp.sdc.be.components.upgrade"})
+        "org.openecomp.sdc.be.components.upgrade",
+        "org.openecomp.sdc.be.externalapi.servlet",
+        "org.openecomp.sdc.be.servlets",
+        "org.openecomp.sdc.be.filters",
+        "org.openecomp.sdc.be.togglz"
+})
 public class CatalogBESpringConfig {
 
     private static final int BEFORE_TRANSACTION_MANAGER = 0;
@@ -68,11 +82,6 @@ public class CatalogBESpringConfig {
         return new ConfigurationProvider();
     }
 
-    @Bean(name = "transactionManager")
-    public TransactionManager transactionManager() {
-        return new TransactionManager();
-    }
-
     @Bean(name = "asset-metadata-utils")
     public AssetMetadataConverter assetMetadataConverter() {
         return new AssetMetadataConverter();
@@ -84,5 +93,32 @@ public class CatalogBESpringConfig {
         return new ComponentLockAspect(componentLocker);
     }
 
+    @Bean
+    public RoleAuthorizationHandler roleAuthorizationHandler() {return new RoleAuthorizationHandler();}
+
+    @Bean
+    public CloseableHttpClient httpClientConnectionManager() {
+        HttpClientFactory httpClientFactory = new HttpClientFactory();
+        return httpClientFactory.createHttpClient();
+    }
+
+    @Bean
+    public PortalConfiguration portalConfiguration() throws CipherUtilException {return new PortalConfiguration();}
+
+    @Bean
+    public FilterConfiguration filterConfiguration() {return new FilterConfiguration(configuration());}
+
+    @Bean
+    public ThreadLocalUtils threadLocalUtils() {return new ThreadLocalUtils();}
+
+    @Bean
+    public PortalClient portalClient() throws CipherUtilException {
+        return new PortalClient(httpClientConnectionManager(), portalConfiguration());
+    }
+
+    @Bean
+    public org.openecomp.sdc.be.config.Configuration configuration(){
+        return ConfigurationManager.getConfigurationManager().getConfiguration();
+    }
 
 }

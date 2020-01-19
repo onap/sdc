@@ -24,34 +24,35 @@ import fj.data.Either;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
+import org.openecomp.sdc.asdctool.migration.tasks.InstanceMigrationBase;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 @Component
-public class SDCInstancesMigration implements Migration {
+public class SDCInstancesMigration extends InstanceMigrationBase implements Migration {
 
-    private JanusGraphDao janusGraphDao;
     private NodeTemplateOperation nodeTemplateOperation;
 
     private static final Logger log = Logger.getLogger(SDCInstancesMigration.class);
@@ -62,7 +63,7 @@ public class SDCInstancesMigration implements Migration {
  
  
     public SDCInstancesMigration(JanusGraphDao janusGraphDao, NodeTemplateOperation nodeTemplateOperation) {
-        this.janusGraphDao = janusGraphDao;
+        super(janusGraphDao);
         this.nodeTemplateOperation = nodeTemplateOperation;
     }
 
@@ -78,41 +79,14 @@ public class SDCInstancesMigration implements Migration {
 
     @Override
     public MigrationResult migrate() {
-        StorageOperationStatus status = connectAllContainers();
-
+        StorageOperationStatus status = upgradeTopologyTemplates();
         return status == StorageOperationStatus.OK ? MigrationResult.success() : MigrationResult.error("failed to create connection between instances and origins. Error : " + status);
     }
 
-    private StorageOperationStatus connectAllContainers() {
-        StorageOperationStatus status;
-        Map<GraphPropertyEnum, Object> hasNotProps = new EnumMap<>(GraphPropertyEnum.class);
-        hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
-        hasNotProps.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.CVFC);
-
-        status = janusGraphDao
-            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, null, hasNotProps, JsonParseFlagEnum.ParseAll)
-                .either(this::connectAll, this::handleError);
-        return status;
-    }
-
-    private StorageOperationStatus handleError(JanusGraphOperationStatus err) {
-        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
-            JanusGraphOperationStatus.NOT_FOUND == err ? JanusGraphOperationStatus.OK : err);
-    }
-
-    private StorageOperationStatus connectAll(List<GraphVertex> containersV) {
+    protected StorageOperationStatus handleOneContainer(GraphVertex containerVorig) {
         StorageOperationStatus status = StorageOperationStatus.OK;
-        for (GraphVertex container : containersV) {
-            status = handleOneContainer(container);
-            if (status != StorageOperationStatus.OK) {
-                break;
-            }
-        }
-        return status;
-    }
 
-    private StorageOperationStatus handleOneContainer(GraphVertex containerV) {
-        StorageOperationStatus status = StorageOperationStatus.OK;
+        GraphVertex containerV = getVertexById(containerVorig.getUniqueId());
 
         boolean needConnectAllotted = false;
         ComponentTypeEnum componentType = containerV.getType();
@@ -153,6 +127,7 @@ public class SDCInstancesMigration implements Migration {
         }
         return status;
     }
+
 
     private Either<Map<String, MapPropertiesDataDefinition>, StorageOperationStatus> getInstProperties(GraphVertex containerV) {
         Map<String, MapPropertiesDataDefinition> instanceProperties;

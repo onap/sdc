@@ -20,6 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.components;
 
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
+
+
+
 public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefinition {
     private static final String EMPTY_STR = "";
 
@@ -27,6 +32,7 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
     private String serviceType;
     private String serviceRole;
     private String instantiationType = EMPTY_STR;
+	private String serviceFunction;
 
     private Boolean ecompGeneratedNaming = true;
 
@@ -38,12 +44,22 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
         super();
         serviceType = "";
         serviceRole = "";
+		serviceFunction = "";
     }
+
 
     public ServiceMetadataDataDefinition(ServiceMetadataDataDefinition other) {
         super(other);
         serviceType = other.getServiceType();
         serviceRole = other.getServiceRole();
+		serviceFunction = other.getServiceFunction();
+	}
+
+	public ServiceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
+		super(extractor);
+		serviceType = extractor.getServiceType();
+		serviceRole = extractor.getServiceRole();
+		serviceFunction = extractor.getServiceFunction();
     }
 
     public String getDistributionStatus() {
@@ -82,6 +98,10 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
         return ecompGeneratedNaming;
     }
 
+	public Boolean getEcompGeneratedNaming() {
+		return ecompGeneratedNaming;
+	}
+
     public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
         this.ecompGeneratedNaming = ecompGeneratedNaming;
     }
@@ -102,18 +122,27 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
         this.environmentContext = environmentContext;
     }
 
-    @Override
-    public String toString() {
-        return "ServiceMetadataDataDefinition{"
-                + "distributionStatus='" + distributionStatus + '\''
-                + ", serviceType='" + serviceType + '\''
-                + ", serviceRole='" + serviceRole + '\''
-                + ", ecompGeneratedNaming=" + ecompGeneratedNaming
-                + ", namingPolicy='" + namingPolicy + '\''
-                + ", environmentContext='" + environmentContext + '\''
-                + ", instantiationType='" + instantiationType + '\''
-                + '}';
-    }
+	public String getServiceFunction() {
+		return serviceFunction;
+	}
+
+	public void setServiceFunction(String serviceFunction) {
+		this.serviceFunction = serviceFunction;
+	}
+
+	@Override
+	public String toString() {
+		return "ServiceMetadataDataDefinition{" +
+				"distributionStatus='" + distributionStatus + '\'' +
+				", serviceType='" + serviceType + '\'' +
+				", serviceRole='" + serviceRole + '\'' +
+				", serviceFunction='" + serviceFunction + '\'' +
+				", ecompGeneratedNaming=" + ecompGeneratedNaming +
+				", namingPolicy='" + namingPolicy + '\'' +
+				", environmentContext='" + environmentContext + '\'' +
+				", instantiationType='" + instantiationType + '\'' +
+				'}';
+	}
 
     @Override
     public int hashCode() {
@@ -124,6 +153,7 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
         result = prime * result + ((namingPolicy == null) ? 0 : namingPolicy.hashCode());
         result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
         result = prime * result + ((serviceRole == null) ? 0 : serviceRole.hashCode());
+		result = prime * result + ((serviceFunction == null) ? 0 : serviceFunction.hashCode());
         result = prime * result + ((environmentContext == null) ? 0 : environmentContext.hashCode());
         result = prime * result + ((instantiationType == null) ? 0 : instantiationType.hashCode());
         return result;
@@ -194,6 +224,12 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
                 return false;
             }
         } else if (!instantiationType.equals(other.instantiationType)) {
+            return false;
+        }
+        if (serviceFunction == null){
+            if (other.serviceFunction != null) {
+                return false;
+        } else if (!serviceFunction.equals(other.serviceFunction))
             return false;
         }
         return super.equals(obj);

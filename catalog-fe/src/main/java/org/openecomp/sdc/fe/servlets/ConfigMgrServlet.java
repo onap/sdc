@@ -25,8 +25,7 @@ import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +42,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/configmgr")
 public class ConfigMgrServlet extends BasicServlet {
 
-    private static Logger log = LoggerFactory.getLogger(ConfigMgrServlet.class.getName());
+	private static Logger log = Logger.getLogger(ConfigMgrServlet.class.getName());
 
     @GET
     @Path("/get")

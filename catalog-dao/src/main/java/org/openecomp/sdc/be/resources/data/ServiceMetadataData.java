@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.resources.data;
 
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
@@ -36,12 +37,10 @@ public class ServiceMetadataData extends ComponentMetadataData {
 		super(NodeTypeEnum.Service, serviceMetadataDataDefinition);
 	}
 
-	public ServiceMetadataData(Map<String, Object> properties) {
-		super(NodeTypeEnum.Service, new ServiceMetadataDataDefinition(), properties);
-		((ServiceMetadataDataDefinition) metadataDataDefinition)
-				.setProjectCode((String) properties.get(GraphPropertiesDictionary.PROJECT_CODE.getProperty()));
-		((ServiceMetadataDataDefinition) metadataDataDefinition).setDistributionStatus(
-				(String) properties.get(GraphPropertiesDictionary.DISTRIBUTION_STATUS.getProperty()));
+	public ServiceMetadataData(GraphPropertiesDictionaryExtractor extractor) {
+		super(NodeTypeEnum.Service, new ServiceMetadataDataDefinition(), extractor);
+		 metadataDataDefinition.setProjectCode(extractor.getProjectCode());
+		((ServiceMetadataDataDefinition) metadataDataDefinition).setDistributionStatus(extractor.getDistributionStatus());
 	}
 
 	@Override

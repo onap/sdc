@@ -29,10 +29,11 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Resource extends Component {
-
 
     private List<String> derivedFrom;
 
@@ -138,7 +139,6 @@ public class Resource extends Component {
 
     public void setCost(String cost) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setCost(cost);
-        ;
     }
 
     public String getLicenseType() {
@@ -165,42 +165,18 @@ public class Resource extends Component {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-
-        Resource other = (Resource) obj;
-        if (attributes == null) {
-            if (other.attributes != null)
-                return false;
-        } else if (!attributes.equals(other.attributes))
-            return false;
-        if (defaultCapabilities == null) {
-            if (other.defaultCapabilities != null)
-                return false;
-        } else if (!defaultCapabilities.equals(other.defaultCapabilities))
-            return false;
-        if (derivedFrom == null) {
-            if (other.derivedFrom != null)
-                return false;
-        } else if (!derivedFrom.equals(other.derivedFrom))
-            return false;
-        if (derivedList == null) {
-            if (other.derivedList != null)
-                return false;
-        } else if (!derivedList.equals(other.derivedList))
-            return false;
-        if (properties == null) {
-            if (other.properties != null)
-                return false;
-        } else if (!properties.equals(other.properties))
-            return false;
-        return super.equals(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Resource resource = (Resource) o;
+        return Objects.equals(derivedFrom, resource.derivedFrom) &&
+                Objects.equals(derivedList, resource.derivedList) &&
+                Objects.equals(properties, resource.properties) &&
+                Objects.equals(attributes, resource.attributes) &&
+                Objects.equals(defaultCapabilities, resource.defaultCapabilities);
     }
+
 
     @Override
     public String toString() {
@@ -273,8 +249,7 @@ public class Resource extends Component {
     }
 
     @Override
-    public boolean shouldGenerateInputs() {
-        //TODO add complex VFC condition when supported
+    public boolean shouldGenerateInputs(){
         return !(this.getResourceType().isAtomicType());
     }
 
@@ -283,13 +258,19 @@ public class Resource extends Component {
         return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
     }
 
-    public Map<String, List<RequirementCapabilityRelDef>> groupRelationsByInstanceName(Resource resource) {
-        Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId = MapUtil.groupListBy(resource.getComponentInstancesRelations(), RequirementCapabilityRelDef::getFromNode);
-        return MapUtil.convertMapKeys(relationsByInstanceId, (instId) -> getInstanceNameFromInstanceId(resource, instId));
+    public Map<String, List<RequirementCapabilityRelDef>> groupRelationsFromCsarByInstanceName(Resource resource) {
+        List<RequirementCapabilityRelDef> componentInstanceRelationsFromCsar = resource.getComponentInstancesRelations().stream().filter(r->!r.isOriginUI()).collect(Collectors.toList());
+        Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId = MapUtil.groupListBy(componentInstanceRelationsFromCsar, RequirementCapabilityRelDef::getFromNode);
+        return MapUtil.convertMapKeys(relationsByInstanceId, instId -> getInstanceInvariantNameFromInstanceId(resource, instId));
     }
 
     private String getInstanceNameFromInstanceId(Resource resource, String instId) {
         Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
         return componentInstanceById.isPresent() ? componentInstanceById.get().getName() : null;
+    }
+
+    private String getInstanceInvariantNameFromInstanceId(Resource resource, String instId) {
+        Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
+        return componentInstanceById.isPresent() ? componentInstanceById.get().getInvariantName() : null;
     }
 }

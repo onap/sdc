@@ -148,6 +148,7 @@ public class Login extends HttpServlet {
 			response.addCookie(cookieLastName);
 			response.addCookie(cookieRemoteAddress);
 			response.addCookie(cookieWsType);
+			response.addCookie(new Cookie(Conf.getInstance().getPortalCookieName(), "portal"));
 			response.sendRedirect("/sdc1");
 		}
 

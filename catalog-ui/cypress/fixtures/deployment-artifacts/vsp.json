@@ -1,0 +1,1027 @@
+{
+  "artifacts": {
+    "vspvsp1informationtxt": {
+      "timeout": 0,
+      "creationDate": 1562234744336,
+      "description": "Artifact created from csar",
+      "artifactName": "VSP_VSP1_Information.txt",
+      "artifactLabel": "vspvsp1informationtxt",
+      "artifactType": "GUIDE",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.vspvsp1informationtxt",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "a07122e3-d7cd-4df0-babe-d2fe99726ebf",
+      "artifactVersion": "1",
+      "artifactGroupType": "INFORMATIONAL",
+      "artifactChecksum": "ODU4MGU0ZTZhNGYyOWYyYWExZDU2NmRkNGI5MzE4MjQ=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234744340,
+      "lastUpdateDate": 1562234744336,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.vspvsp1informationtxt",
+      "artifactDisplayName": "VSP_VSP1_Information",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    }
+  },
+  "deploymentArtifacts": {
+    "vflicense": {
+      "timeout": 0,
+      "creationDate": 1562234744275,
+      "description": "VF license file",
+      "artifactName": "vf-license-model.xml",
+      "artifactLabel": "vflicense",
+      "artifactType": "VF_LICENSE",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.vflicense",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "e7755e36-6676-4418-bd20-d6475b9655fe",
+      "artifactVersion": "1",
+      "artifactGroupType": "DEPLOYMENT",
+      "artifactChecksum": "MDgzZWE0YWI5MTYzN2IxMWQ4Mjc1NGUwNjQ2YTVmMzg=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234744282,
+      "lastUpdateDate": 1562234744275,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.vflicense",
+      "artifactDisplayName": "VF License",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    },
+    "heat1": {
+      "listHeatParameters": [
+        {
+          "name": "vnf_name",
+          "type": "string",
+          "description": "Unique name for this VF instance",
+          "empty": false
+        },
+        {
+          "name": "vnf_id",
+          "type": "string",
+          "description": "Unique ID for this VF instance",
+          "empty": false
+        },
+        {
+          "name": "vf_module_id",
+          "type": "string",
+          "description": "Unique ID for this VF Module instance",
+          "empty": false
+        },
+        {
+          "name": "vf_module_name",
+          "type": "string",
+          "description": "Unique name for this VF Module instance",
+          "empty": false
+        },
+        {
+          "name": "oam_protected_net_name",
+          "type": "string",
+          "description": "Name of the management Network",
+          "empty": false
+        },
+        {
+          "name": "ltm_oam_protected_ip_0",
+          "type": "string",
+          "description": "IP address of the management network",
+          "empty": false
+        },
+        {
+          "name": "dmz_direct_net_name",
+          "type": "string",
+          "description": "Name of the dmz direct Network",
+          "empty": false
+        },
+        {
+          "name": "ltm_dmz_direct_ip_0",
+          "type": "string",
+          "description": "IP address of the dmz direct network",
+          "empty": false
+        },
+        {
+          "name": "ltm_oam_protected_gw",
+          "type": "string",
+          "description": "GW address of the management network",
+          "empty": false
+        },
+        {
+          "name": "availability_zone_0",
+          "type": "string",
+          "description": "availabilityzone name",
+          "empty": false
+        },
+        {
+          "name": "ltm_name_0",
+          "type": "string",
+          "description": "ixla ltm instance name",
+          "empty": false
+        },
+        {
+          "name": "ltm_image_name",
+          "type": "string",
+          "description": "ixla ltm instance image name",
+          "currentValue": "NIMBUS_LANDSLIDE-TAS-TS_15.0.102.qcow2",
+          "empty": false
+        },
+        {
+          "name": "ltm_flavor_name",
+          "type": "string",
+          "description": "the flavor name of ixla ltm instance",
+          "currentValue": "nd.c4r24d50",
+          "empty": false
+        },
+        {
+          "name": "ltm_loopback_ip",
+          "type": "string",
+          "description": "Loopback IP address",
+          "currentValue": "1.1.1.1",
+          "empty": false
+        },
+        {
+          "name": "ltm_version",
+          "type": "string",
+          "description": "Landslide Software Version",
+          "currentValue": "15.0.102",
+          "empty": false
+        },
+        {
+          "name": "ltm_platform",
+          "type": "string",
+          "description": "Landslide VM Platform",
+          "currentValue": "genVM",
+          "empty": false
+        },
+        {
+          "name": "ltm_kernel",
+          "type": "string",
+          "description": "Landslide OS",
+          "currentValue": "UBUNTU",
+          "empty": false
+        },
+        {
+          "name": "ltm_ethDriver",
+          "type": "string",
+          "description": "Landslide Driver Type",
+          "currentValue": "OS",
+          "empty": false
+        },
+        {
+          "name": "ldsa_shared_security_group",
+          "type": "string",
+          "description": "uuid of the security group",
+          "empty": false
+        }
+      ],
+      "timeout": 60,
+      "creationDate": 1562234744461,
+      "description": "created from csar",
+      "artifactName": "module_1_ldsa.yaml",
+      "artifactLabel": "heat1",
+      "artifactType": "HEAT",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.heat1",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "1899776c-347b-4c8b-8c95-11c5a916b224",
+      "artifactVersion": "2",
+      "heatParameters": [
+        {
+          "name": "vnf_name",
+          "type": "string",
+          "description": "Unique name for this VF instance",
+          "empty": false
+        },
+        {
+          "name": "vnf_id",
+          "type": "string",
+          "description": "Unique ID for this VF instance",
+          "empty": false
+        },
+        {
+          "name": "vf_module_id",
+          "type": "string",
+          "description": "Unique ID for this VF Module instance",
+          "empty": false
+        },
+        {
+          "name": "vf_module_name",
+          "type": "string",
+          "description": "Unique name for this VF Module instance",
+          "empty": false
+        },
+        {
+          "name": "oam_protected_net_name",
+          "type": "string",
+          "description": "Name of the management Network",
+          "empty": false
+        },
+        {
+          "name": "ltm_oam_protected_ip_0",
+          "type": "string",
+          "description": "IP address of the management network",
+          "empty": false
+        },
+        {
+          "name": "dmz_direct_net_name",
+          "type": "string",
+          "description": "Name of the dmz direct Network",
+          "empty": false
+        },
+        {
+          "name": "ltm_dmz_direct_ip_0",
+          "type": "string",
+          "description": "IP address of the dmz direct network",
+          "empty": false
+        },
+        {
+          "name": "ltm_oam_protected_gw",
+          "type": "string",
+          "description": "GW address of the management network",
+          "empty": false
+        },
+        {
+          "name": "availability_zone_0",
+          "type": "string",
+          "description": "availabilityzone name",
+          "empty": false
+        },
+        {
+          "name": "ltm_name_0",
+          "type": "string",
+          "description": "ixla ltm instance name",
+          "empty": false
+        },
+        {
+          "name": "ltm_image_name",
+          "type": "string",
+          "description": "ixla ltm instance image name",
+          "currentValue": "NIMBUS_LANDSLIDE-TAS-TS_15.0.102.qcow2",
+          "empty": false
+        },
+        {
+          "name": "ltm_flavor_name",
+          "type": "string",
+          "description": "the flavor name of ixla ltm instance",
+          "currentValue": "nd.c4r24d50",
+          "empty": false
+        },
+        {
+          "name": "ltm_loopback_ip",
+          "type": "string",
+          "description": "Loopback IP address",
+          "currentValue": "1.1.1.1",
+          "empty": false
+        },
+        {
+          "name": "ltm_version",
+          "type": "string",
+          "description": "Landslide Software Version",
+          "currentValue": "15.0.102",
+          "empty": false
+        },
+        {
+          "name": "ltm_platform",
+          "type": "string",
+          "description": "Landslide VM Platform",
+          "currentValue": "genVM",
+          "empty": false
+        },
+        {
+          "name": "ltm_kernel",
+          "type": "string",
+          "description": "Landslide OS",
+          "currentValue": "UBUNTU",
+          "empty": false
+        },
+        {
+          "name": "ltm_ethDriver",
+          "type": "string",
+          "description": "Landslide Driver Type",
+          "currentValue": "OS",
+          "empty": false
+        },
+        {
+          "name": "ldsa_shared_security_group",
+          "type": "string",
+          "description": "uuid of the security group",
+          "empty": false
+        }
+      ],
+      "artifactGroupType": "DEPLOYMENT",
+      "artifactChecksum": "OGZlMzE0MjY0ODFjMjlhYWRkNGFkOTIyYTcyMjQxNTQ=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234745384,
+      "lastUpdateDate": 1562234744461,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.heat1",
+      "artifactDisplayName": "module_1_ldsa",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    },
+    "heat2": {
+      "listHeatParameters": [
+        {
+          "name": "vnf_name",
+          "type": "string",
+          "description": "Unique name for this VF instance",
+          "empty": false
+        }
+      ],
+      "timeout": 60,
+      "creationDate": 1562234745466,
+      "description": "created from csar",
+      "artifactName": "base_ldsa.yaml",
+      "artifactLabel": "heat2",
+      "artifactType": "HEAT",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.heat2",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "377f2098-c635-4fcb-85fd-443bd05acb04",
+      "artifactVersion": "1",
+      "heatParameters": [
+        {
+          "name": "vnf_name",
+          "type": "string",
+          "description": "Unique name for this VF instance",
+          "empty": false
+        }
+      ],
+      "artifactGroupType": "DEPLOYMENT",
+      "artifactChecksum": "YWE1NzM2MzVkMmMwYzQ5NTdhNWUzODk2MGNiOWZkYTI=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234745481,
+      "lastUpdateDate": 1562234745466,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.heat2",
+      "artifactDisplayName": "base_ldsa",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    },
+    "heat2env": {
+      "timeout": 0,
+      "creationDate": 1562234745490,
+      "description": "VF Auto-generated HEAT Environment deployment artifact",
+      "artifactName": "base_ldsa.env",
+      "artifactLabel": "heat2env",
+      "artifactType": "HEAT_ENV",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.heat2env",
+      "generated": false,
+      "artifactVersion": "0",
+      "artifactGroupType": "DEPLOYMENT",
+      "heatParamsUpdateDate": 1562234745490,
+      "generatedFromId": "36cf379e-d218-4413-bec6-a50076289c26.heat2",
+      "mandatory": true,
+      "serviceApi": false,
+      "lastUpdateDate": 1562234745490,
+      "duplicated": false,
+      "creatorFullName": "Carlos Santana",
+      "artifactDisplayName": "VF HEAT ENV",
+      "userIdCreator": "m08740",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "empty": false
+    },
+    "vendorlicense": {
+      "timeout": 0,
+      "creationDate": 1562234744227,
+      "description": " Vendor license file",
+      "artifactName": "vendor-license-model.xml",
+      "artifactLabel": "vendorlicense",
+      "artifactType": "VENDOR_LICENSE",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.vendorlicense",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "d4d542fb-f15f-4167-9f31-74f8183bc58a",
+      "artifactVersion": "1",
+      "artifactGroupType": "DEPLOYMENT",
+      "artifactChecksum": "ODIzNmQ3NWI1OWU3Yjg3NWEwNjI2ZDNiMzI5ZTNiNzk=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234744239,
+      "lastUpdateDate": 1562234744227,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.vendorlicense",
+      "artifactDisplayName": "Vendor License",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    },
+    "heat1env": {
+      "timeout": 0,
+      "creationDate": 1562234745392,
+      "description": "VF Auto-generated HEAT Environment deployment artifact",
+      "artifactName": "module_1_ldsa.env",
+      "artifactLabel": "heat1env",
+      "artifactType": "HEAT_ENV",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.heat1env",
+      "generated": false,
+      "artifactVersion": "0",
+      "artifactGroupType": "DEPLOYMENT",
+      "heatParamsUpdateDate": 1562234745392,
+      "generatedFromId": "36cf379e-d218-4413-bec6-a50076289c26.heat1",
+      "mandatory": true,
+      "serviceApi": false,
+      "lastUpdateDate": 1562234745392,
+      "duplicated": false,
+      "creatorFullName": "Carlos Santana",
+      "artifactDisplayName": "VF HEAT ENV",
+      "userIdCreator": "m08740",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "empty": false
+    }
+  },
+  "toscaArtifacts": {
+    "assettoscacsar": {
+      "timeout": 0,
+      "creationDate": 1562234739292,
+      "description": "TOSCA definition package of the asset",
+      "artifactName": "resource-Vsp1-csar.csar",
+      "artifactLabel": "assettoscacsar",
+      "artifactType": "TOSCA_CSAR",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.assettoscacsar",
+      "generated": false,
+      "artifactUUID": "dc27df0f-f884-44f9-9ea3-07e5457e8901",
+      "artifactVersion": "1",
+      "artifactGroupType": "TOSCA",
+      "artifactChecksum": "NmIxYWM3OGMzNWFhMzdlMDViNmU4OWVkOTY2YzBhNmQ=",
+      "mandatory": true,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234930488,
+      "lastUpdateDate": 1562234739292,
+      "duplicated": false,
+      "creatorFullName": "Carlos Santana",
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.assettoscacsar",
+      "artifactDisplayName": "Tosca Model",
+      "userIdCreator": "m08740",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": false,
+      "empty": false
+    },
+    "assettoscatemplate": {
+      "timeout": 0,
+      "creationDate": 1562234739292,
+      "description": "TOSCA representation of the asset",
+      "artifactName": "resource-Vsp1-template.yml",
+      "artifactLabel": "assettoscatemplate",
+      "artifactType": "TOSCA_TEMPLATE",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.assettoscatemplate",
+      "generated": false,
+      "artifactUUID": "0a8b6319-24ac-45df-b94f-fc8db037deb4",
+      "artifactVersion": "1",
+      "artifactGroupType": "TOSCA",
+      "artifactChecksum": "ODI0ZGY1NzI3Mjc5ZGJkMDg0Nzg4ZDA3MTRlMDM1ZmU=",
+      "mandatory": true,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234929991,
+      "lastUpdateDate": 1562234739292,
+      "duplicated": false,
+      "creatorFullName": "Carlos Santana",
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.assettoscatemplate",
+      "artifactDisplayName": "Tosca Template",
+      "userIdCreator": "m08740",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": false,
+      "empty": false
+    }
+  },
+  "categories": [
+    {
+      "name": "Generic",
+      "normalizedName": "generic",
+      "uniqueId": "resourceNewCategory.generic",
+      "subcategories": [
+        {
+          "name": "Network Elements",
+          "normalizedName": "network elements",
+          "uniqueId": "resourceNewCategory.generic.network elements",
+          "icons": [
+            "network",
+            "connector"
+          ],
+          "empty": false
+        }
+      ],
+      "empty": false
+    }
+  ],
+  "derivedFromGenericType": "org.openecomp.resource.abstract.nodes.VF",
+  "derivedFromGenericVersion": "2.0",
+  "toscaType": "topology_template",
+  "abstract": false,
+  "vendorName": "VLM1",
+  "resourceType": "VF",
+  "vendorRelease": "1.0",
+  "toscaResourceName": "org.openecomp.resource.vf.Vsp1",
+  "resourceVendorModelNumber": "",
+  "version": "1.0",
+  "creationDate": 1562234739293,
+  "tags": [
+    "VSP1"
+  ],
+  "icon": "defaulticon",
+  "csarVersion": "1.0",
+  "description": "ddd",
+  "archived": false,
+  "archiveTime": 0,
+  "vspArchived": false,
+  "uuid": "f1a2fe1d-fdf3-4a57-9b9a-1baaf0c719cc",
+  "componentMetadataForSupportLog": {
+    "SupportablityComponentUUID": "f1a2fe1d-fdf3-4a57-9b9a-1baaf0c719cc",
+    "SupportablityComponentName": "VSP1",
+    "SupportablityCsarVersion": "1.0",
+    "SupportablityCsarUUID": "ba6ba608de4c4970acdfedbbfa7dcf34",
+    "SupportablityComponentVersion": "1.0"
+  },
+  "highestVersion": true,
+  "systemName": "Vsp1",
+  "uniqueId": "24566301-f314-4cf4-981e-2b80f0e04ae2",
+  "lifecycleState": "CERTIFIED",
+  "lastUpdaterUserId": "m08740",
+  "invariantUUID": "83bacce4-6026-46b4-99b5-809905facac9",
+  "normalizedName": "vsp1",
+  "componentType": "RESOURCE",
+  "lastUpdateDate": 1562234930556,
+  "allVersions": {
+    "1.0": "24566301-f314-4cf4-981e-2b80f0e04ae2",
+    "1.1": "18bd8b71-f33a-4620-af73-1789ee64ebb9"
+  },
+  "contactId": "m08740",
+  "lastUpdaterFullName": "Carlos Santana",
+  "creatorUserId": "m08740",
+  "creatorFullName": "Carlos Santana",
+  "actualComponentType": "VF",
+  "topologyTemplate": true,
+  "allArtifacts": {
+    "vflicense": {
+      "timeout": 0,
+      "creationDate": 1562234744275,
+      "description": "VF license file",
+      "artifactName": "vf-license-model.xml",
+      "artifactLabel": "vflicense",
+      "artifactType": "VF_LICENSE",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.vflicense",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "e7755e36-6676-4418-bd20-d6475b9655fe",
+      "artifactVersion": "1",
+      "artifactGroupType": "DEPLOYMENT",
+      "artifactChecksum": "MDgzZWE0YWI5MTYzN2IxMWQ4Mjc1NGUwNjQ2YTVmMzg=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234744282,
+      "lastUpdateDate": 1562234744275,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.vflicense",
+      "artifactDisplayName": "VF License",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    },
+    "heat1": {
+      "listHeatParameters": [
+        {
+          "name": "vnf_name",
+          "type": "string",
+          "description": "Unique name for this VF instance",
+          "empty": false
+        },
+        {
+          "name": "vnf_id",
+          "type": "string",
+          "description": "Unique ID for this VF instance",
+          "empty": false
+        },
+        {
+          "name": "vf_module_id",
+          "type": "string",
+          "description": "Unique ID for this VF Module instance",
+          "empty": false
+        },
+        {
+          "name": "vf_module_name",
+          "type": "string",
+          "description": "Unique name for this VF Module instance",
+          "empty": false
+        },
+        {
+          "name": "oam_protected_net_name",
+          "type": "string",
+          "description": "Name of the management Network",
+          "empty": false
+        },
+        {
+          "name": "ltm_oam_protected_ip_0",
+          "type": "string",
+          "description": "IP address of the management network",
+          "empty": false
+        },
+        {
+          "name": "dmz_direct_net_name",
+          "type": "string",
+          "description": "Name of the dmz direct Network",
+          "empty": false
+        },
+        {
+          "name": "ltm_dmz_direct_ip_0",
+          "type": "string",
+          "description": "IP address of the dmz direct network",
+          "empty": false
+        },
+        {
+          "name": "ltm_oam_protected_gw",
+          "type": "string",
+          "description": "GW address of the management network",
+          "empty": false
+        },
+        {
+          "name": "availability_zone_0",
+          "type": "string",
+          "description": "availabilityzone name",
+          "empty": false
+        },
+        {
+          "name": "ltm_name_0",
+          "type": "string",
+          "description": "ixla ltm instance name",
+          "empty": false
+        },
+        {
+          "name": "ltm_image_name",
+          "type": "string",
+          "description": "ixla ltm instance image name",
+          "currentValue": "NIMBUS_LANDSLIDE-TAS-TS_15.0.102.qcow2",
+          "empty": false
+        },
+        {
+          "name": "ltm_flavor_name",
+          "type": "string",
+          "description": "the flavor name of ixla ltm instance",
+          "currentValue": "nd.c4r24d50",
+          "empty": false
+        },
+        {
+          "name": "ltm_loopback_ip",
+          "type": "string",
+          "description": "Loopback IP address",
+          "currentValue": "1.1.1.1",
+          "empty": false
+        },
+        {
+          "name": "ltm_version",
+          "type": "string",
+          "description": "Landslide Software Version",
+          "currentValue": "15.0.102",
+          "empty": false
+        },
+        {
+          "name": "ltm_platform",
+          "type": "string",
+          "description": "Landslide VM Platform",
+          "currentValue": "genVM",
+          "empty": false
+        },
+        {
+          "name": "ltm_kernel",
+          "type": "string",
+          "description": "Landslide OS",
+          "currentValue": "UBUNTU",
+          "empty": false
+        },
+        {
+          "name": "ltm_ethDriver",
+          "type": "string",
+          "description": "Landslide Driver Type",
+          "currentValue": "OS",
+          "empty": false
+        },
+        {
+          "name": "ldsa_shared_security_group",
+          "type": "string",
+          "description": "uuid of the security group",
+          "empty": false
+        }
+      ],
+      "timeout": 60,
+      "creationDate": 1562234744461,
+      "description": "created from csar",
+      "artifactName": "module_1_ldsa.yaml",
+      "artifactLabel": "heat1",
+      "artifactType": "HEAT",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.heat1",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "1899776c-347b-4c8b-8c95-11c5a916b224",
+      "artifactVersion": "2",
+      "heatParameters": [
+        {
+          "name": "vnf_name",
+          "type": "string",
+          "description": "Unique name for this VF instance",
+          "empty": false
+        },
+        {
+          "name": "vnf_id",
+          "type": "string",
+          "description": "Unique ID for this VF instance",
+          "empty": false
+        },
+        {
+          "name": "vf_module_id",
+          "type": "string",
+          "description": "Unique ID for this VF Module instance",
+          "empty": false
+        },
+        {
+          "name": "vf_module_name",
+          "type": "string",
+          "description": "Unique name for this VF Module instance",
+          "empty": false
+        },
+        {
+          "name": "oam_protected_net_name",
+          "type": "string",
+          "description": "Name of the management Network",
+          "empty": false
+        },
+        {
+          "name": "ltm_oam_protected_ip_0",
+          "type": "string",
+          "description": "IP address of the management network",
+          "empty": false
+        },
+        {
+          "name": "dmz_direct_net_name",
+          "type": "string",
+          "description": "Name of the dmz direct Network",
+          "empty": false
+        },
+        {
+          "name": "ltm_dmz_direct_ip_0",
+          "type": "string",
+          "description": "IP address of the dmz direct network",
+          "empty": false
+        },
+        {
+          "name": "ltm_oam_protected_gw",
+          "type": "string",
+          "description": "GW address of the management network",
+          "empty": false
+        },
+        {
+          "name": "availability_zone_0",
+          "type": "string",
+          "description": "availabilityzone name",
+          "empty": false
+        },
+        {
+          "name": "ltm_name_0",
+          "type": "string",
+          "description": "ixla ltm instance name",
+          "empty": false
+        },
+        {
+          "name": "ltm_image_name",
+          "type": "string",
+          "description": "ixla ltm instance image name",
+          "currentValue": "NIMBUS_LANDSLIDE-TAS-TS_15.0.102.qcow2",
+          "empty": false
+        },
+        {
+          "name": "ltm_flavor_name",
+          "type": "string",
+          "description": "the flavor name of ixla ltm instance",
+          "currentValue": "nd.c4r24d50",
+          "empty": false
+        },
+        {
+          "name": "ltm_loopback_ip",
+          "type": "string",
+          "description": "Loopback IP address",
+          "currentValue": "1.1.1.1",
+          "empty": false
+        },
+        {
+          "name": "ltm_version",
+          "type": "string",
+          "description": "Landslide Software Version",
+          "currentValue": "15.0.102",
+          "empty": false
+        },
+        {
+          "name": "ltm_platform",
+          "type": "string",
+          "description": "Landslide VM Platform",
+          "currentValue": "genVM",
+          "empty": false
+        },
+        {
+          "name": "ltm_kernel",
+          "type": "string",
+          "description": "Landslide OS",
+          "currentValue": "UBUNTU",
+          "empty": false
+        },
+        {
+          "name": "ltm_ethDriver",
+          "type": "string",
+          "description": "Landslide Driver Type",
+          "currentValue": "OS",
+          "empty": false
+        },
+        {
+          "name": "ldsa_shared_security_group",
+          "type": "string",
+          "description": "uuid of the security group",
+          "empty": false
+        }
+      ],
+      "artifactGroupType": "DEPLOYMENT",
+      "artifactChecksum": "OGZlMzE0MjY0ODFjMjlhYWRkNGFkOTIyYTcyMjQxNTQ=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234745384,
+      "lastUpdateDate": 1562234744461,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.heat1",
+      "artifactDisplayName": "module_1_ldsa",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    },
+    "heat2": {
+      "listHeatParameters": [
+        {
+          "name": "vnf_name",
+          "type": "string",
+          "description": "Unique name for this VF instance",
+          "empty": false
+        }
+      ],
+      "timeout": 60,
+      "creationDate": 1562234745466,
+      "description": "created from csar",
+      "artifactName": "base_ldsa.yaml",
+      "artifactLabel": "heat2",
+      "artifactType": "HEAT",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.heat2",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "377f2098-c635-4fcb-85fd-443bd05acb04",
+      "artifactVersion": "1",
+      "heatParameters": [
+        {
+          "name": "vnf_name",
+          "type": "string",
+          "description": "Unique name for this VF instance",
+          "empty": false
+        }
+      ],
+      "artifactGroupType": "DEPLOYMENT",
+      "artifactChecksum": "YWE1NzM2MzVkMmMwYzQ5NTdhNWUzODk2MGNiOWZkYTI=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234745481,
+      "lastUpdateDate": 1562234745466,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.heat2",
+      "artifactDisplayName": "base_ldsa",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    },
+    "heat2env": {
+      "timeout": 0,
+      "creationDate": 1562234745490,
+      "description": "VF Auto-generated HEAT Environment deployment artifact",
+      "artifactName": "base_ldsa.env",
+      "artifactLabel": "heat2env",
+      "artifactType": "HEAT_ENV",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.heat2env",
+      "generated": false,
+      "artifactVersion": "0",
+      "artifactGroupType": "DEPLOYMENT",
+      "heatParamsUpdateDate": 1562234745490,
+      "generatedFromId": "36cf379e-d218-4413-bec6-a50076289c26.heat2",
+      "mandatory": true,
+      "serviceApi": false,
+      "lastUpdateDate": 1562234745490,
+      "duplicated": false,
+      "creatorFullName": "Carlos Santana",
+      "artifactDisplayName": "VF HEAT ENV",
+      "userIdCreator": "m08740",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "empty": false
+    },
+    "vendorlicense": {
+      "timeout": 0,
+      "creationDate": 1562234744227,
+      "description": " Vendor license file",
+      "artifactName": "vendor-license-model.xml",
+      "artifactLabel": "vendorlicense",
+      "artifactType": "VENDOR_LICENSE",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.vendorlicense",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "d4d542fb-f15f-4167-9f31-74f8183bc58a",
+      "artifactVersion": "1",
+      "artifactGroupType": "DEPLOYMENT",
+      "artifactChecksum": "ODIzNmQ3NWI1OWU3Yjg3NWEwNjI2ZDNiMzI5ZTNiNzk=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234744239,
+      "lastUpdateDate": 1562234744227,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.vendorlicense",
+      "artifactDisplayName": "Vendor License",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    },
+    "heat1env": {
+      "timeout": 0,
+      "creationDate": 1562234745392,
+      "description": "VF Auto-generated HEAT Environment deployment artifact",
+      "artifactName": "module_1_ldsa.env",
+      "artifactLabel": "heat1env",
+      "artifactType": "HEAT_ENV",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.heat1env",
+      "generated": false,
+      "artifactVersion": "0",
+      "artifactGroupType": "DEPLOYMENT",
+      "heatParamsUpdateDate": 1562234745392,
+      "generatedFromId": "36cf379e-d218-4413-bec6-a50076289c26.heat1",
+      "mandatory": true,
+      "serviceApi": false,
+      "lastUpdateDate": 1562234745392,
+      "duplicated": false,
+      "creatorFullName": "Carlos Santana",
+      "artifactDisplayName": "VF HEAT ENV",
+      "userIdCreator": "m08740",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "empty": false
+    },
+    "vspvsp1informationtxt": {
+      "timeout": 0,
+      "creationDate": 1562234744336,
+      "description": "Artifact created from csar",
+      "artifactName": "VSP_VSP1_Information.txt",
+      "artifactLabel": "vspvsp1informationtxt",
+      "artifactType": "GUIDE",
+      "uniqueId": "36cf379e-d218-4413-bec6-a50076289c26.vspvsp1informationtxt",
+      "requiredArtifacts": [],
+      "generated": false,
+      "artifactUUID": "a07122e3-d7cd-4df0-babe-d2fe99726ebf",
+      "artifactVersion": "1",
+      "artifactGroupType": "INFORMATIONAL",
+      "artifactChecksum": "ODU4MGU0ZTZhNGYyOWYyYWExZDU2NmRkNGI5MzE4MjQ=",
+      "mandatory": false,
+      "serviceApi": false,
+      "payloadUpdateDate": 1562234744340,
+      "lastUpdateDate": 1562234744336,
+      "duplicated": false,
+      "esId": "36cf379e-d218-4413-bec6-a50076289c26.vspvsp1informationtxt",
+      "artifactDisplayName": "VSP_VSP1_Information",
+      "updaterFullName": "Carlos Santana",
+      "userIdLastUpdater": "m08740",
+      "isFromCsar": true,
+      "artifactCreator": "m08740",
+      "empty": false
+    }
+  },
+  "csarUUID": "ba6ba608de4c4970acdfedbbfa7dcf34",
+  "name": "VSP1"
+}

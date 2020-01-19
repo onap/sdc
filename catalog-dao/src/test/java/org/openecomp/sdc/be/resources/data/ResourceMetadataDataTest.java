@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.resources.data;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class ResourceMetadataDataTest {
 	@Test
 	public void testCtor() throws Exception {
 		new ResourceMetadataData(new ResourceMetadataDataDefinition());
-		new ResourceMetadataData(new HashMap<>());
+		new ResourceMetadataData(new GraphPropertiesDictionaryExtractor(new HashMap<>()));
 	}
 	
 	@Test

@@ -87,18 +87,6 @@ public class BeEcompErrorManagerTest {
 		testSubject.logBeHealthCheckJanusGraphRecovery(context);
 	}
 
-	
-	@Test
-	public void testLogBeHealthCheckElasticSearchRecovery() throws Exception {
-		BeEcompErrorManager testSubject;
-		String context = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.logBeHealthCheckElasticSearchRecovery(context);
-	}
-
-	
 	@Test
 	public void testLogBeHealthCheckUebClusterRecovery() throws Exception {
 		BeEcompErrorManager testSubject;
@@ -142,18 +130,6 @@ public class BeEcompErrorManagerTest {
 		testSubject.logBeHealthCheckJanusGraphError(context);
 	}
 
-	
-	@Test
-	public void testLogBeHealthCheckElasticSearchError() throws Exception {
-		BeEcompErrorManager testSubject;
-		String context = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.logBeHealthCheckElasticSearchError(context);
-	}
-
-	
 	@Test
 	public void testLogBeHealthCheckUebClusterError() throws Exception {
 		BeEcompErrorManager testSubject;

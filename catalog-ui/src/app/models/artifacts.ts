@@ -69,11 +69,13 @@ export class ArtifactModel {
     apiUrl:string;
     heatParameters:Array<HeatParameterModel>;
     generatedFromId:string;
+    isFromCsar: boolean;
 
     //custom properties
     selected:boolean;
     originalDescription:string;
     envArtifact:ArtifactModel;
+    allowDeleteAndUpdate: boolean;
 
     constructor(artifact?:ArtifactModel) {
         if (artifact) {
@@ -97,10 +99,11 @@ export class ArtifactModel {
             this["Content-MD5"] = artifact["Content-MD5"];
             this.artifactChecksum = artifact.artifactChecksum;
             this.apiUrl = artifact.apiUrl;
-            this.heatParameters = _.sortBy(artifact.heatParameters, 'name');
+            this.heatParameters = _.sortBy(_.cloneDeep(artifact.heatParameters), 'name');
             this.generatedFromId = artifact.generatedFromId;
             this.selected = artifact.selected ? artifact.selected : false;
             this.originalDescription = artifact.description;
+            this.isFromCsar = artifact.isFromCsar;
         }
     }
 
@@ -120,6 +123,7 @@ export class ArtifactModel {
         this.selected = undefined;
         this.originalDescription = undefined;
         this.envArtifact = undefined;
+        this.allowDeleteAndUpdate = undefined;
         return this;
     };
 }

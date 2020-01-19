@@ -65,6 +65,6 @@
         <span class="w-sdc-search-icon magnification"></span>
     </div>
 
-    <div class="notification-icon" [ngClass]="{'disabled' : progress > 0}" *ngIf="user.role === 'DESIGNER' && notificationIconCallback" (click)="notificationIconCallback()" tooltip="Vendor Software Product Repository" tooltipPlacement="left" data-tests-id="repository-icon"></div>
+    <div class="notification-icon" [ngClass]="{'disabled' : progress > 0}" *ngIf="user && user.role === 'DESIGNER' && notificationIconCallback" (click)="notificationIconCallback()" tooltip="Vendor Software Product Repository" tooltipPlacement="left" data-tests-id="repository-icon"></div>
 
 </nav>

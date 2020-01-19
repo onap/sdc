@@ -52,7 +52,7 @@ public class DownloadManager {
         if (vspFound) {
             ExtentTestActions.log(Status.INFO, String.format("Going to downloading VSP %s", vspName));
             final List<WebElement> elementsFromTable = GeneralPageElements.getElementsFromTable();
-            elementsFromTable.get(1).click();
+            elementsFromTable.get(0).click();
             GeneralUIUtils.waitForLoader();
             GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.DOWNLOAD_CSAR.getValue());
             ExtentTestActions.log(Status.INFO, "Succeeded to downloaded CSAR file named " + vspName + " into folder " + SetupCDTest.getWindowTest().getDownloadDirectory());

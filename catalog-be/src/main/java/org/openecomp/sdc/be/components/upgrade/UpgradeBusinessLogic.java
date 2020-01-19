@@ -80,7 +80,7 @@ public class UpgradeBusinessLogic {
      */
     public UpgradeStatus automatedUpgrade(String componentId, List<UpgradeRequest> upgradeRequest, String userId) {
         UpgradeStatus status = new UpgradeStatus();
-        User user = userValidations.validateUserExists(userId, "automated upgrade", false);
+        User user = userValidations.validateUserExists(userId);
 
         Either<Component, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaFullElement(componentId);
         if (storageStatus.isRight()) {
@@ -126,7 +126,7 @@ public class UpgradeBusinessLogic {
      */
     public Either<List<ComponentDependency>, ResponseFormat> getComponentDependencies(String componentId, String userId) {
 
-        User user = userValidations.validateUserExists(userId, "get Component Dependencies for automated upgrade", false);
+        User user = userValidations.validateUserExists(userId);
         try {
             return upgradeOperation.getComponentDependencies(componentId)
                     .right()
@@ -426,12 +426,8 @@ public class UpgradeBusinessLogic {
         LOGGER.debug("In Service {} change instance version {} to version {}", service.getName(), ci.getName(), newVersionComponent.getVersion());
         ComponentInstance newComponentInstance = new ComponentInstance();
         newComponentInstance.setComponentUid(newVersionComponent.getUniqueId());
-        Either<ComponentInstance, ResponseFormat> changeInstanceVersion = componentInstanceBusinessLogic.changeInstanceVersion(service, ci, newComponentInstance, user, service.getComponentType());
-        if (changeInstanceVersion.isLeft()) {
-            return ActionStatus.OK;
-        } else {
-            return ActionStatus.GENERAL_ERROR;
-        }
+        ComponentInstance changeInstanceVersion = componentInstanceBusinessLogic.changeInstanceVersion(service, ci, newComponentInstance, user, service.getComponentType());
+        return ActionStatus.OK;
     }
 
     private boolean matchInstance(ComponentInstance ci, Component newVersionComponent) {

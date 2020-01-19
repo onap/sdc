@@ -104,19 +104,7 @@ public class ConfigServletTest {
 
         assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
-    @Test
-    public void validateGetPluginOnlineStateReturnsCorrectState() {
 
-        final String testPluginName = "testPlugin";
-        final String pluginAvailability = "forTesting";
-        prepareMocks();
-        when(pluginStatusBL.getPluginAvailability(eq(testPluginName))).thenReturn(pluginAvailability);
-
-        Response response = configServlet.getPluginOnlineState(testPluginName,httpServletRequest);
-
-        assertEquals(response.getEntity().toString(),pluginAvailability);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
-    }
     @Test
     public void validateGetPluginOnlineStateResponsesWithServerErrorIfExceptionIsThrown() {
 
@@ -128,18 +116,7 @@ public class ConfigServletTest {
 
         assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
-    @Test
-    public void validateGetPluginOnlineStateResponsesWithNotFoundIfThereIsNoPlugin() {
 
-        final String testPluginName = "testPlugin";
-        prepareMocks();
-        when(pluginStatusBL.getPluginAvailability(any(String.class))).thenReturn(null);
-
-        Response response = configServlet.getPluginOnlineState(testPluginName, httpServletRequest);
-
-        assertEquals(response.getStatus(), HttpStatus.SC_NOT_FOUND);
-        assertTrue(response.getEntity().toString().contains(testPluginName));
-    }
 
     private void prepareMocks() {
         when(httpServletRequest.getSession()).thenReturn(httpSession);

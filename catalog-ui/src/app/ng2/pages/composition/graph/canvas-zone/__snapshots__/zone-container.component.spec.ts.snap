@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ZoneContainerComponent should match current snapshot of palette element component 1`] = `
+<zone-container
+  backgroundClick={[Function EventEmitter]}
+  backgroundClicked={[Function Function]}
+  minimize={[Function EventEmitter]}
+  unminifyZone={[Function Function]}
+>
+  <div>
+    <div
+      class="sdc-canvas-zone__header"
+    >
+      <div
+        class="sdc-canvas-zone__title"
+      >
+        
+        <span
+          class="sdc-canvas-zone__counter"
+        >
+          
+        </span>
+      </div>
+      <span
+        class="sdc-canvas-zone__state-button"
+      >
+        –
+      </span>
+    </div>
+    <div
+      class="sdc-canvas-zone__container"
+    />
+  </div>
+</zone-container>
+`;

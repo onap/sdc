@@ -26,18 +26,29 @@ import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.components.impl.*;
+import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.components.impl.ImportUtilsTest;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.UploadResourceInfo;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
@@ -51,14 +62,12 @@ import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 public class ResourceImportManagerTest {
@@ -106,17 +115,14 @@ public class ResourceImportManagerTest {
         user.setRole("ADMIN");
         user.setFirstName("Jhon");
         user.setLastName("Doh");
-        Either<User, ActionStatus> eitherUser = Either.left(user);
-
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(eitherUser);
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
 
-        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
-        assertTrue(createResource.isLeft());
-        Resource resource = createResource.left().value().left;
+        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        Resource resource = createResource.left;
 
         testSetConstantMetaData(resource);
         testSetMetaDataFromJson(resource, resourceMD);
@@ -127,31 +133,29 @@ public class ResourceImportManagerTest {
         Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
     }
 
-    @Test
+    @Test()
     public void testResourceCreationFailed() throws IOException {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        Either<User, ActionStatus> eitherUser = Either.left(user);
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(eitherUser);
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
         ResponseFormat dummyResponseFormat = createGeneralErrorInfo();
 
         when(responseFormatManager.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(dummyResponseFormat);
         setResourceBusinessLogicMock();
 
         String jsonContent = "this is an invalid yml!";
-
-        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
-        assertTrue(createResource.isRight());
-        ResponseFormat errorInfoFromTest = createResource.right().value();
-        assertEquals(errorInfoFromTest.getStatus(), dummyResponseFormat.getStatus());
-        assertEquals(errorInfoFromTest.getMessageId(), dummyResponseFormat.getMessageId());
-        assertEquals(errorInfoFromTest.getFormattedMessage(), dummyResponseFormat.getFormattedMessage());
+        ComponentException errorInfoFromTest = null;
+        try {
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        }catch (ComponentException e){
+            errorInfoFromTest = e;
+        }
+        assertNotNull(errorInfoFromTest);
+        assertEquals(errorInfoFromTest.getActionStatus(), ActionStatus.GENERAL_ERROR);
 
         Mockito.verify(resourceBusinessLogic, Mockito.times(0)).createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.eq(user), Mockito.eq(true), Mockito.eq(false), Mockito.eq(true), Mockito.eq(null), Mockito.eq(null), Mockito.eq(false));
-
         Mockito.verify(resourceBusinessLogic, Mockito.times(0)).propagateStateToCertified(Mockito.eq(user), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
-
     }
 
     @Test
@@ -159,17 +163,14 @@ public class ResourceImportManagerTest {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        Either<User, ActionStatus> eitherUser = Either.left(user);
-
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(eitherUser);
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml");
 
-        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
-        assertTrue(createResource.isLeft());
-        Resource resource = createResource.left().value().left;
+        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        Resource resource = createResource.left;
         testSetCapabilities(resource);
 
         Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
@@ -182,58 +183,47 @@ public class ResourceImportManagerTest {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        Either<User, ActionStatus> eitherUser = Either.left(user);
-
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(eitherUser);
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-port.yml");
 
-        Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
-        assertTrue(createResource.isLeft());
-        testSetRequirments(createResource.left().value().left);
+        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        testSetRequirments(createResource.left);
 
     }
 
     private void setResourceBusinessLogicMock() {
         when(resourceBusinessLogic.getUserAdmin()).thenReturn(userAdmin);
         when(resourceBusinessLogic.createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.eq(null), Mockito.eq(null), Mockito.eq(false)))
-                .thenAnswer(new Answer<ImmutablePair<Resource, ActionStatus>>() {
-                    public ImmutablePair<Resource, ActionStatus> answer(InvocationOnMock invocation) throws Throwable {
-                        Object[] args = invocation.getArguments();
-                        return new ImmutablePair<>((Resource) args[0], ActionStatus.CREATED);
+                .thenAnswer((Answer<ImmutablePair<Resource, ActionStatus>>) invocation -> {
+                    Object[] args = invocation.getArguments();
+                    return new ImmutablePair<>((Resource) args[0], ActionStatus.CREATED);
 
-                    }
                 });
         when(resourceBusinessLogic.propagateStateToCertified(Mockito.any(User.class), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false)))
-                .thenAnswer(new Answer<Either<Resource, ResponseFormat>>() {
-                    public Either<Resource, ResponseFormat> answer(InvocationOnMock invocation) throws Throwable {
-                        Object[] args = invocation.getArguments();
-                        return Either.left((Resource) args[1]);
+                .thenAnswer((Answer<Resource>) invocation -> {
+                    Object[] args = invocation.getArguments();
+                    return (Resource) args[1];
 
-                    }
                 });
-        when(resourceBusinessLogic.createResourceByDao(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), Mockito.anyBoolean(), Mockito.anyBoolean())).thenAnswer(new Answer<Either<Resource, ResponseFormat>>() {
-            public Either<Resource, ResponseFormat> answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                return Either.left((Resource) args[0]);
+        when(resourceBusinessLogic.createResourceByDao(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), Mockito.anyBoolean(), Mockito.anyBoolean())).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
+            Object[] args = invocation.getArguments();
+            return Either.left((Resource) args[0]);
 
-            }
         });
-        when(resourceBusinessLogic.validateResourceBeforeCreate(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), Mockito.eq(false), Mockito.eq(null))).thenAnswer(new Answer<Either<Resource, ResponseFormat>>() {
-            public Either<Resource, ResponseFormat> answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                return Either.left((Resource) args[0]);
+        when(resourceBusinessLogic.validateResourceBeforeCreate(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), Mockito.eq(false), Mockito.eq(null))).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
+            Object[] args = invocation.getArguments();
+            return Either.left((Resource) args[0]);
 
-            }
         });
 
-        Either<Boolean, ResponseFormat> either = Either.left(true);
+        Boolean either = true;
         when(resourceBusinessLogic.validatePropertiesDefaultValues(Mockito.any(Resource.class))).thenReturn(either);
     }
 
-    public ResponseFormat createGeneralErrorInfo() {
+    private ResponseFormat createGeneralErrorInfo() {
         ResponseFormat responseFormat = new ResponseFormat(500);
         responseFormat.setPolicyException(new PolicyException("POL5000", "Error: Internal Server Error. Please try again later", null));
         return responseFormat;
@@ -246,7 +236,7 @@ public class ResourceImportManagerTest {
         resourceMD.addSubCategory("Generic", "Infrastructure");
         resourceMD.setContactId("ya107f");
         resourceMD.setResourceIconPath("defaulticon");
-        resourceMD.setTags(Arrays.asList(new String[] { "BlockStorage" }));
+        resourceMD.setTags(Collections.singletonList("BlockStorage"));
         resourceMD.setDescription("Represents a server-local block storage device (i.e., not shared) offering evenly sized blocks of data from which raw storage volumes can be created.");
         resourceMD.setResourceVendorModelNumber("vendorReleaseNumber");
         return resourceMD;
@@ -357,7 +347,7 @@ public class ResourceImportManagerTest {
     private void testSetConstantMetaData(Resource resource) {
         assertEquals(resource.getVersion(), TypeUtils.getFirstCertifiedVersionVersion());
         assertSame(resource.getLifecycleState(), ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE);
-        assertEquals((boolean) resource.isHighestVersion(), ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
+        assertEquals(resource.isHighestVersion(), ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
         assertEquals(resource.getVendorName(), ImportUtils.Constants.VENDOR_NAME);
         assertEquals(resource.getVendorRelease(), ImportUtils.Constants.VENDOR_RELEASE);
     }

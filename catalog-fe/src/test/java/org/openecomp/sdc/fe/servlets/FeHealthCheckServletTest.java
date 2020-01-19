@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.fe.impl.HealthCheckService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FeHealthCheckServletTest {

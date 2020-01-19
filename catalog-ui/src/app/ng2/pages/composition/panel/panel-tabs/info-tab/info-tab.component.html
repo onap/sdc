@@ -1,0 +1,174 @@
+<!--
+  ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+ 
+<ng2-expand-collapse state="0">
+    <header tooltip="General Information">General Info</header>
+    <content class="general-info-container">
+        <!-- TYPE -->
+        <div class="component-details-panel-item" *ngIf="component.componentType">
+            <span class="name" [innerHTML]="'Type:'"></span>
+            <span class="value" data-tests-id="rightTab_componentType" tooltip="{{component.componentType}}">{{component.componentType}}</span>
+        </div>
+
+        <!-- RESOURCE TYPE-->
+        <div class="component-details-panel-item" *ngIf="component.resourceType">
+            <span class="name" [innerHTML]="'Resource Type:'"></span>
+            <span class="value" data-tests-id="rightTab_resourceType" tooltip="{{component.resourceType}}">{{component.resourceType}}</span>
+        </div>
+
+        <!-- VERSION -->
+        <div class="component-details-panel-item" >
+            <span class="name" [innerHTML]="'GENERAL_LABEL_VERSION' | translate"></span>
+            <span class="value" *ngIf="!isComponentSelectedFlag" data-tests-id="rightTab_version" tooltip="{{component.version}}">{{component.version}}</span>
+            <ng-container *ngIf="isComponentSelectedFlag">
+                <select #versionDropdown (change)="onChangeVersion(versionDropdown)" [ngModel]="component.getComponentUid()" data-tests-id="changeVersion">
+                    <option *ngFor="let version of versions" value="{{version.value}}"
+                            [disabled]="isDisabledFlag" [class.minor]="(component.componentVersion)%1"
+                    >{{version.label}}</option>
+                </select>
+            </ng-container>
+        </div>
+
+        <!-- CATEGORY -->
+        <ng-container *ngIf="component.categories && component.categories[0]">
+            <div class="component-details-panel-item">
+                <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
+                <span class="value" data-tests-id="rightTab_category" tooltip="{{component.categories[0].name}}">{{component.categories[0].name}}</span>
+            </div>
+
+            <!-- SUB CATEGORY -->
+            <div class="component-details-panel-item" *ngIf="component.categories[0].subcategories && component.categories[0].subcategories[0]">
+                <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
+                <span class="value" data-tests-id="rightTab_subCategory" tooltip="{{component.categories[0].subcategories[0].name}}">{{component.categories[0].subcategories[0].name}}</span>
+            </div>
+        </ng-container>
+
+        <!-- CREATION DATE -->
+        <div class="component-details-panel-item" *ngIf="component.creationDate">
+            <span class="name" [innerHTML]="'Creation Date:'"></span>
+            <span class="value" data-tests-id="rightTab_version" tooltip="{{component.creationDate | date: 'MM/dd/yyyy'}}">{{component.creationDate | date: 'MM/dd/yyyy'}}</span>
+        </div>
+
+        <!-- AUTHOR -->
+        <div class="component-details-panel-item" *ngIf="component.creatorFullName">
+            <span class="name" [innerHTML]="'Author:'"></span>
+            <span class="value" data-tests-id="rightTab_author" tooltip="{{component.creatorFullName}}">{{component.creatorFullName}}</span>
+        </div>
+
+        <!-- Vendor Name data-ng-if="selectedComponent.isResource()"-->
+        <div class="component-details-panel-item" *ngIf="component.vendorName">
+            <span class="name" [innerHTML]="'Vendor Name:'"></span>
+            <span class="value" data-tests-id="rightTab_vendorName" tooltip="{{component.vendorName}}">{{component.vendorName}}</span>
+        </div>
+
+        <!-- Vendor Release data-ng-if="selectedComponent.isResource()"-->
+        <div class="component-details-panel-item" *ngIf="component.vendorRelease">
+            <span class="name" [innerHTML]="'Vendor Release:'"></span>
+            <span class="value" data-tests-id="rightTab_vendorRelease" tooltip="{{component.vendorRelease}}">{{component.vendorRelease}}</span>
+        </div>
+
+        <!-- Vendor Release data-ng-if="selectedComponent.isResource()"-->
+        <div class="component-details-panel-item" *ngIf="component.resourceVendorModelNumber">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_RESOURCE_MODEL_NUMBER' | translate"></span>
+            <span class="value" data-tests-id="rightTab_resourceVendorModelNumber" tooltip="{{component.resourceVendorModelNumber}}">{{component.resourceVendorModelNumber}}</span>
+        </div>
+
+        <!-- Service Type data-ng-if="selectedComponent.isService()"-->
+        <div class="component-details-panel-item" *ngIf="component.serviceType">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_SERVICE_TYPE' | translate"></span>
+            <span class="value" data-tests-id="rightTab_serviceType" tooltip="{{component.serviceType}}">{{component.serviceType}}</span>
+        </div>
+
+        <!-- Service Role data-ng-if="selectedComponent.isService()"-->
+        <div class="component-details-panel-item" *ngIf="component.serviceRole">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_SERVICE_ROLE' | translate"></span>
+            <span class="value" data-tests-id="rightTab_serviceRole" tooltip="{{component.serviceRole}}">{{component.serviceRole}}</span>
+        </div>
+
+        <!-- Contact ID -->
+        <div class="component-details-panel-item" *ngIf="component.contactId">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_CONTACT_ID' | translate"></span>
+            <span class="value" data-tests-id="rightTab_contactId" tooltip="{{component.contactId}}">{{component.contactId}}</span>
+        </div>
+
+        <!-- Service Name data-ng-if="isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy()"-->
+        <div class="component-details-panel-item" *ngIf="component.sourceModelName">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_SOURCE_SERVICE_NAME' | translate"></span>
+            <span class="value" data-tests-id="rightTab_sourceModelName" tooltip="{{component.sourceModelName}}">{{component.sourceModelName}}</span>
+        </div>
+
+        <!-- Customization UUID data-ng-if="isViewMode() && currentComponent.isService() && selectedComponent.isResource()"-->
+        <div class="component-details-panel-item" *ngIf="component.customizationUUID">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID' | translate"></span>
+            <span class="value" data-tests-id="rightTab_customizationModuleUUID" tooltip="{{component.customizationUUID}}">{{component.customizationUUID}}</span>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="component-details-panel-item description">
+            <span class="name" [innerHTML]="'GENERAL_LABEL_DESCRIPTION' | translate"></span>
+            <chars-ellipsis [text]="component.description" [maxChars]="55" [testId]="'rightTab_description'"></chars-ellipsis>
+        </div>
+
+
+        <!--TODO: move to separate component!-->
+        <ng-container *ngIf="componentType == 'POLICY'">
+            <!-- TYPE -->
+            <div class="component-details-panel-item policy-item">
+                <span class="name" [innerHTML]="'GENERAL_LABEL_TYPE' | translate"></span>
+                <span class="value" data-tests-id="rightTab_componentType" tooltip="{{component.policyTypeUid}}">{{component.policyTypeUid}}</span>
+            </div>
+
+            <!-- CATEGORY -->
+            <div class="component-details-panel-item policy-item">
+                <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
+                <span class="value" data-tests-id="rightTab_category" tooltip="Policy">Policy</span>
+            </div>
+
+            <!-- SUB CATEGORY -->
+            <div class="component-details-panel-item policy-item">
+                <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
+                <span class="value" data-tests-id="rightTab_subCategory" tooltip="Policy">Policy</span>
+            </div>
+        </ng-container>
+
+        <!--TODO: move to separate component!-->
+        <ng-container *ngIf="componentType == 'GROUP'">
+            <!-- CATEGORY -->
+            <div class="component-details-panel-item group-item">
+                <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
+                <span class="value" data-tests-id="rightTab_category" tooltip="Group">Group</span>
+            </div>
+
+            <!-- SUB CATEGORY -->
+            <div class="component-details-panel-item group-item">
+                <span class="name" [innerHTML]="'GENERAL_LABEL_SUB_CATEGORY' | translate"></span>
+                <span class="value" data-tests-id="rightTab_subCategory" tooltip="Group">Group</span>
+            </div>
+
+        </ng-container>
+
+    </content>
+</ng2-expand-collapse>
+
+<ng2-expand-collapse *ngIf="component.tags || isComponentInstanceSelected()">
+    <header tooltip="Tags">Tags</header>
+    <content class="tags-container">
+        <span *ngIf="component.tags?.indexOf(component.name)===-1" class="i-sdc-designer-sidebar-section-content-item-tag"
+              data-tests-id="rightTab_tag" tooltip="{{component.name}}">{{component.name}}</span>
+        <span class="i-sdc-designer-sidebar-section-content-item-tag" *ngFor="let tag of component.tags"
+              data-tests-id="rightTab_tag" tooltip="{{tag}}">{{tag}}</span>
+    </content>
+</ng2-expand-collapse>

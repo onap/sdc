@@ -64,7 +64,7 @@ public class ArtifactResolverImpl implements ArtifactsResolver {
         }
 
         Map<String, ArtifactDefinition> serviceApiArtifacts = Collections.emptyMap();
-        if (componentType.equals(ComponentTypeEnum.SERVICE)) {
+        if (componentType == ComponentTypeEnum.SERVICE) {
             serviceApiArtifacts = Optional.ofNullable(((Service) component).getServiceApiArtifacts()).orElse(Collections.emptyMap());
         }
 

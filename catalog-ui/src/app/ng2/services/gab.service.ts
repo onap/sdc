@@ -18,12 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable, Inject} from "@angular/core";
-import {Response} from '@angular/http';
-import {HttpService} from "./http.service";
-import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
-import {Observable} from "rxjs";
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Response } from '@angular/http';
+import { Observable } from 'rxjs';
+import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
 
+// tslint:disable-next-line:interface-name
 export interface IServerResponse {
   data: [{ [key: string]: string }];
 }
@@ -36,24 +37,25 @@ export class GabRequest {
   }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 @Injectable()
 export class GabService {
   baseUrl: string;
   gabUrl: string;
 
-  constructor(@Inject(SdcConfigToken) sdcConfig: ISdcConfig, private http: HttpService) {
+  constructor(@Inject(SdcConfigToken) sdcConfig: ISdcConfig, protected http: HttpClient) {
     this.baseUrl = sdcConfig.api.root;
     this.gabUrl = sdcConfig.api.POST_GAB_Search;
   }
 
   public getArtifact(artifactUniqueId: string, resourceId: string, columns: string[]): Observable<Response> {
-    let finalUrl: string = this.baseUrl + this.gabUrl;
-    let request: GabRequest = {
+    const finalUrl: string = this.baseUrl + this.gabUrl;
+    const request: GabRequest = {
       fields: columns,
       parentId: resourceId,
-      artifactUniqueId: artifactUniqueId
+      artifactUniqueId
     };
 
-    return this.http.post(finalUrl, request);
+    return this.http.post<Response>(finalUrl, request);
   }
 }

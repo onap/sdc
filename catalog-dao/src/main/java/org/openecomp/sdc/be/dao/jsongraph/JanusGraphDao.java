@@ -252,7 +252,7 @@ public class JanusGraphDao {
         }
     }
 
-    public void setVertexProperties(Vertex vertex, Map<String, Object> properties) {
+    public void setVertexProperties(Vertex vertex, Map<String, Object> properties) throws IOException {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             if (entry.getValue() != null) {
                 vertex.property(entry.getKey(), entry.getValue());
@@ -351,6 +351,7 @@ public class JanusGraphDao {
                     result.put(valueOf, value);
                 }
             }
+            // add print to properties that can't be converted by enum
         }
         return result;
     }
@@ -574,7 +575,7 @@ public class JanusGraphDao {
      * @return
      */
     public Either<GraphVertex, JanusGraphOperationStatus> getChildVertex(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = getChildrenVertecies(parentVertex, edgeLabel, parseFlag);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = getChildrenVertices(parentVertex, edgeLabel, parseFlag);
         if (childrenVertecies.isRight()) {
             return Either.right(childrenVertecies.right().value());
         }
@@ -589,7 +590,7 @@ public class JanusGraphDao {
      * @return
      */
     public Either<Vertex, JanusGraphOperationStatus> getChildVertex(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertecies = getChildrenVertecies(parentVertex, edgeLabel, parseFlag);
+        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertecies = getChildrenVertices(parentVertex, edgeLabel, parseFlag);
         if (childrenVertecies.isRight()) {
             return Either.right(childrenVertecies.right().value());
         }
@@ -597,7 +598,7 @@ public class JanusGraphDao {
     }
 
     public Either<GraphVertex, JanusGraphOperationStatus> getParentVertex(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = getParentVertecies(parentVertex, edgeLabel, parseFlag);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = getParentVertices(parentVertex, edgeLabel, parseFlag);
         if (childrenVertecies.isRight()) {
             return Either.right(childrenVertecies.right().value());
         }
@@ -608,7 +609,7 @@ public class JanusGraphDao {
     }
 
     public Either<Vertex, JanusGraphOperationStatus> getParentVertex(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertecies = getParentVertecies(parentVertex, edgeLabel, parseFlag);
+        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertecies = getParentVertices(parentVertex, edgeLabel, parseFlag);
         if (childrenVertecies.isRight() ) {
             return Either.right(childrenVertecies.right().value());
         }
@@ -625,19 +626,19 @@ public class JanusGraphDao {
      * @param parseFlag
      * @return
      */
-    public Either<List<GraphVertex>, JanusGraphOperationStatus> getChildrenVertecies(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        return getAdjacentVerticies(parentVertex, edgeLabel, parseFlag, Direction.OUT);
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getChildrenVertices(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
+        return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.OUT);
     }
 
-    public Either<List<GraphVertex>, JanusGraphOperationStatus> getParentVertecies(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        return getAdjacentVerticies(parentVertex, edgeLabel, parseFlag, Direction.IN);
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getParentVertices(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
+        return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.IN);
     }
 
-    public Either<List<Vertex>, JanusGraphOperationStatus> getParentVertecies(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        return getAdjacentVerticies(parentVertex, edgeLabel, parseFlag, Direction.IN);
+    public Either<List<Vertex>, JanusGraphOperationStatus> getParentVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
+        return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.IN);
     }
 
-    private Either<List<Vertex>, JanusGraphOperationStatus> getAdjacentVerticies(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag, Direction direction) {
+    private Either<List<Vertex>, JanusGraphOperationStatus> getAdjacentVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag, Direction direction) {
         List<Vertex> list = new ArrayList<>();
         try {
             Either<JanusGraph, JanusGraphOperationStatus> graphRes = janusGraphClient.getGraph();
@@ -678,14 +679,14 @@ public class JanusGraphDao {
      * @param parseFlag
      * @return
      */
-    public Either<List<Vertex>, JanusGraphOperationStatus> getChildrenVertecies(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        return getAdjacentVerticies(parentVertex, edgeLabel, parseFlag, Direction.OUT);
+    public Either<List<Vertex>, JanusGraphOperationStatus> getChildrenVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
+        return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.OUT);
     }
 
-    private Either<List<GraphVertex>, JanusGraphOperationStatus> getAdjacentVerticies(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag, Direction direction) {
+    private Either<List<GraphVertex>, JanusGraphOperationStatus> getAdjacentVertices(GraphVertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag, Direction direction) {
         List<GraphVertex> list = new ArrayList<>();
 
-        Either<List<Vertex>, JanusGraphOperationStatus> adjacentVerticies = getAdjacentVerticies(parentVertex.getVertex(), edgeLabel, parseFlag, direction);
+        Either<List<Vertex>, JanusGraphOperationStatus> adjacentVerticies = getAdjacentVertices(parentVertex.getVertex(), edgeLabel, parseFlag, direction);
         if (adjacentVerticies.isRight()) {
             return Either.right(adjacentVerticies.right().value());
         }
@@ -816,12 +817,45 @@ public class JanusGraphDao {
 
     public Either<Edge, JanusGraphOperationStatus> deleteEdge(JanusGraphVertex fromVertex, JanusGraphVertex toVertex, EdgeLabelEnum label, String uniqueIdFrom, String uniqueIdTo, boolean deleteAll) {
         Either<Edge, JanusGraphOperationStatus> result = null;
+        Vertex problemV = null;
         try {
             Iterable<JanusGraphEdge> edges = fromVertex.query().labels(label.name()).edges();
             Iterator<JanusGraphEdge> eIter = edges.iterator();
             while (eIter.hasNext()) {
                 Edge edge = eIter.next();
-                String currVertexUniqueId = edge.inVertex().value(GraphPropertyEnum.UNIQUE_ID.getProperty());
+                problemV = edge.inVertex();
+                String currVertexUniqueId = null;
+                try {
+                    currVertexUniqueId = edge.inVertex().value(GraphPropertyEnum.UNIQUE_ID.getProperty());
+                }catch (Exception e){
+                    // AutoHealing procedure
+                    logger.info( "Corrupted vertex and edge were found and deleted {}",e);
+                    if ( problemV != null ) {
+                        Map<GraphPropertyEnum, Object> props = getVertexProperties(problemV);
+                        logger.debug( "problematic Vertex properties:");
+                        logger.debug( "props size: {}",  props.size());
+                        for (Map.Entry<GraphPropertyEnum, Object> entry : props.entrySet()) {
+                            logger.debug( "{}{}",entry.getKey() + ":" + entry.getValue());
+                        }
+                        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertices = getChildrenVertices(problemV, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
+                        if(childrenVertices.isLeft()){
+                            childrenVertices.left().value().size();
+                            logger.debug( "number of children that problematic Vertex has: {}",  props.size());
+                        }
+                        try {
+                            edge.remove();
+                        }catch (Exception e1){
+                            logger.debug( "failed to remove problematic edge. {}",  e1);
+                        }
+                        try {
+                            problemV.remove();
+                        }catch (Exception e2){
+                            logger.debug( "failed to remove problematic vertex . {}",  e2);
+                        }
+                    }
+                    continue;
+                }
+
                 if (currVertexUniqueId != null && currVertexUniqueId.equals(uniqueIdTo)) {
                     CommonUtility.addRecordToLog(logger, LogLevelEnum.TRACE, "Going to delete an edge with the label {} between vertices {} and {}. ", label.name(), uniqueIdFrom, uniqueIdTo);
                     edge.remove();
@@ -836,6 +870,7 @@ public class JanusGraphDao {
                 result = Either.right(JanusGraphOperationStatus.NOT_FOUND);
             }
         } catch (Exception e) {
+
             CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Exception occured during deleting an edge with the label {} between vertices {} and {}. {}", label.name(), uniqueIdFrom, uniqueIdTo, e);
             return Either.right(JanusGraphClient.handleJanusGraphException(e));
         }

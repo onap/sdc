@@ -9,6 +9,7 @@ import {ComponentInstanceServiceNg2} from "../../../services/component-instance-
 import {PropertiesUtils} from "app/ng2/pages/properties-assignment/services/properties.utils";
 import {Requirement} from "../../../../models/requirement";
 import {Capability, RequirementCapabilityModel} from "../../../../models/capability";
+import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 
 const REQUIREMENT = 'Requirement';
 const CAPABILITY = 'Capability';
@@ -24,14 +25,9 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
 
     @Input() optionalRequirementsMap:Dictionary<Requirement[]>; //optional requirement map - key is type, value is array of requirements
     @Input() optionalCapabilitiesMap:Dictionary<Capability[]>; //optional capabilities map - key is type, value is array of capabilities
-
     @Input() selectedReqOrCapOption:string; // the selection value chosen by the user (options: requirement / capability )
-
-    @Input() currentComponent:ComponentModel;
     @Input() componentInstanceId:string;
-
     @Input() selectedReqOrCapModel:RequirementCapabilityModel;
-
     @Output() updateSelectedReqOrCap:EventEmitter<RequirementCapabilityModel> = new EventEmitter<RequirementCapabilityModel>();
 
     types:Array<string> = [];
@@ -51,7 +47,8 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
     private _loadingCapabilityProperties: Array<Capability>;
 
     constructor(private componentInstanceServiceNg2:ComponentInstanceServiceNg2,
-                private propertiesUtils:PropertiesUtils) {
+                private propertiesUtils:PropertiesUtils,
+                private workspaceService: WorkspaceService) {
         this.selectOptions = [new RadioButtonModel(REQUIREMENT, REQUIREMENT), new RadioButtonModel(CAPABILITY, CAPABILITY)];
         this._loadingCapabilityProperties = [];
     }
@@ -171,14 +168,13 @@ export class SelectRequirementOrCapabilityComponent implements OnInit {
         }
     }
 
-
     private setCapabilityProperties = ():void => {
         let selectedCapability = <Capability>this.selectedReqOrCapModel;
         if (!selectedCapability.properties) {
             this.loadingCapabilityProperties = true;
             if (this._loadingCapabilityProperties.indexOf(selectedCapability) == -1) {
                 this._loadingCapabilityProperties.push(selectedCapability);
-                this.componentInstanceServiceNg2.getInstanceCapabilityProperties(this.currentComponent, this.componentInstanceId, selectedCapability)
+                this.componentInstanceServiceNg2.getInstanceCapabilityProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.componentInstanceId, selectedCapability)
                     .subscribe((response: Array<PropertyModel>) => {
                         if (this.selectedReqOrCapModel === selectedCapability) {
                             delete this.loadingCapabilityProperties;

@@ -16,62 +16,80 @@
  *
  */
 
-import { Injectable, Inject } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable, Injector } from '@angular/core';
+import { IAppConfigurtaion, Plugins, PluginsConfiguration, ValidationConfiguration, Validations } from 'app/models';
+import { IApi } from 'app/models/app-config';
 import 'rxjs/add/operator/toPromise';
-import {IAppConfigurtaion, ValidationConfiguration, Validations, Plugins, PluginsConfiguration} from "app/models";
-import {IApi} from "app/models/app-config";
-import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
+import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
+import { CacheService } from './cache.service';
 
 @Injectable()
 export class ConfigService {
 
-    private baseUrl;
     public configuration: IAppConfigurtaion;
-    public api:IApi;
+    public api: IApi;
+    private baseUrl;
 
-    constructor(private http: Http, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
-    	this.api = this.sdcConfig.api;
-        this.baseUrl = this.api.root + this.sdcConfig.api.component_api_root;
+    constructor(
+                @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
+                private cacheService: CacheService,
+                private injector: Injector,
+                private http: HttpClient
+        ) {
+            this.api = this.sdcConfig.api;
+            this.baseUrl = this.api.root + this.sdcConfig.api.component_api_root;
+    }
+
+    loadSdcSetupData = (): Promise<void> =>  {
+        const url: string = this.api.root + this.api.GET_SDC_Setup_Data;
+        const promise: Promise<any> = this.http.get<any>(url).toPromise();
+        promise.then((response) => {
+            this.cacheService.set('version', response.version);
+            this.cacheService.set('serviceCategories', response.categories.serviceCategories);
+            this.cacheService.set('resourceCategories', response.categories.resourceCategories);
+            this.cacheService.set('UIConfiguration', response.configuration);
+        });
+        return promise;
     }
 
     loadValidationConfiguration(): Promise<ValidationConfiguration> {
-        let url: string = this.sdcConfig.validationConfigPath;
-        let promise: Promise<ValidationConfiguration> = this.http.get(url).map((res: Response) => res.json()).toPromise();
+        const url: string = this.sdcConfig.validationConfigPath;
+        const promise: Promise<ValidationConfiguration> = this.http.get<ValidationConfiguration>(url).toPromise();
         promise.then((validationData: Validations) => {
             ValidationConfiguration.validation = validationData;
+            this.cacheService.set('validation', validationData);
         }).catch((ex) => {
             console.error('Error loading validation.json configuration file, using fallback data', ex);
 
-            let fallback:Validations = {
-                "propertyValue": {
-                    "max": 2500,
-                    "min": 0
+            const fallback = {
+                propertyValue: {
+                    max: 2500,
+                    min: 0
                 },
-
-                "validationPatterns": {
-                    "string": "^[\\sa-zA-Z0-9+-]+$",
-                    "comment": "^[\\sa-zA-Z0-9+-_\\{\\}\"]+$",
-                    "integer": "^(([-+]?\\d+)|([-+]?0x[0-9a-fA-F]+))$"
+                validationPatterns: {
+                    string: '^[\\sa-zA-Z0-9+-]+$',
+                    stringOrEmpty: '^[\\sa-zA-Z0-9&-]*$',
+                    comment: '^[\\sa-zA-Z0-9+-_\\{\\}"]+$',
+                    integer: '^(([-+]?\\d+)|([-+]?0x[0-9a-fA-F]+))$'
                 }
             };
 
-            ValidationConfiguration.validation = fallback;
-
+            this.cacheService.set('validation', fallback);
         });
 
         return promise;
     }
 
-    loadPluginsConfiguration(): Promise<PluginsConfiguration> {
-        let url:string = this.api.no_proxy_root + this.api.GET_plugins_configuration;
-        let promise: Promise<any> = this.http.get(url).map((res: Response) => res.json()).toPromise();
+    loadPluginsConfiguration = (): Promise<PluginsConfiguration> =>  {
+        const url: string = this.api.no_proxy_root + this.api.GET_plugins_configuration;
+        const promise: Promise<any> = this.http.get<PluginsConfiguration>(url).toPromise();
         return new Promise<PluginsConfiguration>((resolve) => {
             promise.then((pluginsData: Plugins) => {
                 PluginsConfiguration.plugins = pluginsData;
                 resolve();
             }).catch((ex) => {
-                console.error("Error loading plugins configuration from FE", ex);
+                console.error('Error loading plugins configuration from FE', ex);
 
                 PluginsConfiguration.plugins = [] as Plugins;
                 resolve();

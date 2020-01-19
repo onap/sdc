@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 import java.util.List;
 import java.util.Map;
-
-import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
-import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+
 
 import javax.validation.constraints.NotNull;
 
@@ -62,6 +64,16 @@ public class LengthConstraint extends AbstractPropertyConstraint {
 
     public void setLength(Integer length) {
         this.length = length;
+    }
+
+    @Override
+    public ConstraintType getConstraintType() {
+        return null;
+    }
+
+    @Override
+    public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
+
     }
 
     @Override
