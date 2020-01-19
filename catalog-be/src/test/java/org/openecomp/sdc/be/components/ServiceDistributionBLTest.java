@@ -77,12 +77,15 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     private final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
     private final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
 
+
     @InjectMocks
     ServiceBusinessLogic bl = new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
         groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
         artifactsBusinessLogic, distributionEngine, componentInstanceBusinessLogic,
         serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
-        serviceFilterOperation, serviceFilterValidator, artifactToscaOperation);
+        serviceFilterOperation, serviceFilterValidator, artifactToscaOperation, componentContactIdValidator,
+        componentNameValidator, componentTagsValidator, componentValidator, componentIconValidator,
+        componentProjectCodeValidator, componentDescriptionValidator);
 
     ComponentsUtils componentsUtils;
 

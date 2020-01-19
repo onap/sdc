@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,8 +22,8 @@ package org.openecomp.sdc.common.api;
 
 public interface YamlConstants {
 
-    String NODE_TYPES = "node_types";
-    String INTERFACES = "interfaces";
-    String TEMPLATE_VERSION = "template_version";
-    String TEMPLATE_NAME = "template_name";
+	public static final String NODE_TYPES = "node_types";
+	public static final String INTERFACES = "interfaces";
+	public static final String TEMPLATE_VERSION = "template_version";
+	public static final String TEMPLATE_NAME = "template_name";
 }

@@ -20,13 +20,13 @@
 
 import {Injectable, Inject} from "@angular/core";
 import {Observable} from "rxjs/Observable";
-import {HttpService} from "./http.service";
 import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 import {PolicyInstance, PolicyTargetsRequest} from '../../models/graph/zones/policy-instance';
 import {IZoneInstanceAssignment} from "../../models/graph/zones/zone-instance";
 import {IZoneService} from "../../models/graph/zones/zone";
 import {TargetUiObject} from "../../models/ui-models/ui-target-object";
 import {TargetOrMemberType} from "../../utils/constants";
+import { HttpClient } from "@angular/common/http";
 
 
 @Injectable()
@@ -38,14 +38,12 @@ export class PoliciesService implements IZoneService {
         'SERVICE': 'services'
     }
 
-    constructor(private http:HttpService, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
+    constructor(private http: HttpClient, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
         this.baseUrl = sdcConfig.api.root;
     }
 
-    public createPolicyInstance(topologyTemplateType:string, topologyTemplateId:string, policyType:string) {
-        return this.http.post(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyType, {}).map(resp => {
-            return resp.json();
-        });
+    public createPolicyInstance(topologyTemplateType:string, topologyTemplateId:string, policyType:string): Observable<PolicyInstance> {
+        return this.http.post<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyType, {});
     }
 
     public addPolicyTarget(topologyTemplateType:string, topologyTemplateId:string, policy:PolicyInstance, targetId:string, targetType:TargetOrMemberType) {
@@ -76,8 +74,8 @@ export class PoliciesService implements IZoneService {
     }
 
     public updatePolicyTargets(topologyTemplateType:string, topologyTemplateId:string, policyId:string, targets:PolicyTargetsRequest): Observable<PolicyInstance> {
-        return this.http.post(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId + '/targets', targets.requestItems)
-            .map(response => new PolicyInstance(response.json()));
+        return this.http.post<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId + '/targets', targets.requestItems)
+            .map(response => new PolicyInstance(response));
     }
 
     public updateTargets(topologyTemplateType:string, topologyTemplateId:string, policyId:string, targets:Array<TargetUiObject>):Observable<PolicyInstance> {
@@ -94,22 +92,18 @@ export class PoliciesService implements IZoneService {
     }
 
     public getSpecificPolicy(topologyTemplateType:string, topologyTemplateId:string, policyId:string):Observable<PolicyInstance> {
-        return this.http.get(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId)
+        return this.http.get<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId)
             .map(res => {
-                return new PolicyInstance(res.json());
+                return new PolicyInstance(res);
             });
     }
 
     public updateName(topologyTemplateType:string, topologyTemplateId:string, policyId:string, newName:string):Observable<any> {
-        return this.http.put(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId, {name: newName}).map(res => {
-            return res.json();
-        });
+        return this.http.put<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId, {name: newName});
     };
 
     public deletePolicy(topologyTemplateType:string, topologyTemplateId:string, policyId:string) {
-        return this.http.delete(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId).map(resp => {
-            return resp.json();
-        });
+        return this.http.delete<PolicyInstance>(this.baseUrl + '/v1/catalog/' + this.mapApiDirections[topologyTemplateType.toUpperCase()] + '/' + topologyTemplateId + '/policies/' + policyId);
     };
 
     public updateZoneInstanceAssignments(topologyTemplateType:string, topologyTemplateId:string, policyId:string, targets:Array<IZoneInstanceAssignment>):Observable<PolicyInstance>{

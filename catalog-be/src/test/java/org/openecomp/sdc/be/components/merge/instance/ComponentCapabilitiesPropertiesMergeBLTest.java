@@ -70,13 +70,17 @@ public class ComponentCapabilitiesPropertiesMergeBLTest {
 
 	@Test
 	public void testDescription() throws Exception {
+		// ComponentCapabilitiesPropertiesMergeBL testSubject;
 		String result;
 
+		// default test
+		// testSubject = createTestSubject();
 		result = testSubject.description();
 	}
 
 	@Test
 	public void testMergeComponents() throws Exception {
+		// ComponentCapabilitiesPropertiesMergeBL testSubject;
 		Component prevComponent = ObjectGenerator.buildResourceWithComponentInstance("mock3");
 		Component currentComponent = ObjectGenerator.buildResourceWithComponentInstance("mock1", "mock2");
 		currentComponent.setUniqueId("mock");
@@ -90,6 +94,7 @@ public class ComponentCapabilitiesPropertiesMergeBLTest {
 
 	@Test
 	public void testMergeComponentInstanceCapabilities() throws Exception {
+		// ComponentCapabilitiesPropertiesMergeBL testSubject;
 		Component currentComponent = null;
 		Component origInstanceCmpt = null;
 		String instanceId = "";
@@ -97,6 +102,8 @@ public class ComponentCapabilitiesPropertiesMergeBLTest {
 		List<CapabilityDefinition> prevInstanceCapabilities = null;
 		ActionStatus result;
 
+		// default test
+		// testSubject = createTestSubject();
 		result = testSubject.mergeComponentInstanceCapabilities(currentComponent, origInstanceCmpt, instanceId,
 				prevInstanceCapabilities);
 

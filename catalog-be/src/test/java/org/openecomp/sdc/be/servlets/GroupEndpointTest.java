@@ -39,6 +39,8 @@ import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
@@ -47,6 +49,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -101,7 +104,10 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         GroupEndpoint groupEndpoint() {
-            return new GroupEndpoint(groupBusinessLogic());
+            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+
+            return new GroupEndpoint(userBusinessLogic, componentsUtils, groupBusinessLogic());
         }
 
         @Bean
@@ -168,9 +174,9 @@ public class GroupEndpointTest extends JerseySpringBaseTest {
         when(accessValidations.validateUserCanRetrieveComponentData(eq(VALID_COMPONENT_ID), eq("resources"), eq(VALID_USER), anyString()))
                 .thenReturn(cr);
         when(componentValidations.getComponentInstance(cr, A)).thenReturn(Optional.of(ci));
-        doNothing().when(groupsOperation).updateGroupOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class));
+        doNothing().when(groupsOperation).updateGroupOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), any(PromoteVersionEnum.class));
         when(groupOperation.validateAndUpdatePropertyValue(isA(GroupProperty.class))).thenReturn(StorageOperationStatus.OK);
-        when(groupsOperation.updateGroupPropertiesOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), anyList())).thenAnswer(new Answer<Either>() {
+        when(groupsOperation.updateGroupPropertiesOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), anyList(), any(PromoteVersionEnum.class))).thenAnswer(new Answer<Either>() {
             @Override
             public Either answer(InvocationOnMock invocationOnMock) throws Throwable {
                 Object[] args = invocationOnMock.getArguments();

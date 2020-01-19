@@ -21,6 +21,12 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
@@ -40,6 +46,7 @@ import javax.ws.rs.core.MediaType;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/config")
+@Api(value = "Get configuration", description = "Get configuration")
 public class ConfigServlet extends BasicServlet {
 
     private static final Logger log = Logger.getLogger(ConfigServlet.class);
@@ -47,6 +54,9 @@ public class ConfigServlet extends BasicServlet {
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    @ApiOperation(value = "Retrieve configuration", httpMethod = "GET", notes = "Returns configuration", response = String.class)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public String getConfig(@Context final HttpServletRequest request) {
 
         String result = null;

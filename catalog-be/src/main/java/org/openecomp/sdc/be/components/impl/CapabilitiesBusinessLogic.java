@@ -20,6 +20,7 @@ import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.CapabilitiesValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -131,7 +132,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
     private Either<Component, ResponseFormat> validateUserAndCapabilities(User user, String componentId,
                                                                           String errorContext,
                                                                           List<CapabilityDefinition> capabilityDefinitions ) {
-        validateUserExists(user.getUserId(), errorContext, true);
+        validateUserExists(user.getUserId());
         Either<Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
@@ -194,7 +195,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
     public Either<List<CapabilityDefinition>, ResponseFormat> updateCapabilities(String componentId,
                                                                                  List<CapabilityDefinition> capabilityDefinitions,
                                                                                  User user, String errorContext, boolean lock) {
-        validateUserExists(user.getUserId(), errorContext, true);
+        validateUserExists(user.getUserId());
         Either<Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
@@ -371,7 +372,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
 
     public Either<CapabilityDefinition, ResponseFormat> getCapability(String componentId, String capabilityToGet,
                                                                       User user, boolean lock) {
-        validateUserExists(user.getUserId(), GET_CAPABILITIES, true);
+        validateUserExists(user.getUserId());
         Either<Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
@@ -423,7 +424,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
 
     public Either<CapabilityDefinition, ResponseFormat> deleteCapability(String componentId, String capabilityIdToDelete,
                                                                          User user, boolean lock) {
-        validateUserExists(user.getUserId(), DELETE_CAPABILITIES, true);
+        validateUserExists(user.getUserId());
         Either<Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
@@ -546,12 +547,12 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
 
     private Either<Boolean, ResponseFormat> lockComponentResult(boolean lock, Component component, String action) {
         if (lock) {
-            Either<Boolean, ResponseFormat> lockResult = lockComponent(component.getUniqueId(), component, action);
-            if (lockResult.isRight()) {
-                LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, component.getName(),
-                        lockResult.right().value().getFormattedMessage());
+            try {
+                lockComponent(component.getUniqueId(), component, action);
+            } catch (ComponentException e){
+                LOGGER.debug(FAILED_TO_LOCK_COMPONENT_RESPONSE_IS, component.getName(), e.getMessage());
                 janusGraphDao.rollback();
-                return Either.right(lockResult.right().value());
+                throw e;
             }
         }
         return Either.left(true);

@@ -1,0 +1,23 @@
+<div class="canvas-search-component" [ngClass]="{'results-shown': autoCompleteResults.length}"
+     [class.canvas-search-visible]="autoCompleteValues && autoCompleteValues.length" [attr.data-tests-id]="testId">
+    <div class="canvas-search-bar-container" [attr.data-tests-id]="testId"
+         [class.active]="searchQuery && searchQuery.length">
+        <sdc-search-bar class="canvas-search-bar"
+              [placeHolder]="placeholder"
+              (onSearchClicked)="onSearchClicked($event)"
+              [size]="'medium'"
+              [value]="searchQuery"
+              (valueChange)="onSearchQueryChanged($event)">
+        </sdc-search-bar>
+        <svg-icon class="canvas-clear-search"
+              [name]="'close'"
+              [clickable]="true"
+              [mode]="'secondary'"
+              [size]="'small'"
+              (click)="onClearSearch()">
+        </svg-icon>
+    </div>
+    <dropdown-results *ngIf="autoCompleteResults && autoCompleteResults.length" [options]="autoCompleteResults"
+                      (onItemSelected)="onItemSelected($event)"></dropdown-results>
+</div>
+

@@ -372,7 +372,7 @@ public class JanusGraphDaoMockTest {
 
 		// default test
 
-		result = testSubject.getParentVertecies(parentVertex, edgeLabel, parseFlag);
+		result = testSubject.getParentVertices(parentVertex, edgeLabel, parseFlag);
 	}
 
 	@Test
@@ -388,7 +388,7 @@ public class JanusGraphDaoMockTest {
 		JanusGraphVertex value2 = Mockito.mock(JanusGraphVertex.class);
 		Mockito.when(janusGraphClient.getGraph()).thenReturn(value);
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getAdjacentVerticies",
+		result = Deencapsulation.invoke(testSubject, "getAdjacentVertices",
 				new Object[] { Vertex.class, EdgeLabelEnum.class, JsonParseFlagEnum.class, Direction.class });
 	}
 
@@ -402,7 +402,7 @@ public class JanusGraphDaoMockTest {
 
 		// default test
 
-		result = testSubject.getChildrenVertecies(parentVertex, edgeLabel, parseFlag);
+		result = testSubject.getChildrenVertices(parentVertex, edgeLabel, parseFlag);
 	}
 
 

@@ -68,8 +68,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
     @javax.annotation.Resource
     private ApplicationDataTypeCache dataTypeCache;
 
-
-    @Override
     public Either<List<GroupInstance>, StorageOperationStatus> getAllGroupInstances(String parentId, NodeTypeEnum parentType) {
         Either<List<GroupInstance>, StorageOperationStatus> result = null;
         List<GroupInstance> groupInstanceRes = new ArrayList<>();
@@ -100,11 +98,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
         if (childrenByEdgeCriteria.isRight()) {
             JanusGraphOperationStatus status = childrenByEdgeCriteria.right().value();
             log.debug("Failed to find group instance {} on graph", childrenByEdgeCriteria.right().value());
-
-            if (status == JanusGraphOperationStatus.NOT_FOUND) {
-                return Either.left(groupInstanceRes);
-            }
-            
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
 
@@ -159,12 +152,11 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
     }
 
-    @Override
+
     public Either<Integer, StorageOperationStatus> increaseAndGetGroupInstancePropertyCounter(String instanceId) {
         return propertyOperation.increaseAndGetObjInstancePropertyCounter(instanceId, NodeTypeEnum.GroupInstance);
     }
 
-    @Override
     public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToGroupInstance(ComponentInstanceProperty groupInstanceProperty, String groupInstanceId, Integer index, boolean inTransaction) {
         /// #RULES SUPPORT
         /// Ignore rules received from client till support
@@ -216,7 +208,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
     }
 
-    @Override
     public Either<ComponentInstanceProperty, StorageOperationStatus> updatePropertyValueInGroupInstance(ComponentInstanceProperty gropuInstanceProperty, String groupInstanceId, boolean inTransaction) {
         // TODO Auto-generated method stub
         // change Propety class
@@ -674,7 +665,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
     }
 
-    @Override
     public StorageOperationStatus dissociateAndAssociateGroupsInstanceFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact) {
 
         return this.dissociateAndAssociateGroupsInstanceFromArtifactOnGraph(componentId, componentTypeEnum, oldArtifactId, newArtifact);

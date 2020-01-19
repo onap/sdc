@@ -35,11 +35,11 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
-import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.LAST_COMMAND;
+import static org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic.PENULTIMATE_COMMAND;
 import static org.openecomp.sdc.be.utils.PropertyDefinitionUtils.convertListOfProperties;
 
 @org.springframework.stereotype.Component
-@Order(LAST_COMMAND)//must run after all properties values were merged
+@Order(PENULTIMATE_COMMAND)//must run after all properties values were merged but before component instance relations merge
 public class ComponentInputsMergeBL extends InputsMergeCommand implements VspComponentsMergeCommand {
 
     public ComponentInputsMergeBL(InputsValuesMergingBusinessLogic inputsValuesMergingBusinessLogic, DeclaredInputsResolver declaredInputsResolver, ToscaOperationFacade toscaOperationFacade, ComponentsUtils componentsUtils) {

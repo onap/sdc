@@ -1,0 +1,106 @@
+<div class="onboarding-modal">
+    <div class="search-wrapper">
+        <span class="sub-title-wrapper">
+            <svg-icon class="info-button" 
+                (click) = "openPopover($event, 'ON_BOARDING_GENERAL_INFO')"
+                [name]="'info-circle-o'" [mode]="'primary'"
+                [size]="'medium'"></svg-icon>
+            <span class="sub-title">{{ 'ON_BOARDING_MODAL_SUB_TITLE' | translate }}</span>
+        </span>
+        <span class="sdc-filter-bar-wrapper">
+            <sdc-filter-bar
+                [placeHolder]="'Search'"
+                (keyup)="updateFilter($event)"
+                [testId]="'onboarding-search'">
+            </sdc-filter-bar>
+        </span>   
+    </div>
+    <div class="datatable-components-wapper">
+    <ngx-datatable #componentsMetadataTable 
+        columnMode="flex" 
+        [headerHeight]="40"  
+        [rowHeight]="35" 
+        [rows]="componentsMetadataList"
+        [sorts]="[{prop: 'name', dir: 'asc'}]"
+        (select)='onSelectComponent($event)' 
+        [selectionType]="'single'">
+        <ngx-datatable-row-detail [rowHeight]="undefiend">
+            <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template  >
+                <div class="onboarding-components-details">
+                    <span class="row-details-description">
+                        <div>
+                            <div class="th">VSP Description:</div>
+                            <div>{{row.description}}</div>
+                        </div>
+                    </span>
+                    <span class="row-details-metadata1">
+                        <div *ngIf="isCsarComponentExists">
+                            <div class="th">VF'S Meta Data:</div>
+                            <div><span class="th">Name:</span>{{componentFromServer.name}}</div>
+                            <div><span class="th">Lifecycle:</span>{{componentFromServer.lifecycleState}}</div>
+                            <div><span class="th">Creator:</span>{{componentFromServer.creatorFullName}}</div>
+                        </div>
+                    </span>
+                    <span class="row-details-metadata2">
+                        <div *ngIf="isCsarComponentExists">
+                            <div class="th">&nbsp;</div>
+                            <div><span class="th">UUID:</span> {{componentFromServer.uuid}}</div>
+                            <div><span class="th">Version:</span> {{componentFromServer.version}}</div>
+                            <div><span class="th">Modifier:</span> {{componentFromServer.lastUpdaterFullName}}</div>
+                            <div *ngIf="checkNotCertified()">
+                                <span class="note">Designers cannot update a VSP if the VF is <br>checked out by another user.</span>
+                            </div>
+                        </div>
+                    </span>
+                    <span class="row-details-metadata3">
+                        <svg-icon class="info-button" 
+                        (click) = "openPopover($event, isCsarComponentExists ? 'ON_BOARDING_UPDATE_INFO' : 'ON_BOARDING_IMPORT_INFO')"
+                        [name]="'info-circle-o'" [mode]="'primary'"
+                        [size]="'medium'"></svg-icon>
+                    </span>
+                    <span class="row-details-icon">
+                        <div>
+                            <sdc-button class="import-update-file-btn"
+                            [text]="isCsarComponentExists ? 'Update VSP' : 'Import VSP'"
+                            [testId]="isCsarComponentExists ? 'update-csar' : 'import-csar'"
+                            [type]="'primary'"
+                            [icon_name]="isCsarComponentExists ? 'sync-o' : 'alert-triangle-o'"
+                            [icon_position]="'left'"
+                            [icon_mode] = "'white'"
+                            [size] = "'medium'"
+                            (click)="importOrUpdateCsar()"
+                            [disabled]="checkNotCertified()"
+                          >
+                        </sdc-button>
+                            <svg-icon class="download-file-btn" sdc-tooltip [tooltip-text]="'Download-csar'"
+                                [mode]="'primary'"  [clickable]="true" [name]="'download-o'" 
+                                [testId]="'download-csar'" [size]="'medium'" (click)="downloadCsar(row.packageId)">
+                            </svg-icon>
+                        </div>
+                    </span>     
+                </div>
+                <sdc-loader [global]="false" [active]="isLoad" [size]="'small'"[relative]="true"></sdc-loader>
+            </ng-template>
+        </ngx-datatable-row-detail>
+        <ngx-datatable-column *ngFor="let column of columns" [ngSwitch]="column.prop" [resizeable]="false" [draggable]="false" name={{column.name}}
+            [flexGrow]="column.flexGrow">
+            <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchCase="'name'">
+                <span data-tests-id="csar-row" class="sprite table-arrow" [ngClass]="{'opened': selectedComponent && row.packageId === selectedComponent.packageId}"></span>
+                    {{row[column.prop]}}
+            </ng-template>
+            <ng-template  ngx-datatable-cell-template let-row="row" *ngSwitchCase="'categories'">
+                <span *ngIf="row[column.prop][0]">
+                    {{row[column.prop][0].name}}&nbsp;
+                    <span *ngIf="row[column.prop][0].subcategories[0]">{{row[column.prop][0].subcategories[0].name}}</span>
+                </span> 
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-row="row" *ngSwitchDefault>
+                {{row[column.prop]}}
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+</div>
+</div>
+
+
+

@@ -1,0 +1,101 @@
+<div class="sdc-catalog-container">
+    <div class="w-sdc-main-container">
+        <div class="i-sdc-designer-leftbar-section-left-switch-header"
+             (click)="showCatalogSelector=!showCatalogSelector">
+            <div class="i-sdc-designer-leftbar-section-left-switch-header-text">
+                {{selectedCatalogItem.title}}
+            </div>
+            <div class="i-sdc-designer-leftbar-section-left-switch-header-icon sprite-new arrow-up-small">&nbsp;</div>
+
+            <div class="sdc-catalog-selector-wrapper" *ngIf="showCatalogSelector">
+                <div class="sdc-catalog-selector-item"
+                     *ngFor="let leftSwitchItem of catalogSelectorItems"
+                     (click)="selectLeftSwitchItem(leftSwitchItem)">
+                    <span>{{leftSwitchItem.title}}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEFT SIDE -->
+        <div perfectScrollbar class="sdc-catalog-body-container w-sdc-left-sidebar i-sdc-designer-left-sidebar">
+            <div class="sdc-catalog-leftbar-container">
+                <div class="sdc-catalog-type-filter-container">
+                    <div class="i-sdc-designer-leftbar-section-title pointer"
+                         (click)="sectionClick('type')"
+                         [ngClass]="{'expanded': expandedSection.indexOf('type') !== -1}">
+                        <span class="i-sdc-designer-leftbar-section-title-icon"></span>
+                        <span class="i-sdc-designer-leftbar-section-title-text"
+                              data-tests-id="typeFilterTitle">Type</span>
+                    </div>
+                    <div class="i-sdc-designer-leftbar-section-content">
+                        <sdc-checklist [checklistModel]="typesChecklistModel" [testId]="'checklist-type'"
+                                       (checkedChange)="gui.onComponentTypeClick()"></sdc-checklist>
+                    </div>
+                </div>
+
+                <div class="sdc-catalog-categories-filter-container">
+                    <div class="i-sdc-designer-leftbar-section-title pointer" (click)="sectionClick('category')"
+                         [ngClass]="{'expanded': expandedSection.indexOf('category') !== -1}">
+                        <span class="i-sdc-designer-leftbar-section-title-icon"></span>
+                        <span class="i-sdc-designer-leftbar-section-title-text" data-tests-id="categoriesFilterTitle">Categories</span>
+                    </div>
+                    <div class="i-sdc-designer-leftbar-section-content">
+                        <sdc-checklist [checklistModel]="categoriesChecklistModel" [testId]="'checklist-category'"
+                                       (checkedChange)="gui.onCategoryClick()"></sdc-checklist>
+                    </div>
+                </div>
+
+                <!-- STATUS -->
+                <div class="sdc-catalog-status-filter-container">
+                    <div class="i-sdc-designer-leftbar-section-title pointer" (click)="sectionClick('status')"
+                         [ngClass]="{'expanded': expandedSection.indexOf('status') !== -1}">
+                        <span class="i-sdc-designer-leftbar-section-title-icon"></span>
+                        <span class="i-sdc-designer-leftbar-section-title-text"
+                              data-tests-id="statusFilterTitle">Status</span>
+                    </div>
+
+                    <div class="i-sdc-designer-leftbar-section-content">
+                        <sdc-checklist [checklistModel]="statusChecklistModel" [testId]="'checklist-status'"
+                                       (checkedChange)="gui.onStatusClick()"></sdc-checklist>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="w-sdc-main-right-container w-sdc-catalog-main" infiniteScroll
+             (infiniteScroll)="raiseNumberOfElementToDisplay()" [infiniteScrollDistance]="100">
+                <!-- HEADER -->
+                <div class="catalog-top-bar">
+                    <div class="w-sdc-dashboard-catalog-items-header"
+                         [innerHTML]="getNumOfElements(catalogFilteredItems.length)">
+
+                    </div>
+                    <div class="catalog-top-right-bar">
+                        <span class="w-sdc-dashboard-catalog-header-order1">{{'SORT_CAPTION'|translate}}</span>&nbsp;&nbsp;
+                        <a class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-last-update"
+                           [ngClass]="{'blue' : sortBy==='lastUpdateDate'}"
+                           (click)="order('lastUpdateDate')">{{'SORT_BY_UPDATE_DATE'|translate}}</a>&nbsp;
+                        <span *ngIf="sortBy === 'lastUpdateDate'" class="w-sdc-catalog-sort-arrow"
+                              [ngClass]="{'down': reverse, 'up':!reverse}"></span>
+                        <a class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-alphabetical"
+                           [ngClass]="{'blue' : sortBy!=='lastUpdateDate'}"
+                           (click)="order('resourceName')">{{'SORT_ALPHABETICAL'|translate}}</a>&nbsp;
+                        <span *ngIf="sortBy !== 'lastUpdateDate'" class="w-sdc-catalog-sort-arrow"
+                              [ngClass]="{'down': reverse, 'up':!reverse}"></span>
+                    </div>
+                </div>
+
+                <div class='catalog-elements-list'>
+                    <!-- Tile new -->
+                    <ui-tile *ngFor="let component of catalogFilteredSlicedItems"
+                             [component]="component" (onTileClick)="goToComponent(component)"></ui-tile>
+                    <!-- Tile new -->
+                </div>
+        </div>
+    </div>
+
+    <top-nav [topLvlSelectedIndex]="1" [searchTerm]="search.filterTerm"
+             (searchTermChange)="gui.changeFilterTerm($event)" [version]="version"></top-nav>
+</div>

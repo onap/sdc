@@ -24,6 +24,8 @@ import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -79,14 +81,14 @@ public class ComponentInstanceMergeDataBusinessLogicTest {
         User user = new User();
         DataForMergeHolder dataHolder = new DataForMergeHolder();
         when(toscaOperationFacade.getToscaElement(Mockito.eq("newContainerId"), componentsFilterCapture.capture())).thenReturn(Either.left(persistedService));
-        when(componentInstanceMergeInterfaceMock1.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(Either.left(persistedService));
-        when(componentInstanceMergeInterfaceMock2.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(Either.left(persistedService));
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeComponentUserOrigData(user, dataHolder, new Service(), "newContainerId", "instId");
-        assertEquals(persistedService, mergeResult.left().value());
+        when(componentInstanceMergeInterfaceMock1.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(persistedService);
+        when(componentInstanceMergeInterfaceMock2.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(persistedService);
+        Component mergeResult = testInstance.mergeComponentUserOrigData(user, dataHolder, new Service(), "newContainerId", "instId");
+        assertEquals(persistedService, mergeResult);
         assertComponentFilter(componentsFilterCapture.getValue());
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void mergeComponentUserOrigData_failToGetPersistedComponent_doNotTryToMerge() throws Exception {
         User user = new User();
         DataForMergeHolder dataHolder = new DataForMergeHolder();
@@ -95,22 +97,18 @@ public class ComponentInstanceMergeDataBusinessLogicTest {
         when(toscaOperationFacade.getToscaElement(Mockito.eq("newContainerId"), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.GENERAL_ERROR, ComponentTypeEnum.SERVICE)).thenReturn(ActionStatus.GENERAL_ERROR);
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(rf);
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeComponentUserOrigData(user, dataHolder, container, "newContainerId", "instId");
-        assertEquals(rf, mergeResult.right().value());
-        verifyZeroInteractions(componentInstanceMergeInterfaceMock1, componentInstanceMergeInterfaceMock2);
+        testInstance.mergeComponentUserOrigData(user, dataHolder, container, "newContainerId", "instId");
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void mergeComponentUserOrigData_failOnOneMerge_doNotCallOtherMerge() throws Exception {
         Service persistedService = new Service();
         User user = new User();
         DataForMergeHolder dataHolder = new DataForMergeHolder();
         ResponseFormat rf = new ResponseFormat();
         when(toscaOperationFacade.getToscaElement(Mockito.eq("newContainerId"), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(persistedService));
-        when(componentInstanceMergeInterfaceMock1.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenReturn(Either.right(rf));
-        Either<Component, ResponseFormat> mergeResult = testInstance.mergeComponentUserOrigData(user, dataHolder, new Service(), "newContainerId", "instId");
-        assertEquals(rf, mergeResult.right().value());
-        verifyZeroInteractions(componentInstanceMergeInterfaceMock2);
+        when(componentInstanceMergeInterfaceMock1.mergeDataAfterCreate(user, dataHolder, persistedService, "instId")).thenThrow(new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR));
+        testInstance.mergeComponentUserOrigData(user, dataHolder, new Service(), "newContainerId", "instId");
     }
 
     private void assertComponentFilter(ComponentParametersView value) {

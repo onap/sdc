@@ -23,12 +23,53 @@
  */
 'use strict';
 import * as _ from "lodash";
-import {ArtifactGroupModel, CapabilitiesGroup,RequirementsGroup, PropertyModel, InputModel, Module} from "../../models";
-import {ResourceType,ComponentType} from "../../utils/constants";
+import {
+    ArtifactGroupModel,
+    CapabilitiesGroup,
+    RequirementsGroup,
+    PropertyModel,
+    InputModel,
+    Module
+} from "../../models";
+import {ResourceType, ComponentType} from "../../utils/constants";
 import {Capability} from "../capability";
 import {Requirement} from "../requirement";
 
-export class ComponentInstance {
+export interface IComponentInstance {
+
+    componentUid:string;
+    componentName:string;
+    posX:number;
+    posY:number;
+    componentVersion:string;
+    description:string;
+    icon:string;
+    name:string;
+    normalizedName:string;
+    originType:string;
+    deploymentArtifacts:ArtifactGroupModel;
+    artifacts:ArtifactGroupModel;
+    propertyValueCounter:number;
+    uniqueId:string;
+    creationTime:number;
+    modificationTime:number;
+    capabilities:CapabilitiesGroup;
+    requirements:RequirementsGroup;
+    customizationUUID:string;
+    sourceModelInvariant:string;
+    sourceModelName:string;
+    sourceModelUid:string;
+    sourceModelUuid:string;
+    //custom properties
+    certified:boolean;
+    iconSprite:string;
+    inputs:Array<InputModel>;
+    properties:Array<PropertyModel>;
+    groupInstances:Array<Module>;
+    invariantName:string;
+    originArchived:boolean;
+}
+export class ComponentInstance implements IComponentInstance{
 
     public componentUid:string;
     public componentName:string;
@@ -61,7 +102,7 @@ export class ComponentInstance {
     public groupInstances:Array<Module>;
     public invariantName:string;
     public originArchived:boolean;
-    public directives: Array<string>;
+    public directives: string[];
 
     DIRECTIVES_TYPES = {
         SELECTABLE: 'selectable'
@@ -112,12 +153,16 @@ export class ComponentInstance {
         return this.originType === 'VL';
     };
 
-    public isComplex = () : boolean => {
-        return this.originType === ResourceType.VF || this.originType === ResourceType.PNF || this.originType === ResourceType.CVFC || this.originType === ResourceType.CR ;
+    public isComplex = ():boolean => {
+        return this.originType === ResourceType.VF || this.originType === ResourceType.PNF || this.originType === ResourceType.CVFC || this.originType === ResourceType.CR;
     }
 
-    public isServiceProxy = () :boolean => {
+    public isServiceProxy = ():boolean => {
         return this.originType === ComponentType.SERVICE_PROXY;
+    }
+
+    public getComponentUid = ():string => {
+        return this.isServiceProxy()? this.sourceModelUid : this.componentUid;
     }
 
     public setInstanceRC = ():void=> {
@@ -183,7 +228,6 @@ export class ComponentInstance {
     public get iconClass() {
         return this.iconSprite + ' ' + this.icon;
     }
-
     public isDependent = () : boolean => {
         return this.directives && this.directives.indexOf(this.DIRECTIVES_TYPES.SELECTABLE) !== -1;
     }

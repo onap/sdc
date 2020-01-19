@@ -19,12 +19,12 @@
  */
 
 'use strict';
-import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
-import {PropertyModel} from "app/models";
-import {ModalsHandler} from "app/utils";
-import {COMPONENT_FIELDS} from "../../../../utils/constants";
-import {ComponentGenericResponse} from "../../../../ng2/services/responses/component-generic-response";
-import {ComponentServiceNg2} from "../../../../ng2/services/component-services/component.service";
+import { IWorkspaceViewModelScope } from "app/view-models/workspace/workspace-view-model";
+import { PropertyModel } from "app/models";
+import { ModalsHandler } from "app/utils";
+import { ComponentGenericResponse } from "../../../../ng2/services/responses/component-generic-response";
+import { ComponentServiceNg2 } from "../../../../ng2/services/component-services/component.service";
+import { SdcUiCommon, SdcUiServices, SdcUiComponents } from "onap-ui-angular";
 
 interface IPropertiesViewModelScope extends IWorkspaceViewModelScope {
     tableHeadersList:Array<any>;
@@ -43,14 +43,16 @@ export class PropertiesViewModel {
         '$scope',
         '$filter',
         'ModalsHandler',
-        'ComponentServiceNg2'
+        'ComponentServiceNg2',
+        'ModalServiceSdcUI'
     ];
 
 
     constructor(private $scope:IPropertiesViewModelScope,
                 private $filter:ng.IFilterService,
                 private ModalsHandler:ModalsHandler,
-                private ComponentServiceNg2:ComponentServiceNg2) {
+                private ComponentServiceNg2:ComponentServiceNg2,
+                private modalService: SdcUiServices.ModalService) {
         this.initComponentProperties();
     }
 
@@ -101,12 +103,13 @@ export class PropertiesViewModel {
 
         this.$scope.delete = (property:PropertyModel):void => {
 
-            let onOk = ():void => {
+            let onOk: Function = ():void => {
                 this.$scope.component.deleteProperty(property.uniqueId);
             };
             let title:string = this.$filter('translate')("PROPERTY_VIEW_DELETE_MODAL_TITLE");
             let message:string = this.$filter('translate')("PROPERTY_VIEW_DELETE_MODAL_TEXT", "{'name': '" + property.name + "'}");
-            this.ModalsHandler.openConfirmationModal(title, message, false).then(onOk);
+            const okButton = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+            this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
         };
     }
 }

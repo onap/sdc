@@ -99,11 +99,11 @@ public class MergeInstanceUtils {
      * @param newResource - new version of the same Resource
      * @return list of updated Relations created in UI
      */
-    public List<RequirementCapabilityRelDef> updateUiRelationsInResource(Resource oldResource, Resource newResource) {
+    public List<RequirementCapabilityRelDef> getUpdatedUiRelations(Component oldResource, Component newResource) {
         Map<String, ComponentInstance> mapOldComponentInstances = buildComponentInstanceMap(oldResource, ComponentInstance::getUniqueId);
         Map<String, ComponentInstance> mapNewComponentInstances = buildComponentInstanceMap(newResource, ComponentInstance::getName);
 
-        return getUpdatedCapReqDefs(oldResource,
+        return getUpdatedCapReqDefs(oldResource, newResource,
                 mapOldComponentInstances,
                 mapNewComponentInstances,
                 RequirementCapabilityRelDef::isOriginUI);
@@ -276,12 +276,12 @@ public class MergeInstanceUtils {
     
 
 
-    private Map<String, ComponentInstance> buildComponentInstanceMap(Resource oldRresource, Function<ComponentInstance, String> getKeyFunc) {
+    private Map<String, ComponentInstance> buildComponentInstanceMap(Component oldRresource, Function<ComponentInstance, String> getKeyFunc) {
         return oldRresource.getComponentInstances().stream()
                 .collect(Collectors.toMap(getKeyFunc, Function.identity(), (p1, p2) -> p1));
     }
 
-    private List<RequirementCapabilityRelDef> getUpdatedCapReqDefs(Resource oldResource,
+    private List<RequirementCapabilityRelDef> getUpdatedCapReqDefs(Component oldResource, Component newComponent,
                                                                    Map<String, ComponentInstance> mapOldComponentInstances,
                                                                    Map<String, ComponentInstance> mapNewComponentInstances,
                                                                    Predicate<? super RequirementCapabilityRelDef> filter) {
@@ -290,7 +290,34 @@ public class MergeInstanceUtils {
                         .map(rel -> createRelationMergeInfoPair(rel, mapOldComponentInstances))
                         .map(infoPair -> restoreRequirementCapabilityRelDef(infoPair, mapNewComponentInstances))
                         .filter(Objects::nonNull)
+                        .filter(r-> capReqMatchExist(r, newComponent))
                         .collect(Collectors.toList());
+    }
+
+
+    private boolean capReqMatchExist(RequirementCapabilityRelDef rel, Component currentComponent) {
+        return currentComponent.getComponentInstances().stream()
+                    .anyMatch(i->isFromInstance(i, rel)) &&
+                currentComponent.getComponentInstances().stream()
+                    .anyMatch(i->isToInstance(i, rel));
+    }
+
+    private boolean isToInstance(ComponentInstance inst, RequirementCapabilityRelDef rel) {
+        return inst.getUniqueId().equals(rel.getToNode()) &&
+                inst.getCapabilities().values()
+                        .stream()
+                        .flatMap(Collection::stream)
+                        .anyMatch(cap->cap.getName().equals(rel.resolveSingleRelationship().getRelation().getCapability())
+                                && cap.getOwnerId().equals(rel.resolveSingleRelationship().getRelation().getCapabilityOwnerId()));
+    }
+
+    private boolean isFromInstance(ComponentInstance inst, RequirementCapabilityRelDef rel) {
+        return inst.getUniqueId().equals(rel.getFromNode()) &&
+                inst.getRequirements().values()
+                        .stream()
+                        .flatMap(Collection::stream)
+                        .anyMatch(req->req.getName().equals(rel.resolveSingleRelationship().getRelation().getRequirement())
+                                && req.getOwnerId().equals(rel.resolveSingleRelationship().getRelation().getRequirementOwnerId()));
     }
 
     private ImmutablePair<RelationMergeInfo, RelationMergeInfo> createRelationMergeInfoPair(RequirementCapabilityRelDef reqCapDef,
@@ -331,11 +358,13 @@ public class MergeInstanceUtils {
     }
 
     private RequirementCapabilityRelDef restoreRequirementRelDef(ImmutablePair<RelationMergeInfo, RelationMergeInfo> mergeInfoPair, Map<String, ComponentInstance> mapNewComponentInstances) {
-        RequirementCapabilityRelDef capRelDefFrom;
+        RequirementCapabilityRelDef capRelDefFrom = null;
         RelationMergeInfo mergeInfoFrom = mergeInfoPair.getLeft();
         if (mergeInfoFrom != null) {
             ComponentInstance newComponentInstanceFrom = mapNewComponentInstances.get(mergeInfoFrom.getCapOwnerName());
-            capRelDefFrom = restoreRequirementRelDef(newComponentInstanceFrom, mergeInfoFrom,  newComponentInstanceFrom.getUniqueId());
+            if(newComponentInstanceFrom != null){
+                capRelDefFrom = restoreRequirementRelDef(newComponentInstanceFrom, mergeInfoFrom,  newComponentInstanceFrom.getUniqueId());
+            }
         }
         else {
             capRelDefFrom = null;

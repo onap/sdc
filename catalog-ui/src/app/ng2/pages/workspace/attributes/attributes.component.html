@@ -1,0 +1,93 @@
+<!--
+  ~ Copyright (C) 2018 AT&T Intellectual Property. All rights reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+<div class="workspace-attributes">
+
+    <div class="action-bar-wrapper">
+        <svg-icon-label
+                *ngIf="!(this.isViewOnly$ | async)"
+                class="add-attr-icon"
+                [name]="'plus'"
+                [mode]="'primary'"
+                [size]="'medium'"
+                [label]="'Add'"
+                [labelPlacement]="'right'"
+                [labelClassName]="'externalActionLabel'"
+                (click)="onAddAttribute()">
+        </svg-icon-label>
+    </div>
+
+    <ngx-datatable
+            columnMode="flex"
+            [footerHeight]="0"
+            [limit]="50"
+            [headerHeight]="40"
+            [rowHeight]="35"
+            [rows]="attributes"
+            #componentAttributesTable
+            (activate)="onExpandRow($event)">
+
+        <ngx-datatable-row-detail [rowHeight]="80">
+            <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                <div>{{row.description}}</div>
+            </ng-template>
+        </ngx-datatable-row-detail>
+
+        <ngx-datatable-column [resizeable]="false" name="Name" [flexGrow]="2">
+
+            <ng-template ngx-datatable-cell-template let-row="row" let-expanded="expanded">
+                <div class="expand-collapse-cell">
+                    <svg-icon [clickable]="true" class="expand-collapse-icon"
+                              [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
+                              [size]="'medium'"></svg-icon>
+                    <span>{{ row.name }}</span>
+                </div>
+            </ng-template>
+
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [resizeable]="false" name="Type" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{row.type}}
+            </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [resizeable]="false" name="Default Value" [flexGrow]="3">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{row.defaultValue}}
+            </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column *ngIf="!(this.isViewOnly$ | async)" [resizeable]="false" name="Action" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+                <div class="actionColumn">
+                    <svg-icon [clickable]="true"
+                              [mode]="'primary2'"
+                              [name]="'edit-o'"
+                              [size]="'medium'"
+                              (click)="onEditAttribute($event, row)">
+                    </svg-icon>
+                    <svg-icon [clickable]="true"
+                              [mode]="'primary2'"
+                              [name]="'trash-o'"
+                              (click)="onDeleteAttribute($event, row)"
+                              [size]="'medium'">
+                    </svg-icon>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+
+    </ngx-datatable>
+</div>

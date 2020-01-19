@@ -60,13 +60,13 @@ def importHeatTypes(scheme, beHost, bePort, adminUser, fileDir, updateversion):
                   "extContrailCP",
 				  "portMirroringByPolicy",
 				  "forwardingPath",
+				  "configuration",
 				  "VRFObject",
 				  "extVirtualMachineInterfaceCP",
 				  "VLANNetworkReceptor",
 				  "VRFEntry",
                   "subInterfaceV2",
                   "contrailV2VLANSubInterfaceV2",
-                  "configuration",
                   "fabricConfiguration"
 				  ]
 		

@@ -26,7 +26,7 @@ import com.google.gson.JsonParser;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
@@ -106,14 +106,14 @@ public class ArtifactValidationUtils {
 				counter);
 	}
 
-	public static ESArtifactData parseArtifactRespFromES(RestResponse resResponse) throws Exception {
+	public static DAOArtifactData parseArtifactRespFromES(RestResponse resResponse) throws Exception {
 		String bodyToParse = resResponse.getResponse();
 		JsonElement jElement = new JsonParser().parse(bodyToParse);
 		JsonElement jsourceElement = jElement.getAsJsonObject().get("_source");
 
 		ObjectMapper mapper = new ObjectMapper();
 
-		return mapper.readValue(jsourceElement.toString(), ESArtifactData.class);
+		return mapper.readValue(jsourceElement.toString(), DAOArtifactData.class);
 
 	}
 
@@ -174,13 +174,13 @@ public class ArtifactValidationUtils {
 	}
 
 	public static void validateEsArtifactReqVsResp(ArtifactReqDetails expectedArtifactInfo,
-			ESArtifactData esArtifactData) throws Exception {
+			DAOArtifactData DAOArtifactData) throws Exception {
 		String expectedArtifactUid = expectedArtifactInfo.getUniqueId();
 		if (expectedArtifactUid == null)
 			expectedArtifactUid = "";
-		assertEquals("artifact name is not correct ", expectedArtifactUid, esArtifactData.getId());
+		assertEquals("artifact name is not correct ", expectedArtifactUid, DAOArtifactData.getId());
 
-		String actualPayload = Decoder.encode(esArtifactData.getData().array());
+		String actualPayload = Decoder.encode(DAOArtifactData.getData().array());
 		assertEquals("artifact payloadData is not correct ", expectedArtifactInfo.getPayload(), actualPayload);
 	}
 

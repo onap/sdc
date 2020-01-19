@@ -30,8 +30,8 @@ public enum ResourceTypeEnum {
     CVFC("CVFC"/* Complex Virtual Function Component*/, false),
     VL("VL"/* (Virtual Link)"*/, true),
     VFCMT("VFCMT"/* (VFC Monitoring Template)"*/, true),
-    Configuration("Configuration ()", true),
-    ServiceProxy("ServiceProxy ()", true),
+    Configuration("Configuration", true),
+    ServiceProxy("ServiceProxy", true),
     ABSTRACT("Abstract (Generic VFC/VF/PNF/Service Type)", true);
 
     private String value;

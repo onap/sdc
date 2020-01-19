@@ -20,12 +20,17 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import fj.data.Either;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.janusgraph.core.*;
 import org.janusgraph.graphdb.relations.StandardVertexProperty;
 import org.janusgraph.graphdb.types.system.EmptyVertex;
 import org.janusgraph.graphdb.types.system.ImplicitKey;
-import fj.data.Either;
-import org.apache.tinkerpop.gremlin.structure.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,13 +46,12 @@ import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,13 +60,18 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class UserAdminOperationTest extends ModelTestBase {
-    private static final JanusGraphGenericDao JANUS_GRAPH_GENERIC_DAO = mock(JanusGraphGenericDao.class);
+    private static final JanusGraphGenericDao janusGraphGenericDao = mock(JanusGraphGenericDao.class);
+    private static final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
+
     @InjectMocks
-    private static final UserAdminOperation userAdminOperation = new UserAdminOperation(
-        JANUS_GRAPH_GENERIC_DAO);
+    private static final UserAdminOperation userAdminOperation = new UserAdminOperation(janusGraphGenericDao, toscaOperationFacade);
     private static final String ADMIN = "admin";
 
     @BeforeClass
@@ -73,7 +82,7 @@ public class UserAdminOperationTest extends ModelTestBase {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        Mockito.reset(JANUS_GRAPH_GENERIC_DAO);
+        Mockito.reset(janusGraphGenericDao);
         mockJanusGraphUpdate();
         mockJanusGraphDelete();
 
@@ -83,12 +92,10 @@ public class UserAdminOperationTest extends ModelTestBase {
     public void testDeActivateUserDataSuccess() {
         UserData userData = mockJanusGraphGet(ADMIN, UserRoleEnum.ADMIN, true);
 
-        Either<User, StorageOperationStatus> eitherUser = userAdminOperation.deActivateUser(userAdminOperation.convertToUser(userData));
+        User user = userAdminOperation.deActivateUser(userAdminOperation.convertToUser(userData));
 
-        verify(JANUS_GRAPH_GENERIC_DAO, times(1)).updateNode(eq(userData), eq(UserData.class));
-        verify(JANUS_GRAPH_GENERIC_DAO, times(0)).deleteNode(any(UserData.class), eq(UserData.class));
-        assertTrue(eitherUser.isLeft());
-        User user = eitherUser.left().value();
+        verify(janusGraphGenericDao, times(1)).updateNode(eq(userData), eq(UserData.class));
+        verify(janusGraphGenericDao, times(0)).deleteNode(any(UserData.class), eq(UserData.class));
         assertSame(user.getStatus(), UserStatusEnum.INACTIVE);
     }
 
@@ -99,11 +106,11 @@ public class UserAdminOperationTest extends ModelTestBase {
         List<Edge> edgesList = new ArrayList<>();
 
         Either<List<Edge>, JanusGraphOperationStatus> eitherResult = Either.left(edgesList);
-        when(JANUS_GRAPH_GENERIC_DAO.getEdgesForNode(userData, Direction.BOTH)).thenReturn(eitherResult);
+        when(janusGraphGenericDao.getEdgesForNode(userData, Direction.BOTH)).thenReturn(eitherResult);
 
         Either<User, ActionStatus> eitherUser = userAdminOperation.deleteUserData(ADMIN);
-        verify(JANUS_GRAPH_GENERIC_DAO, times(0)).updateNode(any(UserData.class), eq(UserData.class));
-        verify(JANUS_GRAPH_GENERIC_DAO, times(1)).deleteNode(userData, UserData.class);
+        verify(janusGraphGenericDao, times(0)).updateNode(any(UserData.class), eq(UserData.class));
+        verify(janusGraphGenericDao, times(1)).deleteNode(userData, UserData.class);
         assertTrue(eitherUser.isLeft());
 
     }
@@ -116,11 +123,11 @@ public class UserAdminOperationTest extends ModelTestBase {
         edgesList.add(getEmptyEdgeImpl());
 
         Either<List<Edge>, JanusGraphOperationStatus> eitherResult = Either.left(edgesList);
-        when(JANUS_GRAPH_GENERIC_DAO.getEdgesForNode(userData, Direction.BOTH)).thenReturn(eitherResult);
+        when(janusGraphGenericDao.getEdgesForNode(userData, Direction.BOTH)).thenReturn(eitherResult);
 
         Either<User, ActionStatus> eitherUser = userAdminOperation.deleteUserData(ADMIN);
-        verify(JANUS_GRAPH_GENERIC_DAO, times(0)).updateNode(any(UserData.class), eq(UserData.class));
-        verify(JANUS_GRAPH_GENERIC_DAO, times(0)).deleteNode(any(UserData.class), eq(UserData.class));
+        verify(janusGraphGenericDao, times(0)).updateNode(any(UserData.class), eq(UserData.class));
+        verify(janusGraphGenericDao, times(0)).deleteNode(any(UserData.class), eq(UserData.class));
         assertTrue(eitherUser.isRight());
         assertSame(eitherUser.right().value(), ActionStatus.USER_HAS_ACTIVE_ELEMENTS);
 
@@ -143,11 +150,11 @@ public class UserAdminOperationTest extends ModelTestBase {
         edges.add(edge1);
         edges.add(edge2);
         edges.add(edge3);
-        when(JANUS_GRAPH_GENERIC_DAO.getVertexByProperty(userKey, userId)).thenReturn(Either.left(userVertex));
-        when(JANUS_GRAPH_GENERIC_DAO.getOutgoingEdgesByCriteria(any(), any(), any())).thenReturn(Either.left(edges));
-        Either<List<Edge>, StorageOperationStatus> result = userAdminOperation.getUserPendingTasksList(user, new HashMap<>());
-        assertThat(result.isLeft()).isTrue();
-        List<Edge> pendingTasks = result.left().value();
+        when(janusGraphGenericDao.getVertexByProperty(userKey, userId)).thenReturn(Either.left(userVertex));
+        when(janusGraphGenericDao.getOutgoingEdgesByCriteria(any(), any(), any())).thenReturn(Either.left(edges));
+        ArrayList<Object> states = new ArrayList<>();
+        states.add("state");
+        List<Edge> pendingTasks = userAdminOperation.getUserPendingTasksList(user, states);
         assertThat(pendingTasks.size()).isEqualTo(2);
         assertThat(((TestEdge)pendingTasks.get(0)).getName()).isNotEqualTo("2");
         assertThat(((TestEdge)pendingTasks.get(1)).getName()).isNotEqualTo("2");
@@ -373,7 +380,7 @@ public class UserAdminOperationTest extends ModelTestBase {
     private UserData mockJanusGraphGet(String userId, UserRoleEnum role, boolean isActive) {
         UserData userData = buildUserData(userId, role, isActive);
         Either<UserData, JanusGraphOperationStatus> eitherUserData = Either.left(userData);
-        when(JANUS_GRAPH_GENERIC_DAO
+        when(janusGraphGenericDao
             .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), userId, UserData.class)).thenReturn(eitherUserData);
         return userData;
     }
@@ -383,7 +390,7 @@ public class UserAdminOperationTest extends ModelTestBase {
             Object[] args = invocation.getArguments();
             UserData retValue = (UserData) args[0];
             return Either.left(retValue);
-        }).when(JANUS_GRAPH_GENERIC_DAO).updateNode(any(UserData.class), eq(UserData.class));
+        }).when(janusGraphGenericDao).updateNode(any(UserData.class), eq(UserData.class));
     }
 
     private static void mockJanusGraphDelete() {
@@ -391,7 +398,7 @@ public class UserAdminOperationTest extends ModelTestBase {
             Object[] args = invocation.getArguments();
             UserData retValue = (UserData) args[0];
             return Either.left(retValue);
-        }).when(JANUS_GRAPH_GENERIC_DAO).deleteNode(any(UserData.class), eq(UserData.class));
+        }).when(janusGraphGenericDao).deleteNode(any(UserData.class), eq(UserData.class));
     }
 
     private static UserData buildUserData(String userId, UserRoleEnum role, boolean isActive) {

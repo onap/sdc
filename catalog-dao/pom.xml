@@ -147,7 +147,7 @@ Modifications copyright (c) 2018 Nokia
 		</dependency>
 
 		<dependency>
-    		<groupId>org.jmockit</groupId>
+			<groupId>org.jmockit</groupId>
 			<artifactId>jmockit</artifactId>
 			<scope>test</scope>
 		</dependency>

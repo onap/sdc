@@ -21,14 +21,14 @@
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class ResourceServiceNg2 {
 
     protected baseUrl = "";
 
-    constructor(private http: Http) {
+    constructor(private http: HttpClient) {
 
     }
 

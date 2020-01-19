@@ -22,9 +22,23 @@ package org.openecomp.sdc.be.components.utils;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
+import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
 
 public abstract class ComponentBusinessLogicMock extends BaseBusinessLogicMock {
 
     protected final ArtifactsBusinessLogic artifactsBusinessLogic = Mockito.mock(ArtifactsBusinessLogic.class);
+    protected final ComponentTagsValidator componentTagsValidator = Mockito.mock(ComponentTagsValidator.class);
+    protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
+    protected final ComponentIconValidator componentIconValidator = Mockito.mock(ComponentIconValidator.class);
+    protected final ComponentProjectCodeValidator componentProjectCodeValidator = Mockito.mock(ComponentProjectCodeValidator.class);
+    protected final ComponentDescriptionValidator componentDescriptionValidator = Mockito.mock(ComponentDescriptionValidator.class);
+    protected final ComponentContactIdValidator componentContactIdValidator = Mockito.mock(ComponentContactIdValidator.class);
+    protected final ComponentNameValidator componentNameValidator = Mockito.mock(ComponentNameValidator.class);
 
 }

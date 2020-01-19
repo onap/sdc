@@ -67,12 +67,12 @@ export class ClickedOutsideDirective implements ng.IDirective {
             if (!container) {
                 let clickedOutsideContainerSelector:string = clickedOutsideModel.getClickedOutsideContainerSelector();
                 if (!angular.isUndefined(clickedOutsideContainerSelector) && clickedOutsideContainerSelector !== '') {
-                    container = element.parents(clickedOutsideContainerSelector + ':first')[0];
+                    container = <HTMLElement>element.parents(clickedOutsideContainerSelector + ':first')[0];
                     if (!container) {
-                        container = element[0];
+                        container = <HTMLElement>element[0];
                     }
                 } else {
-                    container = element[0];
+                    container = <HTMLElement>element[0];
                 }
             }
             return container;
@@ -85,7 +85,7 @@ export class ClickedOutsideDirective implements ng.IDirective {
             if (targetDomElementJq.hasClass('tooltip') || targetDomElementJq.parents('.tooltip:first').length) {
                 return;
             }
-            let targetDomElement:HTMLElement = targetDomElementJq[0];
+            let targetDomElement:HTMLElement = <HTMLElement>targetDomElementJq[0];
             if (!containerDomElement.contains(targetDomElement)) {
                 scope.$apply(() => {
                     let onClickedOutsideGetter:Function = clickedOutsideModel.getOnClickedOutsideGetter();

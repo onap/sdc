@@ -39,7 +39,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +76,7 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
 
     public Either<DistributionStatusListResponse, ResponseFormat> getListOfDistributionStatus(String did, String userId) {
 
-        validateUserExists(userId, "get List Of Distribution Status", false);
+        validateUserExists(userId);
 
         log.trace("getListOfDistributionStatus for did {}", did);
         Either<List<DistributionStatusEvent>, ActionStatus> distributionStatus = cassandraDao.getListOfDistributionStatuses(did);
@@ -88,7 +87,7 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
         List<DistributionStatusInfo> distribStatusInfoList = new ArrayList<>();
         List<DistributionStatusEvent> distributionStatusEventList = distributionStatus.left().value();
         if (distributionStatusEventList != null) {
-            for (ESTimeBasedEvent distributionStatusEvent : distributionStatusEventList) {
+            for (AuditingGenericEvent distributionStatusEvent : distributionStatusEventList) {
                 distribStatusInfoList.add(new DistributionStatusInfo(distributionStatusEvent));
             }
         }
@@ -100,7 +99,7 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<DistributionStatusOfServiceListResponce, ResponseFormat> getListOfDistributionServiceStatus(String serviceUuid, String userId) {
-        validateUserExists(userId, "get List Of Distribution Service Status", false);
+        validateUserExists(userId);
 
         log.trace("getListOfDistributionServiceStatus for serviceUUID {}", serviceUuid);
         Either<List<? extends AuditingGenericEvent>, ActionStatus> status = cassandraDao.getServiceDistributionStatusesList(serviceUuid);
@@ -127,7 +126,7 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
             String dNotifyStatus = "";
             boolean isResult = false;
             List<? extends AuditingGenericEvent> auditingGenericEventList = serviceDidMap.get(did);
-            ESTimeBasedEvent resAuditingGenericEvent = null;
+            AuditingGenericEvent resAuditingGenericEvent = null;
             for (AuditingGenericEvent auditingGenericEvent : auditingGenericEventList) {
                 auditingGenericEvent.fillFields();
 
@@ -174,7 +173,7 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
         return reslist;
     }
 
-    private String getStatusFromAuditEvent(ESTimeBasedEvent auditingGenericEvent) {
+    private String getStatusFromAuditEvent(AuditingGenericEvent auditingGenericEvent) {
         String status = "";
         Object requestStatus = auditingGenericEvent.getFields().get(AuditingFieldsKey.AUDIT_STATUS.getDisplayName());
         if (requestStatus instanceof String) {

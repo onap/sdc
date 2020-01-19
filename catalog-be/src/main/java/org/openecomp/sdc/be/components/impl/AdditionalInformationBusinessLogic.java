@@ -32,13 +32,16 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.AdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.GroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.converters.StringConvertor;
@@ -68,7 +71,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
     private static final Logger log = Logger.getLogger(AdditionalInformationBusinessLogic.class.getName());
     private static final String FAILED_TO_LOCK_COMPONENT_ERROR = "Failed to lock component {} error - {}";
 
-    private final IAdditionalInformationOperation additionalInformationOperation;
+    private final AdditionalInformationOperation additionalInformationOperation;
 
     @Autowired
     public AdditionalInformationBusinessLogic(IElementOperation elementDao,
@@ -77,7 +80,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         IGroupTypeOperation groupTypeOperation,
         InterfaceOperation interfaceOperation,
         InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        IAdditionalInformationOperation additionalInformationOperation,
+        AdditionalInformationOperation additionalInformationOperation,
         ArtifactsOperations artifactToscaOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
@@ -102,7 +105,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      */
     public Either<AdditionalInfoParameterInfo, ResponseFormat> createAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
 
-        validateUserExists(userId, "create Additional Information", false);
+        validateUserExists(userId);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
 
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
@@ -113,7 +116,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
         // lock component
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, nodeType);
-        if (!lockResult.equals(StorageOperationStatus.OK)) {
+        if (lockResult != StorageOperationStatus.OK) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(CREATE_ADDITIONAL_INFORMATION, nodeType.getName(), resourceId);
             log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -323,7 +326,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      */
     public Either<AdditionalInfoParameterInfo, ResponseFormat> updateAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
 
-        validateUserExists(userId, "create Additional Information", false);
+        validateUserExists(userId);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
 
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
@@ -333,7 +336,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         }
         // lock component
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, nodeType);
-        if (!lockResult.equals(StorageOperationStatus.OK)) {
+        if (lockResult != StorageOperationStatus.OK) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(UPDATE_ADDITIONAL_INFORMATION, nodeType.getName(), resourceId);
             log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -389,7 +392,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      */
     public Either<AdditionalInfoParameterInfo, ResponseFormat> deleteAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
 
-        validateUserExists(userId, "delete Additional Information", false);
+        validateUserExists(userId);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
 
         ResponseFormat responseFormat = verifyCanWorkOnComponent(nodeType, resourceId, userId);
@@ -398,7 +401,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         }
         // lock component
         StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, nodeType);
-        if (!lockResult.equals(StorageOperationStatus.OK)) {
+        if (lockResult != StorageOperationStatus.OK) {
             BeEcompErrorManager.getInstance().logBeFailedLockObjectError(DELETE_ADDITIONAL_INFORMATION, nodeType.getName(), resourceId);
             log.info(FAILED_TO_LOCK_COMPONENT_ERROR, resourceId, lockResult);
             result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -450,7 +453,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      */
     public Either<AdditionalInfoParameterInfo, ResponseFormat> getAdditionalInformation(NodeTypeEnum nodeType, String resourceId, AdditionalInfoParameterInfo additionalInfoParameterInfo, String userId) {
 
-        validateUserExists(userId, "get Additional Information", false);
+        validateUserExists(userId);
         Either<AdditionalInfoParameterInfo, ResponseFormat> result = null;
 
         try {
@@ -485,7 +488,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      */
     public Either<AdditionalInformationDefinition, ResponseFormat> getAllAdditionalInformation(NodeTypeEnum nodeType, String resourceId, String userId) {
 
-        validateUserExists(userId, "get All Additional Information", false);
+        validateUserExists(userId);
 
         Either<AdditionalInformationDefinition, ResponseFormat> result = null;
 

@@ -25,7 +25,7 @@
 import * as _ from "lodash";
 import {IComponentService, ComponentService} from "./component-service";
 import {PropertyModel, IAppConfigurtaion, Resource, Component} from "../../models";
-import {SharingService} from "../sharing-service";
+import {SharingService} from "app/services-ng2";
 
 export interface IResourceService extends IComponentService {
     updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>>

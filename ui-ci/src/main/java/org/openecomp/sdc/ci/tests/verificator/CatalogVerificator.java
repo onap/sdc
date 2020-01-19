@@ -156,10 +156,6 @@ public class CatalogVerificator {
                 } else {
                     return LifeCycleStateEnum.CERTIFIED;
                 }
-            case READY_FOR_CERTIFICATION:
-                return LifeCycleStateEnum.READY_FOR_TESTING;
-            case CERTIFICATION_IN_PROGRESS:
-                return LifeCycleStateEnum.IN_TESTING;
             case NOT_CERTIFIED_CHECKIN:
                 return LifeCycleStateEnum.CHECKIN;  //to IN DESIGN
             case NOT_CERTIFIED_CHECKOUT:

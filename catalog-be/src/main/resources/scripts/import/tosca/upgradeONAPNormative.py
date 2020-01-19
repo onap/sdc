@@ -59,7 +59,6 @@ def main(argv):
 	updateOnapVersion = 'false'
 	importCommon.debugFlag = False
 	scheme = 'http'
-	opts = []
 
 	try:
 		opts, args = getopt.getopt(argv, "i:p:u:d:v:h:s",

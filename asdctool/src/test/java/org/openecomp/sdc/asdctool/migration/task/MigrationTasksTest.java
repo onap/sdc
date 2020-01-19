@@ -59,13 +59,13 @@ public class MigrationTasksTest  {
 
     @Test
     public void testNoTaskWithVersionGreaterThanCurrentVersion() throws Exception {
-        Set<Migration> migrationsWithVersionsGreaterThanCurrent = migrations.stream().filter(mig -> mig.getVersion().compareTo(DBVersion.CURRENT_VERSION) > 0)
+        Set<Migration> migrationsWithVersionsGreaterThanCurrent = migrations.stream().filter(mig -> mig.getVersion().compareTo(DBVersion.DEFAULT_VERSION) > 0)
                 .collect(Collectors.toSet());
 
         if (!migrationsWithVersionsGreaterThanCurrent.isEmpty()) {
-            Assert.fail(String.format("migrations tasks %s have version which is greater than DBVersion.CURRENT_VERSION %s. did you forget to update current version?",
+            Assert.fail(String.format("migrations tasks %s have version which is greater than DBVersion.DEFAULT_VERSION %s. did you forget to update current version?",
                     getMigrationsNameAsString(migrationsWithVersionsGreaterThanCurrent),
-                    DBVersion.CURRENT_VERSION.toString()));
+                    DBVersion.DEFAULT_VERSION.toString()));
         }
     }
 

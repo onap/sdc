@@ -20,7 +20,8 @@
 
 'use strict';
 import {IFileDownload, Component, ArtifactModel} from "app/models";
-import {EventListenerService, CacheService} from "app/services";
+import {EventListenerService} from "app/services";
+import {CacheService} from "app/services-ng2";
 import {EVENTS, FileUtils} from "app/utils";
 
 export class DOWNLOAD_CSS_CLASSES {

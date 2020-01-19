@@ -1,0 +1,6 @@
+<label>
+    <input type="file" class="i-sdc-dashboard-item-upload-input"
+        (change)="onFileSelect($event)"
+        [accept]="extensionsWithDot"
+        [attr.data-tests-id]="'file-' + testsId" />
+</label>

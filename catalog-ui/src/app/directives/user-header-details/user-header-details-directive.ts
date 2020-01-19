@@ -21,6 +21,7 @@
 'use strict';
 import {User, IUser, IAppConfigurtaion, IUserProperties} from "app/models";
 import { UserService } from "../../ng2/services/user.service";
+import { AuthenticationService } from "app/ng2/services/authentication.service";
 export interface IUserHeaderDetailsScope extends ng.IScope {
     iconUrl:string;
     user:IUser;
@@ -29,7 +30,7 @@ export interface IUserHeaderDetailsScope extends ng.IScope {
 
 export class UserHeaderDetailsDirective implements ng.IDirective {
 
-    constructor(private $http:ng.IHttpService, private sdcConfig:IAppConfigurtaion, private userService:UserService) {
+    constructor(private $http:ng.IHttpService, private sdcConfig:IAppConfigurtaion, private userService:UserService, private authService: AuthenticationService) {
     }
 
     scope = {
@@ -46,7 +47,7 @@ export class UserHeaderDetailsDirective implements ng.IDirective {
 
         scope.initUser = ():void => {
             let defaultUserId:string;
-            let userInfo:IUserProperties = this.userService.getLoggedinUser();
+            let userInfo:IUserProperties = this.authService.getLoggedinUser();
             if (!userInfo) {
                 defaultUserId = this.$http.defaults.headers.common[this.sdcConfig.cookie.userIdSuffix];
                 this.userService.getUser(defaultUserId).subscribe((defaultUserInfo):void => {
@@ -59,10 +60,10 @@ export class UserHeaderDetailsDirective implements ng.IDirective {
         scope.initUser();
     };
 
-    public static factory = ($http:ng.IHttpService, sdcConfig:IAppConfigurtaion, userService:UserService)=> {
-        return new UserHeaderDetailsDirective($http, sdcConfig, userService);
+    public static factory = ($http:ng.IHttpService, sdcConfig:IAppConfigurtaion, userService:UserService, authService:AuthenticationService)=> {
+        return new UserHeaderDetailsDirective($http, sdcConfig, userService, authService);
     };
 
 }
 
-UserHeaderDetailsDirective.factory.$inject = ['$http', 'sdcConfig', 'UserServiceNg2'];
+UserHeaderDetailsDirective.factory.$inject = ['$http', 'sdcConfig', 'UserServiceNg2', 'AuthenticationServiceNg2'];

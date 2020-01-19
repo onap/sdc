@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.components.distribution.engine;
 import com.att.nsa.mr.client.MRConsumer;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
+import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,10 +40,12 @@ import java.util.function.Consumer;
  */
 @Service
 public class DmaapConsumer {
+    private static final String LOG_PARTNER_NAME = "SDC.BE";
     private static final Logger logger = Logger.getLogger(DmaapClientFactory.class.getName());
     private final ExecutorFactory executorFactory;
     private final DmaapClientFactory dmaapClientFactory;
     private final DmaapHealth dmaapHealth;
+    private static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
     /**
      * Allows to create an object of type DmaapConsumer
      * @param executorFactory
@@ -75,6 +78,7 @@ public class DmaapConsumer {
         pollExecutor.scheduleWithFixedDelay(() -> {
             logger.info("Trying to fetch messages from topic: {}", topic);
             boolean isTopicAvailable = false;
+            mdcFieldsHandler.addInfoForErrorAndDebugLogging(LOG_PARTNER_NAME);
             try {
                 Iterable<String> messages = consumer.fetch();
                 isTopicAvailable = true ;
@@ -87,7 +91,7 @@ public class DmaapConsumer {
                 //successfully fetched
             }
             catch (Exception e) {
-                logger.error("The exception occured upon fetching DMAAP message", e);
+                logger.error("The exception occurred upon fetching DMAAP message", e);
             }
             dmaapHealth.report( isTopicAvailable );
         }, 0L, dmaapConsumerParams.getPollingInterval(), TimeUnit.SECONDS);

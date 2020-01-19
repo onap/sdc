@@ -73,7 +73,7 @@ public class PolicyTypeBusinessLogicTest {
 
     @Before
     public void setUp() throws Exception {
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(true))).thenReturn(new User());
+        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(new User());
         when(ConfigurationManager.getConfigurationManager().getConfiguration().getExcludedPolicyTypesMapping()).thenReturn(ImmutableMap.of(COMPONENT_TYPE, EXCLUDED_POLICY_TYPES));
     }
 
@@ -85,7 +85,7 @@ public class PolicyTypeBusinessLogicTest {
     @Test
     public void getAllPolicyTypes_userNotExist() {
         ResponseFormat userNotExistResponse = new ResponseFormat();
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), eq(true))).thenThrow(new ByResponseFormatComponentException(userNotExistResponse));
+        when(userValidations.validateUserExists(eq(USER_ID))).thenThrow(new ByResponseFormatComponentException(userNotExistResponse));
         try{
             testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE);
         }catch(ByResponseFormatComponentException e){

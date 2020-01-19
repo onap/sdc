@@ -20,10 +20,12 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import com.jcabi.aspects.Loggable;
 import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -89,14 +91,11 @@ public class GenericArtifactBrowserServlet extends BeGenericServlet {
         @Parameter(description = "Generic Artifact search model", required = true) GenericArtifactQueryInfo query,
         @Context final HttpServletRequest request) {
         try {
-            Either<ImmutablePair<String, byte[]>, ResponseFormat> immutablePairResponseFormatEither = artifactsBusinessLogic
+            ServletContext context = request.getSession().getServletContext();
+            ImmutablePair<String, byte[]> immutablePairResponseFormatEither = getArtifactBL(context)
                 .downloadArtifact(ESAPI.encoder().canonicalize(query.getParentId()), ESAPI.encoder().canonicalize(query.getArtifactUniqueId()));
-            if (immutablePairResponseFormatEither.isLeft()){
-                GABQuery gabQuery = prepareGabQuery(query, immutablePairResponseFormatEither);
-                return buildOkResponse(gabLogic.searchFor(gabQuery));
-            }else{
-                throw new IOException(immutablePairResponseFormatEither.right().value().getFormattedMessage());
-            }
+            GABQuery gabQuery = prepareGabQuery(query, immutablePairResponseFormatEither);
+            return buildOkResponse(getGenericArtifactBrowserBL(context).searchFor(gabQuery));
         } catch (IOException e) {
             LOGGER.error("Cannot search for a given queries in the yaml file", e);
             return buildGeneralErrorResponse();
@@ -104,9 +103,10 @@ public class GenericArtifactBrowserServlet extends BeGenericServlet {
     }
 
     private GABQuery prepareGabQuery(GenericArtifactQueryInfo query,
-        Either<ImmutablePair<String, byte[]>, ResponseFormat> immutablePairResponseFormatEither) {
-        byte[] content = immutablePairResponseFormatEither.left().value().getRight();
+        ImmutablePair<String, byte[]> immutablePairResponseFormatEither) {
+        byte[] content = immutablePairResponseFormatEither.getRight();
         Set<String> queryFields = query.getFields().stream().map(ESAPI.encoder()::canonicalize).collect(Collectors.toSet());
         return new GABQuery(queryFields, new String(content), GABQueryType.CONTENT);
     }
+
 }

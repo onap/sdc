@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.model;
 
 public enum DistributionStatusEnum {
-    DISTRIBUTION_NOT_APPROVED("Distribution not approved"), DISTRIBUTION_APPROVED("Distribution approved"), DISTRIBUTED("Distributed"), DISTRIBUTION_REJECTED("Distribution rejected");
+    DISTRIBUTION_NOT_APPROVED("Distribution not approved"), DISTRIBUTED("Distributed");
 
     private String value;
 

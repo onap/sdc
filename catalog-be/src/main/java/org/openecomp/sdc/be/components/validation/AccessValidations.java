@@ -51,7 +51,6 @@ public class AccessValidations {
         return componentValidations.validateComponentIsCheckedOutByUser(componentId, componentType, userId);
     }
 
-
     public void validateUserCanWorkOnComponent(Component component, String userId, String actionContext) {
         User user = retrieveUser(userId, actionContext);
         validateUserIsAdminOrDesigner(user);
@@ -62,8 +61,9 @@ public class AccessValidations {
         retrieveUser(userId, context);
     }
 
+
     public void validateUserExist(String userId, String actionContext) {
-        userValidations.validateUserExists(userId, actionContext, false);
+        userValidations.validateUserExists(userId);
     }
 
     public User userIsAdminOrDesigner(String userId, String actionContext){
@@ -73,7 +73,7 @@ public class AccessValidations {
     }
 
     private User retrieveUser(String userId, String actionContext) {
-        return userValidations.validateUserExists(userId, actionContext, true);
+        return userValidations.validateUserExists(userId);
     }
 
     private void validateUserIsAdminOrDesigner(User user) {

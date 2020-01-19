@@ -517,7 +517,7 @@ public class GetFilteredAssetServlet extends ComponentBaseTest {
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		ServiceReqDetails certifyService = new ServiceReqDetails(service);
-		LifecycleRestUtils.changeDistributionStatus(certifyService, certifyService.getVersion(), ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR), null, DistributionStatusEnum.DISTRIBUTION_APPROVED);
+		LifecycleRestUtils.changeDistributionStatus(certifyService, certifyService.getVersion(), ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR), null, DistributionStatusEnum.DISTRIBUTED);
 		AtomicOperationUtils.distributeService(service, false);
 		expectedAssetNamesList.add(service.getName());
 
@@ -529,7 +529,7 @@ public class GetFilteredAssetServlet extends ComponentBaseTest {
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		certifyService = new ServiceReqDetails(service);
-		LifecycleRestUtils.changeDistributionStatus(certifyService, certifyService.getVersion(), ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR), null, DistributionStatusEnum.DISTRIBUTION_APPROVED);
+		LifecycleRestUtils.changeDistributionStatus(certifyService, certifyService.getVersion(), ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR), null, DistributionStatusEnum.DISTRIBUTED);
 		AtomicOperationUtils.distributeService(service, false);
 		expectedAssetNamesList.add(service.getName());
 

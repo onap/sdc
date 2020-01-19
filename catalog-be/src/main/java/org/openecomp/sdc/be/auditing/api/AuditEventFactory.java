@@ -30,7 +30,4 @@ public interface AuditEventFactory {
     String getLogMessage();
     AuditingGenericEvent getDbEvent();
     List<Pair<String, String>> getQueryParams();
-
-    //TODO remove together with ES related code
-    String getAuditingEsType();
 }

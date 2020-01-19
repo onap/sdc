@@ -30,6 +30,9 @@ public enum EcompErrorEnum {
     DmaapHealthCheckError(EcompErrorCode.E_214, ErrorType.CONNECTION_PROBLEM, AlarmSeverity.MAJOR,
             EcompClassification.ERROR),
 
+	SessionExpiredAuthenticationError(EcompErrorCode.E_220, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.MAJOR,
+			EcompClassification.ERROR),
+
     InternalAuthenticationInfo(EcompErrorCode.E_199, ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.INFORMATIONAL,
             EcompClassification.INFORMATION), InternalAuthenticationWarning(EcompErrorCode.E_199,
             ErrorType.AUTHENTICATION_PROBLEM, AlarmSeverity.MINOR,
@@ -42,8 +45,6 @@ public enum EcompErrorEnum {
     BeHealthCheckRecovery(EcompErrorCode.E_205, ErrorType.RECOVERY, AlarmSeverity.INFORMATIONAL,
             EcompClassification.INFORMATION, null), BeHealthCheckJanusGraphRecovery(EcompErrorCode.E_206, ErrorType.RECOVERY,
             AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION,
-            null), BeHealthCheckElasticSearchRecovery(EcompErrorCode.E_207, ErrorType.RECOVERY,
-            AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION,
             null), BeHealthCheckUebClusterRecovery(EcompErrorCode.E_208, ErrorType.RECOVERY,
             AlarmSeverity.INFORMATIONAL, EcompClassification.INFORMATION,
             null), FeHealthCheckRecovery(EcompErrorCode.E_209, ErrorType.RECOVERY,
@@ -55,9 +56,8 @@ public enum EcompErrorEnum {
             BeHealthCheckRecovery),
 
     BeHealthCheckJanusGraphError(EcompErrorCode.E_201, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL,
-            EcompClassification.ERROR, BeHealthCheckJanusGraphRecovery), BeHealthCheckElasticSearchError(
-            EcompErrorCode.E_202, ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR,
-            BeHealthCheckElasticSearchRecovery), BeHealthCheckUebClusterError(EcompErrorCode.E_203,
+            EcompClassification.ERROR, BeHealthCheckJanusGraphRecovery),
+            BeHealthCheckUebClusterError(EcompErrorCode.E_203,
             ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR,
             BeHealthCheckUebClusterRecovery), FeHealthCheckError(EcompErrorCode.E_204,
             ErrorType.SYSTEM_ERROR, AlarmSeverity.CRITICAL, EcompClassification.ERROR,
@@ -410,11 +410,13 @@ public enum EcompErrorEnum {
      * AlarmSeverity.CRITICAL, EcompClassification.FATAL),
      */;
 
-    private EcompErrorCode ecompErrorCode;
-    private ErrorType eType;
-    private AlarmSeverity alarmSeverity;
-    private EcompClassification classification;
-    private EcompErrorEnum clearCode;
+	;
+
+	EcompErrorCode ecompErrorCode;
+	ErrorType eType;
+	AlarmSeverity alarmSeverity;
+	EcompClassification classification;
+	EcompErrorEnum clearCode;
 
     EcompErrorEnum(EcompErrorCode ecompErrorCode, ErrorType eType, AlarmSeverity alarmSeverity,
                    EcompClassification classification, EcompErrorEnum clearCode) {

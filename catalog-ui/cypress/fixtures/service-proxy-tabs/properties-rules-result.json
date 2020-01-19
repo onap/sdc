@@ -1,0 +1,12 @@
+{
+  "properties": [
+    {
+      "servicePropertyName": "contrailv2virtualnetwork0_segmentation_id",
+      "constraintOperator": "equal",
+      "sourceType": "static",
+      "sourceName": null,
+      "value": 11
+    }
+    
+  ]
+}

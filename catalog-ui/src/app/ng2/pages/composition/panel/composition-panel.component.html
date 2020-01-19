@@ -1,0 +1,21 @@
+<panel-wrapper-component *ngIf="compositionState$ | async as state">   <!-- HEADER -->
+
+    <ng2-composition-panel-header [isViewOnly]="state.isViewOnly"
+                                    [selectedComponent]="state.selectedComponent"></ng2-composition-panel-header>
+
+    <!-- TABS -->
+    <div class="component-details-panel-tabs">
+        <sdc-loader [global]="false" name="panel" testId="panel-loader" [active]="state.panelLoading"></sdc-loader>
+        <sdc-tabs (selectedTab)="setActive($event)" [iconsSize]="'large'">
+            <sdc-tab *ngFor="let tab of tabs" [titleIcon]="tab.titleIcon" [active]="tab.isActive"
+                        [tooltipText]="tab.tooltipText">
+                <panel-tab [isActive]="tab.isActive" [component]="selectedComponent"
+                            [componentType]="state.selectedComponentType" [isViewOnly]="isViewOnly$ | async"
+                            [input]="tab.input" [panelTabType]="tab.component"></panel-tab>
+            </sdc-tab>
+        </sdc-tabs>
+    </div>
+
+</panel-wrapper-component>
+
+
