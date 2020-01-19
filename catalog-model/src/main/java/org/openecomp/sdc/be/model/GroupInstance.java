@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,6 +39,8 @@ public class GroupInstance extends GroupInstanceDataDefinition {
     public GroupInstance(GroupInstanceDataDefinition r) {
         super(r);
     }
+
+    private static final Logger log = Logger.getLogger(GroupInstance.class);
     /**
      * Converts contained list of PropertyDataDefinitions to list of GroupInstanceProperties
      * @return
@@ -103,7 +106,8 @@ public class GroupInstance extends GroupInstanceDataDefinition {
      */
     public void alignArtifactsUuid(Map<String, ArtifactDefinition> deploymentArtifacts) {
         List<String> artifactIds = getArtifacts();
-	if(CollectionUtils.isNotEmpty(artifactIds) && deploymentArtifacts != null){
+        log.debug("the artifacts Id's are: {}, and the deployment artifacts Id's are: {}", artifactIds, deploymentArtifacts);
+        if(CollectionUtils.isNotEmpty(artifactIds) && deploymentArtifacts != null){
             removeArtifactsDuplicates();
             clearArtifactsUuid();
             List<String> artifactUuids = getArtifactsUuid();
@@ -111,6 +115,7 @@ public class GroupInstance extends GroupInstanceDataDefinition {
             for(String artifactId : artifactIds){
                 String label = artifactId.substring(artifactId.lastIndexOf('.') + 1);
                 ArtifactDefinition artifact = deploymentArtifacts.get(label);
+                log.debug("current artifact id: {}, current artifact definition: {}", artifactId, artifact);
                 ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifact.getArtifactType());
                 if (artifactType != ArtifactTypeEnum.HEAT_ENV){
                     addArtifactsIdToCollection(artifactUuids, artifact);

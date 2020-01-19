@@ -55,7 +55,6 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.name = UUID.UUID();
             this.parentName = parentName;
             this.propertiesName = parentName + '#' + this.name;
-
             
             if (property.type == PROPERTY_TYPES.LIST) {
                 this.mapKey = property.schema.property.type.split('.').pop();
@@ -75,6 +74,7 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
             this.updateValueObjOrig();
         }
+        // this.constraints = property ? property.constraints : null;
         this.valueObjIsValid = true;
         this.derivedDataType = this.getDerivedPropertyType();
     }

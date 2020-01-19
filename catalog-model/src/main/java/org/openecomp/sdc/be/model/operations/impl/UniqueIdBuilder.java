@@ -74,12 +74,12 @@ public class UniqueIdBuilder {
      */
     public static String getKeyByNodeType(NodeTypeEnum nodeTypeEnum) {
 
-        String key = nodeTypeToUniqueKeyMapper.get(nodeTypeEnum);
-        if (key == null) {
-            key = GraphPropertiesDictionary.UNIQUE_ID.getProperty();
+        String uniqueID = nodeTypeToUniqueKeyMapper.get(nodeTypeEnum);
+        if (uniqueID == null) {
+            uniqueID = GraphPropertiesDictionary.UNIQUE_ID.getProperty();
         }
 
-        return key;
+        return uniqueID;
     }
 
     public static String buildResourceUniqueId() {

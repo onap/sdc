@@ -60,6 +60,7 @@ public class HomePage {
     }
 
     public static boolean searchForVSP(String vspName) {
+        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ImportVfRepository.SEARCH.getValue()).clear();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ImportVfRepository.SEARCH.getValue()).sendKeys(vspName);
         GeneralUIUtils.ultimateWait();
         return true;

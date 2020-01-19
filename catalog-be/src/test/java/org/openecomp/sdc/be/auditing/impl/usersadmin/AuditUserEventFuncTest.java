@@ -31,11 +31,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditAuthRequestEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
@@ -43,7 +40,6 @@ import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.auditing.impl.AuditTestUtils.*;
@@ -55,17 +51,13 @@ public class AuditUserEventFuncTest {
     private static AuditCassandraDao cassandraDao;
     @Captor
     private ArgumentCaptor<AuditingGenericEvent> eventCaptor;
-    @Mock
-    private static AuditingDao auditingDao;
-    @Mock
-    private Configuration.ElasticSearchConfig esConfig;
 
     private AuditingManager auditingManager;
 
     @Before
     public void setUp() {
-        init(esConfig);
-        auditingManager = new AuditingManager(auditingDao, cassandraDao, new TestConfigurationProvider());
+        init();
+        auditingManager = new AuditingManager(cassandraDao, new TestConfigurationProvider());
     }
 
     @Test
@@ -77,8 +69,6 @@ public class AuditUserEventFuncTest {
                         .requestId(REQUEST_ID)
                         .build(),
                 user);
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.USER_ACCESS.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_USER_ACCESS_LOG_STR);
@@ -99,8 +89,6 @@ public class AuditUserEventFuncTest {
                         .build(),
                 modifier, null, user);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.ADD_USER.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_ADD_USER_LOG_STR);
@@ -124,8 +112,6 @@ public class AuditUserEventFuncTest {
                         .build(),
                 modifier, user, updated);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.UPDATE_USER.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(builder)).isEqualTo(EXPECTED_UPDATE_USER_LOG_STR);
@@ -146,8 +132,6 @@ public class AuditUserEventFuncTest {
                         .build(),
                 modifier, user, null);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.DELETE_USER.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_DELETE_USER_LOG_STR);
@@ -165,8 +149,6 @@ public class AuditUserEventFuncTest {
                         .build(),
                 user, USER_DETAILS);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.GET_USERS_LIST.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_GET_USER_LIST_LOG_STR);
@@ -184,8 +166,6 @@ public class AuditUserEventFuncTest {
                         .build(),
                 USER_ID, AUTH_URL, REALM, AUTH_STATUS);
 
-        when(auditingDao.addRecord(any(AuditingGenericEvent.class), eq(AuditingActionEnum.AUTH_REQUEST.getAuditingEsType())))
-                .thenReturn(ActionStatus.OK);
         when(cassandraDao.saveRecord(any(AuditingGenericEvent.class))).thenReturn(CassandraOperationStatus.OK);
 
         assertThat(auditingManager.auditEvent(factory)).isEqualTo(EXPECTED_AUTH_REQUEST_LOG_STR);

@@ -1,0 +1,891 @@
+{
+  "Configuration": {
+    "Configuration": [
+      {
+        "uniqueId": "53260f16-3991-4efd-be2f-b356f39cc7db",
+        "name": "VRF Object Configuration",
+        "version": "3.0",
+        "description": "VRF Object configuration object",
+        "tags": ["VRF Object Configuration"],
+        "icon": "pmc",
+        "systemName": "VrfObjectConfiguration",
+        "invariantUUID": "c1718609-d9df-4b85-92c0-5c4f31776481",
+        "componentType": "RESOURCE",
+        "resourceType": "Configuration ()",
+        "categories": [
+          {
+            "name": "Configuration",
+            "normalizedName": "configuration",
+            "uniqueId": "resourceNewCategory.configuration",
+            "subcategories": [
+              {
+                "name": "Configuration",
+                "normalizedName": "configuration",
+                "uniqueId": "resourceNewCategory.configuration.configuration",
+                "icons": ["pmc"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "1643dcde-99af-4c59-80e1-bb8ed77a4432"
+      },
+      {
+        "uniqueId": "4f036a93-b969-4d7c-b7f9-66727261a6cf",
+        "name": "VRF Entry Configuration",
+        "version": "3.0",
+        "description": "VRF Entry configuration object",
+        "tags": ["VRF Entry Configuration"],
+        "icon": "pmc",
+        "systemName": "VrfEntryConfiguration",
+        "invariantUUID": "316d5fc6-2b07-4c79-b577-5acb006206ca",
+        "componentType": "RESOURCE",
+        "resourceType": "Configuration ()",
+        "categories": [
+          {
+            "name": "Configuration",
+            "normalizedName": "configuration",
+            "uniqueId": "resourceNewCategory.configuration",
+            "subcategories": [
+              {
+                "name": "Configuration",
+                "normalizedName": "configuration",
+                "uniqueId": "resourceNewCategory.configuration.configuration",
+                "icons": ["pmc"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "3e7c0be1-df02-4d68-ba14-fe93523ccaed"
+      },
+      {
+        "uniqueId": "0aff428f-8efb-4f42-a849-0acf355dea99",
+        "name": "VLAN Network Receptor Configuration",
+        "version": "3.0",
+        "description": "VLAN network receptor configuration object",
+        "tags": ["VLAN Network Receptor Configuration"],
+        "icon": "pmc",
+        "systemName": "VlanNetworkReceptorConfiguration",
+        "invariantUUID": "bc973217-dfd9-4d5c-a68c-fe66b3c9c911",
+        "componentType": "RESOURCE",
+        "resourceType": "Configuration ()",
+        "categories": [
+          {
+            "name": "Configuration",
+            "normalizedName": "configuration",
+            "uniqueId": "resourceNewCategory.configuration",
+            "subcategories": [
+              {
+                "name": "Configuration",
+                "normalizedName": "configuration",
+                "uniqueId": "resourceNewCategory.configuration.configuration",
+                "icons": ["pmc"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "42c06b06-b9b6-4b0d-8457-711ce67122a5"
+      },
+      {
+        "uniqueId": "a289997b-1cfa-4d84-a872-3df282e52fa7",
+        "name": "Port Mirroring Configuration",
+        "version": "2.0",
+        "description": "A port mirroring configuration object",
+        "tags": ["Port Mirroring Configuration"],
+        "icon": "pmc",
+        "systemName": "PortMirroringConfiguration",
+        "invariantUUID": "42e40b5f-6a93-4b8d-bb52-017397687758",
+        "componentType": "RESOURCE",
+        "resourceType": "Configuration ()",
+        "categories": [
+          {
+            "name": "Configuration",
+            "normalizedName": "configuration",
+            "uniqueId": "resourceNewCategory.configuration",
+            "subcategories": [
+              {
+                "name": "Configuration",
+                "normalizedName": "configuration",
+                "uniqueId": "resourceNewCategory.configuration.configuration",
+                "icons": ["pmc"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "acc8a391-8797-43e7-bc93-9f6a8dc1c633"
+      },
+      {
+        "uniqueId": "9b387cba-b622-4f74-a307-b1ef414b38e8",
+        "name": "Port Mirroring Configuration By Policy",
+        "version": "2.0",
+        "description": "A port mirroring configuration by policy object",
+        "tags": ["Port Mirroring Configuration By Policy"],
+        "icon": "pmc",
+        "systemName": "PortMirroringConfigurationByPolicy",
+        "invariantUUID": "3138b413-d39e-441b-b324-d6cf411bee04",
+        "componentType": "RESOURCE",
+        "resourceType": "Configuration ()",
+        "categories": [
+          {
+            "name": "Configuration",
+            "normalizedName": "configuration",
+            "uniqueId": "resourceNewCategory.configuration",
+            "subcategories": [
+              {
+                "name": "Configuration",
+                "normalizedName": "configuration",
+                "uniqueId": "resourceNewCategory.configuration.configuration",
+                "icons": ["pmc"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "83d9b135-14cd-4c3d-9663-69a2e5148adc"
+      },
+      {
+        "uniqueId": "b5bdc48c-643d-40bd-a414-bb7e4b43ab91",
+        "name": "Fabric Configuration",
+        "version": "2.0",
+        "description": "A fabric Configuration object",
+        "tags": ["Fabric Configuration"],
+        "icon": "pmc",
+        "systemName": "FabricConfiguration",
+        "invariantUUID": "de1f1c51-f04a-4337-ab58-3adc1091c236",
+        "componentType": "RESOURCE",
+        "resourceType": "Configuration ()",
+        "categories": [
+          {
+            "name": "Configuration",
+            "normalizedName": "configuration",
+            "uniqueId": "resourceNewCategory.configuration",
+            "subcategories": [
+              {
+                "name": "Configuration",
+                "normalizedName": "configuration",
+                "uniqueId": "resourceNewCategory.configuration.configuration",
+                "icons": ["pmc"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "e50417ee-073d-49d7-b73b-f00cfd3cebbb"
+      }
+    ]
+  },
+  "Network Connectivity": {
+    "Virtual Links": [
+      {
+        "uniqueId": "6a0e5a5d-885f-4407-afc8-ebc2c3c7b6f7",
+        "name": "VL ELINE",
+        "version": "2.0",
+        "description": "Thenode represents an E-Line virtual link entity.",
+        "tags": ["VL ELINE"],
+        "icon": "vl",
+        "systemName": "VlEline",
+        "invariantUUID": "1a34d743-dec7-4ecb-9426-f855368a2bce",
+        "componentType": "RESOURCE",
+        "resourceType": "VL",
+        "categories": [
+          {
+            "name": "Network Connectivity",
+            "normalizedName": "network connectivity",
+            "uniqueId": "resourceNewCategory.network connectivity",
+            "subcategories": [
+              {
+                "name": "Virtual Links",
+                "normalizedName": "virtual links",
+                "uniqueId": "resourceNewCategory.network connectivity.virtual links",
+                "icons": ["vl"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "ec1f8f6c-ecda-4ad4-bb31-7210a09e505b"
+      },
+      {
+        "uniqueId": "7792c232-23db-4aba-b7ab-edbf24a33a9c",
+        "name": "InternalVL",
+        "version": "2.0",
+        "description": "The AT&T internal (VF-level) Virtual Link",
+        "tags": ["InternalVL"],
+        "icon": "vl",
+        "systemName": "Internalvl",
+        "invariantUUID": "fd8c20fd-37c0-4aad-b76b-3967dd98145d",
+        "componentType": "RESOURCE",
+        "resourceType": "VL",
+        "categories": [
+          {
+            "name": "Network Connectivity",
+            "normalizedName": "network connectivity",
+            "uniqueId": "resourceNewCategory.network connectivity",
+            "subcategories": [
+              {
+                "name": "Virtual Links",
+                "normalizedName": "virtual links",
+                "uniqueId": "resourceNewCategory.network connectivity.virtual links",
+                "icons": ["vl"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "36124047-43b8-4fdb-9c8c-740e0a6dcf8c"
+      },
+      {
+        "uniqueId": "cbedde9a-8e79-4d00-8987-84af606350ce",
+        "name": "VL",
+        "version": "2.0",
+        "description": " Virtual link (VL) describes the basic topology of the connectivity as well as other required parameters (e.g. bandwidth and QoS class). ",
+        "tags": ["VL"],
+        "icon": "vl",
+        "systemName": "Vl",
+        "invariantUUID": "9e071c3b-2adb-4ae5-a6a9-f1348708855e",
+        "componentType": "RESOURCE",
+        "resourceType": "VL",
+        "categories": [
+          {
+            "name": "Network Connectivity",
+            "normalizedName": "network connectivity",
+            "uniqueId": "resourceNewCategory.network connectivity",
+            "subcategories": [
+              {
+                "name": "Virtual Links",
+                "normalizedName": "virtual links",
+                "uniqueId": "resourceNewCategory.network connectivity.virtual links",
+                "icons": ["vl"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "a4fedff1-23b6-4cfd-b001-a9367ab48b3b"
+      }
+    ]
+  },
+  "Generic": {
+    "Generic": [
+      {
+        "uniqueId": "6a627bf8-64e6-43d4-b2ca-2616ed19b234",
+        "name": "Child Service",
+        "version": "0.2",
+        "description": "ddjhd",
+        "tags": ["Child Service"],
+        "icon": "defaulticon",
+        "systemName": "ChildService",
+        "invariantUUID": "8315c091-0794-4ea7-97a6-fcc0d022ac8d",
+        "componentType": "SERVICE",
+        "resourceType": "Service",
+        "categories": [
+          {
+            "name": "E2E Service",
+            "normalizedName": "e2e service",
+            "uniqueId": "serviceNewCategory.e2e service",
+            "empty": false
+          }
+        ],
+        "uuid": "d549ab35-00c2-43c9-8a54-64f303d8b31d"
+      },
+      {
+        "uniqueId": "c680cd86-dfdb-4606-b803-3db46f453827",
+        "name": "test service1",
+        "version": "1.2",
+        "description": "dfdfdf",
+        "tags": ["test service1"],
+        "icon": "defaulticon",
+        "systemName": "TestService1",
+        "invariantUUID": "99eac7b9-71ea-4065-912e-b70375826ea8",
+        "componentType": "SERVICE",
+        "resourceType": "Service",
+        "categories": [
+          {
+            "name": "Network L1-3",
+            "normalizedName": "network l1-3",
+            "uniqueId": "serviceNewCategory.network l1-3",
+            "empty": false
+          }
+        ],
+        "uuid": "0f75610e-c4bd-4264-8940-fead5ae946f5"
+      },
+      {
+        "uniqueId": "98b9c1ee-285f-45f9-be2f-4ef58ca78297",
+        "name": "test service1",
+        "version": "1.0",
+        "description": "dfdfdf",
+        "tags": ["test service1"],
+        "icon": "defaulticon",
+        "systemName": "TestService1",
+        "invariantUUID": "99eac7b9-71ea-4065-912e-b70375826ea8",
+        "componentType": "SERVICE",
+        "resourceType": "Service",
+        "categories": [
+          {
+            "name": "Network L1-3",
+            "normalizedName": "network l1-3",
+            "uniqueId": "serviceNewCategory.network l1-3",
+            "empty": false
+          }
+        ],
+        "uuid": "68f863a9-234f-41f4-851e-0282000e332b"
+      }
+    ],
+    "Infrastructure": [
+      {
+        "uniqueId": "10596d81-b92d-4930-a710-eff1e9a3d22c",
+        "name": "Network",
+        "version": "2.0",
+        "description": "Represents a simple , logical network service.",
+        "tags": ["Network"],
+        "icon": "vl",
+        "systemName": "Network",
+        "invariantUUID": "8b6b15a4-7579-49c8-9a8a-82fc2a5d5fc7",
+        "componentType": "RESOURCE",
+        "resourceType": "VL",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Infrastructure",
+                "normalizedName": "infrastructure",
+                "uniqueId": "resourceNewCategory.generic.infrastructure",
+                "icons": ["connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "f554e793-4bb0-4157-89ca-aaf2ad1b59b4"
+      }
+    ],
+    "Network Elements": [
+      {
+        "uniqueId": "6155084a-572c-416a-aec0-b8fc263f3daf",
+        "name": "NeutronNet",
+        "version": "2.0",
+        "description": "Represents a network service with optional subnets and advanced configurations.",
+        "tags": ["NeutronNet"],
+        "icon": "vl",
+        "systemName": "Neutronnet",
+        "invariantUUID": "8127c180-4470-4170-96a3-b1dd2c52482b",
+        "componentType": "RESOURCE",
+        "resourceType": "VL",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "abdba1c2-0598-4eb3-a88f-c216078a011f"
+      },
+      {
+        "uniqueId": "a3351552-0bf5-4f19-a341-5e959ea41194",
+        "name": "ContrailV2VirtualNetwork",
+        "version": "2.0",
+        "description": "Represents a network service with optional subnets and advanced configurations for contrail V2.",
+        "tags": ["ContrailV2VirtualNetwork"],
+        "icon": "vl",
+        "systemName": "Contrailv2virtualnetwork",
+        "invariantUUID": "c5c20eba-2c28-402c-9ffc-3284947f8282",
+        "componentType": "RESOURCE",
+        "resourceType": "VL",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "6d7bc209-b212-4632-9cb8-f45e0dfd8f7d"
+      },
+      {
+        "uniqueId": "31358849-cd85-4782-8232-7bd98b7eda8e",
+        "name": "contrailV2VLANSubInterface",
+        "version": "2.0",
+        "description": "VLAN sub-Interface is a logical port which must be binded to a port. Regular port may have 1N VLAN Interfaces.It can connect to its own network (regardless of the network the parent port can connect)",
+        "tags": ["contrailV2VLANSubInterface"],
+        "icon": "cp",
+        "systemName": "Contrailv2vlansubinterface",
+        "invariantUUID": "1095116e-0e29-42ca-bf42-36d77ecd0db9",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "aa380f00-9800-4570-8564-76d1ae248ef5"
+      },
+      {
+        "uniqueId": "28353d9c-3900-41d4-a080-d14e3c3c7b2b",
+        "name": "extContrailCP",
+        "version": "2.0",
+        "description": "The AT&T Connection Point base type all other CP derive from",
+        "tags": ["extContrailCP"],
+        "icon": "cp",
+        "systemName": "Extcontrailcp",
+        "invariantUUID": "860e2d34-1597-4a37-8c4d-ff9f98b148c9",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "a43f1303-61a1-435c-b33a-ceabfa4330fc"
+      },
+      {
+        "uniqueId": "b01ead7f-f180-47c3-927e-3aa1aa9d3846",
+        "name": "Port",
+        "version": "2.0",
+        "description": "Represents a logical entity that associates between Compute and Network normative types.",
+        "tags": ["Port"],
+        "icon": "cp",
+        "systemName": "Port",
+        "invariantUUID": "2589943c-79bd-4330-818a-be4b37e7d3d2",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "e3b44d97-1a00-4c46-95d0-6bdd09cdcb34"
+      },
+      {
+        "uniqueId": "654bd497-5717-474e-9ac8-787a37e4170d",
+        "name": "NeutronPort",
+        "version": "2.0",
+        "description": "Represents a logical entity that associates between Compute and Network normative types.",
+        "tags": ["NeutronPort"],
+        "icon": "cp",
+        "systemName": "Neutronport",
+        "invariantUUID": "19806716-3812-4254-af15-eda5e458693e",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "24d2154b-db99-4d8d-ae2a-67e36320ecb9"
+      },
+      {
+        "uniqueId": "4df7a6df-d147-44a5-a9bc-d49bae56a139",
+        "name": "ExtVL",
+        "version": "2.0",
+        "description": "ECOMP generic virtual link (network) base type for all other service-level and global networks",
+        "tags": ["ExtVL"],
+        "icon": "vl",
+        "systemName": "Extvl",
+        "invariantUUID": "3cc472af-e9f0-4503-8c3e-5d45d268617d",
+        "componentType": "RESOURCE",
+        "resourceType": "VL",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "e8c6402c-ad12-40a0-8d8f-0a386227a7ca"
+      },
+      {
+        "uniqueId": "e97afec5-9770-4ecd-b32f-27084d21e31b",
+        "name": "ExtCP",
+        "version": "2.0",
+        "description": "The AT&T Connection Point base type all other CP derive from",
+        "tags": ["ExtCP"],
+        "icon": "cp",
+        "systemName": "Extcp",
+        "invariantUUID": "8967cd5e-e8c1-4be1-935e-ef8eebe33a1e",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "ceec2c28-a1ce-4955-be40-abe60262d950"
+      },
+      {
+        "uniqueId": "01f741b0-1544-4141-8cb4-9f0899dd7e74",
+        "name": "ContrailVirtualNetwork",
+        "version": "2.0",
+        "description": "Represents a network service with optional subnets and advanced configurations.",
+        "tags": ["ContrailVirtualNetwork"],
+        "icon": "vl",
+        "systemName": "Contrailvirtualnetwork",
+        "invariantUUID": "94997556-cb2e-468f-abdc-0faacd1feb95",
+        "componentType": "RESOURCE",
+        "resourceType": "VL",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "30b724c6-a075-4ac1-b800-a66794406274"
+      },
+      {
+        "uniqueId": "1ad2b0c6-87f8-43f2-b107-fc2fc9a5170b",
+        "name": "ContrailPort",
+        "version": "2.0",
+        "description": "Represents a logical entity that associates between Compute and Network normative types for contrail.",
+        "tags": ["ContrailPort"],
+        "icon": "cp",
+        "systemName": "Contrailport",
+        "invariantUUID": "7a0cdfd2-4d08-47c4-8eda-30e6ee708796",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "4ea1133b-5e1c-4865-aef1-40a245dcd19c"
+      },
+      {
+        "uniqueId": "9032e725-976d-4878-8f33-e9821af782dd",
+        "name": "ContrailV2VirtualMachineInterface",
+        "version": "2.0",
+        "description": "Represents a network interface. The interfaces are defined with specific MAC addresses and ports.",
+        "tags": ["ContrailV2VirtualMachineInterface"],
+        "icon": "cp",
+        "systemName": "Contrailv2virtualmachineinterface",
+        "invariantUUID": "cecf4314-1bf3-440c-8079-6eba965dd491",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "392751ba-0925-4b3d-a826-ca25470e877e"
+      },
+      {
+        "uniqueId": "a7d6b149-f870-4f04-8b0b-15c7f69d84c4",
+        "name": "extNeutronCP",
+        "version": "2.0",
+        "description": "The AT&T Connection Point base type all other CP derive from",
+        "tags": ["extNeutronCP"],
+        "icon": "cp",
+        "systemName": "Extneutroncp",
+        "invariantUUID": "e8be1a55-99bc-4f5c-9653-9bc4bc98fcf2",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "cdf80d1f-5aab-4f3a-b980-6c6b91dd7923"
+      },
+      {
+        "uniqueId": "aed57d1e-853b-4d4b-b924-7df277d49fc0",
+        "name": "ExtCP2",
+        "version": "2.0",
+        "description": "The AT&T Connection Point base type all other CP derive from",
+        "tags": ["ExtCP2"],
+        "icon": "cp",
+        "systemName": "Extcp2",
+        "invariantUUID": "90e3a5a7-a323-4130-934d-536b269f84bb",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "d849ae33-b26e-4bb6-a675-47382ae58bbf"
+      },
+      {
+        "uniqueId": "4534e2b4-53b5-403e-80e5-c612fcb02219",
+        "name": "subInterfaceV2",
+        "version": "2.0",
+        "description": "VLAN sub-Interface is a logical port which must be binded to a port. Regular port may have 1N VLAN Interfaces.It can connect to its own network (regardless of the network the parent port can connect)",
+        "tags": ["subInterfaceV2"],
+        "icon": "cp",
+        "systemName": "Subinterfacev2",
+        "invariantUUID": "9b7db669-76f7-44dc-b666-aa4adcc78431",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "f5caf361-399e-480c-9aec-f8513c0a277c"
+      },
+      {
+        "uniqueId": "f194e4dc-1667-4efd-af4e-0767b7de6734",
+        "name": "extVirtualMachineInterfaceCP",
+        "version": "2.0",
+        "description": "External port for virtual machine interface",
+        "tags": ["extVirtualMachineInterfaceCP"],
+        "icon": "cp",
+        "systemName": "Extvirtualmachineinterfacecp",
+        "invariantUUID": "2fb160fa-b982-45b5-b188-840c122e794e",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "f4548753-8213-4d32-8c6d-e18ba37efe99"
+      },
+      {
+        "uniqueId": "e4ba9117-8f7c-4681-9f69-f7e03adbfb25",
+        "name": "subInterface",
+        "version": "2.0",
+        "description": "VLAN sub-Interface is a logical port which must be binded to a port. Regular port may have 1N VLAN Interfaces.It can connect to its own network (regardless of the network the parent port can connect)",
+        "tags": ["subInterface"],
+        "icon": "cp",
+        "systemName": "Subinterface",
+        "invariantUUID": "31f147fc-5afa-410e-8302-912606cff88b",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "22dfdd30-1037-4b49-a18a-321e8fb284e3"
+      },
+      {
+        "uniqueId": "7b685e37-1450-45f4-9c2d-3f91166784d8",
+        "name": "contrailV2VLANSubInterfaceV2",
+        "version": "2.0",
+        "description": "VLAN sub-Interface is a logical port which must be binded to a port. Regular port may have 1N VLAN Interfaces.It can connect to its own network (regardless of the network the parent port can connect)",
+        "tags": ["contrailV2VLANSubInterfaceV2"],
+        "icon": "cp",
+        "systemName": "Contrailv2vlansubinterfacev2",
+        "invariantUUID": "6b359a74-597c-450c-a808-389ed742bf53",
+        "componentType": "RESOURCE",
+        "resourceType": "CP",
+        "categories": [
+          {
+            "name": "Generic",
+            "normalizedName": "generic",
+            "uniqueId": "resourceNewCategory.generic",
+            "subcategories": [
+              {
+                "name": "Network Elements",
+                "normalizedName": "network elements",
+                "uniqueId": "resourceNewCategory.generic.network elements",
+                "icons": ["network", "connector"],
+                "empty": false
+              }
+            ],
+            "empty": false
+          }
+        ],
+        "uuid": "10c04512-5f68-42e7-9fe4-20e53f63085a"
+      }
+    ]
+  }
+}

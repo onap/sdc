@@ -62,13 +62,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -924,36 +918,19 @@ public abstract class BaseOperation {
 
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends ToscaDataDefinition> StorageOperationStatus updateFullToscaData(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel, Map<String, T> toscaData) {
-        StorageOperationStatus result = null;
-        GraphVertex toscaDataVertex = null;
-        Map<String, T> existingToscaDataMap = null;
-
-        Either<GraphVertex, JanusGraphOperationStatus> toscaDataVertexRes = janusGraphDao
-            .getChildVertex(toscaElement, edgeLabel, JsonParseFlagEnum.ParseJson);
+    <T extends ToscaDataDefinition> StorageOperationStatus updateFullToscaData(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel, Map<String, T> toscaData) {
+        Either<GraphVertex, JanusGraphOperationStatus> toscaDataVertexRes = janusGraphDao.getChildVertex(toscaElement, edgeLabel, JsonParseFlagEnum.ParseJson);
         if (toscaDataVertexRes.isRight() && toscaDataVertexRes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
             JanusGraphOperationStatus status = toscaDataVertexRes.right().value();
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_CHILD_VERTEX_OF_THE_TOSCA_ELEMENT_BY_LABEL_STATUS_IS, toscaElement.getUniqueId(), edgeLabel, status);
-            result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(toscaDataVertexRes.right().value());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(toscaDataVertexRes.right().value());
         }
-        if (result == null) {
-            if (toscaDataVertexRes.isLeft()) {
-                toscaDataVertex = toscaDataVertexRes.left().value();
-                existingToscaDataMap = (Map<String, T>) toscaDataVertex.getJson();
-            }
-
-
+        GraphVertex toscaDataVertex = null;
+        if (toscaDataVertexRes.isLeft()) {
+            toscaDataVertex = toscaDataVertexRes.left().value();
         }
-        if (result == null) {
-
-            result = handleToscaData(toscaElement, vertexLabel, edgeLabel, toscaDataVertex, toscaData);
-        }
-        if (result == null) {
-            result = StorageOperationStatus.OK;
-        }
-        return result;
-
+        StorageOperationStatus result = handleToscaData(toscaElement, vertexLabel, edgeLabel, toscaDataVertex, toscaData);
+        return result == null ? StorageOperationStatus.OK : result;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1373,18 +1350,25 @@ public abstract class BaseOperation {
         return StorageOperationStatus.OK;
     }
 
-    protected <K extends ToscaDataDefinition> StorageOperationStatus handleToscaData(GraphVertex toscaElement, VertexTypeEnum vertexLabel, EdgeLabelEnum edgeLabel, GraphVertex toscaDataVertex, Map<String, K> mergedToscaDataMap) {
-
+    <K extends ToscaDataDefinition> StorageOperationStatus handleToscaData(GraphVertex toscaElement, VertexTypeEnum vertexLabel,
+                                                                           EdgeLabelEnum edgeLabel, GraphVertex toscaDataVertex, Map<String, K> mergedToscaDataMap) {
         StorageOperationStatus result = StorageOperationStatus.OK;
         if (toscaDataVertex == null) {
-
+            if (MapUtils.isEmpty(mergedToscaDataMap)) {
+                //If no new data and this vertex type does not exist, return
+                return result;
+            }
             Either<GraphVertex, StorageOperationStatus> createRes = associateElementToData(toscaElement, vertexLabel, edgeLabel, mergedToscaDataMap);
             if (createRes.isRight()) {
                 StorageOperationStatus status = createRes.right().value();
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to assosiate tosca data {} of the tosca element {}. Status is {}. ", edgeLabel, toscaElement.getUniqueId(), status);
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to associate tosca data {} of the tosca element {}. Status is {}. ", edgeLabel, toscaElement.getUniqueId(), status);
                 result = status;
             }
         } else {
+            if (MapUtils.isEmpty(mergedToscaDataMap)) {
+                JanusGraphOperationStatus janusGraphOperationStatus = janusGraphDao.disassociateAndDeleteLast(toscaElement, Direction.OUT, edgeLabel);
+                return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(janusGraphOperationStatus);
+            }
             toscaDataVertex.setJson(mergedToscaDataMap);
             Either<GraphVertex, JanusGraphOperationStatus> updateOrCopyRes = updateOrCopyOnUpdate(toscaDataVertex, toscaElement, edgeLabel);
             if (updateOrCopyRes.isRight()) {

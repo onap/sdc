@@ -20,16 +20,19 @@
 
 package org.openecomp.sdc.be.components.merge.instance;
 
-import fj.data.Either;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -52,10 +55,14 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
         Map<String, ArtifactDefinition> deploymentArtifactsCreatedOnTheInstance = componentInstancesDeploymentArtifacts.entrySet()
                 .stream()
                 .filter(i -> !originalComponentDeploymentArtifacts.containsKey(i.getKey()))
+                .filter(i -> !ArtifactTypeEnum.VF_MODULES_METADATA.name().equals(i.getValue().getArtifactType()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         dataHolder.setOrigComponentDeploymentArtifactsCreatedOnTheInstance(deploymentArtifactsCreatedOnTheInstance);
-
+//        dataHolder.setComponentInstanceDeploymentArtifactsTimeOut(componentInstancesDeploymentArtifacts.entrySet().stream()
+//                .collect(Collectors.toMap(Map.Entry::getKey, artifact -> artifact.getValue().getTimeout())));
+        dataHolder.setComponentInstanceDeploymentArtifactsTimeOut(componentInstancesDeploymentArtifacts.entrySet().stream()
+                .collect(HashMap::new, (map,entry) -> map.put(entry.getKey(), entry.getValue().getTimeout()) ,HashMap::putAll));
         Map<String, ArtifactDefinition> componentInstancesInformationalArtifacts = currentResourceInstance.safeGetArtifacts();
         Map<String, ArtifactDefinition> originalComponentInformationalArtifacts = originComponent.getArtifacts();
         Map<String, ArtifactDefinition> informationalArtifactsCreatedOnTheInstance = componentInstancesInformationalArtifacts.entrySet()
@@ -70,12 +77,13 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
     }
 
     @Override
-    public Either<Component, ResponseFormat> mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
+    public Component mergeDataAfterCreate(User user, DataForMergeHolder dataHolder, Component updatedContainerComponent, String newInstanceId) {
         Map<String, ArtifactDefinition> origInstanceDeploymentArtifactsCreatedOnTheInstance = dataHolder.getOrigComponentDeploymentArtifactsCreatedOnTheInstance();
         Map<String, ArtifactDefinition> currentInstanceDeploymentArtifacts = updatedContainerComponent.safeGetComponentInstanceDeploymentArtifacts(newInstanceId);
         Map<String, ArtifactDefinition> filteredDeploymentArtifactsToAdd = Optional.ofNullable(origInstanceDeploymentArtifactsCreatedOnTheInstance).orElse(new HashMap<>()).entrySet().stream()
                 .filter(artifact -> noArtifactWithTheSameLabel(artifact.getValue().getArtifactLabel(), currentInstanceDeploymentArtifacts))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, ArtifactDefinition> updatedTimeOutDeploymentArtifacts = getUpdatedTimeOutDeploymentArtifacts(dataHolder, currentInstanceDeploymentArtifacts);
         Map<String, ArtifactDefinition> origInstanceInformationalArtifactsCreatedOnTheInstance = dataHolder.getOrigComponentInformationalArtifactsCreatedOnTheInstance();
         Map<String, ArtifactDefinition> currentInstanceInformationalArtifacts = updatedContainerComponent.safeGetComponentInstanceInformationalArtifacts(newInstanceId);
         Map<String, ArtifactDefinition> filteredInformationalArtifactsToAdd = Optional.ofNullable(origInstanceInformationalArtifactsCreatedOnTheInstance).orElse(new HashMap<>()).entrySet().stream()
@@ -83,6 +91,7 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         Map<String, ArtifactDefinition> allFilteredArtifactsToAdd = new HashMap<>();
         allFilteredArtifactsToAdd.putAll(filteredDeploymentArtifactsToAdd);
+        allFilteredArtifactsToAdd.putAll(updatedTimeOutDeploymentArtifacts);
         allFilteredArtifactsToAdd.putAll(filteredInformationalArtifactsToAdd);
 
         for (Map.Entry<String, ArtifactDefinition> currentArtifactDefinition :  allFilteredArtifactsToAdd.entrySet()) {
@@ -97,15 +106,24 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
                     currentArtifactDefinition.getValue().getPayloadData(),
                     null, currentArtifactDefinition.getValue().getListHeatParameters());
             addEsIdToArtifactJson(jsonForUpdateArtifact, currentArtifactDefinition.getValue().getEsId());
-            Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService =
-                    artifactsBusinessLogic.updateResourceInstanceArtifactNoContent(newInstanceId, updatedContainerComponent,
+            artifactsBusinessLogic.updateResourceInstanceArtifactNoContent(newInstanceId, updatedContainerComponent,
                             user, jsonForUpdateArtifact, artifactsBusinessLogic.new ArtifactOperationInfo(
                                     false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.LINK), currentArtifactDefinition.getValue());
-            if (uploadArtifactToService.isRight()) {
-                return Either.right(uploadArtifactToService.right().value());
-            }
         }
-        return Either.left(updatedContainerComponent);
+        return updatedContainerComponent;
+    }
+
+    private Map<String, ArtifactDefinition> getUpdatedTimeOutDeploymentArtifacts(DataForMergeHolder dataHolder, Map<String, ArtifactDefinition> currentInstanceDeploymentArtifacts) {
+        return currentInstanceDeploymentArtifacts.entrySet().stream()
+                .filter(artifact -> Objects.isNull(artifact.getValue().getTimeout()) || !artifact.getValue().getTimeout()
+                        .equals(dataHolder.getComponentInstanceDeploymentArtifactsTimeOut().get(artifact.getKey())))
+                .collect(Collectors.toMap(Map.Entry::getKey, artifact -> mergeTimeOut(artifact.getValue(), dataHolder
+                        .getComponentInstanceDeploymentArtifactsTimeOut().get(artifact.getKey()))));
+    }
+
+    private ArtifactDefinition mergeTimeOut(ArtifactDefinition artifact, Integer updatedTimeOut) {
+        artifact.setTimeout(updatedTimeOut);
+        return artifact;
     }
 
     private boolean noArtifactWithTheSameLabel(String artifactLabel, Map<String, ArtifactDefinition> currDeploymentArtifacts) {

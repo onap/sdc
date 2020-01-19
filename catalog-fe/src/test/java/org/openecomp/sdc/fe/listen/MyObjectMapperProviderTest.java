@@ -50,7 +50,7 @@ public class MyObjectMapperProviderTest {
 			+ "}";
 
 		ObjectMapper objectMapper = new MyObjectMapperProvider().getContext(MyObjectMapperProviderTest.class);
-		String serialized = objectMapper.writeValueAsString(new AnyModel("Field1"));
+		String serialized = objectMapper.writeValueAsString(new AnyModel("Field1")).replace("\r","");
 		Assert.assertEquals(serialized, prettyJson);
 	}
 }

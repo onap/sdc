@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -51,7 +52,7 @@ public interface IElementOperation {
 
     public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes();
 
-    public Either<Integer, ActionStatus> getDefaultHeatTimeout();
+    public Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> getDefaultHeatTimeout();
 
     public <T extends GraphNode> Either<CategoryData, StorageOperationStatus> getCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
 

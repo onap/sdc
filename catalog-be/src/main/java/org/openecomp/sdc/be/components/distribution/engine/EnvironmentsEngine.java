@@ -34,10 +34,12 @@ import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.components.distribution.engine.IDmaapNotificationData.DmaapActionEnum;
 import org.openecomp.sdc.be.components.distribution.engine.IDmaapNotificationData.OperationaEnvironmentTypeEnum;
 import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCompleteReporter;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
-import org.openecomp.sdc.be.config.DmeConfiguration;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
@@ -47,17 +49,25 @@ import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
+import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.glassfish.jersey.internal.guava.Predicates.not;
 import static org.openecomp.sdc.common.datastructure.FunctionalInterfaces.runMethodWithTimeOut;
 
 /**
@@ -69,6 +79,7 @@ public class EnvironmentsEngine implements INotificationHandler {
     private static final String MESSAGE_BUS = "MessageBus";
     private static final String UNKNOWN = "Unknown";
     private static final Logger log = Logger.getLogger(EnvironmentsEngine.class.getName());
+    private static final String LOG_PARTNER_NAME = "SDC.BE";
     private ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
 
     private Map<String, OperationalEnvironmentEntry> environments = new HashMap<>();
@@ -84,6 +95,7 @@ public class EnvironmentsEngine implements INotificationHandler {
     private final CambriaHandler cambriaHandler;
     private final DistributionEngineClusterHealth distributionEngineClusterHealth;
     private final DistributionCompleteReporter distributionCompleteReporter;
+    private static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
 
     public EnvironmentsEngine(DmaapConsumer dmaapConsumer, OperationalEnvironmentDao operationalEnvironmentDao, DME2EndpointIteratorCreator epIterCreator, AaiRequestHandler aaiRequestHandler, ComponentsUtils componentUtils, CambriaHandler cambriaHandler, DistributionEngineClusterHealth distributionEngineClusterHealth, DistributionCompleteReporter distributionCompleteReporter) {
         this.dmaapConsumer = dmaapConsumer;
@@ -100,6 +112,7 @@ public class EnvironmentsEngine implements INotificationHandler {
     @PostConstruct
     void init() {
         try {
+            mdcFieldsHandler.addInfoForErrorAndDebugLogging(LOG_PARTNER_NAME);
             environments = populateEnvironments();
             createUebTopicsForEnvironments();
             initDmeGlobalConfig();
@@ -121,9 +134,9 @@ public class EnvironmentsEngine implements INotificationHandler {
             log.warn("cannot read dmaap configuration file,DME might not be initialized properly");
             return;
         }
-        System.setProperty("AFT_ENVIRONMENT", dmaapConsumerParams.getEnvironment()); // AFTPRD for production
-        System.setProperty("AFT_LATITUDE", dmaapConsumerParams.getLatitude()!=null ? dmaapConsumerParams.getLatitude().toString() : "1.0"); // Replace with actual latitude
-        System.setProperty("AFT_LONGITUDE", dmaapConsumerParams.getLongitude()!=null ? dmaapConsumerParams.getLongitude().toString() : "1.0"); // Replace with actual longitude
+        System.setProperty("AFT_ENVIRONMENT", dmaapConsumerParams.getAftEnvironment()); // AFTPRD for production
+        System.setProperty("AFT_LATITUDE", dmaapConsumerParams.getLatitude() != null ? dmaapConsumerParams.getLatitude().toString() : "1.0"); // Replace with actual latitude
+        System.setProperty("AFT_LONGITUDE", dmaapConsumerParams.getLongitude() != null ? dmaapConsumerParams.getLongitude().toString() : "1.0"); // Replace with actual longitude
     }
 
     public void connectUebTopicTenantIsolation(OperationalEnvironmentEntry opEnvEntry,
@@ -233,7 +246,7 @@ public class EnvironmentsEngine implements INotificationHandler {
             }
 
         } catch (Exception e) {
-            log.debug("handle message for operational environmet failed for notification: {} with error :{}",
+            log.debug("handle message for operational environment failed for notification: {} with error :{}",
                     notification, e.getMessage(), e);
             errorWrapper.setInnerElement(false);
 
@@ -307,19 +320,20 @@ public class EnvironmentsEngine implements INotificationHandler {
 
     void retrieveUebAddressesFromAftDme(Wrapper<Boolean> errorWrapper, OperationalEnvironmentEntry opEnvEntry) {
         log.debug("handle message - Get List Of UEB Addresses From AFT_DME");
+        log.invoke(opEnvEntry.getEnvironmentId(), "retrieveUebAddressesFromAftDme", opEnvEntry.getStatus(), EnvironmentsEngine.class.getName(), errorWrapper.toString() );
         try {
             boolean isKeyFieldsValid = !isEmpty(opEnvEntry.getTenant()) && !isEmpty(opEnvEntry.getEcompWorkloadContext());
             if (isKeyFieldsValid) {
                 String opEnvKey = map2OpEnvKey(opEnvEntry);
-                String environmentId = opEnvEntry.getEnvironmentId();
-                List<String> uebHosts = discoverUebHosts(opEnvKey, environmentId);
+                List<String> uebHosts = discoverUebHosts(opEnvKey);
                 opEnvEntry.setDmaapUebAddress(uebHosts.stream().collect(Collectors.toSet()));
+                log.invokeReturn(opEnvEntry.getEnvironmentId(), "retrieveUebAddressesFromAftDme", opEnvEntry.getStatus(), "SDC-BE", errorWrapper.toString() );
             } else {
                 errorWrapper.setInnerElement(false);
                 log.debug("Can Not Build AFT DME Key from workLoad & Tenant Fields.");
             }
 
-        } catch (DME2Exception e) {
+        } catch (Exception e) {
             errorWrapper.setInnerElement(false);
             log.error("Failed to retrieve Ueb Addresses From DME. ", e);
         }
@@ -425,14 +439,14 @@ public class EnvironmentsEngine implements INotificationHandler {
         }
     }
 
-    public List<String> discoverUebHosts(String opEnvKey, String env) throws DME2Exception {
-        DmeConfiguration dmeConfiguration = configurationManager.getConfiguration().getDmeConfiguration();
+    public List<String> discoverUebHosts(String opEnvKey) throws DME2Exception {
+        String lookupUriFormat = configurationManager.getConfiguration().getDmeConfiguration().getLookupUriFormat();
+        String environment = configurationManager.getConfiguration().getDmaapConsumerConfiguration().getEnvironment();
+        String lookupURI = String.format(lookupUriFormat, opEnvKey, environment);
+        log.debug("DME2 GRM URI: {}", lookupURI);
+
         List<String> uebHosts = new LinkedList<>();
-
-        String lookupURI = String.format("http://%s/service=%s/version=1.0.0/envContext=%s/partner=*", dmeConfiguration.getDme2Search(), opEnvKey,
-                env);
         DME2EndpointIterator iterator = epIterCreator.create(lookupURI);
-
         // Beginning iteration
         while (iterator.hasNext()) {
             DME2EndpointReference ref = iterator.next();
@@ -469,6 +483,7 @@ public class EnvironmentsEngine implements INotificationHandler {
         String envName = distributionEngineConfiguration.getEnvironments().size() == 1
                 ? distributionEngineConfiguration.getEnvironments().get(0) : UNKNOWN;
         entry.setEnvironmentId(envName);
+        entry.setIsProduction(true);
 
         if (log.isDebugEnabled()) {
             log.debug("Enviroment read from configuration: {}", entry);
@@ -494,7 +509,9 @@ public class EnvironmentsEngine implements INotificationHandler {
     }
 
     void createUebTopicsForEnvironments() {
-        environments.values().forEach(this::createUebTopicsForEnvironment);
+        environments.values().stream()
+                .filter(not(OperationalEnvironmentEntry::getIsProduction))
+                .forEach(this::createUebTopicsForEnvironment);
     }
 
     public void createUebTopicsForEnvironment(OperationalEnvironmentEntry opEnvEntry) {
@@ -514,6 +531,15 @@ public class EnvironmentsEngine implements INotificationHandler {
     public Map<String, OperationalEnvironmentEntry> getEnvironments() {
         return environments;
     }
+
+    public OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
+        return environments.values().stream()
+                .filter(e -> e.getDmaapUebAddress().stream()
+                    .filter(dmaapUebAddress::contains).findAny().isPresent())
+                .findFirst()
+                .orElseThrow(() -> new ByActionStatusComponentException(ActionStatus.DISTRIBUTION_ENV_DOES_NOT_EXIST,dmaapUebAddress.toString()));
+    }
+
 
 
     public Either<OperationalEnvInfo, Integer> getOperationalEnvById(String id) {

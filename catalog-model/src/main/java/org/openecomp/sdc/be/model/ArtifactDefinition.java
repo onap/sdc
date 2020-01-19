@@ -35,6 +35,16 @@ public class ArtifactDefinition extends ArtifactDataDefinition {
      */
     private byte[] payloadData;
 
+    private Boolean isHeatParamUpdated = false;
+
+    public Boolean getHeatParamUpdated() {
+        return isHeatParamUpdated;
+    }
+
+    public void setHeatParamUpdated(Boolean heatParamUpdated) {
+        isHeatParamUpdated = heatParamUpdated;
+    }
+
     public ArtifactDefinition() {
     }
 

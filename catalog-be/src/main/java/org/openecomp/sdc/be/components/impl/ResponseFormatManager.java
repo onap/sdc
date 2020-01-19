@@ -64,11 +64,11 @@ public class ResponseFormatManager {
         String errorMessage = errorInfo.getMessage();
         String errorMessageId = errorInfo.getMessageId();
         ErrorInfoType errorInfoType = errorInfo.getErrorInfoType();
-        if (errorInfoType.equals(ErrorInfoType.SERVICE_EXCEPTION)) {
+        if (errorInfoType == ErrorInfoType.SERVICE_EXCEPTION) {
             errorResponseWrapper.setServiceException(new ServiceException(errorMessageId, errorMessage, variables));
-        } else if (errorInfoType.equals(ErrorInfoType.POLICY_EXCEPTION)) {
+        } else if (errorInfoType == ErrorInfoType.POLICY_EXCEPTION) {
             errorResponseWrapper.setPolicyException(new PolicyException(errorMessageId, errorMessage, variables));
-        } else if (errorInfoType.equals(ErrorInfoType.OK)) {
+        } else if (errorInfoType == ErrorInfoType.OK) {
             errorResponseWrapper.setOkResponseInfo(new OkResponseInfo(errorMessageId, errorMessage, variables));
         }
         return errorResponseWrapper;

@@ -22,8 +22,8 @@
 
 package org.openecomp.sdc.be.info;
 
+import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 
 public class DistributionStatusInfo {
 
@@ -36,7 +36,8 @@ public class DistributionStatusInfo {
     DistributionStatusInfo() {
     }
 
-    public DistributionStatusInfo(ESTimeBasedEvent distributionStatusEvent) {
+    public DistributionStatusInfo(AuditingGenericEvent distributionStatusEvent) {
+        super();
         omfComponentID = String.valueOf(distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName()));
         timestamp = String.valueOf(distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_STATUS_TIME.getDisplayName()));
         url = String.valueOf(distributionStatusEvent.getFields().get(AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName()));

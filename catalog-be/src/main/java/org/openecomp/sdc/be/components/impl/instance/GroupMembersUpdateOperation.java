@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.components.impl.instance;
 
 import org.openecomp.sdc.be.components.impl.group.GroupMembersUpdater;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -73,7 +74,7 @@ public class GroupMembersUpdateOperation implements OnComponentInstanceChangeOpe
 
     private ActionStatus updateGroups(Component container, List<GroupDefinition> groupsToUpdate) {
         log.debug("#updateGroups - updating {} groups for container {}", groupsToUpdate.size(), container.getUniqueId());
-        return groupsOperation.updateGroups(container, groupsToUpdate, false)
+        return groupsOperation.updateGroups(container, groupsToUpdate, PromoteVersionEnum.MINOR)
                 .either(groupsUpdated -> ActionStatus.OK,
                         err -> componentsUtils.convertFromStorageResponse(err, container.getComponentType()));
     }

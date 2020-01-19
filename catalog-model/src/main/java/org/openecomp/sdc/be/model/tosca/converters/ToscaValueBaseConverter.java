@@ -102,7 +102,7 @@ public class ToscaValueBaseConverter {
                 if (elementValue.isJsonPrimitive()) {
                     jsonValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
                 } else {
-                    log.debug("not supported json type {} ", elementValue);
+                    log.debug("not supported json type ");
                 }
             }
         }

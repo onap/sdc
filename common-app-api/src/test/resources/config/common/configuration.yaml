@@ -33,7 +33,6 @@ janusGraphReconnectIntervalInSeconds: 3
 janusGraphHealthCheckReadTimeout: 1
 
 # The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
-esReconnectIntervalInSeconds: 3
 uebHealthCheckReconnectIntervalInSeconds: 15
 uebHealthCheckReadTimeout: 4
 

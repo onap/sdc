@@ -21,7 +21,7 @@
 import { Component, ContentChildren, QueryList, AfterContentInit, Input, Output, EventEmitter } from '@angular/core';
 import { Tab } from './tab/tab.component';
 import { ViewEncapsulation } from '@angular/core';
-import { trigger, state, style, transition, animate, keyframes } from '@angular/core';
+import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 
 export {Tab};
 

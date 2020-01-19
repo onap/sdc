@@ -99,6 +99,12 @@ public class ArtifactUtilsTest {
 		artifactId = null;
 		result = ArtifactUtils.buildJsonForUpdateArtifact(artifactId, artifactName, artifactType, artifactGroupType,
 				label, displayName, description, artifactContentent, updatedRequiredArtifacts, isFromCsar);
+
+		// test 2
+		/*artifactId = "";
+		result = ArtifactUtils.buildJsonForUpdateArtifact(artifactId, artifactName, artifactType, artifactGroupType,
+				label, displayName, description, artifactContentent, updatedRequiredArtifacts, isFromCsar);
+		Assert.assertEquals(null, result);*/
 	}
 
 	@Test

@@ -2,38 +2,6 @@
 # yarn lockfile v1
 
 
-"@angular/common@~2.4.8":
-  version "2.4.10"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-2.4.10.tgz#a3a682d2228fa30ec23dd0eb57c8e887fba26997"
-
-"@angular/core@~2.4.8":
-  version "2.4.10"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-2.4.10.tgz#0b8320a65065965d998645b1f5cd3cf769b441ea"
-
-"@angular/forms@~2.4.8":
-  version "2.4.10"
-  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-2.4.10.tgz#062133aaade1f3b3c962f1593208c541b622fd06"
-
-"@angular/http@^2.4.8":
-  version "2.4.10"
-  resolved "https://registry.yarnpkg.com/@angular/http/-/http-2.4.10.tgz#ff6beade5b39c989ebf2393c49b34eebd43e9555"
-
-"@angular/platform-browser-dynamic@~2.4.8":
-  version "2.4.10"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-2.4.10.tgz#8df25dec2b06adc690cc9bc26448deccaebcd8ec"
-
-"@angular/platform-browser@~2.4.8":
-  version "2.4.10"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-2.4.10.tgz#cbf25608148fb4ffef96cc5005ba5d7b3e093906"
-
-"@angular/router@~3.2.1":
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/@angular/router/-/router-3.2.4.tgz#dfec71ad072ec031364ba5d08bd6fe03fd5beadc"
-
-"@angular/upgrade@^2.4.8":
-  version "2.4.10"
-  resolved "https://registry.yarnpkg.com/@angular/upgrade/-/upgrade-2.4.10.tgz#b69a3ee324d4450eb1696ddc9bded1a6ec06ca52"
-
 "@babel/code-frame@7.0.0-beta.44":
   version "7.0.0-beta.44"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0-beta.44.tgz#2a02643368de80916162be70865c97774f3adbd9"
@@ -7591,19 +7559,24 @@ on-headers@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/on-headers/-/on-headers-1.0.1.tgz#928f5d0f470d49342651ea6794b0857c100693f7"
 
-onap-ui-common@1.0.100:
-  version "1.0.100"
-  resolved "https://registry.yarnpkg.com/onap-ui-common/-/onap-ui-common-1.0.100.tgz#c0dae1d3d1c3fd2b866340d27a1179ed10a3a860"
-  integrity sha512-d+eaYgVgrj9B8/3iVDlkxO2jiE7wXFrvMogxxHsyM8E0Fa7wXGEGwohA4JD5nGydT84dU2vPzwkby7SZNgGpKA==
+onap-ui-common@1.0.101:
+  version "1.0.101"
+  resolved "https://registry.yarnpkg.com/onap-ui-common/-/onap-ui-common-1.0.101.tgz#c79b8fb903b7d2d3f959e3b5c27b561b563d961b"
+  integrity sha512-wedlorlDeGCyr/L7TzZr6UgOqpQTe5RMwh5z2lpNMHapsRx9b5gHS7QSbjNST+5zb7enGpRzjH/bYV1wn4nIPw==
 
-onap-ui-react@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/onap-ui-react/-/onap-ui-react-0.1.1.tgz#3640bdb9fb10f85104ad9dd57a9f320b0703abf3"
-  integrity sha512-hax7WzSMIPll9fHvKVjFbn2dIOh39fWuiy0VQKONq/ccU3f/y08Y6EzJo7rzWcwjt8bp2KDhqNZky0HwIquc6w==
+onap-ui-common@^1.0.101:
+  version "1.0.106"
+  resolved "https://registry.yarnpkg.com/onap-ui-common/-/onap-ui-common-1.0.106.tgz#d7bf8e3eb1c422afcb87fc8f3eaaf5a996aa2947"
+  integrity sha512-Wp8BM9EObjz5EmRC4xU2+XjEoQd9IoqDZnKzB454W1qv9F5EFyjuPT1dnSyQBSmjE679QgkOCNzwrd0UbPs9cg==
+
+onap-ui-react@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/onap-ui-react/-/onap-ui-react-1.0.2.tgz#e99dc5a924f84a991c71a3e9c05a44a915830168"
+  integrity sha512-fsYpTzw+TRSmwNXZNv+oiz9ON4k56RAhoVoKuEEaO5vY6sKJgm/3PB2p3FuQZhtnZ2u4s7/eT+7Pr7EzhPeq3w==
   dependencies:
     "@storybook/react" "^3.1.5"
     http-loader "0.0.1"
-    onap-ui-common "1.0.100"
+    onap-ui-common "1.0.101"
     prop-types "^15.6.0"
     react "15.6.2"
     react-dom "15.6.2"
@@ -9437,12 +9410,6 @@ rx@4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/rx/-/rx-4.1.0.tgz#a5f13ff79ef3b740fe30aa803fb09f98805d4782"
 
-rxjs@5.4.2:
-  version "5.4.2"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.4.2.tgz#2a3236fcbf03df57bae06fd6972fd99e5c08fcf7"
-  dependencies:
-    symbol-observable "^1.0.1"
-
 rxjs@^5.5.2:
   version "5.5.11"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.11.tgz#f733027ca43e3bec6b994473be4ab98ad43ced87"
@@ -9534,28 +9501,6 @@ scss-tokenizer@^0.2.3:
   dependencies:
     js-base64 "^2.1.8"
     source-map "^0.4.2"
-
-sdc-ui@1.6.62:
-  version "1.6.62"
-  resolved "https://registry.yarnpkg.com/sdc-ui/-/sdc-ui-1.6.62.tgz#738b14d3e2d2280f9be69b1fdb91b7c815e60dca"
-  dependencies:
-    "@angular/common" "~2.4.8"
-    "@angular/core" "~2.4.8"
-    "@angular/forms" "~2.4.8"
-    "@angular/http" "^2.4.8"
-    "@angular/platform-browser" "~2.4.8"
-    "@angular/platform-browser-dynamic" "~2.4.8"
-    "@angular/router" "~3.2.1"
-    "@angular/upgrade" "^2.4.8"
-    "@storybook/react" "^3.1.5"
-    http-loader "0.0.1"
-    prop-types "^15.6.0"
-    react "15.6.2"
-    react-dom "15.6.2"
-    reflect-metadata "^0.1.3"
-    rxjs "5.4.2"
-    svg-react-loader "^0.4.4"
-    zone.js "^0.8.18"
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -10261,7 +10206,7 @@ symbol-observable@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.0.1.tgz#8340fc4702c3122df5d22288f88283f513d3fdd4"
 
-symbol-observable@^1.0.1, symbol-observable@^1.0.3, symbol-observable@^1.1.0:
+symbol-observable@^1.0.3, symbol-observable@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
 
@@ -11391,7 +11336,3 @@ yeoman-generator@^2.0.5:
     text-table "^0.2.0"
     through2 "^2.0.0"
     yeoman-environment "^2.0.5"
-
-zone.js@^0.8.18:
-  version "0.8.26"
-  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.8.26.tgz#7bdd72f7668c5a7ad6b118148b4ea39c59d08d2d"

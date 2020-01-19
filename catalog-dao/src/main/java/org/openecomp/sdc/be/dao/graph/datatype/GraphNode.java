@@ -35,14 +35,14 @@ public abstract class GraphNode extends GraphElement {
 
 	private NodeTypeEnum label;
 
-    protected GraphNode(NodeTypeEnum label) {
-        super(GraphElementTypeEnum.Node);
-
-        this.label = label;
-    }
-	
 	protected Gson getGson() {
 		return gson;
+	}
+
+	protected GraphNode(NodeTypeEnum label) {
+		super(GraphElementTypeEnum.Node);
+
+		this.label = label;
 	}
 
 	public String getLabel() {
@@ -51,6 +51,11 @@ public abstract class GraphNode extends GraphElement {
 
 	public ImmutablePair<String, Object> getKeyValueId() {
         return new ImmutablePair<>(getUniqueIdKey(), getUniqueId());
+	}
+
+
+	public ImmutablePair<String, Object> getKeyValueIdForLog() {
+		return getKeyValueId();
 	}
 
 	protected void addIfExists(Map<String, Object> map, GraphPropertiesDictionary property, Object value) {

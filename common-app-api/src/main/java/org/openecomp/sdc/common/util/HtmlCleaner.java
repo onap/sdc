@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,81 +31,81 @@ import java.util.regex.Pattern;
 
 public class HtmlCleaner {
 
-    private static Set<String> htmlTags = new HashSet<>();
+	private static Set<String> htmlTags = new HashSet<>();
 
-    private static String patternHtmlFullTagStr = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[\\^'\">\\s]+))?)+\\s*|\\s*)/?>";
+	private static String patternHtmlFullTagStr = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[\\^'\">\\s]+))?)+\\s*|\\s*)/?>";
 
-    private static String patternHtmlTagOnlyStr = "</?(\\w+)[^>]*/?>";
+	private static String patternHtmlTagOnlyStr = "</?(\\w+)[^>]*/?>";
 
-    private static Pattern onlyTagPattern = Pattern.compile(patternHtmlTagOnlyStr);
+	private static Pattern onlyTagPattern = Pattern.compile(patternHtmlTagOnlyStr);
 
-    private static Pattern fullTagPattern = Pattern.compile(patternHtmlFullTagStr);
+	private static Pattern fullTagPattern = Pattern.compile(patternHtmlFullTagStr);
 
-    static {
-        Tag[] allTags = HTML.getAllTags();
-        for (Tag tag : allTags) {
-            htmlTags.add(tag.toString().toLowerCase());
-        }
-    }
+	static {
+		Tag[] allTags = HTML.getAllTags();
+		for (Tag tag : allTags) {
+			htmlTags.add(tag.toString().toLowerCase());
+		}
+	}
 
-    public static String stripHtml(String input) {
+	public static String stripHtml(String input) {
 
-        return stripHtml(input, false);
+		return stripHtml(input, false);
 
-    }
+	}
 
-    public static String stripHtml(String input, boolean toEscape) {
+	public static String stripHtml(String input, boolean toEscape) {
 
-        if (input == null || input.isEmpty()) {
-            return input;
-        }
+		if (input == null || input.isEmpty()) {
+			return input;
+		}
 
-        Matcher matcher = onlyTagPattern.matcher(input);
+		Matcher matcher = onlyTagPattern.matcher(input);
 
-        Set<String> tagsToRemove = new HashSet<>();
+		Set<String> tagsToRemove = new HashSet<>();
 
-        while (matcher.find()) {
+		while (matcher.find()) {
 
-            int start = matcher.start();
-            int end = matcher.end();
+			int start = matcher.start();
+			int end = matcher.end();
 
-            String matchTag = input.substring(start, end);
+			String matchTag = input.substring(start, end);
 
-            int groupCount = matcher.groupCount();
+			int groupCount = matcher.groupCount();
 
-            if (groupCount > 0) {
-                String tag = matcher.group(1);
-                if (tag != null && htmlTags.contains(tag.toLowerCase())) {
-                    if (!tagsToRemove.contains(matchTag)) {
-                        tagsToRemove.add(matchTag);
-                    }
-                }
-            }
-        }
+			if (groupCount > 0) {
+				String tag = matcher.group(1);
+				if (tag != null && htmlTags.contains(tag.toLowerCase())) {
+					if (!tagsToRemove.contains(matchTag)) {
+						tagsToRemove.add(matchTag);
+					}
+				}
+			}
+		}
 
-        String stripHtmlStr = removeTagsFromString(tagsToRemove, input);
+		String stripHtmlStr = removeTagsFromString(tagsToRemove, input);
 
-        if (stripHtmlStr != null) {
-            if (toEscape) {
-                stripHtmlStr = StringEscapeUtils.escapeHtml4(stripHtmlStr);
-            }
-        }
+		if (stripHtmlStr != null) {
+			if (toEscape) {
+				stripHtmlStr = StringEscapeUtils.escapeHtml4(stripHtmlStr);
+			}
+		}
 
-        return stripHtmlStr;
+		return stripHtmlStr;
 
-    }
+	}
 
-    private static String removeTagsFromString(Set<String> tagsToRemove, String input) {
+	private static String removeTagsFromString(Set<String> tagsToRemove, String input) {
 
-        String stripStr = input;
-        if (input == null || tagsToRemove.isEmpty()) {
-            return input;
-        }
+		String stripStr = input;
+		if (input == null || tagsToRemove.isEmpty()) {
+			return input;
+		}
 
-        for (String tag : tagsToRemove) {
-            stripStr = stripStr.replaceAll(tag, "");
-        }
-        return stripStr;
-    }
+		for (String tag : tagsToRemove) {
+			stripStr = stripStr.replaceAll(tag, "");
+		}
+		return stripStr;
+	}
 
 }

@@ -61,7 +61,7 @@ public enum ToscaType {
 		return type;
 	}
 
-	public ToscaType getToscaType(String typeName) {
+	public static ToscaType getToscaType(String typeName) {
 		if (typeName == null) {
 			return null;
 		}
@@ -220,8 +220,10 @@ public enum ToscaType {
         return name().toLowerCase();
     }
 
-	public static boolean isCollectionType(String type) {
-		return ToscaPropertyType.MAP.getType().equals(type)
-				|| ToscaPropertyType.LIST.getType().equals(type);
-	}
+    public static boolean isCollectionType(String type) {
+        return ToscaPropertyType.MAP.getType().equals(type)
+                || ToscaPropertyType.LIST.getType().equals(type);
+    }
+
+
 }

@@ -33,10 +33,14 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.CommonImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.zip.exception.ZipException;
@@ -56,7 +60,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 /**
- * Here new APIs for types upload written in an attempt to gradually servlet responseCode
+ * Here new APIs for types upload written in an attempt to gradually servlet code
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/uploadType")
@@ -64,14 +68,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Produces(MediaType.APPLICATION_JSON)
 @OpenAPIDefinition(info = @Info(title = "Catalog Types Upload"))
 @Controller
-public class TypesUploadEndpoint {
+public class TypesUploadEndpoint extends BeGenericServlet{
     private static final Logger LOGGER = LoggerFactory.getLogger(TypesUploadEndpoint.class);
 
     private final CommonImportManager commonImportManager;
     private final AnnotationTypeOperations annotationTypeOperations;
     private final AccessValidations accessValidations;
 
-    public TypesUploadEndpoint(CommonImportManager commonImportManager, AnnotationTypeOperations annotationTypeOperations, AccessValidations accessValidations) {
+    public TypesUploadEndpoint(UserBusinessLogic userBusinessLogic,
+        ComponentsUtils componentsUtils, CommonImportManager commonImportManager, AnnotationTypeOperations annotationTypeOperations, AccessValidations accessValidations) {
+        super(userBusinessLogic, componentsUtils);
         this.commonImportManager = commonImportManager;
         this.annotationTypeOperations = annotationTypeOperations;
         this.accessValidations = accessValidations;
@@ -86,7 +92,7 @@ public class TypesUploadEndpoint {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "annotation types already exist")})
-    
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadAnnotationTypes(@Parameter(description = "FileInputStream") @FormDataParam("annotationTypesZip") File file,
             @HeaderParam("USER_ID") String userId) {
         accessValidations.validateUserExists(userId, "Annotation Types Creation");
@@ -96,11 +102,11 @@ public class TypesUploadEndpoint {
         } catch (final ZipException e) {
             LOGGER.error("Could not extract zip contents", e);
         }
-        List<ImmutablePair<AnnotationTypeDefinition, Boolean>> typesResults =
-                commonImportManager.createElementTypes(yamlStringWrapper.getInnerElement(),
-                        TypesUploadEndpoint::buildAnnotationFromFieldMap, annotationTypeOperations);
+        List<ImmutablePair<AnnotationTypeDefinition, Boolean>> typesResults = commonImportManager.createElementTypes(yamlStringWrapper.getInnerElement(), TypesUploadEndpoint::buildAnnotationFromFieldMap, annotationTypeOperations);
         HttpStatus status = getHttpStatus(typesResults);
-        return Response.status(status.value()).entity(typesResults).build();
+        return Response.status(status.value())
+                .entity(typesResults)
+                .build();
     }
 
     @VisibleForTesting

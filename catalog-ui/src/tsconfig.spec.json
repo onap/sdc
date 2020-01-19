@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "../out-tsc/spec",
+    "module": "commonjs",
+    "target": "es5",
+    "emitDecoratorMetadata": true,
+    "lib": [ "es2015" ],
+    "baseUrl": ".",
+    "types": [
+      "jest",
+      "node"
+    ]
+  },
+  "files": [
+    "polyfills.ts"
+  ],
+  "include": [
+    "**/*.spec.ts",
+    "**/*.d.ts"
+  ]
+  
+}

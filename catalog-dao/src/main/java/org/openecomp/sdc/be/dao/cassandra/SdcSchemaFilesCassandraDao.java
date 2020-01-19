@@ -44,7 +44,7 @@ public class SdcSchemaFilesCassandraDao extends CassandraDao {
 	public SdcSchemaFilesCassandraDao(CassandraClient cassandraClient) {
 		super(cassandraClient);
 	}
-	
+
 	@PostConstruct
 	public void init() {
 		String keyspace = AuditingTypesConstants.ARTIFACT_KEYSPACE;

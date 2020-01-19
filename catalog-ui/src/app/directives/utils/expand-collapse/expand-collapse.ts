@@ -70,7 +70,7 @@ export class ExpandCollapseDirective implements ng.IDirective {
             $elem.addClass('expanded');
             scope.collapsed = false;
 
-            let element = $(scope.expandedSelector)[0];
+            let element = <HTMLElement>$(scope.expandedSelector)[0];
             let prevWidth = element.style.height;
             element.style.height = 'auto';
             let endWidth = getComputedStyle(element).height;
@@ -92,7 +92,7 @@ export class ExpandCollapseDirective implements ng.IDirective {
             $elem.removeClass('expanded');
             scope.collapsed = true;
 
-            let element = $(scope.expandedSelector)[0];
+            let element = <HTMLElement>$(scope.expandedSelector)[0];
             element.style.height = getComputedStyle(element).height;
             element.style.transition = 'height .5s ease-in-out';
             element.offsetHeight; // force repaint

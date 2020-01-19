@@ -22,9 +22,7 @@ import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
-import { Response, URLSearchParams } from '@angular/http';
-import {Service, OperationModel} from "app/models";
-import { HttpService } from '../http.service';
+import {Service} from "app/models";
 
 import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
 import {ForwardingPath} from "app/models/forwarding-path";
@@ -34,77 +32,53 @@ import {Component} from "app/models/components/component";
 import {ComponentGenericResponse} from "app/ng2/services/responses/component-generic-response";
 import {COMPONENT_FIELDS, SERVICE_FIELDS} from "app/utils/constants";
 import {ComponentServiceNg2} from "./component.service";
-import {ServiceGenericResponse} from "app/ng2/services/responses/service-generic-response";
 import {ServicePathMapItem} from "app/models/graph/nodes-and-links-map";
-import {ConsumptionInput} from 'app/ng2/components/logic/service-consumption/service-consumption.component';
-
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { OperationModel } from '../../../models/operation';
+import { ConsumptionInput } from '../../components/logic/service-consumption/service-consumption.component';
 
 @Injectable()
 export class ServiceServiceNg2 extends ComponentServiceNg2 {
 
     protected baseUrl = "";
 
-    constructor(protected http: HttpService, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
+    constructor(protected http: HttpClient, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
         super(http, sdcConfig);
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
     }
 
     validateConformanceLevel(service: Service): Observable<boolean> {
 
-        return this.http.get(this.baseUrl + service.getTypeUrl() + service.uuid + '/conformanceLevelValidation')
-            .map((res: Response) => {
-                return res.json();
-            });
+        return this.http.get<boolean>(this.baseUrl + service.getTypeUrl() + service.uuid + '/conformanceLevelValidation');
     }
 
-    getNodesAndLinksMap(service: Service):Observable<Array<ServicePathMapItem>> {
-        return this.http.get(this.baseUrl + service.getTypeUrl() + service.uniqueId + '/linksMap').map(res => {
-            return <Array<ServicePathMapItem>>res.json();
-        });
+    getNodesAndLinksMap(serviceId: string):Observable<Array<ServicePathMapItem>> {
+        return this.http.get<Array<ServicePathMapItem>>(this.baseUrl + 'services/' + serviceId + '/linksMap');
     }
 
-    getServicePath(service: Service, id: string):Observable<any> {
-        return this.http.get(this.baseUrl  + service.getTypeUrl() + service.uniqueId +  '/paths/' + id)
-            .map(res => {
-                return res.json();
-            })
-    }
-
-    getServicePaths(service: Service):Observable<any> {
-        return this.http.get(this.baseUrl  + service.getTypeUrl() + service.uniqueId +  '/paths')
-            .map(res => {
-                return res.json();
-            })
-    }
-
-    createOrUpdateServicePath(service: Service, inputsToCreate: ForwardingPath):Observable<ForwardingPath> {
+    createOrUpdateServicePath(serviceId: string, inputsToCreate: ForwardingPath):Observable<ForwardingPath> {
         if (inputsToCreate.uniqueId) {
-            return this.updateServicePath(service, inputsToCreate);
+            return this.updateServicePath(serviceId, inputsToCreate);
         } else {
-            return this.createServicePath(service, inputsToCreate);
+            return this.createServicePath(serviceId, inputsToCreate);
         }
     }
 
-    createServicePath(service: Service, inputsToCreate: ForwardingPath):Observable<ForwardingPath> {
+    createServicePath(serviceId: string, inputsToCreate: ForwardingPath):Observable<ForwardingPath> {
         let input = new ServicePathRequestData(inputsToCreate);
-
-        return this.http.post(this.baseUrl  + service.getTypeUrl() + service.uniqueId +   '/paths', input)
-            .map(res => {
-                return this.parseServicePathResponse(res);
-            });
+        return this.http.post<ForwardingPath>(this.baseUrl  + 'services/' + serviceId +   '/paths', input).map((res:any) => {
+            return this.parseServicePathResponse(res);
+        });
     }
 
-    deleteServicePath(service: Service, id: string):Observable<any> {
-        return this.http.delete(this.baseUrl  + service.getTypeUrl() + service.uniqueId + '/paths/' + id )
-            .map((res) => {
-                return res.json();
-            });
+    deleteServicePath(serviceId: string, id: string):Observable<any> {
+        return this.http.delete<any>(this.baseUrl  + 'services/' + serviceId + '/paths/' + id);
     }
 
-    updateServicePath(service: Service, inputsToUpdate:ForwardingPath):Observable<ForwardingPath> {
+    updateServicePath(serviceId: string, inputsToUpdate:ForwardingPath):Observable<ForwardingPath> {
         let input = new ServicePathRequestData(inputsToUpdate);
 
-        return this.http.put(this.baseUrl  + service.getTypeUrl() + service.uniqueId + '/paths', input)
+        return this.http.put<{[key:string]:ForwardingPath}>(this.baseUrl  + 'services/' + serviceId + '/paths', input)
             .map((res) => {
                 return this.parseServicePathResponse(res);
             });
@@ -122,28 +96,25 @@ export class ServiceServiceNg2 extends ComponentServiceNg2 {
     }
 
     getServiceConsumptionInputs(service: Service, serviceInstanceId: String, interfaceId: string, operation: OperationModel): Observable<any> {
-        return this.http.get(this.baseUrl + service.getTypeUrl() + service.uniqueId + '/consumption/' + serviceInstanceId + '/interfaces/' + interfaceId + '/operations/' + operation.uniqueId + '/inputs')
-            .map(res => {
-                return res.json();
-            });
+        return this.http.get<any>(this.baseUrl + service.getTypeUrl() + service.uniqueId + '/consumption/' + serviceInstanceId + '/interfaces/' + interfaceId +
+            '/operations/' + operation.uniqueId + '/inputs');
     }
 
     createOrUpdateServiceConsumptionInputs(service: Service, serviceInstanceId: String, consumptionInputsList: Array<{[id: string]: Array<ConsumptionInput>}>): Observable<any> {
         return this.http.post(this.baseUrl + service.getTypeUrl() + service.uniqueId + '/consumption/' + serviceInstanceId, consumptionInputsList);
     }
 
-    checkComponentInstanceVersionChange(service: Service, newVersionId: string):Observable<Array<string>> {
-        let instanceId = service.selectedInstance.uniqueId;
-        let queries = {componentInstanceId: instanceId, newComponentInstanceId: newVersionId};
+    checkComponentInstanceVersionChange(componentType:string, componentId:string, instanceId:string, newInstanceId:string):Observable<Array<string>> {
+        let queries = {componentInstanceId: instanceId, newComponentInstanceId: newInstanceId};
 
-        let params:URLSearchParams = new URLSearchParams();
+        let params:HttpParams = new HttpParams();
         _.map(_.keys(queries), (key:string):void => {
-            params.append(key, queries[key]);
+            params = params.append(key, queries[key]);
         });
 
-        let url = this.baseUrl + service.getTypeUrl() + service.uniqueId + '/paths-to-delete';
-        return this.http.get(url, {search: params}).map((res: Response) => {
-            return res.json().forwardingPathToDelete;
+        let url = this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/paths-to-delete';
+        return this.http.get<any>(url, {params: params}).map((res) => {
+            return res.forwardingPathToDelete;
         });
     }
 
@@ -151,12 +122,8 @@ export class ServiceServiceNg2 extends ComponentServiceNg2 {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_RELATION, COMPONENT_FIELDS.COMPONENT_INSTANCES, SERVICE_FIELDS.FORWARDING_PATHS, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
 
-    protected analyzeComponentDataResponse(res: Response):ComponentGenericResponse {
-        return new ServiceGenericResponse().deserialize(res.json());
-    }
-
-    private parseServicePathResponse(res: Response):ForwardingPath {
-        let resJSON = res.json();
+    private parseServicePathResponse(res: { [key:string]:ForwardingPath }):ForwardingPath {
+        let resJSON = res;
         let pathId = Object.keys(resJSON.forwardingPaths)[0];
         let forwardingPath = resJSON.forwardingPaths[pathId];
         let path:ForwardingPath = new ForwardingPath();

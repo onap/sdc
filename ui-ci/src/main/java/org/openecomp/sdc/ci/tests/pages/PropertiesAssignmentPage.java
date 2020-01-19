@@ -124,7 +124,7 @@ public class PropertiesAssignmentPage {
 
         try {
             SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on the %s component in Properties", resourceName));
-            GeneralUIUtils.clickOnElementChildByTestIdWithoutWait(resourceName);
+            GeneralUIUtils.clickOnElementByInputTestIdWithoutWait(resourceName);
             GeneralUIUtils.ultimateWait();
             GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.LIFECYCLE_STATE.getValue());
         } catch (final Exception e) {

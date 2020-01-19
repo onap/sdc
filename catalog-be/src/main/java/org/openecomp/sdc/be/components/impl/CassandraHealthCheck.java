@@ -25,14 +25,22 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.mapping.MappingManager;
+
+import fj.data.Either;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
 import org.openecomp.sdc.be.dao.cassandra.schema.Table;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -50,6 +58,7 @@ public class CassandraHealthCheck {
     private int HC_FormulaNumber;
 
     private SdcSchemaUtils sdcSchemaUtils;
+    
 
     @PostConstruct
     private void init() {
@@ -92,13 +101,8 @@ public class CassandraHealthCheck {
 
             log.info("creating cluster for Cassandra Health Check.");
             //Create cluster from nodes in cassandra configuration
-            cluster = sdcSchemaUtils.createCluster();
-            if (cluster == null) {
-                log.error("Failure create cassandra cluster.");
-                return;
-            }
-
-            Metadata metadata = cluster.getMetadata();
+           
+            Metadata metadata = sdcSchemaUtils.getMetadata();
 
             if (metadata == null) {
                 log.error("Failure get cassandra metadata.");
@@ -153,7 +157,8 @@ public class CassandraHealthCheck {
         }
 
     }
-
+    
+ 
     public boolean getCassandraStatus()  {
 
         if (GeneralUtility.isEmptyString(localDataCenterName)) {
@@ -161,17 +166,19 @@ public class CassandraHealthCheck {
             return false;
         }
 
-        Cluster cluster = null;
+       
         Session session = null;
         try {
-            log.info("creating cluster for Cassandra for monitoring.");
-            cluster = sdcSchemaUtils.createCluster();
-            if (cluster == null) {
-                log.error("Failure create cassandra cluster.");
+            log.info("creating cluster for Cassandra for monitoring.");           
+            
+            session = sdcSchemaUtils.connect();
+            log.info("The cassandra session is {}", session);
+            if(session == null){
+                log.error("Failed to connect to cassandra ");
                 return false;
             }
-            session = cluster.connect();
-            Metadata metadata = cluster.getMetadata();
+            
+            Metadata metadata = sdcSchemaUtils.getMetadata();
 
             if (metadata == null) {
                 log.error("Failure get cassandra metadata.");
@@ -192,11 +199,18 @@ public class CassandraHealthCheck {
             return false;
         } finally {
             if (session != null) {
+                log.info("close session for Cassandra for monitoring.");
                 session.close();
             }
-            if (cluster != null) {
-                cluster.close();
-            }
+            
         }
+    }
+    
+    @PreDestroy
+    public void closeClient() {
+        if (sdcSchemaUtils!= null) {
+            sdcSchemaUtils.closeCluster();
+        }
+        log.info("** sdcSchemaUtils cluster closed");
     }
 }

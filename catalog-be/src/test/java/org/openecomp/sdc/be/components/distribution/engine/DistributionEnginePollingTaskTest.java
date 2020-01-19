@@ -29,6 +29,11 @@ import org.openecomp.sdc.be.components.distribution.engine.report.DistributionCo
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+import org.openecomp.sdc.common.log.wrappers.LoggerSdcAudit;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DistributionEnginePollingTaskTest extends BeConfDependentTest {
 
@@ -39,16 +44,25 @@ public class DistributionEnginePollingTaskTest extends BeConfDependentTest {
 		componentsUtils = Mockito.mock(ComponentsUtils.class);
 		DistributionEngineConfiguration distributionEngineConfiguration = configurationManager
 				.getDistributionEngineConfiguration();
+		distributionEngineConfiguration.setDistributionNotifTopicName("StamName");
+		distributionEngineConfiguration.setDistributionStatusTopicName("StamName");
+		List uebList = new LinkedList<>();
+		uebList.add("FirstUEBserver.com");
+		distributionEngineConfiguration.setUebServers(uebList);
 
+		OperationalEnvironmentEntry environmentEntry = new OperationalEnvironmentEntry();
+		HashSet<String> dmaapUebAddress = new HashSet<>();
+		dmaapUebAddress.add("STAM");
+		environmentEntry.setDmaapUebAddress(dmaapUebAddress);
 		return new DistributionEnginePollingTask(distributionEngineConfiguration,
 				new DistributionCompleteReporterMock(), componentsUtils, new DistributionEngineClusterHealth(),
-				new OperationalEnvironmentEntry());
+				environmentEntry);
 	}
 
 	@Test
 	public void testStartTask() throws Exception {
 		DistributionEnginePollingTask testSubject;
-		String topicName = "";
+		String topicName = "UEBTopic";
 
 		// default test
 		testSubject = createTestSubject();
@@ -99,9 +113,9 @@ public class DistributionEnginePollingTaskTest extends BeConfDependentTest {
 		testSubject = createTestSubject();
 		Mockito.doNothing().when(componentsUtils).auditDistributionStatusNotification( Mockito.anyString(),
 				Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), 
-				Mockito.anyString(), Mockito.anyString());
+				Mockito.anyString(), Mockito.anyString(), Mockito.isNull());
 		Deencapsulation.invoke(testSubject, "handleDistributionNotificationMsg",
-				notification);
+				notification, new LoggerSdcAudit(DistributionEnginePollingTask.class));
 	}
 
 	@Test

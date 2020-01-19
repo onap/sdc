@@ -52,7 +52,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
@@ -83,12 +83,12 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("artifactUuidFix")
 public class ArtifactUuidFix {
-	
+
 	private static final String MIGRATION1707_ARTIFACT_UUID_FIX = "Migration1707ArtifactUuidFix  fix group:  group name {} correct artifactId {} artifactUUID {} ";
 
-    private static final String FAILED_TO_FETCH_VF_RESOURCES = "Failed to fetch vf resources ";
+	private static final String FAILED_TO_FETCH_VF_RESOURCES = "Failed to fetch vf resources ";
 
-    private static final String UTF8 = "utf-8";
+	private static final String UTF8 = "utf-8";
 
 	private JanusGraphDao janusGraphDao;
 	private ToscaOperationFacade toscaOperationFacade;
@@ -249,7 +249,7 @@ public class ArtifactUuidFix {
 							vfLst.add(resource);
 							writeModuleResultToFile(writer, resource, service);
 							writer.flush();
-							
+
 						}
 						janusGraphDao.commit();
 					}
@@ -274,7 +274,7 @@ public class ArtifactUuidFix {
 			Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
 			hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
 			if ("distributed_only".equals(fixServices)) {
-				hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());			
+				hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 				hasProps.put(GraphPropertyEnum.DISTRIBUTION_STATUS, DistributionStatusEnum.DISTRIBUTED.name());
 			}
 
@@ -302,17 +302,17 @@ public class ArtifactUuidFix {
 					continue;
 				}
 				Service service = toscaElement.left().value();
-				
+
 				String serviceName = (String) gv.getMetadataProperty(GraphPropertyEnum.NAME);
-				
+
 				boolean isProblematic = isProblematicService(service, serviceName);
 				if (isProblematic) {
 					serviceList.add(service);
 					writeModuleResultToFile(writer, service, null);
 					writer.flush();
-				
+
 				}
-				
+
 				janusGraphDao.commit();
 			}
 			log.info("output file with list of services : {}", fileName);
@@ -326,9 +326,9 @@ public class ArtifactUuidFix {
 	}
 
 	private boolean isProblematicService( Service service, String serviceName) {
-		
+
 		List<ComponentInstance> componentInstances = service.getComponentInstances();
-		
+
 		if (componentInstances == null) {
 			log.info("No instances for service {} ", service.getUniqueId());
 			return false;
@@ -350,21 +350,21 @@ public class ArtifactUuidFix {
 			if(isCheckVFModules){
 				Optional<ArtifactDefinition> optionalVfModuleArtifact = deploymentArtifacts.values().stream()
 						.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.name())).findAny();
-				
-				 if(!optionalVfModuleArtifact.isPresent())
-					 return true;
-			
-				 ArtifactDefinition vfModuleArtifact = optionalVfModuleArtifact.get();
-				 Either<List<VfModuleArtifactPayloadEx>, StorageOperationStatus> vfModulesEither = parseVFModuleJson(vfModuleArtifact);
-				 if(vfModulesEither.isRight()){
-					 log.error("Failed to parse vfModule for service {} status is {}", service.getUniqueId(), vfModulesEither.right().value());
-					 return true;
-				 }
-				 vfModules = vfModulesEither.left().value();
-				 if(vfModules == null || vfModules.isEmpty() ){
-					 log.info("vfModules empty for service {}", service.getUniqueId());
-					 return true;
-				 }	
+
+				if(!optionalVfModuleArtifact.isPresent())
+					return true;
+
+				ArtifactDefinition vfModuleArtifact = optionalVfModuleArtifact.get();
+				Either<List<VfModuleArtifactPayloadEx>, StorageOperationStatus> vfModulesEither = parseVFModuleJson(vfModuleArtifact);
+				if(vfModulesEither.isRight()){
+					log.error("Failed to parse vfModule for service {} status is {}", service.getUniqueId(), vfModulesEither.right().value());
+					return true;
+				}
+				vfModules = vfModulesEither.left().value();
+				if(vfModules == null || vfModules.isEmpty() ){
+					log.info("vfModules empty for service {}", service.getUniqueId());
+					return true;
+				}
 			}
 
 			for (GroupInstance gi : groupInstances) {
@@ -373,7 +373,7 @@ public class ArtifactUuidFix {
 					if(isCheckVFModules && vfModules != null){
 						Optional<VfModuleArtifactPayloadEx> op = vfModules.stream().filter(vf -> vf.getVfModuleModelName().equals(gi.getGroupName())).findAny();
 						if(!op.isPresent()){
-							 log.error("Failed to find vfModule for group {}", gi.getGroupName());
+							log.error("Failed to find vfModule for group {}", gi.getGroupName());
 							return true;
 						}
 						vfModule = op.get();
@@ -383,13 +383,13 @@ public class ArtifactUuidFix {
 					}
 				}
 			}
-			
+
 		}
 		return false;
 	}
 
 	private boolean isProblematicGroup(GroupDefinition gr, String resourceName,
-			Map<String, ArtifactDefinition> deploymentArtifacts) {
+									   Map<String, ArtifactDefinition> deploymentArtifacts) {
 		List<String> artifacts = gr.getArtifacts();
 		List<String> artifactsUuid = gr.getArtifactsUuid();
 		Set<String> artifactsSet = new HashSet<>();
@@ -454,14 +454,14 @@ public class ArtifactUuidFix {
 	}
 
 	private boolean isProblematicGroupInstance(GroupInstance gi, String instName, String servicename,
-			Map<String, ArtifactDefinition> deploymentArtifacts, VfModuleArtifactPayloadEx vfModule) {
+											   Map<String, ArtifactDefinition> deploymentArtifacts, VfModuleArtifactPayloadEx vfModule) {
 		List<String> artifacts = gi.getArtifacts();
 		List<String> artifactsUuid = gi.getArtifactsUuid();
 		List<String> instArtifactsUuid = gi.getGroupInstanceArtifactsUuid();
 		List<String> instArtifactsId = gi.getGroupInstanceArtifacts();
 		Set<String> instArtifatIdSet = new HashSet<>();
-		Set<String> artifactsSet = new HashSet<>();	
-	
+		Set<String> artifactsSet = new HashSet<>();
+
 		log.info("check group {} for instance {} ", gi.getGroupName(), instName);
 		if ((artifactsUuid == null || artifactsUuid.isEmpty()) && (artifacts == null || artifacts.isEmpty())) {
 			log.info("No instance groups for instance {} in service {} ", instName, servicename);
@@ -548,12 +548,12 @@ public class ArtifactUuidFix {
 		if(vfModule != null && artifactsUuid != null){
 			return isProblematicVFModule(vfModule, artifactsUuid, instArtifactsUuid);
 		}
-		
+
 		return false;
 	}
 
 	private boolean isProblematicVFModule(VfModuleArtifactPayloadEx vfModule, List<String> artifactsUuid,
-			List<String> instArtifactsUuid) {
+										  List<String> instArtifactsUuid) {
 		log.info(" isProblematicVFModule  {}  ", vfModule.getVfModuleModelName());
 		List<String> vfModuleArtifacts = vfModule.getArtifacts();
 		List<String> allArtifacts = new ArrayList<>();
@@ -580,10 +580,10 @@ public class ArtifactUuidFix {
 		return false;
 	}
 
-	
+
 
 	private boolean fix(List<Resource> vfLst, List<Service> serviceList, Map<String, List<Component>> nodesToFixTosca,
-			Map<String, List<Component>> vfToFixTosca, Map<String, List<Component>> servicesToFixTosca) {
+						Map<String, List<Component>> vfToFixTosca, Map<String, List<Component>> servicesToFixTosca) {
 		boolean res = true;
 		log.info(" Fix started ***** ");
 		if (vfLst != null && !vfLst.isEmpty()) {
@@ -600,6 +600,7 @@ public class ArtifactUuidFix {
 
 		long time = System.currentTimeMillis();
 		String fileName = "FailedGenerateTosca" + "_" + time + ".csv";
+
 		try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF8))) {
 			writer.write("componentType, name, version, UID, UUID, invariantUUID, state\n");
 			List<Component> failedList = new ArrayList<>();
@@ -614,7 +615,7 @@ public class ArtifactUuidFix {
 				generateAndSaveToscaArtifacts(vfToFixTosca, fixedIds, vfLst, failedList);
 
 			}
-			
+
 			for (Component component : vfLst) {
 				res = generateToscaPerComponent(fixedIds, component);
 				if (res) {
@@ -642,7 +643,7 @@ public class ArtifactUuidFix {
 
 			}
 
-			
+
 			for (Component component : serviceList) {
 				res = generateToscaPerComponent(fixedIds, component);
 				if (res) {
@@ -690,7 +691,7 @@ public class ArtifactUuidFix {
 	}
 
 	private boolean generateAndSaveToscaArtifacts(Map<String, List<Component>> nodesToFixTosca, Set<String> fixedIds,
-			List<? extends Component> componentsWithFailedGroups, List<Component> failedList) {
+												  List<? extends Component> componentsWithFailedGroups, List<Component> failedList) {
 		boolean res = true;
 		log.debug("Migration1707ArtifactUuidFix  generateAndSaveToscaArtifacts started ");
 		for (Map.Entry<String, List<Component>> entry : nodesToFixTosca.entrySet()) {
@@ -751,9 +752,9 @@ public class ArtifactUuidFix {
 				log.error("Couldn't generate and save tosca template component  unique id {}, name {} error: {}",
 						toscaElementFull.getUniqueId(), toscaElementFull.getName(), either.right().value());
 				res = false;
-				
+
 			}
-			
+
 			if (res) {
 				c.setToscaArtifacts(either.left().value().getToscaArtifacts());
 				fixedIds.add(toscaElementFull.getUniqueId());
@@ -770,7 +771,7 @@ public class ArtifactUuidFix {
 	}
 
 	private <T extends ToscaDataDefinition> boolean fixDataOnGraph(String componentId, VertexTypeEnum vertexTypeEnum,
-			EdgeLabelEnum edgeLabelEnum, Map<String, T> groups) {
+																   EdgeLabelEnum edgeLabelEnum, Map<String, T> groups) {
 		log.debug("amount groups to update: VertexTypeEnum {} EdgeLabelEnum {} data size {}", vertexTypeEnum.getName(),
 				edgeLabelEnum, groups.size());
 		boolean res = true;
@@ -860,7 +861,7 @@ public class ArtifactUuidFix {
 	}
 
 	private void fixGroupInstances(Service service, Map<String, ArtifactDefinition> artifactsMap,
-			List<GroupInstance> groupsToDelete, GroupInstance group) {
+								   List<GroupInstance> groupsToDelete, GroupInstance group) {
 		if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
 			log.debug("Migration1707ArtifactUuidFix  fix group:  resource id {}, group name {} ", service.getUniqueId(),
 					group.getName());
@@ -871,9 +872,9 @@ public class ArtifactUuidFix {
 					groupArtifactsSet.addAll(groupInsArtifacts);
 				}
 				List<String> groupArtifacts = new ArrayList<>(groupArtifactsSet);
-	
+
 				clearGroupInstanceArtifacts(group);
-	
+
 				for (String artifactId : groupArtifacts) {
 					fixArtifactUndergroupInstances(artifactsMap, group, groupArtifacts, artifactId);
 				}
@@ -902,14 +903,14 @@ public class ArtifactUuidFix {
 		else{
 			group.setGroupInstanceArtifacts(new ArrayList<>());
 		}
-		if(group.getGroupInstanceArtifactsUuid() != null )				
+		if(group.getGroupInstanceArtifactsUuid() != null )
 			group.getGroupInstanceArtifactsUuid().clear();
 		else
 			group.setGroupInstanceArtifactsUuid(new ArrayList<>());
 	}
 
 	private void fixArtifactUndergroupInstances(Map<String, ArtifactDefinition> artifactsMap, GroupInstance group,
-			List<String> groupArtifacts, String artifactId) {
+												List<String> groupArtifacts, String artifactId) {
 		String artifactlabel = findArtifactLabelFromArtifactId(artifactId);
 		log.debug("Migration1707ArtifactUuidFix  fix group:  group name {} artifactId for fix {} artifactlabel {} ",
 				group.getName(), artifactId, artifactlabel);
@@ -938,7 +939,7 @@ public class ArtifactUuidFix {
 			} else {
 				log.debug(
 						MIGRATION1707_ARTIFACT_UUID_FIX,
-						group.getName(), correctArtifactId, correctArtifactUUID);				
+						group.getName(), correctArtifactId, correctArtifactUUID);
 				Set<String> tmpSet = new HashSet<>(group.getGroupInstanceArtifacts());
 				tmpSet.add(correctArtifactId);
 				group.setGroupInstanceArtifacts(new ArrayList<>(tmpSet));
@@ -997,7 +998,7 @@ public class ArtifactUuidFix {
 	}
 
 	private void fixArtifactUnderGroup(Map<String, ArtifactDefinition> artifactsMap, GroupDefinition group,
-			List<String> groupArtifacts, String artifactId) {
+									   List<String> groupArtifacts, String artifactId) {
 
 		String artifactlabel = findArtifactLabelFromArtifactId(artifactId);
 		log.debug("Migration1707ArtifactUuidFix  fix group:  group name {} artifactId for fix {} artifactlabel {} ",
@@ -1037,7 +1038,7 @@ public class ArtifactUuidFix {
 	}
 
 	private void writeModuleResultToFile(Writer writer, org.openecomp.sdc.be.model.Component component,
-			Service service) {
+										 Service service) {
 		try {
 			// "service name, service id, state, version
 			StringBuilder sb = new StringBuilder(component.getName());
@@ -1071,7 +1072,7 @@ public class ArtifactUuidFix {
 	}
 
 	public boolean doFixTosca(Map<String, List<Component>> nodeToFix, Map<String, List<Component>> vfToFix,
-			Map<String, List<Component>> serviceToFix) {
+							  Map<String, List<Component>> serviceToFix) {
 
 		Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
@@ -1099,7 +1100,7 @@ public class ArtifactUuidFix {
 	}
 
 	public Map<String, List<Component>> getVerticesToValidate(VertexTypeEnum type,
-			Map<GraphPropertyEnum, Object> hasProps) {
+															  Map<GraphPropertyEnum, Object> hasProps) {
 
 		Map<String, List<Component>> result = new HashMap<>();
 		try {
@@ -1146,7 +1147,7 @@ public class ArtifactUuidFix {
 	}
 
 	public boolean validateTosca(Map<String, List<Component>> vertices, Map<String, List<Component>> compToFix,
-			String name) {
+								 String name) {
 		boolean result = true;
 		long time = System.currentTimeMillis();
 		String fileName = name + "_" + time + ".csv";
@@ -1238,7 +1239,7 @@ public class ArtifactUuidFix {
 				toscaArtifact.setEsId(toscaArtifact.getUniqueId());
 
 				toscaArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
-				ESArtifactData artifactData = new ESArtifactData(toscaArtifact.getEsId(), decodedPayload);
+				DAOArtifactData artifactData = new DAOArtifactData(toscaArtifact.getEsId(), decodedPayload);
 				artifactCassandraDao.saveArtifact(artifactData);
 
 				log.debug("Tosca yaml artifact esId  {} ", toscaArtifact.getEsId());
@@ -1270,7 +1271,7 @@ public class ArtifactUuidFix {
 				csarArtifact.setEsId(csarArtifact.getUniqueId());
 
 				csarArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
-				ESArtifactData artifactData = new ESArtifactData(csarArtifact.getEsId(), decodedPayload);
+				DAOArtifactData artifactData = new DAOArtifactData(csarArtifact.getEsId(), decodedPayload);
 				artifactCassandraDao.saveArtifact(artifactData);
 				log.debug("Tosca csar artifact esId  {} ", csarArtifact.getEsId());
 
@@ -1285,29 +1286,29 @@ public class ArtifactUuidFix {
 
 		return Either.left(parent);
 	}
-	
-	   private ArtifactDefinition createVfModuleArtifact(ComponentInstance currVF, Service service) {
 
-	        ArtifactDefinition vfModuleArtifactDefinition = new ArtifactDefinition();
+	private ArtifactDefinition createVfModuleArtifact(ComponentInstance currVF, Service service) {
 
-	        vfModuleArtifactDefinition.setDescription("Auto-generated VF Modules information artifact");
-	        vfModuleArtifactDefinition.setArtifactDisplayName("Vf Modules Metadata");
-	        vfModuleArtifactDefinition.setArtifactType(ArtifactTypeEnum.VF_MODULES_METADATA.getType());
-	        vfModuleArtifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-	        vfModuleArtifactDefinition.setArtifactLabel("vfModulesMetadata");
-	        vfModuleArtifactDefinition.setTimeout(0);
-	        vfModuleArtifactDefinition.setArtifactName(currVF.getNormalizedName() + "_modules.json");
-	       
-	       return vfModuleArtifactDefinition;
-	    }
+		ArtifactDefinition vfModuleArtifactDefinition = new ArtifactDefinition();
+
+		vfModuleArtifactDefinition.setDescription("Auto-generated VF Modules information artifact");
+		vfModuleArtifactDefinition.setArtifactDisplayName("Vf Modules Metadata");
+		vfModuleArtifactDefinition.setArtifactType(ArtifactTypeEnum.VF_MODULES_METADATA.getType());
+		vfModuleArtifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+		vfModuleArtifactDefinition.setArtifactLabel("vfModulesMetadata");
+		vfModuleArtifactDefinition.setTimeout(0);
+		vfModuleArtifactDefinition.setArtifactName(currVF.getNormalizedName() + "_modules.json");
+
+		return vfModuleArtifactDefinition;
+	}
 
 
 	private void fillVfModuleInstHeatEnvPayload(Component parent, ComponentInstance instance, List<GroupInstance> groupsForCurrVF,
-			ArtifactDefinition vfModuleArtifact) {
+												ArtifactDefinition vfModuleArtifact) {
 		log.debug("generate new vf module for component. name  {}, id {}, Version {}", instance.getName(), instance.getUniqueId());
-		
+
 		String uniqueId = UniqueIdBuilder.buildInstanceArtifactUniqueId(parent.getUniqueId(), instance.getUniqueId(), vfModuleArtifact.getArtifactLabel());
-				
+
 		vfModuleArtifact.setUniqueId(uniqueId);
 		vfModuleArtifact.setEsId(vfModuleArtifact.getUniqueId());
 
@@ -1329,7 +1330,7 @@ public class ArtifactUuidFix {
 						.calculateMD5Base64EncodedByByteArray(vfModulePayloadString.getBytes());
 				vfModuleArtifact.setArtifactChecksum(newCheckSum);
 
-				ESArtifactData artifactData = new ESArtifactData(vfModuleArtifact.getEsId(),
+				DAOArtifactData artifactData = new DAOArtifactData(vfModuleArtifact.getEsId(),
 						vfModulePayloadString.getBytes());
 				artifactCassandraDao.saveArtifact(artifactData);
 
@@ -1338,21 +1339,21 @@ public class ArtifactUuidFix {
 		}
 
 	}
-	
+
 	private Either<List<VfModuleArtifactPayloadEx>, StorageOperationStatus> parseVFModuleJson(ArtifactDefinition vfModuleArtifact) {
 		log.info("Try to get vfModule json from cassandra {}", vfModuleArtifact.getEsId());
-		Either<ESArtifactData, CassandraOperationStatus> vfModuleData = artifactCassandraDao.getArtifact(vfModuleArtifact.getEsId());
-		
+		Either<DAOArtifactData, CassandraOperationStatus> vfModuleData = artifactCassandraDao.getArtifact(vfModuleArtifact.getEsId());
+
 		if (vfModuleData.isRight()) {
 			CassandraOperationStatus resourceUploadStatus = vfModuleData.right().value();
 			StorageOperationStatus storageResponse = DaoStatusConverter.convertCassandraStatusToStorageStatus(resourceUploadStatus);
 			log.error("failed to fetch vfModule json {} from cassandra. Status is {}", vfModuleArtifact.getEsId(), storageResponse);
 			return Either.right(storageResponse);
-			
+
 		}
 
-		ESArtifactData esArtifactData = vfModuleData.left().value();
-		String gsonData = new String( esArtifactData.getDataAsArray());
+		DAOArtifactData DAOArtifactData = vfModuleData.left().value();
+		String gsonData = new String( DAOArtifactData.getDataAsArray());
 		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		JsonArray jsonElement = new JsonArray();
 		jsonElement = gson.fromJson(gsonData, jsonElement.getClass());
@@ -1361,10 +1362,10 @@ public class ArtifactUuidFix {
 			VfModuleArtifactPayloadEx vfModule = ComponentsUtils.parseJsonToObject(je.toString(), VfModuleArtifactPayloadEx.class);
 			vfModules.add(vfModule);
 		});
-		
+
 		log.debug  ("parse vf module finish {}", gsonData);
 		return Either.left(vfModules);
-		
+
 	}
 }
 

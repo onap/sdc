@@ -1,0 +1,51 @@
+@import '../../../../../../../assets/styles/variables';
+
+.general-info-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px;
+}
+
+.component-details-panel-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 5px;
+    order:1;
+
+    .name { font-family: OpenSans-Semibold, sans-serif; }
+    .value { padding-left: 10px; }
+
+
+    &.description {
+        margin-top: 28px;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow: ellipsis;
+
+        .value {
+            padding-left: 0;
+            max-width: none;
+            font-weight: normal;
+            font-family: @font-opensans-regular;
+        }
+    }
+
+    &.group-item, &.policy-item {
+        order:0;
+    }
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 20px;
+
+    .i-sdc-designer-sidebar-section-content-item-tag {
+        padding: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        user-select: all;
+    }
+}

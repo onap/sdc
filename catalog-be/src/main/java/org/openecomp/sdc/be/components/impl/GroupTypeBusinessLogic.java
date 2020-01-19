@@ -57,7 +57,7 @@ public class GroupTypeBusinessLogic {
 
     public List<GroupTypeDefinition> getAllGroupTypes(String userId, String internalComponentType) {
         try {
-            userValidations.validateUserExists(userId, "get group types", true);
+            userValidations.validateUserExists(userId);
             Set<String> excludeGroupTypes = getExcludedGroupTypes(internalComponentType);
             return groupTypeOperation.getAllGroupTypes(excludeGroupTypes);
         } finally {

@@ -41,10 +41,10 @@ public class HealingJanusGraphDao extends JanusGraphDao {
     }
 
     @Override
-    public Either<List<GraphVertex>, JanusGraphOperationStatus> getChildrenVertecies(GraphVertex parentVertex,
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getChildrenVertices(GraphVertex parentVertex,
                                                                                      EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
         Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies =
-                super.getChildrenVertecies(parentVertex, edgeLabel, parseFlag);
+                super.getChildrenVertices(parentVertex, edgeLabel, parseFlag);
         return Either.iif(childrenVertecies.isRight(), () -> childrenVertecies.right().value(),
                 () -> childrenVertecies.left().value().stream()
                               .map(graphVertex -> transformVertex(graphVertex, edgeLabel))

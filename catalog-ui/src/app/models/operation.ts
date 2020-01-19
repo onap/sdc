@@ -2,16 +2,20 @@
 
 export class OperationParameter {
     name: string;
-    type: String;
-    inputId: string;
-    required: boolean;
+    type: string;
+    inputId?: string;
+    required?: boolean;
+    property?: string;
+    mandatory?: boolean;
 
     constructor(param?: any) {
         if (param) {
             this.name = param.name;
             this.type = param.type;
-            this.inputId = param.inputId;
+            this.inputId = param.inputId ;
             this.required = param.required;
+            this.property = param.property;
+            this.mandatory = param.mandatory;
         }
     }
 }
@@ -76,17 +80,41 @@ export class BEOperationModel {
     }
 }
 
-export class OperationModel extends BEOperationModel {
+export class OperationModel extends BEOperationModel{
     interfaceType: string;
     interfaceId: string;
-    artifactFileName: string;
-    artifactData: any;
+    operationType: string;
+    description: string;
+    uniqueId: string;
+    artifactFileName?: string;
+    artifactData?: any;
+
+    inputParams: IOperationParamsList;
+    outputParams: IOperationParamsList;
+
+    workflowId: string;
+    workflowVersionId: string;
+
+    protected OperationTypeEnum: Array<String> = [
+        'Create',
+        'Delete',
+        'Instantiate',
+        'Start',
+        'Stop'
+    ];
 
     constructor(operation?: any) {
         super(operation);
         if (operation) {
             this.interfaceId = operation.interfaceId;
             this.interfaceType = operation.interfaceType;
+            this.description = operation.description;
+            this.inputParams = operation.inputParams;
+            this.operationType = operation.operationType;
+            this.outputParams = operation.outputParams;
+            this.uniqueId = operation.uniqueId;
+            this.workflowId = operation.workflowId;
+            this.workflowVersionId = operation.workflowVersionId;
             this.artifactFileName = operation.artifactFileName;
             this.artifactData = operation.artifactData;
         }
@@ -95,6 +123,22 @@ export class OperationModel extends BEOperationModel {
     public displayType(): string {
         return displayType(this.interfaceType);
     }
+
+    public createInputParamsList(inputParams: Array<OperationParameter>): void {
+        this.inputParams = {
+            listToscaDataDefinition: inputParams
+        };
+    }
+
+    public createOutputParamsList(outputParams: Array<OperationParameter>): void {
+        this.outputParams = {
+            listToscaDataDefinition: outputParams
+        };
+    }
+}
+
+export interface CreateOperationResponse extends OperationModel {
+    artifactUUID: string;
 }
 
 export class InterfaceModel {

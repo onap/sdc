@@ -319,6 +319,8 @@ public class CsarGeneratorTest {
                 .replace("\t\t\n", "\n")
                 .replace("\t\n", "\n")
                 .replace("\t\t", "\t")
+                .replace("\t\r", "")
+                .replace("\r", "")
                 .split("\n", -1);
     }
 

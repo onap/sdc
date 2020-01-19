@@ -83,7 +83,6 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         this.operationUtils = operationUtils;
     }
 
-    @Override
     public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition) {
         Either<GroupTypeDefinition, StorageOperationStatus> validationRes = validateUpdateProperties(groupTypeDefinition);
         if (validationRes.isRight()) {
@@ -94,7 +93,6 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         return addGroupType(groupTypeDefinition, true);
     }
 
-    @Override
     public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition, boolean inTransaction) {
 
         Either<GroupTypeDefinition, StorageOperationStatus> result = null;
@@ -119,7 +117,6 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
     }
 
-    @Override
     public Either<GroupTypeDefinition, StorageOperationStatus> updateGroupType(GroupTypeDefinition updatedGroupType, GroupTypeDefinition currGroupType) {
         log.debug("updating group type {}", updatedGroupType.getType());
         return updateGroupTypeOnGraph(updatedGroupType, currGroupType);
@@ -330,7 +327,6 @@ public class GroupTypeOperation implements IGroupTypeOperation {
                 .bind(groupType -> buildGroupTypeDefinition(uniqueId, groupType));
     }
 
-    @Override
     public Either<GroupTypeDefinition, StorageOperationStatus> getGroupType(String uniqueId, boolean inTransaction) {
         Either<GroupTypeDefinition, StorageOperationStatus> result = null;
         try {
@@ -355,12 +351,10 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
     }
 
-    @Override
     public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String type) {
         return getLatestGroupTypeByType(type, true);
     }
 
-    @Override
     public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String type, boolean inTransaction) {
         Map<String, Object> mapCriteria = new HashMap<>();
         mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);
@@ -472,12 +466,10 @@ public class GroupTypeOperation implements IGroupTypeOperation {
     }
 
 
-    @Override
     public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String type, String version) {
         return getGroupTypeByTypeAndVersion(type, version, false);
     }
 
-    @Override
     public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String type, String version, boolean inTransaction) {
         Map<String, Object> mapCriteria = new HashMap<>();
         mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);

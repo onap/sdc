@@ -16,11 +16,17 @@
 
 package org.openecomp.sdc.be.components.path;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
@@ -31,38 +37,35 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
-import static org.junit.Assert.*;
+import fj.data.Either;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/paths/path-context.xml")
 public class ForwardingPathBusinessLogicTest extends BaseForwardingPathTest {
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void shouldFailToUpdateForwardingPathSincePathDoesNotExist() {
         Service service = initForwardPath();
-        Either<Service, ResponseFormat> serviceResponseFormatEither = bl.updateForwardingPath(FORWARDING_PATH_ID, service, user, true);
-        assertTrue(serviceResponseFormatEither.isRight());
+        bl.updateForwardingPath(FORWARDING_PATH_ID, service, user, true);
     }
 
-    @Test
+    @Test(expected = ComponentException.class)
     public void shouldFailToDeleteForwardingPathSincePathDoesNotExist() {
-        Service service = initForwardPath();
-        Either<Set<String>, ResponseFormat> serviceResponseFormatEither = bl.deleteForwardingPaths("delete_forward_test", Sets.newHashSet(FORWARDING_PATH_ID), user, true);
-        assertTrue(serviceResponseFormatEither.isRight());
+        initForwardPath();
+        bl.deleteForwardingPaths("delete_forward_test", Sets.newHashSet(FORWARDING_PATH_ID), user, true);
     }
 
-    @Test
+    @Test  
     public void shouldSucceedCreateAndDeleteForwardingPath() {
         Service createdService = createService();
         Service service = initForwardPath();
         assertNotNull(service);
-        Either<Service, ResponseFormat> serviceResponseFormatEither = bl.createForwardingPath(createdService.getUniqueId(), service, user, true);
-        assertTrue(serviceResponseFormatEither.isLeft());
-        Map<String, ForwardingPathDataDefinition> forwardingPathsMap = serviceResponseFormatEither.left().value().getForwardingPaths();
+        Service serviceResponseFormatEither = bl.createForwardingPath(createdService.getUniqueId(), service, user, true);
+        assertTrue(serviceResponseFormatEither != null);
+        Map<String, ForwardingPathDataDefinition> forwardingPathsMap = serviceResponseFormatEither.getForwardingPaths();
         Set<String> pathIds = forwardingPathsMap.keySet();
         assertEquals(1, pathIds.size());
         String toscaResourceName = forwardingPathsMap.values().iterator().next().getToscaResourceName();
@@ -87,7 +90,7 @@ public class ForwardingPathBusinessLogicTest extends BaseForwardingPathTest {
         service.getForwardingPaths().clear();
         service.getForwardingPaths().put(forwardingPathDataDefinitionUpdate.getUniqueId(), forwardingPathDataDefinitionUpdate);
         serviceResponseFormatEither = bl.updateForwardingPath(createdService.getUniqueId(), service, user, true);
-        assertTrue(serviceResponseFormatEither.isLeft());
+        assertTrue(serviceResponseFormatEither != null);
 
         // make sure changes were applied
         uiResaponse = bl.getComponentDataFilteredByParams(createdService.getUniqueId(), user, Lists.newArrayList(ComponentFieldsEnum.FORWARDING_PATHS.getValue()));
@@ -98,10 +101,10 @@ public class ForwardingPathBusinessLogicTest extends BaseForwardingPathTest {
         assertEquals(newProtocol, updatedData.getProtocol());
         assertTrue(updatedData.getPathElements().isEmpty());
 
-        Service createdData = serviceResponseFormatEither.left().value();
+        Service createdData = serviceResponseFormatEither;
         Set<String> paths = createdData.getForwardingPaths().keySet();
-        Either<Set<String>, ResponseFormat> setResponseFormatEither = bl.deleteForwardingPaths(createdService.getUniqueId(), paths, user, true);
-        assertTrue(setResponseFormatEither.isLeft());
+        Set<String> setResponseFormatEither = bl.deleteForwardingPaths(createdService.getUniqueId(), paths, user, true);
+        assertTrue(setResponseFormatEither != null);
 
         // nothing to return now
         uiResaponse = bl.getComponentDataFilteredByParams(createdService.getUniqueId(), user, Lists.newArrayList(ComponentFieldsEnum.COMPONENT_INSTANCES.getValue(),ComponentFieldsEnum.FORWARDING_PATHS.getValue()));

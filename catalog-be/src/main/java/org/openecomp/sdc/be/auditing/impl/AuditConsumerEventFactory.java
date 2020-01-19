@@ -43,7 +43,7 @@ public class AuditConsumerEventFactory extends AuditBaseEventFactory {
     }
 
     private AuditConsumerEventFactory(AuditingActionEnum action, CommonAuditData commonFields,
-                                     String ecompUser, String modifier) {
+                                      String ecompUser, String modifier) {
         super(action);
         event = new ConsumerEvent(getAction().getName(), commonFields, ecompUser, modifier);
     }

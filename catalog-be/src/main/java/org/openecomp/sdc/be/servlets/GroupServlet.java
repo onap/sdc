@@ -38,6 +38,8 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -62,6 +64,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
+
+import java.io.IOException;
 
 /**
  * Root resource (exposed at "/" path)
@@ -71,7 +76,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/v1/catalog")
 @OpenAPIDefinition(info = @Info(title = "Group Servlet"))
-@Singleton
+@Controller
 public class GroupServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(GroupServlet.class);
@@ -97,6 +102,7 @@ public class GroupServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createGroup(@PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupType") final String type,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -104,9 +110,11 @@ public class GroupServlet extends AbstractValidationsServlet {
         log.debug("(post) Start handle request of {}", url);
 
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        GroupDefinition groupDefinition = groupBL.createGroup(componentId, componentTypeEnum, type, userId);
+        GroupDefinition groupDefinition = groupBL
+                .createGroup(componentId, componentTypeEnum, type, userId);
 
-        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), groupDefinition);
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED),
+                groupDefinition);
     }
 
     @GET
@@ -117,6 +125,7 @@ public class GroupServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "group found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Group not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getGroupById(@PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -140,7 +149,7 @@ public class GroupServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getGroupArtifactById");
             log.debug("getGroupArtifactById unexpected exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
 
     }
@@ -156,16 +165,17 @@ public class GroupServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteGroup(@PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST, url);
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        GroupDefinition groupDefinition = groupBL.deleteGroup(componentId, componentTypeEnum, groupId, userId);
+        GroupDefinition groupDefinition = groupBL
+                .deleteGroup(componentId, componentTypeEnum, groupId, userId);
 
-        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT),
-                groupDefinition.getUniqueId());
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), groupDefinition.getUniqueId());
     }
 
     @PUT
@@ -177,6 +187,7 @@ public class GroupServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "component / group Not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateGroup(@PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -197,10 +208,11 @@ public class GroupServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group Updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateGroupMetadata(@PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
             @Parameter(description = "Service object to be Updated", required = true) String data,
-            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST, url);
@@ -222,8 +234,8 @@ public class GroupServlet extends AbstractValidationsServlet {
 
             // Update GroupDefinition
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            Either<GroupDefinition, ResponseFormat> actionResponse = groupBL.validateAndUpdateGroupMetadata(componentId,
-                    user, componentTypeEnum, updatedGroup, true, true);
+            Either<GroupDefinition, ResponseFormat> actionResponse = groupBL
+                    .validateAndUpdateGroupMetadata(componentId, user, componentTypeEnum, updatedGroup, true ,true);
 
             if (actionResponse.isRight()) {
                 log.debug("failed to update GroupDefinition");
@@ -238,9 +250,7 @@ public class GroupServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Group Metadata");
             log.debug("update group metadata failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 

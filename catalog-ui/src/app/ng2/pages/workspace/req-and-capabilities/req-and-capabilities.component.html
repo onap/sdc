@@ -1,0 +1,21 @@
+<div class="workspace-req-and-cap">
+    <div>
+        <span class="addTitle" *ngIf="selectTabName === 'REQUIREMENTS'" (click)="addRequiremnet()">Add Requirement</span>
+        <span class="addTitle" *ngIf="selectTabName !== 'REQUIREMENTS'" (click)="addCapability()">Add Capability</span>
+        <span class="req-and-cap-filter" *ngIf="notEmptyTable">
+            <sdc-filter-bar
+                [placeHolder]="'Search'"
+                (keyup)="updateFilter($event)"
+                [testId]="'search-box'">
+            </sdc-filter-bar>
+        </span>
+    </div>
+    <sdc-tabs (selectedTab)="selectTab($event)" [tabStyle]="'sdc-table-tab'">
+        <sdc-tab [title]="'Requirements('+(requirements.length||'0')+')'" [active]="true" [testId]="'req-tab'">
+            <div #requirmentsContainer></div>
+        </sdc-tab>
+        <sdc-tab [title]="'Capabilities('+(capabilities.length||'0')+')'" [active]="false" [testId]="'cap-tab'">
+            <div #capabilitiesContainer></div>      
+        </sdc-tab>
+    </sdc-tabs>
+</div>

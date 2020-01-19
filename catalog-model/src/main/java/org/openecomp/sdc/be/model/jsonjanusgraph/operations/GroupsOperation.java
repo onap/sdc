@@ -31,12 +31,14 @@ import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.model.utils.GroupUtils;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -46,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("groups-operation")
@@ -155,7 +158,7 @@ public class GroupsOperation extends BaseOperation {
 			result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
 		}
         if (result == null) {
-            status = addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groups, JsonPresentationFields.NAME);
+            status = addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groups, JsonPresentationFields.CI_INVARIANT_NAME);
 
             if (status != StorageOperationStatus.OK) {
                 result = Either.right(status);
@@ -163,7 +166,7 @@ public class GroupsOperation extends BaseOperation {
         }
 
         if (result == null) {
-			Map<String, GroupDataDefinition> mapGroup = groups.stream().collect(Collectors.toMap(GroupDataDefinition::getName, x->x));
+			Map<String, GroupDataDefinition> mapGroup = groups.stream().collect(Collectors.toMap(GroupDataDefinition::getInvariantName, x->x));
             result = Either.left(ModelConverter.convertToGroupDefinitions(mapGroup));
         }
         return result;
@@ -179,8 +182,8 @@ public class GroupsOperation extends BaseOperation {
 			result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
 		}
         if (result == null) {
-			List<String> groupName = groups.stream().map(GroupDataDefinition::getName).collect(Collectors.toList());
-            status = deleteToscaDataElements(component.getUniqueId(), EdgeLabelEnum.GROUPS, groupName);
+			List<String> groupInvariantName = groups.stream().map(GroupDataDefinition::getInvariantName).collect(Collectors.toList());
+            status = deleteToscaDataElements(component.getUniqueId(), EdgeLabelEnum.GROUPS, groupInvariantName);
 
             if (status != StorageOperationStatus.OK) {
                 result = Either.right(status);
@@ -194,7 +197,7 @@ public class GroupsOperation extends BaseOperation {
         return result;
     }
 
-    public <T extends GroupDataDefinition> Either<List<GroupDefinition>, StorageOperationStatus> updateGroups(Component component, List<T> groups, boolean promoteVersion) {
+    public <T extends GroupDataDefinition> Either<List<GroupDefinition>, StorageOperationStatus> updateGroups(Component component, List<T> groups, PromoteVersionEnum promoteVersion) {
         Either<List<GroupDefinition>, StorageOperationStatus> result = null;
         Either<GraphVertex, JanusGraphOperationStatus> getComponentVertex = null;
         StorageOperationStatus status = null;
@@ -206,11 +209,11 @@ public class GroupsOperation extends BaseOperation {
         if (result == null) {
             groups.forEach(gr -> {
                 updateVersion(promoteVersion, gr);
-                String groupUUID = UniqueIdBuilder.generateUUID();
-                gr.setGroupUUID(groupUUID);
+               // String groupUUID = UniqueIdBuilder.generateUUID();
+               // gr.setGroupUUID(groupUUID);
             });
 
-            status = updateToscaDataOfToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groups, JsonPresentationFields.NAME);
+            status = updateToscaDataOfToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groups, JsonPresentationFields.CI_INVARIANT_NAME);
 
             if (status != StorageOperationStatus.OK) {
                 result = Either.right(status);
@@ -218,33 +221,67 @@ public class GroupsOperation extends BaseOperation {
         }
 
         if (result == null) {
-			Map<String, GroupDataDefinition> mapGroup = groups.stream().collect(Collectors.toMap( GroupDataDefinition::getName, x->x));
+			Map<String, GroupDataDefinition> mapGroup = groups.stream().collect(Collectors.toMap( GroupDataDefinition::getInvariantName, x->x));
             result = Either.left(ModelConverter.convertToGroupDefinitions(mapGroup));
+            updateGroupsOnComponent(component, ModelConverter.convertToGroupDefinitions(mapGroup));
         }
         return result;
     }
 
-    private <T extends GroupDataDefinition> void updateVersion(boolean promoteVersion, T group) {
-        if(promoteVersion) {
-            String version = group.getVersion();
-            String newVersion = increaseMajorVersion(version);
-            group.setVersion(newVersion);
+    private void updateGroupsOnComponent(Component component, List<GroupDefinition> groupsToUpdate) {
+        List<GroupDefinition> groupsFromResource = component.getGroups();
+        for (GroupDefinition group : groupsToUpdate) {
+            Optional<GroupDefinition> op = groupsFromResource.stream()
+                    .filter(p -> p.getInvariantName()
+                            .equalsIgnoreCase(group.getInvariantName()))
+                    .findAny();
+            if (op.isPresent()) {
+                GroupDefinition groupToUpdate = op.get();
+                groupToUpdate.setMembers(group.getMembers());
+                groupToUpdate.setCapabilities(group.getCapabilities());
+                groupToUpdate.setProperties(group.getProperties());
+            }
         }
     }
 
-    public void updateGroupOnComponent(String componentId, GroupDefinition groupDefinition) {
+    private <T extends GroupDataDefinition> void updateVersion(PromoteVersionEnum promoteVersion, T group) {
+
+        group.setVersion(GroupUtils.updateVersion(promoteVersion, group.getVersion()));
+    }
+
+    public void updateGroupOnComponent(String componentId, GroupDefinition groupDefinition, PromoteVersionEnum promoteMinorVersion) {
         GraphVertex componentVertex = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseMetadata)
                 .left()
                 .on(this::onJanusGraphError);
+         updateVersion(promoteMinorVersion, groupDefinition);
 
         StorageOperationStatus updateToscaResult = updateToscaDataOfToscaElement(componentVertex, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groupDefinition,
-                JsonPresentationFields.NAME);
+                JsonPresentationFields.CI_INVARIANT_NAME);
 
         if (StorageOperationStatus.OK != updateToscaResult) {
             throw new StorageException(updateToscaResult, groupDefinition.getUniqueId());
         }
 
         updateLastUpdateDate(componentVertex);
+    }
+
+
+    public <T extends GroupDataDefinition> StorageOperationStatus updateGroupsOnComponent(String componentId, List<T> groups) {
+        GraphVertex componentVertex = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseMetadata)
+                .left()
+                .on(this::onJanusGraphError);
+
+        StorageOperationStatus updateToscaResult = updateToscaDataOfToscaElement(componentVertex, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groups, JsonPresentationFields.CI_INVARIANT_NAME);
+
+
+        if (StorageOperationStatus.OK != updateToscaResult) {
+            throw new StorageException(updateToscaResult);
+        }
+
+        updateLastUpdateDate(componentVertex);
+
+        return updateToscaResult;
+
     }
 
     private void updateLastUpdateDate(GraphVertex componentVertex) {
@@ -259,7 +296,7 @@ public class GroupsOperation extends BaseOperation {
                 DaoStatusConverter.convertJanusGraphStatusToStorageStatus(janusGraphOperationStatus));
     }
 
-    public Either<List<GroupProperty>, StorageOperationStatus> updateGroupPropertiesOnComponent(String componentId, GroupDefinition group, List<GroupProperty> newGroupProperties) {
+    public Either<List<GroupProperty>, StorageOperationStatus> updateGroupPropertiesOnComponent(String componentId, GroupDefinition group, List<GroupProperty> newGroupProperties, PromoteVersionEnum promoteMinorVersion) {
 
         Either<List<GroupProperty>, StorageOperationStatus> result = null;
         Either<GraphVertex, JanusGraphOperationStatus> getComponentVertex = null;
@@ -280,8 +317,8 @@ public class GroupsOperation extends BaseOperation {
                     currentProp.get().setValue(np.getValue());
                 }
             });
-
-            StorageOperationStatus updateDataRes = updateToscaDataOfToscaElement(componentVertex, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, group, JsonPresentationFields.NAME);
+            updateVersion(promoteMinorVersion, group);
+            StorageOperationStatus updateDataRes = updateToscaDataOfToscaElement(componentVertex, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, group, JsonPresentationFields.CI_INVARIANT_NAME);
             if (updateDataRes != StorageOperationStatus.OK) {
                 log.debug("Failed to update properties for group {} error {}", group.getName(), updateDataRes);
                 result = Either.right(updateDataRes);
@@ -301,22 +338,7 @@ public class GroupsOperation extends BaseOperation {
         return result;
     }
 
-    /**
-     * The version of the group is an integer. In order to support BC, we might get a version in a float format.
-     *
-     * @param version
-     * @return
-     */
-    private String increaseMajorVersion(String version) {
 
-        String[] versionParts = version.split(ToscaElementLifecycleOperation.VERSION_DELIMITER_REGEXP);
-        Integer majorVersion = Integer.parseInt(versionParts[0]);
-
-        majorVersion++;
-
-        return String.valueOf(majorVersion);
-
-    }
 
     public Either<List<GroupInstance>, StorageOperationStatus> updateGroupInstances(Component component, String instanceId, List<GroupInstance> updatedGroupInstances) {
 
@@ -343,7 +365,7 @@ public class GroupsOperation extends BaseOperation {
     }
 
     public Either<GroupDefinition, StorageOperationStatus> updateGroup(Component component, GroupDefinition currentGroup) {
-        StorageOperationStatus status = updateToscaDataOfToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroup, JsonPresentationFields.NAME);
+        StorageOperationStatus status = updateToscaDataOfToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroup, JsonPresentationFields.CI_INVARIANT_NAME);
         if (status != StorageOperationStatus.OK) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update group {} of component {}. The status is}. ", currentGroup.getName(), component.getName(), status);
             return Either.right(status);
@@ -352,15 +374,16 @@ public class GroupsOperation extends BaseOperation {
     }
 
     public StorageOperationStatus deleteGroup(Component component, String currentGroupName) {
-        StorageOperationStatus status = deleteToscaDataElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroupName, JsonPresentationFields.NAME);
+        StorageOperationStatus status = deleteToscaDataElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroupName, JsonPresentationFields.CI_INVARIANT_NAME);
         if (status != StorageOperationStatus.OK) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to delete group {} of component {}. The status is}. ", currentGroupName, component.getName(), status);
         }
         return status;
     }
 
-    public Either<GroupDefinition, StorageOperationStatus> addGroup(Component component, GroupDefinition currentGroup) {
-        StorageOperationStatus status = addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroup, JsonPresentationFields.NAME);
+    public Either<GroupDefinition, StorageOperationStatus> addGroup(Component component, GroupDefinition currentGroup, PromoteVersionEnum promoteMinorVersion) {
+        updateVersion(promoteMinorVersion, currentGroup);
+        StorageOperationStatus status = addToscaDataToToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, currentGroup, JsonPresentationFields.CI_INVARIANT_NAME);
         if (status != StorageOperationStatus.OK) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update group {} of component {}. The status is}. ", currentGroup.getName(), component.getName(), status);
             return Either.right(status);
@@ -386,6 +409,8 @@ public class GroupsOperation extends BaseOperation {
         });
         GroupInstanceDataDefinition groupInstanceDataDefinition = new GroupInstanceDataDefinition(oldGroupInstance);
         List<String> pathKeys = new ArrayList<>();
+        groupInstanceDataDefinition.setModificationTime(System.currentTimeMillis());
+        groupInstanceDataDefinition.setCustomizationUUID(UUID.randomUUID().toString());
         pathKeys.add(instanceId);
         StorageOperationStatus updateDataRes = updateToscaDataDeepElementOfToscaElement(componentId, EdgeLabelEnum.INST_GROUPS, VertexTypeEnum.INST_GROUPS, groupInstanceDataDefinition, pathKeys, JsonPresentationFields.NAME);
         if (updateDataRes != StorageOperationStatus.OK) {

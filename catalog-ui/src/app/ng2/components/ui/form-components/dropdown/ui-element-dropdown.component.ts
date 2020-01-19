@@ -24,11 +24,21 @@ import { UiElementBase, UiElementBaseInterface } from './../ui-element-base.comp
 export class DropdownValue {
   value:any;
   label:string;
+  hidden?: boolean;
+  selected?: boolean;
 
-  constructor(value:any,label:string) {
+
+  constructor(value:any,label:string, hidden: boolean = false, selected: boolean = false) {
     this.value = value;
     this.label = label;
+    this.hidden = hidden;
+    this.selected = selected;
+    
+    // this.hidden = hidden ? true : "hidden": "";
+    // this.selected = selected ? true : "selected": "";
   }
+
+
 }
 
 @Component({
@@ -37,8 +47,8 @@ export class DropdownValue {
   styleUrls: ['./ui-element-dropdown.component.less'],
 })
 export class UiElementDropDownComponent extends UiElementBase implements UiElementBaseInterface  {
-  @Input()
-  values: DropdownValue[]|string[];
+  
+  @Input() values: DropdownValue[];
 
   constructor() {
     super();

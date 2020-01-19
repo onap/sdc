@@ -20,10 +20,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {
-    Component, ElementRef, forwardRef, Inject, Input, trigger, state, style,
-    transition, animate, ViewChild, ViewContainerRef, ComponentRef
-} from "@angular/core";
+import { Component, ElementRef, forwardRef, Inject, Input, ViewChild, ViewContainerRef, ComponentRef} from "@angular/core";
+import {trigger, state, style, transition, animate} from '@angular/animations';
 import {StepModel} from "app/models";
 import {ModalService} from "../../../services/modal.service";
 import {ModalComponent} from "../modal/modal.component";

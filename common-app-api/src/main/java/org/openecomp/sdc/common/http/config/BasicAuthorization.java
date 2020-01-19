@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@ package org.openecomp.sdc.common.http.config;
 
 import fj.data.Either;
 import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.security.SecurityUtil;
+import org.onap.sdc.security.SecurityUtil;
 
 public class BasicAuthorization {
     private String userName;
@@ -53,17 +53,19 @@ public class BasicAuthorization {
         return password;
     }
 
-
+    
     private void setPassword(String password, boolean isEncoded) {
         validate(password);
-        if (isEncoded) {
+        if(isEncoded) {
             Either<String, String> passkey = SecurityUtil.INSTANCE.decrypt(password);
-            if (passkey.isLeft()) {
+            if(passkey.isLeft()) {
                 this.password = passkey.left().value();
-            } else {
+            }
+            else {
                 throw new IllegalArgumentException(passkey.right().value());
             }
-        } else {
+        }
+        else {
             this.password = password;
         }
     }
@@ -79,28 +81,26 @@ public class BasicAuthorization {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         BasicAuthorization other = (BasicAuthorization) obj;
         if (password == null) {
-            if (other.password != null) {
+            if (other.password != null)
                 return false;
-            }
-        } else if (!password.equals(other.password)) {
+        }
+        else if (!password.equals(other.password))
             return false;
-        }
         if (userName == null) {
-            return other.userName == null;
-        } else {
-            return userName.equals(other.userName);
+            if (other.userName != null)
+                return false;
         }
+        else if (!userName.equals(other.userName))
+            return false;
+        return true;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class BasicAuthorization {
     }
 
     private void validate(String str) {
-        if (StringUtils.isEmpty(str)) {
+        if(StringUtils.isEmpty(str)) {
             throw new IllegalArgumentException("BasicAuthorization username and/or password cannot be empty");
         }
     }

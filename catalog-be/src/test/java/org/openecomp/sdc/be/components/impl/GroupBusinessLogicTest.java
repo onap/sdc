@@ -62,6 +62,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -114,10 +115,9 @@ public class GroupBusinessLogicTest {
     @Mock
     PolicyTargetsUpdateHandler policyTargetsUpdateHandler;
 
-    private final static ServletContext servletContext = Mockito.mock(ServletContext.class);
-    private final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
-    private final static Configuration configuration = Mockito.mock(Configuration.class);
-    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @Before
     public void setUp() throws Exception {
@@ -187,8 +187,11 @@ public class GroupBusinessLogicTest {
         List<PropertyDataDefinition> properties = new LinkedList<>();
         properties.add(new PropertyDataDefinition());
         oldGroupInstance.setProperties(properties);
-        result = test.validateAndUpdateGroupInstancePropertyValues(componentId, instanceId, oldGroupInstance, newProperties);
-        Assert.assertTrue(result.isRight());
+        try {
+            result = test.validateAndUpdateGroupInstancePropertyValues(componentId, instanceId, oldGroupInstance, newProperties);
+        }catch (ComponentException e){
+            assertThat(e.getActionStatus()).isEqualTo(ActionStatus.GENERAL_ERROR);
+        }
     }
 
     @Test
@@ -293,18 +296,20 @@ public class GroupBusinessLogicTest {
     }
 
     @Test
-    public void testDeleteGroup() throws Exception {
+    public void testDeleteGroup(){
 
         Component component= new Resource();
+        List<GroupDefinition> groupDefList = new ArrayList<>();
         GroupDefinition updatedGroup = new GroupDefinition();
-        List<GroupDefinition> grpdefList = new ArrayList<>();
         updatedGroup.setName("GRP~01");
         updatedGroup.setUniqueId("GRP.01");
-        grpdefList.add(updatedGroup);
+        groupDefList.add(updatedGroup);
         component.setUniqueId("GRP.01");
-        component.setGroups(grpdefList);
+        component.setGroups(groupDefList);
+        List<GroupDefinition> groupDefListCopy = new ArrayList<>();
+        groupDefListCopy.add(updatedGroup);
         when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "DeleteGroup")).thenReturn(component);
-        when(groupsOperation.deleteGroups(anyObject(),anyList())).thenReturn(Either.left(grpdefList));
+        when(groupsOperation.deleteGroups(anyObject(),anyList())).thenReturn(Either.left(groupDefListCopy));
         when(groupsOperation.deleteCalculatedCapabilitiesWithProperties(anyString(), anyObject())).thenReturn(StorageOperationStatus.OK);
         when(policyTargetsUpdateHandler.removePoliciesTargets(anyObject(),anyString(),anyObject())).thenReturn(ActionStatus.OK);
 

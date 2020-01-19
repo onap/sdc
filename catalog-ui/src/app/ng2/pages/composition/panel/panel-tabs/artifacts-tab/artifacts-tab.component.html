@@ -1,0 +1,119 @@
+<div class="w-sdc-designer-sidebar-tab-content artifacts">
+    <div class="w-sdc-designer-sidebar-section">
+        <ng2-expand-collapse state="0">
+            <header sdc-tooltip tooltip-text="{{title}}">{{title}}</header>
+            <content class="artifacts-container">
+                <div class="w-sdc-designer-sidebar-section-content">
+                    <div class="i-sdc-designer-sidebar-section-content-item" *ngFor="let artifact of artifacts$ | async">
+                        <div class="i-sdc-designer-sidebar-section-content-item-artifact"
+                             *ngIf="(!isComponentInstanceSelected || artifact.esId) && 'HEAT_ENV' !== artifact.artifactType"
+                             attr.data-tests-id="'artifact-item-' + artifact.artifactDisplayName">
+                            <span *ngIf="artifact.heatParameters?.length"
+                                  class="i-sdc-designer-sidebar-section-content-item-file-link"></span>
+                            <div class="i-sdc-designer-sidebar-section-content-item-artifact-details"
+                                 [class.heat]="artifact.isHEAT() && artifact.heatParameters?.length">
+                                <div *ngIf="artifact.artifactName"
+                                     class="i-sdc-designer-sidebar-section-content-item-artifact-filename"
+                                     attr.data-tests-id="artifactName-{{artifact.artifactDisplayName}}"
+                                     sdc-tooltip tooltip-text="{{artifact.artifactName}}">{{artifact.artifactName}}
+                                </div>
+                                <div class="artifact-buttons-container upper-buttons">
+
+
+                                    <svg-icon
+                                            *ngIf="!isViewOnly && !artifact.isFromCsar && artifact.artifactName"
+                                            name="trash-o" clickable="true" size="medium" mode="info"
+                                            class="artifact-button" testId="delete_{{artifact.artifactDisplayName}}"
+                                            (click)="delete(artifact)"></svg-icon>
+
+                                    <!--Display env parameters edit button for Instance -->
+                                    <svg-icon
+                                            *ngIf="!isViewOnly  && artifact.isHEAT() && isComponentInstanceSelected && artifact.heatParameters?.length"
+                                            name="indesign_status" clickable="true" size="medium" mode="info"
+                                            class="artifact-button"
+                                            testId="edit-parameters-of-{{artifact.artifactDisplayName}}"
+                                            (click)="updateEnvParams(artifact)"
+                                            tooltip="Edit ENV Params"
+                                    ></svg-icon>
+
+                                    <!--Display env parameters VIEW button for Instance -->
+                                    <svg-icon
+                                            *ngIf="isViewOnly && artifact.isHEAT() && isComponentInstanceSelected && artifact.heatParameters?.length"
+                                            name="inputs-o" clickable="true" size="medium" mode="info"
+                                            class="artifact-button"
+                                            testId="view-parameters-of-{{artifact.artifactDisplayName}}"
+                                            (click)="viewEnvParams(artifact)"
+                                            tooltip="View ENV Params"
+                                    ></svg-icon>
+
+                                    <!--Display env parameters edit button for VF -->
+                                    <svg-icon
+                                            *ngIf = "!isViewOnly && !isComponentInstanceSelected && artifact.heatParameters?.length"
+                                            name="indesign_status" clickable="true" size="medium" mode="info"
+                                            class="artifact-button"
+                                            testId="edit-parameters-of-{{artifact.artifactDisplayName}}"
+                                            (click)="updateEnvParams(artifact)"></svg-icon>
+
+
+                                    <download-artifact *ngIf="artifact.esId && 'deployment' != type"
+                                                       class="artifact-button"
+                                                       [artifact]="artifact" [componentType]="component.componentType"
+                                                       [componentId]="component.uniqueId"
+                                                       testId="download_{{artifact.artifactDisplayName}}"
+                                                       [isInstance]="isComponentInstanceSelected"></download-artifact>
+                                    <download-artifact *ngIf="artifact.esId && 'deployment' == type"
+                                                       class="artifact-button"
+                                                       [artifact]="artifact" [componentType]="component.componentType"
+                                                       [componentId]="component.uniqueId"
+                                                       [isInstance]="isComponentInstanceSelected"
+                                                       testId="download_{{artifact.artifactDisplayName}}"
+                                                       [showLoader]="artifact.isHEAT()"></download-artifact>
+
+                                    <button *ngIf="!isViewOnly && !artifact.esId && type==='deployment' && !isComponentInstanceSelected && !artifact.isThirdParty()"
+                                            class="artifact-button attach sprite e-sdc-small-icon-upload"
+                                            (click)="addOrUpdate(artifact)" type="button"
+                                            attr.data-tests-id="add_Artifact"></button>
+                                </div>
+                                <div>
+                                <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-name"
+                                      attr.data-tests-id="artifact_Display_Name-{{artifact.artifactDisplayName}}"
+                                      [ngClass]="{'hand enabled': artifact.allowDeleteAndUpdate}"
+                                      (click)="artifact.allowDeleteAndUpdate && addOrUpdate(artifact)"
+                                      sdc-tooltip tooltip-text="{{artifact.artifactDisplayName}}">{{artifact.artifactDisplayName}}</span>
+                                    <div class="i-sdc-designer-sidebar-section-content-item-artifact-heat-env"
+                                         *ngIf="artifact.heatParameters?.length">
+                                        <span attr.data-tests-id="heat_env_{{artifact.artifactDisplayName}}">{{artifact.artifactDisplayName}} (ENV)</span>
+                                        <div class="artifact-buttons-container">
+                                            <svg-icon *ngIf="!isViewOnly && envArtifactOf(artifact)"
+                                                      name="edit-o" clickable="true" size="medium"
+                                                      mode="info" class="artifact-button edit-pencil"
+                                                      testId="edit_{{artifact.artifactDisplayName}}"
+                                                      (click)="addOrUpdate(envArtifactOf(artifact))"></svg-icon>
+
+                                            <download-artifact [artifact]="envArtifactOf(artifact)"
+                                                               class="artifact-button"
+                                                               [componentType]="component.componentType"
+                                                               [componentId]="component.uniqueId"
+                                                               [isInstance]="isComponentInstanceSelected"
+                                                               testId="download_env_{{artifact.artifactDisplayName}}"></download-artifact>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="i-sdc-designer-sidebar-section-content-item-artifact-details-desc">
+                                    <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-desc-label"
+                                          *ngIf="artifact.description">Description:</span>{{artifact.description}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-sdc-designer-sidebar-section-footer"
+                     *ngIf="!isViewOnly && type!=='api' && (!isComponentInstanceSelected || isVfOrPnf() && (type !== 'deployment') || isComplex)">
+                    <sdc-button testId="add_Artifact_Button" size="large" type="primary" text="Add Artifact"
+                                (click)="addOrUpdate({})"></sdc-button>
+                </div>
+            </content>
+        </ng2-expand-collapse>
+    </div>
+</div>

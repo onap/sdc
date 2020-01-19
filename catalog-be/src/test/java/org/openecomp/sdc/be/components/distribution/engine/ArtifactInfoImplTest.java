@@ -315,12 +315,4 @@ public class ArtifactInfoImplTest extends BeConfDependentTest {
 		testSubject.setGeneratedFromUUID(generatedFromUUID);
 	}
 
-	@Test
-	public void testUpdateArtifactTimeout() throws Exception {
-		ArtifactInfoImpl testSubject;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.updateArtifactTimeout();
-	}
 }

@@ -20,20 +20,36 @@
 
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
-public class AuditingGenericEvent extends ESTimeBasedEvent {
+public class AuditingGenericEvent {
+    protected SimpleDateFormat simpleDateFormat;
+    protected static String dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS z";
+
     protected String requestId;
     protected String serviceInstanceId;
     protected String action;
     protected String status;
+    protected String timestamp;
 
     protected String desc;
+    protected Map<String, Object> fields = new HashMap<>();
+
 
     public AuditingGenericEvent() {
         super();
+        simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.timestamp = simpleDateFormat.format(new Date());
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), this.timestamp);
+
     }
 
     public String getRequestId() {
@@ -89,5 +105,22 @@ public class AuditingGenericEvent extends ESTimeBasedEvent {
             return new Date();
         }
     }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Map<String, Object> getFields() {
+        return fields;
+    }
+
+    public void setFields(Map<String, Object> fields) {
+        this.fields = fields;
+    }
+
 
 }

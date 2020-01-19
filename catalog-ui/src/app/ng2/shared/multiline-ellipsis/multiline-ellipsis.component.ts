@@ -1,4 +1,4 @@
-import {Component, OnChanges, AfterViewChecked, ViewChild, ElementRef, Input, Output, SimpleChanges, EventEmitter} from "@angular/core";
+import {Component, OnChanges, AfterContentInit, ViewChild, ElementRef, Input, Output, SimpleChanges, EventEmitter} from "@angular/core";
 import {WindowRef} from "../../services/window.service";
 
 @Component({
@@ -6,7 +6,7 @@ import {WindowRef} from "../../services/window.service";
 	templateUrl: 'multiline-ellipsis.component.html',
 	styleUrls: ['multiline-ellipsis.component.less']
 })
-export class MultilineEllipsisComponent implements OnChanges, AfterViewChecked {
+export class MultilineEllipsisComponent implements OnChanges, AfterContentInit {
 
 	@Input() public lines: number;
 	@Input() public lineHeight: string;
@@ -30,7 +30,7 @@ export class MultilineEllipsisComponent implements OnChanges, AfterViewChecked {
 		this.prepareStyles()
 	}
 
-	public ngAfterViewChecked() {
+	public ngAfterContentInit() {
 		const hasEllipsis = (this.elmContainer.nativeElement.offsetHeight < this.elmContent.nativeElement.offsetHeight);
 		if (hasEllipsis !== this.hasEllipsis) {
 			this.hasEllipsis = hasEllipsis;

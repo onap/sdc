@@ -1,0 +1,97 @@
+<ng2-expand-collapse state="0">
+    <header sdc-tooltip tooltip-text="{{input.title}}">{{input.title}}</header>
+    <content>
+    <div class="w-sdc-designer-sidebar-section">
+        <div *ngIf="properties">
+        <ng-container *ngFor="let key of objectKeys(properties); let idx = index">
+            <sdc-accordion [title]="groupNameByKey(key) + ' Properties'" [css-class]="'properties-accordion'" [arrow-direction]="'right'" [testId]="groupNameByKey(key) + 'properties'" [open]="true">
+                
+                <!--ng-show="isShowDetailsSection" -->
+                <div class="i-sdc-designer-sidebar-section-content-item" *ngIf="!groupPropertiesByInstance">
+                    <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute" attr.data-tests-id="propertyRow"
+                            *ngFor="let property of properties[key]">
+
+                        <div class="property-details">
+                            <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                                    [ngClass]="{'hand enabled': !isViewOnly}"
+                                    sdc-tooltip tooltip-text="{{property.name}}"
+                                    (click)="!isViewOnly && updateProperty(property)"
+                                    attr.data-tests-id="{{property.name}}">{{property.name}}</span>
+                            <span class="i-sdc-designer-sidebar-section-content-item-property-value" *ngIf="isPropertyOwner()"
+                                    sdc-tooltip tooltip-text="{{property.defaultValue}}">{{property.defaultValue}}</span>
+                            <span class="i-sdc-designer-sidebar-section-content-item-property-value" *ngIf="!isPropertyOwner()"
+                                    sdc-tooltip tooltip-text="{{property.value}}"
+                                    attr.data-tests-id="value_{{property.name}}">{{property.value}}</span>
+                        </div>
+                        <div class="property-buttons">
+                            <svg-icon *ngIf="!isViewOnly && (isPropertyOwner() && !property.readonly)" name="trash-o" clickable="true" size="medium" mode="info" testId="delete_{{property.name}}" (click)="deleteProperty(property)"></svg-icon>
+                        </div>
+                    </div>
+                </div>
+                <div class="i-sdc-designer-sidebar-section-content-item" *ngIf="groupPropertiesByInstance">
+                    <ng-container *ngFor="let InstanceProperties of properties[key]; let propIndex = index">
+                        <div class="vfci-properties-group">
+                            <div class="second-level">
+                                <div class="expand-collapse-title-icon"></div>
+                                <span class="w-sdc-designer-sidebar-section-title-text" sdc-tooltip tooltip-text="{{getComponentInstanceNameFromInstanceByKey(InstanceProperties.key)}}&nbsp;Properties"
+                                        attr.data-tests-id="vfci-properties">{{getComponentInstanceNameFromInstanceByKey(InstanceProperties.key) + ' Properties'}}</span>
+                            </div>
+                        </div>
+                        <div  class="w-sdc-designer-sidebar-section-content instance-properties {{propIndex}}">
+                            <div class="i-sdc-designer-sidebar-section-content-item">
+                                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute" attr.data-tests-id="propertyRow"
+                                        *ngFor="let instanceProperty of InstanceProperties.value">
+                                    <div>
+                                        <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                                                [ngClass]="{'hand enabled': !isViewOnly}"
+                                                sdc-tooltip tooltip-text="{{instanceProperty.name}}"
+                                                attr.data-tests-id="vfci-property">{{instanceProperty.name}}</span>
+                                    </div>
+                                    <div>
+                                        <span class="i-sdc-designer-sidebar-section-content-item-property-value"
+                                                sdc-tooltip tooltip-text="{{instanceProperty.value === undefined ? instanceProperty.defaultValue : instanceProperty.value}}">
+                                            {{instanceProperty.value === undefined ? instanceProperty.defaultValue : instanceProperty.value}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+                <!--<div  class="w-sdc-designer-sidebar-section-footer" *ngIf="(!isViewOnly && isPropertyOwner()) || showAddPropertyButton">-->
+                    <!--<button class="w-sdc-designer-sidebar-section-footer-action tlv-btn blue" attr.data-tests-id="addGrey" (click)="addProperty()" type="button">-->
+                        <!--Add Property-->
+                    <!--</button>-->
+                <!--</div>-->
+            </sdc-accordion>
+        </ng-container>
+        </div>
+
+        <!--attributes-->
+        <div *ngIf="attributes">
+        <ng-container *ngFor="let key of objectKeys(attributes); let attrIndex = index">
+            <sdc-accordion [title]="groupNameByKey(key) + ' Attributes'" [arrow-direction]="'right'" [testId]="groupNameByKey(key) + 'attributes'" [css-class]="'attributes-accordion'">
+                <!--ng-show="isShowDetailsSection" -->
+                    <div class="i-sdc-designer-sidebar-section-content-item">
+                        <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute"
+                                *ngFor="let attribute of attributes[key]">
+                            <div>
+                                <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                                        [ngClass]="{'hand enabled': !isViewOnly}"
+                                        sdc-tooltip tooltip-text="{{attribute.name}}"
+                                        (click)="!isViewOnly && viewAttribute(attribute)"
+                                        attr.data-tests-id="{{attribute.name}}-attr">{{attribute.name}}</span>
+                            </div>
+                            <div>
+                                <span class="i-sdc-designer-sidebar-section-content-item-property-value" *ngIf="isPropertyOwner()"
+                                        sdc-tooltip tooltip-text="{{attribute.defaultValue}}">{{attribute.defaultValue}}</span>
+                                <span class="i-sdc-designer-sidebar-section-content-item-property-value" *ngIf="!isPropertyOwner()"
+                                        sdc-tooltip tooltip-text="{{attribute.value}}" attr.data-tests-id="value-of-{{attribute.name}}">{{attribute.value}}</span>
+                            </div>
+                        </div>
+                    </div>
+            </sdc-accordion>
+        </ng-container>
+        </div>
+    </div>            
+    </content>
+</ng2-expand-collapse>

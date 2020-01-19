@@ -28,8 +28,8 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
 
 public class AuditHandler {
-    ComponentsUtils componentsUtils;
-    String instanceID;
+    private ComponentsUtils componentsUtils;
+    private String instanceID;
     private RegistrationRequest registrationRequest;
 
     public AuditHandler(ComponentsUtils componentsUtils, String instanceID, RegistrationRequest registrationRequest) {

@@ -1,0 +1,32 @@
+@import "./../../../../../../assets/styles/override";
+.palette-element {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  max-height: 65px;
+  border-bottom: 1px solid @sdcui_color_silver;
+  padding: 10px;
+  align-items: center;
+  .palette-element-icon {
+    min-width: 45px;
+    text-align: center;
+  }
+
+  .palette-element-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    line-height: 15px;
+    padding-left: 10px;
+    font-family: OpenSans-Regular, sans-serif;
+    overflow: hidden;
+
+    .palette-element-name {
+      color: @sdcui_color_dark-gray;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
+}

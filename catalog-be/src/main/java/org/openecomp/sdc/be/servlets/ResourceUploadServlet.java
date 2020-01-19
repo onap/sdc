@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.servlets;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
@@ -39,10 +40,12 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -59,13 +62,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.openecomp.sdc.common.zip.exception.ZipException;
+import org.springframework.stereotype.Controller;
+
 /**
  * Root resource (exposed at "/" path)
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/upload")
 @OpenAPIDefinition(info = @Info(title = "Resources Catalog Upload", description = "Upload resource yaml"))
-@Singleton
+@Controller
 public class ResourceUploadServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ResourceUploadServlet.class);
@@ -83,9 +89,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     }
 
     public enum ResourceAuthorityTypeEnum {
-        NORMATIVE_TYPE_BE(NORMATIVE_TYPE_RESOURCE, true, false), USER_TYPE_BE(USER_TYPE_RESOURCE, true,
-                true), USER_TYPE_UI(USER_TYPE_RESOURCE_UI_IMPORT, false,
-                        true), CSAR_TYPE_BE(CSAR_TYPE_RESOURCE, true, true);
+        NORMATIVE_TYPE_BE(NORMATIVE_TYPE_RESOURCE, true, false), USER_TYPE_BE(USER_TYPE_RESOURCE, true, true), USER_TYPE_UI(USER_TYPE_RESOURCE_UI_IMPORT, false, true), CSAR_TYPE_BE(CSAR_TYPE_RESOURCE, true, true);
 
         private String urlPath;
         private boolean isBackEndImport, isUserTypeResource;
@@ -131,6 +135,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Resource already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadMultipart(
             @Parameter(description = "validValues: normative-resource / user-resource",
                     schema = @Schema(allowableValues = {NORMATIVE_TYPE_RESOURCE ,
@@ -141,7 +146,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             @Parameter(description = "resourceMetadata") @FormDataParam("resourceMetadata") String resourceInfoJsonString,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             // updateResourse Query Parameter if false checks if already exist
-            @DefaultValue("true") @QueryParam("createNewVersion") boolean createNewVersion) {
+            @DefaultValue("true") @QueryParam("createNewVersion") boolean createNewVersion) throws FileNotFoundException, ZipException {
 
         try {
 
@@ -164,7 +169,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), resourceInfoJsonString, resourceAuthorityEnum, file);
 
             // PayLoad Validations
-            if(!resourceAuthorityEnum.equals(ResourceAuthorityTypeEnum.CSAR_TYPE_BE)){
+            if(resourceAuthorityEnum != ResourceAuthorityTypeEnum.CSAR_TYPE_BE){
                 commonPayloadValidations(responseWrapper, yamlStringWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement());
 
                 specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request, resourceInfoJsonString, resourceAuthorityEnum);
@@ -179,7 +184,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Upload Resource");
             log.debug("upload resource failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 

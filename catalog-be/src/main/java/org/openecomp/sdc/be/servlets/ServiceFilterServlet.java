@@ -43,6 +43,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -109,6 +111,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Service Filter"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response addServiceFilterConstraint(@Parameter(description = "Service data", required = true) String data,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
@@ -174,6 +177,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Service Filter"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateServiceFilterConstraint(@Parameter(description = "Service data", required = true) String data,
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,
@@ -244,6 +248,7 @@ public class ServiceFilterServlet extends AbstractValidationsServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete Service Filter Constraint"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteServiceFilterConstraint(
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
             @Parameter(description = "Resource Instance Id") @PathParam("resourceInstanceId") String ciId,

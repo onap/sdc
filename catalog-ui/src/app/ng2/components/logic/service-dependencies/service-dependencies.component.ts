@@ -13,22 +13,22 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {Component, Input, Output, EventEmitter, ComponentRef} from '@angular/core';
-import {ModalService} from 'app/ng2/services/modal.service';
+import { Component, ComponentRef, EventEmitter, Input, Output } from '@angular/core';
 import {
-    Service,
-    ComponentInstance,
-    ModalModel,
     ButtonModel,
-    PropertyBEModel,
+    ComponentInstance,
     InputBEModel,
-    ServiceInstanceObject
+    ModalModel,
+    PropertyBEModel,
 } from 'app/models';
-import {ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
-import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
-import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
-import {TranslateService} from 'app/ng2/shared/translator/translate.service';
-import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
+import { ModalComponent } from 'app/ng2/components/ui/modal/modal.component';
+import { ServiceDependenciesEditorComponent } from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
+import { ModalService } from 'app/ng2/services/modal.service';
+import { ComponentGenericResponse } from 'app/ng2/services/responses/component-generic-response';
+import { TranslateService } from 'app/ng2/shared/translator/translate.service';
+import { ComponentMetadata } from '../../../../models/component-metadata';
+import { ServiceInstanceObject } from '../../../../models/service-instance-properties-and-interfaces';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 
 export class ConstraintObject {
     servicePropertyName: string;
@@ -48,12 +48,13 @@ export class ConstraintObject {
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class ConstraintObjectUI extends ConstraintObject{
     isValidValue: boolean;
 
     constructor(input?: any) {
         super(input);
-        if(input) {
+        if (input) {
             this.isValidValue = input.isValidValue ? input.isValidValue : input.value !== '';
         }
     }
@@ -63,7 +64,7 @@ export class ConstraintObjectUI extends ConstraintObject{
     }
 
     public isValidRule(isStatic) {
-        let isValidValue = isStatic ? this.isValidValue : true;
+        const isValidValue = isStatic ? this.isValidValue : true;
         return this.servicePropertyName != null && this.servicePropertyName !== ''
             && this.value != null && this.value !== '' && isValidValue;
     }
@@ -75,6 +76,7 @@ export const OPERATOR_TYPES = {
     LESS_THAN: 'less_than'
 };
 
+// tslint:disable-next-line:max-classes-per-file
 class I18nTexts {
     static uncheckModalTitle: string;
     static uncheckModalText: string;
@@ -89,21 +91,21 @@ class I18nTexts {
     static deleteRuleMsg: string;
 
     public static translateTexts(translateService) {
-            I18nTexts.uncheckModalTitle = translateService.translate("SERVICE_DEPENDENCY_UNCHECK_TITLE");
-            I18nTexts.uncheckModalText = translateService.translate("SERVICE_DEPENDENCY_UNCHECK_TEXT");
-            I18nTexts.modalApprove = translateService.translate("MODAL_APPROVE");
-            I18nTexts.modalCancel = translateService.translate("MODAL_CANCEL");
-            I18nTexts.modalCreate = translateService.translate("MODAL_CREATE");
-            I18nTexts.modalSave = translateService.translate("MODAL_SAVE");
-            I18nTexts.modalDelete = translateService.translate("MODAL_DELETE");
-            I18nTexts.addRuleTxt = translateService.translate("SERVICE_DEPENDENCY_ADD_RULE");
-            I18nTexts.updateRuleTxt = translateService.translate("SERVICE_DEPENDENCY_UPDATE_RULE");
-            I18nTexts.deleteRuleTxt = translateService.translate("SERVICE_DEPENDENCY_DELETE_RULE");
-            I18nTexts.deleteRuleMsg = translateService.translate("SERVICE_DEPENDENCY_DELETE_RULE_MSG");
+            I18nTexts.uncheckModalTitle = translateService.translate('SERVICE_DEPENDENCY_UNCHECK_TITLE');
+            I18nTexts.uncheckModalText = translateService.translate('SERVICE_DEPENDENCY_UNCHECK_TEXT');
+            I18nTexts.modalApprove = translateService.translate('MODAL_APPROVE');
+            I18nTexts.modalCancel = translateService.translate('MODAL_CANCEL');
+            I18nTexts.modalCreate = translateService.translate('MODAL_CREATE');
+            I18nTexts.modalSave = translateService.translate('MODAL_SAVE');
+            I18nTexts.modalDelete = translateService.translate('MODAL_DELETE');
+            I18nTexts.addRuleTxt = translateService.translate('SERVICE_DEPENDENCY_ADD_RULE');
+            I18nTexts.updateRuleTxt = translateService.translate('SERVICE_DEPENDENCY_UPDATE_RULE');
+            I18nTexts.deleteRuleTxt = translateService.translate('SERVICE_DEPENDENCY_DELETE_RULE');
+            I18nTexts.deleteRuleMsg = translateService.translate('SERVICE_DEPENDENCY_DELETE_RULE_MSG');
     }
 }
 
-
+// tslint:disable-next-line:max-classes-per-file
 @Component({
     selector: 'service-dependencies',
     templateUrl: './service-dependencies.component.html',
@@ -115,56 +117,55 @@ export class ServiceDependenciesComponent {
     modalInstance: ComponentRef<ModalComponent>;
     isDependent: boolean;
     isLoading: boolean;
-    parentServiceInputs: Array<InputBEModel> = [];
-    rulesList: Array<ConstraintObject> = [];
-    operatorTypes: Array<any>;
+    parentServiceInputs: InputBEModel[] = [];
+    rulesList: ConstraintObject[] = [];
+    operatorTypes: any[];
 
     @Input() readonly: boolean;
-    @Input() compositeService: Service;
+    @Input() compositeService: ComponentMetadata;
     @Input() currentServiceInstance: ComponentInstance;
-    @Input() selectedInstanceSiblings: Array<ServiceInstanceObject>;
-    @Input() selectedInstanceConstraints: Array<ConstraintObject> = [];
-    @Input() selectedInstanceProperties: Array<PropertyBEModel> = [];
-    @Output() updateRulesListEvent:EventEmitter<Array<ConstraintObject>> = new EventEmitter<Array<ConstraintObject>>();
+    @Input() selectedInstanceSiblings: ServiceInstanceObject[];
+    @Input() selectedInstanceConstraints: ConstraintObject[] = [];
+    @Input() selectedInstanceProperties: PropertyBEModel[] = [];
+    @Output() updateRulesListEvent: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
     @Output() loadRulesListEvent:EventEmitter<any> = new EventEmitter();
     @Output() dependencyStatus = new EventEmitter<boolean>();
 
-
-    constructor(private componentServiceNg2: ComponentServiceNg2, private ModalServiceNg2: ModalService, private translateService: TranslateService) {
+    constructor(private topologyTemplateService: TopologyTemplateService, private modalServiceNg2: ModalService, private translateService: TranslateService) {
     }
 
     ngOnInit() {
         this.isLoading = false;
         this.operatorTypes = [
-            {label: ">", value: OPERATOR_TYPES.GREATER_THAN},
-            {label: "<", value: OPERATOR_TYPES.LESS_THAN},
-            {label: "=", value: OPERATOR_TYPES.EQUAL}
+            {label: '>', value: OPERATOR_TYPES.GREATER_THAN},
+            {label: '<', value: OPERATOR_TYPES.LESS_THAN},
+            {label: '=', value: OPERATOR_TYPES.EQUAL}
         ];
-        this.componentServiceNg2.getComponentInputsWithProperties(this.compositeService).subscribe((result: ComponentGenericResponse) => {
+        this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((result: ComponentGenericResponse) => {
             this.parentServiceInputs = result.inputs;
         });
         this.loadRules();
-        this.translateService.languageChangedObservable.subscribe(lang => {
+        this.translateService.languageChangedObservable.subscribe((lang) => {
             I18nTexts.translateTexts(this.translateService);
         });
     }
 
     ngOnChanges(changes) {
-        if(changes.currentServiceInstance) {
+        if (changes.currentServiceInstance) {
             this.currentServiceInstance = changes.currentServiceInstance.currentValue;
             this.isDependent = this.currentServiceInstance.isDependent();
         }
-        if(changes.selectedInstanceConstraints && changes.selectedInstanceConstraints.currentValue !== changes.selectedInstanceConstraints.previousValue) {
+        if (changes.selectedInstanceConstraints && changes.selectedInstanceConstraints.currentValue !== changes.selectedInstanceConstraints.previousValue) {
             this.selectedInstanceConstraints = changes.selectedInstanceConstraints.currentValue;
             this.loadRules();
         }
     }
 
     public openRemoveDependencyModal = (): ComponentRef<ModalComponent> => {
-        let actionButton: ButtonModel = new ButtonModel(I18nTexts.modalApprove, 'blue', this.onUncheckDependency);
-        let cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
-        let modalModel: ModalModel = new ModalModel('sm', I18nTexts.uncheckModalTitle, I18nTexts.uncheckModalText, [actionButton, cancelButton]);
-        return this.ModalServiceNg2.createCustomModal(modalModel);
+        const actionButton: ButtonModel = new ButtonModel(I18nTexts.modalApprove, 'blue', this.onUncheckDependency);
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
+        const modalModel: ModalModel = new ModalModel('sm', I18nTexts.uncheckModalTitle, I18nTexts.uncheckModalText, [actionButton, cancelButton]);
+        return this.modalServiceNg2.createCustomModal(modalModel);
     }
 
     loadRules() {
@@ -178,60 +179,59 @@ export class ServiceDependenciesComponent {
     }
 
     onUncheckDependency = () => {
-        this.ModalServiceNg2.closeCurrentModal();
+        this.modalServiceNg2.closeCurrentModal();
         this.isLoading = true;
-        let isDepOrig = this.isDependent;
-        let rulesListOrig = this.rulesList;
+        const isDepOrig = this.isDependent;
+        const rulesListOrig = this.rulesList;
         this.currentServiceInstance.unmarkAsDependent();
         this.updateComponentInstance(isDepOrig, rulesListOrig);
     }
 
     onCloseRemoveDependencyModal = () => {
         this.isDependent = true;
-        this.ModalServiceNg2.closeCurrentModal();
+        this.modalServiceNg2.closeCurrentModal();
     }
 
     onCheckDependency = () => {
-        let isDepOrig = this.isDependent;
-        let rulesListOrig = this.rulesList;
+        const isDepOrig = this.isDependent;
+        const rulesListOrig = this.rulesList;
         this.currentServiceInstance.markAsDependent();
         this.rulesList = [];
         this.updateComponentInstance(isDepOrig, rulesListOrig);
     }
 
     onMarkAsDependent() {
-        if(!this.currentServiceInstance.isDependent()) {
+        if (!this.currentServiceInstance.isDependent()) {
             this.onCheckDependency();
-        }
-        else {
+        } else {
             this.openRemoveDependencyModal().instance.open();
         }
     }
 
-    updateComponentInstance(isDependent_origVal : boolean, rulesList_orig: Array<ConstraintObject>) {
+    updateComponentInstance(isDependentOrigVal: boolean, rulesListOrig: ConstraintObject[]) {
         this.isLoading = true;
-        this.componentServiceNg2.updateComponentInstance(this.compositeService, this.currentServiceInstance).subscribe((updatedServiceIns: ComponentInstance) => {
+        this.topologyTemplateService.updateComponentInstance(this.compositeService.uniqueId, this.currentServiceInstance).subscribe((updatedServiceIns: ComponentInstance) => {
             this.currentServiceInstance = new ComponentInstance(updatedServiceIns);
             this.isDependent = this.currentServiceInstance.isDependent();
             this.dependencyStatus.emit(this.isDependent);
-            if(this.isDependent) {
+            if (this.isDependent) {
                 this.loadRulesListEvent.emit();
             }
             this.isLoading = false;
-        }, err=> {
-            this.isDependent = isDependent_origVal;
-            this.rulesList = rulesList_orig;
+        }, (err) => {
+            this.isDependent = isDependentOrigVal;
+            this.rulesList = rulesListOrig;
             this.isLoading = false;
             console.log('An error has occurred.');
         });
     }
 
-    onAddRule () {
-        let cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.ModalServiceNg2.closeCurrentModal);
-        let saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', this.createRule, this.getDisabled);
-        let modalModel: ModalModel = new ModalModel('l', I18nTexts.addRuleTxt, '', [saveButton, cancelButton], 'standard');
-        this.modalInstance = this.ModalServiceNg2.createCustomModal(modalModel);
-        this.ModalServiceNg2.addDynamicContentToModal(
+    onAddRule() {
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', this.createRule, this.getDisabled);
+        const modalModel: ModalModel = new ModalModel('l', I18nTexts.addRuleTxt, '', [saveButton, cancelButton], 'standard');
+        this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+        this.modalServiceNg2.addDynamicContentToModal(
             this.modalInstance,
             ServiceDependenciesEditorComponent,
             {
@@ -247,16 +247,16 @@ export class ServiceDependenciesComponent {
     }
 
     onSelectRule(index: number) {
-        let cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.ModalServiceNg2.closeCurrentModal);
-        let saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateRules(), this.getDisabled);
-        let modalModel: ModalModel = new ModalModel('l', I18nTexts.updateRuleTxt, '', [saveButton, cancelButton], 'standard');
-        this.modalInstance = this.ModalServiceNg2.createCustomModal(modalModel);
-        this.ModalServiceNg2.addDynamicContentToModal(
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
+        const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateRules(), this.getDisabled);
+        const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateRuleTxt, '', [saveButton, cancelButton], 'standard');
+        this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+        this.modalServiceNg2.addDynamicContentToModal(
             this.modalInstance,
             ServiceDependenciesEditorComponent,
             {
                 serviceRuleIndex: index,
-                serviceRules: _.map(this.rulesList, rule => new ConstraintObjectUI(rule)),
+                serviceRules: _.map(this.rulesList, (rule) => new ConstraintObjectUI(rule)),
                 currentServiceName: this.currentServiceInstance.name,
                 operatorTypes: this.operatorTypes,
                 compositeServiceName: this.compositeService.name,
@@ -268,40 +268,40 @@ export class ServiceDependenciesComponent {
         this.modalInstance.instance.open();
     }
 
-    getDisabled = ():boolean =>  {
+    getDisabled = (): boolean =>  {
         return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
-    };
+    }
 
-    createRule  = ():void => {
-        let newRuleToCreate: ConstraintObject = new ConstraintObject(this.modalInstance.instance.dynamicContent.instance.currentRule);
+    createRule  = (): void => {
+        const newRuleToCreate: ConstraintObject = new ConstraintObject(this.modalInstance.instance.dynamicContent.instance.currentRule);
         this.isLoading = true;
-        this.componentServiceNg2.createServiceFilterConstraints(
-            this.compositeService,
-            this.currentServiceInstance,
+        this.topologyTemplateService.createServiceFilterConstraints(
+            this.compositeService.uniqueId,
+            this.currentServiceInstance.uniqueId,
             newRuleToCreate
         ).subscribe( (response) => {
             this.updateRulesListEvent.emit(response.properties);
             this.isLoading = false;
-        }, err=> {
+        }, (err) => {
             this.isLoading = false;
         });
-        this.ModalServiceNg2.closeCurrentModal();
-    };
+        this.modalServiceNg2.closeCurrentModal();
+    }
 
-    updateRules = ():void => {
-        let allRulesToUpdate: Array<ConstraintObject> = this.modalInstance.instance.dynamicContent.instance.serviceRulesList.map(rule => new ConstraintObject(rule));
+    updateRules = (): void => {
+        const allRulesToUpdate: ConstraintObject[] = this.modalInstance.instance.dynamicContent.instance.serviceRulesList.map((rule) => new ConstraintObject(rule));
         this.isLoading = true;
-        this.componentServiceNg2.updateServiceFilterConstraints(
-            this.compositeService,
-            this.currentServiceInstance,
+        this.topologyTemplateService.updateServiceFilterConstraints(
+            this.compositeService.uniqueId,
+            this.currentServiceInstance.uniqueId,
             allRulesToUpdate
         ).subscribe((response) => {
             this.updateRulesListEvent.emit(response.properties);
             this.isLoading = false;
-        }, err => {
+        }, (err) => {
             this.isLoading = false;
         });
-        this.ModalServiceNg2.closeCurrentModal();
+        this.modalServiceNg2.closeCurrentModal();
     }
 
     getSymbol(constraintOperator) {
@@ -312,23 +312,23 @@ export class ServiceDependenciesComponent {
         }
     }
 
-    onDeleteRule = (index:number) => {
+    onDeleteRule = (index: number) => {
         this.isLoading = true;
-        this.componentServiceNg2.deleteServiceFilterConstraints(
-            this.compositeService,
-            this.currentServiceInstance,
+        this.topologyTemplateService.deleteServiceFilterConstraints(
+            this.compositeService.uniqueId,
+            this.currentServiceInstance.uniqueId,
             index
         ).subscribe( (response) => {
             this.updateRulesListEvent.emit(response.properties);
             this.isLoading = false;
-        }, err=> {
+        }, (err) => {
             this.isLoading = false;
         });
-        this.ModalServiceNg2.closeCurrentModal();
-    };
+        this.modalServiceNg2.closeCurrentModal();
+    }
 
-    openDeleteModal = (index:number) => {
-        this.ModalServiceNg2.createActionModal(I18nTexts.deleteRuleTxt, I18nTexts.deleteRuleMsg,
+    openDeleteModal = (index: number) => {
+        this.modalServiceNg2.createActionModal(I18nTexts.deleteRuleTxt, I18nTexts.deleteRuleMsg,
             I18nTexts.modalDelete, () => this.onDeleteRule(index), I18nTexts.modalCancel).instance.open();
     }
 }
