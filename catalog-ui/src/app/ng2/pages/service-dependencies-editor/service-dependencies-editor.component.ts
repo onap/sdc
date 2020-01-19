@@ -14,20 +14,23 @@
  * permissions and limitations under the License.
  */
 import { Component } from '@angular/core';
-import {ServiceServiceNg2} from "app/ng2/services/component-services/service.service";
-import {ConstraintObjectUI, OPERATOR_TYPES} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
-import {ServiceInstanceObject, PropertyBEModel, InputBEModel} from 'app/models';
+import { InputBEModel, PropertyBEModel } from 'app/models';
+import { ConstraintObjectUI, OPERATOR_TYPES } from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
+import { DropdownValue } from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { ServiceServiceNg2 } from 'app/ng2/services/component-services/service.service';
 import { PROPERTY_DATA } from 'app/utils';
-import {DropdownValue} from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
+import { ServiceInstanceObject } from '../../../models/service-instance-properties-and-interfaces';
 
-export class UIDropDownSourceTypesElement extends DropdownValue{
-    options: Array<any>;
+export class UIDropDownSourceTypesElement extends DropdownValue {
+    options: any[];
     assignedLabel: string;
     type: string;
-    constructor(input?: any){
-        if(input) {
-            let value = input.value || '';
-            let label = input.label || '';
+    constructor(input?: any) {
+        if (input) {
+            const value = input.value || '';
+            const label = input.label || '';
+            // const hidden = input.hidden || '';
+            // const selected = input.selected || '';
             super(value, label);
             this.options = input.options;
             this.assignedLabel = input.assignedLabel;
@@ -36,10 +39,11 @@ export class UIDropDownSourceTypesElement extends DropdownValue{
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 @Component({
     selector: 'service-dependencies-editor',
     templateUrl: './service-dependencies-editor.component.html',
-    styleUrls:['./service-dependencies-editor.component.less'],
+    styleUrls: ['./service-dependencies-editor.component.less'],
     providers: [ServiceServiceNg2]
 })
 
@@ -47,44 +51,42 @@ export class ServiceDependenciesEditorComponent {
 
     input: {
         serviceRuleIndex: number,
-        serviceRules: Array<ConstraintObjectUI>,
+        serviceRules: ConstraintObjectUI[],
         compositeServiceName: string,
         currentServiceName: string,
-        parentServiceInputs: Array<InputBEModel>,
-        selectedInstanceProperties: Array<PropertyBEModel>,
-        operatorTypes: Array<DropdownValue>,
-        selectedInstanceSiblings: Array<ServiceInstanceObject>
+        parentServiceInputs: InputBEModel[],
+        selectedInstanceProperties: PropertyBEModel[],
+        operatorTypes: DropdownValue[],
+        selectedInstanceSiblings: ServiceInstanceObject[]
     };
     currentServiceName: string;
-    selectedServiceProperties: Array<PropertyBEModel>;
+    selectedServiceProperties: PropertyBEModel[];
     selectedPropertyObj: PropertyBEModel;
-    ddValueSelectedServicePropertiesNames: Array<DropdownValue>;
-    operatorTypes: Array<DropdownValue>;
-    sourceTypes: Array<UIDropDownSourceTypesElement> = [];
+    ddValueSelectedServicePropertiesNames: DropdownValue[];
+    operatorTypes: DropdownValue[];
+    sourceTypes: UIDropDownSourceTypesElement[] = [];
     currentRule: ConstraintObjectUI;
     currentIndex: number;
-    listOfValuesToAssign: Array<DropdownValue>;
-    listOfSourceOptions: Array<PropertyBEModel>;
+    listOfValuesToAssign: DropdownValue[];
+    listOfSourceOptions: PropertyBEModel[];
     assignedValueLabel: string;
-    serviceRulesList: Array<ConstraintObjectUI>;
-
+    serviceRulesList: ConstraintObjectUI[];
 
     SOURCE_TYPES = {
         STATIC: {label: 'Static', value: 'static'},
         SERVICE_PROPERTY: {label: 'Service Property', value: 'property'}
     };
 
-
     ngOnInit() {
         this.currentIndex = this.input.serviceRuleIndex;
         this.serviceRulesList = this.input.serviceRules;
         this.currentRule = this.serviceRulesList && this.input.serviceRuleIndex >= 0 ?
-            this.serviceRulesList[this.input.serviceRuleIndex]:
-            new ConstraintObjectUI({sourceName: this.SOURCE_TYPES.STATIC.value, sourceType: this.SOURCE_TYPES.STATIC.value, value: "", constraintOperator: OPERATOR_TYPES.EQUAL});
+            this.serviceRulesList[this.input.serviceRuleIndex] :
+            new ConstraintObjectUI({sourceName: this.SOURCE_TYPES.STATIC.value, sourceType: this.SOURCE_TYPES.STATIC.value, value: '', constraintOperator: OPERATOR_TYPES.EQUAL});
         this.currentServiceName = this.input.currentServiceName;
         this.operatorTypes = this.input.operatorTypes;
         this.selectedServiceProperties = this.input.selectedInstanceProperties;
-        this.ddValueSelectedServicePropertiesNames = _.map(this.input.selectedInstanceProperties, prop => new DropdownValue(prop.name, prop.name));
+        this.ddValueSelectedServicePropertiesNames = _.map(this.input.selectedInstanceProperties, (prop) => new DropdownValue(prop.name, prop.name));
         this.initSourceTypes();
         this.syncRuleData();
         this.updateSourceTypesRelatedValues();
@@ -100,7 +102,7 @@ export class ServiceDependenciesEditorComponent {
             type: this.SOURCE_TYPES.SERVICE_PROPERTY.value,
             options: this.input.parentServiceInputs
         });
-        _.forEach(this.input.selectedInstanceSiblings, sib =>
+        _.forEach(this.input.selectedInstanceSiblings, (sib) =>
             this.sourceTypes.push({
                 label: sib.name,
                 value: sib.name,
@@ -112,28 +114,27 @@ export class ServiceDependenciesEditorComponent {
     }
 
     syncRuleData() {
-        if(!this.currentRule.sourceName && this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value) {
+        if (!this.currentRule.sourceName && this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value) {
             this.currentRule.sourceName = this.SOURCE_TYPES.STATIC.value;
         }
-        this.selectedPropertyObj = _.find(this.selectedServiceProperties, prop => prop.name === this.currentRule.servicePropertyName);
+        this.selectedPropertyObj = _.find(this.selectedServiceProperties, (prop) => prop.name === this.currentRule.servicePropertyName);
         this.updateOperatorTypesList();
         this.updateSourceTypesRelatedValues();
     }
 
     updateOperatorTypesList() {
         if (this.selectedPropertyObj && PROPERTY_DATA.SIMPLE_TYPES_COMPARABLE.indexOf(this.selectedPropertyObj.type) === -1) {
-            this.operatorTypes = [{label: "=", value: OPERATOR_TYPES.EQUAL}];
+            this.operatorTypes = [{label: '=', value: OPERATOR_TYPES.EQUAL}];
             this.currentRule.constraintOperator = OPERATOR_TYPES.EQUAL;
-        }
-        else {
+        } else {
             this.operatorTypes = this.input.operatorTypes;
         }
     }
 
     updateSourceTypesRelatedValues() {
-        if(this.currentRule.sourceName) {
-            let selectedSourceType: UIDropDownSourceTypesElement = this.sourceTypes.find(
-                t => t.value === this.currentRule.sourceName && t.type === this.currentRule.sourceType
+        if (this.currentRule.sourceName) {
+            const selectedSourceType: UIDropDownSourceTypesElement = this.sourceTypes.find(
+                (t) => t.value === this.currentRule.sourceName && t.type === this.currentRule.sourceType
             );
             this.listOfSourceOptions = selectedSourceType.options || [];
             this.assignedValueLabel = selectedSourceType.assignedLabel || this.SOURCE_TYPES.STATIC.label;
@@ -150,7 +151,7 @@ export class ServiceDependenciesEditorComponent {
     }
 
     onServicePropertyChanged() {
-        this.selectedPropertyObj = _.find(this.selectedServiceProperties, prop => prop.name === this.currentRule.servicePropertyName);
+        this.selectedPropertyObj = _.find(this.selectedServiceProperties, (prop) => prop.name === this.currentRule.servicePropertyName);
         this.updateOperatorTypesList();
         this.filterOptionsByType();
         this.currentRule.value = '';
@@ -165,11 +166,11 @@ export class ServiceDependenciesEditorComponent {
     }
 
     filterOptionsByType() {
-        if(!this.selectedPropertyObj) {
+        if (!this.selectedPropertyObj) {
             this.listOfValuesToAssign = [];
             return;
         }
-        this.listOfValuesToAssign =  this.listOfSourceOptions.reduce((result, op:PropertyBEModel) => {
+        this.listOfValuesToAssign =  this.listOfSourceOptions.reduce((result, op: PropertyBEModel) => {
             if (op.type === this.selectedPropertyObj.type && (!op.schemaType || op.schemaType === this.selectedPropertyObj.schemaType)) {
                 result.push(new DropdownValue(op.name, op.name));
             }
@@ -182,11 +183,11 @@ export class ServiceDependenciesEditorComponent {
     }
 
     checkFormValidForSubmit() {
-        if(!this.serviceRulesList) { //for create modal
-            let isStatic = this.currentRule.sourceName === this.SOURCE_TYPES.STATIC.value;
+        if (!this.serviceRulesList) { // for create modal
+            const isStatic = this.currentRule.sourceName === this.SOURCE_TYPES.STATIC.value;
             return this.currentRule.isValidRule(isStatic);
         }
-        //for update all rules
-        return this.serviceRulesList.every(rule => rule.isValidRule(rule.sourceName === this.SOURCE_TYPES.STATIC.value));
+        // for update all rules
+        return this.serviceRulesList.every((rule) => rule.isValidRule(rule.sourceName === this.SOURCE_TYPES.STATIC.value));
     }
 }

@@ -167,7 +167,7 @@ public class PropertyConvertor {
                 }
 
                 innerConverter = type.getValueConverter();
-                if (ToscaPropertyType.STRING.equals(type) && valueStartsWithNonJsonChar(value)) {
+                if (ToscaPropertyType.STRING == type && valueStartsWithNonJsonChar(value)) {
                     return innerConverter.convertToToscaValue(value, innerType, dataTypes);
                 }
             }
@@ -199,7 +199,7 @@ public class PropertyConvertor {
                 }
             }
             Object convertedValue;
-            if (innerConverter != null && (ToscaPropertyType.MAP.equals(type) || ToscaPropertyType.LIST.equals(type))) {
+                if (innerConverter != null && (ToscaPropertyType.MAP == type || ToscaPropertyType.LIST == type)) {
                 convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
             } else if (isScalar) {
                 // complex json for scalar type

@@ -14,12 +14,12 @@
  * permissions and limitations under the License.
  */
 
-import { NgModule } from "@angular/core";
-import {CommonModule} from "@angular/common";
-import {PoliciesTableComponent} from "./policies-table.component";
-import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
-import {UiElementsModule} from "app/ng2/components/ui/ui-elements.module";
-import {GlobalPipesModule} from "../../../pipes/global-pipes.module";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { UiElementsModule } from 'app/ng2/components/ui/ui-elements.module';
+import { TranslateModule } from 'app/ng2/shared/translator/translate.module';
+import { GlobalPipesModule } from '../../../pipes/global-pipes.module';
+import { PoliciesTableComponent } from './policies-table.component';
 
 @NgModule({
     declarations: [

@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.model.InputDefinition;
 
+import java.util.List;
 @org.springframework.stereotype.Component
 public class InputsValuesMergingBusinessLogic {
 

@@ -29,8 +29,8 @@
       [rowHeight]="200"
       [reorderable]="false"
   >
-    <ngx-datatable-column prop="{{col.prop}}" [minWidth]="100" *ngFor="let col of columns">
-      <template let-column="column" height="100" ngx-datatable-header-template>
+    <ngx-datatable-column *ngFor="let col of columns" prop="{{col.prop}}" [minWidth]="100" >
+      <ng-template let-column="column" height="100" ngx-datatable-header-template>
             <span class="datatable-column-span">
               <b>{{col.name}}</b>
               <div *ngIf="canBeDeleted(col.name)" style="width: 45px !important; color: red; "
@@ -44,23 +44,23 @@
             placeholder='Filter column...'
             (keyup)='updateColumnFilter($event, col.prop)'
         />
-      </template>
+      </ng-template>
     </ngx-datatable-column>
 
     <ngx-datatable-column *ngIf="addNewColumn" class="datatable-white-body-cell" [minWidth]="220" [maxWidth]="220" [width]="220" >
-      <template ngx-datatable-header-template>
+      <ng-template ngx-datatable-header-template>
         <gab-column-provider [pathsAndNames]="pathsandnames" (onCancel)="hideAddNewColumn()" (onSave)="refresh()"></gab-column-provider>
-      </template>
-      <template class="datatable-white-body-cell" ngx-datatable-cell-template>
-      </template>
+      </ng-template>
+      <ng-template class="datatable-white-body-cell" ngx-datatable-cell-template>
+      </ng-template>
     </ngx-datatable-column>
 
     <ngx-datatable-column class="datatable-white-body-cell" [minWidth]="50" [maxWidth]="50" [width]="50" >
-      <template ngx-datatable-header-template>
+      <ng-template ngx-datatable-header-template>
         <div data-tests-id="gab-add-btn" class="add-btn add-btn-div" (click)="showAddNewColumn()">Add</div>
-      </template>
-      <template class="datatable-white-body-cell" ngx-datatable-cell-template>
-      </template>
+      </ng-template>
+      <ng-template class="datatable-white-body-cell" ngx-datatable-cell-template>
+      </ng-template>
     </ngx-datatable-column>
   </ngx-datatable>
 </div>

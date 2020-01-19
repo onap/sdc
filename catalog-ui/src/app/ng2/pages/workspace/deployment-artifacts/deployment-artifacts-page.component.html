@@ -1,0 +1,73 @@
+<div class="deployment-artifact-page" *ngIf="(workspaceState$ | async) as state">
+    <svg-icon-label *ngIf="!state.isViewOnly" class="add-artifact-btn" [clickable]="true" [mode]="'primary'" [labelPlacement]="'right'"
+                    [label]="'Add'" [name]="'plus'"
+                    (click)="addOrUpdateArtifact()"></svg-icon-label>
+    <ngx-datatable
+            columnMode="flex"
+            [headerHeight]="40"
+            [footerHeight]="'undefined'"
+            [reorderable]="false"
+            [swapColumns]="false"
+                [rows]="deploymentArtifacts$ | async"
+            #deploymentArtifactsTable>
+        <ngx-datatable-column [resizeable]="false" name="Name" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div *ngIf="row.generatedFromId" class="env-artifact-container">
+                     <div class="env-artifact"></div>
+                </div>
+                <span sdc-tooltip [tooltip-text]="row.artifactDisplayName" [tooltip-placement]="3" [attr.data-tests-id]="'artifactDisplayName_' + row.artifactDisplayName">{{row.artifactDisplayName}}</span>
+                <span *ngIf="row.description.length > 0" class="info">
+                    <svg-icon [clickable]="true" [name]="'comment'" [mode]="'primary2'" (click)="openPopOver('Description',row.description,{x:$event.pageX , y:$event.pageY },'bottom')"></svg-icon>
+                </span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="Type" [flexGrow]="0.6">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span sdc-tooltip [tooltip-text]="row.artifactType" [tooltip-placement]="3" [attr.data-tests-id]="'artifactType_' + row.artifactDisplayName">{{row.artifactType}}</span>
+            </ng-template>
+        </ngx-datatable-column> exactly 2 tosca artifacts
+        <ngx-datatable-column [resizeable]="false" name="Version" [flexGrow]="0.3">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span [attr.data-tests-id]="'artifactVersion_' + row.artifactDisplayName">{{ row.artifactVersion }}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="UUID" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span sdc-tooltip [tooltip-text]="row.artifactUUID" [tooltip-placement]="3">{{ row.artifactUUID }}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" [flexGrow]="0.6">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div class="download-artifact-button">
+                    <svg-icon *ngIf="!row.heatParameters?.length && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'edit-o'"
+                              testId="edit_{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              (click)="addOrUpdateArtifact(row, state.isViewOnly)"></svg-icon>
+                    <svg-icon *ngIf="row.heatParameters?.length && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'indesign_status'"
+                              testId="update_heat_params_{{row.artifactDisplayName}}" clickable="true" size="medium"
+                              (click)="updateEnvParams(row, state.isViewOnly)"></svg-icon>
+                    <svg-icon *ngIf="!row.isFromCsar && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'trash-o'"
+                              testId="delete_{{row.artifactDisplayName}}" clickable="true" size="medium" (click)="deleteArtifact(row)"></svg-icon>
+                    <svg-icon *ngIf="row.isGenericBrowseable()" class="action-icon" [mode]="'primary2'" [name]="'search-o'"
+                              testId="gab-{{row.artifactDisplayName}}" clickable="true" size="medium" (click)="openGenericArtifactBrowserModal(row)"></svg-icon>
+
+                    <!--Download-->
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template>
+                <div class="table-footer-container">
+                    <sdc-button *ngIf="!state.isViewOnly" [type]="'secondary'"
+                                [testId]="'add_artifact_btn'"
+                                [text]="'DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER' | translate"
+                                [icon_name]="'plus-circle-o'"
+                                [icon_mode] = "'secondary'"
+                                [icon_position]="'left'"
+                                (click)="addOrUpdateArtifact()">
+                    </sdc-button>
+                </div>
+            </ng-template>
+        </ngx-datatable-footer>
+    </ngx-datatable>
+</div>

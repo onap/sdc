@@ -52,6 +52,8 @@ public class SDCInstancesMigrationTest{
     private JanusGraphDao janusGraphDao;
     @Mock
     private NodeTemplateOperation nodeTemplateOperation;
+    @Mock
+    GraphVertex topologyTemplateVertex;
 
     
     @Test
@@ -79,10 +81,13 @@ public class SDCInstancesMigrationTest{
         vertexOrig.setJson(jsonComposition);
         vertexOrig.setType(ComponentTypeEnum.SERVICE);
         list.add(vertexOrig);
-        
+
+
+        when(janusGraphDao.getVertexById(any())).thenReturn(Either.left(vertexOrig));
         when(janusGraphDao.getByCriteria(any(), any(), any(), any() )).thenReturn(Either.left(list));
         when(nodeTemplateOperation.createInstanceEdge(vertexOrig, instance)).thenReturn(StorageOperationStatus.OK);
-        
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+
         MigrationResult migrate = instancesMigration.migrate();
         MigrationStatus migrationStatus = migrate.getMigrationStatus();
         assertEquals(MigrationStatus.COMPLETED, migrationStatus);

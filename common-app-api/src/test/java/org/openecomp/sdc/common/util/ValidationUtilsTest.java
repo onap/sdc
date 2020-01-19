@@ -19,6 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
+
 package org.openecomp.sdc.common.util;
 
 import com.google.common.collect.Lists;
@@ -526,7 +527,7 @@ public class ValidationUtilsTest {
 
 	@Test
 	public void checkValidateStringNotEmptyReturnsFalseIfStringIsNotEmpty() {
-		final String testString =  "test";
+		final String testString = "test";
 
 		boolean result = ValidationUtils.validateStringNotEmpty(testString);
 
@@ -802,10 +803,10 @@ public class ValidationUtilsTest {
 	}
 
 	@Test
-	public void validateIsUTF8StrReturnsFalseIfGivenStringContainsUtf8Character() {
-		final String testString = "testקString";
+	public void validateIsUTF8StrReturnsFalseIfGivenStringContainsUtf8Character(){
+final String testString="testקString";
 
-		boolean result = ValidationUtils.isUTF8Str(testString);
+		boolean result=ValidationUtils.isUTF8Str(testString);
 
 		assertFalse(result);
 	}
@@ -892,10 +893,10 @@ public class ValidationUtilsTest {
 	}
 
 	@Test
-	public void checkValidateArtifactLabelReturnsFalseIfLabelIsNotValid() {
-		final String testArtifactDisplayName = "test=notValid=Label";
+	public void checkValidateArtifactLabelReturnsFalseIfLabelIsNotValid(){
+final String testArtifactDisplayName="test=notValid=Label";
 
-		boolean result = ValidationUtils.validateArtifactLabel(testArtifactDisplayName);
+		boolean result=ValidationUtils.validateArtifactLabel(testArtifactDisplayName);
 
 		assertFalse(result);
 	}
@@ -910,13 +911,13 @@ public class ValidationUtilsTest {
 	}
 
 	@Test
-	public void checkValidateConsumerNameReturnsFalseIfLabelIsNotValid() {
-		final String testConsumerName = "test=notValid=ConsumerName";
+	public void checkValidateConsumerNameReturnsFalseIfLabelIsNotValid(){
+final String testConsumerName="test=notValid=ConsumerName";
 
-		boolean result = ValidationUtils.validateConsumerName(testConsumerName);
+		boolean result=ValidationUtils.validateConsumerName(testConsumerName);
 
 		assertFalse(result);
-	}
+		}
 
 	@Test
 	public void checkValidateConsumerPassSaltReturnsTrueIfLabelIsValid() {

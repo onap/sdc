@@ -48,10 +48,6 @@ exitOnError $? "copy_jvm_properties"
 
 ./scripts/updateSslParams.sh ${JETTY_BASE}
 exitOnError $? "updateSslParams_script"
-	 
-#ONLY FOR BE	 
-#cp /opt/app/sdc/config/catalog-${COMP}/elasticsearch.yml config
-#exitOnError $? "copy_elasticsearch_yaml_to_config"
 
 mkdir -p ${JETTY_BASE}/config/catalog-${COMP}
 cp -r /opt/app/sdc/config/catalog-${COMP}/*.xml ${JETTY_BASE}/config/catalog-${COMP}

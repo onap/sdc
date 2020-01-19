@@ -22,15 +22,17 @@ package org.openecomp.sdc.be.components.health;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
+import org.openecomp.sdc.be.components.impl.CADIHealthCheck;
 import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.impl.EsHealthCheckDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
@@ -39,6 +41,7 @@ import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
+import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.HealthCheckUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,31 +73,33 @@ import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
 @Component("healthCheckBusinessLogic")
 public class HealthCheckBusinessLogic {
 
-    protected static final String BE_HEALTH_LOG_CONTEXT = "be.healthcheck";
+    private static String hcUrl = "%s://%s:%s%s";
     private static final String BE_HEALTH_CHECK_STR = "beHealthCheck";
+    private static final String LOG_PARTNER_NAME = "SDC.BE";
     private static final String COMPONENT_CHANGED_MESSAGE = "BE Component %s state changed from %s to %s";
     private static final Logger log = Logger.getLogger(HealthCheckBusinessLogic.class.getName());
     private static final HealthCheckUtil healthCheckUtil = new HealthCheckUtil();
     private final ScheduledExecutorService healthCheckScheduler = newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "BE-Health-Check-Task"));
     private HealthCheckScheduledTask healthCheckScheduledTask = null;
+    private static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
+
     @Resource
     private JanusGraphGenericDao janusGraphGenericDao;
-    @Resource
-    private EsHealthCheckDao esHealthCheckDao;
     @Resource
     private DistributionEngineClusterHealth distributionEngineClusterHealth;
     @Resource
     private DmaapHealth dmaapHealth;
     @Resource
+    private DmaapProducerHealth dmaapProducerHealth;
+    @Resource
     private CassandraHealthCheck cassandraHealthCheck;
-    private final SwitchoverDetector switchoverDetector;
-    private volatile List<HealthCheckInfo> prevBeHealthCheckInfos = null;
-    private ScheduledFuture<?> scheduledFuture = null;
+    @Resource
+    private PortalHealthCheckBuilder portalHealthCheck;
 
     @Autowired
-    public HealthCheckBusinessLogic(SwitchoverDetector switchoverDetector) {
-        this.switchoverDetector = switchoverDetector;
-    }
+    private SwitchoverDetector switchoverDetector;
+    private volatile List<HealthCheckInfo> prevBeHealthCheckInfos = null;
+    private ScheduledFuture<?> scheduledFuture = null;
 
     @PostConstruct
     public void init() {
@@ -114,7 +119,7 @@ public class HealthCheckBusinessLogic {
     public boolean isDistributionEngineUp() {
 
         HealthCheckInfo healthCheckInfo = distributionEngineClusterHealth.getHealthCheckInfo();
-        return !healthCheckInfo.getHealthCheckStatus().equals(DOWN);
+        return healthCheckInfo.getHealthCheckStatus() != DOWN;
     }
 
     public Pair<Boolean, List<HealthCheckInfo>> getBeHealthCheckInfosStatus() {
@@ -129,103 +134,98 @@ public class HealthCheckBusinessLogic {
         List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
 
         //Dmaap
-        getDmaapHealthCheck(healthCheckInfos);
+        HealthCheckInfo info;
+        if ((info = getDmaapHealthCheck()) != null) {
+            healthCheckInfos.add(info);
+        }
+
+        //DmaapProducer
+        healthCheckInfos.add(getDmaapProducerHealthCheck());
 
         // BE
-        getBeHealthCheck(healthCheckInfos);
+        healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_BE, UP, getAppVersion(), "OK"));
 
         // JanusGraph
-        getJanusGraphHealthCheck(healthCheckInfos);
-        // ES
-        getEsHealthCheck(healthCheckInfos);
+        healthCheckInfos.add(getJanusGraphHealthCheck());
 
         // Distribution Engine
-        getDistributionEngineCheck(healthCheckInfos);
+        healthCheckInfos.add(distributionEngineClusterHealth.getHealthCheckInfo());
 
         //Cassandra
-        getCassandraHealthCheck(healthCheckInfos);
+        healthCheckInfos.add(getCassandraHealthCheck());
 
         // Amdocs
-        getAmdocsHealthCheck(healthCheckInfos);
+        healthCheckInfos.add(getHostedComponentsBeHealthCheck(HC_COMPONENT_ON_BOARDING, buildOnBoardingHealthCheckUrl()));
 
         //DCAE
-        getDcaeHealthCheck(healthCheckInfos);
+        healthCheckInfos.add(getHostedComponentsBeHealthCheck(HC_COMPONENT_DCAE, buildDcaeHealthCheckUrl()));
+
+        //ECOMP Portal
+        healthCheckInfos.add(portalHealthCheck.getHealthCheckInfo());
+
+        //CADI
+        healthCheckInfos.add(CADIHealthCheck.getCADIHealthCheckInstance().getCADIStatus());
 
         return healthCheckInfos;
     }
 
-    private List<HealthCheckInfo> getEsHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
-
-        // ES health check and version
-        String appVersion = getAppVersion();
-        HealthCheckStatus healthCheckStatus;
-        String description;
-
-        try {
-            healthCheckStatus = esHealthCheckDao.getClusterHealthStatus();
-        } catch (Exception e) {
-            healthCheckStatus = DOWN;
-            description = "ES cluster error: " + e.getMessage();
-            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_ES, healthCheckStatus, appVersion, description));
-            log.error(description, e);
-            return healthCheckInfos;
-        }
-        if (healthCheckStatus.equals(DOWN)) {
-            description = "ES cluster is down";
-        } else {
-            description = "OK";
-        }
-        healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_ES, healthCheckStatus, appVersion, description));
-        return healthCheckInfos;
-    }
-
-    private List<HealthCheckInfo> getBeHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
-        String appVersion = getAppVersion();
-        String description = "OK";
-        healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_BE, UP, appVersion, description));
-        return healthCheckInfos;
-    }
-
-    private List<HealthCheckInfo> getDmaapHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
+    private HealthCheckInfo getDmaapHealthCheck() {
+        HealthCheckInfo healthCheckInfo = null;
         if(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()){
             String appVersion = getAppVersion();
             dmaapHealth.getHealthCheckInfo().setVersion(appVersion);
-            healthCheckInfos.add(dmaapHealth.getHealthCheckInfo());
+            healthCheckInfo = dmaapHealth.getHealthCheckInfo();
         } else {
           log.debug("Dmaap health check disabled");
         }
-
-        return healthCheckInfos;
+        return healthCheckInfo;
     }
 
+    private HealthCheckInfo getDmaapProducerHealthCheck() {
+        HealthCheckInfo healthCheckInfo = null;
+        if(ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()){
+            String appVersion = getAppVersion();
+        dmaapProducerHealth.getHealthCheckInfo().setVersion(appVersion);
+        healthCheckInfo = dmaapProducerHealth.getHealthCheckInfo();
+        } else {
+          log.debug("Dmaap health check disabled");
+            String description = ("Dmaap health check disabled");
+            healthCheckInfo = new HealthCheckInfo(HC_COMPONENT_DMAAP_PRODUCER, DOWN, null, description);
+        }
+        return healthCheckInfo;
+    }
 
-    public List<HealthCheckInfo> getJanusGraphHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
+    public HealthCheckInfo getJanusGraphHealthCheck() {
         // JanusGraph health check and version
         String description;
         boolean isJanusGraphUp;
+        HealthCheckInfo healthCheckInfo = new HealthCheckInfo(HC_COMPONENT_JANUSGRAPH, DOWN, null, null);
 
         try {
             isJanusGraphUp = janusGraphGenericDao.isGraphOpen();
         } catch (Exception e) {
-            description = "JanusGraph error: ";
-            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_JANUSGRAPH, DOWN, null, description));
-            log.error(description, e);
-            return healthCheckInfos;
+            description = "JanusGraph error: " + e.getMessage();
+            healthCheckInfo.setDescription(description);
+            log.error(description);
+            return healthCheckInfo;
         }
         if (isJanusGraphUp) {
             description = "OK";
-            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_JANUSGRAPH, UP, null, description));
+            healthCheckInfo.setDescription(description);
+            healthCheckInfo.setHealthCheckStatus(HealthCheckInfo.HealthCheckStatus.UP);
+
         } else {
             description = "JanusGraph graph is down";
-            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_JANUSGRAPH, DOWN, null, description));
+            healthCheckInfo.setDescription(description);
         }
-        return healthCheckInfos;
+        return healthCheckInfo;
     }
 
-    private List<HealthCheckInfo> getCassandraHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
+    private HealthCheckInfo getCassandraHealthCheck() {
 
         String description;
         boolean isCassandraUp = false;
+        HealthCheckInfo healthCheckInfo = new HealthCheckInfo(HC_COMPONENT_CASSANDRA, DOWN, null, null);
 
         try {
             isCassandraUp = cassandraHealthCheck.getCassandraStatus();
@@ -235,33 +235,15 @@ public class HealthCheckBusinessLogic {
         }
         if (isCassandraUp) {
             description = "OK";
-            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CASSANDRA, UP, null, description));
+//            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CASSANDRA, UP, null, description));
+            healthCheckInfo.setHealthCheckStatus(HealthCheckStatus.UP);
+            healthCheckInfo.setDescription(description);
         } else {
             description = "Cassandra is down";
-            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CASSANDRA, DOWN, null, description));
+//            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CASSANDRA, DOWN, null, description));
+            healthCheckInfo.setDescription(description);
         }
-        return healthCheckInfos;
-
-    }
-
-    private void getDistributionEngineCheck(List<HealthCheckInfo> healthCheckInfos) {
-
-        HealthCheckInfo healthCheckInfo = distributionEngineClusterHealth.getHealthCheckInfo();
-
-        healthCheckInfos.add(healthCheckInfo);
-
-    }
-
-    private List<HealthCheckInfo> getAmdocsHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
-        HealthCheckInfo beHealthCheckInfo = getHostedComponentsBeHealthCheck(HC_COMPONENT_ON_BOARDING, buildOnBoardingHealthCheckUrl());
-        healthCheckInfos.add(beHealthCheckInfo);
-        return healthCheckInfos;
-    }
-
-    private List<HealthCheckInfo> getDcaeHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
-        HealthCheckInfo beHealthCheckInfo = getHostedComponentsBeHealthCheck(HC_COMPONENT_DCAE, buildDcaeHealthCheckUrl());
-        healthCheckInfos.add(beHealthCheckInfo);
-        return healthCheckInfos;
+        return healthCheckInfo;
     }
 
     private HealthCheckInfo getHostedComponentsBeHealthCheck(String componentName, String healthCheckUrl) {
@@ -277,35 +259,26 @@ public class HealthCheckBusinessLogic {
                 int statusCode = httpResponse.getStatusCode();
                 String aggDescription = "";
 
-                if (statusCode == SC_OK || statusCode == SC_INTERNAL_SERVER_ERROR) {
+                if ((statusCode == SC_OK || statusCode == SC_INTERNAL_SERVER_ERROR) && !componentName.equals(HC_COMPONENT_ECOMP_PORTAL)) {
                     String response = httpResponse.getResponse();
                     log.trace("{} Health Check response: {}", componentName, response);
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, Object> healthCheckMap = mapper.readValue(response, new TypeReference<Map<String, Object>>() {
                     });
-                    version = healthCheckMap.get("sdcVersion") != null ? healthCheckMap.get("sdcVersion").toString() : null;
+                    version = getVersion(healthCheckMap);
                     if (healthCheckMap.containsKey("componentsInfo")) {
                         componentsInfo = mapper.convertValue(healthCheckMap.get("componentsInfo"), new TypeReference<List<HealthCheckInfo>>() {
                         });
                     }
-
-                    if (!componentsInfo.isEmpty()) {
-                        aggDescription = healthCheckUtil.getAggregateDescription(componentsInfo, null);
-                    } else {
-                        componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, null));
-                    }
+                    aggDescription = getAggDescription(componentsInfo, aggDescription);
                 } else {
                     log.trace("{} Health Check Response code: {}", componentName, statusCode);
                 }
 
                 if (statusCode != SC_OK) {
                     healthCheckStatus = DOWN;
-                    description = aggDescription.length() > 0
-                            ? aggDescription
-                            : componentName + " is Down, specific reason unknown";//No inner component returned DOWN, but the status of HC is still DOWN.
-                    if (componentsInfo.isEmpty()) {
-                        componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
-                    }
+                    description = getDescription(componentName, aggDescription);
+                    setDescriptionToObject(description, componentsInfo);
                 } else {
                     healthCheckStatus = UP;
                     description = "OK";
@@ -315,17 +288,47 @@ public class HealthCheckBusinessLogic {
                 log.error("{} unexpected response: ", componentName, e);
                 healthCheckStatus = DOWN;
                 description = componentName + " unexpected response: " + e.getMessage();
-                if (componentsInfo != null && componentsInfo.isEmpty()) {
-                    componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
-                }
+                addToHealthCheckInfoObject(description, componentsInfo);
             }
         } else {
             healthCheckStatus = DOWN;
             description = componentName + " health check Configuration is missing";
             componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
         }
-
         return new HealthCheckInfo(componentName, healthCheckStatus, version, description, componentsInfo);
+    }
+
+    private void addToHealthCheckInfoObject(String description, List<HealthCheckInfo> componentsInfo) {
+        if (componentsInfo != null && componentsInfo.isEmpty()) {
+            componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
+        }
+    }
+
+    private void setDescriptionToObject(String description, List<HealthCheckInfo> componentsInfo) {
+        if (componentsInfo.isEmpty()) {
+            componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
+        }
+    }
+
+    private String getDescription(String componentName, String aggDescription) {
+        String description;
+        description = aggDescription.length() > 0
+                ? aggDescription
+                : componentName + " is Down, specific reason unknown";//No inner component returned DOWN, but the status of HC is still DOWN.
+        return description;
+    }
+
+    private String getVersion(Map<String, Object> healthCheckMap) {
+        return healthCheckMap.get("sdcVersion") != null ? healthCheckMap.get("sdcVersion").toString() : null;
+    }
+
+    private String getAggDescription(List<HealthCheckInfo> componentsInfo, String aggDescription) {
+        if (!componentsInfo.isEmpty()) {
+            aggDescription = healthCheckUtil.getAggregateDescription(componentsInfo);
+        } else {
+            componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, null));
+        }
+        return aggDescription;
     }
 
     @PreDestroy
@@ -364,92 +367,93 @@ public class HealthCheckBusinessLogic {
                 int prevSize = prevValues.size();
 
                 if (currentSize != prevSize) {
-
                     result = true; //extra/missing component
-
-                    Map<String, HealthCheckStatus> notPresent = null;
-                    if (currentValues.keySet().containsAll(prevValues.keySet())) {
-                        notPresent = new HashMap<>(currentValues);
-                        notPresent.keySet().removeAll(prevValues.keySet());
-                    } else {
-                        notPresent = new HashMap<>(prevValues);
-                        notPresent.keySet().removeAll(currentValues.keySet());
-                    }
-
-                    for (String component : notPresent.keySet()) {
-                        logAlarm(format(COMPONENT_CHANGED_MESSAGE, component, prevValues.get(component), currentValues.get(component)));
-                    }
-
+                    updateHealthCheckStatusMap(currentValues, prevValues);
                 } else {
-
-                    for (Entry<String, HealthCheckStatus> entry : currentValues.entrySet()) {
-                        String key = entry.getKey();
-                        HealthCheckStatus value = entry.getValue();
-
-                        if (!prevValues.containsKey(key)) {
-                            result = true; //component missing
-                            logAlarm(format(COMPONENT_CHANGED_MESSAGE, key, prevValues.get(key), currentValues.get(key)));
-                            break;
-                        }
-
-                        HealthCheckStatus prevHealthCheckStatus = prevValues.get(key);
-
-                        if (value != prevHealthCheckStatus) {
-                            result = true; //component status changed
-                            logAlarm(format(COMPONENT_CHANGED_MESSAGE, key, prevValues.get(key), currentValues.get(key)));
-                            break;
-                        }
-                    }
+                    result = isHealthStatusChanged(result, currentValues, prevValues);
                 }
             }
 
         } else if (beHealthCheckInfos == null && prevBeHealthCheckInfos == null) {
             result = false;
         } else {
-            logAlarm(format(COMPONENT_CHANGED_MESSAGE, "", prevBeHealthCheckInfos == null ? "null" : "true", prevBeHealthCheckInfos == null ? "true" : "null"));
+            writeLogAlarm(prevBeHealthCheckInfos);
             result = true;
         }
 
         return result;
     }
 
-    private String buildOnBoardingHealthCheckUrl() {
+    private void writeLogAlarm(List<HealthCheckInfo> prevBeHealthCheckInfos) {
+        logAlarm(format(COMPONENT_CHANGED_MESSAGE, "", prevBeHealthCheckInfos == null ? "null" : "true", prevBeHealthCheckInfos == null ? "true" : "null"));
+    }
 
-        Configuration.OnboardingConfig onboardingConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getOnboarding();
+    private boolean isHealthStatusChanged(boolean result, Map<String, HealthCheckStatus> currentValues, Map<String, HealthCheckStatus> prevValues) {
+        for (Entry<String, HealthCheckStatus> entry : currentValues.entrySet()) {
+            String key = entry.getKey();
+            HealthCheckStatus value = entry.getValue();
 
-        if (onboardingConfig != null) {
-            String protocol = onboardingConfig.getProtocol();
-            String host = onboardingConfig.getHost();
-            Integer port = onboardingConfig.getPort();
-            String uri = onboardingConfig.getHealthCheckUri();
+            if (!prevValues.containsKey(key)) {
+                result = true; //component missing
+                logAlarm(format(COMPONENT_CHANGED_MESSAGE, key, prevValues.get(key), currentValues.get(key)));
+                break;
+            }
 
-            return protocol + "://" + host + ":" + port + uri;
+            HealthCheckStatus prevHealthCheckStatus = prevValues.get(key);
+
+            if (value != prevHealthCheckStatus) {
+                result = true; //component status changed
+                logAlarm(format(COMPONENT_CHANGED_MESSAGE, key, prevValues.get(key), currentValues.get(key)));
+                break;
+            }
+        }
+        return result;
+    }
+
+    private void updateHealthCheckStatusMap(Map<String, HealthCheckStatus> currentValues, Map<String, HealthCheckStatus> prevValues) {
+        Map<String, HealthCheckStatus> notPresent;
+        if (currentValues.keySet().containsAll(prevValues.keySet())) {
+            notPresent = new HashMap<>(currentValues);
+            notPresent.keySet().removeAll(prevValues.keySet());
+        } else {
+            notPresent = new HashMap<>(prevValues);
+            notPresent.keySet().removeAll(currentValues.keySet());
         }
 
-        log.error("onboarding health check configuration is missing.");
+        for (String component : notPresent.keySet()) {
+            logAlarm(format(COMPONENT_CHANGED_MESSAGE, component, prevValues.get(component), currentValues.get(component)));
+        }
+    }
+    @VisibleForTesting
+    String buildOnBoardingHealthCheckUrl() {
+
+        Configuration.OnboardingConfig onboardingConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getOnboarding();
+        if (onboardingConfig != null) {
+            return String.format(hcUrl, onboardingConfig.getProtocol(), onboardingConfig.getHost(),
+                    onboardingConfig.getPort(),onboardingConfig.getHealthCheckUri());
+        }
+        log.error("Onboarding health check configuration is missing.");
         return null;
     }
 
-    private String buildDcaeHealthCheckUrl() {
+    @VisibleForTesting
+    String buildDcaeHealthCheckUrl() {
 
         Configuration.DcaeConfig dcaeConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getDcae();
 
         if (dcaeConfig != null) {
-            String protocol = dcaeConfig.getProtocol();
-            String host = dcaeConfig.getHost();
-            Integer port = dcaeConfig.getPort();
-            String uri = dcaeConfig.getHealthCheckUri();
-
-            return protocol + "://" + host + ":" + port + uri;
+            return String.format(hcUrl, dcaeConfig.getProtocol(), dcaeConfig.getHost(),
+                    dcaeConfig.getPort(),dcaeConfig.getHealthCheckUri());
         }
 
-        log.error("dcae health check configuration is missing.");
+        log.error("DCAE health check configuration is missing.");
         return null;
     }
 
     public class HealthCheckScheduledTask implements Runnable {
         @Override
         public void run() {
+            mdcFieldsHandler.addInfoForErrorAndDebugLogging(LOG_PARTNER_NAME);
             Configuration config = ConfigurationManager.getConfigurationManager().getConfiguration();
             log.trace("Executing BE Health Check Task");
 
@@ -475,6 +479,8 @@ public class HealthCheckBusinessLogic {
                 BeEcompErrorManager.getInstance().logBeHealthCheckError(BE_HEALTH_CHECK_STR);
             }
         }
+
+
     }
 
 }

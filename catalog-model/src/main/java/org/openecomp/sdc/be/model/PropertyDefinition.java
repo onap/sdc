@@ -20,10 +20,19 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.openecomp.sdc.be.dao.utils.CollectionUtils;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.be.dao.utils.CollectionUtils.safeGetList;
+
 
 
 public class PropertyDefinition extends PropertyDataDefinition
@@ -48,7 +57,7 @@ public class PropertyDefinition extends PropertyDataDefinition
         private String propertyName;
         private GroupInstancePropertyValueUpdateBehavior updateBehavior;
 
-        private PropertyNames(String propertyName,GroupInstancePropertyValueUpdateBehavior updateBehavior){
+        PropertyNames(String propertyName,GroupInstancePropertyValueUpdateBehavior updateBehavior){
             this.propertyName = propertyName;
             this.updateBehavior = updateBehavior;
         }
@@ -62,8 +71,8 @@ public class PropertyDefinition extends PropertyDataDefinition
         }
         /**
          * finds PropertyNames according received string name
-         * @param name
-         * @return
+         * @param name of the property
+         * @return PropertyNames found by received property name
          */
         public static PropertyNames findName(String name){
             for (PropertyNames e : PropertyNames.values()) {
@@ -87,7 +96,7 @@ public class PropertyDefinition extends PropertyDataDefinition
         String levelName;
         int levelNumber;
 
-        private GroupInstancePropertyValueUpdateBehavior(String name, int levelNumber){
+        GroupInstancePropertyValueUpdateBehavior(String name, int levelNumber){
             this.levelName = name;
             this.levelNumber = levelNumber;
         }
@@ -109,26 +118,59 @@ public class PropertyDefinition extends PropertyDataDefinition
 
     public PropertyDefinition(PropertyDataDefinition p) {
         super(p);
+        getConstraints();
     }
 
     public PropertyDefinition(PropertyDefinition pd) {
         super(pd);
-        this.setConstraints(pd.getConstraints());
+        setConstraints(pd.getConstraints());
     }
 
     public List<PropertyConstraint> getConstraints() {
+        if(CollectionUtils.isEmpty(constraints)){
+            constraints = deserializePropertyConstraints(findConstraints());
+        }
         return constraints;
     }
 
     public List<PropertyConstraint> safeGetConstraints() {
-        return CollectionUtils.safeGetList(constraints);
+        return safeGetList(constraints);
     }
 
     public void setConstraints(List<PropertyConstraint> constraints) {
+        setPropertyConstraints(serializePropertyConstraints(constraints));
         this.constraints = constraints;
     }
 
+    private List<PropertyConstraint> deserializePropertyConstraints(List<String> constraints) {
+        if(CollectionUtils.isNotEmpty(constraints)){
+            Type constraintType = new TypeToken<PropertyConstraint>() {
+            }.getType();
+            Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintDeserialiser()).create();
+            return constraints.stream().map(c -> (PropertyConstraint)gson.fromJson(c, constraintType)).collect(Collectors.toList());
+        }
+        return null;
+    }
 
+    private List<String> serializePropertyConstraints(List<PropertyConstraint> constraints) {
+        if(CollectionUtils.isNotEmpty(constraints)){
+            Type constraintType = new TypeToken<PropertyConstraint>() {
+            }.getType();
+            Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintSerialiser()).create();
+            return constraints.stream().map(gson::toJson).collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    private List<String> findConstraints() {
+        if(CollectionUtils.isNotEmpty(getPropertyConstraints())){
+            return getPropertyConstraints();
+        }
+        if(getSchemaProperty()!= null){
+            return getSchemaProperty().getPropertyConstraints();
+        }
+        return null;
+    }
 
     @Override
     public String toString() {

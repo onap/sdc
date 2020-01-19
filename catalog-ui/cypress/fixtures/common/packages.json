@@ -1,0 +1,17 @@
+{
+  "listCount": 1,
+  "results": [
+    {
+      "description": "TEST",
+      "vspName": "TEST",
+      "version": "1.0",
+      "packageId": "c7deaf9e75a34229b4fade10634007d7",
+      "category": "resourceNewCategory.allotted resource",
+      "subCategory": "resourceNewCategory.allotted resource.tunnel xconnect",
+      "vendorName": "TEST",
+      "vendorRelease": "1.0",
+      "packageType": "CSAR",
+      "resourceType": "VF"
+    }
+  ]
+}

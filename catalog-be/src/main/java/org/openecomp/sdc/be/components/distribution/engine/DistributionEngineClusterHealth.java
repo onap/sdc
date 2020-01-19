@@ -66,7 +66,8 @@ public class DistributionEngineClusterHealth {
         OK(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UP, null, ClusterStatusDescription.OK.getDescription())),
         UNAVAILABLE(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.UNAVAILABLE.getDescription())),
         NOT_CONFIGURED(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.NOT_CONFIGURED.getDescription())),
-        DISABLED(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription()));
+        DISABLED(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription())),
+        UNKNOWN(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UNKNOWN, null, ClusterStatusDescription.UNKNOWN.getDescription()));
 
         private HealthCheckInfo healthCheckInfo;
 
@@ -80,7 +81,7 @@ public class DistributionEngineClusterHealth {
 
     }
 
-    private HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
+    private HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNKNOWN.getHealthCheckInfo();
 
     private Map<String, AtomicBoolean> envNamePerStatus = null;
 
@@ -97,7 +98,7 @@ public class DistributionEngineClusterHealth {
 
     public enum ClusterStatusDescription {
 
-        OK("OK"), UNAVAILABLE("U-EB cluster is not available"), NOT_CONFIGURED("U-EB cluster is not configured"), DISABLED("DE is disabled in configuration");
+        OK("OK"), UNAVAILABLE("U-EB cluster is not available"), NOT_CONFIGURED("U-EB cluster is not configured"), DISABLED("DE is disabled in configuration"), UNKNOWN("U-EB cluster is currently unknown (try again in few minutes)");
 
         private String desc;
 

@@ -1,0 +1,38 @@
+<div class="requirements-table">
+    <ngx-datatable #capabilitiesTable 
+        columnMode="flex" 
+        [headerHeight]="40"  
+        [rowHeight]="35"
+        [rowClass]="getRowClass"
+        [rows]="requirements">
+        <ngx-datatable-column  name="Name" [flexGrow]="1" [resizeable]="false" >
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span [ngStyle]="{'cursor':row.isCreatedManually ? 'pointer' : 'null' }" data-tests-id="row.name" sdc-tooltip [tooltip-text]="row.name" [tooltip-placement]="3" (click)="editRequirement(row)">{{row.name}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Capability" [flexGrow]="1" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span data-tests-id="row.capability" sdc-tooltip [tooltip-text]="row.capability" [tooltip-placement]="3">{{row.capability ? row.capability.substring("tosca.capabilities.".length) : ''}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Node" [flexGrow]="1" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span data-tests-id="row.node" sdc-tooltip [tooltip-text]="row.node" [tooltip-placement]="3">{{row.node ? row.node.substring("tosca.nodes.".length) : ''}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Relationship" [flexGrow]="1" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span data-tests-id="row.relationship" sdc-tooltip [tooltip-text]="row.relationship" [tooltip-placement]="3">{{row.relationship ? row.relationship.substring("tosca.relationships.".length): ''}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Connected To" [flexGrow]="1" [resizeable]="false">
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="Occurrences" [flexGrow]="1" [prop]="'minOccurrences'" [resizeable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span data-tests-id="row.minOccurrences+','+row.maxOccurrences" sdc-tooltip 
+                    [tooltip-text]="row.minOccurrences+','+row.maxOccurrences" [tooltip-placement]="3">
+                    {{row.minOccurrences}},{{row.maxOccurrences}}</span>
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+</div>

@@ -38,7 +38,7 @@ public class Utils {
 
 	private static Logger log = Logger.getLogger(Utils.class.getName());
 
-	public final static String NEW_LINE = System.getProperty("line.separator");
+	public static String NEW_LINE = System.getProperty("line.separator");
 
 	public static Response buildOkResponse(
 			/*

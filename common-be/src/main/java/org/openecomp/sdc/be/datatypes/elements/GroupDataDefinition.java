@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -33,9 +34,9 @@ import static java.util.Collections.emptyMap;
 
 
 public class GroupDataDefinition extends ToscaDataDefinition {
-
+    @JsonInclude
     private String typeUid;
-
+    @JsonInclude
     private Integer propertyValueCounter = 0;
 
     public GroupDataDefinition() {

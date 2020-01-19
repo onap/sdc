@@ -21,6 +21,7 @@
 package org.openecomp.sdc;
 
 import fj.data.Either;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -92,6 +93,10 @@ public class ElementOperationMock implements IElementOperation {
 
     }
 
+    /*
+     * @Override public Either<Category, ActionStatus> getCategory(String name) { if (name.equals(resourceCategory.getName())){ return Either.left(resourceCategory); } else { return Either.right(ActionStatus.CATEGORY_NOT_FOUND); } }
+     */
+
     @Override
     public Either<List<Tag>, ActionStatus> getAllTags() {
         // TODO Auto-generated method stub
@@ -123,7 +128,7 @@ public class ElementOperationMock implements IElementOperation {
     }
 
     @Override
-    public Either<Integer, ActionStatus> getDefaultHeatTimeout() {
+    public Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> getDefaultHeatTimeout() {
         // TODO Auto-generated method stub
         return null;
     }

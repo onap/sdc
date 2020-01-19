@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`environment parameters component should match current snapshot of env-params component 1`] = `
+<env-params
+  cacheService={[Function Object]}
+  clearCurrentValue={[Function Function]}
+  copiedWorkingArtifactHeatParameters={[Function Array]}
+  defaultDeploymentTimeout={[Function Number]}
+  displayRegexValid={[Function String]}
+  maxDeploymentTimeout={[Function Number]}
+  minDeploymentTimeout={[Function Number]}
+  onValidationChange={[Function Subject]}
+  onValidityChange={[Function Function]}
+  openPopOver={[Function Function]}
+  popoverService={[Function Object]}
+  textArea="undefined"
+>
+  <div
+    class="filter-bar"
+  >
+    <sdc-filter-bar />
+  </div><ngx-datatable
+    class="material ngx-datatable"
+  >
+    <div
+      visibilityobserver=""
+    >
+      
+      <datatable-body
+        class="datatable-body"
+      >
+        <datatable-selection>
+          
+          
+          
+        </datatable-selection>
+      </datatable-body>
+      
+    </div>
+  </ngx-datatable>
+</env-params>
+`;

@@ -26,7 +26,10 @@ import {GroupByPipe} from "./groupBy.pipe";
 import {ResourceNamePipe} from "./resource-name.pipe";
 import {NgModule} from "@angular/core";
 import {SafeUrlSanitizerPipe} from "./safeUrlSanitizer.pipe";
-import {OrderByPipe} from "./orderBy.pipe";
+import {EntityFilterPipe} from "./entity-filter.pipe";
+import {KeyValuePipe} from "./key-value.pipe";
+import {PropertiesOrderByPipe} from "./properties-order-by.pipe";
+import {OrderByPipe} from "./order-by.pipe";
 
 @NgModule({
     declarations: [
@@ -36,6 +39,9 @@ import {OrderByPipe} from "./orderBy.pipe";
         SafeUrlSanitizerPipe,
         SearchFilterPipe,
         ResourceNamePipe,
+        EntityFilterPipe,
+        KeyValuePipe,
+        PropertiesOrderByPipe,
         OrderByPipe
     ],
     exports: [
@@ -45,7 +51,20 @@ import {OrderByPipe} from "./orderBy.pipe";
         SafeUrlSanitizerPipe,
         SearchFilterPipe,
         ResourceNamePipe,
-        OrderByPipe
+        EntityFilterPipe,
+        PropertiesOrderByPipe,
+        OrderByPipe,
+        KeyValuePipe
+    ],
+    providers: [
+        ContentAfterLastDotPipe,
+        GroupByPipe,
+        KeysPipe,
+        SafeUrlSanitizerPipe,
+        SearchFilterPipe,
+        ResourceNamePipe,
+        EntityFilterPipe,
+        KeyValuePipe
     ]
 })
 

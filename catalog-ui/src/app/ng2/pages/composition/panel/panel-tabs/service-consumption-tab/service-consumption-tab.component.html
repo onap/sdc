@@ -1,0 +1,15 @@
+<ng2-expand-collapse state="0">
+    <header sdc-tooltip tooltip-text="{{input.title}}">{{input.title}}</header>
+    <content>
+        <service-consumption
+        [parentService]="metadata"
+        [selectedService]="component"
+        [selectedServiceInstanceId]="component.uniqueId"
+        [instancesMappedList]="instancesMappedList"
+        [parentServiceInputs]="componentInputs"
+        [instancesCapabilitiesMap]="instancesCapabilitiesMap"
+        [readonly]="isViewOnly">
+        </service-consumption>
+    </content>
+</ng2-expand-collapse>
+

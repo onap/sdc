@@ -5,7 +5,8 @@ import {FormsModule} from "@angular/forms";
 import {FormElementsModule} from "app/ng2/components/ui/form-components/form-elements.module";
 import {UiElementsModule} from "app/ng2/components/ui/ui-elements.module";
 import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
-import {SdcUiComponentsModule} from "sdc-ui/lib/angular/index";
+import { SdcUiComponentsModule } from 'onap-ui-angular';
+
 
 @NgModule({
     declarations: [

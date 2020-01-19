@@ -19,7 +19,7 @@
      [style.left]="left + 'px'"
      [class.in]="isIn"
      [class.fade]="animation"
-     style="display: block"
+     [style.display] = "displayType"
      role="popover"
      [ngClass]="{'hide-arrow':hideArrow}">
     <div [hidden]="!closeOnMouseOutside" class="virtual-area"></div>
@@ -29,13 +29,11 @@
         <span class="close-button" (click)="popover.hide()"></span>
     </div>
     <ng-content></ng-content>
-    <div class="popover-footer">
+    <div class="popover-footer" *ngIf="buttons">
         <button *ngFor="let buttonName of buttonsNames"
-                class="tlv-btn {{buttons[buttonName].cssClass}}" 
+                class="tlv-btn {{buttons[buttonName].cssClass}}"
                 [attr.data-tests-id]="'filter-' + buttons[buttonName].text.toLowerCase() + '-button'"
                 [disabled] = "buttons[buttonName].getDisabled && buttons[buttonName].getDisabled()"
                 (click) = "buttons[buttonName].callback()">{{buttons[buttonName].text}}</button>
     </div>
 </div>
-
-

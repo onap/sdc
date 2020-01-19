@@ -50,6 +50,7 @@ public class ReportManager {
             initCsvFile();
             initReportFile();
         } catch (IOException e) {
+            e.printStackTrace();
             log.info("Init file failed - {}", e.getClass().getSimpleName(), e);
         }
     }
@@ -98,6 +99,7 @@ public class ReportManager {
             Files.write(Paths.get(reportOutputFilePath), new StrBuilder().appendNewLine().toString().getBytes(), StandardOpenOption.APPEND);
             Files.write(Paths.get(reportOutputFilePath), message.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
+            e.printStackTrace();
             log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
         }
     }
@@ -145,6 +147,7 @@ public class ReportManager {
                     new StrBuilder().appendNewLine().toString().getBytes(),
                     StandardOpenOption.APPEND);
             } catch (IOException e) {
+                    e.printStackTrace();
                 log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
             }
         }));

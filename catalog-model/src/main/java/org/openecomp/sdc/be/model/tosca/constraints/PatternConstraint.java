@@ -24,7 +24,9 @@ import java.util.regex.Pattern;
 
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 import javax.validation.constraints.NotNull;
 
@@ -48,8 +50,20 @@ public class PatternConstraint extends AbstractStringPropertyConstraint {
     }
 
     @Override
+    public ConstraintType getConstraintType() {
+        return null;
+    }
+
+    @Override
+    public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
+
+    }
+
+    @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
         return getErrorMessage(toscaType, e, propertyName, "%s property value must match the regular expression %s",
                 pattern);
     }
+
+
 }

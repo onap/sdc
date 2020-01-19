@@ -55,9 +55,13 @@ public enum GraphPropertyEnum {
     IS_ARCHIVED("isArchived", Boolean.class, false, true),
     IS_VSP_ARCHIVED("isVspArchived", Boolean.class, false, true),
     ARCHIVE_TIME("archiveTime", Long.class, false, true),
+    PREV_CATALOG_UPDATE_TIME    ("previousUpdateTime",         Long.class,                 false,      true),
+    CURRENT_CATALOG_UPDATE_TIME ("currentUpdateTime",         Long.class,                 false,      true),
 
     //Healing
     HEALING_VERSION("healVersion", Integer.class, false, true);
+
+
 
     private String property;
     private Class clazz;

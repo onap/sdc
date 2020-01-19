@@ -4,7 +4,7 @@ import {RequirementsEditorComponent} from "./requirements-editor.component";
 import {FormsModule} from "@angular/forms";
 import {FormElementsModule} from "../../../components/ui/form-components/form-elements.module";
 import {TranslateModule} from 'app/ng2/shared/translator/translate.module';
-import {SdcUiComponentsModule} from "sdc-ui/lib/angular/index";
+import { SdcUiComponentsModule } from "onap-ui-angular";
 
 @NgModule({
     declarations: [

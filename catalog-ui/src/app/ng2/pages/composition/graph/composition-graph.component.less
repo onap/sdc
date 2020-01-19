@@ -1,0 +1,93 @@
+:host(composition-graph) {
+  flex: 1;
+  padding-top: 53px;
+}
+
+.composition {
+  .custom-modal {
+    /* Hack solution to hide canvas tooltips under modals */
+    z-index: 20000 !important;
+  }
+}
+
+.sdc-composition-graph-wrapper {
+  height: 100%;
+  width: 100%;
+
+  &.with-sidebar {
+    width: calc(~'100% - 300px');
+  }
+}
+
+.view-only {
+  background-color: rgb(248, 248, 248);
+}
+
+.sdc-canvas-zones__wrapper {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  display: flex;
+  transition: right 0.2s;
+
+  &.with-sidebar {
+    right: 310px;
+  }
+
+  ng2-zone-container {
+    display: flex;
+    margin-left: 10px;
+  }
+}
+
+.group-tagging {
+  cursor: url("../../../../../assets/styles/images/canvas-tagging-icons/group_1.svg"), pointer;
+}
+
+.group-tagging-hover {
+  cursor: url("../../../../../assets/styles/images/canvas-tagging-icons/group_2.svg"), pointer;
+}
+
+.policy-tagging {
+  cursor: url("../../../../../assets/styles/images/canvas-tagging-icons/policy_1.svg"), pointer;
+}
+
+.policy-tagging-hover {
+  cursor: url("../../../../../assets/styles/images/canvas-tagging-icons/policy_2.svg"), pointer;
+}
+
+//Canvas menu
+.sdc-composition-menu {
+  position: absolute;
+  right: 18px;
+  top: 53px;
+  transition: right 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 10px;
+  pointer-events: none;
+
+  & > * {
+    pointer-events: all;
+  }
+
+  &.with-sidebar {
+    right: 320px;
+  }
+
+  .composition-search {
+    margin-top: 12px;
+  }
+
+  .zoom-icons {
+    border: solid 1px #d2d2d2;
+    border-radius: 2px;
+    box-shadow: 0px 2px 3.88px 0.12px rgba(0, 0, 0, 0.29);
+    margin-top: 10px;
+
+    /deep/ .svg-icon {
+      box-sizing: content-box;
+    }
+  }
+}

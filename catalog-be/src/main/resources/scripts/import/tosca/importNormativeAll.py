@@ -4,6 +4,7 @@ from StringIO import StringIO
 import json
 import copy
 import time
+# from importNormativeElements import createNormativeElement
 from importNormativeElements import *
 from importNormativeTypes import importNormativeTypes
 from importHeatTypes import importHeatTypes

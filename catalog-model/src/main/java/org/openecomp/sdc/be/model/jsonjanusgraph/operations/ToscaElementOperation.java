@@ -20,14 +20,17 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -64,14 +67,10 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import fj.data.Either;
 
 public abstract class ToscaElementOperation extends BaseOperation {
     private static final String FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR = "failed to fetch {} for tosca element with id {}, error {}";
@@ -79,6 +78,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
     private static final String CANNOT_FIND_USER_IN_THE_GRAPH_STATUS_IS = "Cannot find user {} in the graph. status is {}";
 
     private static final String FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS = "Failed to create edge with label {} from user vertex {} to tosca element vertex {} on graph. Status is {}. ";
+
+    private static final String FAILED_TO_GET_CREATOR_VERTEX_OF_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS = "Failed to get creator vertex with label {} of tosca element vertex {} on graph. Status is {}. ";
 
     private static Logger log = Logger.getLogger(ToscaElementOperation.class.getName());
 
@@ -189,8 +190,18 @@ public abstract class ToscaElementOperation extends BaseOperation {
             }
         }
         if (result == null) {
-            status = janusGraphDao
-                .createEdge(user.getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.CREATOR, new HashMap<>());
+            Either<GraphVertex, JanusGraphOperationStatus> creatorVertexRes = janusGraphDao.getParentVertex(previousToscaElement,
+                    EdgeLabelEnum.CREATOR, JsonParseFlagEnum.NoParse);
+            if (creatorVertexRes.isRight()) {
+                status = creatorVertexRes.right().value();
+                CommonUtility.addRecordToLog(log,
+                        LogLevelEnum.DEBUG, FAILED_TO_GET_CREATOR_VERTEX_OF_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS,
+                        EdgeLabelEnum.CREATOR,
+                        nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
+                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+            }
+            status = janusGraphDao.createEdge(creatorVertexRes.left().value().getVertex(), createdToscaElementVertex.getVertex(),
+                    EdgeLabelEnum.CREATOR, new HashMap<>());
             if (status != JanusGraphOperationStatus.OK) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.CREATOR, user.getUniqueId(),
                         nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
@@ -603,8 +614,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         if (derivedResources != null && !derivedResources.isEmpty()) {
             for (GraphVertex derived : derivedResources) {
-                Either<List<GraphVertex>, JanusGraphOperationStatus> derivedProperties = janusGraphDao
-                    .getChildrenVertecies(derived, edge, JsonParseFlagEnum.ParseJson);
+                Either<List<GraphVertex>, JanusGraphOperationStatus> derivedProperties = janusGraphDao.getChildrenVertices(derived, edge, JsonParseFlagEnum.ParseJson);
                 if (derivedProperties.isRight()) {
                     if (derivedProperties.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                         log.debug("Failed to get properties for derived from {} error {}", derived.getUniqueId(), derivedProperties.right().value());
@@ -714,42 +724,38 @@ public abstract class ToscaElementOperation extends BaseOperation {
             log.debug("Failed to fetch users by criteria {} error {}", props, usersByCriteria.right().value());
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(usersByCriteria.right().value()));
         }
-        List<GraphVertex> users = usersByCriteria.left().value();
+        GraphVertex userV = usersByCriteria.left().value().get(0);
 
         List<T> components = new ArrayList<>();
         List<T> componentsPerUser;
-        for (GraphVertex userV : users) {
 
-            HashSet<String> ids = new HashSet<>();
-            Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = janusGraphDao
-                .getChildrenVertecies(userV, EdgeLabelEnum.STATE, JsonParseFlagEnum.NoParse);
-            if (childrenVertecies.isRight() && childrenVertecies.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
-                log.debug("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.STATE, childrenVertecies.right().value());
+        HashSet<String> ids = new HashSet<String>();
+        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = janusGraphDao.getChildrenVertices(userV, EdgeLabelEnum.STATE, JsonParseFlagEnum.NoParse);
+        if (childrenVertecies.isRight() && childrenVertecies.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+            log.debug("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.STATE, childrenVertecies.right().value());
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childrenVertecies.right().value()));
-            }
+        }
 
-            // get all resource with current state
-            if (childrenVertecies.isLeft()) {
-                componentsPerUser = fetchComponents(lifecycleStates, childrenVertecies.left().value(), neededType, EdgeLabelEnum.STATE);
+        // get all resource with current state
+        if (childrenVertecies.isLeft()) {
+                componentsPerUser = fetchComponents(userId, lifecycleStates, childrenVertecies.left().value(), neededType, EdgeLabelEnum.STATE);
 
-                if (componentsPerUser != null) {
-                    for (T comp : componentsPerUser) {
-                        ids.add(comp.getUniqueId());
-                        components.add(comp);
-                    }
+            if (componentsPerUser != null) {
+                for (T comp : componentsPerUser) {
+                    ids.add(comp.getUniqueId());
+                    components.add(comp);
                 }
             }
             if (lastStateStates != null && !lastStateStates.isEmpty()) {
                 // get all resource with last state
-                childrenVertecies = janusGraphDao
-                    .getChildrenVertecies(userV, EdgeLabelEnum.LAST_STATE, JsonParseFlagEnum.NoParse);
+                childrenVertecies = janusGraphDao.getChildrenVertices(userV, EdgeLabelEnum.LAST_STATE, JsonParseFlagEnum.NoParse);
                 if (childrenVertecies.isRight() && childrenVertecies.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                     log.debug("Failed to fetch children vertices for user {} by edge {} error {}", userV.getMetadataProperty(GraphPropertyEnum.USERID), EdgeLabelEnum.LAST_STATE, childrenVertecies.right().value());
                     return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childrenVertecies.right().value()));
                 }
                 if (childrenVertecies.isLeft()) {
                     boolean isFirst;
-                    componentsPerUser = fetchComponents(lastStateStates, childrenVertecies.left().value(), neededType, EdgeLabelEnum.LAST_STATE);
+                    componentsPerUser = fetchComponents(userId, lastStateStates, childrenVertecies.left().value(), neededType, EdgeLabelEnum.LAST_STATE);
                     if (componentsPerUser != null) {
                         for (T comp : componentsPerUser) {
                             isFirst = true;
@@ -773,7 +779,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     }
 
-    private <T extends ToscaElement> List<T> fetchComponents(Set<LifecycleStateEnum> lifecycleStates, List<GraphVertex> vertices, ComponentTypeEnum neededType, EdgeLabelEnum edgelabel) {
+    private <T extends ToscaElement> List<T> fetchComponents(String userId, Set<LifecycleStateEnum> lifecycleStates, List<GraphVertex> vertices, ComponentTypeEnum neededType, EdgeLabelEnum edgelabel) {
         List<T> components = new ArrayList<>();
         for (GraphVertex node : vertices) {
 
@@ -787,7 +793,12 @@ public abstract class ToscaElementOperation extends BaseOperation {
                     log.debug("no supported STATE {} for element  {}", stateStr, node.getUniqueId());
                     continue;
                 }
-                if (lifecycleStates != null && lifecycleStates.contains(nodeState)) {
+
+                //get user from edge and compare to user from followed request
+                JanusGraphVertex userVertex = (JanusGraphVertex) edge.outVertex();
+                String userIdFromEdge = (String) janusGraphDao.getProperty(userVertex, GraphPropertyEnum.USERID.getProperty());
+
+                if (lifecycleStates != null && lifecycleStates.contains(nodeState) && (userIdFromEdge.equals(userId))) {
 
                     Boolean isDeleted = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_DELETED);
                     Boolean isArchived = (Boolean) node.getMetadataProperty(GraphPropertyEnum.IS_ARCHIVED);
@@ -915,6 +926,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     protected JanusGraphOperationStatus setResourceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
+        List<CategoryDefinition> categories = new ArrayList<>();
+        SubCategoryDefinition subcategory;
 
         Either<Vertex, JanusGraphOperationStatus> childVertex = janusGraphDao
             .getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
@@ -923,25 +936,44 @@ public abstract class ToscaElementOperation extends BaseOperation {
             return childVertex.right().value();
         }
         Vertex subCategoryV = childVertex.left().value();
-        catalogComponent.setSubCategoryNormalizedName((String) subCategoryV.property(JsonPresentationFields.NORMALIZED_NAME.getPresentation()).value());
-        Either<Vertex, JanusGraphOperationStatus> parentVertex = janusGraphDao
-            .getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
+        String subCategoryNormalizedName = (String) subCategoryV.property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
+        catalogComponent.setSubCategoryNormalizedName(subCategoryNormalizedName);
+        subcategory = new SubCategoryDefinition();
+        subcategory.setUniqueId((String) subCategoryV.property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value());
+        subcategory.setNormalizedName(subCategoryNormalizedName);
+        subcategory.setName((String) subCategoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
+        Either<Vertex, JanusGraphOperationStatus> parentVertex = janusGraphDao.getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
         Vertex categoryV = parentVertex.left().value();
-        catalogComponent.setCategoryNormalizedName((String) categoryV.property(JsonPresentationFields.NORMALIZED_NAME.getPresentation()).value());
+        String categoryNormalizedName = (String) categoryV.property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
+        catalogComponent.setCategoryNormalizedName(categoryNormalizedName);
+        CategoryDefinition category = new CategoryDefinition();
+        category.setUniqueId((String) categoryV.property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value());
+        category.setNormalizedName(categoryNormalizedName);
+        category.setName((String) categoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
 
+        category.addSubCategory(subcategory);
+        categories.add(category);
+        catalogComponent.setCategories(categories);
         return JanusGraphOperationStatus.OK;
     }
 
     protected JanusGraphOperationStatus setServiceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
-        Either<Vertex, JanusGraphOperationStatus> childVertex = janusGraphDao
-            .getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
+        List<CategoryDefinition> categories = new ArrayList<>();
+        Either<Vertex, JanusGraphOperationStatus> childVertex = janusGraphDao.getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
         if (childVertex.isRight()) {
             log.debug(FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR, EdgeLabelEnum.CATEGORY, catalogComponent.getUniqueId(), childVertex.right().value());
             return childVertex.right().value();
         }
         Vertex categoryV = childVertex.left().value();
-        catalogComponent.setCategoryNormalizedName((String) categoryV.property(JsonPresentationFields.NORMALIZED_NAME.getPresentation()).value());
+        String categoryNormalizedName = (String) categoryV.property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
+        catalogComponent.setCategoryNormalizedName(categoryNormalizedName);
+        CategoryDefinition category = new CategoryDefinition();
+        category.setUniqueId((String) categoryV.property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value());
+        category.setNormalizedName(categoryNormalizedName);
+        category.setName((String) categoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
 
+        categories.add(category);
+        catalogComponent.setCategories(categories);
         return JanusGraphOperationStatus.OK;
     }
 
@@ -1241,8 +1273,18 @@ public abstract class ToscaElementOperation extends BaseOperation {
             catalogComponent.setName((String) metadatObj.get(JsonPresentationFields.NAME.getPresentation()));
             catalogComponent.setIcon((String) metadatObj.get(JsonPresentationFields.ICON.getPresentation()));
             catalogComponent.setLifecycleState((String) metadatObj.get(JsonPresentationFields.LIFECYCLE_STATE.getPresentation()));
-            catalogComponent.setLastUpdateDate((Long) metadatObj.get(JsonPresentationFields.LAST_UPDATE_DATE.getPresentation()));
+            Object lastUpdateDate = metadatObj.get(JsonPresentationFields.LAST_UPDATE_DATE.getPresentation());
+            catalogComponent.setLastUpdateDate( (lastUpdateDate != null ? (Long)lastUpdateDate : 0L));
             catalogComponent.setDistributionStatus((String) metadatObj.get(JsonPresentationFields.DISTRIBUTION_STATUS.getPresentation()));
+            catalogComponent.setDescription((String) metadatObj.get(JsonPresentationFields.DESCRIPTION.getPresentation()));
+            catalogComponent.setSystemName((String) metadatObj.get(JsonPresentationFields.SYSTEM_NAME.getPresentation()));
+            catalogComponent.setUuid((String) metadatObj.get(JsonPresentationFields.UUID.getPresentation()));
+            catalogComponent.setInvariantUUID((String) metadatObj.get(JsonPresentationFields.INVARIANT_UUID.getPresentation()));
+            catalogComponent.setIsHighestVersion((Boolean) metadatObj.get(JsonPresentationFields.HIGHEST_VERSION.getPresentation()));
+            Iterator<Edge> edges = vertex.edges(Direction.IN, EdgeLabelEnum.STATE.name());
+            if(edges.hasNext()){
+                catalogComponent.setLastUpdaterUserId((String) edges.next().outVertex().property(GraphPropertiesDictionary.USERID.getProperty()).value());
+            }
             Object resourceType = metadatObj.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation());
             if (resourceType != null) {
                 catalogComponent.setResourceType((String) resourceType);

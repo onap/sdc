@@ -1,0 +1,65 @@
+@import '../../../../../../assets/styles/variables';
+@import '../../../../../../assets/styles/override';
+
+
+// ---------------------------------------------------------------------------------------------------
+///* override sdc-ui library tabs */
+// ---------------------------------------------------------------------------------------------------
+
+
+:host ::ng-deep .sdc-tabs {
+
+    .sdc-tabs-list {
+        display: flex;
+        border-bottom: 1px solid @sdcui_color_silver;
+        min-height: min-content;
+    }
+    .sdc-tab {
+        background-color: @sdcui_color_white;
+        border: 1px solid @sdcui_color_silver;
+        border-left: none;
+        border-bottom: none;
+        height: 36px;
+        width: 60px;
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+
+
+        &.sdc-tab-active {
+            background-color: @sdcui_color_silver;
+            border-bottom: none;
+        }
+        &[disabled] {
+            opacity: 0.3;
+            cursor: default;
+        }
+    }
+    &.sdc-tabs-header {
+        .sdc-tab {
+            font-size: 24px;
+        }
+    }
+    &.sdc-tabs-menu {
+        .sdc-tab {
+            font-size: 14px;
+            padding: 0px 10px 4px 10px;          
+        }
+    }
+    .sdc-tab-content {
+        margin-top: 0;
+        flex:1;
+        overflow-y:auto;
+    }
+}
+
+
+:host ::ng-deep .expand-collapse-title {
+    margin-top: 1px;
+    background-color: #eaeaea;
+    color: #5a5a5a;
+    font-family: OpenSans-Semibold, sans-serif;
+}

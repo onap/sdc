@@ -37,7 +37,6 @@ import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefini
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
-import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.AdditionalInfoParameterData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
@@ -53,7 +52,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @Component("additional-information-operation")
-public class AdditionalInformationOperation implements IAdditionalInformationOperation {
+public class AdditionalInformationOperation {
 
     private static final Logger log = Logger.getLogger(AdditionalInformationOperation.class.getName());
 
@@ -70,7 +69,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
 
 
-    @Override
     public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> addAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String key, String value) {
 
         JanusGraphOperationStatus
@@ -128,7 +126,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> updateAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id, String key, String value) {
 
         JanusGraphOperationStatus
@@ -182,7 +179,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> deleteAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id) {
 
         JanusGraphOperationStatus
@@ -256,7 +252,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         return list;
     }
 
-    @Override
     public Either<AdditionalInfoParameterData, JanusGraphOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId) {
 
         UniqueIdData from = new UniqueIdData(nodeType, componentId);
@@ -287,7 +282,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         return Either.left(to);
     }
 
-    @Override
     public Either<JanusGraphVertex, JanusGraphOperationStatus> addAdditionalInformationNode(NodeTypeEnum nodeType, String componentId, JanusGraphVertex metadataVertex) {
 
         String uniqueId = UniqueIdBuilder.buildAdditionalInformationUniqueId(componentId);
@@ -385,7 +379,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public JanusGraphOperationStatus findResourceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties) {
 
         log.trace("Going to fetch additional information under resource {}", uniqueId);
@@ -421,7 +414,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public JanusGraphOperationStatus findServiceAllAdditionalInformationRecursively(String uniqueId, List<AdditionalInformationDefinition> properties) {
 
         log.trace("Going to fetch additional information under service {}", uniqueId);
@@ -492,7 +484,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         return new AdditionalInformationDefinition(additionalInfoData.getAdditionalInfoParameterDataDefinition(), uniqueId, convertParameters(parameters, idToKey));
     }
 
-    @Override
     public Either<AdditionalInformationDefinition, StorageOperationStatus> createAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String key, String value, boolean inTransaction) {
 
         Either<AdditionalInformationDefinition, StorageOperationStatus> result = null;
@@ -518,7 +509,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<AdditionalInformationDefinition, StorageOperationStatus> updateAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String id, String key, String value, boolean inTransaction) {
 
         Either<AdditionalInformationDefinition, StorageOperationStatus> result = null;
@@ -543,7 +533,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<AdditionalInformationDefinition, StorageOperationStatus> deleteAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String id, boolean inTransaction) {
 
         Either<AdditionalInformationDefinition, StorageOperationStatus> result = null;
@@ -568,7 +557,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<Integer, StorageOperationStatus> getNumberOfAdditionalInformationParameters(NodeTypeEnum nodeType, String resourceId, boolean inTransaction) {
 
         Either<Integer, StorageOperationStatus> result = null;
@@ -600,7 +588,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<Integer, JanusGraphOperationStatus> getNumberOfParameters(NodeTypeEnum nodeType, String resourceId) {
 
         Either<ImmutablePair<AdditionalInfoParameterData, GraphEdge>, JanusGraphOperationStatus> getResult = janusGraphGenericDao
@@ -625,7 +612,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<AdditionalInfoParameterInfo, JanusGraphOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String componentId, String id) {
 
         JanusGraphOperationStatus
@@ -674,7 +660,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<AdditionalInformationDefinition, JanusGraphOperationStatus> getAllAdditionalInformationParameters(NodeTypeEnum nodeType, String componentId, boolean ignoreVerification) {
 
         if (!ignoreVerification) {
@@ -708,7 +693,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
 
     }
 
-    @Override
     public Either<AdditionalInformationDefinition, StorageOperationStatus> getAllAdditionalInformationParameters(NodeTypeEnum nodeType, String resourceId, boolean ignoreVerification, boolean inTransaction) {
 
         Either<AdditionalInformationDefinition, StorageOperationStatus> result = null;
@@ -747,7 +731,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
     }
     
 
-    @Override
     public Either<AdditionalInfoParameterInfo, StorageOperationStatus> getAdditionalInformationParameter(NodeTypeEnum nodeType, String resourceId, String id, boolean inTransaction) {
 
         Either<AdditionalInfoParameterInfo, StorageOperationStatus> result = null;
@@ -771,7 +754,6 @@ public class AdditionalInformationOperation implements IAdditionalInformationOpe
         }
     }
 
-    @Override
     public Either<AdditionalInformationDefinition, StorageOperationStatus> deleteAllAdditionalInformationParameters(NodeTypeEnum nodeType, String resourceId, boolean inTransaction) {
 
         Either<AdditionalInformationDefinition, StorageOperationStatus> result = null;

@@ -22,7 +22,7 @@
 // Definitions by: Roland Greim <https://github.com/tigerxy>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped/
 
-/// <reference path="../jquery/jquery.d.ts"/>
+/// <reference path="../../../node_modules/@types/jquery/index.d.ts"/>
 
 interface JQuery {
     md5(value: string): string;

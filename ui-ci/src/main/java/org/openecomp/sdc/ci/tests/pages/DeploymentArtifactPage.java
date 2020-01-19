@@ -168,7 +168,8 @@ public class DeploymentArtifactPage extends GeneralPageElements {
         SetupCDTest.getExtendTest().log(Status.INFO, "Verifying the artifacts in the table");
         List<String> artifactList = Lists.newArrayList(artifactsFromZipFile).stream().filter(p -> !p.contains(".env")).map(p -> getVisualArtifactName(p)).collect(Collectors.toList());
         try {
-            List<WebElement> rows = GeneralUIUtils.getElementsByCSS("div div[data-tests-id^='artifact-item'] span[data-tests-id^='artifactDisplayName']");
+//            List<WebElement> rows = GeneralUIUtils.getElementsByCSS("div div[data-tests-id^='artifact-item'] span[data-tests-id^='artifactDisplayName']");
+            List<WebElement> rows = GeneralUIUtils.getWebElementsListByContainsClassName("datatable-body-row");
             for (WebElement r : rows) {
                 String artifactDisplayed = r.getAttribute("textContent").trim();
                 if (artifactList.contains(artifactDisplayed)) {

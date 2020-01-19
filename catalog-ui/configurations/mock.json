@@ -25,7 +25,6 @@
             "GET_relationship": "/v1/catalog/services/:serviceId/resourceInstance/:action",
             "GET_lifecycle_state_resource": "/v1/catalog/:type/:id/lifecycleState/:action",
             "GET_lifecycle_state_CHECKIN":"lifecycleState/CHECKIN",
-            "GET_lifecycle_state_CERTIFICATIONREQUEST":"lifecycleState/CERTIFICATIONREQUEST",
             "GET_lifecycle_state_UNDOCHECKOUT":"lifecycleState/UNDOCHECKOUT",
             "root": "http://localhost:9999"
         },
@@ -40,7 +39,8 @@
             "userFirstName": "HTTP_CSP_FIRSTNAME",
             "userLastName": "HTTP_CSP_LASTNAME",
             "userEmail": "HTTP_CSP_EMAIL",
-            "xEcompRequestId": " X-ECOMP-RequestID"
+            "xEcompRequestId": " X-ECOMP-RequestID",
+            "portalCookie": "EPService"
         },
         "userTypes": {
             "admin": {
@@ -51,31 +51,10 @@
                 "xEcompRequestId": "ccccc"
             },
             "designer": {
-                "userId": "cs0008",
+                "userId": "m08740",
                 "email": "designer@sdc.com",
                 "firstName": "Carlos",
                 "lastName": "Santana",
-                "xEcompRequestId": "ccccc"
-            },
-            "tester": {
-                "userId": "jm0007",
-                "email": "tester@sdc.com",
-                "firstName": "Johnny",
-                "lastName": "Depp",
-                "xEcompRequestId": "ccccc"
-            },
-            "governor": {
-                "userId": "gv0001",
-                "email": "governor@sdc.com",
-                "firstName": "gover",
-                "lastName": "nor",
-                "xEcompRequestId": "ccccc"
-            },
-            "ops": {
-                "userId": "op0001",
-                "email": "ops@sdc.com",
-                "firstName": "op",
-                "lastName": "ss",
                 "xEcompRequestId": "ccccc"
             }
         },
@@ -86,14 +65,6 @@
                     "NOT_CERTIFIED_CHECKOUT",
                     "NOT_CERTIFIED_CHECKIN"
                 ]
-            },
-            "readyForCertification": {
-                "name": "Ready for certification",
-                "values": "READY_FOR_CERTIFICATION"
-            },
-            "inCertification": {
-                "name": "In Certification",
-                "values": "CERTIFICATION_IN_PROGRESS"
             },
             "certified": {
                 "name": "Certified",
@@ -115,12 +86,8 @@
                     {"text":"Edit"    ,"action":"goToEntity"}
                 ],
                 "NOT_CERTIFIED_CHECKIN":[
-                    {"text":"Check out","action":"changeLifecycleState", "url":"CHECKOUT"},
-                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"}
-
+                    {"text":"Check out","action":"changeLifecycleState", "url":"CHECKOUT"}
                 ],
-                "READY_FOR_CERTIFICATION":[],
-                "CERTIFICATION_IN_PROGRESS":[],
                 "CERTIFIED":[]
             }
         },
@@ -130,41 +97,14 @@
             "states":{
                 "NOT_CERTIFIED_CHECKOUT":[
                     {"text":"Edit"    ,"action":"goToEntity"},
-                    {"text":"Check in","action":"changeLifecycleState", "url":"CHECKIN"},
-                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"}
+                    {"text":"Check in","action":"changeLifecycleState", "url":"CHECKIN"}
                 ],
                 "NOT_CERTIFIED_CHECKIN":[
-                    {"text":"Check out","action":"changeLifecycleState", "url":"CHECKOUT"},
-                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"}
-                ],
-                "READY_FOR_CERTIFICATION":[
-                ],
-                "CERTIFICATION_IN_PROGRESS":[
+                    {"text":"Check out","action":"changeLifecycleState", "url":"CHECKOUT"}
                 ],
                 "CERTIFIED":[
                 ]
             }
-
-        },
-        "TESTER":{
-            "pages":[],
-            "READY_FOR_CERTIFICATION":[],
-            "CERTIFICATION_IN_PROGRESS":[],
-            "CERTIFIED":[]
-
-        },
-        "OPS":{
-            "pages":[],
-            "READY_FOR_CERTIFICATION":[],
-            "CERTIFICATION_IN_PROGRESS":[],
-            "CERTIFIED":[]
-
-        },
-        "GOVERNOR":{
-            "pages":[],
-            "READY_FOR_CERTIFICATION":[],
-            "CERTIFICATION_IN_PROGRESS":[],
-            "CERTIFIED":[]
 
         }
     }

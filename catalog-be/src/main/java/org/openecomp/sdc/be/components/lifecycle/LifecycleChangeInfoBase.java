@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-public class LifecycleChangeInfoBase {
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-    private String userRemarks;
+public class LifecycleChangeInfoBase {
 
     public LifecycleChangeInfoBase() {
     }
@@ -31,6 +31,9 @@ public class LifecycleChangeInfoBase {
         super();
         this.userRemarks = userRemarks;
     }
+
+    @JsonInclude
+    private String userRemarks;
 
     public String getUserRemarks() {
         return userRemarks;

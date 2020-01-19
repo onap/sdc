@@ -20,15 +20,18 @@
 
 
 import {Injectable} from "@angular/core";
-import {Component} from "../../../models/components/component";
+import {Component} from "app/models";
 import {ComponentServiceNg2} from "./component.service";
 import {ServiceServiceNg2} from "./service.service";
+import {CacheService} from "app/services-ng2";
 
 @Injectable()
 export class ComponentServiceFactoryNg2 {
+
     componentService: ComponentServiceNg2;
     serviceService: ServiceServiceNg2;
-    constructor(componentService: ComponentServiceNg2, serviceService: ServiceServiceNg2) {
+
+    constructor(componentService: ComponentServiceNg2, serviceService: ServiceServiceNg2, private cacheService:CacheService) {
         this.serviceService = serviceService;
         this.componentService = componentService;
     }

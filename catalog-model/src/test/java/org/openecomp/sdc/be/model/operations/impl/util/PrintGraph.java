@@ -34,9 +34,10 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+//import com.tinkerpop.blueprints.Direction;
+//import com.tinkerpop.blueprints.Edge;
+//import com.tinkerpop.blueprints.Vertex;
+//import com.tinkerpop.blueprints.util.ElementHelper;
 
 public class PrintGraph {
 
@@ -48,6 +49,10 @@ public class PrintGraph {
             Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
                 Vertex vertex = iterator.next();
+
+                // System.out.println(vertex);
+                // System.out.println(ElementHelper.getProperties(vertex));
+                // System.out.println("=======================================");
             }
 
         }
@@ -56,6 +61,7 @@ public class PrintGraph {
     }
 
     public void printGraphEdges(JanusGraph graph) {
+
         Iterable<JanusGraphEdge> vertices = graph.query().edges();
 
         if (vertices != null) {
@@ -63,9 +69,16 @@ public class PrintGraph {
             while (iterator.hasNext()) {
                 Edge edge = iterator.next();
 
+                // System.out.println(edge);
+                // System.out.println("edge=" + edge.getLabel() + ",
+                // properties="+ ElementHelper.getProperties(edge));
+                // System.out.println("edge=" + edge.label() + ", properties="+
+                // getProperties(edge));
+                // System.out.println("=======================================");
             }
 
         }
+        // graph.commit();
         graph.tx().commit();
     }
 
@@ -75,12 +88,20 @@ public class PrintGraph {
         builder.append("digraph finite_state_machine {\n");
         builder.append("rankdir=LR;\n");
         builder.append("size=\"15,10\" \n");
+        // node [shape = doublecircle]; LR_0 LR_3 LR_4 LR_8;
+        // node [shape = circle];
+
         Iterable<JanusGraphVertex> vertices = graph.query().vertices();
 
         if (vertices != null) {
             Iterator<JanusGraphVertex> iterator = vertices.iterator();
             while (iterator.hasNext()) {
                 Vertex vertex = iterator.next();
+
+                // System.out.println(vertex);
+                // System.out.println(ElementHelper.getProperties(vertex));
+                // System.out.println(getProperties(vertex));
+                // System.out.println("=======================================");
 
                 Map<String, Object> properties = getProperties(vertex);
 
@@ -90,9 +111,21 @@ public class PrintGraph {
 
                 String uid = getNodeIdByLabel(nodeLabel, properties);
 
+                // System.out.println("uid=" + uid);
+
                 String nodeRecord = buildNodeRecord(uid, color, properties);
 
+                // System.out.println(nodeRecord);
+
                 builder.append(nodeRecord);
+
+                // if (nodeLabel.equals(NodeTypeEnum.Category)) {
+                //
+                // String
+                //
+                // } else (nodeLabel.equals(NodeTypeEnum.User)) {
+                //
+                // }
 
             }
 
@@ -105,18 +138,38 @@ public class PrintGraph {
             while (iterator.hasNext()) {
                 Edge edge = iterator.next();
 
+                // Vertex vertexFrom = edge.getVertex(Direction.OUT);
+                // Vertex vertexTo = edge.getVertex(Direction.IN);
                 Vertex vertexFrom = edge.outVertex();
                 Vertex vertexTo = edge.inVertex();
+
+                // String fromUid =
+                // getNodeIdByLabel((String)vertexFrom.getProperty(GraphPropertiesDictionary.LABEL.getProperty()),
+                // ElementHelper.getProperties(vertexFrom));
+                // String toUid =
+                // getNodeIdByLabel((String)vertexTo.getProperty(GraphPropertiesDictionary.LABEL.getProperty()),
+                // ElementHelper.getProperties(vertexTo));
                 String fromUid = getNodeIdByLabel(vertexFrom.value(GraphPropertiesDictionary.LABEL.getProperty()),
                         getProperties(vertexFrom));
                 String toUid = getNodeIdByLabel(vertexTo.value(GraphPropertiesDictionary.LABEL.getProperty()),
                         getProperties(vertexTo));
 
+                // String edgeLabel = edge.getLabel();
                 String edgeLabel = edge.label();
 
+                // String edgeRecord = buildEdgeRecord(fromUid, toUid,
+                // edgeLabel, ElementHelper.getProperties(edge));
                 String edgeRecord = buildEdgeRecord(fromUid, toUid, edgeLabel, getProperties(edge));
 
                 builder.append(edgeRecord);
+
+                // System.out.println(edge);
+                // System.out.println("edge=" + edge.getLabel() + ",
+                // properties="
+                // + ElementHelper.getProperties(edge));
+                // System.out.println("edge=" + edge.label() + ", properties="
+                // + getProperties(edge));
+                // System.out.println("=======================================");
             }
 
         }
@@ -127,6 +180,25 @@ public class PrintGraph {
 
     }
 
+    // LR_0 [ style = "bold" color = "red" shape = "Mrecord" label =
+    // "hello&#92;nworld | { name | apache } | { version | 1.0 } | { uid |
+    // apache.1.0 } | { state| CERTIFIED } |{ b |{c|<here> d|e}| f}| g | h"
+    // ]
+
+    // LR_0 -> LR_2 [ label = "SS(B)" ];
+    // LR_0 -> LR_1 [ label = "SS(S)" ];
+    // LR_1 -> LR_3 [ label = "S($end)" ];
+    // LR_2 -> LR_6 [ label = "SS(b)" ];
+    // LR_2 -> LR_5 [ label = "SS(a)" ];
+    // LR_2 -> LR_4 [ label = "S(A)" ];
+    // LR_5 -> LR_7 [ label = "S(b)" ];
+    // LR_5 -> LR_5 [ label = "S(a)" ];
+    // LR_6 -> LR_6 [ label = "S(b)" ];
+    // LR_6 -> LR_5 [ label = "S(a)" ];
+    // LR_7 -> LR_8 [ label = "S(b)" ];
+    // LR_7 -> LR_5 [ label = "S(a)" ];
+    // LR_8 -> LR_6 [ label = "S(b)" ];
+    // LR_8 -> LR_5 [ label = "S(a)" ];
 
     private String buildEdgeRecord(String fromUid, String toUid, String edgeLabel, Map<String, Object> properties) {
 
@@ -220,6 +292,12 @@ public class PrintGraph {
 
         builder.append("label = \"" + label + "\" ");
         builder.append(" ] ");
+
+        // LR_0 [ style = "bold" color = "red" shape = "Mrecord" label =
+        // "hello&#92;nworld | { name | apache } | { version | 1.0 } | { uid |
+        // apache.1.0 } | { state| CERTIFIED } |{ b |{c|<here> d|e}| f}| g | h"
+        // ]
+
         builder.append(" \n ");
         return builder.toString();
     }
@@ -334,6 +412,13 @@ public class PrintGraph {
             while (iterator.hasNext()) {
                 Vertex vertex = iterator.next();
 
+                // System.out.println(vertex);
+                // System.out.println(ElementHelper.getProperties(vertex));
+                // System.out.println(getProperties(vertex));
+                // System.out.println("=======================================");
+
+                // Map<String, Object> properties =
+                // ElementHelper.getProperties(vertex);
                 Map<String, Object> properties = getProperties(vertex);
 
                 String nodeLabel = (String) properties.get(GraphPropertiesDictionary.LABEL.getProperty());

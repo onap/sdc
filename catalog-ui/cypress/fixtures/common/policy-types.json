@@ -1,0 +1,86 @@
+[
+    {
+    "name": "Placement Valet Affinity",
+    "icon": "placement-valet-affinity",
+    "type": "org.openecomp.policies.placement.valet.Affinity",
+    "uniqueId": "org.openecomp.policies.placement.valet.Affinity.1.0.policytype",
+    "version": "1.0"
+    },
+    {
+        "name": "External",
+        "icon": "policy-external",
+        "type": "org.openecomp.policies.External",
+        "uniqueId": "org.openecomp.policies.External.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Root",
+        "icon": "policy-root",
+        "type": "tosca.policies.Root",
+        "uniqueId": "tosca.policies.Root.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Placement",
+        "icon": "policy-placement",
+        "type": "tosca.policies.Placement",
+        "uniqueId": "tosca.policies.Placement.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Placement Colocate",
+        "icon": "policy-placement-colocate",
+        "type": "org.openecomp.policies.placement.Colocate",
+        "uniqueId": "org.openecomp.policies.placement.Colocate.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Placement Valet Diversity",
+        "icon": "policy-placement-valet-diversity",
+        "type": "org.openecomp.policies.placement.valet.Diversity",
+        "uniqueId": "org.openecomp.policies.placement.valet.Diversity.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Update",
+        "icon": "policy-update",
+        "type": "tosca.policies.Update",
+        "uniqueId": "tosca.policies.Update.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Performance",
+        "icon": "policy-performance",
+        "type": "tosca.policies.Performance",
+        "uniqueId": "tosca.policies.Performance.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Placement Antilocate",
+        "icon": "policy-placement-antilocate",
+        "type": "org.openecomp.policies.placement.Antilocate",
+        "uniqueId": "org.openecomp.policies.placement.Antilocate.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Scaling Fixed",
+        "icon": "policy-fixed",
+        "type": "org.openecomp.policies.scaling.Fixed",
+        "uniqueId": "org.openecomp.policies.scaling.Fixed.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Scaling",
+        "icon": "policy-scaling",
+        "type": "tosca.policies.Scaling",
+        "uniqueId": "tosca.policies.Scaling.1.0.policytype",
+        "version": "1.0"
+    },
+    {
+        "name": "Placement Valet Exclusivity",
+        "icon": "policy-placement-valet-exclusivity",
+        "type": "org.openecomp.policies.placement.valet.Exclusivity",
+        "uniqueId": "org.openecomp.policies.placement.valet.Exclusivity.1.0.policytype",
+        "version": "1.0"
+    }
+]

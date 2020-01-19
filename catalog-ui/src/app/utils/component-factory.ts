@@ -21,7 +21,8 @@
 'use strict';
 import * as _ from "lodash";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
-import {ServiceService, CacheService, ResourceService} from "app/services";
+import {ServiceService, ResourceService} from "app/services";
+import {CacheService} from "app/services-ng2";
 import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service} from "app/models";
 import {ComponentMetadata} from "../models/component-metadata";
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
@@ -71,23 +72,23 @@ export class ComponentFactory {
         return newResource;
     };
 
-    public updateComponentFromCsar = (csarComponent:Resource, oldComponent:Resource):Component => {
-        _.pull(oldComponent.tags, oldComponent.name);
-        if (!oldComponent.isAlreadyCertified()) {
+    public updateComponentFromCsar = (csarComponent:Resource, oldComponent: Resource): Component => {
+          _.pull(oldComponent.tags, oldComponent.name);
+          if (!oldComponent.isAlreadyCertified()) {
             oldComponent.name = csarComponent.name;
             oldComponent.categories = csarComponent.categories;
             oldComponent.selectedCategory = csarComponent.selectedCategory;
         }
-        oldComponent.vendorName = csarComponent.vendorName;
-        oldComponent.vendorRelease = csarComponent.vendorRelease;
-        oldComponent.csarUUID = csarComponent.csarUUID;
-        oldComponent.csarPackageType = csarComponent.csarPackageType;
-        oldComponent.csarVersion = csarComponent.csarVersion;
-        oldComponent.packageId = csarComponent.packageId;
-        oldComponent.description = csarComponent.description;
-        oldComponent.filterTerm = oldComponent.name +  ' '  + oldComponent.description + ' ' + oldComponent.vendorName + ' ' + oldComponent.csarVersion
-        return oldComponent;
-    };
+          oldComponent.vendorName = csarComponent.vendorName;
+          oldComponent.vendorRelease = csarComponent.vendorRelease;
+          oldComponent.csarUUID = csarComponent.csarUUID;
+          oldComponent.csarPackageType = csarComponent.csarPackageType;
+          oldComponent.csarVersion = csarComponent.csarVersion;
+          oldComponent.packageId = csarComponent.packageId;
+          oldComponent.description = csarComponent.description;
+          oldComponent.filterTerm = oldComponent.name +  ' '  + oldComponent.description + ' ' + oldComponent.vendorName + ' ' + oldComponent.csarVersion;
+          return oldComponent;
+    }
 
     public createFromCsarComponent = (csar:ICsarComponent):Component => {
         let newResource:Resource = <Resource>this.createEmptyComponent(ComponentType.RESOURCE);
@@ -126,7 +127,7 @@ export class ComponentFactory {
         }
 
         // Fill the component with details from CSAR
-        newResource.selectedCategory = selectedCategory && selectedSubCategory ? selectedCategory.name + "_#_" + selectedSubCategory.name : '';
+
         newResource.categories = categories;
         newResource.vendorName = csar.vendorName;
         newResource.vendorRelease = csar.vendorRelease;
@@ -136,7 +137,8 @@ export class ComponentFactory {
         newResource.packageId = csar.packageId;
         newResource.description = csar.description;
         newResource.resourceType = csar.resourceType;
-        newResource.filterTerm = newResource.name +  ' '  + newResource.description + ' ' + newResource.vendorName + ' ' + newResource.csarVersion
+        newResource.selectedCategory = selectedCategory && selectedSubCategory ? selectedCategory.name + "_#_" + selectedSubCategory.name : '';
+        newResource.filterTerm = newResource.name +  ' '  + newResource.description + ' ' + newResource.vendorName + ' ' + newResource.csarVersion;
         return newResource;
     };
 
@@ -183,7 +185,7 @@ export class ComponentFactory {
         let deferred = this.$q.defer<Component>();
         let component = this.createEmptyComponent(componentType);
         component.setUniqueId(componentId);
-        this.ComponentServiceNg2.getComponentMetadata(component).subscribe((response:ComponentGenericResponse) => {
+        this.ComponentServiceNg2.getComponentMetadata(component.uniqueId, component.componentType).subscribe((response:ComponentGenericResponse) => {
             component.setComponentMetadata(response.metadata);
             deferred.resolve(component);
         });

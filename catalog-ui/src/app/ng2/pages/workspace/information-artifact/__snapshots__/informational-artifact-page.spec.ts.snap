@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`informational artifacts page should match current snapshot of informational artifact pages component 1`] = `
+<information-artifact-page
+  addOrUpdateArtifact={[Function Function]}
+  artifactsService={[Function Object]}
+  deleteArtifact={[Function Function]}
+  store={[Function Store]}
+  table={[Function DatatableComponent]}
+  workspaceService={[Function Object]}
+>
+  <div
+    class="information-artifact-page"
+  >
+    <svg-icon-label
+      class="add-artifact-btn"
+    />
+    <ngx-datatable
+      class="ngx-datatable"
+      columnmode="flex"
+    >
+      <div
+        visibilityobserver=""
+      >
+        
+        <datatable-body
+          class="datatable-body"
+        >
+          <datatable-selection>
+            
+            
+            
+          </datatable-selection>
+        </datatable-body>
+        
+      </div>
+    </ngx-datatable>
+  </div>
+</information-artifact-page>
+`;

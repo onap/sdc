@@ -1,29 +1,9 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
 package org.openecomp.sdc.common.log.elements;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.openecomp.sdc.common.log.api.LogConfigurationConstants;
 import org.openecomp.sdc.common.log.enums.ConstantsLogging;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.openecomp.sdc.common.log.api.ILogFieldsHandler;
 import org.openecomp.sdc.common.log.enums.Severity;
 import org.slf4j.Logger;
@@ -36,6 +16,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+
+import static java.lang.Integer.valueOf;
 
 public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
@@ -50,7 +32,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
       .ofPattern(dateFormatPattern);
   protected static Logger log = LoggerFactory.getLogger(LogFieldsMdcHandler.class.getName());
   protected static String hostAddress;
-  private static String fqdn;
+  protected static String fqdn;
 
   static {
     try {
@@ -79,7 +61,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
   public void stopAuditTimer() {
     //set start time if it is not set yet
     startAuditTimer();
-    MDC.put(LogConfigurationConstants.MDC_END_TIMESTAMP, generatedTimeNow());
+    MDC.put(ILogConfiguration.MDC_END_TIMESTAMP, generatedTimeNow());
     setElapsedTime(MDC.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
   }
 
@@ -87,13 +69,13 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
   public void stopMetricTimer() {
     //set start time if it is not set yet
     startMetricTimer();
-    MDC.put(LogConfigurationConstants.MDC_END_TIMESTAMP, generatedTimeNow());
+    MDC.put(ILogConfiguration.MDC_END_TIMESTAMP, generatedTimeNow());
     setElapsedTime(MDC.get(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP));
   }
 
   @Override
   public void setClassName(String className) {
-    MDC.put(LogConfigurationConstants.MDC_CLASS_NAME, className);
+    MDC.put(ILogConfiguration.MDC_CLASS_NAME, className);
   }
 
   @Override
@@ -103,7 +85,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void setServerIPAddress(String serverIPAddress) {
-    MDC.put(LogConfigurationConstants.MDC_SERVER_IP_ADDRESS, serverIPAddress);
+    MDC.put(ILogConfiguration.MDC_SERVER_IP_ADDRESS, serverIPAddress);
   }
 
   @Override
@@ -123,7 +105,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void setProcessKey(String processKey) {
-    MDC.put(LogConfigurationConstants.MDC_PROCESS_KEY, processKey);
+    MDC.put(ILogConfiguration.MDC_PROCESS_KEY, processKey);
   }
 
   @Override
@@ -133,12 +115,12 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void setOptCustomField1(String customField1) {
-    MDC.put(LogConfigurationConstants.MDC_OPT_FIELD1, customField1);
+    MDC.put(ILogConfiguration.MDC_OPT_FIELD1, customField1);
   }
 
   @Override
   public void setOutgoingInvocationId(String outgoingInvocationId) {
-    MDC.put(LogConfigurationConstants.MDC_OUTGOING_INVOCATION_ID, outgoingInvocationId);
+    MDC.put(ILogConfiguration.MDC_OUTGOING_INVOCATION_ID, outgoingInvocationId);
   }
 
   @Override
@@ -155,7 +137,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void setRemoteHost(String remoteHost) {
-    MDC.put(LogConfigurationConstants.MDC_REMOTE_HOST, remoteHost);
+    MDC.put(ILogConfiguration.MDC_REMOTE_HOST, remoteHost);
   }
 
   @Override
@@ -185,7 +167,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void setServiceInstanceId(String serviceInstanceId) {
-    MDC.put(LogConfigurationConstants.MDC_SERVICE_INSTANCE_ID, serviceInstanceId);
+    MDC.put(ILogConfiguration.MDC_SERVICE_INSTANCE_ID, serviceInstanceId);
   }
 
   @Override
@@ -200,22 +182,22 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void setTargetVirtualEntity(String targetVirtualEntity) {
-    MDC.put(LogConfigurationConstants.MDC_TARGET_VIRTUAL_ENTITY, targetVirtualEntity);
+    MDC.put(ILogConfiguration.MDC_TARGET_VIRTUAL_ENTITY, targetVirtualEntity);
   }
 
   @Override
   public void setErrorCode(int errorCode) {
-    MDC.put(LogConfigurationConstants.MDC_ERROR_CODE,  Integer.toString(errorCode));
+    MDC.put(ILogConfiguration.MDC_ERROR_CODE, valueOf(errorCode).toString());
   }
 
   @Override
   public void setErrorCategory(String errorCategory) {
-    MDC.put(LogConfigurationConstants.MDC_ERROR_CATEGORY, errorCategory);
+    MDC.put(ILogConfiguration.MDC_ERROR_CATEGORY, errorCategory);
   }
 
   @Override
   public String getErrorCode() {
-    return MDC.get(LogConfigurationConstants.MDC_ERROR_CODE);
+    return MDC.get(ILogConfiguration.MDC_ERROR_CODE);
   }
 
   @Override
@@ -225,7 +207,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public String getErrorCategory() {
-    return MDC.get(LogConfigurationConstants.MDC_ERROR_CATEGORY);
+    return MDC.get(ILogConfiguration.MDC_ERROR_CATEGORY);
   }
 
   @Override
@@ -285,7 +267,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void removeServiceInstanceId() {
-    MDC.remove(LogConfigurationConstants.MDC_SERVICE_INSTANCE_ID);
+    MDC.remove(ILogConfiguration.MDC_SERVICE_INSTANCE_ID);
   }
 
   @Override
@@ -300,81 +282,87 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void removeTargetVirtualEntity() {
-    MDC.remove(LogConfigurationConstants.MDC_TARGET_VIRTUAL_ENTITY);
+    MDC.remove(ILogConfiguration.MDC_TARGET_VIRTUAL_ENTITY);
   }
 
   @Override
   public void removeErrorCode() {
-    MDC.remove(LogConfigurationConstants.MDC_ERROR_CODE);
+    MDC.remove(ILogConfiguration.MDC_ERROR_CODE);
   }
 
   @Override
   public void removeErrorCategory() {
-    MDC.remove(LogConfigurationConstants.MDC_ERROR_CATEGORY);
+    MDC.remove(ILogConfiguration.MDC_ERROR_CATEGORY);
   }
 
   @Override
   public void removeErrorDescription() {
-    MDC.remove(LogConfigurationConstants.MDC_ERROR_DESC);
+    MDC.remove(ILogConfiguration.MDC_ERROR_DESC);
   }
 
   @Override
   public void setAuditMessage(String message) {
-    MDC.put(LogConfigurationConstants.MDC_AUDIT_MESSAGE, message);
+    MDC.put(ILogConfiguration.MDC_AUDIT_MESSAGE, message);
   }
 
   @Override
   public String getAuditMessage() {
-    return MDC.get(LogConfigurationConstants.MDC_AUDIT_MESSAGE);
+    return MDC.get(ILogConfiguration.MDC_AUDIT_MESSAGE);
   }
+
 
   @Override
   public String getSupportablityStatusCode() {
-    return MDC.get(LogConfigurationConstants.MDC_SUPPORTABLITY_STATUS_CODE);
+    return MDC.get(ILogConfiguration.MDC_SUPPORTABLITY_STATUS_CODE);
   }
 
   @Override
   public String getSupportablityAction() {
-    return MDC.get(LogConfigurationConstants.MDC_SUPPORTABLITY_ACTION);
+    return MDC.get(ILogConfiguration.MDC_SUPPORTABLITY_ACTION);
 
   }
 
 
   @Override
   public String getRemoteHost() {
-    return MDC.get(LogConfigurationConstants.MDC_REMOTE_HOST);
+    return MDC.get(ILogConfiguration.MDC_REMOTE_HOST);
   }
 
   @Override
   public String getServerIpAddress() {
-    return MDC.get(LogConfigurationConstants.MDC_SERVER_IP_ADDRESS);
+    return MDC.get(ILogConfiguration.MDC_SERVER_IP_ADDRESS);
   }
+
+//  @Override
+//  public String getSupportablityCsarName() {
+//    return MDC.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_NAME);
+//  }
 
   @Override
   public String getSupportablityCsarUUID() {
-    return MDC.get(LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_UUID);
+    return MDC.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID);
   }
 
   @Override
   public String getSupportablityCsarVersion() {
-    return MDC.get(LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_VERSION);
+    return MDC.get(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION);
 
   }
 
   @Override
   public String getSupportablityComponentName() {
-    return MDC.get(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_NAME);
+    return MDC.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME);
   }
 
   @Override
   public String getSupportablityComponentUUID() {
-    return MDC.get(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_UUID);
+    return MDC.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID);
 
   }
 
   @Override
   public String getSupportablityComponentVersion() {
-    return MDC.get(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_VERSION);
+    return MDC.get(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION);
   }
 
   @Override
@@ -384,72 +372,77 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
 
   @Override
   public void setSupportablityStatusCode(String statusCode) {
-    MDC.put(LogConfigurationConstants.MDC_SUPPORTABLITY_STATUS_CODE, statusCode);
+    MDC.put(ILogConfiguration.MDC_SUPPORTABLITY_STATUS_CODE, statusCode);
   }
 
   @Override
   public void setSupportablityAction(String action) {
-    MDC.put(LogConfigurationConstants.MDC_SUPPORTABLITY_ACTION, action);
+    MDC.put(ILogConfiguration.MDC_SUPPORTABLITY_ACTION, action);
   }
 
   @Override
   public void setSupportablityCsarUUID(String uuid) {
-    MDC.put(LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_UUID, uuid);
+    MDC.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID, uuid);
   }
 
   @Override
   public void setSupportablityCsarVersion(String version) {
-    MDC.put(LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_VERSION, version);
+    MDC.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION, version);
   }
 
   @Override
   public void setSupportablityComponentName(String name) {
-    MDC.put(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_NAME, name);
+    MDC.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME, name);
   }
 
   @Override
   public void setSupportablityComponentUUID(String uuid) {
-    MDC.put(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_UUID, uuid);
+    MDC.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID, uuid);
   }
 
   @Override
   public void setSupportablityComponentVersion(String version) {
-    MDC.put(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_VERSION, version);
+    MDC.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION, version);
   }
 
   @Override
   public void removeSupportablityAction() {
-    MDC.remove(LogConfigurationConstants.MDC_SUPPORTABLITY_ACTION);
+    MDC.remove(ILogConfiguration.MDC_SUPPORTABLITY_ACTION);
   }
 
   @Override
   public void removeSupportablityComponentName() {
-    MDC.remove(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_NAME);
+    MDC.remove(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME);
   }
 
   @Override
   public void removeSupportablityComponentUUID() {
-    MDC.remove(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_UUID);
+    MDC.remove(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID);
   }
 
   @Override
   public void removeSupportablityComponentVersion() {
-    MDC.remove(LogConfigurationConstants.MDC_SUPPORTABLITY_COMPONENT_VERSION);
+    MDC.remove(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION);
   }
+
+//  @Override
+//  public void removeSupportablityCsarName() {
+//    MDC.remove(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_NAME);
+//  }
 
   @Override
   public void removeSupportablityCsarUUID() {
-    MDC.remove(LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_UUID);
+    MDC.remove(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID);
   }
 
   @Override
   public void removeSupportablityCsarVersion() {
-    MDC.remove(LogConfigurationConstants.MDC_SUPPORTABLITY_CSAR_VERSION);
+    MDC.remove(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION);
   }
 
   @Override
   public void removeSupportablityStatusCode() {
-    MDC.remove(LogConfigurationConstants.MDC_SUPPORTABLITY_STATUS_CODE);
+    MDC.remove(ILogConfiguration.MDC_SUPPORTABLITY_STATUS_CODE);
   }
 
   @Override
@@ -461,10 +454,10 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
     try {
       final LocalDateTime startTime = LocalDateTime.parse(beginTimestamp, dateTimeFormatter);
       final LocalDateTime endTime = LocalDateTime
-          .parse(MDC.get(LogConfigurationConstants.MDC_END_TIMESTAMP), dateTimeFormatter);
+          .parse(MDC.get(ILogConfiguration.MDC_END_TIMESTAMP), dateTimeFormatter);
       final Duration timeDifference = Duration.between(startTime, endTime);
 
-      MDC.put(LogConfigurationConstants.MDC_ELAPSED_TIME, String.valueOf(timeDifference.toMillis()));
+      MDC.put(ILogConfiguration.MDC_ELAPSED_TIME, String.valueOf(timeDifference.toMillis()));
 
     } catch (Exception ex) {
       log.error("failed to calculate elapsed time", ex);

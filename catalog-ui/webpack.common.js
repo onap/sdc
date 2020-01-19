@@ -80,7 +80,7 @@ module.exports = function(params) {
                     enforce: "pre",
                     test: /\.js$/,
                     loader: "source-map-loader",
-                    exclude: [ /\/node_modules\// ]
+                    exclude: [ path.join(__dirname, 'node_modules') ]
                 },
                 { test: /\.json$/, loader: "json-loader" },
                 { test: /\.html$/, loader: "html-loader" },
@@ -226,6 +226,7 @@ module.exports = function(params) {
             // }),
             new GlobCopyWebpackPlugin({
                 patterns: [
+                    "assets/preloading.css",
                     "assets/languages",
                     "assets/styles/fonts",
                     "assets/styles/images",
@@ -292,7 +293,7 @@ module.exports = function(params) {
             }),
             new AotPlugin({
                 mainPath: "main.ts",
-                exclude: [],
+                exclude: [    "**/*.spec.ts" ],
                 tsConfigPath: "src/tsconfig.json",
                 skipCodeGeneration: true
             })

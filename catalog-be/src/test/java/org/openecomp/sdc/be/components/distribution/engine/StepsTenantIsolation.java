@@ -282,7 +282,7 @@ public class StepsTenantIsolation {
     @Then("^trying to retrieve Ueb Addresses From AftDme (.*)$")
     public void trying_to_retrieve_ueb_addresses_from_AftDme(boolean isActivated) throws Throwable {
         verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated))).discoverUebHosts(
-                Mockito.anyString(), Mockito.anyString());
+                Mockito.anyString());
 
     }
 

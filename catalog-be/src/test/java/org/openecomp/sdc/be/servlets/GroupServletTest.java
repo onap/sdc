@@ -30,9 +30,7 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 public class GroupServletTest {

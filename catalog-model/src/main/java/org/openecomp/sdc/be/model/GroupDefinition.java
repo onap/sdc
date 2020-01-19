@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,6 +39,7 @@ import static java.util.stream.Collectors.*;
 
 public class GroupDefinition extends GroupDataDefinition implements PropertiesOwner{
 
+	@JsonInclude
 	private Map<String, List<CapabilityDefinition>> capabilities;
 	
     public GroupDefinition() {

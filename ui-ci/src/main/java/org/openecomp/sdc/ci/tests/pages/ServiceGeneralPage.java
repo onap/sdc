@@ -55,12 +55,39 @@ public class ServiceGeneralPage extends ResourceGeneralPage {
         serviceNameTextbox.sendKeys(serviceName);
     }
 
+
+    public static void defineServiceFunction(String serviceFunction) {
+        WebElement serviceFunctionTextbox = GeneralUIUtils
+                .getWebElementByTestID(DataTestIdEnum.ServiceMetadataEnum.SERVICE_FUNCTION.getValue());
+        serviceFunctionTextbox.clear();
+        serviceFunctionTextbox.sendKeys(serviceFunction);
+    }
+
     public static void defineProjectCode(String pmat) {
         WebElement projectCodeTextbox = GeneralUIUtils
                 .getWebElementByTestID(DataTestIdEnum.ServiceMetadataEnum.PROJECT_CODE.getValue());
         projectCodeTextbox.clear();
         projectCodeTextbox.sendKeys(pmat);
     }
+    public static void defineNamingPolicy(String namingPolicyText) {
+        WebElement namingPolicyTextbox = GeneralUIUtils
+                .getWebElementByTestID(DataTestIdEnum.ServiceMetadataEnum.NAMING_POLICY.getValue());
+        namingPolicyTextbox.clear();
+        namingPolicyTextbox.sendKeys(namingPolicyText);
+    }
+
+	public static String getServiceFunctionText(){
+		return getServiceFunctionField().getAttribute("value");
+	}
+
+    public static String getNamingPolicyText(){
+        return getNamingPolicyField().getAttribute("value");
+    }
+
+    private static WebElement getNamingPolicyField() {
+        return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ServiceMetadataEnum.NAMING_POLICY.getValue());
+    }
+
 
     public static String getProjectCodeText() {
         return getProjectCodeField().getAttribute("value");
@@ -68,6 +95,9 @@ public class ServiceGeneralPage extends ResourceGeneralPage {
 
     public static String[] getTags() {
         return ResourceGeneralPage.getElementsFromTagsTable().stream().map(WebElement::getText).toArray(String[]::new);
+    }
+    private static WebElement getServiceFunctionField() {
+        return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ServiceMetadataEnum.SERVICE_FUNCTION.getValue());
     }
 
     private static WebElement getProjectCodeField() {

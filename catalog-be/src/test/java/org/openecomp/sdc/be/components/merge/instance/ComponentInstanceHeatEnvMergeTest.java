@@ -92,7 +92,7 @@ public class ComponentInstanceHeatEnvMergeTest {
                                                                                     Mockito.eq(USER), Mockito.eq(json),
                                                                                     Mockito.refEq(artifactUpdateOperation),
                                                                                     isNull()))
-                                           .thenReturn(Either.left(Either.left(new ArtifactDefinition())));
+                                           .thenReturn(Either.left(new ArtifactDefinition()));
         }
     }
 

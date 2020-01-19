@@ -55,6 +55,9 @@ public class UebHealthCheckCall implements Callable<Boolean> {
             logger.debug("After running Health check towards ueb server {}. Error code is {}. Set result to true", server, cambriaErrorResponse.httpCode);
             result = true;
         }
+        else {
+            logger.debug("After running Health check towards ueb server {}. Error code is {}. Set result to false", server, cambriaErrorResponse.httpCode);
+        }
 
         healthLogger.trace("Result after running health check towards ueb server {} is {}. Returned result is {} ", server, cambriaErrorResponse, result);
 

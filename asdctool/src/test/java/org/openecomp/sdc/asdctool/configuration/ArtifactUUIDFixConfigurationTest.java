@@ -38,6 +38,9 @@ public class ArtifactUUIDFixConfigurationTest {
 		return new ArtifactUUIDFixConfiguration();
 	}
 
+	private static ToscaExportHandler toscaExportHandler;
+	private static CsarUtils csarUtils;
+
 	@Test
 	public void testArtifactUuidFix() throws Exception {
 		ArtifactUUIDFixConfiguration testSubject;
@@ -47,9 +50,7 @@ public class ArtifactUUIDFixConfigurationTest {
 		testSubject = createTestSubject();
 		JanusGraphDao janusGraphDao = mock(JanusGraphDao.class);
 		ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
-		ToscaExportHandler toscaExportHandler = mock(ToscaExportHandler.class);
 		ArtifactCassandraDao artifactCassandraDao = mock(ArtifactCassandraDao.class);
-		CsarUtils csarUtils = mock(CsarUtils.class);
 
 		result = testSubject.artifactUuidFix(janusGraphDao, toscaOperationFacade,
 			toscaExportHandler, artifactCassandraDao, csarUtils);
@@ -64,13 +65,4 @@ public class ArtifactUUIDFixConfigurationTest {
 		testSubject = createTestSubject();
 	}
 
-	@Test
-	public void testMapper() throws Exception {
-		ArtifactUUIDFixConfiguration testSubject;
-		PropertiesFactoryBean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.mapper();
-	}
 }

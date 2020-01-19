@@ -27,8 +27,13 @@ import com.aventstack.extentreports.Status;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import fj.data.Either;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
@@ -46,6 +51,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.CompositionPage;
@@ -426,15 +432,16 @@ public class Vf extends SetupCDTest {
     }
 
     @Test
-    public void changeInstanceNameInVfTest() {
+    public void changeInstanceNameInVfTest() throws Exception {
         final ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
+        Resource containerObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
+        Resource computeObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Compute", "1.0");
+        ComponentInstance componentInstanceDetails = AtomicOperationUtils.addComponentInstanceToComponentContainer(computeObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
+        containerObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
+        String intanceWithUpdatedName  = AtomicOperationUtils.updateComponentInstanceName("newName", containerObject, componentInstanceDetails.getName(), getUser(), true).getRight().getName();
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
-        final CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
-        final CanvasElement computeElement = vfCanvasManager.createElementOnCanvas(LeftPanelCanvasItems.COMPUTE);
-        final String updatedInstanceName = "updatedName";
-        vfCanvasManager.updateElementNameInCanvas(computeElement, updatedInstanceName);
-        assertEquals(CompositionPage.getSelectedInstanceName(), updatedInstanceName);
+        assertEquals(intanceWithUpdatedName, "newName");
     }
 
     @Test

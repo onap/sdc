@@ -52,6 +52,7 @@ public class MSORestClient {
         if ( numOfRetries > 0 ) {
             httpClientConfig.setRetryHandler(RetryHandlers.getDefault(numOfRetries));
         }
+        serviceConfig.getHttpClientConfig().setEnableMetricLogging(true);
     }
 
     public HttpResponse<String> notifyDistributionComplete(String distributionId, DistributionStatusNotificationEnum distributionStatusEnum, String errReason) {
@@ -67,7 +68,6 @@ public class MSORestClient {
     private HttpResponse<String> doNotifyDistributionComplete(String distributionId, DistributionStatusNotificationEnum distributionStatusEnum, String errReason) throws HttpExecuteException {
         StringEntity entity = new StringEntity(gson.toJson(new DistributionStatusRequest(distributionStatusEnum.name(), errReason)), ContentType.APPLICATION_JSON);
         HttpResponse<String> response = HttpRequest.patch(buildMsoDistributionUrl(distributionId), buildReqHeader(), entity, serviceConfig.getHttpClientConfig());
-        logger.info("response from mso - status code: {}, status description: {}, response: {}, ", response.getStatusCode(), response.getDescription(), response.getResponse());
         return response;
     }
 

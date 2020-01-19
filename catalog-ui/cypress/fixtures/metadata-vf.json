@@ -1,0 +1,100 @@
+{
+    "artifacts": null,
+    "deploymentArtifacts": null,
+    "toscaArtifacts": null,
+    "categories": null,
+    "creatorUserId": null,
+    "creatorFullName": null,
+    "lastUpdaterUserId": null,
+    "lastUpdaterFullName": null,
+    "componentType": null,
+    "componentInstances": null,
+    "componentInstancesRelations": null,
+    "componentInstancesInputs": null,
+    "componentInstancesProperties": null,
+    "componentInstancesAttributes": null,
+    "capabilities": null,
+    "policies": null,
+    "requirements": null,
+    "inputs": null,
+    "groups": null,
+    "additionalInformation": null,
+    "metadata": {
+        "uniqueId": "56d04fe8-b501-4037-bf98-dc9997fd5ec2",
+        "name": "vf",
+        "version": "0.1",
+        "isHighestVersion": true,
+        "creationDate": 1543399737925,
+        "lastUpdateDate": 1543399737925,
+        "description": "dsafdsf",
+        "lifecycleState": "NOT_CERTIFIED_CHECKOUT",
+        "tags": [
+            "vf"
+        ],
+        "icon": "defaulticon",
+        "normalizedName": "vf",
+        "systemName": "Vf",
+        "contactId": "cs0008",
+        "allVersions": {
+            "0.1": "46d04fe8-b501-4037-bf98-dc9997fd5ec2",
+            "0.2": "56d04fe8-b501-4037-bf98-dc9997fd5ec2"
+        },
+        "isDeleted": null,
+        "csarUUID": null,
+        "csarVersion": null,
+        "importedToscaChecksum": null,
+        "invariantUUID": "c2c660c4-340a-4ad5-862e-c57076bd4708",
+        "componentType": "RESOURCE",
+        "categories": [
+            {
+                "name": "Allotted Resource",
+                "normalizedName": "allotted resource",
+                "uniqueId": "resourceNewCategory.allotted resource",
+                "icons": null,
+                "subcategories": [
+                    {
+                        "name": "IP Mux Demux",
+                        "normalizedName": "ip mux demux",
+                        "uniqueId": "resourceNewCategory.allotted resource.ip mux demux",
+                        "icons": [
+                            "ip_mux_demux"
+                        ],
+                        "groupings": null,
+                        "version": null,
+                        "ownerId": null,
+                        "empty": false,
+                        "type": null
+                    }
+                ],
+                "version": null,
+                "ownerId": null,
+                "empty": false,
+                "type": null
+            }
+        ],
+        "creatorUserId": "cs0008",
+        "creatorFullName": "Carlos Santana",
+        "lastUpdaterUserId": "cs0008",
+        "lastUpdaterFullName": "Carlos Santana",
+        "archiveTime": 0,
+        "vendorName": "324324",
+        "vendorRelease": "3243243",
+        "resourceVendorModelNumber": "",
+        "resourceType": "VF",
+        "isAbstract": null,
+        "cost": null,
+        "licenseType": null,
+        "toscaResourceName": "org.openecomp.resource.vf.Vf",
+        "derivedFrom": null,
+        "uuid": "b6c1da0f-90a8-4f4b-b6e5-f95a7f8b465f",
+        "archived": false,
+        "vspArchived": false
+    },
+    "derivedFrom": null,
+    "derivedList": null,
+    "properties": null,
+    "attributes": null,
+    "interfaces": null,
+    "defaultCapabilities": null,
+    "interfaceOperations": null
+}

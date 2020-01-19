@@ -20,7 +20,8 @@
 
 import * as _ from "lodash";
 import {ComponentType} from "../utils/constants";
-import {CacheService} from "../services/cache-service";
+import {CacheService} from "app/services-ng2";
+
 export class CategoryTypeFilter {
 
     static $inject = ['Sdc.Services.CacheService'];

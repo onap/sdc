@@ -1,0 +1,89 @@
+@import "./override";
+
+:host ::ng-deep {
+
+  .externalActionLabel {
+      color: @sdcui_color_blue;
+  }
+
+  .ngx-datatable {
+    border: 1px solid @sdcui_color_light-gray;
+    > div {
+      height: 100%;
+      min-height: 500px;
+      datatable-body {
+        height: calc(100% - 50px) !important;
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-height: 500px;
+      }
+    }
+    //*********************************************
+
+    .datatable-header {
+      background-color: @sdcui_color_silver;
+      border-bottom: 1px solid @sdcui_color_light-gray;
+
+      .datatable-header-inner {
+        height: 100%;
+        align-items: center;
+
+        .datatable-header-cell {
+          box-sizing: border-box;
+          color: @sdcui_color_dark-gray;
+          border-right: 1px solid @sdcui_color_light-gray;
+          font-weight: bold;
+          text-align: center;
+          padding: 10px;
+
+          .datatable-icon-up {
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid @sdcui_color_dark-gray;
+          }
+
+          .datatable-icon-down {
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid @sdcui_color_dark-gray;
+          }
+        }
+      }
+    }
+
+    .datatable-body-cell {
+      padding: 5px 20px;
+      border-bottom: 1px solid @sdcui_color_light-gray;
+      border-right: 1px solid @sdcui_color_light-gray;
+      font-family: OpenSans-Regular, sans-serif;
+      font-size: 13px;
+      font-weight: normal;
+      .label {
+        font-family: OpenSans-Regular, sans-serif;
+        font-size: 13px;
+        color: @sdcui_color_gray;
+      }
+    }
+    .datatable-body-row:hover {
+      background-color: @sdcui_color_light-silver;
+    }
+
+  }
+  .datatable-row-detail {
+    padding: 10px 25px;
+    border-bottom: 1px solid @sdcui_color_light-gray;
+  }
+
+  .empty-row {
+    padding: 10px;
+  }
+
+}
+
+.expand-collapse-cell {
+  display: flex;
+  align-items: center;
+  .expand-collapse-icon {
+    padding-right: 10px;
+  }
+}

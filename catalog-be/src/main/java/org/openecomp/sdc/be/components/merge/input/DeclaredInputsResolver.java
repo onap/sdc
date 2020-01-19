@@ -32,6 +32,7 @@ import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.openecomp.sdc.be.utils.PropertyDefinitionUtils.resolveGetInputProperties;
@@ -88,6 +89,7 @@ public class DeclaredInputsResolver {
         List<InputDefinition> inputsForRedeclaration = redeclareInputData.declaredInputIds.stream()
                                             .filter(oldInputsById::containsKey)
                                             .map(oldInputsById::get)
+                                            .filter(Objects::nonNull)
                                             .map(InputDefinition::new)
                                             .collect(Collectors.toList());
         

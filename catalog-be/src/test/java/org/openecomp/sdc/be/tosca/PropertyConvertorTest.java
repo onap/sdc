@@ -162,28 +162,5 @@ public class PropertyConvertorTest {
         ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, PropertyConvertor.PropertyType.PROPERTY);
         assertThat(toscaProperty.getDefaultp()).isEqualTo("/");
     }
-    
-    @Test
-    public void testConvertToToscaObject() {
-		dataTypes.put(ToscaPropertyType.Root.getType(), new DataTypeDefinition());
-    	
-    	PropertyConvertor.getInstance().convertToToscaObject(ToscaPropertyType.Root.getType(), "", "innerType", dataTypes,true);
-    }
-    
-    @Test
-    public void testConvertToToscaObjectWhenPropertyTypeAndInnerTypeNull() {
-    	dataTypes.put(ToscaPropertyType.Root.getType(), new DataTypeDefinition());
-    	
-    	PropertyConvertor.getInstance().convertToToscaObject(null, "value", null, dataTypes,true);
-    }
-    
-    @Test
-    public void testConvertToToscaObjectWhenIsScalarTypeIsNotNull() {
-    	DataTypeDefinition def = new DataTypeDefinition();
-    	def.setName("integer");
-    	dataTypes.put("type", def);
-    	
-    	PropertyConvertor.getInstance().convertToToscaObject("type", "value", "innerType", dataTypes,true);
-    }
 
 }

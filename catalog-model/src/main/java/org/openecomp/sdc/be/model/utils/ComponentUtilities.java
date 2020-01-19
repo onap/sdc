@@ -54,6 +54,6 @@ public class ComponentUtilities {
     }
 
     public static boolean isNotUpdatedCapReqName(String prefix, String currName, String previousName) {
-        return StringUtils.isEmpty(previousName) || !currName.equals(prefix + previousName);
+        return StringUtils.isEmpty(previousName) || StringUtils.isEmpty(currName) || !currName.equals(prefix + previousName);
     }
 }

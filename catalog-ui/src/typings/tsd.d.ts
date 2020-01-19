@@ -18,4 +18,3 @@
  * ============LICENSE_END=========================================================
  */
 /// <reference path="notifyjs/notifyjs.d.ts" />
-/// <reference path="jasmine/jasmine.d.ts" />

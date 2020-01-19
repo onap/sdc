@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-import {ToscaPresentationData} from "./tosca-presentation";
+import {ToscaPresentationData} from './tosca-presentation';
 
 export class RelationshipTypesMap {
     relationshipTypesMap: RelationshipTypesMapData;

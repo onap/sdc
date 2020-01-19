@@ -40,10 +40,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import fj.data.Either;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -51,7 +52,6 @@ import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -68,6 +68,9 @@ import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -107,7 +110,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<InterfaceDefinition>, ResponseFormat> deleteInterfaceOperation(String componentId,
             String interfaceId, List<String> operationsToDelete, User user, boolean lock) {
-        validateUserExists(user.getUserId(), DELETE_INTERFACE_OPERATION, true);
+        validateUserExists(user.getUserId());
 
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
@@ -115,11 +118,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
 
-        Either<Boolean, ResponseFormat> lockResult =
-                lockComponentResult(lock, storedComponent, DELETE_INTERFACE_OPERATION);
-        if (lockResult.isRight()) {
-            return Either.right(lockResult.right().value());
-        }
+        lockComponentResult(lock, storedComponent, DELETE_INTERFACE_OPERATION);
+
 
         try {
             Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(
@@ -208,10 +208,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             janusGraphDao.rollback();
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_DELETED));
         } finally {
-            if (lockResult.isLeft() && lockResult.left().value()) {
-                graphLockOperation.unlockComponent(storedComponent.getUniqueId(),
-                        NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
-            }
+            graphLockOperation.unlockComponent(storedComponent.getUniqueId(),
+                    NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
         }
     }
 
@@ -228,18 +226,19 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
     private Either<Boolean, ResponseFormat> lockComponentResult(boolean lock,
             org.openecomp.sdc.be.model.Component component, String action) {
         if (lock) {
-            Either<Boolean, ResponseFormat> lockResult = lockComponent(component.getUniqueId(), component, action);
-            if (lockResult.isRight()) {
-                janusGraphDao.rollback();
-                return Either.right(lockResult.right().value());
-            }
+            try {
+                lockComponent(component.getUniqueId(), component, action);
+            } catch (ComponentException e) {
+            janusGraphDao.rollback();
+            throw e;
         }
+    }
         return Either.left(true);
     }
 
     public Either<List<InterfaceDefinition>, ResponseFormat> getInterfaceOperation(String componentId,
             String interfaceId, List<String> operationsToGet, User user, boolean lock) {
-        validateUserExists(user.getUserId(), GET_INTERFACE_OPERATION, true);
+        validateUserExists(user);
 
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
@@ -247,11 +246,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
 
-        Either<Boolean, ResponseFormat> lockResult =
-                lockComponentResult(lock, storedComponent, GET_INTERFACE_OPERATION);
-        if (lockResult.isRight()) {
-            return Either.right(lockResult.right().value());
-        }
+        lockComponentResult(lock, storedComponent, GET_INTERFACE_OPERATION);
 
         try {
             Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(
@@ -280,10 +275,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             return Either.right(
                     componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, componentId));
         } finally {
-            if (lockResult.isLeft() && lockResult.left().value()) {
-                graphLockOperation.unlockComponent(storedComponent.getUniqueId(),
-                        NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
-            }
+            graphLockOperation.unlockComponent(storedComponent.getUniqueId(),
+                    NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
         }
     }
 
@@ -296,7 +289,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
     private Either<List<InterfaceDefinition>, ResponseFormat> createOrUpdateInterfaceOperation(String componentId,
             List<InterfaceDefinition> interfaceDefinitions, User user, boolean isUpdate, String errorContext,
             boolean lock) {
-        validateUserExists(user.getUserId(), errorContext, true);
+        validateUserExists(user);
 
         Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
@@ -304,10 +297,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
 
-        Either<Boolean, ResponseFormat> lockResult = lockComponentResult(lock, storedComponent, errorContext);
-        if (lockResult.isRight()) {
-            return Either.right(lockResult.right().value());
-        }
+        lockComponentResult(lock, storedComponent, errorContext);
+
 
         Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceLifecycleTypes =
                 getAllInterfaceLifecycleTypes();
@@ -416,10 +407,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "addOrUpdate", e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
-            if (lockResult.isLeft() && lockResult.left().value()) {
-                graphLockOperation.unlockComponent(storedComponent.getUniqueId(),
-                        NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
-            }
+            graphLockOperation.unlockComponent(storedComponent.getUniqueId(),
+                    NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
         }
     }
 
@@ -566,7 +555,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
 
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
-        validateUserExists(user.getUserId(), GET_INTERFACE_OPERATION, true);
+        validateUserExists(user.getUserId());
 
         Either<Boolean, ResponseFormat> lockResult = lockComponentResult(true, storedComponent, GET_INTERFACE_OPERATION);
         if (lockResult.isRight()) {

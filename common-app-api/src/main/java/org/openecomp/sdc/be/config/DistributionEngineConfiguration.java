@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,461 +23,449 @@ package org.openecomp.sdc.be.config;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DistributionEngineConfiguration extends BasicConfiguration {
 
-    private List<String> uebServers;
+	private List<String> uebServers;
 
-    private String distributionNotifTopicName;
+	private String distributionNotifTopicName;
 
-    private String distributionStatusTopicName;
+	private String distributionStatusTopicName;
 
-    private Integer initRetryIntervalSec;
+	private Integer initRetryIntervalSec;
 
-    private Integer initMaxIntervalSec;
+	private Integer initMaxIntervalSec;
 
-    private ComponentArtifactTypesConfig distribNotifServiceArtifactTypes;
+	private ComponentArtifactTypesConfig distribNotifServiceArtifactTypes;
 
-    private ComponentArtifactTypesConfig distribNotifResourceArtifactTypes;
+	private ComponentArtifactTypesConfig distribNotifResourceArtifactTypes;
 
-    private String uebPublicKey;
+	private String uebPublicKey;
 
-    private String uebSecretKey;
+	private String uebSecretKey;
 
-    private List<String> environments;
+	private List<String> environments;
 
-    private DistributionStatusTopicConfig distributionStatusTopic;
+	private DistributionStatusTopicConfig distributionStatusTopic;
 
-    private CreateTopicConfig createTopic;
+	private CreateTopicConfig createTopic;
 
-    private boolean startDistributionEngine;
+	private boolean startDistributionEngine;
 
-    private DistributionNotificationTopicConfig distributionNotificationTopic;
+	private DistributionNotificationTopicConfig distributionNotificationTopic;
 
-    private Integer defaultArtifactInstallationTimeout = 60;
+	private Integer defaultArtifactInstallationTimeout = 60;
+	
+	private Integer currentArtifactInstallationTimeout = 120;
+	private boolean useHttpsWithDmaap;
 
-    private Integer currentArtifactInstallationTimeout = 120;
+	private ExternalServiceConfig aaiConfig;
 
-    private boolean useHttpsWithDmaap;
+	private ExternalServiceConfig msoConfig;
+	
+	private Integer opEnvRecoveryIntervalSec;
+	
+	private Integer allowedTimeBeforeStaleSec;
+	
+	public static class DistribNotifServiceArtifacts {
 
-    private ExternalServiceConfig aaiConfig;
+		Map<String, Object> service;
+		Map<String, Object> resource;
+		
+		
 
-    private ExternalServiceConfig msoConfig;
+		public Map<String, Object> getService() {
+			return service;
+		}
 
-    private Integer opEnvRecoveryIntervalSec;
+		public void setService(Map<String, Object> service) {
+			this.service = service;
+		}
 
-    private Integer allowedTimeBeforeStaleSec;
+		public Map<String, Object> getResource() {
+			return resource;
+		}
 
-    public static class DistribNotifServiceArtifacts {
+		public void setResource(Map<String, Object> resource) {
+			this.resource = resource;
+		}
 
-        private Map<String, Object> service;
-        private Map<String, Object> resource;
+	}
 
+	public static class NotifArtifactTypes {
 
-        public Map<String, Object> getService() {
-            return service;
-        }
+		List<String> info;
+		List<String> lifecycle;
 
-        public void setService(Map<String, Object> service) {
-            this.service = service;
-        }
+		public List<String> getInfo() {
+			return info;
+		}
 
-        public Map<String, Object> getResource() {
-            return resource;
-        }
+		public void setInfo(List<String> info) {
+			this.info = info;
+		}
 
-        public void setResource(Map<String, Object> resource) {
-            this.resource = resource;
-        }
+		public List<String> getLifecycle() {
+			return lifecycle;
+		}
 
-    }
+		public void setLifecycle(List<String> lifecycle) {
+			this.lifecycle = lifecycle;
+		}
 
-    public static class NotifArtifactTypes {
+	}
 
-        private List<String> info;
-        private List<String> lifecycle;
+	public static class NotifArtifactTypesResource {
 
-        public List<String> getInfo() {
-            return info;
-        }
+		List<ArtifcatTypeEnum> lifecycle;
 
-        public void setInfo(List<String> info) {
-            this.info = info;
-        }
+	}
 
-        public List<String> getLifecycle() {
-            return lifecycle;
-        }
+	public enum ArtifcatTypeEnum {
 
-        public void setLifecycle(List<String> lifecycle) {
-            this.lifecycle = lifecycle;
-        }
+		MURANO_PKG("MURANO-PKG"), HEAT("HEAT"), DG_XML("DG_XML");
 
-    }
+		String value;
 
-    public static class NotifArtifactTypesResource {
+		private ArtifcatTypeEnum(String value) {
+			this.value = value;
+		}
 
-        private List<ArtifcatTypeEnum> lifecycle;
+		public String getValue() {
 
-        public List<ArtifcatTypeEnum> getLifecycle() {
-            return lifecycle;
-        }
+			return value;
+		}
+	}
 
-        public void setLifecycle(List<ArtifcatTypeEnum> lifecycle) {
-            this.lifecycle = lifecycle;
-        }
-    }
+	public List<String> getUebServers() {
+		return uebServers;
+	}
 
-    public enum ArtifcatTypeEnum {
+	public void setUebServers(List<String> uebServers) {
+		this.uebServers = uebServers;
+	}
 
-        MURANO_PKG("MURANO-PKG"), HEAT("HEAT"), DG_XML("DG_XML");
+	public String getDistributionNotifTopicName() {
+		return distributionNotifTopicName;
+	}
 
-        private String value;
+	public void setDistributionNotifTopicName(String distributionNotifTopicName) {
+		this.distributionNotifTopicName = distributionNotifTopicName;
+	}
 
-        ArtifcatTypeEnum(String value) {
-            this.value = value;
-        }
+	public String getDistributionStatusTopicName() {
+		return distributionStatusTopicName;
+	}
 
-        public String getValue() {
+	public void setDistributionStatusTopicName(String distributionStatusTopicName) {
+		this.distributionStatusTopicName = distributionStatusTopicName;
+	}
 
-            return value;
-        }
-    }
+	public Integer getInitRetryIntervalSec() {
+		return initRetryIntervalSec;
+	}
 
-    public List<String> getUebServers() {
-        return uebServers;
-    }
+	public void setInitRetryIntervalSec(Integer initRetryIntervalSec) {
+		this.initRetryIntervalSec = initRetryIntervalSec;
+	}
 
-    public void setUebServers(List<String> uebServers) {
-        this.uebServers = uebServers;
-    }
+	public ComponentArtifactTypesConfig getDistribNotifServiceArtifactTypes() {
+		return distribNotifServiceArtifactTypes;
+	}
+
+	public void setDistribNotifServiceArtifactTypes(ComponentArtifactTypesConfig distribNotifServiceArtifactTypes) {
+		this.distribNotifServiceArtifactTypes = distribNotifServiceArtifactTypes;
+	}
+
+	public ComponentArtifactTypesConfig getDistribNotifResourceArtifactTypes() {
+		return distribNotifResourceArtifactTypes;
+	}
+
+	public void setDistribNotifResourceArtifactTypes(ComponentArtifactTypesConfig distribNotifResourceArtifactTypes) {
+		this.distribNotifResourceArtifactTypes = distribNotifResourceArtifactTypes;
+	}
+
+	public String getUebPublicKey() {
+		return uebPublicKey;
+	}
+
+	public void setUebPublicKey(String uebPublicKey) {
+		this.uebPublicKey = uebPublicKey;
+	}
+
+	public String getUebSecretKey() {
+		return uebSecretKey;
+	}
+
+	public void setUebSecretKey(String uebSecretKey) {
+		this.uebSecretKey = uebSecretKey;
+	}
+
+	public List<String> getEnvironments() {
+		return environments;
+	}
+
+	public void setEnvironments(List<String> environments) {
+
+		Set<String> set = new HashSet<>();
+		if (environments != null) {
+			set.addAll(environments);
+			this.environments = new ArrayList<>(set);
+		} else {
+			this.environments = null;
+		}
 
-    public String getDistributionNotifTopicName() {
-        return distributionNotifTopicName;
-    }
+	}
 
-    public void setDistributionNotifTopicName(String distributionNotifTopicName) {
-        this.distributionNotifTopicName = distributionNotifTopicName;
-    }
+	public DistributionStatusTopicConfig getDistributionStatusTopic() {
+		return distributionStatusTopic;
+	}
 
-    public String getDistributionStatusTopicName() {
-        return distributionStatusTopicName;
-    }
+	public void setDistributionStatusTopic(DistributionStatusTopicConfig distributionStatusTopic) {
+		this.distributionStatusTopic = distributionStatusTopic;
+	}
 
-    public void setDistributionStatusTopicName(String distributionStatusTopicName) {
-        this.distributionStatusTopicName = distributionStatusTopicName;
-    }
+	public Integer getInitMaxIntervalSec() {
+		return initMaxIntervalSec;
+	}
 
-    public Integer getInitRetryIntervalSec() {
-        return initRetryIntervalSec;
-    }
+	public void setInitMaxIntervalSec(Integer initMaxIntervalSec) {
+		this.initMaxIntervalSec = initMaxIntervalSec;
+	}
 
-    public void setInitRetryIntervalSec(Integer initRetryIntervalSec) {
-        this.initRetryIntervalSec = initRetryIntervalSec;
-    }
+	public CreateTopicConfig getCreateTopic() {
+		return createTopic;
+	}
 
-    public ComponentArtifactTypesConfig getDistribNotifServiceArtifactTypes() {
-        return distribNotifServiceArtifactTypes;
-    }
+	public void setCreateTopic(CreateTopicConfig createTopic) {
+		this.createTopic = createTopic;
+	}
 
-    public void setDistribNotifServiceArtifactTypes(ComponentArtifactTypesConfig distribNotifServiceArtifactTypes) {
-        this.distribNotifServiceArtifactTypes = distribNotifServiceArtifactTypes;
-    }
+	public boolean isStartDistributionEngine() {
+		return startDistributionEngine;
+	}
 
-    public ComponentArtifactTypesConfig getDistribNotifResourceArtifactTypes() {
-        return distribNotifResourceArtifactTypes;
-    }
+	public void setStartDistributionEngine(boolean startDistributionEngine) {
+		this.startDistributionEngine = startDistributionEngine;
+	}
 
-    public void setDistribNotifResourceArtifactTypes(ComponentArtifactTypesConfig distribNotifResourceArtifactTypes) {
-        this.distribNotifResourceArtifactTypes = distribNotifResourceArtifactTypes;
-    }
 
-    public String getUebPublicKey() {
-        return uebPublicKey;
-    }
 
-    public void setUebPublicKey(String uebPublicKey) {
-        this.uebPublicKey = uebPublicKey;
-    }
+	public DistributionNotificationTopicConfig getDistributionNotificationTopic() {
+		return distributionNotificationTopic;
+	}
 
-    public String getUebSecretKey() {
-        return uebSecretKey;
-    }
+	public void setDistributionNotificationTopic(DistributionNotificationTopicConfig distributionNotificationTopic) {
+		this.distributionNotificationTopic = distributionNotificationTopic;
+	}
 
-    public void setUebSecretKey(String uebSecretKey) {
-        this.uebSecretKey = uebSecretKey;
-    }
+	public int getDefaultArtifactInstallationTimeout() {
+		return defaultArtifactInstallationTimeout;
+	}
+	public void setDefaultArtifactInstallationTimeout(int defaultArtifactInstallationTimeout) {
+		this.defaultArtifactInstallationTimeout = defaultArtifactInstallationTimeout;
+	}
+	
+	public int getCurrentArtifactInstallationTimeout() {
+		return currentArtifactInstallationTimeout;
+	}
+	public void setCurrentArtifactInstallationTimeout(int currentArtifactInstallationTimeout) {
+		this.currentArtifactInstallationTimeout = currentArtifactInstallationTimeout;
+	}
+	public boolean isUseHttpsWithDmaap() {
+		return useHttpsWithDmaap;
+	}
 
-    public List<String> getEnvironments() {
-        return environments;
-    }
+	public void setUseHttpsWithDmaap(boolean useHttpsWithDmaap) {
+		this.useHttpsWithDmaap = useHttpsWithDmaap;
+	}
 
-    public void setEnvironments(List<String> environments) {
+	public static class CreateTopicConfig {
 
-        Set<String> set = new HashSet<>();
-        if (environments != null) {
-            set.addAll(environments);
-            this.environments = new ArrayList<>(set);
-        } else {
-            this.environments = null;
-        }
+		private Integer partitionCount;
+		private Integer replicationCount;
 
-    }
+		public Integer getPartitionCount() {
+			return partitionCount;
+		}
 
-    public DistributionStatusTopicConfig getDistributionStatusTopic() {
-        return distributionStatusTopic;
-    }
+		public void setPartitionCount(Integer partitionCount) {
+			this.partitionCount = partitionCount;
+		}
 
-    public void setDistributionStatusTopic(DistributionStatusTopicConfig distributionStatusTopic) {
-        this.distributionStatusTopic = distributionStatusTopic;
-    }
+		public Integer getReplicationCount() {
+			return replicationCount;
+		}
 
-    public Integer getInitMaxIntervalSec() {
-        return initMaxIntervalSec;
-    }
+		public void setReplicationCount(Integer replicationCount) {
+			this.replicationCount = replicationCount;
+		}
 
-    public void setInitMaxIntervalSec(Integer initMaxIntervalSec) {
-        this.initMaxIntervalSec = initMaxIntervalSec;
-    }
+		@Override
+		public String toString() {
+			return "CreateTopicConfig [partitionCount=" + partitionCount + ", replicationCount=" + replicationCount
+					+ "]";
+		}
 
-    public CreateTopicConfig getCreateTopic() {
-        return createTopic;
-    }
+	}
 
-    public void setCreateTopic(CreateTopicConfig createTopic) {
-        this.createTopic = createTopic;
-    }
+	public static class EnvironmentConfig {
 
-    public boolean isStartDistributionEngine() {
-        return startDistributionEngine;
-    }
+		private String name;
+		private List<String> uebServers;
 
-    public void setStartDistributionEngine(boolean startDistributionEngine) {
-        this.startDistributionEngine = startDistributionEngine;
-    }
+		public String getName() {
+			return name;
+		}
 
-    public DistributionNotificationTopicConfig getDistributionNotificationTopic() {
-        return distributionNotificationTopic;
-    }
+		public void setName(String name) {
+			this.name = name;
+		}
 
-    public void setDistributionNotificationTopic(DistributionNotificationTopicConfig distributionNotificationTopic) {
-        this.distributionNotificationTopic = distributionNotificationTopic;
-    }
+		public List<String> getUebServers() {
+			return uebServers;
+		}
 
-    public int getDefaultArtifactInstallationTimeout() {
-        return defaultArtifactInstallationTimeout;
-    }
+		public void setUebServers(List<String> uebServers) {
+			this.uebServers = uebServers;
+		}
 
-    public void setDefaultArtifactInstallationTimeout(int defaultArtifactInstallationTimeout) {
-        this.defaultArtifactInstallationTimeout = defaultArtifactInstallationTimeout;
-    }
+		@Override
+		public String toString() {
+			return "EnvironmentConfig [name=" + name + ", uebServers=" + uebServers + "]";
+		}
 
-    public int getCurrentArtifactInstallationTimeout() {
-        return currentArtifactInstallationTimeout;
-    }
+	}
 
-    public void setCurrentArtifactInstallationTimeout(int currentArtifactInstallationTimeout) {
-        this.currentArtifactInstallationTimeout = currentArtifactInstallationTimeout;
-    }
+	public static class DistributionStatusTopicConfig {
 
-    public boolean isUseHttpsWithDmaap() {
-        return useHttpsWithDmaap;
-    }
+		private Integer pollingIntervalSec;
+		private Integer fetchTimeSec;
+		private String consumerGroup;
+		private String consumerId;
 
-    public void setUseHttpsWithDmaap(boolean useHttpsWithDmaap) {
-        this.useHttpsWithDmaap = useHttpsWithDmaap;
-    }
+		public Integer getPollingIntervalSec() {
+			return pollingIntervalSec;
+		}
 
-    public static class CreateTopicConfig {
+		public void setPollingIntervalSec(Integer pollingIntervalSec) {
+			this.pollingIntervalSec = pollingIntervalSec;
+		}
 
-        private Integer partitionCount;
-        private Integer replicationCount;
+		public Integer getFetchTimeSec() {
+			return fetchTimeSec;
+		}
 
-        public Integer getPartitionCount() {
-            return partitionCount;
-        }
+		public void setFetchTimeSec(Integer fetchTimeSec) {
+			this.fetchTimeSec = fetchTimeSec;
+		}
 
-        public void setPartitionCount(Integer partitionCount) {
-            this.partitionCount = partitionCount;
-        }
+		public String getConsumerGroup() {
+			return consumerGroup;
+		}
 
-        public Integer getReplicationCount() {
-            return replicationCount;
-        }
+		public void setConsumerGroup(String consumerGroup) {
+			this.consumerGroup = consumerGroup;
+		}
 
-        public void setReplicationCount(Integer replicationCount) {
-            this.replicationCount = replicationCount;
-        }
+		public String getConsumerId() {
+			return consumerId;
+		}
 
-        @Override
-        public String toString() {
-            return "CreateTopicConfig [partitionCount=" + partitionCount + ", replicationCount=" + replicationCount
-                    + "]";
-        }
+		public void setConsumerId(String consumerId) {
+			this.consumerId = consumerId;
+		}
 
-    }
+		@Override
+		public String toString() {
+			return "DistributionStatusTopicConfig [pollingIntervalSec=" + pollingIntervalSec + ", fetchTimeSec="
+					+ fetchTimeSec + ", consumerGroup=" + consumerGroup + ", consumerId=" + consumerId + "]";
+		}
 
-    public static class EnvironmentConfig {
+	}
 
-        private String name;
-        private List<String> uebServers;
+	public static class DistributionNotificationTopicConfig {
 
-        public String getName() {
-            return name;
-        }
+		private Integer maxWaitingAfterSendingSeconds;
+		private Integer maxThreadPoolSize;
+		private Integer minThreadPoolSize;
 
-        public void setName(String name) {
-            this.name = name;
-        }
+		public Integer getMaxWaitingAfterSendingSeconds() {
+			return maxWaitingAfterSendingSeconds;
+		}
 
-        public List<String> getUebServers() {
-            return uebServers;
-        }
+		public void setMaxWaitingAfterSendingSeconds(Integer maxWaitingAfterSendingSeconds) {
+			this.maxWaitingAfterSendingSeconds = maxWaitingAfterSendingSeconds;
+		}
 
-        public void setUebServers(List<String> uebServers) {
-            this.uebServers = uebServers;
-        }
+		public Integer getMaxThreadPoolSize() {
+			return maxThreadPoolSize;
+		}
 
-        @Override
-        public String toString() {
-            return "EnvironmentConfig [name=" + name + ", uebServers=" + uebServers + "]";
-        }
+		public void setMaxThreadPoolSize(Integer maxThreadPoolSize) {
+			this.maxThreadPoolSize = maxThreadPoolSize;
+		}
 
-    }
+		public Integer getMinThreadPoolSize() {
+			return minThreadPoolSize;
+		}
 
-    public static class DistributionStatusTopicConfig {
+		public void setMinThreadPoolSize(Integer minThreadPoolSize) {
+			this.minThreadPoolSize = minThreadPoolSize;
+		}
 
-        private Integer pollingIntervalSec;
-        private Integer fetchTimeSec;
-        private String consumerGroup;
-        private String consumerId;
+		@Override
+		public String toString() {
+			return "DistributionNotificationTopicConfig [maxWaitingAfterSendingSeconds=" + maxWaitingAfterSendingSeconds
+					+ ", maxThreadPoolSize=" + maxThreadPoolSize + ", minThreadPoolSize=" + minThreadPoolSize + "]";
+		}
 
-        public Integer getPollingIntervalSec() {
-            return pollingIntervalSec;
-        }
+	}
 
-        public void setPollingIntervalSec(Integer pollingIntervalSec) {
-            this.pollingIntervalSec = pollingIntervalSec;
-        }
+	public static class ComponentArtifactTypesConfig {
 
-        public Integer getFetchTimeSec() {
-            return fetchTimeSec;
-        }
+		private List<String> info;
+		private List<String> lifecycle;
 
-        public void setFetchTimeSec(Integer fetchTimeSec) {
-            this.fetchTimeSec = fetchTimeSec;
-        }
+		public List<String> getInfo() {
+			return info;
+		}
 
-        public String getConsumerGroup() {
-            return consumerGroup;
-        }
+		public void setInfo(List<String> info) {
+			this.info = info;
+		}
 
-        public void setConsumerGroup(String consumerGroup) {
-            this.consumerGroup = consumerGroup;
-        }
+		public List<String> getLifecycle() {
+			return lifecycle;
+		}
 
-        public String getConsumerId() {
-            return consumerId;
-        }
+		public void setLifecycle(List<String> lifecycle) {
+			this.lifecycle = lifecycle;
+		}
 
-        public void setConsumerId(String consumerId) {
-            this.consumerId = consumerId;
-        }
+		@Override
+		public String toString() {
+			return "ArtifactTypesConfig [info=" + info + ", lifecycle=" + lifecycle + "]";
+		}
 
-        @Override
-        public String toString() {
-            return "DistributionStatusTopicConfig [pollingIntervalSec=" + pollingIntervalSec + ", fetchTimeSec="
-                    + fetchTimeSec + ", consumerGroup=" + consumerGroup + ", consumerId=" + consumerId + "]";
-        }
+	}
 
-    }
+	public Integer getOpEnvRecoveryIntervalSec() {
+		return opEnvRecoveryIntervalSec;
+	}
 
-    public static class DistributionNotificationTopicConfig {
+	public void setOpEnvRecoveryIntervalSec(Integer opEnvRecoveryIntervalSec) {
+		this.opEnvRecoveryIntervalSec = opEnvRecoveryIntervalSec;
+	}
 
-        private Integer maxWaitingAfterSendingSeconds;
-        private Integer maxThreadPoolSize;
-        private Integer minThreadPoolSize;
+	public Integer getAllowedTimeBeforeStaleSec() {
+		return allowedTimeBeforeStaleSec;
+	}
 
-        public Integer getMaxWaitingAfterSendingSeconds() {
-            return maxWaitingAfterSendingSeconds;
-        }
-
-        public void setMaxWaitingAfterSendingSeconds(Integer maxWaitingAfterSendingSeconds) {
-            this.maxWaitingAfterSendingSeconds = maxWaitingAfterSendingSeconds;
-        }
-
-        public Integer getMaxThreadPoolSize() {
-            return maxThreadPoolSize;
-        }
-
-        public void setMaxThreadPoolSize(Integer maxThreadPoolSize) {
-            this.maxThreadPoolSize = maxThreadPoolSize;
-        }
-
-        public Integer getMinThreadPoolSize() {
-            return minThreadPoolSize;
-        }
-
-        public void setMinThreadPoolSize(Integer minThreadPoolSize) {
-            this.minThreadPoolSize = minThreadPoolSize;
-        }
-
-        @Override
-        public String toString() {
-            return "DistributionNotificationTopicConfig [maxWaitingAfterSendingSeconds=" + maxWaitingAfterSendingSeconds
-                    + ", maxThreadPoolSize=" + maxThreadPoolSize + ", minThreadPoolSize=" + minThreadPoolSize + "]";
-        }
-
-    }
-
-    public static class ComponentArtifactTypesConfig {
-
-        private List<String> info;
-        private List<String> lifecycle;
-
-        public List<String> getInfo() {
-            return info;
-        }
-
-        public void setInfo(List<String> info) {
-            this.info = info;
-        }
-
-        public List<String> getLifecycle() {
-            return lifecycle;
-        }
-
-        public void setLifecycle(List<String> lifecycle) {
-            this.lifecycle = lifecycle;
-        }
-
-        @Override
-        public String toString() {
-            return "ArtifactTypesConfig [info=" + info + ", lifecycle=" + lifecycle + "]";
-        }
-
-    }
-
-    public Integer getOpEnvRecoveryIntervalSec() {
-        return opEnvRecoveryIntervalSec;
-    }
-
-    public void setOpEnvRecoveryIntervalSec(Integer opEnvRecoveryIntervalSec) {
-        this.opEnvRecoveryIntervalSec = opEnvRecoveryIntervalSec;
-    }
-
-    public Integer getAllowedTimeBeforeStaleSec() {
-        return allowedTimeBeforeStaleSec;
-    }
-
-    public void setAllowedTimeBeforeStaleSec(Integer allowedTimeBeforeStaleSec) {
-        this.allowedTimeBeforeStaleSec = allowedTimeBeforeStaleSec;
-    }
+	public void setAllowedTimeBeforeStaleSec(Integer allowedTimeBeforeStaleSec) {
+		this.allowedTimeBeforeStaleSec = allowedTimeBeforeStaleSec;
+	}
 
     public ExternalServiceConfig getAaiConfig() {
         return aaiConfig;

@@ -1,9 +1,9 @@
 /**
  * Created by ob0695 on 11.04.2018.
  */
-import {Component, Input} from "@angular/core";
-import {UiBaseObject} from "../../../../../models/ui-models/ui-base-object";
-import {IDropDownOption} from "sdc-ui/lib/angular/form-elements/dropdown/dropdown-models";
+import { Component, Input } from "@angular/core";
+import { UiBaseObject } from "../../../../../models/ui-models/ui-base-object";
+import { IDropDownOption } from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 
 @Component({
     selector: 'add-elements',
