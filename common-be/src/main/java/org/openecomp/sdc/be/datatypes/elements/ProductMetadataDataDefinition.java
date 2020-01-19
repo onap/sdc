@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,10 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
 
     public ProductMetadataDataDefinition(ProductMetadataDataDefinition other) {
         super(other);
+	}
+
+	public ProductMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
+		super(extractor);
     }
 
     public Boolean getIsActive() {

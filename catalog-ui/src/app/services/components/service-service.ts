@@ -25,7 +25,7 @@
 import * as _ from "lodash";
 import {IComponentService, ComponentService} from "./component-service";
 import {Distribution, DistributionComponent, Service, PropertyModel, Component, IAppConfigurtaion} from "app/models";
-import {SharingService} from "../sharing-service";
+import {SharingService} from "app/services-ng2";
 
 export interface IServiceService extends IComponentService {
     getDistributionsList(uuid:string):ng.IPromise<Array<Distribution>>;

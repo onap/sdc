@@ -20,7 +20,7 @@
         <div class="i-sdc-form-item list-new-item" data-ng-class="{error:(parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid)}">
             <input class="i-sdc-form-input"
                    data-tests-id="listNewItem{{fieldsPrefixName}}"
-                   ng-if="!((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
+                   ng-if="!constraints && !((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
                    data-ng-disabled="readOnly"
                    data-ng-model="listNewItem.value"
                    type="text"
@@ -34,13 +34,32 @@
                    autofocus />
             <select class="i-sdc-form-select"
                     data-tests-id="listNewItem{{fieldsPrefixName}}"
-                    ng-if="(schemaProperty.simpleType||schemaProperty.type) == 'boolean'"
+                    ng-if="!constraints && (schemaProperty.simpleType||schemaProperty.type) == 'boolean'"
                     data-ng-disabled="readOnly"
                     name="listNewItem{{fieldsPrefixName}}"
                     data-ng-model="listNewItem.value">
                 <option value="true">true</option>
                 <option value="false">false</option>
             </select>
+
+
+            <select class="i-sdc-form-select"
+                data-tests-id="constraints"
+                ng-if="constraints"
+                data-ng-disabled="readOnly"
+                data-ng-model="listNewItem.value">
+                <!-- Get the default value in case exist -->
+                <option value = "{{listNewItem.value}" name = "{{listNewItem.value}}" hidden selected>
+                        {{listNewItem.value}}
+                </option> 
+                <!-- add all constratint to Select list -->
+                <option ng-repeat='value in constraints' value="{{value}}" name="{{value}}">
+                    {{value}}
+                </option>
+                
+                
+            </select>
+
             <div class="input-error" data-ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid">
                 <span ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
                 <span ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{maxLength}}' }"></span>

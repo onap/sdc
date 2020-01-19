@@ -14,34 +14,38 @@
  * permissions and limitations under the License.
  */
 
-import {Component, Input, ComponentRef} from '@angular/core';
-import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
-import {ComponentInstanceServiceNg2} from 'app/ng2/services/component-instance-services/component-instance.service';
-import {ServiceServiceNg2} from "app/ng2/services/component-services/service.service";
-import {ModalService} from 'app/ng2/services/modal.service';
-import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
+import { Component, ComponentRef, Input } from '@angular/core';
 import {
-    ModalModel,
     ButtonModel,
-    OperationModel,
-    Service,
-    ServiceInstanceObject,
-    PropertyFEModel,
-    PropertyBEModel,
+    CapabilitiesGroup,
+    Capability,
+    Component as TopologyTemplate,
     InputBEModel,
     InterfaceModel,
-    CapabilitiesGroup,
-    Capability
+    ModalModel,
+    OperationModel,
+    PropertyBEModel,
+    PropertyFEModel
 } from 'app/models';
-import {ServiceConsumptionCreatorComponent} from 'app/ng2/pages/service-consumption-editor/service-consumption-editor.component';
-
+import { ModalComponent } from 'app/ng2/components/ui/modal/modal.component';
+import { ServiceConsumptionCreatorComponent } from 'app/ng2/pages/service-consumption-editor/service-consumption-editor.component';
+import { ComponentInstanceServiceNg2 } from 'app/ng2/services/component-instance-services/component-instance.service';
+import { ComponentServiceNg2 } from 'app/ng2/services/component-services/component.service';
+import { ModalService } from 'app/ng2/services/modal.service';
+import { ComponentMetadata } from '../../../../models/component-metadata';
+import { Resource } from '../../../../models/components/resource';
+import { FullComponentInstance } from '../../../../models/componentsInstances/fullComponentInstance';
+import { ServiceInstanceObject } from '../../../../models/service-instance-properties-and-interfaces';
+import { ComponentFactory } from '../../../../utils/component-factory';
+import { ComponentType } from '../../../../utils/constants';
+import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 
 export class ConsumptionInput extends PropertyFEModel{
     inputId: string;
     type: string;
     source: string;
     value: any;
-    constraints: Array<any>;
+    constraints: any[];
 
     constructor(input?: any) {
         super(input);
@@ -49,19 +53,20 @@ export class ConsumptionInput extends PropertyFEModel{
             this.inputId = input.inputId;
             this.type = input.type;
             this.source = input.source;
-            this.value = input.value || "";
+            this.value = input.value || '';
             this.constraints = input.constraints;
         }
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class ConsumptionInputDetails extends ConsumptionInput {
     name: string;
     expanded: boolean;
     assignValueLabel: string;
-    associatedProps: Array<string>;
-    associatedInterfaces: Array<any>;
-    associatedCapabilities: Array<Capability>;
+    associatedProps: string[];
+    associatedInterfaces: any[];
+    associatedCapabilities: Capability[];
     origVal: string;
     isValid: boolean;
 
@@ -74,7 +79,7 @@ export class ConsumptionInputDetails extends ConsumptionInput {
             this.associatedProps = input.associatedProps;
             this.associatedInterfaces = input.associatedInterfaces;
             this.associatedCapabilities = input.associatedCapabilities;
-            this.origVal = input.value || "";
+            this.origVal = input.value || '';
             this.isValid = input.isValid;
         }
     }
@@ -84,9 +89,10 @@ export class ConsumptionInputDetails extends ConsumptionInput {
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class ServiceOperation {
     operation: OperationModel;
-    consumptionInputs: Array<ConsumptionInputDetails>;
+    consumptionInputs: ConsumptionInputDetails[];
 
     constructor(input?: any) {
         if (input) {
@@ -96,24 +102,24 @@ export class ServiceOperation {
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class InterfaceWithServiceOperation {
     interfaceId: string;
     displayName: string;
-    operationsList: Array<ServiceOperation>;
+    operationsList: ServiceOperation[];
     isExpanded: boolean;
 
     constructor(input?: InterfaceModel) {
         if (input) {
             this.interfaceId = input.uniqueId;
             this.displayName = input.displayType();
-            this.operationsList = _.map(input.operations, operation => new ServiceOperation({operation: operation}));
+            this.operationsList = _.map(input.operations, (operation) => new ServiceOperation({operation: operation}));
             this.isExpanded = true;
         }
     }
 }
 
-
-
+// tslint:disable-next-line:max-classes-per-file
 @Component({
     selector: 'service-consumption',
     templateUrl: './service-consumption.component.html',
@@ -125,21 +131,23 @@ export class ServiceConsumptionComponent {
 
     modalInstance: ComponentRef<ModalComponent>;
     isLoading: boolean = false;
-    interfacesList: Array<InterfaceWithServiceOperation>;
-    operationsGroup: Array<ServiceOperation>;
-    @Input() parentServiceInputs: Array<InputBEModel> = [];
-    @Input() parentService: Service;
-    @Input() selectedService: Service;
+    interfacesList: InterfaceWithServiceOperation[];
+    operationsGroup: ServiceOperation[];
+    @Input() parentServiceInputs: InputBEModel[] = [];
+    @Input() parentService: ComponentMetadata;
+    @Input() selectedService: TopologyTemplate | FullComponentInstance;
     @Input() selectedServiceInstanceId: string;
-    @Input() instancesMappedList: Array<ServiceInstanceObject>;
-    @Input() instancesCapabilitiesMap: Map<string, Array<Capability>>;
+    @Input() instancesMappedList: ServiceInstanceObject[];
+    @Input() instancesCapabilitiesMap: Map<string, Capability[]>;
     @Input() readonly: boolean;
 
-    selectedInstanceSiblings: Array<ServiceInstanceObject>;
-    selectedInstancePropertiesList: Array<PropertyBEModel> = [];
-    selectedInstanceCapabilitisList: Array<Capability> = [];
+    selectedInstanceSiblings: ServiceInstanceObject[];
+    selectedInstancePropertiesList: PropertyBEModel[] = [];
+    selectedInstanceCapabilitisList: Capability[] = [];
 
-    constructor(private ModalServiceNg2: ModalService, private serviceServiceNg2: ServiceServiceNg2, private componentServiceNg2: ComponentServiceNg2, private componentInstanceServiceNg2:ComponentInstanceServiceNg2) {}
+    constructor(private modalServiceNg2: ModalService, private topologyTemplateService: TopologyTemplateService,
+                private componentServiceNg2: ComponentServiceNg2, private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private componentFactory: ComponentFactory) {}
 
     ngOnInit() {
         this.updateSelectedInstancePropertiesAndSiblings();
@@ -147,15 +155,15 @@ export class ServiceConsumptionComponent {
     }
 
     ngOnChanges(changes) {
-        if(changes.selectedServiceInstanceId && changes.selectedServiceInstanceId.currentValue !== changes.selectedServiceInstanceId.previousValue) {
+        if (changes.selectedServiceInstanceId && changes.selectedServiceInstanceId.currentValue !== changes.selectedServiceInstanceId.previousValue) {
             this.selectedServiceInstanceId = changes.selectedServiceInstanceId.currentValue;
-            if(changes.selectedService && changes.selectedService.currentValue !== changes.selectedService.previousValue) {
+            if (changes.selectedService && changes.selectedService.currentValue !== changes.selectedService.previousValue) {
                 this.selectedService = changes.selectedService.currentValue;
             }
             this.updateSelectedInstancePropertiesAndSiblings();
             this.updateSelectedServiceCapabilities();
         }
-        if(changes.instancesMappedList && !_.isEqual(changes.instancesMappedList.currentValue, changes.instancesMappedList.previousValue)) {
+        if (changes.instancesMappedList && !_.isEqual(changes.instancesMappedList.currentValue, changes.instancesMappedList.previousValue)) {
             this.updateSelectedInstancePropertiesAndSiblings();
             this.updateSelectedServiceCapabilities();
         }
@@ -163,22 +171,22 @@ export class ServiceConsumptionComponent {
 
     updateSelectedInstancePropertiesAndSiblings() {
         this.interfacesList = [];
-        let selectedInstanceMetadata: ServiceInstanceObject = _.find(this.instancesMappedList, coInstance => coInstance.id === this.selectedServiceInstanceId);
+        const selectedInstanceMetadata: ServiceInstanceObject = _.find(this.instancesMappedList, (coInstance) => coInstance.id === this.selectedServiceInstanceId);
         if (selectedInstanceMetadata) {
-            _.forEach(selectedInstanceMetadata.interfaces, (interfaceData:InterfaceModel) => {
+            _.forEach(selectedInstanceMetadata.interfaces, (interfaceData: InterfaceModel) => {
                 this.interfacesList.push(new InterfaceWithServiceOperation(interfaceData));
             });
         }
-        this.interfacesList.sort((interf1:InterfaceWithServiceOperation, interf2:InterfaceWithServiceOperation) => interf1.displayName.localeCompare(interf2.displayName));
+        this.interfacesList.sort((interf1: InterfaceWithServiceOperation, interf2: InterfaceWithServiceOperation) => interf1.displayName.localeCompare(interf2.displayName));
 
         this.selectedInstancePropertiesList = selectedInstanceMetadata && selectedInstanceMetadata.properties;
-        this.selectedInstanceSiblings = _.filter(this.instancesMappedList, coInstance => coInstance.id !== this.selectedServiceInstanceId);
+        this.selectedInstanceSiblings = _.filter(this.instancesMappedList, (coInstance) => coInstance.id !== this.selectedServiceInstanceId);
     }
 
     updateSelectedServiceCapabilities() {
         this.selectedInstanceCapabilitisList = _.filter(
             CapabilitiesGroup.getFlattenedCapabilities(this.selectedService.capabilities),
-            cap => cap.properties && cap.ownerId === this.selectedService.uniqueId
+            (cap) => cap.properties && cap.ownerId === this.selectedService.uniqueId
         );
     }
 
@@ -186,15 +194,15 @@ export class ServiceConsumptionComponent {
         currInterface.isExpanded = !currInterface.isExpanded;
     }
 
-    onSelectOperation(event, currInterface:InterfaceWithServiceOperation, opIndex: number) {
+    onSelectOperation(event, currInterface: InterfaceWithServiceOperation, opIndex: number) {
         event.stopPropagation();
-        if(!this.readonly) {
+        if (!this.readonly) {
             this.operationsGroup = currInterface.operationsList;
-            let cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.ModalServiceNg2.closeCurrentModal);
-            let saveButton: ButtonModel = new ButtonModel('Save', 'blue', this.createOrUpdateOperationInput, this.getDisabled);
-            let modalModel: ModalModel = new ModalModel('l', 'Modify Operation Consumption', '', [saveButton, cancelButton], 'standard');
-            this.modalInstance = this.ModalServiceNg2.createCustomModal(modalModel);
-            this.ModalServiceNg2.addDynamicContentToModal(
+            const cancelButton: ButtonModel = new ButtonModel('Cancel', 'outline white', this.modalServiceNg2.closeCurrentModal);
+            const saveButton: ButtonModel = new ButtonModel('Save', 'blue', this.createOrUpdateOperationInput, this.getDisabled);
+            const modalModel: ModalModel = new ModalModel('l', 'Modify Operation Consumption', '', [saveButton, cancelButton], 'standard');
+            this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
+            this.modalServiceNg2.addDynamicContentToModal(
                 this.modalInstance,
                 ServiceConsumptionCreatorComponent,
                 {
@@ -215,11 +223,11 @@ export class ServiceConsumptionComponent {
         }
     }
 
-    createOrUpdateOperationInput  = ():void => {
+    createOrUpdateOperationInput  = (): void => {
         this.isLoading = true;
-        let consumptionInputsList:Array<{[id: string]: Array<ConsumptionInput>}> = _.map(this.operationsGroup, (serviceOp) => {
-            let consumptionInputsArr: Array<any> = [];
-            if(serviceOp.consumptionInputs) {
+        const consumptionInputsList: Array<{[id: string]: ConsumptionInput[]}> = _.map(this.operationsGroup, (serviceOp) => {
+            let consumptionInputsArr: any[] = [];
+            if (serviceOp.consumptionInputs) {
                 consumptionInputsArr = _.map(serviceOp.consumptionInputs, (input: ConsumptionInputDetails) => {
                     return {
                         inputId: input.inputId,
@@ -233,16 +241,24 @@ export class ServiceConsumptionComponent {
                 [serviceOp.operation.uniqueId]: consumptionInputsArr
             };
         });
-        this.serviceServiceNg2.createOrUpdateServiceConsumptionInputs(this.parentService,this.selectedServiceInstanceId, consumptionInputsList).subscribe(() => {
+        this.topologyTemplateService.createOrUpdateServiceConsumptionInputs(this.convertMetaDataToComponent(this.parentService).uniqueId, this.selectedServiceInstanceId, consumptionInputsList)
+            .subscribe(() => {
             this.isLoading = false;
-        }, err=> {
+        }, (err) => {
             this.isLoading = false;
         });
-        this.ModalServiceNg2.closeCurrentModal();
-    };
+        this.modalServiceNg2.closeCurrentModal();
+    }
 
-    getDisabled = ():boolean =>  {
+    getDisabled = (): boolean =>  {
         return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
-    };
+    }
+
+     //TODO remove when workspace page convert to angular5
+     convertMetaDataToComponent(componentMetadata: ComponentMetadata) {
+        const newResource: Resource = this.componentFactory.createEmptyComponent(ComponentType.RESOURCE) as Resource;
+        newResource.setComponentMetadata(componentMetadata);
+        return newResource;
+    }
 
 }

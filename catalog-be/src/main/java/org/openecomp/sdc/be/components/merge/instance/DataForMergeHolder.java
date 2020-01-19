@@ -24,6 +24,7 @@ package org.openecomp.sdc.be.components.merge.instance;
 import org.openecomp.sdc.be.model.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by chaya on 9/7/2017.
@@ -43,6 +44,7 @@ public class DataForMergeHolder {
     private Component currInstanceNode;
     private String origComponentInstId;
     private List<ComponentInstanceInterface> origComponentInstanceInterfaces;
+    private Map <String, Integer> componentInstanceDeploymentArtifactsTimeOut;
 
     public DataForMergeHolder() {
         origComponentInstanceInputs = new ArrayList<>();
@@ -52,6 +54,7 @@ public class DataForMergeHolder {
         origCompInstDeploymentArtifactsCreatedOnTheInstance = new HashMap<>();
         origInstanceCapabilities = new ArrayList<>();
         origComponentInstanceInterfaces = new ArrayList<>();
+        componentInstanceDeploymentArtifactsTimeOut = new HashMap<>();
     }
 
     List<ArtifactDefinition> getOrigComponentInstanceHeatEnvArtifacts() {
@@ -178,6 +181,14 @@ public class DataForMergeHolder {
         this.origComponentInstId = origComponentInstId;
     }
 
+    void setComponentInstanceDeploymentArtifactsTimeOut(Map<String,Integer> componentInstancesDeploymentArtifacts) {
+        this.componentInstanceDeploymentArtifactsTimeOut = componentInstancesDeploymentArtifacts;
+    }
+
+    public Map<String, Integer> getComponentInstanceDeploymentArtifactsTimeOut() {
+        return componentInstanceDeploymentArtifactsTimeOut;
+    }
+
     public List<ComponentInstanceInterface> getOrigComponentInstanceInterfaces() {
         return origComponentInstanceInterfaces;
     }
@@ -185,4 +196,5 @@ public class DataForMergeHolder {
     public void setOrigComponentInstanceInterfaces(List<ComponentInstanceInterface> origComponentInstanceInterfaces) {
         this.origComponentInstanceInterfaces = origComponentInstanceInterfaces;
     }
+
 }

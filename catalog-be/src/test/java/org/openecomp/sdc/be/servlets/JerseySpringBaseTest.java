@@ -36,6 +36,7 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvi
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.BeforeClass;
@@ -88,6 +89,7 @@ public abstract class JerseySpringBaseTest extends JerseyTest {
                         bind(request).to(HttpServletRequest.class);
                     }
                 })
+                .register(RolesAllowedDynamicFeature.class)
                 .register(DefaultExceptionMapper.class)
                 .register(ComponentExceptionMapper.class)
                 .register(StorageExceptionMapper.class)

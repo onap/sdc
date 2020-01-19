@@ -14,12 +14,19 @@
  * permissions and limitations under the License.
  */
 
-import {Injectable, Inject} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {HttpService} from './http.service';
-import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
-import {CapabilityTypesMap, NodeTypesMap, RelationshipTypesMap} from "app/models";
-import {Response} from '@angular/http';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Response } from '@angular/http';
+import {
+    CapabilityTypeModel,
+    CapabilityTypesMap,
+    IComponentsArray,
+    NodeTypesMap,
+    RelationshipTypesMap
+} from 'app/models';
+import { Observable } from 'rxjs/Observable';
+import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
+import 'rxjs/add/operator/toPromise';
 
 declare var angular: angular.IAngularStatic;
 
@@ -28,28 +35,20 @@ export class ToscaTypesServiceNg2 {
 
     protected baseUrl;
 
-    constructor(protected http: HttpService, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
+    constructor(protected http: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
     }
 
-    fetchRelationshipTypes(): Observable<RelationshipTypesMap> {
-        return this.http.get(this.baseUrl + 'relationshipTypes')
-            .map((res: Response) => {
-                return res.json();
-            });
+    async fetchRelationshipTypes(): Promise<RelationshipTypesMap> {
+        return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes').toPromise();
     }
 
-    fetchNodeTypes(): Observable<NodeTypesMap> {
-        return this.http.get(this.baseUrl + 'nodeTypes')
-            .map((res: Response) => {
-                return res.json();
-            });
+    async fetchNodeTypes(): Promise<NodeTypesMap> {
+        return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes').toPromise();
     }
 
-    fetchCapabilityTypes(): Observable<CapabilityTypesMap> {
-        return this.http.get(this.baseUrl + 'capabilityTypes')
-            .map((res: Response) => {
-                return res.json();
-            });
+    async fetchCapabilityTypes(): Promise<CapabilityTypesMap>{
+        return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes').toPromise();
     }
 }
+

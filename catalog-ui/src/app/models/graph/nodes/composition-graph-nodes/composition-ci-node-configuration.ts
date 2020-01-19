@@ -20,7 +20,7 @@
 
 import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
 import {ComponentInstance, CompositionCiNodeBase} from "../../../../models";
-import {ImageCreatorService} from "../../../../directives/graphs-v2/image-creator/image-creator.service";
+import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
 export class CompositionCiNodeConfiguration extends CompositionCiNodeBase {
 
     constructor(instance:ComponentInstance,

@@ -5,3 +5,51 @@
     text-decoration: underline;
     text-align: left;
 }
+
+
+.expand-collapse-title {
+    display:flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+    line-height: 32px;
+    padding: 0 10px 0 20px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    header {
+        flex: 1;
+    }
+
+    .expand-collapse-title-icon {
+        padding-top: 10px;
+        padding-left: 2px; 
+        transition: transform .3s ease-out;
+        
+    }
+
+    &.expanded .expand-collapse-title-icon {
+        transform: rotate(0);
+    }
+
+    &.collapsed .expand-collapse-title-icon {
+        transform: rotate(-180deg);
+    }
+    
+} 
+
+.expand-collapse-content {
+    overflow: hidden;
+    transition: max-height .3s ease-in;
+
+    &.collapsed {
+        max-height: 0px;
+        overflow:hidden;
+        transition: all .3s cubic-bezier(0, 1, 0, 1);
+
+    }
+
+}

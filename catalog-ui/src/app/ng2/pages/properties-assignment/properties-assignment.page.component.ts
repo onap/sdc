@@ -19,58 +19,34 @@
  */
 
 import * as _ from "lodash";
-import {Component, ViewChild, Inject, TemplateRef} from "@angular/core";
+import { Component, ViewChild, Inject, TemplateRef } from "@angular/core";
 import { PropertiesService } from "../../services/properties.service";
-import {
-    PropertyFEModel,
-    InstanceFePropertiesMap,
-    InstanceBePropertiesMap,
-    InstancePropertiesAPIMap,
-    Component as ComponentData,
-    FilterPropertiesAssignmentData,
-    ModalModel,
-    ButtonModel,
-    Capability,
-    ToscaPresentationData
-} from "app/models";
+import { PropertyFEModel, InstanceFePropertiesMap, InstanceBePropertiesMap, InstancePropertiesAPIMap, Component as ComponentData, FilterPropertiesAssignmentData, ModalModel, ButtonModel } from "app/models";
 import { ResourceType } from "app/utils";
-import {ComponentServiceNg2} from "../../services/component-services/component.service";
-import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
-import {
-    InputBEModel,
-    InputFEModel,
-    ComponentInstance,
-    GroupInstance,
-    PolicyInstance,
-    PropertyBEModel,
-    DerivedFEProperty,
-    SimpleFlatProperty,
-    CapabilitiesGroup
-} from "app/models";
+import { ComponentServiceNg2 } from "../../services/component-services/component.service";
+import { TopologyTemplateService } from "../../services/component-services/topology-template.service";
+import { ComponentInstanceServiceNg2 } from "../../services/component-instance-services/component-instance.service"
+import { InputBEModel, InputFEModel, ComponentInstance, GroupInstance, PolicyInstance, PropertyBEModel, DerivedFEProperty, SimpleFlatProperty } from "app/models";
 import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
-import {WorkspaceMode, EVENTS} from "../../../utils/constants";
-import {EventListenerService} from "app/services/event-listener-service"
-import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
-import {FilterPropertiesAssignmentComponent} from "../../components/logic/filter-properties-assignment/filter-properties-assignment.component";
-import {PropertyRowSelectedEvent} from "../../components/logic/properties-table/properties-table.component";
-import {HierarchyNavService} from "./services/hierarchy-nav.service";
-import {PropertiesUtils} from "./services/properties.utils";
-import {ComponentModeService} from "../../services/component-services/component-mode.service";
-import {ModalService} from "../../services/modal.service";
-import {Tabs, Tab} from "../../components/ui/tabs/tabs.component";
-import {InputsUtils} from "./services/inputs.utils";
-import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
-import {DeclareListComponent} from "./declare-list/declare-list.component";
+import { WorkspaceMode, EVENTS, PROPERTY_TYPES } from "../../../utils/constants";
+import { EventListenerService } from "app/services/event-listener-service"
+import { HierarchyDisplayOptions } from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
+import { FilterPropertiesAssignmentComponent } from "../../components/logic/filter-properties-assignment/filter-properties-assignment.component";
+import { PropertyRowSelectedEvent } from "../../components/logic/properties-table/properties-table.component";
+import { HierarchyNavService } from "./services/hierarchy-nav.service";
+import { PropertiesUtils } from "./services/properties.utils";
+import { ComponentModeService } from "../../services/component-services/component-mode.service";
+import { Tabs, Tab } from "../../components/ui/tabs/tabs.component";
+import { InputsUtils } from "./services/inputs.utils";
 import { InstanceFeDetails } from "../../../models/instance-fe-details";
-import { SdcUiComponents } from "sdc-ui/lib/angular";
-//import { ModalService as ModalServiceSdcUI} from "sdc-ui/lib/angular/modals/modal.service";
-import { IModalButtonComponent } from "sdc-ui/lib/angular/modals/models/modal-config";
+import { SdcUiServices, SdcUiCommon } from "onap-ui-angular";
 import { UnsavedChangesComponent } from "app/ng2/components/ui/forms/unsaved-changes/unsaved-changes.component";
-import {Observable} from "rxjs";
-import { DataTypeService } from "app/ng2/services/data-type.service";
-import { DataTypeModel } from "app/models";
-import { PROPERTY_DATA, PROPERTY_TYPES } from "app/utils";
-import { PropertyDeclareAPIModel} from "app/models";
+import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
+import {ModalService} from "../../services/modal.service";
+import { DeclareListComponent } from "./declare-list/declare-list.component";
+import { CapabilitiesGroup, Capability } from "../../../models/capability";
+import { ToscaPresentationData } from "../../../models/tosca-presentation";
+import { Observable } from "rxjs";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -119,7 +95,7 @@ export class PropertiesAssignmentComponent {
     stateChangeStartUnregister:Function;
     serviceBePropertiesMap: InstanceBePropertiesMap;
     serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
-    selectedInstance_FlattenCapabilitiesList: Array<Capability>;
+    selectedInstance_FlattenCapabilitiesList: Capability[];
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -136,12 +112,13 @@ export class PropertiesAssignmentComponent {
                 @Inject("$state") private $state:ng.ui.IStateService,
                 @Inject("Notification") private Notification:any,
                 private componentModeService:ComponentModeService,
-                private ModalService:ModalService,
                 private EventListenerService:EventListenerService,
-                private ModalServiceSdcUI: SdcUiComponents.ModalService) {
+                private ModalServiceSdcUI: SdcUiServices.ModalService,
+                private ModalService: ModalService,
+                private keysPipe:KeysPipe,
+                private topologyTemplateService: TopologyTemplateService) {
 
         this.instanceFePropertiesMap = new InstanceFePropertiesMap();
-
         /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
         than if the data is already exist, no need to call the api again - Ask orit if you have any questions*/
         this.component = _stateParams.component;
@@ -159,8 +136,8 @@ export class PropertiesAssignmentComponent {
         this.loadingPolicies = true;
         this.loadingInstances = true;
         this.loadingProperties = true;
-        this.componentServiceNg2
-            .getComponentInputsWithProperties(this.component)
+        this.topologyTemplateService
+            .getComponentInputsWithProperties(this.component.componentType, this.component.uniqueId)
             .subscribe(response => {
                 _.forEach(response.inputs, (input: InputBEModel) => {
                     const newInput: InputFEModel = new InputFEModel(input);
@@ -169,7 +146,7 @@ export class PropertiesAssignmentComponent {
                 });
                 this.loadingInputs = false;
 
-            });
+            }, error => {}); //ignore error
         this.componentServiceNg2
             .getComponentResourcePropertiesData(this.component)
             .subscribe(response => {
@@ -177,6 +154,7 @@ export class PropertiesAssignmentComponent {
                 this.instances = [];
                 this.instances.push(...response.componentInstances);
                 this.instances.push(...response.groupInstances);
+                this.instances.push(...response.policies);
 
                 _.forEach(response.policies, (policy: any) => {
                     const newPolicy: InputFEModel = new InputFEModel(policy);
@@ -199,7 +177,7 @@ export class PropertiesAssignmentComponent {
                     this.loadingProperties = false;
                 }
                 this.selectFirstInstanceByDefault();
-            });
+            }, error => { this.loadingInstances = false; }); //ignore error
 
         this.stateChangeStartUnregister = this.$scope.$on('$stateChangeStart', (event, toState, toParams) => {
             // stop if has changed properties
@@ -238,14 +216,14 @@ export class PropertiesAssignmentComponent {
 
     getServiceProperties(){
         this.loadingProperties = false;
-        this.componentServiceNg2
-            .getServiceProperties(this.component)
-            .subscribe(response => {
+        this.topologyTemplateService
+            .getServiceProperties(this.component.uniqueId)
+            .subscribe((response) => {
                 this.serviceBePropertiesMap = new InstanceBePropertiesMap();
                 this.serviceBePropertiesMap[this.component.uniqueId] = response;
                 this.processInstancePropertiesResponse(this.serviceBePropertiesMap, false);
                 this.loadingProperties = false;
-            }, error => {
+            }, (error) => {
                 this.loadingProperties = false;
             });
     }
@@ -267,14 +245,12 @@ export class PropertiesAssignmentComponent {
         this.loadingProperties = true;
         if (instance instanceof ComponentInstance) {
             let instanceBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
-            this.selectedInstance_FlattenCapabilitiesList = instance.capabilities ? CapabilitiesGroup.getFlattenedCapabilities(instance.capabilities) : [];
             if (this.isInput(instance.originType)) {
                 this.componentInstanceServiceNg2
                     .getComponentInstanceInputs(this.component, instance)
                     .subscribe(response => {
                         instanceBePropertiesMap[instance.uniqueId] = response;
                         this.processInstancePropertiesResponse(instanceBePropertiesMap, true);
-                        this.processInstanceCapabilitiesPropertiesResponse(false);
                         this.loadingProperties = false;
                     }, error => {
                     }); //ignore error
@@ -286,7 +262,6 @@ export class PropertiesAssignmentComponent {
                     .subscribe(response => {
                         instanceBePropertiesMap[instance.uniqueId] = response;
                         this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
-                        this.processInstanceCapabilitiesPropertiesResponse(false);
                         this.loadingProperties = false;
                     }, error => {
                     }); //ignore error
@@ -305,7 +280,7 @@ export class PropertiesAssignmentComponent {
         } else if (instance instanceof PolicyInstance) {
             let instanceBePropertiesMap: InstanceBePropertiesMap = new InstanceBePropertiesMap();
             this.componentInstanceServiceNg2
-                .getComponentPolicyInstanceProperties(this.component, this.selectedInstanceData.uniqueId)
+                .getComponentPolicyInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId)
                 .subscribe((response) => {
                     instanceBePropertiesMap[instance.uniqueId] = response;
                     this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
@@ -480,7 +455,7 @@ export class PropertiesAssignmentComponent {
         let selectedGroupInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let selectedPolicyInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let selectedComponentInstancesInputs: InstanceBePropertiesMap = new InstanceBePropertiesMap();
-        let instancesIds = new KeysPipe().transform(this.instanceFePropertiesMap, []);
+        let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
 
         angular.forEach(instancesIds, (instanceId: string): void => {
             let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
@@ -500,7 +475,7 @@ export class PropertiesAssignmentComponent {
 
         let inputsToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedComponentInstancesInputs, selectedComponentInstancesProperties, selectedGroupInstancesProperties, selectedPolicyInstancesProperties);
 
-        //move changed capabilities properties from componentInstanceInputsMap obj to componentInstanceProperties
+	//move changed capabilities properties from componentInstanceInputsMap obj to componentInstanceProperties
         inputsToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId] =
             (inputsToCreate.componentInstanceProperties[this.selectedInstanceData.uniqueId] || []).concat(
                 _.filter(
@@ -526,15 +501,14 @@ export class PropertiesAssignmentComponent {
                 }
             }
         );
-
-        this.componentServiceNg2
+        this.topologyTemplateService
             .createInput(this.component, inputsToCreate, this.isSelf())
-            .subscribe(response => {
+            .subscribe((response) => {
                 this.setInputTabIndication(response.length);
                 this.checkedPropertiesCount = 0;
                 this.checkedChildPropertiesCount = 0;
                 _.forEach(response, (input: InputBEModel) => {
-                    let newInput: InputFEModel = new InputFEModel(input);
+                    const newInput: InputFEModel = new InputFEModel(input);
                     this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
                     this.inputs.push(newInput);
                     this.updatePropertyValueAfterDeclare(newInput);
@@ -628,8 +602,8 @@ export class PropertiesAssignmentComponent {
                         };
                         console.log("save button clicked. input=", input);
 
-                        this.componentServiceNg2
-                        .createListInput(this.component, input, this.isSelf())
+                        this.topologyTemplateService
+                        .createListInput(this.component.uniqueId, input, this.isSelf())
                         .subscribe(response => {
                             this.setInputTabIndication(response.length);
                             this.checkedPropertiesCount = 0;
@@ -662,8 +636,8 @@ export class PropertiesAssignmentComponent {
         console.log('declareListProperties() - leave');
     };
 
-    /*** DECLARE PROPERTIES/POLICIES ***/
-    declarePropertiesToPolicies = (): void => {
+     /*** DECLARE PROPERTIES/POLICIES ***/
+     declarePropertiesToPolicies = (): void => {
         let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let instancesIds = new KeysPipe().transform(this.instanceFePropertiesMap, []);
 
@@ -679,7 +653,7 @@ export class PropertiesAssignmentComponent {
         let policiesToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(null, selectedComponentInstancesProperties, null, null);
         this.loadingPolicies = true;
 
-        this.componentServiceNg2
+        this.topologyTemplateService
             .createPolicy(this.component, policiesToCreate, this.isSelf())
             .subscribe(response => {
                 this.setPolicyTabIndication(response.length);
@@ -688,7 +662,7 @@ export class PropertiesAssignmentComponent {
                 this.loadingPolicies = false;
             }); //ignore error
 
-    };
+    }
 
     displayPoliciesAsDeclared = (policies) => {
         _.forEach(policies, (policy: any) => {
@@ -699,8 +673,7 @@ export class PropertiesAssignmentComponent {
             this.updatePropertyValueAfterDeclare(newPolicy);
             this.policies.push(policy);
         });
-    };
-
+    }
 
     saveChangedData = ():Promise<(PropertyBEModel|InputBEModel)[]> => {
         return new Promise((resolve, reject) => {
@@ -736,7 +709,8 @@ export class PropertiesAssignmentComponent {
                         if (changedInputsProperties.length && changedCapabilitiesProperties.length) {
                             request = Observable.forkJoin(
                                 this.componentInstanceServiceNg2.updateInstanceInputs(this.component, this.selectedInstanceData.uniqueId, changedInputsProperties),
-                                this.componentInstanceServiceNg2.updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedCapabilitiesProperties)
+                                this.componentInstanceServiceNg2.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
+                                    this.selectedInstanceData.uniqueId, changedCapabilitiesProperties)
                             );
                         }
                         else if (changedInputsProperties.length) {
@@ -745,7 +719,7 @@ export class PropertiesAssignmentComponent {
                         }
                         else if (changedCapabilitiesProperties.length) {
                             request = this.componentInstanceServiceNg2
-                                .updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedCapabilitiesProperties);
+                                .updateInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedCapabilitiesProperties);
                         }
                         handleSuccess = (response) => {
                             // reset each changed property with new value and remove it from changed properties list
@@ -757,19 +731,18 @@ export class PropertiesAssignmentComponent {
                         };
                     } else {
                         if (this.isSelf()) {
-                            request = this.componentServiceNg2.updateServiceProperties(this.component, _.map(changedProperties, cp => {
+                            request = this.topologyTemplateService.updateServiceProperties(this.component.uniqueId,  _.map(changedProperties, cp => {
                                 delete cp.constraints;
                                 return cp;
                             }));
                         } else {
                             request = this.componentInstanceServiceNg2
-                                .updateInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedProperties);
+                                .updateInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedProperties);
                         }
                         handleSuccess = (response) => {
                             // reset each changed property with new value and remove it from changed properties list
                             response.forEach((resProp) => {
-                                const changedProp = <PropertyFEModel>_.find(this.changedData, changedDataObject => changedDataObject.uniqueId === resProp.uniqueId);
-                                this.changedData = _.filter(this.changedData, changedDataObject => changedDataObject.uniqueId !== resProp.uniqueId);
+                                const changedProp = <PropertyFEModel>this.changedData.shift();
                                 this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
                             });
                             resolve(response);
@@ -778,7 +751,7 @@ export class PropertiesAssignmentComponent {
                     }
                 } else if (this.selectedInstanceData instanceof GroupInstance) {
                     request = this.componentInstanceServiceNg2
-                        .updateComponentGroupInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedProperties);
+                        .updateComponentGroupInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedProperties);
                     handleSuccess = (response) => {
                         // reset each changed property with new value and remove it from changed properties list
                         response.forEach((resProp) => {
@@ -790,7 +763,7 @@ export class PropertiesAssignmentComponent {
                     };
                 } else if (this.selectedInstanceData instanceof PolicyInstance) {
                     request = this.componentInstanceServiceNg2
-                        .updateComponentPolicyInstanceProperties(this.component, this.selectedInstanceData.uniqueId, changedProperties);
+                        .updateComponentPolicyInstanceProperties(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedProperties);
                     handleSuccess = (response) => {
                         // reset each changed property with new value and remove it from changed properties list
                         response.forEach((resProp) => {
@@ -802,6 +775,7 @@ export class PropertiesAssignmentComponent {
                     };
                 }
             } else if (this.isInputsTabSelected) {
+            
                 const changedInputs: InputBEModel[] = this.changedData.map((changedInput) => {
                     changedInput = <InputFEModel>changedInput;
                     const inputBE = new InputBEModel(changedInput);
@@ -925,27 +899,27 @@ export class PropertiesAssignmentComponent {
                 {
                     title: modalTitle,
                     size: 'sm',
-                    type: 'custom',
-                    testId: "id",
-                    
+                    type: SdcUiCommon.ModalType.custom,
+                    testId: "navigate-modal",
+
                     buttons: [
-                        {id: 'cancelButton', text: 'Cancel', type: 'secondary', size: 'xsm', closeModal: true, callback: () => reject()},
-                        {id: 'discardButton', text: 'Discard', type: 'secondary', size: 'xsm', closeModal: true, callback: () => { this.reverseChangedData(); resolve()}},
-                        {id: 'saveButton', text: 'Save', type: 'primary', size: 'xsm', closeModal: true, disabled: !this.isValidChangedData, callback: () => this.doSaveChangedData(resolve, reject)}
-                ] as IModalButtonComponent[]
-            }, UnsavedChangesComponent, {isValidChangedData: this.isValidChangedData});
+                        {id: 'cancelButton', text: 'Cancel', type: SdcUiCommon.ButtonType.secondary, size: 'xsm', closeModal: true, callback: () => reject()},
+                        {id: 'discardButton', text: 'Discard', type: SdcUiCommon.ButtonType.secondary, size: 'xsm', closeModal: true, callback: () => { this.reverseChangedData(); resolve()}},
+                        {id: 'saveButton', text: 'Save', type: SdcUiCommon.ButtonType.primary, size: 'xsm', closeModal: true, disabled: !this.isValidChangedData, callback: () => this.doSaveChangedData(resolve, reject)}
+                ] as SdcUiCommon.IModalButtonComponent[]
+            } as SdcUiCommon.IModalConfig, UnsavedChangesComponent, {isValidChangedData: this.isValidChangedData});
         });
 
     }
 
     updatePropertyValueAfterDeclare = (input: InputFEModel) => {
         if (this.instanceFePropertiesMap[input.instanceUniqueId]) {
-            let instanceName = input.instanceUniqueId.slice(input.instanceUniqueId.lastIndexOf('.') + 1);
-            let propertyForUpdatindVal = _.find(this.instanceFePropertiesMap[input.instanceUniqueId], (feProperty: PropertyFEModel) => {
-                return feProperty.uniqueId === input.propertyId &&
+            const instanceName = input.instanceUniqueId.slice(input.instanceUniqueId.lastIndexOf('.') + 1);
+            const propertyForUpdatindVal = _.find(this.instanceFePropertiesMap[input.instanceUniqueId], (feProperty: PropertyFEModel) => {
+                return feProperty.name == input.relatedPropertyName &&
                     (feProperty.name == input.relatedPropertyName || input.name === instanceName.concat('_').concat(feProperty.name.replace(/[.]/g, '_')));
             });
-            let inputPath = (input.inputPath && input.inputPath != propertyForUpdatindVal.name) ? input.inputPath : undefined;
+            const inputPath = (input.inputPath && input.inputPath != propertyForUpdatindVal.name) ? input.inputPath : undefined;
             propertyForUpdatindVal.setAsDeclared(inputPath); //set prop as declared before assigning value
             this.propertiesService.disableRelatedProperties(propertyForUpdatindVal, inputPath);
             this.propertiesUtils.resetPropertyValue(propertyForUpdatindVal, input.relatedPropertyValue, inputPath);
@@ -968,7 +942,7 @@ export class PropertiesAssignmentComponent {
 
     setPolicyTabIndication = (numPolicies: number): void => {
         this.propertyInputTabs.setTabIndication('Policies', numPolicies);
-    };
+    }
 
     resetUnsavedChangesForInput = (input:InputFEModel) => {
         this.inputsUtils.resetInputDefaultValue(input, input.defaultValue);
@@ -1009,9 +983,9 @@ export class PropertiesAssignmentComponent {
 
     deletePolicy = (policy: PolicyInstance) => {
         this.loadingPolicies = true;
-        this.componentServiceNg2
+        this.topologyTemplateService
             .deletePolicy(this.component, policy)
-            .subscribe(response => {
+            .subscribe((response) => {
                 this.policies = this.policies.filter(policy => policy.uniqueId !== response.uniqueId);
                 //Reload the whole instance for now - TODO: CHANGE THIS after the BE starts returning properties within the response, use commented code below instead!
                 this.changeSelectedInstance(this.selectedInstanceData);
@@ -1020,25 +994,25 @@ export class PropertiesAssignmentComponent {
     };
 
     deleteProperty = (property: PropertyFEModel) => {
-        let propertyToDelete = new PropertyFEModel(property);
+        const propertyToDelete = new PropertyFEModel(property);
         this.loadingProperties = true;
-        let feMap = this.instanceFePropertiesMap;
-        this.componentServiceNg2
-            .deleteServiceProperty(this.component, propertyToDelete)
-            .subscribe(response => {
+        const feMap = this.instanceFePropertiesMap;
+        this.topologyTemplateService
+            .deleteServiceProperty(this.component.uniqueId, propertyToDelete)
+            .subscribe((response) => {
                 const props = feMap[this.component.uniqueId];
                 props.splice(props.findIndex(p => p.uniqueId === response),1);
                 this.loadingProperties = false;
-            }, error => {
+            }, (error) => {
                 this.loadingProperties = false;
                 console.error(error);
             });
-    };
+    }
 
     /*** addProperty ***/
     addProperty = () => {
         let modalTitle = 'Add Property';
-        const modal = this.ModalService.createCustomModal(new ModalModel(
+        let modal = this.ModalService.createCustomModal(new ModalModel(
             'sm',
             modalTitle,
             null,
@@ -1046,10 +1020,10 @@ export class PropertiesAssignmentComponent {
                 new ButtonModel('Save', 'blue', () => {
                     modal.instance.dynamicContent.instance.isLoading = true;
                     const newProperty: PropertyBEModel = modal.instance.dynamicContent.instance.propertyModel;
-                    this.componentServiceNg2.createServiceProperty(this.component, newProperty)
-                        .subscribe(response => {
+                    this.topologyTemplateService.createServiceProperty(this.component.uniqueId, newProperty)
+                        .subscribe((response) => {
                             modal.instance.dynamicContent.instance.isLoading = false;
-                            let newProp: PropertyFEModel = this.propertiesUtils.convertAddPropertyBAToPropertyFE(response);
+                            const newProp: PropertyFEModel = this.propertiesUtils.convertAddPropertyBAToPropertyFE(response);
                             this.instanceFePropertiesMap[this.component.uniqueId].push(newProp);
                             modal.instance.close();
                         }, (error) => {
@@ -1059,7 +1033,6 @@ export class PropertiesAssignmentComponent {
                                 title: 'Failure'
                             });
                         });
-
                 }, () => !modal.instance.dynamicContent.instance.checkFormValidForSubmit()),
                 new ButtonModel('Cancel', 'outline grey', () => {
                     modal.instance.close();
@@ -1069,24 +1042,23 @@ export class PropertiesAssignmentComponent {
         ));
         this.ModalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
         modal.instance.open();
-    };
+    }
 
     /*** SEARCH RELATED FUNCTIONS ***/
     searchPropertiesInstances = (filterData:FilterPropertiesAssignmentData) => {
         let instanceBePropertiesMap:InstanceBePropertiesMap;
         this.componentServiceNg2
             .filterComponentInstanceProperties(this.component, filterData)
-            .subscribe(response => {
-
+            .subscribe((response) => {
                 this.processInstancePropertiesResponse(response, false);
                 this.hierarchyPropertiesDisplayOptions.searchText = filterData.propertyName;//mark results in tree
                 this.searchPropertyName = filterData.propertyName;//mark in table
                 this.hierarchyNavTabs.triggerTabChange('Composition');
                 this.propertiesNavigationData = [];
                 this.displayClearSearch = true;
-            }, error => {}); //ignore error
+            }, (error) => {}); //ignore error
 
-    };
+    }
 
     clearSearch = () => {
         this.instancesNavigationData = this.instances;
@@ -1106,5 +1078,6 @@ export class PropertiesAssignmentComponent {
     private isInput = (instanceType:string):boolean =>{
         return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC || instanceType === ResourceType.CR;
     }
+    
 
 }

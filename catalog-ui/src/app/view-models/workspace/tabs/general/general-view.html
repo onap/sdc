@@ -13,13 +13,12 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
 -->
-
 <div include-padding="true" class="sdc-workspace-general-step">
     <div class="w-sdc-main-container-body-content-action-buttons">
-        <div data-ng-if="unsavedFile && !isCreateMode() && !isViewMode()" class="unsaved-file-warning">
+        <div data-ng-if="unsavedFile && !isCreateMode() && !isViewMode()" data-tests-id="save-warning" class="unsaved-file-warning">
              <span class="sprite-new sdc-warning"></span> Click save to update to the new VSP
         </div>
-        <button class="tlv-btn blue" data-ng-if="isDesigner()" data-ng-show="isGeneralView()" data-ng-class="{'disabled' : !isValidForm  || isDisableMode() || isViewMode() || isCreateMode()}"  
+        <button class="tlv-btn blue" data-ng-if="isDesigner()" data-ng-show="isGeneralView()" data-ng-class="{'disabled' : !isValidForm  || isDisableMode() || isViewMode() || isCreateMode()}"
             data-ng-click="save()" data-tests-id="create/save" tooltips tooltip-content="Save">Save</button>
         <span data-ng-if="isDesigner()" data-ng-class="{'disabled' :isDisableMode() || isViewMode() || isCreateMode()}"  ng-click="revert()" class="sprite-new revert-btn" data-tests-id="revert"
               data-ng-show="isGeneralView()" tooltips tooltip-content="Revert"></span>
@@ -160,7 +159,7 @@
                 <div class="w-sdc-form-column">
                     <!--------------------- IMPORT TOSCA FILE USING BROWSE (ALSO VFC) -------------------->
                     <div class="i-sdc-form-item" ng-if="isShowFileBrowse">
-                       
+
                         <!-- //                                     element-disabled="{{!isCreateMode()&&!(isEditMode()&&component.resourceType=='VF')&&component.vspArchived}} || {{isViewMode()}}" -->
 
                         <label class="i-sdc-form-label" data-ng-class="{'required':isCreateMode()}">{{browseFileLabel}}</label>
@@ -173,17 +172,17 @@
                                      on-file-changed-in-directive="onImportFileChange"
                                      extensions="{{importedFileExtension}}"
                                      default-text="'Browse to select file'"
-                                     data-ng-class="{'error':!(isEditMode()&&component.resourceType=='VF') && (!editForm.fileElement.$valid || !component.importedFile.filename)}"></file-upload>
+                                     ></file-upload>
                     </div>
 
                     <!--------------------- IMPORT TOSCA FILE USING ONBOARDING -------------------->
                     <div class="i-sdc-form-item" ng-if="isShowOnboardingSelectionBrowse">
-                            <label class="i-sdc-form-label required">Select VSP</label>
+                            <label class="i-sdc-form-label required">VSP</label>
                             <div class="i-sdc-form-file-upload i-sdc-form-input">
                                 <span class="i-sdc-form-file-name"  data-ng-disabled="component.vspArchived"  data-tests-id="filename">{{(fileModel && fileModel.filename) || importedToscaBrowseFileText }}</span>
                                 <div class="i-sdc-form-file-upload-x-btn" ng-click="cancel()" data-ng-show="fileModel.filename && fileModel.filename!=='' && elementDisabled!=='true'"></div>
-                                <input type="button" data-ng-disabled="component.vspArchived" name="fileElement" />
-                                <div class="file-upload-browse-btn" data-ng-click="openOnBoardingModal()" data-ng-disabled="!component.vspArchived" data-tests-id="browseButton">Browse</div>
+                                <input type="button" data-ng-class="{'disabled': !isEditMode() && component.vspArchived}" data-ng-disabled="component.vspArchived" name="fileElement" />
+                                <div class="file-upload-browse-btn" data-ng-class="{'disabled': !isEditMode() && !component.vspArchived}" data-ng-click="openOnBoardingModal()" data-ng-disabled="!component.vspArchived" data-tests-id="browseButton">Browse</div>
                             </div>
                     </div>
 
@@ -217,28 +216,6 @@
                         </div>
                     </div>
                     <!--------------------- USER ID -------------------->
-
-                    <!--------------------- PROJECT CODE -------------------->
-                    <div class="i-sdc-form-item"  data-ng-if="!component.isResource()"
-                         data-ng-class="{'error': validateField(editForm.projectCode)}">
-                        <label class="i-sdc-form-label required" translate="GENERAL_LABEL_PROJECT_CODE"></label>
-                        <input class="i-sdc-form-input" type="text"
-                               data-ng-model="component.projectCode"
-                               data-ng-class="{'view-mode': isViewMode()}"
-                               data-ng-model-options="{ debounce: 500 }"
-                               data-ng-maxlength="50"
-                               data-required
-                               name="projectCode"
-                               data-ng-pattern="validation.projectCodeValidationPattern"
-                               data-tests-id="projectCode"
-                        />
-
-                        <div class="input-error" data-ng-show="validateField(editForm.projectCode)">
-                            <span ng-show="editForm.contactId.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
-                            <span ng-show="editForm.projectCode.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_PROJECT_CODE_REQUIRED"></span>
-                            <span ng-show="editForm.projectCode.$error.pattern" translate="NEW_SERVICE_RESOURCE_ERROR_PROJECT_CODE_NOT_VALID"></span>
-                        </div>
-                    </div>
 
                 <!--------------------- VENDOR NAME -------------------->
                 <div ng-if="component.isResource()" class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.vendorName)}">
@@ -400,6 +377,27 @@
                         </div>
                     </div>
                     <!--------------------- Service Role -------------------->
+
+                    <!--------------------- Service Function -------------------->
+                    <div ng-if="component.isService()"
+                         class="i-sdc-form-item"
+                         data-ng-class="{'error': validateField(editForm.serviceFunction)}">
+                        <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_SERVICE_FUNCTION"></label>
+                        <input class="i-sdc-form-input" type="text"
+                               data-ng-class="{'view-mode': isViewMode()}"
+                               data-ng-model="component.serviceFunction"
+                               data-ng-model-options="{ debounce: 500 }"
+                               name="serviceFunction"
+                               data-tests-id="serviceFunction"
+                               data-ng-maxlength="256"
+                               data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+                        />
+                        <div class="input-error" data-ng-show="validateField(editForm.serviceFunction)">
+                            <span ng-show="editForm.serviceFunction.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
+                            <span ng-show="editForm.serviceFunction.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                        </div>
+                    </div>
+                    <!--------------------- Service Function -------------------->
 
                     <!-------------------- ENVIRONMENT CONTEXT  ----------------->
 

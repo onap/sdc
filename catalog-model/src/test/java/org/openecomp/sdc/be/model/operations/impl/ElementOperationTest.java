@@ -456,17 +456,6 @@ public class ElementOperationTest extends ModelTestBase {
 
 	
 	@Test
-	public void testGetDefaultHeatTimeout() throws Exception {
-		ElementOperation testSubject;
-		Either<Integer, ActionStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDefaultHeatTimeout();
-	}
-
-	
-	@Test
 	public void testGetResourceTypesMap() throws Exception {
 		ElementOperation testSubject;
 		Either<Map<String, String>, ActionStatus> result;

@@ -45,6 +45,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.impl.*;
 import org.openecomp.sdc.be.resources.data.GroupTypeData;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -95,7 +96,9 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         GroupTypesEndpoint groupTypesEndpoint() {
-            return new GroupTypesEndpoint(groupTypeBusinessLogic());
+            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+            return new GroupTypesEndpoint(userBusinessLogic, componentsUtils, groupTypeBusinessLogic());
         }
 
         @Bean
@@ -123,7 +126,7 @@ public class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
     @Before
     public void init() {
-        when(userValidations.validateUserExists(eq(USER_ID), anyString(), anyBoolean())).thenReturn(user);
+        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
         when(janusGraphGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class))).thenReturn(Either.left(buildGroupTypeDataList()));
     }
 

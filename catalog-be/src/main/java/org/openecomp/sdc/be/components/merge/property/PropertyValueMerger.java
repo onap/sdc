@@ -60,7 +60,7 @@ public class PropertyValueMerger {
     
     private Map<String, Object> mergeMapValue(Map<String, Object> oldValMap, Map<String, Object> newValMap, List<String> inputNamesToMerge, String type, String innertType, Map<String, DataTypeDefinition> dataTypes) {
         mergeEntriesExistInOldValue(oldValMap, newValMap, inputNamesToMerge, type, innertType, dataTypes);//continue the recursion
-        if (type != null && !type.equals("map")) {
+        if (type != null && !type.equals("map") && !type.equals("json")) {
             setOldEntriesNotExistInNewValue(oldValMap, newValMap, inputNamesToMerge);
         }
         

@@ -30,9 +30,7 @@ import org.springframework.stereotype.Component;
 public class DME2EndpointIteratorCreator {
 
     public DME2EndpointIterator create(String lookupURI) throws DME2Exception {
-        // Initializing DME2Manager instance
-        DME2Manager manager = DME2Manager.getDefaultInstance();
         // Returning an instance of the DME2EndpointIteratorFactory
-        return (DME2EndpointIterator) DME2EndpointIteratorFactory.getInstance().getIterator(lookupURI, null, null, manager);
+        return (DME2EndpointIterator) DME2EndpointIteratorFactory.getInstance().getIterator(lookupURI, null, null);
     }
 }

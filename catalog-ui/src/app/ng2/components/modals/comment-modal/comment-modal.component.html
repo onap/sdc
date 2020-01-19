@@ -1,0 +1,18 @@
+<form>
+    <div>
+        <div class="comment-modal-text" [innerHTML]="message"></div>
+        <sdc-textarea #comment1
+                      [(value)]="comment.text"
+                      placeHolder="{{'CONFIRMATION_MODAL_PLACEHOLDER' | translate }}"
+                      [required]="true"
+                      name="comment1"
+                      testId="checkindialog"
+                      [maxLength]="256">
+        </sdc-textarea>
+        <sdc-validation [validateElement]="comment1" (validityChanged)="onValidityChange($event)">
+            <sdc-required-validator message="{{ 'VALIDATION_ERROR_REQUIRED' | translate:{'field': 'Comment' } }}"></sdc-required-validator>
+            <sdc-regex-validator message="{{ 'VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED' | translate}}"
+                                 [pattern]="commentValidationPattern"></sdc-regex-validator>
+        </sdc-validation>
+    </div>
+</form>

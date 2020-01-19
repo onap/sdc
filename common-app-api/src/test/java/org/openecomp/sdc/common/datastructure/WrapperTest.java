@@ -26,7 +26,7 @@ import org.junit.Test;
 public class WrapperTest {
 
 	private Wrapper createTestSubject() {
-		return new Wrapper("test");
+		return new Wrapper(null);
 	}
 
 

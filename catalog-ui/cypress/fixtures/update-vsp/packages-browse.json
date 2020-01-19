@@ -1,0 +1,53 @@
+{
+    "listCount": 4,
+    "results": [
+        {
+            "description": "test update vsp cypress",
+            "vspName": "test update vsp",
+            "version": "3.0",
+            "packageId": "4f66a9dfea784f7cbd3630d8f99bc1be",
+            "category": "resourceNewCategory.network l2-3",
+            "subCategory": "resourceNewCategory.network l2-3.gateway",
+            "vendorName": "test vlm",
+            "vendorRelease": "1.0",
+            "packageType": "CSAR",
+            "resourceType": "VF"
+        },
+        {
+            "description": "test update vsp cypress",
+            "vspName": "test update vsp",
+            "version": "2.0",
+            "packageId": "4f66a9dfea784f7cbd3630d8f99bc1be",
+            "category": "resourceNewCategory.network l2-3",
+            "subCategory": "resourceNewCategory.network l2-3.gateway",
+            "vendorName": "test vlm",
+            "vendorRelease": "1.0",
+            "packageType": "CSAR",
+            "resourceType": "VF"
+        },
+        {
+            "description": "test update vsp cypress",
+            "vspName": "test update vsp",
+            "version": "4.0",
+            "packageId": "4f66a9dfea784f7cbd3630d8f99bc1be",
+            "category": "resourceNewCategory.network l2-3",
+            "subCategory": "resourceNewCategory.network l2-3.gateway",
+            "vendorName": "test vlm",
+            "vendorRelease": "1.0",
+            "packageType": "CSAR",
+            "resourceType": "VF"
+        },
+        {
+            "description": "test update vsp cypress",
+            "vspName": "test update vsp",
+            "version": "1.0",
+            "packageId": "4f66a9dfea784f7cbd3630d8f99bc1be",
+            "category": "resourceNewCategory.network l2-3",
+            "subCategory": "resourceNewCategory.network l2-3.gateway",
+            "vendorName": "test vlm",
+            "vendorRelease": "1.0",
+            "packageType": "CSAR",
+            "resourceType": "VF"
+        }
+    ]
+}

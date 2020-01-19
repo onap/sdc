@@ -32,6 +32,7 @@ import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogicTest;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
@@ -48,7 +49,13 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
@@ -69,6 +76,8 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
@@ -81,18 +90,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogicMock {
+    private static final Logger log = LoggerFactory.getLogger(ServiceBusinessLogicTest.class);
     private static final String SERVICE_CATEGORY = "Mobility";
     private final ServletContext servletContext = Mockito.mock(ServletContext.class);
     private UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     private WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     private WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-    private final IDistributionEngine distributionEngine = Mockito.mock(IDistributionEngine.class);
-    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    private final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
-    private final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
-    private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    private final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
-    private final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
+    protected final IDistributionEngine distributionEngine = Mockito.mock(IDistributionEngine.class);
+    protected final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    protected final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
+    protected final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
+    protected final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    protected final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
+    protected final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
     private ServiceBusinessLogic bl;
     private ResponseFormatManager responseManager = null;
     private IElementOperation mockElementDao;
@@ -136,11 +146,11 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         user.setLastName("Hendrix");
         user.setRole(Role.ADMIN.name());
 
-        Either<User, ActionStatus> eitherGetUser = Either.left(user);
-        when(mockUserAdmin.getUser("jh0003", false)).thenReturn(eitherGetUser);
+        when(mockUserAdmin.getUser("jh0003", false)).thenReturn(user);
 
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
+//        when(servletContext.getAttribute(Constants.SERVICE_OPERATION_MANAGER)).thenReturn(new ServiceOperation());
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
         when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
@@ -174,7 +184,8 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
             groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactsBusinessLogic, distributionEngine, componentInstanceBusinessLogic,
             serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
-            serviceFilterOperation, serviceFilterValidator, artifactToscaOperation);
+            serviceFilterOperation, serviceFilterValidator, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
+            componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
         bl.setUserAdmin(mockUserAdmin);
         bl.setGraphLockOperation(graphLockOperation);
         bl.setJanusGraphDao(mockJanusGraphDao);
@@ -236,8 +247,10 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         createResourceAudit.setStatus("201");
         createResourceAudit.setPrevVersion("");
         createResourceAudit.setAction("Create");
+        // fields.put("TIMESTAMP", "2015-11-22 09:19:12.977");
         createResourceAudit.setPrevState("");
         createResourceAudit.setResourceName("MyTestResource");
+        // createResourceAudit.setFields(fields);
 
         final ResourceAdminEvent checkInResourceAudit = new ResourceAdminEvent();
         checkInResourceAudit.setModifier("Carlos Santana(cs0008)");
@@ -251,6 +264,7 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         checkInResourceAudit.setStatus("200");
         checkInResourceAudit.setPrevVersion("0.1");
         checkInResourceAudit.setAction("Checkin");
+        // fields.put("TIMESTAMP", "2015-11-22 09:25:03.797");
         checkInResourceAudit.setPrevState("NOT_CERTIFIED_CHECKOUT");
         checkInResourceAudit.setResourceName("MyTestResource");
 
@@ -266,8 +280,11 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         checkOutResourceAudit.setStatus("200");
         checkOutResourceAudit.setPrevVersion("0.1");
         checkOutResourceAudit.setAction("Checkout");
+        // fields.put("TIMESTAMP", "2015-11-22 09:39:41.024");
         checkOutResourceAudit.setPrevState("NOT_CERTIFIED_CHECKIN");
         checkOutResourceAudit.setResourceName("MyTestResource");
+        // checkOutResourceAudit.setFields(fields);
+
         List<ResourceAdminEvent> list = new ArrayList<ResourceAdminEvent>() {
             {
                 add(createResourceAudit);
@@ -289,6 +306,7 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         };
         Either<List<ResourceAdminEvent>, ActionStatus> resultCurr = Either.left(listCurr);
         Mockito.when(auditingDao.getAuditByServiceIdAndCurrVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(resultCurr);
+
     }
 
     protected Service createServiceObject(boolean afterCreate) {
@@ -304,7 +322,10 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         List<String> tgs = new ArrayList<>();
         tgs.add(service.getName());
         service.setTags(tgs);
+        // service.setVendorName("Motorola");
+        // service.setVendorRelease("1.0.0");
         service.setIcon("MyIcon");
+        // service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         service.setContactId("aa1234");
         service.setProjectCode("12345");
 

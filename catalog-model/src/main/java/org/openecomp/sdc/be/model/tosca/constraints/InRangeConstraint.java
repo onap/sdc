@@ -21,13 +21,13 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import com.google.common.collect.Lists;
-
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import java.util.List;
-
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 import javax.validation.constraints.NotNull;
 
@@ -78,6 +78,16 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         if (min.compareTo(propertyValue) > 0 || max.compareTo(propertyValue) < 0) {
             throw new ConstraintViolationException("The value [" + propertyValue + "] is out of range " + inRange);
         }
+    }
+
+    @Override
+    public ConstraintType getConstraintType() {
+        return ConstraintType.IN_RANGE;
+    }
+
+    @Override
+    public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
+
     }
 
     @NotNull

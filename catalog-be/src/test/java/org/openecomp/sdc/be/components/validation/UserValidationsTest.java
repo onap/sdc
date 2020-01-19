@@ -20,19 +20,20 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,87 +47,83 @@ public class UserValidationsTest {
 	UserValidations testSubject;
 	
 	@Mock
-	IUserBusinessLogic userAdmin;
+	UserBusinessLogic userAdmin;
 	
 	@Mock
     ComponentsUtils componentsUtils;
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		//TestUtilsSdc.setFinalStatic(UserValidations.class, "log", LoggerFactory.getLogger(UserValidations.class));
 		MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
-	public void testValidateUserExists() throws Exception {
+	public void testValidateUserExists() {
 		String userId = "mock";
-		String ecompErrorContext = "mock";
 		User usr = new User();
-		boolean inTransaction = false;
-		User result;
-		
-		
-		Mockito.when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.left(usr));
-		
+		usr.setUserId(userId);
+		usr.setStatus(UserStatusEnum.ACTIVE);
+		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenReturn(usr);
 		// default test
-		result = testSubject.validateUserExists(userId, ecompErrorContext, inTransaction);
+		testSubject.validateUserExists(userId);
 	}
 	
 	@Test
-	public void testValidateNonExistingUser2() throws Exception {
+	public void testValidateNonExistingUser2() {
 		String userId = "mock";
 		String ecompErrorContext = "mock";
 		boolean inTransaction = false;
 		User result;
-		
-		
-		Mockito.when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
 
-		Throwable thrown = catchThrowable(() -> testSubject.validateUserExists(userId, ecompErrorContext, inTransaction) );
-		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.AUTH_FAILED);
+
+		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
+
+		Throwable thrown = catchThrowable(() -> testSubject.validateUserExists(userId) );
+		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.USER_NOT_FOUND);
 
 	}
 
 	@Test
-	public void testValidateUserRole() throws Exception {
+	public void testValidateUserRole() {
 		User user = new User();
 		List<Role> roles = new LinkedList<>();
 		roles.add(Role.DESIGNER);
-		
+
 		user.setRole(Role.DESIGNER.name());
-		
+
 		// test 1
 		testSubject.validateUserRole(user, roles);
 	}
 
 	@Test
-	public void testValidateUserExistsActionStatus() throws Exception {
+	public void testValidateUserExistsActionStatus() {
 		String userId = "mock";
 		String ecompErrorContext = "mock";
-		Either<User, ActionStatus> result;
+		ActionStatus result;
 		User usr = new User();
 		
-		Mockito.when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.left(usr));
+		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenReturn(usr);
 		
 		// default test
-		result = testSubject.validateUserExistsActionStatus(userId, ecompErrorContext);
+		result = testSubject.validateUserExistsActionStatus(userId);
 	}
 
 	@Test
-	public void testValidateUserExistsActionStatus2() throws Exception {
+	public void testValidateUserExistsActionStatus2() {
 		String userId = "mock";
 		String ecompErrorContext = "mock";
-		Either<User, ActionStatus> result;
+		ActionStatus result;
 		User usr = new User();
 		
-		Mockito.when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
+		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException((ActionStatus.USER_NOT_FOUND)));
 		
 		// default test
-		result = testSubject.validateUserExistsActionStatus(userId, ecompErrorContext);
+		result = testSubject.validateUserExistsActionStatus(userId);
 	}
 	
 	@Test
-	public void testValidateUserNotEmpty() throws Exception {
+	public void testValidateUserNotEmpty() {
 		User user = new User();
 		user.setUserId("userId");
 		String ecompErrorContext = "mock";
@@ -137,14 +134,14 @@ public class UserValidationsTest {
 	}
 
 	@Test
-	public void testValidateNonExistingUser() throws Exception {
+	public void testValidateNonExistingUser() {
 		String userId = "";
 		String ecompErrorContext = "";
 
-		Mockito.when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.right(ActionStatus.USER_NOT_FOUND));
+		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
 		
 		// default test
-		Throwable thrown = catchThrowable(() -> testSubject.validateUserExist(userId, ecompErrorContext) );
-		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.AUTH_FAILED);
+		Throwable thrown = catchThrowable(() -> testSubject.validateUserExists(userId) );
+		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.USER_NOT_FOUND);
 	}
 }

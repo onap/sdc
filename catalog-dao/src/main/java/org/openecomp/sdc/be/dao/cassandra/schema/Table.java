@@ -35,7 +35,6 @@ public enum Table {
     DISTRIBUTION_DEPLOY_EVENT(new DistribDeployEventTableDesc()),
     DISTRIBUTION_GET_UEB_CLUSTER_EVENT(new GetUebClusterEventTableDesc()),
     AUTH_EVENT(new AuthEventTableDescription()),
-    CONSUMER_EVENT(new ConsumerEventTableDefinition()),
     CATEGORY_EVENT(new CategoryEventTableDescription()),
     GET_USERS_LIST_EVENT(new GetUsersListEventTableDesc()),
     GET_CATEGORY_HIERARCHY_EVENT(new GetCatHierEventTableDesc()),
@@ -43,7 +42,8 @@ public enum Table {
     SDC_SCHEMA_FILES(new SdcSchemaFilesTableDescription()),
     SDC_REPO(new MigrationTasksTableDescription()),
     SDC_OPERATIONAL_ENVIRONMENT(new OperationalEnvironmentsTableDescription()),
-    AUDIT_ECOMP_OPERATIONAL_ENVIRONMENT(new EcompOperationalEnvironmentEventTableDesc());
+    AUDIT_ECOMP_OPERATIONAL_ENVIRONMENT(new EcompOperationalEnvironmentEventTableDesc()),
+    FEATURE_TOGGLE_STATE(new FeatureToggleEventTableDesc());
 
 	ITableDescription tableDescription;
 

@@ -1,0 +1,41 @@
+<div class="composition-palette-component">
+    <div class="palette-elements-count">Elements
+        <span class="palette-elements-count-value">{{numberOfElements}}</span>
+    </div>
+
+    <sdc-filter-bar placeholder="Search..." (valueChange)="onSearchChanged($event)" testId="searchAsset"></sdc-filter-bar>
+
+    <div class="palette-elements-list">
+        <sdc-loader [global]="false" name="palette-loader" testId="palette-loader" [active]="this.isPaletteLoading" [class.inactive]="!this.isPaletteLoading"></sdc-loader>
+        <div *ngIf="numberOfElements === 0 && searchText" class="no-elements-found">No Elements Found</div>
+        <sdc-accordion *ngFor="let mapByCategory of paletteElements | keyValue; let first = first" [attr.data-tests-id]="'leftPalette.category.'+mapByCategory.key" [title]="mapByCategory.key" [css-class]="'palette-category'">
+            <div *ngFor="let mapBySubCategory of mapByCategory.value | keyValue">
+                <div class="palette-subcategory">{{mapBySubCategory.key}}</div>
+                <ng-container *ngIf="!(isViewOnly$ | async)">
+                    <div *ngFor="let paletteElement of mapBySubCategory.value"
+                        [dndDraggable]="paletteElement"
+                        [dndDisableIf]="paletteElement.componentSubType == 'GROUP' && paletteElement.componentSubType == 'POLICY'"
+                        (dndStart)="onDragStart($event, paletteElement)"
+                        (drag)="onDraggableMoved($event)"
+                        [dndEffectAllowed]="'copyMove'"
+                        (mouseenter)="onMouseOver($event, paletteElement)"
+                        (mouseleave)="onMouseOut(paletteElement)"
+                        [attr.data-tests-id]="paletteElement.name">
+                       <palette-element [paletteElement]="paletteElement"></palette-element>
+                   </div>
+                </ng-container>
+                <ng-container *ngIf="(isViewOnly$ | async)">
+                    <div *ngFor="let paletteElement of mapBySubCategory.value"
+                        [attr.data-tests-id]="paletteElement.name">
+                        <palette-element [paletteElement]="paletteElement"></palette-element>
+                    </div>
+                </ng-container>
+            </div>
+        </sdc-accordion>
+    </div>
+</div>
+
+<div id="draggable_element" dndDropzone (dndDrop)="onDrop($event)" [dndAllowExternal]="true">
+    <sdc-element-icon *ngIf="paletteDraggedElement" [iconName]="paletteDraggedElement.icon"
+        [elementType]="paletteDraggedElement.componentSubType" [uncertified]="paletteDraggedElement.certifiedIconClass"></sdc-element-icon>
+</div>

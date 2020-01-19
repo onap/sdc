@@ -32,7 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 public class ArtifactCassandraDaoTest {
@@ -69,7 +69,7 @@ public class ArtifactCassandraDaoTest {
 
 	@Test
 	public void testSaveArtifact() throws Exception {
-		ESArtifactData artifact = null;
+		DAOArtifactData artifact = null;
 		CassandraOperationStatus result;
 
 		// default test
@@ -79,7 +79,7 @@ public class ArtifactCassandraDaoTest {
 	@Test
 	public void testGetArtifact() throws Exception {
 		String artifactId = "";
-		Either<ESArtifactData, CassandraOperationStatus> result;
+		Either<DAOArtifactData, CassandraOperationStatus> result;
 
 		// default test
 		result = testSubject.getArtifact(artifactId);

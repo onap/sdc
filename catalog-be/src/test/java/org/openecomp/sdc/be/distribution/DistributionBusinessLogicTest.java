@@ -31,17 +31,23 @@ import org.openecomp.sdc.be.components.distribution.engine.CambriaErrorResponse;
 import org.openecomp.sdc.be.components.distribution.engine.CambriaHandler;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineInitTask;
 import org.openecomp.sdc.be.components.distribution.engine.SubscriberTypeEnum;
+import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
 import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;
 import org.openecomp.sdc.be.distribution.api.client.TopicUnregistrationResponse;
+import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 
 import javax.ws.rs.core.Response;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.distribution.engine.DistributionEngineInitTask.buildTopicName;
@@ -51,18 +57,91 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
     @InjectMocks
     DistributionBusinessLogic distributionBusinessLogic = Mockito.spy(DistributionBusinessLogic.class);
 
-    CambriaHandler cambriaHandler = Mockito.mock(CambriaHandler.class);
-    AuditHandler auditHandler = Mockito.mock(AuditHandler.class);
+    private CambriaHandler cambriaHandler = Mockito.mock(CambriaHandler.class);
+    private AuditHandler auditHandler = Mockito.mock(AuditHandler.class);
+    private DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
 
-    CambriaErrorResponse errorResponse = new CambriaErrorResponse(CambriaOperationStatus.CONNNECTION_ERROR,
+    private CambriaErrorResponse errorResponse = new CambriaErrorResponse(CambriaOperationStatus.CONNNECTION_ERROR,
             HttpStatus.SC_SERVICE_UNAVAILABLE);
-    CambriaErrorResponse okResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
-    DistributionEngineConfiguration config = configurationManager.getDistributionEngineConfiguration();
+    private CambriaErrorResponse okResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
+    private DistributionEngineConfiguration config = configurationManager.getDistributionEngineConfiguration();
 
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
         Mockito.reset(cambriaHandler);
+    }
+
+    @Test
+    public void testHandleRegistrationOnTenant() {
+        List<String> uebs = Arrays.asList("11","22");
+        OperationalEnvironmentEntry environment = new OperationalEnvironmentEntry();
+        environment.setEnvironmentId("1");
+        environment.setUebApikey("11");
+        environment.setUebSecretKey("22");
+        RegistrationRequest registrationRequest =
+                new RegistrationRequest("myPublicKey", "myEnv",uebs ,false);
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        when(distributionEngine.getEnvironmentByDmaapUebAddress(uebs))
+                .thenReturn(environment);
+        testHandleRegistrationBasic(registrationRequest, responseWrapper);
+    }
+
+    @Test
+    public void handleUnregistrationOnTenant() {
+        List<String> uebs = Arrays.asList("11","22");
+        OperationalEnvironmentEntry environment = new OperationalEnvironmentEntry();
+        environment.setEnvironmentId("1");
+        environment.setUebApikey("11");
+        environment.setUebSecretKey("22");
+        RegistrationRequest registrationRequest =
+                new RegistrationRequest("myPublicKey", "myEnv",uebs ,false);
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        CambriaErrorResponse okResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
+
+        when(cambriaHandler.unRegisterFromTopic(Mockito.anyCollection(), eq("11"),
+                eq("22"), eq("myPublicKey"), Mockito.any(SubscriberTypeEnum.class), Mockito.anyString()))
+                .thenReturn(okResponse);
+        when(distributionEngine.getEnvironmentByDmaapUebAddress(uebs))
+                .thenReturn(environment);
+
+        distributionBusinessLogic.handleUnRegistration(responseWrapper, registrationRequest, auditHandler);
+
+        Mockito.verify(distributionBusinessLogic, Mockito.times(0)).registerDistributionClientToTopic(
+                eq(responseWrapper), eq(registrationRequest), eq(SubscriberTypeEnum.PRODUCER),
+                Mockito.anyString());
+        Mockito.verify(distributionBusinessLogic, Mockito.times(0)).registerDistributionClientToTopic(
+                eq(responseWrapper), eq(registrationRequest), eq(SubscriberTypeEnum.CONSUMER),
+                Mockito.anyString());
+        Mockito.verify(distributionBusinessLogic, Mockito.times(1)).unRegisterDistributionClientFromTopic(
+                eq(registrationRequest), eq(SubscriberTypeEnum.PRODUCER), Mockito.anyString());
+        Mockito.verify(distributionBusinessLogic, Mockito.times(1)).unRegisterDistributionClientFromTopic(
+                eq(registrationRequest), eq(SubscriberTypeEnum.CONSUMER), Mockito.anyString());
+
+        Mockito.verify(cambriaHandler, Mockito.times(2)).unRegisterFromTopic(Mockito.anyCollection(),
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(SubscriberTypeEnum.class),
+                Mockito.anyString());
+
+        assertTrue(!responseWrapper.isEmpty());
+        Response response = responseWrapper.getInnerElement();
+        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+
+        TopicUnregistrationResponse okTopicUnregisterResponse = (TopicUnregistrationResponse) response.getEntity();
+
+        String expectedStatusTopicName = DistributionEngineInitTask.buildTopicName(
+                configurationManager.getDistributionEngineConfiguration().getDistributionStatusTopicName(),
+                registrationRequest.getDistrEnvName());
+        String actualStatusTopicName = okTopicUnregisterResponse.getDistrStatusTopicName();
+        assertEquals(expectedStatusTopicName, actualStatusTopicName);
+
+        String expectedNotificationTopicName = DistributionEngineInitTask.buildTopicName(
+                configurationManager.getDistributionEngineConfiguration().getDistributionNotifTopicName(),
+                registrationRequest.getDistrEnvName());
+        String actualNotificationTopicName = okTopicUnregisterResponse.getDistrNotificationTopicName();
+        assertEquals(expectedNotificationTopicName, actualNotificationTopicName);
+
+        assertEquals(okTopicUnregisterResponse.getNotificationUnregisterResult(), CambriaOperationStatus.OK);
+        assertEquals(okTopicUnregisterResponse.getStatusUnregisterResult(), CambriaOperationStatus.OK);
     }
 
     @Test
@@ -256,7 +335,7 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
     public void testHandleUnRegistrationHappyScenario() {
         CambriaErrorResponse okResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
 
-        Mockito.when(cambriaHandler.unRegisterFromTopic(Mockito.anyCollection(), Mockito.anyString(),
+        when(cambriaHandler.unRegisterFromTopic(Mockito.anyCollection(), Mockito.anyString(),
                 Mockito.anyString(), Mockito.anyString(), Mockito.any(SubscriberTypeEnum.class), Mockito.anyString()))
                 .thenReturn(okResponse);
 
@@ -265,15 +344,15 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
         distributionBusinessLogic.handleUnRegistration(responseWrapper, registrationRequest, auditHandler);
 
         Mockito.verify(distributionBusinessLogic, Mockito.times(0)).registerDistributionClientToTopic(
-                Mockito.eq(responseWrapper), Mockito.eq(registrationRequest), Mockito.eq(SubscriberTypeEnum.PRODUCER),
+                eq(responseWrapper), eq(registrationRequest), eq(SubscriberTypeEnum.PRODUCER),
                 Mockito.anyString());
         Mockito.verify(distributionBusinessLogic, Mockito.times(0)).registerDistributionClientToTopic(
-                Mockito.eq(responseWrapper), Mockito.eq(registrationRequest), Mockito.eq(SubscriberTypeEnum.CONSUMER),
+                eq(responseWrapper), eq(registrationRequest), eq(SubscriberTypeEnum.CONSUMER),
                 Mockito.anyString());
         Mockito.verify(distributionBusinessLogic, Mockito.times(1)).unRegisterDistributionClientFromTopic(
-                Mockito.eq(registrationRequest), Mockito.eq(SubscriberTypeEnum.PRODUCER), Mockito.anyString());
+                eq(registrationRequest), eq(SubscriberTypeEnum.PRODUCER), Mockito.anyString());
         Mockito.verify(distributionBusinessLogic, Mockito.times(1)).unRegisterDistributionClientFromTopic(
-                Mockito.eq(registrationRequest), Mockito.eq(SubscriberTypeEnum.CONSUMER), Mockito.anyString());
+                eq(registrationRequest), eq(SubscriberTypeEnum.CONSUMER), Mockito.anyString());
 
         Mockito.verify(cambriaHandler, Mockito.times(2)).unRegisterFromTopic(Mockito.anyCollection(),
                 Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(SubscriberTypeEnum.class),
@@ -315,25 +394,25 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
                 .buildTopicName(config.getDistributionStatusTopicName(), registrationRequest.getDistrEnvName());
         String expectedNotificationTopicName = DistributionEngineInitTask
                 .buildTopicName(config.getDistributionNotifTopicName(), registrationRequest.getDistrEnvName());
-        Mockito.when(cambriaHandler.unRegisterFromTopic(config.getUebServers(), config.getUebPublicKey(),
+        when(cambriaHandler.unRegisterFromTopic(config.getUebServers(), config.getUebPublicKey(),
                 config.getUebSecretKey(), registrationRequest.getApiPublicKey(), SubscriberTypeEnum.PRODUCER,
                 expectedStatusTopicName)).thenReturn(okResponse);
-        Mockito.when(cambriaHandler.unRegisterFromTopic(config.getUebServers(), config.getUebPublicKey(),
+        when(cambriaHandler.unRegisterFromTopic(config.getUebServers(), config.getUebPublicKey(),
                 config.getUebSecretKey(), registrationRequest.getApiPublicKey(), SubscriberTypeEnum.CONSUMER,
                 expectedNotificationTopicName)).thenReturn(errorResponse);
 
         distributionBusinessLogic.handleUnRegistration(responseWrapper, registrationRequest, auditHandler);
 
         Mockito.verify(distributionBusinessLogic, Mockito.times(0)).registerDistributionClientToTopic(
-                Mockito.eq(responseWrapper), Mockito.eq(registrationRequest), Mockito.eq(SubscriberTypeEnum.PRODUCER),
+                eq(responseWrapper), eq(registrationRequest), eq(SubscriberTypeEnum.PRODUCER),
                 Mockito.anyString());
         Mockito.verify(distributionBusinessLogic, Mockito.times(0)).registerDistributionClientToTopic(
-                Mockito.eq(responseWrapper), Mockito.eq(registrationRequest), Mockito.eq(SubscriberTypeEnum.CONSUMER),
+                eq(responseWrapper), eq(registrationRequest), eq(SubscriberTypeEnum.CONSUMER),
                 Mockito.anyString());
         Mockito.verify(distributionBusinessLogic, Mockito.times(1)).unRegisterDistributionClientFromTopic(
-                Mockito.eq(registrationRequest), Mockito.eq(SubscriberTypeEnum.PRODUCER), Mockito.anyString());
+                eq(registrationRequest), eq(SubscriberTypeEnum.PRODUCER), Mockito.anyString());
         Mockito.verify(distributionBusinessLogic, Mockito.times(1)).unRegisterDistributionClientFromTopic(
-                Mockito.eq(registrationRequest), Mockito.eq(SubscriberTypeEnum.CONSUMER), Mockito.anyString());
+                eq(registrationRequest), eq(SubscriberTypeEnum.CONSUMER), Mockito.anyString());
 
         assertTrue(!responseWrapper.isEmpty());
         Response response = responseWrapper.getInnerElement();
@@ -357,7 +436,7 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
     private void testHandleRegistrationBasic(RegistrationRequest registrationRequest,
             Wrapper<Response> responseWrapper) {
         CambriaErrorResponse okResponse = new CambriaErrorResponse(CambriaOperationStatus.OK, HttpStatus.SC_OK);
-        Mockito.when(cambriaHandler.registerToTopic(Mockito.anyCollection(), Mockito.anyString(), Mockito.anyString(),
+        when(cambriaHandler.registerToTopic(Mockito.anyCollection(), Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString(), Mockito.any(SubscriberTypeEnum.class), Mockito.anyString()))
                 .thenReturn(okResponse);
 

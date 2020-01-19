@@ -8,6 +8,7 @@ const webpackCommonConfig = require('./webpack.common');
 const {GlobCopyWebpackPlugin, BaseHrefWebpackPlugin} = require('@angular/cli/plugins/webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 var CompressionPlugin = require('compression-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var currentTime = new Date().getTime();
 
 const params = {};
@@ -43,18 +44,7 @@ const webpackProdConfig = {
             }
             }
         ]),
-        new webpack.optimize.UglifyJsPlugin({
-            beautify: false,
-            mangle: {
-                screw_ie8: true,
-                keep_fnames: true
-            },
-            compress: {
-                warnings: false,
-                screw_ie8: true
-            },
-            comments: false
-        }),
+        new UglifyJSPlugin({}),
         new webpack.optimize.AggressiveMergingPlugin(),//Merge chunks
         new CompressionPlugin({
             asset: "[path]gz",

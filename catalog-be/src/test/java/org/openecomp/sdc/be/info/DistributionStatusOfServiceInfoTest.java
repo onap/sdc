@@ -35,6 +35,104 @@ public class DistributionStatusOfServiceInfoTest {
 	private static final String TIMESTAMP = "timestamp";
 	private static final String DISTRIBUTION_ID = "distributionID";
 
+	private DistributionStatusOfServiceInfo createTestSubject() {
+		return new DistributionStatusOfServiceInfo();
+	}
+
+	@Test
+	public void testCtor() throws Exception {
+		new DistributionStatusOfServiceInfo("","","","");
+	}
+
+
+	@Test
+	public void testGetDistributionID() throws Exception {
+		DistributionStatusOfServiceInfo testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getDistributionID();
+	}
+
+
+	@Test
+	public void testSetDistributionID() throws Exception {
+		DistributionStatusOfServiceInfo testSubject;
+		String distributionID = "";
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setDistributionID(distributionID);
+	}
+
+
+	@Test
+	public void testGetTimestamp() throws Exception {
+		DistributionStatusOfServiceInfo testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getTimestamp();
+	}
+
+
+	@Test
+	public void testSetTimestamp() throws Exception {
+		DistributionStatusOfServiceInfo testSubject;
+		String timestamp = "";
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setTimestamp(timestamp);
+	}
+
+
+	@Test
+	public void testGetUserId() throws Exception {
+		DistributionStatusOfServiceInfo testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getUserId();
+	}
+
+
+	@Test
+	public void testSetUserId() throws Exception {
+		DistributionStatusOfServiceInfo testSubject;
+		String userId = "";
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setUserId(userId);
+	}
+
+
+	@Test
+	public void testGetDeployementStatus() throws Exception {
+		DistributionStatusOfServiceInfo testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getDeployementStatus();
+	}
+
+
+	@Test
+	public void testSetDeployementStatus() throws Exception {
+		DistributionStatusOfServiceInfo testSubject;
+		String deployementStatus = "";
+
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setDeployementStatus(deployementStatus);
+	}
+
+
 	@Test
 	public void shouldHaveValidDefaultConstructor() {
 		assertThat(DistributionStatusOfServiceInfo.class, hasValidBeanConstructor());
@@ -48,11 +146,12 @@ public class DistributionStatusOfServiceInfoTest {
 	@Test
 	public void shouldTestWhetherTheDefaultConstructorCorrectlySetAllFields() {
 		DistributionStatusOfServiceInfo distributionStatusOfServiceInfo = new DistributionStatusOfServiceInfo(
-			DISTRIBUTION_ID, TIMESTAMP, USER_ID, STATUS);
+				DISTRIBUTION_ID, TIMESTAMP, USER_ID, STATUS);
 		assertThat(distributionStatusOfServiceInfo.getDistributionID(), is(DISTRIBUTION_ID));
 		assertThat(distributionStatusOfServiceInfo.getTimestamp(), is(TIMESTAMP));
 		assertThat(distributionStatusOfServiceInfo.getUserId(), is(USER_ID));
 		assertThat(distributionStatusOfServiceInfo.getDeployementStatus(), is(STATUS));
 	}
+
 
 }

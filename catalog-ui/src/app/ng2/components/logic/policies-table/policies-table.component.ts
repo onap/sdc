@@ -14,12 +14,11 @@
  * permissions and limitations under the License.
  */
 
-
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { PolicyInstance } from "app/models";
-import { ModalService } from "../../../services/modal.service";
-import { InstanceFeDetails } from "app/models/instance-fe-details";
-import {TranslateService} from 'app/ng2/shared/translator/translate.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { PolicyInstance } from 'app/models';
+import { InstanceFeDetails } from 'app/models/instance-fe-details';
+import { TranslateService } from 'app/ng2/shared/translator/translate.service';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
     selector: 'policies-table',
@@ -28,13 +27,13 @@ import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 })
 export class PoliciesTableComponent {
 
-    @Input() policies: Array<PolicyInstance>;
+    @Input() policies: PolicyInstance[];
     @Input() instanceNamesMap: Map<string, InstanceFeDetails>;
     @Input() readonly: boolean;
     @Input() isLoading: boolean;
     @Output() deletePolicy: EventEmitter<any> = new EventEmitter<any>();
 
-    sortBy: String;
+    sortBy: string;
     reverse: boolean;
     selectedPolicyToDelete: PolicyInstance;
     deleteMsgTitle: string;
@@ -42,43 +41,39 @@ export class PoliciesTableComponent {
     modalDeleteBtn: string;
     modalCancelBtn: string;
 
-    sort = (sortBy) => {
-        this.reverse = (this.sortBy === sortBy) ? !this.reverse : true;
-        let reverse = this.reverse ? 1 : -1;
-        this.sortBy = sortBy;
-        let instanceNameMapTemp = this.instanceNamesMap;
-        let itemIdx1Val = "";
-        let itemIdx2Val = "";
-        this.policies.sort(function (itemIdx1, itemIdx2) {
-            if (sortBy == 'instanceUniqueId') {
-                itemIdx1Val = (itemIdx1[sortBy] && instanceNameMapTemp[itemIdx1[sortBy]] !== undefined) ? instanceNameMapTemp[itemIdx1[sortBy]].name : "";
-                itemIdx2Val = (itemIdx2[sortBy] && instanceNameMapTemp[itemIdx2[sortBy]] !== undefined) ? instanceNameMapTemp[itemIdx2[sortBy]].name : "";
-            }
-            else {
-                itemIdx1Val = itemIdx1[sortBy];
-                itemIdx2Val = itemIdx2[sortBy];
-            }            
-            if (itemIdx1Val < itemIdx2Val) {
-                return -1 * reverse;
-            }
-            else if (itemIdx1Val > itemIdx2Val) {
-                return 1 * reverse;
-            }
-            else {
-                return 0;
-            }
-        });
-    };
-
-
     constructor(private modalService: ModalService, private translateService: TranslateService) {
     }
 
+    sort = (sortBy) => {
+        this.reverse = (this.sortBy === sortBy) ? !this.reverse : true;
+        const reverse = this.reverse ? 1 : -1;
+        this.sortBy = sortBy;
+        const instanceNameMapTemp = this.instanceNamesMap;
+        let itemIdx1Val = '';
+        let itemIdx2Val = '';
+        this.policies.sort((itemIdx1, itemIdx2) => {
+            if (sortBy === 'instanceUniqueId') {
+                itemIdx1Val = (itemIdx1[sortBy] && instanceNameMapTemp[itemIdx1[sortBy]] !== undefined) ? instanceNameMapTemp[itemIdx1[sortBy]].name : '';
+                itemIdx2Val = (itemIdx2[sortBy] && instanceNameMapTemp[itemIdx2[sortBy]] !== undefined) ? instanceNameMapTemp[itemIdx2[sortBy]].name : '';
+            } else {
+                itemIdx1Val = itemIdx1[sortBy];
+                itemIdx2Val = itemIdx2[sortBy];
+            }
+            if (itemIdx1Val < itemIdx2Val) {
+                return -1 * reverse;
+            } else if (itemIdx1Val > itemIdx2Val) {
+                return 1 * reverse;
+            } else {
+                return 0;
+            }
+        });
+    }
+
     ngOnInit() {
-        this.translateService.languageChangedObservable.subscribe(lang => {
-            this.deleteMsgTitle = this.translateService.translate("DELETE_POLICY_TITLE");
-            this.modalDeleteBtn = this.translateService.translate("MODAL_DELETE");
-            this.modalCancelBtn = this.translateService.translate("MODAL_CANCEL");
+        this.translateService.languageChangedObservable.subscribe((lang) => {
+            this.deleteMsgTitle = this.translateService.translate('DELETE_POLICY_TITLE');
+            this.modalDeleteBtn = this.translateService.translate('MODAL_DELETE');
+            this.modalCancelBtn = this.translateService.translate('MODAL_CANCEL');
 
         });
     }
@@ -86,15 +81,13 @@ export class PoliciesTableComponent {
     onDeletePolicy = () => {
         this.deletePolicy.emit(this.selectedPolicyToDelete);
         this.modalService.closeCurrentModal();
-    };
+    }
 
     openDeleteModal = (policy: PolicyInstance) => {
         this.selectedPolicyToDelete = policy;
-        this.translateService.languageChangedObservable.subscribe(lang => {
-            this.deleteMsgBodyTxt = this.translateService.translate("DELETE_POLICY_MSG", {policyName: policy.name});
+        this.translateService.languageChangedObservable.subscribe((lang) => {
+            this.deleteMsgBodyTxt = this.translateService.translate('DELETE_POLICY_MSG', {policyName: policy.name});
             this.modalService.createActionModal(this.deleteMsgTitle, this.deleteMsgBodyTxt, this.modalDeleteBtn, this.onDeletePolicy, this.modalCancelBtn).instance.open();
         });
     }
 }
-
-

@@ -23,13 +23,12 @@
  */
 import { DataTypesService } from "../../services/data-types-service";
 import ICacheObject = angular.ICacheObject;
-import { SharingService } from "../../services/sharing-service";
 import { CookieService } from "../../services/cookie-service";
-import { CacheService } from "../../services/cache-service";
 import {ComponentFactory} from "../../utils/component-factory"
 import { EventListenerService } from "app/services/event-listener-service";
 import { ModalsHandler } from "app/utils";
 import IScope = angular.IScope;
+import { SharingService } from "../services/sharing.service";
 
 /** Services we need to upgrade from angular1 to angular2 - in the future we need to rewrite them all to angular2 **/
 
@@ -61,16 +60,16 @@ export function scopeServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('$scope');
 }
 
-export function cacheServiceFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('Sdc.Services.CacheService');
-}
-
 export function eventListenerServiceServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('EventListenerService');
 }
 
 export function notificationServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Notification');
+}
+
+export function ModalsHandlerFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('ModalsHandler');
 }
 
 
@@ -80,17 +79,11 @@ export const ComponentFactoryProvider = {
     deps: ['$injector']
 };
 
-
-export function ModalsHandlerFactory(cacheObj: ICacheObject) {
-    return cacheObj.get('ModalsHandler');
-}
-
 export const DataTypesServiceProvider = {
     provide: DataTypesService,
     useFactory: dataTypesServiceFactory,
     deps: ['$injector']
 };
-
 
 export const SharingServiceProvider = {
     provide: SharingService,
@@ -122,17 +115,12 @@ export const StateParamsServiceFactory = {
     useFactory: stateParamsServiceFactory,
     deps: ['$injector']
 };
-export const CacheServiceProvider = {
-    provide: CacheService,
-    useFactory: cacheServiceFactory,
-    deps: ['$injector']
-};
-
-export const EventListenerServiceProvider = {
-    provide: EventListenerService,
-    useFactory: eventListenerServiceServiceFactory,
-    deps: ['$injector']
-};
+//
+// export const EventListenerServiceProvider = {
+//     provide: EventListenerService,
+//     useFactory: eventListenerServiceServiceFactory,
+//     deps: ['$injector']
+// };
 
 export const NotificationServiceProvider = {
     provide: 'Notification',
@@ -144,4 +132,4 @@ export const ModalsHandlerProvider = {
     provide: ModalsHandler,
     useFactory: ModalsHandlerFactory,
     deps: ['$injector']
-}
+};

@@ -93,7 +93,7 @@ public class ComponentValidationsTest {
 		String userId = "";
 		Component result;
 		Resource resource = new  Resource();
-		resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		
 		Mockito.when(toscaOperationFacadeMock.getToscaElement(Mockito.anyString(), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(resource));
 		

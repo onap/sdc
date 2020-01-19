@@ -28,18 +28,17 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.InvalidArgumentException;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.PluginsConfiguration;
 import org.openecomp.sdc.fe.config.PluginsConfiguration.Plugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class PluginStatusBL {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PluginStatusBL.class.getName());
+    private static final Logger log = Logger.getLogger(PluginStatusBL.class.getName());
     private final Gson gson;
     private final CloseableHttpClient client;
     private final PluginsConfiguration pluginsConfiguration;
@@ -60,14 +59,14 @@ public class PluginStatusBL {
     }
 
     public String getPluginsList() {
-        String result;
+        String result = null;
 
         if (pluginsConfiguration == null || pluginsConfiguration.getPluginsList() == null) {
-            LOGGER.warn("Configuration of type {} was not found", PluginsConfiguration.class);
+            log.warn("Configuration of type {} was not found", PluginsConfiguration.class);
             throw new InvalidArgumentException("the plugin configuration was not read successfully.");
 
         } else {
-            LOGGER.debug("The value returned from getConfig is {}", pluginsConfiguration);
+            log.debug("The value returned from getConfig is {}", pluginsConfiguration);
 
             result = gson.toJson(pluginsConfiguration.getPluginsList());
         }
@@ -78,11 +77,11 @@ public class PluginStatusBL {
         String result = null;
 
         if (pluginsConfiguration == null || pluginsConfiguration.getPluginsList() == null) {
-            LOGGER.warn("Configuration of type {} was not found", PluginsConfiguration.class);
+            log.warn("Configuration of type {} was not found", PluginsConfiguration.class);
             throw new InvalidArgumentException("the plugin configuration was not read successfully.");
 
         } else {
-            LOGGER.debug("The value returned from getConfig is {}", pluginsConfiguration);
+            log.debug("The value returned from getConfig is {}", pluginsConfiguration);
             Integer connectionTimeout = pluginsConfiguration.getConnectionTimeout();
             this.requestConfig = RequestConfig.custom()
                     .setSocketTimeout(connectionTimeout)
@@ -104,17 +103,17 @@ public class PluginStatusBL {
 
     private boolean checkPluginAvailability(Plugin plugin) {
         boolean result = false;
-        LOGGER.debug("sending head request to id:{} url:{}", plugin.getPluginId(), plugin.getPluginDiscoveryUrl());
+        log.debug("sending head request to id:{} url:{}", plugin.getPluginId(), plugin.getPluginDiscoveryUrl());
         HttpHead head = new HttpHead(plugin.getPluginDiscoveryUrl());
 
         head.setConfig(this.requestConfig);
 
         try (CloseableHttpResponse response = this.client.execute(head)) {
             result = response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-            LOGGER.debug("The plugin {} is {} with result {}", plugin.getPluginId(), (result ? "online" : "offline"), result);
+            log.debug("The plugin {} is {} with result {}", plugin.getPluginId(), (result ? "online" : "offline"), result);
         } catch (IOException e) {
-            LOGGER.debug("The plugin {} is offline", plugin.getPluginId());
-            LOGGER.debug("Exception:", e);
+            log.debug("The plugin {} is offline", plugin.getPluginId());
+            log.debug("Exception:", e);
         }
 
         return result;

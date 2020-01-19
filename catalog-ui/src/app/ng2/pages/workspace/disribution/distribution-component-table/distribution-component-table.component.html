@@ -1,0 +1,47 @@
+<div >
+  <div class="distributionSummary" *ngIf="!isModal">
+    <span class= "rightVerticalSeperator titleSummaryFontSettings" data-tests-id="totalDistributionArtifactsLabel">Total Artifacts <span class="blue" data-tests-id="totalDistributionArtifactsValue">{{ getTotalArtifactsForDistributionID(rowDistributionID) }} </span></span>
+    <span class="blue rightVerticalSeperator" (click)="openModal(rowDistributionID,'NOTIFIED')" data-tests-id="totalDistributionNotifiedArtifactsLabel">Notified <span data-tests-id="totalDistributionNotifiedArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'NOTIFIED') }}</span></span>
+    <span class="blue rightVerticalSeperator" (click)="openModal(rowDistributionID,'DOWNLOAD_OK')" data-tests-id="totalDistributionDownloadedArtifactsLabel">Downloaded <span data-tests-id="totalDistributionDownloadedArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'DOWNLOAD_OK') }}</span></span>
+    <span class="blue rightVerticalSeperator" (click)="openModal(rowDistributionID,'DEPLOY_OK')" data-tests-id="totalDistributionDeployedArtifactsLabel">Deployed <span data-tests-id="totalDistributionDeployedArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'DEPLOY_OK') }}</span></span>
+    <span class="blue rightVerticalSeperator" (click)="openModal(rowDistributionID,'NOT_NOTIFIED')" data-tests-id="totalDistributionNotNotifiedArtifactsLabel">Not Notified <span data-tests-id="totalDistributionNotNotifiedArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'NOT_NOTIFIED') }}</span></span>
+    <span class="blue rightVerticalSeperator floatRight" (click)="openModal(rowDistributionID,'DEPLOY_ERROR')" data-tests-id="totalDistributionDeployErrorArtifactsLabel">Deploy Errors <span class="red" data-tests-id="totalDistributionDeployErrorArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'DEPLOY_ERROR') }}</span></span>
+    <span class="blue rightVerticalSeperator floatRight" (click)="openModal(rowDistributionID,'DOWNLOAD_ERROR ')" data-tests-id="totalDistributionDownloadErrorArtifactsLabel">Download Errors <span class="red" data-tests-id="totalDistributionDownloadErrorArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'DOWNLOAD_ERROR') }}</span></span>
+  </div>
+
+  <div class="distributionSummary" *ngIf="isModal">
+    <span data-tests-id="modalStatusLabel"><a>Status {{ statusFilter }} <span class="blue" data-tests-id="statusValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, statusFilter) }}</span></a></span>
+  </div>
+
+
+  <div class="componentShiftLeft" *ngFor="let component of components">
+    <div class="componentSummary" *ngIf="!isModal">
+      <svg-icon [clickable]="true" class="expand-collapse-icon"
+                [name]="isExpanded(component) ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
+                [size]="'medium'" [attr.data-tests-id]="generateExpandDataTestID(component)" (click)="expandRow(component)"></svg-icon>
+
+
+      <span class="rightVerticalSeperatorComponent titleSummaryFontSettings" [attr.data-tests-id]="generateTotalComponentArtifactsLabel(component, '')">{{ component }} <span class="blue" data-tests-id="totalComponentArtifactsValue">{{ getTotalArtifactsForDistributionID(rowDistributionID, component) }}</span></span>
+      <span class="rightVerticalSeperatorComponent titleSummaryFontSettings" [attr.data-tests-id]="generateTotalComponentArtifactsLabel(component, 'Notified')">Notified <span class="blue" data-tests-id="totalComponentNotifiedArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'NOTIFIED', component) }}</span></span>
+      <span class="rightVerticalSeperatorComponent titleSummaryFontSettings" [attr.data-tests-id]="generateTotalComponentArtifactsLabel(component, 'Downloaded')">Downloaded <span class="blue" data-tests-id="totalComponentDownloadedArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'DOWNLOAD_OK', component) }}</span></span>
+      <span class="rightVerticalSeperatorComponent titleSummaryFontSettings" [attr.data-tests-id]="generateTotalComponentArtifactsLabel(component, 'Deployed')">Deployed <span class="blue" data-tests-id="totalComponentDeployedArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'DEPLOY_OK', component) }}</span></span>
+      <span class="rightVerticalSeperatorComponent titleSummaryFontSettings" [attr.data-tests-id]="generateTotalComponentArtifactsLabel(component, 'NotNotified')">Not Notified <span class="blue" data-tests-id="totalComponentNotNotifiedArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'NOT_NOTIFIED', component) }}</span></span>
+      <span class="msoStatus" [ngClass]="{'red': getMSOStatus (rowDistributionID, component) === 'COMPONENT_DONE_ERROR', 'green': getMSOStatus (rowDistributionID, component) === 'COMPONENT_DONE_OK'}">{{ getMSOStatus (rowDistributionID, component) }}</span>
+      <span class="rightVerticalSeperatorComponent floatRight titleSummaryFontSettings" [attr.data-tests-id]="generateTotalComponentArtifactsLabel(component, 'DeployErrors')">Deploy Errors <span class="red" data-tests-id="totalComponentDeployErrorArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'DEPLOY_ERROR', component) }}</span></span>
+      <span class="rightVerticalSeperatorComponent floatRight titleSummaryFontSettings" [attr.data-tests-id]="generateTotalComponentArtifactsLabel(component, 'DownloadErrors')">Download Errors <span class="red" data-tests-id="totalComponentDownloadErrorArtifactsValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, 'DOWNLOAD_ERROR', component) }}</span></span>
+    </div>
+
+    <div class="componentSummary" *ngIf="isModal">
+      <svg-icon [clickable]="true" class="expand-collapse-icon"
+                [name]="isExpanded(component) ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
+                [size]="'medium'" [attr.data-tests-id]="generateExpandDataTestID(component+'_ForModal')" (click)="expandRow(component)"></svg-icon>
+      <span data-tests-id="modalComponentLabel"><a>{{ component }} <span class="blue" data-tests-id="modalComponentValue">{{ getLengthArtifactsForDistributionIDByStatus(rowDistributionID, statusFilter, component) }} </span></a></span>
+    </div>
+
+    <div *ngIf="isExpanded(component)">
+      <app-distribution-component-artifact-table [rowDistributionID]= rowDistributionID [componentName]=component
+                                               [statusFilter]="statusFilter"></app-distribution-component-artifact-table>
+    </div>
+  </div>
+</div>
+

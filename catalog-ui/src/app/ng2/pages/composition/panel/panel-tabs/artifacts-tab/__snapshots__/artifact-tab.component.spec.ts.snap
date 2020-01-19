@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`artifact-tab component should match current snapshot of artifact-tab component 1`] = `
+<artifacts-tab
+  addOrUpdate={[Function Function]}
+  allowDeleteAndUpdateArtifact={[Function Function]}
+  artifactService={[Function Object]}
+  componentInstanceService="undefined"
+  compositionService={[Function Object]}
+  delete={[Function Function]}
+  getEnvArtifact={[Function Function]}
+  getTitle={[Function Function]}
+  heatToEnv={[Function Map]}
+  isLicenseArtifact={[Function Function]}
+  loadArtifacts={[Function Function]}
+  store={[Function Store]}
+  topologyTemplateService="undefined"
+  updateEnvParams={[Function Function]}
+  viewEnvParams={[Function Function]}
+  workspaceService="undefined"
+>
+  <div
+    class="w-sdc-designer-sidebar-tab-content artifacts"
+  >
+    <div
+      class="w-sdc-designer-sidebar-section"
+    >
+      <ng2-expand-collapse
+        state="0"
+      >
+        <header
+          sdc-tooltip=""
+        >
+          
+        </header>
+        <content
+          class="artifacts-container"
+        >
+          <div
+            class="w-sdc-designer-sidebar-section-content"
+          >
+            
+          </div>
+          
+        </content>
+      </ng2-expand-collapse>
+    </div>
+  </div>
+</artifacts-tab>
+`;

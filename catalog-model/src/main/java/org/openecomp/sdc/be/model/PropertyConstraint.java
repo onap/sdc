@@ -20,10 +20,13 @@
 
 package org.openecomp.sdc.be.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 public interface PropertyConstraint {
 
@@ -33,5 +36,11 @@ public interface PropertyConstraint {
 
     void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException;
 
-	String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException exception, String propertyName);
+    @JsonIgnore
+    ConstraintType getConstraintType();
+
+    void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException;
+
+    String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException exception, String propertyName);
+
 }

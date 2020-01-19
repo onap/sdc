@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,105 +20,120 @@
 
 package org.openecomp.sdc.common.monitoring;
 
-import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 
-public class MonitoringEvent extends ESTimeBasedEvent {
+import java.util.Formatter;
+import java.util.Locale;
 
-    private static final String MONITORING_EVENT_TEMPLATE = "hostid=\"%s\" hostcpu=\"%s\" hostmem=\"%s\" hostdisk=\"%s\" " + "jvmid=\"%s\" jvmcpu=\"%s\" jvmmem=\"%s\" jvmtnum=\"%s\" " + "appid=\"%s\" appstat=\"%s\"";
+public class MonitoringEvent {
 
-    private String hostid;
-    private Long hostcpu;
-    private Double hostmem;
-    private String hostdisk;
-    private String jvmid;
-    private Long jvmcpu;
-    private Long jvmmem;
-    private Integer jvmtnum;
-    private String appid;
-    private String appstat;
+	private static String MONITORING_EVENT_TEMPLATE = "hostid=\"%s\" hostcpu=\"%s\" hostmem=\"%s\" hostdisk=\"%s\" " + "jvmid=\"%s\" jvmcpu=\"%s\" jvmmem=\"%s\" jvmtnum=\"%s\" " + "appid=\"%s\" appstat=\"%s\"";
 
-    public String getHostid() {
-        return hostid;
-    }
+	private String hostid;
+	private Long hostcpu;
+	private Double hostmem;
+	private String hostdisk;
+	private String jvmid;
+	private Long jvmcpu;
+	private Long jvmmem;
+	private Integer jvmtnum;
+	private String appid;
+	private String appstat;
 
-    public void setHostid(String hostid) {
-        this.hostid = hostid;
-    }
+	public String getHostid() {
+		return hostid;
+	}
 
-    public Long getHostcpu() {
-        return hostcpu;
-    }
+	public void setHostid(String hostid) {
+		this.hostid = hostid;
+	}
 
-    public void setHostcpu(Long hostcpu) {
-        this.hostcpu = hostcpu;
-    }
+	public Long getHostcpu() {
+		return hostcpu;
+	}
 
-    public Double getHostmem() {
-        return hostmem;
-    }
+	public void setHostcpu(Long hostcpu) {
+		this.hostcpu = hostcpu;
+	}
 
-    public void setHostmem(Double hostmem) {
-        this.hostmem = hostmem;
-    }
+	public Double getHostmem() {
+		return hostmem;
+	}
 
-    public String getHostdisk() {
-        return hostdisk;
-    }
+	public void setHostmem(Double hostmem) {
+		this.hostmem = hostmem;
+	}
 
-    public void setHostdisk(String hostdisk) {
-        this.hostdisk = hostdisk;
-    }
+	public String getHostdisk() {
+		return hostdisk;
+	}
 
-    public String getJvmid() {
-        return jvmid;
-    }
+	public void setHostdisk(String hostdisk) {
+		this.hostdisk = hostdisk;
+	}
 
-    public void setJvmid(String jvmid) {
-        this.jvmid = jvmid;
-    }
+	public String getJvmid() {
+		return jvmid;
+	}
 
-    public Long getJvmcpu() {
-        return jvmcpu;
-    }
+	public void setJvmid(String jvmid) {
+		this.jvmid = jvmid;
+	}
 
-    public void setJvmcpu(Long jvmcpu) {
-        this.jvmcpu = jvmcpu;
-    }
+	public Long getJvmcpu() {
+		return jvmcpu;
+	}
 
-    public Long getJvmmem() {
-        return jvmmem;
-    }
+	public void setJvmcpu(Long jvmcpu) {
+		this.jvmcpu = jvmcpu;
+	}
 
-    public void setJvmmem(Long jvmmem) {
-        this.jvmmem = jvmmem;
-    }
+	public Long getJvmmem() {
+		return jvmmem;
+	}
 
-    public Integer getJvmtnum() {
-        return jvmtnum;
-    }
+	public void setJvmmem(Long jvmmem) {
+		this.jvmmem = jvmmem;
+	}
 
-    public void setJvmtnum(Integer jvmtnum) {
-        this.jvmtnum = jvmtnum;
-    }
+	public Integer getJvmtnum() {
+		return jvmtnum;
+	}
 
-    public String getAppid() {
-        return appid;
-    }
+	public void setJvmtnum(Integer jvmtnum) {
+		this.jvmtnum = jvmtnum;
+	}
 
-    public void setAppid(String appid) {
-        this.appid = appid;
-    }
+	public String getAppid() {
+		return appid;
+	}
 
-    public String getAppstat() {
-        return appstat;
-    }
+	public void setAppid(String appid) {
+		this.appid = appid;
+	}
 
-    public void setAppstat(String appstat) {
-        this.appstat = appstat;
-    }
+	public String getAppstat() {
+		return appstat;
+	}
 
-    @Override
-    public String toString() {
-        return getFormattedString(MONITORING_EVENT_TEMPLATE, hostid, hostcpu, hostmem, hostdisk, jvmid, jvmcpu, jvmmem, jvmtnum, appid, appstat);
-    }
+	public void setAppstat(String appstat) {
+		this.appstat = appstat;
+	}
+
+	private String getFormattedString(String template, Object... params) {
+		String res = null;
+		StringBuilder sb = new StringBuilder();
+		Formatter formatter = new Formatter(sb, Locale.US);
+		try {
+			formatter.format(template, params);
+			res = formatter.toString();
+		} finally {
+			formatter.close();
+		}
+		return res;
+	}
+
+	@Override
+	public String toString() {
+		return getFormattedString(MONITORING_EVENT_TEMPLATE, hostid, hostcpu, hostmem, hostdisk, jvmid, jvmcpu, jvmmem, jvmtnum, appid, appstat);
+	}
 }

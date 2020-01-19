@@ -1,0 +1,18 @@
+<ng2-expand-collapse state="0">
+    <header sdc-tooltip tooltip-text="{{input.title}}">{{input.title}}</header>
+    <content>
+        <div *ngIf="isComponentInstanceSelected">
+                <service-dependencies
+                    [compositeService]="metaData"
+                    [currentServiceInstance]="component"
+                    [selectedInstanceProperties]="selectedInstanceProperties"
+                    [selectedInstanceSiblings]="selectedInstanceSiblings"
+                    [selectedInstanceConstraints]="selectedInstanceConstraints"
+                    [readonly]="isViewOnly"
+                    (dependencyStatus)="notifyDependencyEventsObserver($event)"
+                    (updateRulesListEvent)="updateSelectedInstanceConstraints($event)"
+                    (loadRulesListEvent)="loadConstraints()">
+                </service-dependencies>
+        </div>
+    </content>
+</ng2-expand-collapse>

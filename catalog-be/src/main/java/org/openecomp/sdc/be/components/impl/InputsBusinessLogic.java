@@ -31,8 +31,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -65,15 +68,23 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.GroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import fj.data.Either;
+
+import javax.inject.Inject;
 
 @Component("inputsBusinessLogic")
 public class InputsBusinessLogic extends BaseBusinessLogic {
@@ -87,6 +98,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private static final String FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR = "Failed to found input {} under component {}, error: {}";
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
     private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
+    public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(InputsBusinessLogic.class.getName());
 
     private final PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
@@ -118,7 +130,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
      */
     public Either<List<InputDefinition>, ResponseFormat> getInputs(String userId, String componentId) {
 
-        validateUserExists(userId, "get Inputs", false);
+        validateUserExists(userId);
 
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
@@ -140,7 +152,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<ComponentInstanceInput>, ResponseFormat> getComponentInstanceInputs(String userId, String componentId, String componentInstanceId) {
 
-        validateUserExists(userId, "get Inputs", false);
+        validateUserExists(userId);
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
         filters.setIgnoreInputs(false);
@@ -159,6 +171,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         if(!ComponentValidations.validateComponentInstanceExist(component, componentInstanceId)){
             ActionStatus actionStatus = ActionStatus.COMPONENT_INSTANCE_NOT_FOUND;
             log.debug("Failed to found component instance inputs {}, error: {}", componentInstanceId, actionStatus);
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS,component.getComponentMetadataForSupportLog(),
+                StatusCode.ERROR,"Failed to found component instance inputs componentInstanceId: {}",componentInstanceId);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
 		Map<String, List<ComponentInstanceInput>> ciInputs =
@@ -181,7 +195,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
      */
 
     public Either<List<ComponentInstanceProperty>, ResponseFormat> getComponentInstancePropertiesByInputId(String userId, String componentId, String instanceId, String inputId) {
-        validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
+        validateUserExists(userId);
         String parentId = componentId;
         org.openecomp.sdc.be.model.Component component;
         ComponentParametersView filters = new ComponentParametersView();
@@ -234,7 +248,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     }
 
-    private Either<String,ResponseFormat> updateInputObjectValue(InputDefinition currentInput, InputDefinition newInput, Map<String, DataTypeDefinition> dataTypes) {
+    private String updateInputObjectValue(InputDefinition currentInput, InputDefinition newInput, Map<String, DataTypeDefinition> dataTypes) {
         String innerType = null;
         String propertyType = currentInput.getType();
         ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
@@ -244,12 +258,12 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             SchemaDefinition def = currentInput.getSchema();
             if (def == null) {
                 log.debug("Schema doesn't exists for property of type {}", type);
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE));
             }
             PropertyDataDefinition propDef = def.getProperty();
             if (propDef == null) {
                 log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE));
             }
             innerType = propDef.getType();
         }
@@ -261,8 +275,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (Boolean.FALSE.equals(res)) {
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
-                    JanusGraphOperationStatus.ILLEGAL_ARGUMENT))));
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
             }
         } else {
             Object object = isValid.left().value();
@@ -270,7 +283,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 newValue = object.toString();
             }
         }
-        return Either.left(newValue);
+        return newValue;
     }
 
     private InputDefinition getInputFromInputsListById(List<InputDefinition> componentsOldInputs, InputDefinition input) {
@@ -284,7 +297,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         org.openecomp.sdc.be.model.Component component = null;
 
         try {
-            validateUserExists(userId, "get input", false);
+            validateUserExists(userId);
 
             ComponentParametersView componentParametersView = new ComponentParametersView();
             componentParametersView.disableAll();
@@ -294,43 +307,29 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			componentParametersView.setIgnoreComponentInstancesProperties(false);
 			componentParametersView.setIgnoreComponentInstances(false);
 
-            Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponent = validateComponentExists(componentId, componentType, componentParametersView);
-
-            if (validateComponent.isRight()) {
-                result = Either.right(validateComponent.right().value());
-                return result;
-            }
-            component = validateComponent.left().value();
+            component = validateComponentExists(componentId, componentType, componentParametersView);
 
             if (shouldLockComp) {
-                Either<Boolean, ResponseFormat> lockComponent = lockComponent(component, UPDATE_INPUT);
-                if (lockComponent.isRight()) {
-                    result = Either.right(lockComponent.right().value());
+                try {
+                    lockComponent(component, UPDATE_INPUT);
+                }catch (ComponentException e){
+                    result = Either.right(e.getResponseFormat());
                     return result;
                 }
             }
 
-            Either<Boolean, ResponseFormat> canWork = validateCanWorkOnComponent(component, userId);
-            if (canWork.isRight()) {
-                result = Either.right(canWork.right().value());
-                return result;
-            }
-
-			//Validate value and Constraint of input
+            //Validate value and Constraint of input
 			Either<Boolean, ResponseFormat> constraintValidatorResponse = validateInputValueConstraint(inputs);
-			if (constraintValidatorResponse.isRight()) {
-				log.error("Failed validation value and constraint of property: {}",
-						constraintValidatorResponse.right().value());
-				return Either.right(constraintValidatorResponse.right().value());
-			}
-
-            Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(applicationDataTypeCache);
-            if (allDataTypes.isRight()) {
-                result = Either.right(allDataTypes.right().value());
-                return result;
+            if (constraintValidatorResponse.isRight()) {
+                log.error("Failed validation value and constraint of property: {}",
+                        constraintValidatorResponse.right().value());
+                return Either.right(constraintValidatorResponse.right().value());
             }
 
-            Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
+            validateCanWorkOnComponent(component, userId);
+            Map<String, DataTypeDefinition> dataTypes;
+            dataTypes = getAllDataTypes(applicationDataTypeCache);
+
             List<InputDefinition> componentsOldInputs = Optional.ofNullable(component.getInputs()).orElse(Collections.emptyList());
             for (InputDefinition newInput: inputs) {
                 InputDefinition currInput = getInputFromInputsListById(componentsOldInputs, newInput);
@@ -340,13 +339,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                     result = Either.right(componentsUtils.getResponseFormat(actionStatus));
                     return result;
                 }
-                Either<String, ResponseFormat> updateInputObjectValue = updateInputObjectValue(currInput, newInput, dataTypes);
-                if ( updateInputObjectValue.isRight()) {
-                    return Either.right(updateInputObjectValue.right().value());
-                }
-                String newValue = updateInputObjectValue.left().value();
-                currInput.setValue(newValue);
-                currInput.setDefaultValue(newValue);
+                String updateInputObjectValue = updateInputObjectValue(currInput, newInput, dataTypes);
+                currInput.setDefaultValue(updateInputObjectValue);
                 currInput.setOwnerId(userId);
                 Either<InputDefinition, StorageOperationStatus> status = toscaOperationFacade.updateInputOfComponent(component, currInput);
                 if(status.isRight()){
@@ -358,22 +352,16 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 }
             }
             result = Either.left(returnInputs);
-            return result;
-        } finally {
-                if (!inTransaction) {
-                    if (result == null || result.isRight()) {
-                        log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
-                        janusGraphDao.rollback();
-                    } else {
-                        log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
-                        janusGraphDao.commit();
-                    }
-                }
-                // unlock resource
-                if (shouldLockComp && component != null) {
-                    graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
-                }
-            }
+        }catch (ComponentException e) {
+            log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+            unlockRollbackWithException(component, e);
+        } catch (Exception e){
+            unlockRollbackWithException(component, new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR));
+        }
+        log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+        unlockWithCommit(component);
+        return result;
+
     }
 
     private Either<Boolean, ResponseFormat> validateInputValueConstraint(List<InputDefinition> inputs) {
@@ -399,7 +387,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 	}
 
     public Either<List<ComponentInstanceInput>, ResponseFormat> getInputsForComponentInput(String userId, String componentId, String inputId) {
-        validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
+        validateUserExists(userId);
         org.openecomp.sdc.be.model.Component component = null;
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
@@ -442,7 +430,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         org.openecomp.sdc.be.model.Component component = null;
 
         try {
-            validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
+            validateUserExists(userId);
 
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
 
@@ -498,7 +486,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         try {
             /* check if user exists */
-            validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
+            validateUserExists(userId);
 
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
 
@@ -579,23 +567,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private org.openecomp.sdc.be.model.Component getAndValidateComponentForCreate(
         String userId, String componentId, ComponentTypeEnum componentType, boolean shouldLockComp
     ) {
-
         ComponentParametersView componentParametersView = getBaseComponentParametersView();
-
-        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither =
-            // get Component Object
-            validateComponentExists(componentId, componentType, componentParametersView)
-            .left().bind(component -> {
-                if (shouldLockComp) {
-                    // lock the component
-                    return lockComponent(component, CREATE_INPUT).left().map(result -> component);
-                }
-                return Either.left(component);
-            }).left().bind(component -> validateCanWorkOnComponent(component, userId).left().map(result -> component));
-        if (componentEither.isRight()) {
-            throw new ByResponseFormatComponentException(componentEither.right().value());
+        org.openecomp.sdc.be.model.Component component = validateComponentExists(componentId, componentType, componentParametersView);
+        if (shouldLockComp) {
+            // lock the component
+            lockComponent(component, CREATE_INPUT);
         }
-        return componentEither.left().value();
+        validateCanWorkOnComponent(component, userId);
+        return component;
     }
 
     private DataTypeDefinition prepareDataTypeForListInput(ComponentInstInputsMap inputsMap, InputDefinition input) {
@@ -615,7 +594,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         DataTypeDefinition dataType = new DataTypeDefinition();
         List<ComponentInstancePropInput> propInputs = inputsMap.resolvePropertiesToDeclare().getRight();
         dataType.setName(desiredTypeName);
-        dataType.setDerivedFromName(ToscaPropertyType.Root.getType());
+        dataType.setDerivedFromName(ToscaPropertyType.ROOT.getType());
         // Copy properties from inputsMap
         dataType.setProperties(propInputs.stream().map(PropertyDefinition::new).collect(Collectors.toList()));
         return dataType;
@@ -639,12 +618,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     public Either<List<InputDefinition>, ResponseFormat> createInputsInGraph(Map<String, InputDefinition> inputs, org.openecomp.sdc.be.model.Component component) {
 
         List<InputDefinition> resourceProperties = component.getInputs();
-        Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(applicationDataTypeCache);
-        if (allDataTypes.isRight()) {
-            return Either.right(allDataTypes.right().value());
-        }
 
-        Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
+        Map<String, DataTypeDefinition> dataTypes = getAllDataTypes(applicationDataTypeCache);
 
         for (Map.Entry<String, InputDefinition> inputDefinition : inputs.entrySet()) {
             String inputName = inputDefinition.getKey();
@@ -668,6 +643,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Either<List<InputDefinition>, StorageOperationStatus> associateInputsEither = toscaOperationFacade.createAndAssociateInputs(inputs, component.getUniqueId());
         if(associateInputsEither.isRight()){
             log.debug("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), associateInputsEither.right().value());
+
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(associateInputsEither.right().value())));
         }
         return Either.left(associateInputsEither.left().value());
@@ -677,13 +653,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Map<String, DataTypeDefinition> privateDataTypes, org.openecomp.sdc.be.model.Component component) {
 
         log.trace("#createListInputsInGraph: enter");
-        Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(
-            applicationDataTypeCache);
-        if (allDataTypes.isRight()) {
-            return Either.right(allDataTypes.right().value());
-        }
 
-        Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
+        Map<String, DataTypeDefinition> dataTypes = getAllDataTypes(
+                applicationDataTypeCache);
         dataTypes.putAll(privateDataTypes);
 
         for (Map.Entry<String, InputDefinition> inputDefinition : inputs.entrySet()) {
@@ -717,14 +689,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
      * @param inputId
      * @return
      */
-    public Either<InputDefinition, ResponseFormat> deleteInput(String componentId, String userId, String inputId) {
+    public InputDefinition deleteInput(String componentId, String userId, String inputId) {
 
         Either<InputDefinition, ResponseFormat> deleteEither = null;
         if (log.isDebugEnabled()) {
             log.debug("Going to delete input id: {}", inputId);
         }
 
-        validateUserExists(userId, "Delete input", true);
+        validateUserExists(userId);
 
         ComponentParametersView componentParametersView = getBaseComponentParametersView();
         componentParametersView.setIgnoreInterfaces(false);
@@ -734,9 +706,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither =
             toscaOperationFacade.getToscaElement(componentId, componentParametersView);
         if (componentEither.isRight()) {
-            deleteEither = Either.right(componentsUtils.getResponseFormat(
-                componentsUtils.convertFromStorageResponse(componentEither.right().value())));
-            return deleteEither;
+            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(componentEither.right().value()));
         }
         org.openecomp.sdc.be.model.Component component = componentEither.left().value();
 
@@ -747,57 +717,43 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 // Get the input
                         findAny();
         if (!optionalInput.isPresent()) {
-            return Either.right(
-                componentsUtils.getResponseFormat(ActionStatus.INPUT_IS_NOT_CHILD_OF_COMPONENT, inputId, componentId));
+            throw new ByActionStatusComponentException(ActionStatus.INPUT_IS_NOT_CHILD_OF_COMPONENT, inputId, componentId);
         }
 
         InputDefinition inputForDelete = optionalInput.get();
 
         // Lock component
-        Either<Boolean, ResponseFormat> lockResultEither =
-            lockComponent(componentId, component, "deleteInput");
-        if (lockResultEither.isRight()) {
-            ResponseFormat responseFormat = lockResultEither.right().value();
-            deleteEither = Either.right(responseFormat);
-            return deleteEither;
-        }
-
+        lockComponent(componentId, component, "deleteInput");
         // Delete input operations
+        boolean failed = false;
         try {
             StorageOperationStatus status =
                 toscaOperationFacade.deleteInputOfResource(component, inputForDelete.getName());
             if (status != StorageOperationStatus.OK) {
                 log.debug("Component id: {} delete input id: {} failed", componentId, inputId);
-                deleteEither = Either.right(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(status), component.getName()));
-                return deleteEither;
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status), component.getName());
             }
 
             if (BooleanUtils.isTrue(inputForDelete.getIsDeclaredListInput())){
                 deleteEither = deleteListInput(componentId, inputId, component, inputForDelete, status);
-                return deleteEither;
+                if (deleteEither.isRight()){
+                    throw new ByResponseFormatComponentException(deleteEither.right().value());
+                }
+                return deleteEither.left().value();
             }
 
             StorageOperationStatus storageOperationStatus =
                 propertyDeclarationOrchestrator.unDeclarePropertiesAsInputs(component, inputForDelete);
             if (storageOperationStatus != StorageOperationStatus.OK) {
                 log.debug("Component id: {} update properties declared as input for input id: {} failed", componentId, inputId);
-                deleteEither = Either.right(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(status), component.getName()));
-                return deleteEither;
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(storageOperationStatus), component.getName());
             }
-
-            deleteEither = Either.left(inputForDelete);
-            return deleteEither;
-        } finally {
-            if (deleteEither == null || deleteEither.isRight()) {
-                log.debug("Component id: {} delete input id: {} failed", componentId, inputId);
-                janusGraphDao.rollback();
-            } else {
-                log.debug("Component id: {} delete input id: {} success", componentId, inputId);
-                janusGraphDao.commit();
-            }
-            unlockComponent(deleteEither, component);
+            return  inputForDelete;
+        }catch (ComponentException e){
+            failed = true;
+            throw e;
+        }finally {
+            unlockComponent(failed, component);
         }
     }
 
@@ -858,7 +814,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         Either<InputDefinition, ResponseFormat> result = null;
         try {
 
-            validateUserExists(userId, GET_PROPERTIES_BY_INPUT, false);
+            validateUserExists(userId);
             ComponentParametersView filters = new ComponentParametersView();
             filters.disableAll();
             filters.setIgnoreComponentInstances(false);

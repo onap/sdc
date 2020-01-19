@@ -36,6 +36,7 @@ import java.util.TimeZone;
 public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
 
     @PartitionKey
+    @Column(name = "operational_environment_id")
     protected String operationalEnvironmentId;
 
     @ClusteringColumn
@@ -101,7 +102,7 @@ public class EcompOperationalEnvironmentEvent  extends AuditingGenericEvent {
         return operationalEnvironmentType;
     }
 
-    public void setOperational_environment_type(String operationalEnvironmentType) {
+    public void setOperationalEnvironmentType(String operationalEnvironmentType) {
         this.operationalEnvironmentType = operationalEnvironmentType;
     }
 

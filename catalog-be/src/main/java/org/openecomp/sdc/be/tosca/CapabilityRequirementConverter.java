@@ -62,6 +62,7 @@ public class CapabilityRequirementConverter {
     private static CapabilityRequirementConverter instance;
     private static final Logger logger = Logger.getLogger(CapabilityRequirementConverter.class);
     private static final String PATH_DELIMITER = ".";
+    private static final String FAILED_TO_FIND_CI_IN_PATH ="Failed to find ci in the path is {} component {}";
 
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
@@ -366,7 +367,7 @@ public class CapabilityRequirementConverter {
         Optional<ComponentInstance> ci =
                 component.safeGetComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
         if(!ci.isPresent()){
-            logger.debug("Failed to find ci in the path is {} component {}", path, component.getUniqueId());
+            logger.debug(FAILED_TO_FIND_CI_IN_PATH, path, component.getUniqueId());
 
             Collections.reverse(path);
 
@@ -390,7 +391,7 @@ public class CapabilityRequirementConverter {
             entry.setFullName(fullName);
             entry.setSourceName(sourceName);
         } else {
-            logger.debug("Failed to find ci in the path is {} component {}", path, component.getUniqueId());
+            logger.debug(FAILED_TO_FIND_CI_IN_PATH, path, component.getUniqueId());
             return false;
         }
         return true;
@@ -578,7 +579,7 @@ public class CapabilityRequirementConverter {
         }
         Optional<ComponentInstance> ci = component.safeGetComponentInstances().stream().filter(c->c.getUniqueId().equals(Iterables.getLast(path))).findFirst();
         if(!ci.isPresent()){
-            logger.debug("Failed to find ci in the path is {} component {}", path, component.getUniqueId());
+            logger.debug(FAILED_TO_FIND_CI_IN_PATH, path, component.getUniqueId());
 
             Collections.reverse(path);
 

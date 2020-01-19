@@ -22,7 +22,17 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
+import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
+import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.facade.operations.CatalogOperation;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.version.VesionUpdateHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.components.impl.*;
@@ -35,6 +45,11 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
@@ -43,11 +58,9 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
-import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -70,9 +83,6 @@ public class LifecycleBusinessLogic {
     @Autowired
     private JanusGraphDao janusGraphDao;
 
-    @Autowired
-    private CapabilityOperation capabilityOperation;
-
     private static final Logger log = Logger.getLogger(LifecycleBusinessLogic.class);
 
     @javax.annotation.Resource
@@ -80,9 +90,6 @@ public class LifecycleBusinessLogic {
 
     @javax.annotation.Resource
     private ToscaElementLifecycleOperation lifecycleOperation;
-
-    @javax.annotation.Resource
-    private ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder;
 
     @Autowired
     @Lazy
@@ -97,28 +104,22 @@ public class LifecycleBusinessLogic {
     private ProductBusinessLogic productBusinessLogic;
 
     @Autowired
-    private ToscaExportHandler toscaExportUtils;
-
-    @Autowired
     ToscaOperationFacade toscaOperationFacade;
     
     @Autowired
     NodeTemplateOperation nodeTemplateOperation;
 
+    @Autowired
+    CatalogOperation catalogOperations;
+
+    @Autowired
+    VesionUpdateHandler groupUpdateHandler;
+
     private Map<String, LifeCycleTransition> stateTransitions;
-    private static volatile boolean isInitialized = false;
 
     @PostConstruct
     public void init() {
-        // init parameters
-        if (!isInitialized) {
-            synchronized (this) {
-                if (!isInitialized) {
-                    initStateOperations();
-                    isInitialized = true;
-                }
-            }
-        }
+       initStateOperations();
     }
 
     private void initStateOperations() {
@@ -128,42 +129,21 @@ public class LifecycleBusinessLogic {
             janusGraphDao);
         stateTransitions.put(checkoutOp.getName().name(), checkoutOp);
 
-        UndoCheckoutTransition undoCheckoutOp = new UndoCheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
+        UndoCheckoutTransition undoCheckoutOp = new UndoCheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
+        undoCheckoutOp.setCatalogOperations(catalogOperations);
         stateTransitions.put(undoCheckoutOp.getName().name(), undoCheckoutOp);
 
-        LifeCycleTransition checkinOp = new CheckinTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
+        LifeCycleTransition checkinOp = new CheckinTransition(componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao, groupUpdateHandler);
         stateTransitions.put(checkinOp.getName().name(), checkinOp);
 
-        LifeCycleTransition certificationRequest = new CertificationRequestTransition(componentUtils, lifecycleOperation, serviceBusinessLogic, toscaOperationFacade,
-            janusGraphDao);
-        stateTransitions.put(certificationRequest.getName().name(), certificationRequest);
-
-        LifeCycleTransition startCertification = new StartCertificationTransition(componentUtils, lifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
-        stateTransitions.put(startCertification.getName().name(), startCertification);
-
-        LifeCycleTransition failCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.FAIL_CERTIFICATION, componentUtils, lifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
-        stateTransitions.put(failCertification.getName().name(), failCertification);
-
-        LifeCycleTransition cancelCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CANCEL_CERTIFICATION, componentUtils, lifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
-        stateTransitions.put(cancelCertification.getName().name(), cancelCertification);
-
-        CertificationChangeTransition successCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentUtils, lifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
+        CertificationChangeTransition successCertification = new CertificationChangeTransition(serviceBusinessLogic, LifeCycleTransitionEnum.CERTIFY, componentUtils, lifecycleOperation, toscaOperationFacade, janusGraphDao);
         successCertification.setNodeTemplateOperation(nodeTemplateOperation);
         stateTransitions.put(successCertification.getName().name(), successCertification);
     }
 
-    public LifeCycleTransition getLifecycleTransition(LifeCycleTransitionEnum transitionEnum) {
-        return stateTransitions.get(transitionEnum.name());
-    }
-
-    public Either<Service, ResponseFormat> changeServiceState(String serviceId, User modifier, LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction, boolean needLock) {
-        return (Either<Service, ResponseFormat>) changeComponentState(ComponentTypeEnum.SERVICE, serviceId, modifier, transitionEnum, changeInfo, inTransaction, needLock);
+    @VisibleForTesting
+    Map<String, LifeCycleTransition> getStartTransition() {
+        return stateTransitions;
     }
 
     // TODO: rhalili - should use changeComponentState when possible
@@ -190,7 +170,7 @@ public class LifecycleBusinessLogic {
             ResponseFormat error = componentUtils.getInvalidContentErrorAndAudit(modifier, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
             return Either.right(error);
         }
-        Component component = null;
+        Component component;
         log.debug("get resource from graph");
         ResponseFormat errorResponse;
 
@@ -205,9 +185,10 @@ public class LifecycleBusinessLogic {
         // lock resource
         if (!inTransaction && needLock) {
             log.debug("lock component {}", componentId);
-            Either<Boolean, ResponseFormat> eitherLockResource = lockComponent(componentType, component);
-            if (eitherLockResource.isRight()) {
-                errorResponse = eitherLockResource.right().value();
+            try {
+                lockComponent(componentType, component);
+            }catch (ComponentException e){
+                errorResponse = e.getResponseFormat();
                 componentUtils.auditComponent(errorResponse, modifier, component, lifeCycleTransition.getAuditingAction(),
                         new ResourceCommonInfo(componentType.getValue()),
                         ResourceVersionInfo.newBuilder()
@@ -241,14 +222,17 @@ public class LifecycleBusinessLogic {
                 return Either.right(validateHighestVersion.right().value());
             }
             log.debug("after validate Highest Version");
-            if (componentType == ComponentTypeEnum.RESOURCE) {
-                Either<? extends Component, ResponseFormat> changeResourceResponse = changeResourceState(componentType, modifier, transitionEnum, changeInfo, true, component);
-                if (changeResourceResponse.isRight()) {
-                    return changeResourceResponse;
-                }
-                component = changeResourceResponse.left().value();
+            final Component oldComponent = component;
+            Either<? extends Component, ResponseFormat> checkedInComponentEither = checkInBeforeCertifyIfNeeded(componentType, modifier, transitionEnum, changeInfo, inTransaction, component);
+            if(checkedInComponentEither.isRight()) {
+                return Either.right(checkedInComponentEither.right().value());
             }
-            return changeState(component, lifeCycleTransition, componentType, modifier, changeInfo, inTransaction);
+            component = checkedInComponentEither.left().value();
+            return changeState(component, lifeCycleTransition, componentType, modifier, changeInfo, inTransaction)
+                                        .left()
+                                        .bind(c -> updateCatalog(c, oldComponent, ChangeTypeEnum.LIFECYCLE));
+
+
         } finally {
             component.setUniqueId(componentId);
             if (!inTransaction && needLock) {
@@ -262,66 +246,36 @@ public class LifecycleBusinessLogic {
 
     }
 
-    /*
-     * special case for certification of VFCMT - VFCMT can be certified by Designer or Tester right after checkin in case the operation "submit for test" / "start testing" is done to "VFCMT" - please return error 400
-     */
-    private Either<? extends Component, ResponseFormat> changeResourceState(ComponentTypeEnum componentType, User modifier, LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction,
-            Component component) {
-        LifecycleStateEnum oldState = component.getLifecycleState();
-        Component updatedComponent = component;
-        if (transitionEnum == LifeCycleTransitionEnum.START_CERTIFICATION || transitionEnum == LifeCycleTransitionEnum.CERTIFICATION_REQUEST) {
-            //for VFCMT use old error for backward comp. 
-            ActionStatus status = isComponentVFCMT(component, componentType) ? ActionStatus.RESOURCE_VFCMT_LIFECYCLE_STATE_NOT_VALID : ActionStatus.RESOURCE_LIFECYCLE_STATE_NOT_VALID;
-            return Either.right(componentUtils.getResponseFormat(status, transitionEnum.getDisplayName()));
-        } // certify is done directly from checkin
-        else if (transitionEnum == LifeCycleTransitionEnum.CERTIFY) {
-            log.debug("Certification request for resource {} ", component.getUniqueId());
-            if (oldState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT) {
-                log.debug("Resource {} is in Checkout state perform checkin", component.getUniqueId());
-                Either<? extends Component, ResponseFormat> actionResponse = changeState(component, stateTransitions.get(LifeCycleTransitionEnum.CHECKIN.name()), componentType, modifier, changeInfo, inTransaction);
-                if (actionResponse.isRight()) {
-                    log.debug("Failed to check in Resource {} error {}", component.getUniqueId(), actionResponse.right().value());
-                    return actionResponse;
+    private Either<Component, ResponseFormat>  updateCatalog(Component component,  Component oldComponent, ChangeTypeEnum changeStatus){
+
+        log.debug("updateCatalog start");
+        Component result = component == null? oldComponent : component;
+            if(component != null){
+                ActionStatus status =  catalogOperations.updateCatalog(changeStatus,component);
+                if(status != ActionStatus.OK){
+                    return Either.right( componentUtils.getResponseFormat(status));
                 }
-                updatedComponent = actionResponse.left().value();
-                oldState = updatedComponent.getLifecycleState();
-            }
-            if (oldState == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN) {
-                // we will call for submit for testing first and then for certify
-                Either<? extends Component, ResponseFormat> actionResponse = changeState(updatedComponent, stateTransitions.get(LifeCycleTransitionEnum.CERTIFICATION_REQUEST.name()), componentType, modifier, changeInfo, inTransaction);
-                if (actionResponse.isRight()) {
-                    return actionResponse;
-                }
-                updatedComponent = actionResponse.left().value();
-                actionResponse = changeState(updatedComponent, stateTransitions.get(LifeCycleTransitionEnum.START_CERTIFICATION.name()), componentType, modifier, changeInfo, inTransaction);
-                if (actionResponse.isRight()) {
-                    return actionResponse;
-                }
-                updatedComponent = actionResponse.left().value();
-            }
-            if(oldState == LifecycleStateEnum.CERTIFIED){
-                failOnAlreadyCertifiedResource(component);
-            }
         }
-        return Either.left(updatedComponent);
+
+       return Either.left(result);
     }
 
-    private void failOnAlreadyCertifiedResource(Component component) {
-        String firstName = null;
-        String lastName = null;
-        if(StringUtils.isNotEmpty(component.getLastUpdaterFullName())){
-            String[] fullName = component.getLastUpdaterFullName().split(" ");
-            if(fullName.length == 2){
-                firstName = fullName[0];
-                lastName = fullName[1];
+    private Either<? extends Component, ResponseFormat> checkInBeforeCertifyIfNeeded(ComponentTypeEnum componentType, User modifier, LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction,
+                                              Component component) {
+
+        LifecycleStateEnum oldState = component.getLifecycleState();
+        Component updatedComponent = component;
+        log.debug("Certification request for resource {} ", component.getUniqueId());
+        if (oldState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT && transitionEnum == LifeCycleTransitionEnum.CERTIFY) {
+            log.debug("Resource {} is in Checkout state perform checkin", component.getUniqueId());
+            Either<? extends Component, ResponseFormat> actionResponse = changeState(component, stateTransitions.get(LifeCycleTransitionEnum.CHECKIN.name()), componentType, modifier, changeInfo, inTransaction);
+            if (actionResponse.isRight()) {
+                log.debug("Failed to check in Resource {} error {}", component.getUniqueId(), actionResponse.right().value());
             }
+            return actionResponse;
         }
-        throw new ByActionStatusComponentException(ActionStatus.COMPONENT_ALREADY_CERTIFIED,
-                component.getName(),
-                component.getComponentType().name().toLowerCase(),
-                firstName,
-                lastName,
-                component.getLastUpdaterUserId());
+
+        return Either.left(updatedComponent);
     }
 
     private Either<? extends Component, ResponseFormat> changeState(Component component, LifeCycleTransition lifeCycleTransition, ComponentTypeEnum componentType, User modifier, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction) {
@@ -365,7 +319,7 @@ public class LifecycleBusinessLogic {
 
             return Either.right(errorResponse);
         }
-        Component resourceAfterOperation = operationResult.left().value();
+        Component resourceAfterOperation = operationResult.left().value() == null? component: operationResult.left().value() ;
         componentUtils.auditComponent(componentUtils.getResponseFormat(ActionStatus.OK), modifier, resourceAfterOperation,
                 lifeCycleTransition.getAuditingAction(), new ResourceCommonInfo(componentType.getValue()),
                 ResourceVersionInfo.newBuilder()
@@ -411,24 +365,21 @@ public class LifecycleBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> lockComponent(ComponentTypeEnum componentType, Component component) {
+    private Boolean lockComponent(ComponentTypeEnum componentType, Component component) {
         NodeTypeEnum nodeType = componentType.getNodeType();
         StorageOperationStatus lockResourceStatus = graphLockOperation.lockComponent(component.getUniqueId(), nodeType);
 
         if (lockResourceStatus.equals(StorageOperationStatus.OK)) {
-            return Either.left(true);
+            return true;
         } else {
             ActionStatus actionStatus = componentUtils.convertFromStorageResponse(lockResourceStatus);
-            ResponseFormat responseFormat = componentUtils.getResponseFormat(actionStatus, component.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
-            return Either.right(responseFormat);
+            throw new ByActionStatusComponentException(actionStatus, component.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
         }
-
     }
 
     private Either<String, ResponseFormat> validateComment(LifecycleChangeInfoWithAction changeInfo, LifeCycleTransitionEnum transitionEnum) {
         String comment = changeInfo.getUserRemarks();
-        if (LifeCycleTransitionEnum.CANCEL_CERTIFICATION == transitionEnum || LifeCycleTransitionEnum.CERTIFY == transitionEnum || LifeCycleTransitionEnum.FAIL_CERTIFICATION == transitionEnum || LifeCycleTransitionEnum.CHECKIN == transitionEnum
-                || LifeCycleTransitionEnum.CERTIFICATION_REQUEST == transitionEnum
+        if (LifeCycleTransitionEnum.CERTIFY == transitionEnum || LifeCycleTransitionEnum.CHECKIN == transitionEnum
         // import?
         ) {
 
@@ -497,43 +448,36 @@ public class LifecycleBusinessLogic {
      * @param needLock
      * @return
      */
-    public Either<Resource, ResponseFormat> forceResourceCertification(Resource resource, User user, LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock) {
-        Either<Resource, ResponseFormat> result = null;
+    public Resource forceResourceCertification(Resource resource, User user, LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock) {
+        Resource result = null;
         Either<ToscaElement, StorageOperationStatus> certifyResourceRes = null;
         if (lifecycleChangeInfo.getAction() != LifecycleChanceActionEnum.CREATE_FROM_CSAR) {
             log.debug("Force certification is not allowed for the action {}. ", lifecycleChangeInfo.getAction());
-            result = Either.right(componentUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+            throw new ByActionStatusComponentException(ActionStatus.NOT_ALLOWED);
         }
         if (!isFirstCertification(resource.getVersion())) {
             log.debug("Failed to perform a force certification of resource{}. Force certification is allowed for the first certification only. ", resource.getName());
-            result = Either.right(componentUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+            throw new ByActionStatusComponentException(ActionStatus.NOT_ALLOWED);
         }
         // lock resource
-        if (result == null && !inTransaction && needLock) {
+        if (!inTransaction && needLock) {
             log.info("lock component {}", resource.getUniqueId());
-            Either<Boolean, ResponseFormat> eitherLockResource = lockComponent(resource.getComponentType(), resource);
-            if (eitherLockResource.isRight()) {
-                log.error("lock component {} failed", resource.getUniqueId());
-                result = Either.right(eitherLockResource.right().value());
-            }
+            lockComponent(resource.getComponentType(), resource);
             log.info("after lock component {}", resource.getUniqueId());
         }
         try {
-            if (result == null) {
-                certifyResourceRes = lifecycleOperation.forceCerificationOfToscaElement(resource.getUniqueId(), user.getUserId(), user.getUserId(), resource.getVersion());
-                if (certifyResourceRes.isRight()) {
-                    StorageOperationStatus status = certifyResourceRes.right().value();
-                    log.debug("Failed to perform a force certification of resource {}. The status is {}. ", resource.getName(), status);
-                    result = Either.right(componentUtils.getResponseFormatByResource(componentUtils.convertFromStorageResponse(status), resource));
-                }
+            certifyResourceRes = lifecycleOperation.forceCerificationOfToscaElement(resource.getUniqueId(), user.getUserId(), user.getUserId(), resource.getVersion());
+            if (certifyResourceRes.isRight()) {
+                StorageOperationStatus status = certifyResourceRes.right().value();
+                log.debug("Failed to perform a force certification of resource {}. The status is {}. ", resource.getName(), status);
+                throw new ByResponseFormatComponentException(componentUtils.getResponseFormatByResource(componentUtils.convertFromStorageResponse(status), resource));
             }
-            if (result == null) {
-                result = Either.left(ModelConverter.convertFromToscaElement(certifyResourceRes.left().value()));
-            }
+            result = ModelConverter.convertFromToscaElement(certifyResourceRes.left().value());
+            resource.setMetadataDefinition(result.getComponentMetadataDefinition());
         } finally {
             log.info("unlock component {}", resource.getUniqueId());
             if (!inTransaction) {
-                if (result.isLeft()) {
+                if (result != null) {
                     janusGraphDao.commit();
                 } else {
                     janusGraphDao.rollback();

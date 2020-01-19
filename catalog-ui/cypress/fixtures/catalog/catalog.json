@@ -1,0 +1,618 @@
+{
+  "resources": [
+    {
+      "distributionStatus": null,
+      "uniqueId": "1b11095c-6e93-45dd-b23a-d6d58bbc6645",
+      "name": "Compute",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "compute",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589851251,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "Compute"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "55942a8e-ba11-4229-88da-4f60e79b7534",
+      "name": "extNeutronCP",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590034049,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "extNeutronCP"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "e6afa716-25fb-4d28-92e4-aed464361e72",
+      "name": "subInterfaceV2",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590069604,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "subInterfaceV2"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "9306910f-f5cb-4153-9fb2-acb5d09b2b78",
+      "name": "NeutronPort",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589927579,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "NeutronPort"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "fd217802-44c6-4cb6-98b3-35fe09571e8d",
+      "name": "contrailV2VLANSubInterfaceV2",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590073905,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "contrailV2VLANSubInterfaceV2"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "d9213333-b17d-4f02-bb63-d1f91394c793",
+      "name": "VL ELINE",
+      "resourceType": "VL",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "vl",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589954061,
+      "categoryNormalizedName": "network connectivity",
+      "subCategoryNormalizedName": "virtual links",
+      "tags": [
+        "VL ELINE"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "bb313f2f-f2e3-44c6-87fc-a0871db55c10",
+      "name": "CinderVolume",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "objectStorage",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589914327,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "CinderVolume"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "cef972b3-5068-4744-8b9a-f8c490603a88",
+      "name": "subInterface",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590015666,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "subInterface"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "827cbbc5-52ac-4ec6-9e74-3a43df7bcc38",
+      "name": "volume",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "objectStorage",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589909792,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "volume"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "03c00112-5bed-4b70-ac24-84bff4700d90",
+      "name": "ContrailCompute",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "compute",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590006992,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "ContrailCompute"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "de4f27bc-d396-48ec-a3cf-3e87815c3779",
+      "name": "NeutronNet",
+      "resourceType": "VL",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "vl",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589923144,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "NeutronNet"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "343f6ffb-2379-429a-8136-b683d1c587fc",
+      "name": "ContrailV2NetworkRules",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "networkrules",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589990789,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "rules",
+      "tags": [
+        "ContrailV2NetworkRules"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "c4cc068c-78ff-429b-a482-aeba0ccd0062",
+      "name": "contrailV2VLANSubInterface",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590019991,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "contrailV2VLANSubInterface"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "ecbf723b-1b63-4f33-8a11-a85ac99f20a0",
+      "name": "ExtCP2",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590029759,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "ExtCP2"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "859bd804-0336-4a63-a697-5c0de61e04da",
+      "name": "ContrailV2VirtualNetwork",
+      "resourceType": "VL",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "vl",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589995088,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "ContrailV2VirtualNetwork"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "c2f29c5e-0e4d-42a3-a35c-cad450cc783a",
+      "name": "MyVSP1",
+      "resourceType": "VF",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "defaulticon",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567596408782,
+      "categoryNormalizedName": "allotted resource",
+      "subCategoryNormalizedName": "allotted resource",
+      "tags": [
+        "MyVSP1"
+      ],
+      "lastUpdaterUserId": "m08740"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "3c802824-394b-4507-9bc9-b188e446496c",
+      "name": "extContrailCP",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590038363,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "extContrailCP"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "93dd5666-0fdb-412a-9b2b-9f9d77a8e9f6",
+      "name": "LoadBalancer",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "loadBalancer",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589887256,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "LoadBalancer"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "66110def-110d-443e-8636-c5e5592f4ed1",
+      "name": "ContrailPort",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589979347,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "ContrailPort"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "6f91e3bd-9f24-4ced-83db-749f3ca50089",
+      "name": "ContrailNetworkRules",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "networkrules",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589975104,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "rules",
+      "tags": [
+        "ContrailNetworkRules"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "9a41d34d-77fd-44c7-a9b3-070750012274",
+      "name": "Network",
+      "resourceType": "VL",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "vl",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589895952,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "Network"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "0a24d8c3-1a86-4bed-8531-5288294a2346",
+      "name": "InternalVL",
+      "resourceType": "VL",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "vl",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589940808,
+      "categoryNormalizedName": "network connectivity",
+      "subCategoryNormalizedName": "virtual links",
+      "tags": [
+        "InternalVL"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "60316bf8-a477-4aed-881e-593491a53a4f",
+      "name": "VL",
+      "resourceType": "VL",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "vl",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589949441,
+      "categoryNormalizedName": "network connectivity",
+      "subCategoryNormalizedName": "virtual links",
+      "tags": [
+        "VL"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "762444bf-591e-46c5-a7d9-af0cc959b6a9",
+      "name": "BlockStorage",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "objectStorage",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589877110,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "BlockStorage"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "83b1b533-4e91-442e-856c-4a245117e992",
+      "name": "Database",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "defaulticon",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589868226,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "database",
+      "tags": [
+        "Database"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "31b99fff-d3f5-4c3b-b7ac-109c414730f5",
+      "name": "NovaServer",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "defaulticon",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589932011,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "NovaServer"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "3ad85fd2-2cb4-4f57-9012-f164a3c87c02",
+      "name": "ContrailV2VirtualMachineInterface",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590011291,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "ContrailV2VirtualMachineInterface"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "20fffa40-0602-4820-99de-26fa9ac0ac6a",
+      "name": "extVirtualMachineInterfaceCP",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567590056675,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "extVirtualMachineInterfaceCP"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "a32946cf-abdc-424f-be24-4bc02a70067e",
+      "name": "ExtVL",
+      "resourceType": "VL",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "vl",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589936445,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "ExtVL"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "329a76a4-36be-415a-9b0d-0798a42415f0",
+      "name": "ObjectStorage",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "objectStorage",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589872760,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "infrastructure",
+      "tags": [
+        "ObjectStorage"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "1dee3310-41c7-48b3-b6b3-4df7e60dfea6",
+      "name": "Port",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589891588,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "Port"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "e2cd4bf0-8dfc-4ea4-8550-13f753466591",
+      "name": "ContrailVirtualNetwork",
+      "resourceType": "VL",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "vl",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589918735,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "ContrailVirtualNetwork"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "69783d4e-272f-4d83-8bd2-cf809e85ab0d",
+      "name": "SecurityRules",
+      "resourceType": "VFC",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "securityrules",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589999948,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "rules",
+      "tags": [
+        "SecurityRules"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    },
+    {
+      "distributionStatus": null,
+      "uniqueId": "246530c3-9f93-4ff1-bc4e-620002cceddf",
+      "name": "ExtCP",
+      "resourceType": "CP",
+      "version": "1.0",
+      "lifecycleState": "CERTIFIED",
+      "icon": "cp",
+      "componentType": "RESOURCE",
+      "lastUpdateDate": 1567589945092,
+      "categoryNormalizedName": "generic",
+      "subCategoryNormalizedName": "network elements",
+      "tags": [
+        "ExtCP"
+      ],
+      "lastUpdaterUserId": "jh0003"
+    }
+  ],
+  "services": [
+    {
+      "distributionStatus": "DISTRIBUTION_NOT_APPROVED",
+      "uniqueId": "2ce5a441-f548-489a-bb90-01a56a01d646",
+      "name": "MyService2",
+      "resourceType": null,
+      "version": "0.2",
+      "lifecycleState": "NOT_CERTIFIED_CHECKOUT",
+      "icon": "defaulticon",
+      "componentType": "SERVICE",
+      "lastUpdateDate": 1567671986741,
+      "categoryNormalizedName": "network l4+",
+      "subCategoryNormalizedName": null,
+      "tags": [
+        "MyService2"
+      ],
+      "lastUpdaterUserId": "m08740"
+    },
+    {
+      "distributionStatus": "DISTRIBUTION_NOT_APPROVED",
+      "uniqueId": "6267b324-7e41-4c64-9d2f-30f4faa6ffcd",
+      "name": "MyService1",
+      "resourceType": null,
+      "version": "0.2",
+      "lifecycleState": "NOT_CERTIFIED_CHECKIN",
+      "icon": "defaulticon",
+      "componentType": "SERVICE",
+      "lastUpdateDate": 1567692093466,
+      "categoryNormalizedName": "network l4+",
+      "subCategoryNormalizedName": null,
+      "tags": [
+        "MyService1"
+      ],
+      "lastUpdaterUserId": "m08740"
+    }
+  ]
+}

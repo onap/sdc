@@ -23,12 +23,26 @@ beSslPort: 8443
 
 version: 1.1.0
 released: 2012-11-30
-toscaConformanceLevel: 9.0
+toscaConformanceLevel: 12.0
 minToscaConformanceLevel: 3.0
+
+# access restriction
+authCookie:
+  securityKey: "AGLDdG4D04BKm2IxIWEr8o=="
+  maxSessionTimeOut: 24*60*60*1000
+  sessionIdleTimeOut: 2*60*60*1000
+  cookieName: "AuthenticationCookie"
+  path: /
+  domain: ""
+  isHttpOnly: true
+  # redirect variable name from portal.properties file
+  redirectURL: "ecomp_redirect_url"
+  excludedUrls: ['/config', '/configmgr', '/kibanaProxy', '/healthcheck', '/v1/catalog', '/v1/catalog/archive', '/v1/followed', '/v1/catalog/upload.*', '/v1/consumers', '/v1/screen', '/v1/catalogUpdateTimea', '/v1/user.*']
 
 # These values are necessary for running upgrade migration 1710.0 process
 enableAutoHealing: false
 appVersion: 1.1.0
+artifactGeneratorConfig: Artifact-Generator.properties
 resourcesForUpgrade:
  8.0:
   - org.openecomp.resource.cp.extCP
@@ -52,8 +66,6 @@ janusGraphReconnectIntervalInSeconds: 3
 # The read timeout towards Janus Graph DB when health check is invoked:
 janusGraphHealthCheckReadTimeout: 1
 
-# The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
-esReconnectIntervalInSeconds: 3
 uebHealthCheckReconnectIntervalInSeconds: 15
 uebHealthCheckReadTimeout: 4
 
@@ -105,32 +117,8 @@ cassandraConfig:
         - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
         - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
         - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
-        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}       
+        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
         - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
-
-
-#Application-specific settings of ES
-elasticSearch:
-    # Mapping of index prefix to time-based frame. For example, if below is configured:
-    #
-    # - indexPrefix: auditingevents
-    #    creationPeriod: minute
-    #
-    # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
-    # Another object created on 2015-12-23 13:25:54, will enter "auditingevents-2015-12-23-13-25" index.
-    # If creationPeriod: month, both of the above will enter "auditingevents-2015-12" index.
-    #
-    # PLEASE NOTE: the timestamps are created in UTC/GMT timezone! This is needed so that timestamps will be correctly presented in Kibana.
-    #
-    # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
-    #
-    # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
-    
-    indicesTimeFrequency:
-      - indexPrefix: auditingevents
-        creationPeriod: month
-      - indexPrefix: monitoring_events
-        creationPeriod: month
 
 artifactTypes:
    - CHEF
@@ -178,11 +166,6 @@ resourceTypes: &allResourceTypes
 #        - VF
 #        - VL
 deploymentResourceArtifacts:
-  cdsBlueprint:
-      displayName: "CDS Blueprint"
-      type: CONTROLLER_BLUEPRINT_ARCHIVE
-      description: "CDS deployment artifact"
-      fileExtension: "zip"
 #  heat:
 #      displayName: "Base HEAT Template"
 #      type: HEAT
@@ -321,7 +304,10 @@ systemMonitoring:
     isProxy: false
     probeIntervalInSeconds: 15
 
-defaultHeatArtifactTimeoutMinutes: 60
+heatArtifactDeploymentTimeout:
+  defaultMinutes: 30
+  minMinutes: 1
+  maxMinutes: 120
 
 serviceDeploymentArtifacts:
     CONTROLLER_BLUEPRINT_ARCHIVE:
@@ -352,7 +338,7 @@ serviceDeploymentArtifacts:
             - xml
     AAI_VF_INSTANCE_MODEL:
         acceptedTypes:
-            - xml 
+            - xml
     CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT:
         acceptedTypes:
             - zip
@@ -465,7 +451,7 @@ resourceDeploymentArtifacts:
         acceptedTypes:
         validForResourceTypes:
             - VF
-            - VFCMT       
+            - VFCMT
     DCAE_EVENT:
         acceptedTypes:
         validForResourceTypes:
@@ -521,7 +507,6 @@ resourceDeploymentArtifacts:
     ONBOARDED_PACKAGE:
         acceptedTypes:
             - csar
-            - zip
         validForResourceTypes:
             - VF
             - PNF
@@ -600,7 +585,7 @@ resourceInformationalArtifacts:
         validForResourceTypes: *allResourceTypes
     OTHER:
         acceptedTypes:
-        validForResourceTypes: 
+        validForResourceTypes:
             - VFC
             - CVFC
             - CP
@@ -631,10 +616,6 @@ resourceInformationalArtifacts:
 
 resourceInformationalDeployedArtifacts:
 
-requirementsToFulfillBeforeCert:
-
-capabilitiesToConsumeBeforeCert:
-
 unLoggedUrls:
    - /sdc2/rest/healthCheck
 
@@ -661,6 +642,12 @@ dcae:
     host: 127.0.0.1
     port: 8080
     healthCheckUri: "/dcae/healthCheck"
+
+ecompPortal:
+    protocol: https
+    host: ecomp-portal-web-tdevn2.mtn23a.ecomp.cci.att.com
+    port: 8443
+    healthCheckUri: "/ecompui/portalApi/healthCheck"
 
 switchoverDetector:
     gBeFqdn: AIO-BE.ecomp.idns.cip.com
@@ -703,6 +690,7 @@ toscaValidators:
     stringMaxLength: 2500
 
 disableAudit: false
+consumerBusinessLogic: false
 
 vfModuleProperties:
     min_vf_module_instances:
@@ -761,6 +749,7 @@ gabConfig:
         path: "event.structure.faultFields.structure.alarmAdditionalInformation.comment"
         searchable: "true"
 
+#Tenant isolation consumer
 dmaapConsumerConfiguration:
     active: true
     hosts: olsd004.wnsnet.ws.com:3905
@@ -789,13 +778,50 @@ dmaapConsumerConfiguration:
     credential:
         username: m09875@sdc.com
         password: mockhmXYcznAljMSisdy8zgcag==
+    aftDme2SslEnable: true
+    aftDme2ClientIgnoreSslConfig: false
+    aftDme2ClientKeystore: /opt/app/jetty/base/be/config/.truststore
+    aftDme2ClientKeystorePassword: hmXYcznAljMSisdy8zgcag==
+    aftDme2ClientSslCertAlias: certman
+
+#Performence microservice dmaap producer
+dmaapProducerConfiguration:
+    active: false
+    consumerGroup: asdc
+    consumerId: mama #mama - in Order To Consume Remove This String And Replace It With -> mama
+    timeoutMs: 15000
+    limit: 1
+    pollingInterval: 2
+    topic: com.sdc.23911-SDCforTestDev-v001
+    latitude: 32.109333
+    longitude: 34.855499
+    version: 1.0
+    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.com/events
+    environment: TEST
+    partner: BOT_R
+    routeOffer: MR1
+    protocol: http
+    contenttype: application/json
+    dme2TraceOn: true
+    aftEnvironment: AFTUAT
+    aftDme2ConnectionTimeoutMs: 15000
+    aftDme2RoundtripTimeoutMs: 240000
+    aftDme2ReadTimeoutMs: 50000
+    dme2preferredRouterFilePath: DME2preferredRouter.txt
+    timeLimitForNotificationHandleMs: 120000
+    credential:
+        username: m09875@sdc.com
+        password: mockhmXYcznAljMSisdy8zgcag==
+        aftDme2SslEnable: true
+    aftDme2ClientIgnoreSslConfig: false
+    aftDme2ClientKeystore: /opt/app/jetty/base/be/config/.truststore
+    aftDme2ClientKeystorePassword: hmXYcznAljMSisdy8zgcag==
+    aftDme2ClientSslCertAlias: certman
 
 
-        
+
 dmeConfiguration:
-    dme2Search: DME2SEARCH
-    dme2Resolve: DME2RESOLVE
-
+    lookupUriFormat: "http://DME2RESOLVE/service=%s/version=1.0.0/envContext=%s/routeOffer=DEFAULT"
 
 excludedPolicyTypesMapping:
    # VF:
@@ -808,21 +834,49 @@ excludedGroupTypesMapping:
     CR:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
+       - org.openecomp.groups.Group
        - tosca.groups.Root
     PNF:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
+       - org.openecomp.groups.Group
        - tosca.groups.Root
     VF:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
+       - org.openecomp.groups.Group
        - tosca.groups.Root
     Service:
        - org.openecomp.groups.VfModule
        - org.openecomp.groups.heat.HeatStack
+       - org.openecomp.groups.Group
        - tosca.groups.Root
 
 healthStatusExclude:
    - DE
-   - ES
    - DMAAP
+   - DMAAP_PRODUCER
+   - ECOMP_PORTAL
+
+aafNamespace: com.att.sdc
+
+aafAuthNeeded: false
+
+cadiFilterParams:
+    hostname: 192.168.33.10
+    csp_domain: PROD
+    cadi_keyfile: /opt/app/jetty/base/be/config/catalog-be/keyfile
+    cadi_loglevel: DEBUG
+    cadi_truststore: /opt/app/jetty/base/be/config/.truststore
+    cadi_truststore_password: enc:HdzGwQGAK5Rc29vzn3Kqoy9BCTbJNGgNxd72zpCUtjg
+    #aaf_url: https://DME2RESOLVE/service=com.att.authz.AuthorizationService/version=2.0/envContext=TEST/routeOffer=BAU_SE
+    aaf_id: m09875@sdc.att.com
+    aaf_password: enc:HdzGwQGAK5Rc29vzn3Kqoy9BCTbJNGgNxd72zpCUtjg
+    aaf_env: DEV
+    aafLocateUrl: https://aaf.api.simpledemo.onap.org:8095
+    aaf_url: https://AAF_LOCATE_URL/AAF_NS.service:2.0
+    AFT_LATITUDE: "32.780140"
+    AFT_LONGITUDE: "-96.800451"
+    AFT_ENVIRONMENT: AFTUAT
+    cadiX509Issuers: "CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US"
+

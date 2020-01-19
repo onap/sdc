@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`artifact form component should match current snapshot of top-nav component 1`] = `
+<top-nav
+  $state={[Function Object]}
+  _getTopLvlSelectedIndexByState={[Function Function]}
+  authService={[Function Object]}
+  sdcConfig={[Function Object]}
+  searchTermChange={[Function EventEmitter]}
+  translateService={[Function Object]}
+>
+  <nav
+    class="top-nav"
+  >
+    <div
+      class="asdc-app-title-wrapper"
+    >
+      <a
+        class="asdc-app-title"
+      >
+        
+      </a>
+      <div
+        class="asdc-version"
+      >
+         v.
+      </div>
+    </div>
+    
+    
+    <div
+      class="top-search"
+    >
+      <input
+        class="search-text"
+        data-tests-id="main-menu-input-search"
+        placeholder="Search"
+        type="text"
+      />
+      <span
+        class="w-sdc-search-icon magnification"
+      />
+    </div>
+    
+  </nav>
+</top-nav>
+`;

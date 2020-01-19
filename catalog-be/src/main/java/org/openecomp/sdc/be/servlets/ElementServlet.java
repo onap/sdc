@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -40,8 +42,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -49,12 +54,8 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTypesInfo;
-import org.openecomp.sdc.be.model.ArtifactType;
-import org.openecomp.sdc.be.model.Category;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Tag;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
@@ -75,21 +76,23 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.stereotype.Controller;
 
 @Path("/v1/")
 
 /****
- * 
+ *
  * UI oriented servlet - to return elements in specific format UI needs
- * 
+ *
  *
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @OpenAPIDefinition(info = @Info(title = "Element Servlet",description = "Element Servlet"))
-@Singleton
+@Controller
 public class ElementServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(ElementServlet.class);
+    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
     private final ComponentsCleanBusinessLogic componentsCleanBusinessLogic;
     private final ElementBusinessLogic elementBusinessLogic;
     private final UserBusinessLogic userBusinessLogic;
@@ -131,6 +134,7 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "400", description = "Invalid component type"),
             @ApiResponse(responseCode = "409", description = "Restricted operation"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentCategories(
             @Parameter(description = "allowed values are resources / services/ products", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
                     ComponentTypeEnum.SERVICE_PARAM_NAME,ComponentTypeEnum.PRODUCT_PARAM_NAME}),required = true)
@@ -138,8 +142,8 @@ public class ElementServlet extends BeGenericServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @Context final HttpServletRequest request) {
 
         try {
-            Either<List<CategoryDefinition>, ResponseFormat> either =
-                    elementBusinessLogic.getAllCategories(componentType, userId);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            Either<List<CategoryDefinition>, ResponseFormat> either = elementBL.getAllCategories(componentType, userId);
             if (either.isRight()) {
                 log.debug("No categories were found for type {}", componentType);
                 return buildErrorResponse(either.right().value());
@@ -149,26 +153,23 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Component Categories");
             log.debug("getComponentCategories failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
-    @GET
+    //TODO remove after UI alignment and tests after API consolidation ASDC-191
+   /* @GET
     @Path("/categories")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Retrieve the all resource, service and product categories", method = "GET",
-            summary = "Retrieve the all resource, service and product categories", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns categories Ok"),
-            @ApiResponse(responseCode = "403", description = "Missing information"),
-            @ApiResponse(responseCode = "409", description = "Restricted operation"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public Response getAllCategories(@Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    @ApiOperation(value = "Retrieve the all resource, service and product categories", httpMethod = "GET", notes = "Retrieve the all resource, service and product categories", response = Response.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Returns categories Ok"), @ApiResponse(code = 403, message = "Missing information"),
+            @ApiResponse(code = 409, message = "Restricted operation"), @ApiResponse(code = 500, message = "Internal Server Error")})
+    public Response getAllCategories(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            Either<UiCategories, ResponseFormat> either = elementBusinessLogic.getAllCategories(userId);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            Either<UiCategories, ResponseFormat> either = elementBL.getAllCategories(userId);
             if (either.isRight()) {
                 log.debug("No categories were found");
                 return buildErrorResponse(either.right().value());
@@ -180,7 +181,7 @@ public class ElementServlet extends BeGenericServlet {
             log.debug("getAllCategories failed with exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
-    }
+    }*/
 
 
     @POST
@@ -195,6 +196,7 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409",
                     description = "Category already exists / User not permitted to perform the action"),
             @ApiResponse(responseCode = "500", description = "General Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createComponentCategory(
             @Parameter(description = "allowed values are resources /services / products",
                     schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
@@ -203,10 +205,10 @@ public class ElementServlet extends BeGenericServlet {
             @Parameter(description = "Category to be created", required = true) String data,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         try {
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
             CategoryDefinition category = RepresentationUtils.fromRepresentation(data, CategoryDefinition.class);
 
-            Either<CategoryDefinition, ResponseFormat> createResourceCategory =
-                    elementBusinessLogic.createCategory(category, componentType, userId);
+            Either<CategoryDefinition, ResponseFormat> createResourceCategory = elementBL.createCategory(category, componentType, userId);
             if (createResourceCategory.isRight()) {
                 return buildErrorResponse(createResourceCategory.right().value());
             }
@@ -217,8 +219,7 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create resource category");
             log.debug("createResourceCategory failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -234,13 +235,14 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409", description = "User not permitted to perform the action"),
             @ApiResponse(responseCode = "404", description = "Category not found"),
             @ApiResponse(responseCode = "500", description = "General Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteComponentCategory(@PathParam(value = "categoryUniqueId") final String categoryUniqueId,
             @PathParam(value = "componentType") final String componentType, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            Either<CategoryDefinition, ResponseFormat> createResourceCategory =
-                    elementBusinessLogic.deleteCategory(categoryUniqueId, componentType, userId);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            Either<CategoryDefinition, ResponseFormat> createResourceCategory = elementBL.deleteCategory(categoryUniqueId, componentType, userId);
 
             if (createResourceCategory.isRight()) {
                 return buildErrorResponse(createResourceCategory.right().value());
@@ -251,8 +253,7 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create resource category");
             log.debug("createResourceCategory failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -276,6 +277,7 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409",
                     description = "Subcategory already exists / User not permitted to perform the action"),
             @ApiResponse(responseCode = "500", description = "General Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createComponentSubCategory(
             @Parameter(description = "allowed values are resources / products",
                     schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
@@ -288,11 +290,10 @@ public class ElementServlet extends BeGenericServlet {
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            SubCategoryDefinition subCategory =
-                    RepresentationUtils.fromRepresentation(data, SubCategoryDefinition.class);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            SubCategoryDefinition subCategory = RepresentationUtils.fromRepresentation(data, SubCategoryDefinition.class);
 
-            Either<SubCategoryDefinition, ResponseFormat> createSubcategory =
-                    elementBusinessLogic.createSubCategory(subCategory, componentType, categoryId, userId);
+            Either<SubCategoryDefinition, ResponseFormat> createSubcategory = elementBL.createSubCategory(subCategory, componentType, categoryId, userId);
             if (createSubcategory.isRight()) {
                 return buildErrorResponse(createSubcategory.right().value());
             }
@@ -302,8 +303,7 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create sub-category");
             log.debug("createComponentSubCategory failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -319,14 +319,15 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409", description = "User not permitted to perform the action"),
             @ApiResponse(responseCode = "404", description = "Category not found"),
             @ApiResponse(responseCode = "500", description = "General Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteComponentSubCategory(@PathParam(value = "categoryUniqueId") final String categoryUniqueId,
             @PathParam(value = "subCategoryUniqueId") final String subCategoryUniqueId,
             @PathParam(value = "componentType") final String componentType, @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            Either<SubCategoryDefinition, ResponseFormat> deleteSubResourceCategory =
-                    elementBusinessLogic.deleteSubCategory(subCategoryUniqueId, componentType, userId);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            Either<SubCategoryDefinition, ResponseFormat> deleteSubResourceCategory = elementBL.deleteSubCategory(subCategoryUniqueId, componentType, userId);
             if (deleteSubResourceCategory.isRight()) {
                 return buildErrorResponse(deleteSubResourceCategory.right().value());
             }
@@ -334,10 +335,9 @@ public class ElementServlet extends BeGenericServlet {
             return buildOkResponse(responseFormat, null);
 
         } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete component category");
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete component subcategory");
             log.debug("deleteComponentSubCategory failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -357,6 +357,7 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409",
                     description = "Grouping already exists / User not permitted to perform the action"),
             @ApiResponse(responseCode = "500", description = "General Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createComponentGrouping(
             @Parameter(description = "allowed values are products",
                     schema = @Schema(allowableValues = {ComponentTypeEnum.PRODUCT_PARAM_NAME}),
@@ -368,10 +369,10 @@ public class ElementServlet extends BeGenericServlet {
             @Parameter(description = "Subcategory to be created", required = true) String data,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         try {
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
             GroupingDefinition grouping = RepresentationUtils.fromRepresentation(data, GroupingDefinition.class);
 
-            Either<GroupingDefinition, ResponseFormat> createGrouping = elementBusinessLogic.createGrouping(grouping,
-                    componentType, grandParentCategoryId, parentSubCategoryId, userId);
+            Either<GroupingDefinition, ResponseFormat> createGrouping = elementBL.createGrouping(grouping, componentType, grandParentCategoryId, parentSubCategoryId, userId);
             if (createGrouping.isRight()) {
                 return buildErrorResponse(createGrouping.right().value());
             }
@@ -381,8 +382,7 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create grouping");
             log.debug("createComponentGrouping failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -398,6 +398,7 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409", description = "User not permitted to perform the action"),
             @ApiResponse(responseCode = "404", description = "Category not found"),
             @ApiResponse(responseCode = "500", description = "General Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteComponentGrouping(
             @PathParam(value = "categoryUniqueId") final String grandParentCategoryUniqueId,
             @PathParam(value = "subCategoryUniqueId") final String parentSubCategoryUniqueId,
@@ -406,8 +407,8 @@ public class ElementServlet extends BeGenericServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         try {
-            Either<GroupingDefinition, ResponseFormat> deleteGrouping =
-                    elementBusinessLogic.deleteGrouping(groupingUniqueId, componentType, userId);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            Either<GroupingDefinition, ResponseFormat> deleteGrouping = elementBL.deleteGrouping(groupingUniqueId, componentType, userId);
             if (deleteGrouping.isRight()) {
                 return buildErrorResponse(deleteGrouping.right().value());
             }
@@ -417,8 +418,7 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete component grouping");
             log.debug("deleteGrouping failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
+            throw e;
         }
     }
 
@@ -433,13 +433,15 @@ public class ElementServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns tags Ok"),
             @ApiResponse(responseCode = "404", description = "No tags were found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getTags(@Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(getTags) Start handle request of {}", url);
 
         try {
-            Either<List<Tag>, ActionStatus> either = elementBusinessLogic.getAllTags(userId);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            Either<List<Tag>, ActionStatus> either = elementBL.getAllTags(userId);
             if (either.isRight() || either.left().value() == null) {
                 log.debug("No tags were found");
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
@@ -449,7 +451,7 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get All Tags");
             log.debug("getAllTags failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
@@ -465,13 +467,15 @@ public class ElementServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns propertyScopes Ok"),
             @ApiResponse(responseCode = "404", description = "No propertyScopes were found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyScopes(@Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(getPropertyScopes) Start handle request of {}", url);
 
         try {
-            Either<List<PropertyScope>, ActionStatus> either = elementBusinessLogic.getAllPropertyScopes(userId);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            Either<List<PropertyScope>, ActionStatus> either = elementBL.getAllPropertyScopes(userId);
             if (either.isRight() || either.left().value() == null) {
                 log.debug("No property scopes were found");
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
@@ -481,7 +485,7 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Property Scopes Categories");
             log.debug("getPropertyScopes failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
@@ -497,20 +501,21 @@ public class ElementServlet extends BeGenericServlet {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns artifactTypes Ok"),
             @ApiResponse(responseCode = "404", description = "No artifactTypes were found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getArtifactTypes(@Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET - getArtifactTypes) Start handle request of {}", url);
 
         try {
-            Either<List<ArtifactType>, ActionStatus> either = elementBusinessLogic.getAllArtifactTypes(userId);
+            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+            Either<List<ArtifactType>, ActionStatus> either = elementBL.getAllArtifactTypes(userId);
             if (either.isRight() || either.left().value() == null) {
                 log.debug("No artifact types were found");
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
             } else {
 
-                Integer defaultHeatTimeout = ConfigurationManager.getConfigurationManager().getConfiguration()
-                        .getDefaultHeatArtifactTimeoutMinutes();
+                Integer defaultHeatTimeout = ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout().getDefaultMinutes();
                 ArtifactTypesInfo typesResponse = new ArtifactTypesInfo();
                 typesResponse.setArtifactTypes(either.left().value());
                 typesResponse.setHeatDefaultTimeout(defaultHeatTimeout);
@@ -520,71 +525,10 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Artifact Types");
             log.debug("getArtifactTypes failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // retrieve all artifact types
-    @GET
-    @Path("/configuration/ui")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Retrieve all artifactTypes", method = "GET", summary = "Retrieve all artifactTypes",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns artifactTypes Ok"),
-            @ApiResponse(responseCode = "404", description = "No artifactTypes were found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public Response getConfiguration(@Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("(getConfiguration) Start handle request of {}", url);
-
-        try {
-            Either<List<ArtifactType>, ActionStatus> otherEither = elementBusinessLogic.getAllArtifactTypes(userId);
-            Either<Integer, ActionStatus> defaultHeatTimeout = elementBusinessLogic.getDefaultHeatTimeout();
-            Either<Map<String, Object>, ActionStatus> deploymentEither =
-                    elementBusinessLogic.getAllDeploymentArtifactTypes();
-            Either<Map<String, String>, ActionStatus> resourceTypesMap = elementBusinessLogic.getResourceTypesMap();
-
-            if (otherEither.isRight() || otherEither.left().value() == null) {
-                log.debug("No other artifact types were found");
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
-            } else if (deploymentEither.isRight() || deploymentEither.left().value() == null) {
-                log.debug("No deployment artifact types were found");
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
-            } else if (defaultHeatTimeout.isRight() || defaultHeatTimeout.left().value() == null) {
-                log.debug("heat default timeout was not found");
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
-            } else if (resourceTypesMap.isRight() || resourceTypesMap.left().value() == null) {
-                log.debug("No resource types were found");
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
-            } else {
-                Map<String, Object> artifacts = new HashMap<>();
-                Map<String, Object> configuration = new HashMap<>();
-
-                artifacts.put("other", otherEither.left().value());
-                artifacts.put("deployment", deploymentEither.left().value());
-                configuration.put("artifacts", artifacts);
-                configuration.put("defaultHeatTimeout", defaultHeatTimeout.left().value());
-                configuration.put("componentTypes", elementBusinessLogic.getAllComponentTypesParamNames());
-                configuration.put("roles", elementBusinessLogic.getAllSupportedRoles());
-                configuration.put("resourceTypes", resourceTypesMap.left().value());
-                configuration.put("environmentContext",
-                        ConfigurationManager.getConfigurationManager().getConfiguration().getEnvironmentContext());
-                configuration.put("gab",
-                        ConfigurationManager.getConfigurationManager().getConfiguration().getGabConfig());
-
-                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), configuration);
-            }
-
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Artifact Types");
-            log.debug("getArtifactTypes failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
-    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     // retrieve all followed resources and services
@@ -599,40 +543,27 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "404", description = "No followed were found"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getFollowedResourcesServices(@Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
 
         Response res = null;
-        User userData = null;
         try {
             String url = request.getMethod() + " " + request.getRequestURI();
-            log.debug("Start handle request of {}", url);
-
-            // Getting the user
-            Either<User, ActionStatus> either = userBusinessLogic.getUser(userId, false);
-            if (either.isRight()) {
-                // Couldn't find or otherwise fetch the user
-                return buildErrorResponse(
-                        getComponentsUtils().getResponseFormatByUserId(either.right().value(), userId));
+            log.debug(START_HANDLE_REQUEST_OF, url);
+            UserBusinessLogic userAdminManager = getUserAdminManager(request.getSession().getServletContext());
+            User userData = userAdminManager.getUser(userId, false);
+            Either<Map<String, List<? extends Component>>, ResponseFormat> followedResourcesServices = getElementBL(request.getSession().getServletContext()).getFollowed(userData);
+            if (followedResourcesServices.isRight()) {
+                log.debug("failed to get followed resources services ");
+                return buildErrorResponse(followedResourcesServices.right().value());
             }
-
-            if (either.left().value() != null) {
-                userData = either.left().value();
-                Either<Map<String, List<? extends Component>>, ResponseFormat> followedResourcesServices =
-                        elementBusinessLogic.getFollowed(userData);
-                if (followedResourcesServices.isRight()) {
-                    log.debug("failed to get followed resources services ");
-                    return buildErrorResponse(followedResourcesServices.right().value());
-                }
-                Object data = RepresentationUtils.toRepresentation(followedResourcesServices.left().value());
-                res = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
-            } else {
-                res = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            }
+            Object data = RepresentationUtils.toRepresentation(followedResourcesServices.left().value());
+            res = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Followed Resources / Services Categories");
             log.debug("Getting followed resources/services failed with exception", e);
-            res = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
         return res;
     }
@@ -650,17 +581,17 @@ public class ElementServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "404", description = "No resources and services were found"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCatalogComponents(@Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @QueryParam("excludeTypes") List<OriginTypeEnum> excludeTypes) {
+            @QueryParam("excludeTypes") List<OriginTypeEnum> excludeTypes) throws IOException {
 
         Response res = null;
         try {
             String url = request.getMethod() + " " + request.getRequestURI();
-            log.debug("Start handle request of {}", url);
+            log.debug(START_HANDLE_REQUEST_OF, url);
 
-            Either<Map<String, List<CatalogComponent>>, ResponseFormat> catalogData =
-                    elementBusinessLogic.getCatalogComponents(userId, excludeTypes);
+            Either<Map<String, List<CatalogComponent>>, ResponseFormat> catalogData = getElementBL(request.getSession().getServletContext()).getCatalogComponents(userId, excludeTypes);
 
             if (catalogData.isRight()) {
                 log.debug("failed to get catalog data");
@@ -672,16 +603,17 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Catalog Components");
             log.debug("Getting catalog components failed with exception", e);
-            res = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
         }
         return res;
     }
 
     @DELETE
     @Path("/inactiveComponents/{componentType}")
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteMarkedResources(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
 
         // get modifier id
         String userId = request.getHeader(Constants.USER_ID_HEADER);
@@ -714,9 +646,7 @@ public class ElementServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Marked Components");
             log.debug("delete marked components failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
-
+            throw e;
         }
     }
 
@@ -727,9 +657,119 @@ public class ElementServlet extends BeGenericServlet {
     @Operation(description = "Retrieve ecomp portal menu - MOC", method = "GET", summary = "Retrieve ecomp portal menu", responses = @ApiResponse(
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Retrieve ecomp portal menu") })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getListOfCsars(@Context final HttpServletRequest request) {
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
                 "[{\"menuId\":1,\"column\":2,\"text\":\"Design\",\"parentMenuId\":null,\"url\":\"\",\"appid\":null,\"roles\":null,\"children\":[{\"menuId\":11,\"column\":1,\"text\":\"ProductDesign\",\"parentMenuId\":1,\"url\":\"\",\"appid\":null,\"roles\":null},{\"menuId\":12,\"column\":2,\"text\":\"Service\",\"parentMenuId\":1,\"url\":\"\",\"appid\":null,\"roles\":null,\"children\":[{\"menuId\":21,\"column\":1,\"text\":\"ViewPolicies\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null,\"children\":[{\"menuId\":90,\"column\":1,\"text\":\"4thLevelApp1aR16\",\"parentMenuId\":21,\"url\":\"http://google.com\",\"appid\":null,\"roles\":null}]},{\"menuId\":22,\"column\":2,\"text\":\"UpdatePolicies\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null,\"children\":[{\"menuId\":91,\"column\":1,\"text\":\"4thLevelApp1bR16\",\"parentMenuId\":22,\"url\":\"http://jsonlint.com/\",\"appid\":null,\"roles\":null}]},{\"menuId\":23,\"column\":3,\"text\":\"UpdateRules\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null},{\"menuId\":24,\"column\":4,\"text\":\"CreateSignatures?\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null},{\"menuId\":25,\"column\":5,\"text\":\"Definedata\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null}]}]}]");
     }
+
+    @GET
+    @Path("/catalogUpdateTime")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Retrieve previus and current catalog update time", method = "GET", summary = "Retrieve previus and current catalog update time", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Retrieve previus and current catalog update time")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getCatalogUpdateTime(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("(post) Start handle request of {}", url);
+        CatalogUpdateTimestamp catalogUpdateTimestamp = getElementBL(request.getSession().getServletContext()).getCatalogUpdateTime(userId);
+
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                catalogUpdateTimestamp);
+    }
+
+
+    // retrieve all artifact types, ui configuration and sdc version
+    @GET
+    @Path("/setup/ui")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Retrieve all artifactTypes, ui configuration and sdc version", method = "GET", summary = "Retrieve all artifactTypes, ui configuration and sdc version", responses = @ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns artifactTypes, ui configuration and sdc version Ok"),
+    @ApiResponse(responseCode = "404", description = "No artifactTypes were found/no ui configuration were found/no sdc version were found"),
+    @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getConfCategoriesAndVersion(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("(getConsolidated) Start handle request of {}", url);
+
+        Map<String, Object> consolidatedObject = new HashMap<>();
+
+        try {
+            ServletContext servletContext = request.getSession().getServletContext();
+            Map<String, Object> configuration = getConfigurationUi(elementBusinessLogic, userId);
+            if (!configuration.isEmpty()) {
+                consolidatedObject.put("configuration", configuration);
+            } else {
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
+            }
+
+            Either<UiCategories, ResponseFormat> either = elementBusinessLogic.getAllCategories(userId);
+            if (either.isRight()) {
+                log.debug("No categories were found");
+                return buildErrorResponse(either.right().value());
+            }
+            consolidatedObject.put("categories", either.left().value());
+
+            consolidatedObject.put("version", getVersion(servletContext));
+
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getSDCVersion");
+            log.debug("method getConfCategoriesAndVersion failed with unexpected exception", e);
+            throw e;
+        }
+
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), consolidatedObject);
+    }
+
+    private String getVersion(ServletContext servletContext) {
+        String version = (String) servletContext.getAttribute(Constants.ASDC_RELEASE_VERSION_ATTR);
+        log.debug("sdc version from manifest is: {}", version);
+        return version;
+    }
+
+    private Map<String, Object> getConfigurationUi(ElementBusinessLogic elementBL, String userId) {
+        Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> defaultHeatTimeout = elementBL.getDefaultHeatTimeout();
+        Either<Map<String, Object>, ActionStatus> deploymentEither = elementBL.getAllDeploymentArtifactTypes();
+        Either<Map<String, String>, ActionStatus> resourceTypesMap = elementBL.getResourceTypesMap();
+        Either<List<ArtifactType>, ActionStatus> otherEither = elementBL.getAllArtifactTypes(userId);
+
+        Map<String, Object> configuration = new HashMap<>();
+
+        if (otherEither.isRight() || otherEither.left().value() == null) {
+            log.debug("No other artifact types were found");
+            return configuration;
+        }
+        if (deploymentEither.isRight() || deploymentEither.left().value() == null) {
+            log.debug("No deployment artifact types were found");
+            return configuration;
+        }
+        if (defaultHeatTimeout.isRight() || defaultHeatTimeout.left().value() == null) {
+            log.debug("heat default timeout was not found");
+            return configuration;
+        }
+        if (resourceTypesMap.isRight() || resourceTypesMap.left().value() == null) {
+            log.debug("No resource types were found");
+            return configuration;
+        }
+        Map<String, Object> artifacts = new HashMap<>();
+        artifacts.put("other", otherEither.left().value());
+        artifacts.put("deployment", deploymentEither.left().value());
+        configuration.put("artifacts", artifacts);
+        configuration.put("heatDeploymentTimeout", defaultHeatTimeout.left().value());
+        configuration.put("componentTypes", elementBL.getAllComponentTypesParamNames());
+        configuration.put("roles", elementBL.getAllSupportedRoles());
+        configuration.put("resourceTypes", resourceTypesMap.left().value());
+        configuration.put("environmentContext", ConfigurationManager.getConfigurationManager().getConfiguration().getEnvironmentContext());
+        configuration.put("gab", ConfigurationManager.getConfigurationManager().getConfiguration().getGabConfig());
+
+        return configuration;
+    }
+
 
 }

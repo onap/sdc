@@ -1,0 +1,72 @@
+{
+  "distributionStatusList": [
+    {
+      "omfComponentID": "Consumer1",
+      "timestamp": "1564048073950",
+      "url": "url/artifacts/artifact1.env",
+      "status": "NOTIFIED",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer2",
+      "timestamp": "1564048073950",
+      "url": "url/artifacts/artifact2_1.csar",
+      "status": "DOWNLOAD_OK",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer2",
+      "timestamp": "1564048073950",
+      "url": "url/artifacts/artifact2_2.csar",
+      "status": "DEPLOY_OK",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer3",
+      "timestamp": "1564048073950",
+      "url": "url/artifacts/artifact3_1.csar",
+      "status": "NOT_NOTIFIED",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer3",
+      "timestamp": "1564048073950",
+      "url": "url/artifacts/artifact3_2.csar",
+      "status": "DEPLOY_ERROR",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer3",
+      "timestamp": "1564048073950",
+      "url": "",
+      "status": "COMPONENT_DONE_OK",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer4",
+      "timestamp": "1564048073950",
+      "url": "url/artifacts/artifact1.env",
+      "status": "DUPLICATE_URL_STATUS_NOT_COUNTED",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer4",
+      "timestamp": "1564048073950",
+      "url": null,
+      "status": "COMPONENT_DONE_ERROR",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer5",
+      "timestamp": "1564048073950",
+      "url": "ArtifactWithTwoStatuses",
+      "status": "LATEST_STATUS",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer5",
+      "timestamp": "1563961673000",
+      "url": "ArtifactWithTwoStatuses",
+      "status": "EARLIER_STATUS",
+      "errorReason": null
+    },{
+      "omfComponentID": "Consumer6",
+      "timestamp": "1564048073950",
+      "url": "url/artifacts/artifact3_2.csar",
+      "status": "DOWNLOAD_ERROR",
+      "errorReason": null
+    }
+  ]
+}
+

@@ -23,22 +23,21 @@
 'use strict';
 import * as _ from "lodash";
 import {Dictionary} from "../utils/dictionary/dictionary";
+import {Injectable} from "@angular/core";
 
-interface IEventListenerService {
-
-}
 
 interface ICallbackData {
-    callback:Function;
-    args:any[];
+    callback: Function;
+    args: any[];
 }
 
-export class EventListenerService implements IEventListenerService {
+@Injectable()
+export class EventListenerService {
 
-    public observerCallbacks:Dictionary<string, ICallbackData[]> = new Dictionary<string, Array<ICallbackData>>();
+    public observerCallbacks: Dictionary<string, ICallbackData[]> = new Dictionary<string, Array<ICallbackData>>();
 
     //register an observer + callback
-    public registerObserverCallback = (eventName:string, callback:Function, ...args) => {
+    public registerObserverCallback = (eventName: string, callback: Function, ...args) => {
         let callbackData = {
             callback: callback,
             args: args
@@ -62,11 +61,11 @@ export class EventListenerService implements IEventListenerService {
     };
 
     //unregister an observer
-    public unRegisterObserver = (eventName:string, callbackFunc?:Function) => {
+    public unRegisterObserver = (eventName: string, callbackFunc?: Function) => {
         if (this.observerCallbacks.containsKey(eventName)) {
 
-            let callbacks: ICallbackData[]  =  this.observerCallbacks.getValue(eventName);
-            if(callbacks.length === 1) {
+            let callbacks: ICallbackData[] = this.observerCallbacks.getValue(eventName);
+            if (callbacks.length === 1) {
                 this.observerCallbacks.remove(eventName);
             } else {
                 let filterCallbacks = _.filter(callbacks, (callBackObj) => {
@@ -74,13 +73,12 @@ export class EventListenerService implements IEventListenerService {
                 });
                 this.observerCallbacks.setValue(eventName, filterCallbacks);
             }
-
         }
     };
 
-    public notifyObservers = function (eventName:string, ...args) {
-        _.forEach(this.observerCallbacks.getValue(eventName), (callbackData:ICallbackData) => {
-            callbackData.callback(...args);
-        });
+    public notifyObservers = function (eventName: string, ...args) {
+            _.forEach(this.observerCallbacks.getValue(eventName), (callbackData: ICallbackData) => {
+                callbackData.callback(...args);
+            });
     };
 }

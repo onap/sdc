@@ -36,6 +36,7 @@ import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.GroupDefinition;
@@ -49,6 +50,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -130,7 +132,7 @@ public class GroupMembersUpdateOperationTest {
     @Test
     public void onChangeVersion_whenGroupHasPrevInstanceAsMember_replaceWithNewInstanceId_updateReplacedGroups() {
         verifyAllGroupsHasPrevInstancesAsMembers();
-        when(groupsOperation.updateGroups(eq(container), updatedGroupsCaptor.capture(), eq(false))).thenReturn(Either.left(null));
+        when(groupsOperation.updateGroups(eq(container), updatedGroupsCaptor.capture(),any(PromoteVersionEnum.class))).thenReturn(Either.left(null));
         ActionStatus actionStatus = testInstance.onChangeVersion(container, prevInst2Version, currInst2Version);
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
         assertUpdatedGroups(updatedGroupsCaptor.getValue(), group1, group2);
@@ -139,7 +141,7 @@ public class GroupMembersUpdateOperationTest {
 
     @Test
     public void onChangeVersion_whenFailingToUpdateGroups_propagateError() {
-        when(groupsOperation.updateGroups(eq(container), updatedGroupsCaptor.capture(), eq(false))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(groupsOperation.updateGroups(eq(container), updatedGroupsCaptor.capture(), any(PromoteVersionEnum.class))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         ActionStatus actionStatus = testInstance.onChangeVersion(container, prevInst2Version, currInst2Version);
         assertThat(actionStatus).isEqualTo(ActionStatus.RESOURCE_NOT_FOUND);
     }
@@ -180,7 +182,7 @@ public class GroupMembersUpdateOperationTest {
 
     @Test
     public void onDeleteInstance_removeInstanceIdFromGroupMember() {
-        when(groupsOperation.updateGroups(eq(container), updatedGroupsCaptor.capture(), eq(false))).thenReturn(Either.left(null));
+        when(groupsOperation.updateGroups(eq(container), updatedGroupsCaptor.capture(), any(PromoteVersionEnum.class))).thenReturn(Either.left(null));
         ActionStatus actionStatus = testInstance.onDelete(container, INSTANCE_ID_PRE_CHANGE);
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
         assertUpdatedGroups(updatedGroupsCaptor.getValue(), group1, group2);
@@ -190,7 +192,7 @@ public class GroupMembersUpdateOperationTest {
 
     @Test
     public void onDeleteInstance_whenGroupsUpdateFails_propagateTheFailure() {
-        when(groupsOperation.updateGroups(eq(container), anyList(), eq(false))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(groupsOperation.updateGroups(eq(container), anyList(), any(PromoteVersionEnum.class))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         ActionStatus actionStatus = testInstance.onDelete(container, INSTANCE_ID_PRE_CHANGE);
         assertThat(actionStatus).isEqualTo(ActionStatus.RESOURCE_NOT_FOUND);
     }

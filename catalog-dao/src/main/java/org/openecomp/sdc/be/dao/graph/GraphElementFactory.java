@@ -24,6 +24,7 @@ import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.graph.datatype.RelationEndPoint;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionaryExtractor;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.resources.data.*;
 import org.openecomp.sdc.be.resources.data.category.CategoryData;
@@ -84,10 +85,10 @@ public class GraphElementFactory {
 				element = new TagData(properties);
 				break;
 			case Service:
-				element = new ServiceMetadataData(properties);
+				element = new ServiceMetadataData(new GraphPropertiesDictionaryExtractor(properties));
 				break;
 			case Resource:
-				element = new ResourceMetadataData(properties);
+				element = new ResourceMetadataData(new GraphPropertiesDictionaryExtractor(properties));
 				break;
 			case Property:
 				element = new PropertyData(properties);
@@ -133,13 +134,13 @@ public class GraphElementFactory {
 				element = clazz.cast(new TagData(properties));
 				break;
 			case Service:
-				element = clazz.cast(new ServiceMetadataData(properties));
+				element = clazz.cast(new ServiceMetadataData(new GraphPropertiesDictionaryExtractor(properties)));
 				break;
 			case Product:
-				element = clazz.cast(new ProductMetadataData(properties));
+				element = clazz.cast(new ProductMetadataData(new GraphPropertiesDictionaryExtractor(properties)));
 				break;
 			case Resource:
-				element = clazz.cast(new ResourceMetadataData(properties));
+				element = clazz.cast(new ResourceMetadataData(new GraphPropertiesDictionaryExtractor(properties)));
 				break;
 			case Attribute:
 				element = clazz.cast(new AttributeData(properties));

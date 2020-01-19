@@ -64,8 +64,8 @@ export class GenericArtifactBrowserComponent {
     this.gabService.getArtifact(this.artifactid, this.resourceid, paths)
     .subscribe(
         response => {
-          let typedServerResponse: IServerResponse = response.json() as IServerResponse;
-          this.normalizeDataForNgxDatatable(typedServerResponse.data);
+          // let typedServerResponse: IServerResponse = response.json() as IServerResponse;
+          this.normalizeDataForNgxDatatable(response['data']);
         },
         () => {
             this.ready = false;

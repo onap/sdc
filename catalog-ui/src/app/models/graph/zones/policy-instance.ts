@@ -5,6 +5,7 @@ import {GroupInstance} from "./group-instance";
 import {ComponentInstance} from "../../componentsInstances/componentInstance";
 import {TargetUiObject} from "../../ui-models/ui-target-object";
 import {TargetOrMemberType} from "../../../utils/constants";
+import * as _ from 'lodash';
 
 /* The request and response should be same model, need to fix in BE */
 export class PolicyTargetsMap {
@@ -66,24 +67,25 @@ export class PolicyInstance implements IZoneInstanceMethod {
 
 
     constructor(policy?:PolicyInstance) {
-        this.componentName = policy.componentName;
-        this.description = policy.description;
-        this.empty = policy.empty;
-        this.invariantName = policy.invariantName;
-        this.invariantUUID = policy.invariantUUID;
-        this.isFromCsar = policy.isFromCsar;
-        
-        this.name = policy.name;
-        this.normalizedName =policy.normalizedName;
-        this.type = policy.type;
-        this.policyTypeUid = policy.policyTypeUid;
-        this.policyUUID = policy.policyUUID;
-        this.properties = CommonUtils.initProperties(policy.properties);
-        this.targets = policy.targets;
-        this.uniqueId = policy.uniqueId;
-        this.version = policy.version;
-        this.instanceUniqueId = policy.instanceUniqueId;
-
+        if(policy){
+            this.componentName = policy.componentName;
+            this.description = policy.description;
+            this.empty = policy.empty;
+            this.invariantName = policy.invariantName;
+            this.invariantUUID = policy.invariantUUID;
+            this.isFromCsar = policy.isFromCsar;
+            
+            this.name = policy.name;
+            this.normalizedName =policy.normalizedName;
+            this.type = policy.type;
+            this.policyTypeUid = policy.policyTypeUid;
+            this.policyUUID = policy.policyUUID;
+            this.properties = CommonUtils.initProperties(policy.properties);
+            this.targets = policy.targets;
+            this.uniqueId = policy.uniqueId;
+            this.version = policy.version;
+            this.instanceUniqueId = policy.instanceUniqueId;           
+        }
         this.iconSprite = '';
         this.icon = 'icon-policy';
     }

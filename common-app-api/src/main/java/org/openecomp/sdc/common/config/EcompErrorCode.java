@@ -34,19 +34,19 @@ public enum EcompErrorCode {
             "Unable to connect to a valid ASDC Backend Server",
             "Please check connectivity from this FE instance towards BE or BE Load Balancer. Please check that parameters in FE configuration.yaml: beHost,     beHttpPort and beSslPort point to a valid host and port values."),
 
-    E_205("ASDC Backend Recovery to either one of the following components: JanusGraph DB, Cassandra, Onboarding, UEB Cluster."), E_206(
-            "ASDC Backend connection recovery to JanusGraph DB."), E_207(
-            "ASDC Backend connection recovery to ElasticSearch."), E_208(
-            "ASDC Backend connection recovery to UEB Cluster."), E_209(
-            "Connectivity to ASDC BE Server is recovered."), E_210(
-            "Connection problem towards U-EB server. Reason: %s",
-            "Please check that that parameter uebServers in distribution-configuration.yaml points to a valid UEB Cluster."), E_211(
-            "Connection problem towards U-EB server. Cannot reach host %s",
-            "Please check that that parameter uebServers in distribution-configuration.yaml points to a valid UEB Cluster."), E_212(
-            "Couldn't resolve hostIP. Desciption: %s"), E_213(
-            "Site switch over was done. Site is now in %s mode"), E_214(
-            "Dmaap Connection problem."), E_299(
-            "Internal Connection problem. Description: %s"),
+	E_205("ASDC Backend Recovery to either one of the following components: JanusGraph DB, Cassandra, Onboarding, UEB Cluster."), E_206(
+			"ASDC Backend connection recovery to JanusGraph DB."), E_208(
+							"ASDC Backend connection recovery to UEB Cluster."), E_209(
+									"Connectivity to ASDC BE Server is recovered."), E_210(
+											"Connection problem towards U-EB server. Reason: %s",
+											"Please check that that parameter uebServers in distribution-configuration.yaml points to a valid UEB Cluster."), E_211(
+													"Connection problem towards U-EB server. Cannot reach host %s",
+													"Please check that that parameter uebServers in distribution-configuration.yaml points to a valid UEB Cluster."), E_212(
+															"Couldn't resolve hostIP. Desciption: %s"), E_213(
+																	"Site switch over was done. Site is now in %s mode"), E_214(
+																				"Dmaap Connection problem."), E_220(
+																						"User HTTP session is expired"), E_299(
+																								"Internal Connection problem. Description: %s"),
 
     // [resource/service/product]
     E_300("Mandatory %s Component %s cannot be found in repository"),

@@ -1,164 +1,301 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	version="3.0">
-	
-	<servlet>
-		<servlet-name>jersey</servlet-name>
-		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-		<init-param>
-			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>io.swagger.jaxrs.json, org.openecomp.sdc.be.servlets</param-value>
-		</init-param>
-		<init-param>
-			<param-name>jersey.config.server.provider.classnames</param-name>
-			<param-value>io.swagger.jersey.listing.ApiListingResourceJSON,
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+
+    <servlet>
+        <servlet-name>jersey</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>io.swagger.jaxrs.json, org.openecomp.sdc.be.servlets</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>io.swagger.jersey.listing.ApiListingResourceJSON,
                 org.glassfish.jersey.media.multipart.MultiPartFeature,
                 org.openecomp.sdc.be.filters.BeServletFilter,
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
+                org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature,
 				org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
+                org.openecomp.sdc.be.servlets.exception.ConstraintViolationExceptionMapper,
 				org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
-                org.openecomp.sdc.be.view.MixinModelWriter
+                org.openecomp.sdc.be.view.MixinModelWriter,
+                org.openecomp.sdc.config.ObjectMapperProvider
             </param-value>
 
-		</init-param>
-		<init-param>
-			<param-name>swagger.scanner.id</param-name>
-			<param-value>test.1</param-value>
-		</init-param>
-		<init-param>
-			<param-name>swagger.config.id</param-name>
-			<param-value>test.1</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>jersey</servlet-name>
-		<url-pattern>/sdc2/rest/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>EsGateway</servlet-name>
-		<servlet-class>org.openecomp.sdc.be.monitoring.EsGateway</servlet-class>
-		<load-on-startup>1</load-on-startup>
-		<async-supported>true</async-supported>
-	</servlet>
+        </init-param>
+        <init-param>
+            <param-name>swagger.scanner.id</param-name>
+            <param-value>test.1</param-value>
+        </init-param>
+        <init-param>
+            <param-name>swagger.config.id</param-name>
+            <param-value>test.1</param-value>
+        </init-param>
+        <init-param>
+            <param-name>exclude_url_endpoints</param-name>
+            <param-value>/api/v3/analytics,/api/v3/storeAnalytics</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
 
-	<servlet-mapping>
-		<servlet-name>EsGateway</servlet-name>
-		<url-pattern>/sdc2/esGateway/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>jerseyDistribution</servlet-name>
-		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-		<init-param>
-			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>io.swagger.jaxrs.json, org.openecomp.sdc.be.distribution.servlet, org.openecomp.sdc.be.externalapi.servlet</param-value>
-		</init-param>
-		<init-param>
-			<param-name>jersey.config.server.provider.classnames</param-name>
-			<param-value>io.swagger.jersey.listing.ApiListingResourceJSON, 
-			org.glassfish.jersey.media.multipart.MultiPartFeature, 
-			org.openecomp.sdc.be.filters.BeServletFilter,
-			org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
-			org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
-			org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
-			org.openecomp.sdc.be.filters.BasicAuthenticationFilter</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.scanner.id</param-name>
-			<param-value>test.2</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.config.id</param-name>
-			<param-value>test.2</param-value>
-		</init-param>
-		
-		<load-on-startup>1</load-on-startup>
-		<async-supported>true</async-supported>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>jerseyDistribution</servlet-name>
-		<url-pattern>/sdc/*</url-pattern>
-	</servlet-mapping>
+    </servlet>
 
-	<servlet>
-		<servlet-name>Internal-APIs-Configurations</servlet-name>
-		<servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
-		
-		<init-param>
-			<param-name>api.version</param-name>
-			<param-value>1.2.0</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.api.title</param-name>
-			<param-value>Internal API's</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.api.basepath</param-name>
-			<param-value>/sdc2/rest</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.scanner.id</param-name>
-			<param-value>test.1</param-value>
-		</init-param>
+    <servlet-mapping>
+        <servlet-name>jersey</servlet-name>
+        <url-pattern>/sdc2/rest/*</url-pattern>
+    </servlet-mapping>
 
-		<init-param>
-			<param-name>swagger.config.id</param-name>
-			<param-value>test.1</param-value>
-		</init-param>
-		
-		<load-on-startup>2</load-on-startup>
-		<async-supported>true</async-supported>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>External and Distribution API's</servlet-name>
-		<servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
-		
-		<init-param>
-			<param-name>api.version</param-name>
-			<param-value>1.2.0</param-value>
-		</init-param>
-	
-		<init-param>
-			<param-name>swagger.api.title</param-name>
-			<param-value>DistributionAndExternalAPIs</param-value>
-		</init-param>
-    
-    	<init-param>
-			<param-name>swagger.api.basepath</param-name>
-			<!-- Check if second param can be added -->
-			<param-value>/sdc</param-value>
-		</init-param>
-		
-		<init-param>
-			<param-name>swagger.context.id</param-name>
-			<param-value>test.2</param-value>
-		</init-param>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>ViewStatusMessages</servlet-name>
-		<servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
-		<async-supported>true</async-supported>
-	</servlet>
+    <servlet>
+        <servlet-name>jerseyDistribution</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>io.swagger.jaxrs.json, org.openecomp.sdc.be.distribution.servlet, org.openecomp.sdc.be.externalapi.servlet </param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>io.swagger.jersey.listing.ApiListingResourceJSON,
+                org.glassfish.jersey.media.multipart.MultiPartFeature,
+                org.openecomp.sdc.be.filters.BeServletFilter,
+                org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
+                org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
+                org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
+                org.openecomp.sdc.be.filters.BasicAuthenticationFilter
+                </param-value>
+        </init-param>
 
-	<servlet-mapping>
-		<servlet-name>ViewStatusMessages</servlet-name>
-		<url-pattern>/lbClassicStatus</url-pattern>
-	</servlet-mapping>
+        <init-param>
+            <param-name>swagger.scanner.id</param-name>
+            <param-value>test.2</param-value>
+        </init-param>
 
+        <init-param>
+            <param-name>swagger.config.id</param-name>
+            <param-value>test.2</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>jerseyDistribution</servlet-name>
+        <url-pattern>/sdc/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Internal-APIs-Configurations</servlet-name>
+        <servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+
+        <init-param>
+            <param-name>api.version</param-name>
+            <param-value>1.2.0</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>swagger.api.title</param-name>
+            <param-value>Internal API's</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>swagger.api.basepath</param-name>
+            <param-value>/sdc2/rest</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>swagger.scanner.id</param-name>
+            <param-value>test.1</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>swagger.config.id</param-name>
+            <param-value>test.1</param-value>
+        </init-param>
+
+        <load-on-startup>2</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+
+    <servlet>
+        <servlet-name>External and Distribution API's</servlet-name>
+        <servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+
+        <init-param>
+            <param-name>api.version</param-name>
+            <param-value>1.2.0</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>swagger.api.title</param-name>
+            <param-value>DistributionAndExternalAPIs</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>swagger.api.basepath</param-name>
+            <!-- Check if second param can be added -->
+            <param-value>/sdc</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>swagger.context.id</param-name>
+            <param-value>test.2</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <!-- ECOMP Portal -->
+    <servlet>
+        <servlet-name>ECOMPServlet</servlet-name>
+        <servlet-class>org.onap.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy</servlet-class>
+        <load-on-startup>3</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+
+<!--    <filter>-->
+<!--        <filter-name>CadiAuthFilter</filter-name>-->
+<!--        <filter-class>org.onap.portalsdk.core.onboarding.crossapi.CadiAuthFilter</filter-class>-->
+<!--        <init-param>-->
+<!--            <param-name>cadi_prop_files</param-name>-->
+<!--            &lt;!&ndash; Add Absolute path of cadi.properties &ndash;&gt;-->
+<!--            <param-value>etc/cadi.properties</param-value>-->
+<!--        </init-param>-->
+<!--        &lt;!&ndash;Add param values with comma delimited values &ndash;&gt;-->
+<!--        &lt;!&ndash; for example /api/v3/*,/auxapi/*&ndash;&gt;-->
+<!--        <init-param>-->
+<!--            <param-name>include_url_endpoints</param-name>-->
+<!--            <param-value>/api/v3/roles,/api/v3/user/*,/api/v3/user/*/roles,/api/v3/users,/api/v3/sessionTimeOuts,/api/v3/updateSessionTimeOuts</param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>exclude_url_endpoints</param-name>-->
+<!--            <param-value>/api/v3/analytics,/api/v3/storeAnalytics</param-value>-->
+<!--        </init-param>-->
+<!--    </filter>-->
+<!--    <filter-mapping>-->
+<!--        <filter-name>CadiAuthFilter</filter-name>-->
+<!--        <url-pattern>/api/v3/*</url-pattern>-->
+<!--    </filter-mapping>-->
+
+    <servlet>
+        <servlet-name>ViewStatusMessages</servlet-name>
+        <servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
+        <async-supported>true</async-supported>
+    </servlet>
+
+    <servlet>
+        <servlet-name>TogglzConsoleServlet</servlet-name>
+        <servlet-class>org.togglz.console.TogglzConsoleServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TogglzConsoleServlet</servlet-name>
+        <url-pattern>/catalog/togglz/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ViewStatusMessages</servlet-name>
+        <url-pattern>/lbClassicStatus</url-pattern>
+    </servlet-mapping>
+
+    <!--  	<filter>
+           <filter-name>GzipFilter</filter-name>
+           <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
+           <async-supported>true</async-supported>
+           <init-param>
+            <param-name>methods</param-name>
+            <param-value>GET,POST,PUT,DELETE</param-value>
+           </init-param>
+           <init-param>
+              <param-name>mimeTypes</param-name>
+              <param-value>text/html,text/plain,text/css,application/javascript,application/json</param-value>
+           </init-param>
+        </filter>
+        <filter-mapping>
+           <filter-name>GzipFilter</filter-name>
+            <url-pattern>/sdc2/rest/*</url-pattern>
+        </filter-mapping>
+
+    -->
+    <!--<filter>-->
+    <!--<filter-name>RestrictionAccessFilter</filter-name>-->
+    <!--<filter-class>org.openecomp.sdc.be.filters.RestrictionAccessFilter</filter-class>-->
+    <!--<async-supported>true</async-supported>-->
+    <!--</filter>-->
+
+<!--    <filter>-->
+<!--    <filter-name>gatewayFilter</filter-name>-->
+<!--    <filter-class>org.openecomp.sdc.be.filters.GatewayFilter</filter-class>-->
+<!--    </filter>-->
+
+    <filter>
+        <filter-name>gatewayFilter</filter-name>
+        <filter-class>
+            org.springframework.web.filter.DelegatingFilterProxy
+        </filter-class>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>gatewayFilter</filter-name>
+        <url-pattern>/sdc2/rest/*</url-pattern>
+        <url-pattern>/sdc/*</url-pattern>
+    </filter-mapping>
+
+<!--    <filter>-->
+<!--        <filter-name>beRestrictionAccessFilter</filter-name>-->
+<!--        <filter-class>-->
+<!--            org.springframework.web.filter.DelegatingFilterProxy-->
+<!--        </filter-class>-->
+<!--        <init-param>-->
+<!--            <param-name>targetFilterLifecycle</param-name>-->
+<!--            <param-value>true</param-value>-->
+<!--        </init-param>-->
+<!--    </filter>-->
+<!--    <filter-mapping>-->
+<!--        <filter-name>beRestrictionAccessFilter</filter-name>-->
+<!--        <url-pattern>/sdc2/rest/*</url-pattern>-->
+<!--    </filter-mapping>-->
+
+<!--    <filter>-->
+<!--        <filter-name>CADI</filter-name>-->
+<!--        <filter-class>org.openecomp.sdc.be.filters.BeCadiServletFilter</filter-class>-->
+<!--        <init-param>-->
+<!--            <param-name>cadi_prop_files</param-name>-->
+<!--            <param-value>etc/cadi.properties</param-value>-->
+<!--        </init-param>-->
+<!--    </filter>-->
+
+<!--    <filter-mapping>-->
+<!--        <filter-name>CADI</filter-name>-->
+<!--        <url-pattern>/sdc/*</url-pattern>-->
+<!--        <url-pattern>/sdc2/rest/*</url-pattern>-->
+<!--    </filter-mapping>-->
+
+    <filter>
+        <filter-name>reqValidationFilter</filter-name>
+        <filter-class>
+            org.springframework.web.filter.DelegatingFilterProxy
+        </filter-class>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>reqValidationFilter</filter-name>
+        <url-pattern>/sdc2/rest/*</url-pattern>
+        <url-pattern>/sdc/*</url-pattern>
+    </filter-mapping>
+
+    <error-page>
+        <exception-type>java.lang.RuntimeException</exception-type>
+        <location>/sdc2/rest/v1/catalog/handleException/</location>
+    </error-page>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:application-context.xml</param-value>
@@ -168,11 +305,11 @@
 		<listener-class>org.openecomp.sdc.be.listen.BEAppContextListener</listener-class>
 	</listener>
 
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
 </web-app>

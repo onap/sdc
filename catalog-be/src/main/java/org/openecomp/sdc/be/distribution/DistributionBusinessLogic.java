@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.distribution;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.components.distribution.engine.*;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
@@ -31,6 +32,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.api.client.*;
+import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -55,11 +57,18 @@ public class DistributionBusinessLogic {
     private IDistributionEngine distributionEngine;
 
     private ResponseFormatManager responseFormatManager = ResponseFormatManager.getInstance();
-    private CambriaHandler cambriaHandler;
+    @Resource
+    private ICambriaHandler cambriaHandler;
 
-    private void initRequestEnvEndPoints(RegistrationRequest registrationRequest, DistributionEngineConfiguration config) {
-        if(registrationRequest.getDistEnvEndPoints() == null || registrationRequest.getDistEnvEndPoints().isEmpty()){
+    private void initRequestEnvEndPointsAndKeys(RegistrationRequest registrationRequest, DistributionEngineConfiguration config) {
+        if(CollectionUtils.isEmpty(registrationRequest.getDistEnvEndPoints())){
             registrationRequest.setDistEnvEndPoints(config.getUebServers());
+            registrationRequest.setManagerApiPublicKey(config.getUebPublicKey());
+            registrationRequest.setManagerApiSecretKey(config.getUebSecretKey());
+        } else {
+            OperationalEnvironmentEntry environment = distributionEngine.getEnvironmentByDmaapUebAddress(registrationRequest.getDistEnvEndPoints());
+            registrationRequest.setManagerApiPublicKey(environment.getUebApikey());
+            registrationRequest.setManagerApiSecretKey(environment.getUebSecretKey());
         }
     }
     public Either<ServerListResponse, ResponseFormat> getUebServerList() {
@@ -91,6 +100,7 @@ public class DistributionBusinessLogic {
             DistributionEngineConfiguration config = getConfigurationManager().getDistributionEngineConfiguration();
             String statusTopicName = buildTopicName(config.getDistributionStatusTopicName(),
                     registrationRequest.getDistrEnvName());
+            initRequestEnvEndPointsAndKeys(registrationRequest, config);
             registerResponse = registerDistributionClientToTopic(responseWrapper, registrationRequest,
                     SubscriberTypeEnum.PRODUCER, statusTopicName);
 
@@ -167,6 +177,9 @@ public class DistributionBusinessLogic {
         Wrapper<CambriaErrorResponse> cambriaResponseWrapper = new Wrapper<>();
         try {
             String statusTopicName = getStatusTopicName(unRegistrationRequest.getDistrEnvName());
+            DistributionEngineConfiguration config = ConfigurationManager.getConfigurationManager()
+                    .getDistributionEngineConfiguration();
+            initRequestEnvEndPointsAndKeys(unRegistrationRequest, config);
             CambriaErrorResponse unregisterClientProducerTopicResponse = unRegisterDistributionClientFromTopic(
                     unRegistrationRequest, SubscriberTypeEnum.PRODUCER, statusTopicName);
             auditHandler.auditUnRegisterACL(unregisterClientProducerTopicResponse, SubscriberTypeEnum.PRODUCER,
@@ -237,13 +250,10 @@ public class DistributionBusinessLogic {
 
     protected CambriaErrorResponse unRegisterDistributionClientFromTopic(RegistrationRequest unRegistrationRequest,
             SubscriberTypeEnum subscriberType, String topicName) {
-        DistributionEngineConfiguration config = ConfigurationManager.getConfigurationManager()
-                .getDistributionEngineConfiguration();
-        initRequestEnvEndPoints(unRegistrationRequest, config);
 
         log.debug("unregistering client as {} , from topic: {}, using DistEnvPoints: {}", subscriberType, topicName, unRegistrationRequest.getDistEnvEndPoints());
-        return getCambriaHandler().unRegisterFromTopic(unRegistrationRequest.getDistEnvEndPoints(), config.getUebPublicKey(),
-                config.getUebSecretKey(), unRegistrationRequest.getApiPublicKey(), subscriberType, topicName);
+        return cambriaHandler.unRegisterFromTopic(unRegistrationRequest.getDistEnvEndPoints(), unRegistrationRequest.getManagerApiPublicKey(),
+                unRegistrationRequest.getManagerApiSecretKey(), unRegistrationRequest.getApiPublicKey(), subscriberType, topicName);
     }
 
     private TopicRegistrationResponse buildTopicResponse(RegistrationRequest registrationRequest) {
@@ -262,9 +272,7 @@ public class DistributionBusinessLogic {
 
     protected CambriaErrorResponse registerDistributionClientToTopic(Wrapper<Response> responseWrapper,
             RegistrationRequest registrationRequest, SubscriberTypeEnum subscriberType, String topicName) {
-        DistributionEngineConfiguration config = ConfigurationManager.getConfigurationManager()
-                .getDistributionEngineConfiguration();
-        initRequestEnvEndPoints(registrationRequest, config);
+
         String errorMsg;
 
         // Register for notifications as consumer
@@ -276,8 +284,8 @@ public class DistributionBusinessLogic {
             errorMsg = "registration of subscriber to topic:" + topicName + " as producer failed";
         }
         log.debug("registering client as {} , from topic: {}, using DistEnvPoints: {}", subscriberType, topicName, registrationRequest.getDistEnvEndPoints());
-        CambriaErrorResponse registerToTopic = getCambriaHandler().registerToTopic(registrationRequest.getDistEnvEndPoints(),
-                config.getUebPublicKey(), config.getUebSecretKey(), registrationRequest.getApiPublicKey(),
+        CambriaErrorResponse registerToTopic = cambriaHandler.registerToTopic(registrationRequest.getDistEnvEndPoints(),
+                registrationRequest.getManagerApiPublicKey(), registrationRequest.getManagerApiSecretKey(), registrationRequest.getApiPublicKey(),
                 subscriberType, topicName);
 
         if (registerToTopic.getOperationStatus() != CambriaOperationStatus.OK) {
@@ -301,13 +309,6 @@ public class DistributionBusinessLogic {
 
     public IDistributionEngine getDistributionEngine() {
         return distributionEngine;
-    }
-
-    public CambriaHandler getCambriaHandler() {
-        if (cambriaHandler == null) {
-            cambriaHandler = new CambriaHandler();
-        }
-        return cambriaHandler;
     }
 
 }

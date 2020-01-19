@@ -42,6 +42,7 @@ export interface IDataTypeFieldsStructureScope extends ng.IScope {
     expand:boolean;
     expanded:boolean;
     dataTypesService:DataTypesService;
+    constraints:string[];
 
     expandAndCollapse():void;
     getValidationPattern(type:string):RegExp;
@@ -53,10 +54,14 @@ export interface IDataTypeFieldsStructureScope extends ng.IScope {
 
 export class DataTypeFieldsStructureDirective implements ng.IDirective {
 
+    
+
     constructor(private DataTypesService:DataTypesService,
                 private PropertyNameValidationPattern:RegExp,
                 private ValidationUtils:ValidationUtils) {
     }
+
+    constraints: string[];
 
     scope = {
         valueObjRef: '=',
@@ -67,6 +72,7 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
         defaultValue: '@',
         //     types: '=',
         expandByDefault: '='
+        
     };
 
     restrict = 'E';
@@ -92,6 +98,7 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
         }
         return defaultValue;
     };
+
 
     private initDataOnScope = (scope:any, $attr:any):void => {
         scope.dataTypesService = this.DataTypesService;
@@ -149,7 +156,7 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
             return !value || this.ValidationUtils.validateIntRange(value);
         };
 
-        scope.onValueChange = (propertyName:string, type:string):void => {
+        scope.onValueChange = (propertyName:string, type:string,):void => {
             scope.valueObjRef[propertyName] = !angular.isUndefined(scope.valueObjRef[propertyName]) ? scope.valueObjRef[propertyName] : scope.currentTypeDefaultValue[propertyName];
             if (scope.valueObjRef[propertyName] && type != 'string') {
                 scope.valueObjRef[propertyName] = JSON.parse(scope.valueObjRef[propertyName]);
@@ -157,7 +164,10 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
         };
 
         scope.inputOnValueChange = (property:any) => {
-
+            if (property.constraints){
+                // this.constraints = property.constraints[0].validValues;
+            }
+            
             let value = !scope.parentFormObj[scope.fieldsPrefixName + property.name].$error.pattern
                 && ('integer' == property.type && scope.parentFormObj[scope.fieldsPrefixName + property.name].$setValidity('pattern', scope.validateIntRange(scope.valueObjRef[property.name]))
                 || scope.onValueChange(property.name, (property.simpleType || property.type)));

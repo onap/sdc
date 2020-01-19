@@ -36,8 +36,6 @@ janusGraphReconnectIntervalInSeconds: 3
 # The read timeout towards JanusGraph DB when health check is invoked:
 janusGraphHealthCheckReadTimeout: 1
 
-# The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
-esReconnectIntervalInSeconds: 3
 uebHealthCheckReconnectIntervalInSeconds: 15
 uebHealthCheckReadTimeout: 4
 
@@ -88,28 +86,6 @@ cassandraConfig:
         - { name: sdccomponent, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
         - { name: sdcrepository, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
 
-#Application-specific settings of ES
-elasticSearch:
-    # Mapping of index prefix to time-based frame. For example, if below is configured:
-    #
-    # - indexPrefix: auditingevents
-    #    creationPeriod: minute
-    #
-    # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
-    # Another object created on 2015-12-23 13:25:54, will enter "auditingevents-2015-12-23-13-25" index.
-    # If creationPeriod: month, both of the above will enter "auditingevents-2015-12" index.
-    #
-    # PLEASE NOTE: the timestamps are created in UTC/GMT timezone! This is needed so that timestamps will be correctly presented in Kibana.
-    #
-    # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
-    #
-    # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
-    
-    indicesTimeFrequency:
-      - indexPrefix: auditingevents
-        creationPeriod: month
-      - indexPrefix: monitoring_events
-        creationPeriod: month
 
 artifactTypes:
    - CHEF
@@ -292,7 +268,10 @@ systemMonitoring:
     isProxy: false
     probeIntervalInSeconds: 15
 
-defaultHeatArtifactTimeoutMinutes: 60
+heatArtifactDeploymentTimeout:
+  defaultMinutes: 30
+  minMinutes: 1
+  maxMinutes: 120
 
 serviceDeploymentArtifacts:
     YANG_XML:
@@ -546,10 +525,6 @@ resourceInformationalArtifacts:
 
 resourceInformationalDeployedArtifacts:
 
-requirementsToFulfillBeforeCert:
-
-capabilitiesToConsumeBeforeCert:
-
 unLoggedUrls:
    - /sdc2/rest/healthCheck
 
@@ -688,5 +663,4 @@ dmaapConsumerConfiguration:
         password: hmXYcznAljMSisdy8zgcag==
         
 dmeConfiguration:
-    dme2Search: DME2SEARCH
-    dme2Resolve: DME2RESOLVE
+    lookupUriFormat: "http://DME2RESOLVE/service=%s/version=1.0.0/envContext=%s/routeOffer=DEFAULT"
