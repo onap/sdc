@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6502042a_6b614145",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-01-21T13:17:52Z",
+      "side": 1,
+      "message": "I think you forgot to change the pattern to the format properly work:\n\"//*[@data-tests-id\u003d\u0027%s\u0027]\" \u003c- this will find any element containing the attribute data-tests-id with the provided value %s;\nSometimes the code is using also \"//*[@data-tests-id\u003d\u0027%s\u0027]//*\": this will find any child of the element found.\n\nMaybe you should have something like this:\n\nprivate static final String DATA_TESTS_ID \u003d \"data-tests-id\";\nprivate static final String FIND_ELEMENT_BY_ATTRIBUTE_XPATH \u003d \"//*[@%s\u003d\u0027%s\u0027]\";\nprivate static final String FIND_CHILD_ELEMENT_BY_ATTRIBUTE_XPATH \u003d \"//*[@%s\u003d\u0027%s\u0027]//*\";\n\n[...]\n//this code should be wrapped in a method as it is called many times\nString.format(FIND_ELEMENT_BY_ATTRIBUTE_XPATH, DATA_TESTS_ID, \"desired data test id\")\n//or\nString.format(FIND_CHILD_ELEMENT_BY_ATTRIBUTE_XPATH, DATA_TESTS_ID, \"desired data test id\") \n[...]",
+      "range": {
+        "startLine": 66,
+        "startChar": 48,
+        "endLine": 66,
+        "endChar": 71
+      },
+      "revId": "b5f88777d6a1d1641c490e4f4989464578a2faea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
