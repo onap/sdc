@@ -105,7 +105,7 @@ public class EcompIntImplTest {
         HttpServletRequest httpServletRequestImpl = Mockito.mock(HttpServletRequest.class);
         // default test
         testSubject = createTestSubject();
-        result = testSubject.isAppAuthenticated(httpServletRequestImpl);
+        result = testSubject.isAppAuthenticated(httpServletRequestImpl, null);
     }
 
     @Test
