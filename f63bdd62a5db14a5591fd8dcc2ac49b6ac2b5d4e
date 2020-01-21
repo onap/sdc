@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "cdb040a7_b73b67d1",
+        "filename": "asdctool/src/main/java/com/att/nsa/cambria/client/CambriaConsumer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T11:41:16Z",
+      "side": 1,
+      "message": "That\u0027s the way it was open sourced and is consumed in SDC POM files. Check:\nhttps://github.com/att/dmaap-framework\n\nThis is just a mock for unit tests",
+      "parentUuid": "38263d5a_2a598817",
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e02c2b98_aa240baa",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/configuration/ConfigurationUploader.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2020-01-21T08:08:44Z",
       "side": 1,
       "message": "missing license",
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acea2520_099b5e3d",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/configuration/ConfigurationUploader.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T11:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e02c2b98_aa240baa",
       "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
