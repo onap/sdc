@@ -36,6 +36,40 @@
     },
     {
       "key": {
+        "uuid": "e8027da9_abb1e6e3",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/enums/DistributionStatusEnum.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2020-01-21T08:09:54Z",
+      "side": 1,
+      "message": "use lombok for constructor and getter",
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65250791_d794edc8",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/enums/DistributionStatusEnum.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2020-01-21T08:09:54Z",
+      "side": 1,
+      "message": "use Optional\u003cDistributionStatusEnum\u003e to inform user of this function that it might return null",
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1135a239_4ee32c78",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/enums/LifecycleStateEnum.java",
         "patchSetId": 5
