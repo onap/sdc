@@ -330,6 +330,30 @@
     },
     {
       "key": {
+        "uuid": "231ee87e_510dddee",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "I agree it\u0027s better practice.\n@Yuli please note for future changes",
+      "parentUuid": "80d47f2f_ba0e1c71",
+      "range": {
+        "startLine": 66,
+        "startChar": 4,
+        "endLine": 66,
+        "endChar": 71
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "56fece6f_0c1c3aa6",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -376,6 +400,54 @@
     },
     {
       "key": {
+        "uuid": "2ff0730f_929174c1",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56fece6f_0c1c3aa6",
+      "range": {
+        "startLine": 120,
+        "startChar": 51,
+        "endLine": 120,
+        "endChar": 81
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cea19b67_f3c0f92e",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68fd773d_115a528a",
+      "range": {
+        "startLine": 120,
+        "startChar": 29,
+        "endLine": 120,
+        "endChar": 50
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cf7e0029_75fcf72d",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -387,6 +459,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "should continue to be final",
+      "range": {
+        "startLine": 122,
+        "startChar": 12,
+        "endLine": 122,
+        "endChar": 30
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc5df815_9d729c25",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf7e0029_75fcf72d",
       "range": {
         "startLine": 122,
         "startChar": 12,
@@ -422,6 +518,30 @@
     },
     {
       "key": {
+        "uuid": "4951ceae_5592c8fa",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a87c2a7_5aa5d3ca",
+      "range": {
+        "startLine": 123,
+        "startChar": 85,
+        "endLine": 123,
+        "endChar": 118
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "92f58add_fcf99cf5",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -433,6 +553,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "Should use String.format as before.",
+      "range": {
+        "startLine": 129,
+        "startChar": 49,
+        "endLine": 129,
+        "endChar": 82
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b367d6b4_debf476e",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92f58add_fcf99cf5",
       "range": {
         "startLine": 129,
         "startChar": 49,
@@ -468,6 +612,30 @@
     },
     {
       "key": {
+        "uuid": "e5ac8cc3_62e5c6be",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e7be0e0_a6ee7003",
+      "range": {
+        "startLine": 139,
+        "startChar": 42,
+        "endLine": 139,
+        "endChar": 85
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "17a63767_abfffcd6",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -479,6 +647,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "Should use String.format as before.",
+      "range": {
+        "startLine": 147,
+        "startChar": 40,
+        "endLine": 147,
+        "endChar": 82
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70ec28ba_c97f77ac",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17a63767_abfffcd6",
       "range": {
         "startLine": 147,
         "startChar": 40,
@@ -514,6 +706,30 @@
     },
     {
       "key": {
+        "uuid": "7535f74d_7b95b053",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3c1d3fe8_99cf1822",
+      "range": {
+        "startLine": 185,
+        "startChar": 80,
+        "endLine": 185,
+        "endChar": 142
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "df9a120a_03fc95eb",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -525,6 +741,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "Should use String.format as before.",
+      "range": {
+        "startLine": 207,
+        "startChar": 78,
+        "endLine": 207,
+        "endChar": 120
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a9765c9_dd6c1bba",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df9a120a_03fc95eb",
       "range": {
         "startLine": 207,
         "startChar": 78,
@@ -560,6 +800,30 @@
     },
     {
       "key": {
+        "uuid": "566c265c_6c78d8f9",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "954e4b03_38d1f985",
+      "range": {
+        "startLine": 219,
+        "startChar": 73,
+        "endLine": 219,
+        "endChar": 106
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6664f470_e7d9c676",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -571,6 +835,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "Should use String.format as before.",
+      "range": {
+        "startLine": 225,
+        "startChar": 77,
+        "endLine": 225,
+        "endChar": 119
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d852ad77_095f301a",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6664f470_e7d9c676",
       "range": {
         "startLine": 225,
         "startChar": 77,
@@ -629,6 +917,30 @@
     },
     {
       "key": {
+        "uuid": "aa6659ce_5c760d44",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "001cd4c6_266476d1",
+      "range": {
+        "startLine": 235,
+        "startChar": 16,
+        "endLine": 235,
+        "endChar": 27
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "72a6efa6_09419760",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -668,6 +980,54 @@
         "startChar": 16,
         "endLine": 244,
         "endChar": 27
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50114888_454646eb",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e790290_3e7a245d",
+      "range": {
+        "startLine": 244,
+        "startChar": 16,
+        "endLine": 244,
+        "endChar": 27
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e6ad825_99ec1f5e",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72a6efa6_09419760",
+      "range": {
+        "startLine": 244,
+        "startChar": 8,
+        "endLine": 244,
+        "endChar": 9
       },
       "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -721,6 +1081,30 @@
     },
     {
       "key": {
+        "uuid": "22bf88ac_bfaeecf8",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6967f281_cd5226b4",
+      "range": {
+        "startLine": 252,
+        "startChar": 51,
+        "endLine": 252,
+        "endChar": 84
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "022098e1_04b8699f",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -732,6 +1116,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "remove sysout or use a logger instead",
+      "range": {
+        "startLine": 253,
+        "startChar": 12,
+        "endLine": 253,
+        "endChar": 88
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "368d5799_048e6bcb",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "022098e1_04b8699f",
       "range": {
         "startLine": 253,
         "startChar": 12,
@@ -790,6 +1198,30 @@
     },
     {
       "key": {
+        "uuid": "08578305_a5483b7c",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94c69059_cbe8417f",
+      "range": {
+        "startLine": 254,
+        "startChar": 8,
+        "endLine": 254,
+        "endChar": 9
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "61963ae6_a1b73e18",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -801,6 +1233,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "Should continue to use the String.format",
+      "range": {
+        "startLine": 261,
+        "startChar": 67,
+        "endLine": 261,
+        "endChar": 99
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25877985_67b4735c",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61963ae6_a1b73e18",
       "range": {
         "startLine": 261,
         "startChar": 67,
@@ -836,6 +1292,30 @@
     },
     {
       "key": {
+        "uuid": "0d6495cd_ce2dbf11",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e6f97ee_8e429498",
+      "range": {
+        "startLine": 266,
+        "startChar": 72,
+        "endLine": 266,
+        "endChar": 100
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "60aa6ee6_8b3b8d33",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -847,6 +1327,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "Should continue to use the String.format",
+      "range": {
+        "startLine": 271,
+        "startChar": 82,
+        "endLine": 271,
+        "endChar": 115
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "563f3558_e869ce33",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "60aa6ee6_8b3b8d33",
       "range": {
         "startLine": 271,
         "startChar": 82,
@@ -882,6 +1386,30 @@
     },
     {
       "key": {
+        "uuid": "12a42710_bde55cbc",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05eff41b_1d23b959",
+      "range": {
+        "startLine": 276,
+        "startChar": 72,
+        "endLine": 276,
+        "endChar": 126
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ad90e61d_66398c97",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -893,6 +1421,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "Should continue to use the String.format",
+      "range": {
+        "startLine": 285,
+        "startChar": 61,
+        "endLine": 285,
+        "endChar": 95
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cc6215e_bfdbb59f",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ad90e61d_66398c97",
       "range": {
         "startLine": 285,
         "startChar": 61,
@@ -928,6 +1480,30 @@
     },
     {
       "key": {
+        "uuid": "cca0b372_694db545",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc9a8721_6e2f9fbd",
+      "range": {
+        "startLine": 287,
+        "startChar": 88,
+        "endLine": 287,
+        "endChar": 132
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c4e52619_64bd1464",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -939,6 +1515,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "remove commented code",
+      "range": {
+        "startLine": 288,
+        "startChar": 0,
+        "endLine": 288,
+        "endChar": 29
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cd61ede_fdc78332",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4e52619_64bd1464",
       "range": {
         "startLine": 288,
         "startChar": 0,
@@ -974,6 +1574,30 @@
     },
     {
       "key": {
+        "uuid": "3e3f26fb_fd3beee7",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae95c8ca_bb95f086",
+      "range": {
+        "startLine": 382,
+        "startChar": 34,
+        "endLine": 382,
+        "endChar": 51
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0b9c7c0b_2523f60d",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
         "patchSetId": 5
@@ -985,6 +1609,30 @@
       "writtenOn": "2020-01-21T11:46:59Z",
       "side": 1,
       "message": "Should continue to use the String.format",
+      "range": {
+        "startLine": 413,
+        "startChar": 50,
+        "endLine": 413,
+        "endChar": 93
+      },
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd10770b_82a77539",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/utilities/GeneralUIUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T12:46:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b9c7c0b_2523f60d",
       "range": {
         "startLine": 413,
         "startChar": 50,
