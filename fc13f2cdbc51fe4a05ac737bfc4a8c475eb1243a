@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "70016d9f_0331ffda",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/DeploymentArtifactPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T11:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be8edc13_6b68d3b5",
+      "range": {
+        "startLine": 171,
+        "startChar": 0,
+        "endLine": 171,
+        "endChar": 156
+      },
+      "revId": "fc13f2cdbc51fe4a05ac737bfc4a8c475eb1243a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "50d792c5_683fc2f6",
         "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/GeneralPageElements.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2020-01-21T10:24:14Z",
       "side": 1,
       "message": "Please, remove commented code.",
+      "range": {
+        "startLine": 153,
+        "startChar": 0,
+        "endLine": 153,
+        "endChar": 48
+      },
+      "revId": "fc13f2cdbc51fe4a05ac737bfc4a8c475eb1243a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e26f134_a5e261f8",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/GeneralPageElements.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-01-21T11:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50d792c5_683fc2f6",
       "range": {
         "startLine": 153,
         "startChar": 0,
