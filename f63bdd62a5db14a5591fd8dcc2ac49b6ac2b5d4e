@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1135a239_4ee32c78",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/enums/LifecycleStateEnum.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2020-01-21T08:04:42Z",
+      "side": 1,
+      "message": "would it be better to return Optional\u003cLifecylcleStateEnum\u003e . Function signature should suggest it return null",
+      "revId": "f63bdd62a5db14a5591fd8dcc2ac49b6ac2b5d4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
