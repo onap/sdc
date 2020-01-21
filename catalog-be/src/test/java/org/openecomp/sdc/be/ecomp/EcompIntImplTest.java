@@ -87,17 +87,6 @@ public class EcompIntImplTest {
         result = testSubject.getAvailableRoles("Mock");
 	}
 
-	/*@Test
-	public void testPushUserRole() throws Exception {
-		EcompIntImpl testSubject;
-		String loginId = "";
-		List<EcompRole> roles = null;
-
-		// test 1
-		testSubject = createTestSubject();
-		roles = null;
-		testSubject.pushUserRole(loginId, roles);
-	}*/
 
     @Test(expected= PortalAPIException.class)
 	public void testGetUserRoles() throws Exception {
@@ -117,7 +106,7 @@ public class EcompIntImplTest {
         HttpServletRequest httpServletRequestImpl = Mockito.mock(HttpServletRequest.class);
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.isAppAuthenticated(httpServletRequestImpl);
+        result = testSubject.isAppAuthenticated(httpServletRequestImpl, null);
 	}
 
 	@Test
