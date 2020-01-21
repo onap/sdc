@@ -328,7 +328,7 @@ public class EcompIntImpl implements IPortalRestAPIService {
     }
 
     @Override
-    public boolean isAppAuthenticated(HttpServletRequest request) {
+    public boolean isAppAuthenticated(HttpServletRequest request, Map<String,String> appCredentials) throws PortalAPIException {
         final String portal_key = PortalApiProperties.getProperty("portal_pass");
         final String portal_user = PortalApiProperties.getProperty("portal_user");
         final String USERNAME = request.getHeader("username");
