@@ -581,8 +581,8 @@
                 ${project.basedir}\sdc-cassandra-init\chef-repo\cookbooks\cassandra-actions\attributes\version.rb
               </path>
               <lines>
-                <line>normal['version']
-                  ="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"
+                <line>
+                  normal['version']="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"
                 </line>
               </lines>
             </file>

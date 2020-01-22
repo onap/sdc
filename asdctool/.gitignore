@@ -1,2 +1,3 @@
 /bin/
 /build/
+/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/attributes/version.rb
