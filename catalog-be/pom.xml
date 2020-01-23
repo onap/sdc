@@ -35,13 +35,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>security-utils</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.onap.sdc.common</groupId>
             <artifactId>onap-generic-artifact-browser-service</artifactId>
             <version>${project.version}</version>
@@ -657,7 +650,7 @@
         <dependency>
             <groupId>org.onap.sdc.sdc-be-common</groupId>
             <artifactId>security-util-lib</artifactId>
-            <version>1.6.0</version>
+            <version>${security.util.lib.version}</version>
         </dependency>
     </dependencies>
 
