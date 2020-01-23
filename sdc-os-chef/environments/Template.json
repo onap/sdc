@@ -18,35 +18,35 @@
       "interfaces": {
          "application": "eth0",
          "private": "eth1"
-   },
-   "ECompP": {
-      "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
-      "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm",
-      "cipher_key": "AGLDdG4D04BKm2IxIWEr8o==",
-      "portal_user": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA=",
-      "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI=",
-      "portal_app_name": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA="
-   },
-   "UEB": {
-      "PublicKey": "iPIxkpAMI8qTcQj8",
+      },
+      "ECompP": {
+         "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
+         "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm",
+         "cipher_key": "AGLDdG4D04BKm2IxIWEr8o==",
+         "portal_user": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA=",
+         "portal_pass": "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI=",
+         "portal_app_name": "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA="
+      },
+      "UEB": {
+         "PublicKey": "iPIxkpAMI8qTcQj8",
          "SecretKey": "Ehq3WyT4bkif4zwgEbvshGal",
          "fqdn": ["10.0.11.1", "10.0.11.1"]
-   },
-   "Nodes": {
-      "CS": [
-               "yyy"
-            ],
-      "BE":            "yyy",
-      "ONBOARDING_BE": "yyy",
-      "FE":            "yyy",
-      "ES": [
-                       "yyy"
-            ],
-      "KB":            "yyy"
-   },
-   "VnfRepo": {
-      "vnfRepoPort": "8702",
-      "vnfRepoHost": "10.0.14.1"
+      },
+      "Nodes": {
+         "CS": [
+            "yyy"
+         ],
+         "BE":            "yyy",
+         "ONBOARDING_BE": "yyy",
+         "FE":            "yyy",
+         "ES": [
+            "yyy"
+         ],
+         "KB":            "yyy"
+      },
+      "VnfRepo": {
+         "vnfRepoPort": "8702",
+         "vnfRepoHost": "10.0.14.1"
       }
    },
    "override_attributes": {
@@ -93,7 +93,25 @@
          "socket_connect_timeout": "20000",
          "janusgraph_connection_timeout": "10000",
          "replication_factor": "1"
+      },
+      "DMAAP": {
+         "consumer": {
+            "host": "dcae-mrtr.com:3905",
+            "topic": "operationalEnvironmentEvent",
+            "serviceName": "dcae-mrtr.com:3905/events",
+            "environment": "TEST",
+            "partner": "BOT_R",
+            "username": "user1@sdc.com",
+            "password": "password=="
+         },
+         "producer": {
+            "host": "olsd004.com:3905",
+            "topic": "SDC-FACADE-NOTIF-v1 ",
+            "serviceName": "dmaap.com:3905/events",
+            "environment": "TEST",
+            "username": "user1@sdc.com",
+            "password": "password=="
          }
       }
+   }
 }
-
