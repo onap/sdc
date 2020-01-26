@@ -179,10 +179,6 @@ function monitor_docker {
                 ready_probe ${DOCKER_NAME} ${TIME} ;
                 status=$? ;
             ;;
-            sdc-es)
-                probe_es ${TIME} ;
-                status=$? ;
-            ;;
             sdc-BE)
                 ready_probe ${DOCKER_NAME} ${TIME} ;
                 status=$? ;
@@ -267,38 +263,6 @@ function command_exit_status {
 # Run Containers
 #
 
-#Elastic-Search
-function sdc-es {
-    DOCKER_NAME="sdc-es"
-    echo "docker run sdc-elasticsearch..."
-    if [ ${LOCAL} = false ]; then
-        echo "pulling code"
-        docker pull ${PREFIX}/sdc-elasticsearch:${RELEASE}
-    fi
-    docker run -dit --name ${DOCKER_NAME} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --env ES_JAVA_OPTS="-Xms512m -Xmx512m" --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --env ES_HEAP_SIZE=1024M --volume ${WORKSPACE}/data/ES:/usr/share/elasticsearch/data --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE} /bin/sh
-    command_exit_status $? ${DOCKER_NAME}
-    echo "please wait while ES is starting..."
-    monitor_docker ${DOCKER_NAME}
-}
-#
-
-
-#Init-Elastic-Search
-function sdc-init-es {
-    DOCKER_NAME="sdc-init-es"
-    echo "docker run sdc-init-elasticsearch..."
-    if [ ${LOCAL} = false ]; then
-        echo "pulling code"
-        docker pull ${PREFIX}/sdc-init-elasticsearch:${RELEASE}
-    fi
-    echo "Running sdc-init-es"
-    docker run --name ${DOCKER_NAME} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-init-elasticsearch:${RELEASE} > /dev/null 2>&1
-    rc=$?
-    docker_logs ${DOCKER_NAME}
-    if [[ ${rc} != 0 ]]; then exit ${rc}; fi
-}
-#
-
 
 #Cassandra
 function sdc-cs {
@@ -341,19 +305,6 @@ function sdc-cs-onboard-init {
     rc=$?
     docker_logs ${DOCKER_NAME}
     if [[ ${rc} != 0 ]]; then exit ${rc}; fi
-}
-#
-
-
-#Kibana
-function sdc-kbn {
-    DOCKER_NAME="sdc-kbn"
-    echo "docker run sdc-kibana..."
-    if [ ${LOCAL} = false ]; then
-        docker pull ${PREFIX}/sdc-kibana:${RELEASE}
-        docker run --detach --name ${DOCKER_NAME} --env ENVNAME="${DEP_ENV}" --env NODE_OPTIONS="--max-old-space-size=200" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
-        command_exit_status $? ${DOCKER_NAME}
-    fi
 }
 #
 
@@ -609,11 +560,8 @@ echo ""
 if [ -z "${DOCKER}" ]; then
     cleanup all
     dir_perms
-    sdc-es
-    sdc-init-es
     sdc-cs
     sdc-cs-init
-#    sdc-kbn
     sdc-cs-onboard-init
     sdc-onboard-BE
     sdc-BE

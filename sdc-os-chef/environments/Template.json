@@ -10,8 +10,6 @@
       "BE_VIP": "yyy",
       "ONBOARDING_BE_VIP": "yyy",
       "FE_VIP": "yyy",
-      "ES_VIP": "yyy",
-      "KB_VIP": "yyy",
       "DCAE_BE_VIP": "yyy",
       "DCAE_FE_VIP": "yyy",
       "DCAE_TOSCA_LAB_VIP": "yyy",
@@ -38,11 +36,7 @@
          ],
          "BE":            "yyy",
          "ONBOARDING_BE": "yyy",
-         "FE":            "yyy",
-         "ES": [
-            "yyy"
-         ],
-         "KB":            "yyy"
+         "FE":            "yyy"
       },
       "VnfRepo": {
          "vnfRepoPort": "8702",
@@ -65,13 +59,6 @@
          "https_port": "8445",
          "domain_name": "sdc",
          "catalog_notification_url": "%s://%s:%s/sdc2/rest/v1/catalog/notif/vsp/"
-      },
-      "elasticsearch": {
-         "cluster_name": "SDC-ES-",
-         "ES_path_home": "/usr/share/elasticsearch",
-         "ES_path_data": "/usr/share/elasticsearch/data",
-         "num_of_replicas": "0",
-         "num_of_shards": "1"
       },
       "cassandra": {
          "cassandra_port": 9042,
