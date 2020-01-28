@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CompositionBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -64,7 +65,7 @@ public class CheckoutTest extends LifecycleTestBase {
     private final PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
     protected ComponentContactIdValidator componentContactIdValidator = new ComponentContactIdValidator(componentsUtils);
     protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
-
+    private final PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
     @InjectMocks
     ResourceBusinessLogic bl = new ResourceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
         groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
@@ -72,7 +73,7 @@ public class CheckoutTest extends LifecycleTestBase {
         resourceDataMergeBusinessLogic, csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils,
         uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation, propertyBusinessLogic,
         componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
-            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator );
+            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator ,policyBusinessLogic);
 
     @Before
     public void setup() {

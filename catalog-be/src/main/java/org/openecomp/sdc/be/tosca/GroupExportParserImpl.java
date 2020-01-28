@@ -43,7 +43,6 @@ import org.openecomp.sdc.be.tosca.model.VfModuleToscaMetadata;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,6 +51,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import org.springframework.context.event.EventListener;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -62,7 +62,7 @@ import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.openecomp.sdc.be.model.utils.ComponentUtilities.getComponentInstanceNameByInstanceId;
 
-@Service
+@org.springframework.stereotype.Component
 public class GroupExportParserImpl implements GroupExportParser {
 
     private static final Logger log = Logger.getLogger(GroupExportParserImpl.class);
@@ -85,6 +85,13 @@ public class GroupExportParserImpl implements GroupExportParser {
 		}
 		
 		return dataTypesEither.left().value();
+	}
+
+	@EventListener
+	public void onDataTypesCacheChangedEvent(
+			ApplicationDataTypeCache.DataTypesCacheChangedEvent dataTypesCacheChangedEvent) {
+		dataTypes = dataTypesCacheChangedEvent.getNewData();
+		log.debug("Data types cache updated.");
 	}
     
 	@Override
