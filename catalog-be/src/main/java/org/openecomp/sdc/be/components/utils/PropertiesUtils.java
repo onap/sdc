@@ -16,6 +16,7 @@
 
 package org.openecomp.sdc.be.components.utils;
 
+import com.google.common.base.CharMatcher;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -187,5 +188,13 @@ public class PropertiesUtils {
         Resource resource = (Resource) component;
         ResourceTypeEnum resType = resource.getResourceType();
         return resType.equals(ResourceTypeEnum.ServiceProxy);
+    }
+
+    /**
+     * Trim " and ' quotes
+     * @return String
+     */
+    public static String trimQuotes(String incomingString) {
+        return CharMatcher.is('\"').or(CharMatcher.is('\'')).trimFrom(incomingString);
     }
 }
