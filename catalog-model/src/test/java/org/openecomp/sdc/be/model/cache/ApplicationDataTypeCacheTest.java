@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.springframework.context.ApplicationEventPublisher;
 
 public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 
@@ -47,6 +48,9 @@ public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
 	
 	@Mock
 	PropertyOperation propertyOperation;
+
+	@Mock
+	ApplicationEventPublisher applicationEventPublisher;
 
 	@Before
 	public void setUpMocks() throws Exception {

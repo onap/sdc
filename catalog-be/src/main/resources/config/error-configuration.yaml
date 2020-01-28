@@ -1915,6 +1915,13 @@ errors:
         message: "Error: Invalid policy name %1 received.",
         messageId: "SVC4684"
     }
+    #---------SVC4801------------------------------
+    # %1 - policy type
+    POLICY_TYPE_IS_INVALID: {
+        code: 400,
+        message: "Error: Invalid content. Policy type %1 does not exist",
+        messageId: "SVC4801"
+    }
     #---------SVC4685------------------------------
     # %1 - policy name
     POLICY_NAME_ALREADY_EXIST: {
