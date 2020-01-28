@@ -96,6 +96,7 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -271,6 +272,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	@Autowired
 	private SoftwareInformationBusinessLogic softwareInformationBusinessLogic;
 
+	@Autowired
+	private PolicyBusinessLogic policyBusinessLogic;
 
 	public LifecycleBusinessLogic getLifecycleBusinessLogic() {
 		return lifecycleBusinessLogic;
@@ -1653,6 +1656,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			loggerSupportability.log(LoggerSupportabilityActions.CREATE_ARTIFACTS,resource.getComponentMetadataForSupportLog(),
 					StatusCode.STARTED,"Started to add artifacts from yaml: {}",yamlName);
 
+			log.trace("************* Starting to add policies from yaml {}", yamlName);
+			Map<String, PolicyDefinition> policies = parsedToscaYamlInfo.getPolicies();
+			if (policies != null && !policies.isEmpty()) {
+				Either<Resource, ResponseFormat> createPoliciesOnResource = createPoliciesOnResource(resource, policies);
+				if (createPoliciesOnResource.isRight()) {
+					rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+					throw new ByResponseFormatComponentException(createPoliciesOnResource.right().value());
+				}
+				resource = createPoliciesOnResource.left().value();
+			}
+			log.trace("************* Finished to add policies from yaml {}", yamlName);
+
 			NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName,
 					nodeTypesArtifactsToCreate);
 
@@ -1751,6 +1766,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					.forEach(p -> handleGetInputs(p, inputs));
 		}
 	}
+
+    private Either<Resource, ResponseFormat> createPoliciesOnResource(Resource resource, Map<String, PolicyDefinition> policies) {
+        if (policies != null && !policies.isEmpty()) {
+			Either<Map<String, PolicyDefinition>, ResponseFormat> policiesOnResource =
+					policyBusinessLogic.createPoliciesFromParsedCsar(resource, policies);
+			if (policiesOnResource.isRight()) {
+				return Either.right(policiesOnResource.right().value());
+			}
+		}
+		return Either.left(resource);
+    }
 
 	private void handleGetInputs(PropertyDataDefinition property, List<InputDefinition> inputs) {
 		if (isNotEmpty(property.getGetInputValues())) {

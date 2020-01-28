@@ -29,6 +29,8 @@ public class ParsedToscaYamlInfo {
 
     Map<String, GroupDefinition> groups;
 
+    Map<String, PolicyDefinition> policies;
+
     public Map<String, UploadComponentInstanceInfo> getInstances() {
         return instances;
     }
@@ -53,9 +55,17 @@ public class ParsedToscaYamlInfo {
         this.inputs = inputs;
     }
 
-    @Override
-    public String toString() {
-        return "ParsedToscaYamlInfo [inputs=" + inputs + ", instances=" + instances + ", groups=" + groups + "]";
+    public Map<String, PolicyDefinition> getPolicies() {
+        return policies;
     }
 
+    public void setPolicies(Map<String, PolicyDefinition> policies) {
+        this.policies = policies;
+    }
+
+    @Override
+    public String toString() {
+        return "ParsedToscaYamlInfo{" + "inputs=" + inputs + ", instances=" + instances + ", groups=" + groups
+                       + ", policies=" + policies + '}';
+    }
 }

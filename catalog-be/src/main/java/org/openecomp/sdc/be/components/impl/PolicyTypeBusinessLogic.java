@@ -22,8 +22,10 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
@@ -63,6 +65,12 @@ public class PolicyTypeBusinessLogic {
         return getPolicyTypes(excludedPolicyTypes);
     }
 
+    public PolicyTypeDefinition getLatestPolicyTypeByType(String policyTypeName) {
+        return policyTypeOperation.getLatestPolicyTypeByType(policyTypeName)
+                       .left()
+                       .on(e -> failOnPolicyType(e, policyTypeName));
+    }
+
     public Set<String> getExcludedPolicyTypes(String internalComponentType) {
         if (StringUtils.isEmpty(internalComponentType)) {
             return emptySet();
@@ -79,5 +87,14 @@ public class PolicyTypeBusinessLogic {
     private Either<List<PolicyTypeDefinition>, ResponseFormat> convertToResponseFormatOrNotFoundErrorToEmptyList(StorageOperationStatus err) {
         log.debug("error when trying to fetch policy types: {}", err);
         return componentsUtils.convertToResponseFormatOrNotFoundErrorToEmptyList(err);
+    }
+
+    private PolicyTypeDefinition failOnPolicyType(StorageOperationStatus status, String policyType) {
+        janusGraphDao.rollback();
+        if (status == StorageOperationStatus.INVALID_ID) {
+            throw new ByActionStatusComponentException(ActionStatus.POLICY_TYPE_IS_INVALID, policyType);
+        } else {
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+        }
     }
 }

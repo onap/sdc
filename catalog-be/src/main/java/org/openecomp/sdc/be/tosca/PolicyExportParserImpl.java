@@ -37,7 +37,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaMetadata;
 import org.openecomp.sdc.be.tosca.model.ToscaPolicyTemplate;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +50,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
-@Service
+@org.springframework.stereotype.Component
 public class PolicyExportParserImpl implements PolicyExportParser {
 
 	private static final Logger log = Logger.getLogger(PolicyExportParserImpl.class);

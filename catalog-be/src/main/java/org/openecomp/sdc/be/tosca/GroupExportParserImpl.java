@@ -43,7 +43,6 @@ import org.openecomp.sdc.be.tosca.model.VfModuleToscaMetadata;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -62,7 +61,7 @@ import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.openecomp.sdc.be.model.utils.ComponentUtilities.getComponentInstanceNameByInstanceId;
 
-@Service
+@org.springframework.stereotype.Component
 public class GroupExportParserImpl implements GroupExportParser {
 
     private static final Logger log = Logger.getLogger(GroupExportParserImpl.class);
