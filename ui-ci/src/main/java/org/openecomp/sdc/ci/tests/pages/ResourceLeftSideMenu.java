@@ -69,7 +69,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      */
     public enum XpathSelector {
         MAIN_DIV("w-sdc-left-sidebar", "//div[@class='%s']"),
-        PROPERTIES_ASSIGNMENT_MENU("Properties AssignmentLeftSideMenu", "//div[@data-tests-id='%s']/button");
+        PROPERTIES_ASSIGNMENT_MENU("Properties AssignmentLeftSideMenu", "//*[@data-tests-id='%s']");
 
         private final String id;
         private final String xpathFormat;

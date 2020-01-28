@@ -166,8 +166,8 @@ public class OnboardingUiUtils {
         DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.getVspId());
         File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 
-        ExtentTestActions.log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));
-        HomePage.showVspRepository();
+//        ExtentTestActions.log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));
+//        HomePage.showVspRepository();
         ExtentTestActions.log(Status.INFO, String.format("Going to import %s", vnfFile.substring(0, vnfFile.indexOf("."))));
         importVSP(createVendorSoftwareProduct);
 
@@ -205,9 +205,6 @@ public class OnboardingUiUtils {
                 artifactName = deploymentArtifact.getFileName().trim();
             }
 
-            if (heatEnvFilesFromCSAR.contains(artifactName + ".env")) {
-                artifactVersion = "2";
-            }
             ArtifactUIUtils.validateArtifactNameVersionType(artifactName, artifactVersion, deploymentArtifact.getType());
         }
     }
