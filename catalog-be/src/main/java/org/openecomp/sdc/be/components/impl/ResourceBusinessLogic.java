@@ -124,6 +124,7 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -217,6 +218,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private final UiComponentDataConverter uiComponentDataConverter;
     private final CsarBusinessLogic csarBusinessLogic;
     private final PropertyBusinessLogic propertyBusinessLogic;
+	private final PolicyBusinessLogic policyBusinessLogic;
 
 	@Autowired
     public ResourceBusinessLogic(IElementOperation elementDao,
@@ -238,7 +240,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	 	ComponentValidator componentValidator,
 	 	ComponentIconValidator componentIconValidator,
 	 	ComponentProjectCodeValidator componentProjectCodeValidator,
-	 	ComponentDescriptionValidator componentDescriptionValidator) {
+	 	ComponentDescriptionValidator componentDescriptionValidator, PolicyBusinessLogic policyBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation,
 				componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
@@ -253,6 +255,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.csarBusinessLogic = csarBusinessLogic;
         this.propertyBusinessLogic = propertyBusinessLogic;
+		this.policyBusinessLogic = policyBusinessLogic;
     }
 
 	@Autowired
@@ -269,7 +272,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	@Autowired
 	private SoftwareInformationBusinessLogic softwareInformationBusinessLogic;
-
 
 	public LifecycleBusinessLogic getLifecycleBusinessLogic() {
 		return lifecycleBusinessLogic;
@@ -1690,8 +1692,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				resource.getComponentMetadataForSupportLog(),
 				StatusCode.STARTED,"Started to add artifacts from yaml: {}",yamlName);
 
+			log.trace("************* Starting to add policies from yaml {}", yamlName);
+			Map<String, PolicyDefinition> policies = parsedToscaYamlInfo.getPolicies();
+			if (MapUtils.isNotEmpty(policies)) {
+				resource = createPoliciesOnResource(resource, policies);
+			}
+			log.trace("************* Finished to add policies from yaml {}", yamlName);
+
 			final NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts =
-				new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToCreate);
+					new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToCreate);
 
 			final Either<Resource, ResponseFormat> createArtifactsEither = createOrUpdateArtifacts(
 				ArtifactOperationEnum.CREATE, createdArtifacts, yamlName, csarInfo, resource,
@@ -1788,6 +1797,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					.forEach(p -> handleGetInputs(p, inputs));
 		}
 	}
+
+    private Resource createPoliciesOnResource(Resource resource, Map<String, PolicyDefinition> policies) {
+		policyBusinessLogic.createPoliciesFromParsedCsar(resource, policies);
+		return resource;
+    }
 
 	private void handleGetInputs(PropertyDataDefinition property, List<InputDefinition> inputs) {
 		if (isNotEmpty(property.getGetInputValues())) {

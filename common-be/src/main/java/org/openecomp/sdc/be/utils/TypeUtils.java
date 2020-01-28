@@ -46,7 +46,7 @@ public class TypeUtils {
         // Group Types
         MEMBERS("members"), METADATA("metadata"),
         // Policy Types
-        TARGETS("targets"),
+        POLICIES("policies"), TARGETS("targets"),
         // Capabilities
         CAPABILITIES("capabilities"), VALID_SOURCE_TYPES("valid_source_types"),
         // Requirements
