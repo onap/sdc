@@ -2239,3 +2239,18 @@ errors:
         message: 'Error: Invalid Content. %1 has invalid format.',
         messageId: "SVC4723"
     }
+    #---------SVC4801------------------------------
+    # %1 - policy type
+    POLICY_TYPE_IS_INVALID: {
+        code: 400,
+        message: "Error: Invalid content. Policy type %1 does not exist",
+        messageId: "SVC4801"
+    }
+
+    #---------SVC4802------------------------------
+    # %1 - policy name
+    POLICY_MISSING_POLICY_TYPE: {
+        code: 400,
+        message: "Error: Invalid content. Type name is not defined for policy %1",
+        messageId: "SVC4802"
+    }

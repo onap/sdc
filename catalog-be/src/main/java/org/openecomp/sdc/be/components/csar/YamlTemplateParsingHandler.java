@@ -25,6 +25,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import fj.data.Either;
+import java.util.Collections;
+import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,12 +34,15 @@ import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.NodeFilterUploadCreator;
+import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -46,6 +51,8 @@ import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
@@ -85,9 +92,11 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.POLICIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.PROPERTIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIREMENTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TARGETS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES;
@@ -108,12 +117,14 @@ public class YamlTemplateParsingHandler {
     private JanusGraphDao janusGraphDao;
     private GroupTypeBusinessLogic groupTypeBusinessLogic;
     private AnnotationBusinessLogic annotationBusinessLogic;
+    private PolicyTypeBusinessLogic policyTypeBusinessLogic;
 
-    public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao,
-                                      GroupTypeBusinessLogic groupTypeBusinessLogic, AnnotationBusinessLogic annotationBusinessLogic) {
+    public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao, GroupTypeBusinessLogic groupTypeBusinessLogic,
+            AnnotationBusinessLogic annotationBusinessLogic, PolicyTypeBusinessLogic policyTypeBusinessLogic) {
         this.janusGraphDao = janusGraphDao;
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
         this.annotationBusinessLogic = annotationBusinessLogic;
+        this.policyTypeBusinessLogic = policyTypeBusinessLogic;
     }
 
     public ParsedToscaYamlInfo parseResourceInfoFromYAML(String fileName, String resourceYml, Map<String, String> createdNodesToscaResourceNames,
@@ -128,6 +139,7 @@ public class YamlTemplateParsingHandler {
         parsedToscaYamlInfo.setInputs(getInputs(mappedToscaTemplate));
         parsedToscaYamlInfo.setInstances(getInstances(fileName, mappedToscaTemplate, createdNodesToscaResourceNames));
         parsedToscaYamlInfo.setGroups(getGroups(fileName, mappedToscaTemplate));
+        parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate));
         log.debug("#parseResourceInfoFromYAML - The yaml {} has been parsed ", fileName);
         return parsedToscaYamlInfo;
     }
@@ -163,6 +175,107 @@ public class YamlTemplateParsingHandler {
                 .on(err -> new HashMap<>());
         annotationBusinessLogic.validateAndMergeAnnotationsAndAssignToInput(inputs);
         return inputs;
+    }
+
+    private Map<String, PolicyDefinition> getPolicies(String fileName, Map<String, Object> toscaJson) {
+
+        Map<String, Object> foundPolicies = findFirstToscaMapElement(toscaJson, POLICIES)
+                                                  .left()
+                                                  .on(err -> logPoliciesNotFound(fileName));
+
+        if (MapUtils.isNotEmpty(foundPolicies)) {
+            return foundPolicies
+                           .entrySet()
+                           .stream()
+                           .map(this::createPolicy)
+                           .collect(Collectors.toMap(PolicyDefinition::getName, p -> p));
+        }
+        return Collections.emptyMap();
+    }
+
+    private PolicyDefinition createPolicy(Map.Entry<String, Object> policyNameValue) {
+        PolicyDefinition emptyPolicyDef = new PolicyDefinition();
+        String policyName = policyNameValue.getKey();
+        emptyPolicyDef.setName(policyName);
+        try {
+            if (policyNameValue.getValue() != null && policyNameValue.getValue() instanceof Map) {
+                Map<String, Object> policyTemplateJsonMap = (Map<String, Object>) policyNameValue.getValue();
+                validateAndFillPolicy(emptyPolicyDef, policyTemplateJsonMap);
+            } else {
+                rollbackWithException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
+            }
+        } catch (ClassCastException e) {
+            log.debug("#createPolicy - Failed to create the policy {}. The exception occurred", policyName, e);
+            rollbackWithException(ActionStatus.INVALID_YAML);
+        }
+        return emptyPolicyDef;
+    }
+
+    private Map<String, Object> logPoliciesNotFound(String fileName) {
+        log.debug("#logPoliciesNotFound - Policies were not found in the yaml template {}.", fileName);
+        return Collections.emptyMap();
+    }
+
+    private void validateAndFillPolicy(PolicyDefinition emptyPolicyDefinition, Map<String, Object> policyTemplateJsonMap) {
+        String policyTypeName = (String) policyTemplateJsonMap.get(TYPE.getElementName());
+        if(StringUtils.isEmpty(policyTypeName)){
+            log.debug("#validateAndFillPolicy - The 'type' member is not found under policy {}", emptyPolicyDefinition.getName());
+            rollbackWithException(ActionStatus.POLICY_MISSING_POLICY_TYPE, emptyPolicyDefinition.getName());
+        }
+        emptyPolicyDefinition.setType(policyTypeName);
+        // set policy targets
+        emptyPolicyDefinition.setTargets(validateFillPolicyTargets(policyTemplateJsonMap));
+        PolicyTypeDefinition policyTypeDefinition = validateGetPolicyTypeDefinition(policyTypeName);
+        // set policy properties
+        emptyPolicyDefinition.setProperties(validateFillPolicyProperties(policyTypeDefinition, policyTemplateJsonMap));
+    }
+
+    private PolicyTypeDefinition validateGetPolicyTypeDefinition(String policyType) {
+        PolicyTypeDefinition policyTypeDefinition = policyTypeBusinessLogic.getLatestPolicyTypeByType(policyType);
+        if (policyTypeDefinition == null) {
+            log.debug("#validateAndFillPolicy - The policy type {} not found", policyType);
+            rollbackWithException(ActionStatus.POLICY_TYPE_IS_INVALID, policyType);
+        }
+        return policyTypeDefinition;
+    }
+
+    private List<PropertyDataDefinition> validateFillPolicyProperties(PolicyTypeDefinition policyTypeDefinition,
+            Map<String, Object> policyTemplateJsonMap) {
+        List<PropertyDataDefinition> propertyDataDefinitionList = new ArrayList<>();
+        Map<String, Object> propertiesMap =
+                (Map<String, Object>) policyTemplateJsonMap.get(PROPERTIES.getElementName());
+        if (MapUtils.isEmpty(propertiesMap)) {
+            return Collections.emptyList();
+        }
+        if (CollectionUtils.isNotEmpty(policyTypeDefinition.getProperties())) {
+            propertyDataDefinitionList = policyTypeDefinition
+                                                 .getProperties()
+                                                 .stream()
+                                                 .map(propertyDefinition -> setPropertyValue(propertiesMap,
+                                                         propertyDefinition))
+                                                 .collect(Collectors.toList());
+        }
+        return propertyDataDefinitionList;
+    }
+
+    private PropertyDataDefinition setPropertyValue(Map<String, Object> propertiesMap, PropertyDataDefinition srcPropertyDataDefinition) {
+        PropertyDataDefinition newPropertyDef = new PropertyDataDefinition(srcPropertyDataDefinition);
+        String propertyName = newPropertyDef.getName();
+        if (Objects.nonNull(propertiesMap.get(propertyName))) {
+            Object propValue = propertiesMap.get(propertyName);
+            newPropertyDef.setValue(PropertiesUtils.trimQuotes(gson.toJson(propValue)));
+        }
+        return newPropertyDef;
+    }
+
+    private Map<PolicyTargetType, List<String>> validateFillPolicyTargets(Map<String, Object> policyTemplateJson) {
+        Map<PolicyTargetType, List<String>> targets = new HashMap<>();
+        if (policyTemplateJson.containsKey(TARGETS.getElementName())
+                    && policyTemplateJson.get(TARGETS.getElementName()) instanceof List ) {
+            List<String> targetsElement = (List<String>) policyTemplateJson.get(TARGETS.getElementName());
+            targets.put(PolicyTargetType.COMPONENT_INSTANCES, targetsElement);
+        }
+        return targets;
     }
 
     private Map<String, UploadComponentInstanceInfo> getInstances(String yamlName, Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames) {
