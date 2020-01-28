@@ -18,6 +18,8 @@ package org.openecomp.sdc.be.components.impl;
 
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -76,11 +78,14 @@ import java.util.Map;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -176,6 +181,47 @@ public class PolicyBusinessLogicTest {
         stubUnlockAndCommit();
         PolicyDefinition response = businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
         assertTrue(!response.isEmpty());
+    }
+
+    @Test
+    public void createPolicyFromCsarDefinitionTest() {
+        String prop1 = "Prop_1";
+        String prop2 = "Prop_2";
+        Map<String, PolicyDefinition> policies = new HashMap<>();
+        PolicyDefinition policy = buildPolicy(POLICY_NAME);
+        Map<PolicyTargetType, List<String>> targets = getTargets();
+        PropertyDataDefinition[] properties = getProperties(prop1, prop2);
+        policy.setTargets(targets);
+        policy.setProperties(Arrays.asList(properties));
+        policies.put(POLICY_NAME, policy);
+
+        List<ComponentInstance> instanceList = new ArrayList<>();
+        ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setUniqueId(UNIQUE_ID_EXSISTS);
+        componentInstance.setName(UNIQUE_ID_EXSISTS);
+        instanceList.add(componentInstance);
+
+        Resource newResource = buildResource();
+        newResource.setPolicies(policies);
+        newResource.setComponentInstances(instanceList);
+        
+        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME))).thenReturn(getPolicyTypeSuccessEither);
+        when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(Either.left(policy));
+        when(toscaOperationFacade.getToscaFullElement(eq(COMPONENT_ID))).thenReturn(Either.left(newResource));
+        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(Either.left(policy));
+        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop1), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop1));
+        when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop2), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop2));
+
+        Map<String, PolicyDefinition> createdPolicy = businessLogic.createPoliciesFromParsedCsar(newResource, policies);
+
+        assertFalse(createdPolicy.isEmpty());
+        PolicyDefinition newPolicy = createdPolicy.get(POLICY_NAME);
+        assertNotNull(newPolicy);
+        assertNotNull(newPolicy.getTargets());
+        assertNotNull(newPolicy.getProperties());
+        assertEquals(2, newPolicy.getProperties().size());
+        assertEquals(1, newPolicy.getTargets().size());
     }
     
     @Test

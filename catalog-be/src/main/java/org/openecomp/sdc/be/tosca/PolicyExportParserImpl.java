@@ -37,7 +37,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaMetadata;
 import org.openecomp.sdc.be.tosca.model.ToscaPolicyTemplate;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,13 +44,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.springframework.context.event.EventListener;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
-@Service
+@org.springframework.stereotype.Component
 public class PolicyExportParserImpl implements PolicyExportParser {
 
 	private static final Logger log = Logger.getLogger(PolicyExportParserImpl.class);
@@ -75,6 +75,13 @@ public class PolicyExportParserImpl implements PolicyExportParser {
 		}
 		
 		return dataTypesEither.left().value();
+	}
+
+	@EventListener
+	public void onDataTypesCacheChangedEvent(
+			ApplicationDataTypeCache.DataTypesCacheChangedEvent dataTypesCacheChangedEvent) {
+		dataTypes = dataTypesCacheChangedEvent.getNewData();
+		log.debug("Data types cache updated.");
 	}
 	
 	@Override

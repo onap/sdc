@@ -21,8 +21,12 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
@@ -32,9 +36,11 @@ import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.PolicyDefinition;
@@ -49,6 +55,9 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +85,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     private static final String FAILED_TO_VALIDATE_COMPONENT = "#{} - failed to validate the component {} before policy processing. ";
     private static final String DECLARE_PROPERTIES_TO_POLICIES = "declare properties to policies";
     private static final Logger log = Logger.getLogger(PolicyBusinessLogic.class);
+    private static final LoggerSupportability loggerSupportability= LoggerSupportability.getLogger(PolicyBusinessLogic.class.getName());
 
     private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
 
@@ -121,6 +131,85 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         }finally {
             unlockComponent(shouldLock, failed, component);
         }
+    }
+
+    public Map<String, PolicyDefinition> createPoliciesFromParsedCsar(Component component,
+            final Map<String, PolicyDefinition> incomingPolicyDefinitions) {
+        if (MapUtils.isEmpty(incomingPolicyDefinitions)) {
+            return Collections.emptyMap();
+        }
+        Map<String, PolicyDefinition> createdPolicies = new HashMap<>();
+        for (Map.Entry<String, PolicyDefinition> policyEntry : incomingPolicyDefinitions.entrySet()) {
+            PolicyDefinition incomingPolicyDefinition = policyEntry.getValue();
+            String policyName = incomingPolicyDefinition.getName();
+            log.trace("Going to create policy {}", incomingPolicyDefinition);
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_GROUP_POLICY,component.getComponentMetadataForSupportLog(),
+                    StatusCode.STARTED,"Start to create policy: {} for component {}", policyName, component.getName());
+            String policyType = incomingPolicyDefinition.getType();
+            if (StringUtils.isEmpty(policyType)) {
+                log.debug("Policy type '{}' for policy '{}' not found.", policyType, policyName);
+                throw new ByActionStatusComponentException(ActionStatus.POLICY_MISSING_POLICY_TYPE, policyName);
+            }
+            // create policyDefinition
+            String policyTypeName = incomingPolicyDefinition.getPolicyTypeName();
+            PolicyDefinition createdPolicyDefinition = createPolicy(policyTypeName, component);
+            // set isFromCsar
+            createdPolicyDefinition.setToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR, true);
+            // link policy to component
+            component.addPolicy(createdPolicyDefinition);
+            // process targets
+            Map<PolicyTargetType, List<String>> policyTargets = incomingPolicyDefinition.getTargets();
+            createdPolicyDefinition = setUpdatePolicyTargets(component, createdPolicyDefinition, policyTargets);
+            // process policy properties
+            List<PropertyDataDefinition> properties = incomingPolicyDefinition.getProperties();
+            createdPolicyDefinition = setUpdatePolicyProperties(component, createdPolicyDefinition, properties);
+            createdPolicies.put(policyName, createdPolicyDefinition);
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_POLICIES,component.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,"policy {} has been created ", policyName);
+        }
+        return createdPolicies;
+    }
+
+    private PolicyDefinition setUpdatePolicyProperties(Component component, PolicyDefinition policyDefinition, List<PropertyDataDefinition> properties) {
+        if (CollectionUtils.isNotEmpty(properties)) {
+            PropertyDataDefinition[] propertiesArray = properties.toArray(new PropertyDataDefinition[properties.size()]);
+            List<PropertyDataDefinition> updatedPropertiesList = setComponentValidateUpdatePolicyProperties(
+                    policyDefinition.getUniqueId(),
+                    propertiesArray,
+                    component
+            );
+            policyDefinition.setProperties(updatedPropertiesList);
+        }
+        return policyDefinition;
+    }
+
+    private PolicyDefinition setUpdatePolicyTargets(Component component, PolicyDefinition policyDefinition,
+            Map<PolicyTargetType, List<String>> targets) {
+        if (MapUtils.isEmpty(targets)) {
+            return policyDefinition;
+        }
+        List<String> targetsToUpdate = targets.get(PolicyTargetType.COMPONENT_INSTANCES);
+        if (CollectionUtils.isEmpty(targetsToUpdate)) {
+            return policyDefinition;
+        }
+        // update targets to uniqueIds of respective component instance
+        List<String> targetsUniqueIds = new ArrayList<>();
+        for (String targetName : targetsToUpdate) {
+            Optional<ComponentInstance> componentInstance = component.getComponentInstanceByName(targetName);
+            String componentUniqueId = componentInstance
+                                               .orElseThrow(
+                                                       () -> new ByActionStatusComponentException(
+                                                               ActionStatus.COMPONENT_INSTANCE_NOT_FOUND
+                                                       )
+                                               )
+                                               .getUniqueId();
+            targetsUniqueIds.add(componentUniqueId);
+        }
+        EnumMap<PolicyTargetType, List<String>> updatedTargets = new EnumMap<>(PolicyTargetType.class);
+        updatedTargets.put(PolicyTargetType.COMPONENT_INSTANCES, targetsUniqueIds);
+        policyDefinition.setTargets(updatedTargets);
+        policyDefinition = validateAndUpdatePolicyTargets(component, policyDefinition.getUniqueId(),
+                policyDefinition.getTargets());
+        return policyDefinition;
     }
 
     /*public Either<PolicyDefinition, ResponseFormat> createPolicy(ComponentTypeEnum componentType, String componentId, String policyTypeName, String userId, boolean shouldLock) {
