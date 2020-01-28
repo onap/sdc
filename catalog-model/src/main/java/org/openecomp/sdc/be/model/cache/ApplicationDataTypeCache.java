@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.cache;
 
 import fj.data.Either;
+import lombok.Getter;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -34,6 +35,9 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -73,6 +77,9 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 
     @Resource
     private PropertyOperation propertyOperation;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @PostConstruct
     public void init() {
@@ -313,6 +320,8 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
                 w.lock();
 
                 data = allDataTypes.left().value();
+                // send notification on data types change
+                onDataChangeEventEmit(data);
 
                 BeEcompErrorManager.getInstance().logInternalFlowError("ReplaceDataTypesCache",
                         "Succeed to replace the data types cache", ErrorSeverity.INFO);
@@ -325,4 +334,22 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 
     }
 
+    private void onDataChangeEventEmit(Map<String, DataTypeDefinition> newData) {
+        log.trace("Cache data has changed, sending event to all listening for this change.");
+        DataTypesCacheChangedEvent dataTypesCacheChangedEvent = new DataTypesCacheChangedEvent(this, newData);
+        applicationEventPublisher.publishEvent(dataTypesCacheChangedEvent);
+    }
+
+    /**
+     * Custom event to notify all interested in cached data changes
+     */
+    public static class DataTypesCacheChangedEvent extends ApplicationEvent {
+        @Getter
+        private Map<String, DataTypeDefinition> newData;
+
+        public DataTypesCacheChangedEvent(Object source, Map<String, DataTypeDefinition> newData) {
+            super(source);
+            this.newData = newData;
+        }
+    }
 }
