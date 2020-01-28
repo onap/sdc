@@ -22,6 +22,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import com.google.common.collect.ImmutableMap;
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -122,4 +123,12 @@ public class PolicyTypeBusinessLogicTest {
         }
     }
 
+    @Test
+    public void getLatestPolicyTypeByTypeTest() {
+        PolicyTypeDefinition policyTypeDefinition = new PolicyTypeBuilder().setType("org.openecomp.policies.placement.Antilocate").build();
+        when(policyTypeOperation.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate")).thenReturn(
+                Either.left(policyTypeDefinition));
+        assertThat(policyTypeOperation.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate"))
+                .isEqualTo(Either.left(testInstance.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate")));
+    }
 }

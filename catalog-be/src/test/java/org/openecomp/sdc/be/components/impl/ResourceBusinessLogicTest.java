@@ -198,7 +198,7 @@ public class ResourceBusinessLogicTest {
 	MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
 	UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
 	ToscaExportHandler toscaExportHandler = Mockito.mock(ToscaExportHandler.class);
-
+	PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
 
 
 	@InjectMocks
@@ -318,7 +318,8 @@ public class ResourceBusinessLogicTest {
 				resourceImportManager, inputsBusinessLogic, compositionBusinessLogic, resourceDataMergeBusinessLogic,
 				csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
 				artifactToscaOperation, propertyBusinessLogic, componentContactIdValidator, componentNameValidator,
-				componentTagsValidator, componentValidator,	componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
+				componentTagsValidator, componentValidator,	componentIconValidator, componentProjectCodeValidator,
+				componentDescriptionValidator, policyBusinessLogic);
 		bl.setElementDao(mockElementDao);
 		bl.setUserAdmin(mockUserAdmin);
 		bl.setCapabilityTypeOperation(capabilityTypeOperation);
