@@ -63,7 +63,7 @@ public final class GeneralUIUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneralUIUtils.class);
 
-    private static final String TEST_ID_XPATH = "//*[@data-tests-id='%s']";
+    private static final String TEST_ID_XPATH = "//*[@data-test-id='%1$s' or @data-tests-id='%1$s']";
     private static final String TEST_ID_CHILD_XPATH = "//*[@data-tests-id='%s']//*";
     private static final String TEST_ID_ATTRIBUTE_NAME = "data-tests-id";
     private static final String COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW = "color: yellow; border: 4px solid yellow;";

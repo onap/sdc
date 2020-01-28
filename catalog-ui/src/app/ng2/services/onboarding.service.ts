@@ -116,7 +116,7 @@ export class OnboardingService {
         newMetadata.description = csar.description;
         newMetadata.selectedCategory = selectedCategory && selectedSubCategory ? selectedCategory.name + "_#_" + selectedSubCategory.name : '';
         newMetadata.filterTerm = newMetadata.name +  ' '  + newMetadata.description + ' ' + newMetadata.vendorName + ' ' + newMetadata.csarVersion;
-        newMetadata.resourceType = "VF";
+        newMetadata.resourceType = csar.resourceType;
         newMetadata.componentType = ComponentType.RESOURCE;
         newMetadata.tags = [];
         newMetadata.icon = DEFAULT_ICON;

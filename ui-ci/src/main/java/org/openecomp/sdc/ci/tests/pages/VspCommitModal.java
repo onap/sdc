@@ -19,6 +19,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
+import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -64,6 +65,7 @@ public class VspCommitModal extends AbstractPageObject {
     public void submit() {
         final WebElement commitAndSubmitBtn = wrappingElement.findElement(By.xpath(COMMIT_AND_SUBMIT_BTN.getXpath()));
         commitAndSubmitBtn.click();
+        GeneralUIUtils.ultimateWait();
         confirmSuccess();
     }
 

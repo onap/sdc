@@ -142,7 +142,7 @@ export class ComponentFactory {
         return newResource;
     };
 
-    public createEmptyComponent = (componentType:string):Component => {
+    public createEmptyComponent = (componentType:string, resourceType?:string):Component => {
         let newComponent:Component;
 
         switch (componentType) {
@@ -161,6 +161,9 @@ export class ComponentFactory {
             case ResourceType.CVFC:
             case ResourceType.CONFIGURATION:
                 newComponent = new Resource(this.ResourceService, this.$q);
+                if (resourceType){
+                    (<Resource> newComponent).resourceType = resourceType;
+                }
                 break;
         }
         newComponent.componentType = componentType;

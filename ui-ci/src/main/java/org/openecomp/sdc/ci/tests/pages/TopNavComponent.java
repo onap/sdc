@@ -86,6 +86,7 @@ public class TopNavComponent extends AbstractPageObject {
      */
     public VspRepositoryModalComponent clickOnRepositoryIcon() {
         wrappingElement.findElement(By.xpath(REPOSITORY_ICON.getXpath())).click();
+
         return new VspRepositoryModalComponent(webDriver);
     }
 
@@ -123,7 +124,7 @@ public class TopNavComponent extends AbstractPageObject {
         SUB_MENU_BUTTON_HOME("sub-menu-button-home", "//*[@data-tests-id='%s']"),
         ARROW_DROPDOWN("triangle-dropdown", "//li[contains(@class, '%s')]"),
         MAIN_MENU_ONBOARD_BTN("main-menu-button-onboard", "//a[@data-tests-id='%s']"),
-        REPOSITORY_ICON("repository-icon", "//div[@data-tests-id='%s']");
+        REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']");
 
         private final String id;
         private final String xpathFormat;

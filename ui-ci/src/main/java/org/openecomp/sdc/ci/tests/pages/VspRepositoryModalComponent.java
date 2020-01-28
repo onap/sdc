@@ -72,7 +72,7 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
         final List<WebElement> vspResultList =
             findSubElements(wrappingElement, By.className(RESULTS_CONTAINER_DIV.getId()));
         vspResultList.get(listPosition).click();
-        findSubElement(wrappingElement, By.xpath(IMPORT_VSP_BTN.getXpath())).click();
+        GeneralUIUtils.clickOnElementByTestId(IMPORT_VSP_BTN.getId());
         return new ResourceCreatePage(webDriver, new LoaderHelper(), new NotificationHelper());
     }
 
@@ -101,10 +101,10 @@ public class VspRepositoryModalComponent extends AbstractPageObject {
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     public enum XpathSelector {
-        MODAL_DIV("modalOnboarding", "//div[@modal='%s']"),
-        SEARCH_TXT("onboarding-search", "//input[@data-tests-id='%s']"),
-        IMPORT_VSP_BTN("import-csar", "//span[@data-tests-id='%s']"),
-        RESULTS_CONTAINER_DIV("flex-container", "//div[contains(@class,'%s']");
+        MODAL_DIV("importVspTable", "//*[@data-tests-id='%s']"),
+        SEARCH_TXT("onboarding-search-input", "//input[@data-tests-id='%s']"),
+        IMPORT_VSP_BTN("import-csar", "//*[@data-tests-id='%s']"),
+        RESULTS_CONTAINER_DIV("datatable-body-cell-label", "//datatable-body[contains(@class,'%s']");
 
         private final String id;
         private final String xpathFormat;
