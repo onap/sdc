@@ -22,13 +22,6 @@ threadpoolSize: 50
 # request processing timeout (seconds)
 requestTimeout: 10
 
-# a4c hostname
-a4cHost: localhost
-
-# a4c http port
-a4cHttpPort: 8088
-
-
 identificationHeaderFields: 
    -
         - &HTTP_IV_USER HTTP_IV_USER

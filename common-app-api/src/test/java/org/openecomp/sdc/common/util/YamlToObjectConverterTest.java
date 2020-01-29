@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.openecomp.sdc.exception.YamlConversionException;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
@@ -81,14 +82,14 @@ public class YamlToObjectConverterTest {
     }
 
     @Test
-    public void validateConvertWithFullFilePathReturnsValidObjectCreatedFromYaml() {
+    public void validateConvertWithFullFilePathReturnsValidObjectCreatedFromYaml() throws YamlConversionException {
         Configuration result = yamlToObjectConverter.convert(filePath+fileName, Configuration.class);
 
         assertThatCreatedObjectIsValid(result);
     }
 
     @Test
-    public void validateConvertWithFullFilePathReturnsNullIfFileDoesNotExist() {
+    public void validateConvertWithFullFilePathReturnsNullIfFileDoesNotExist() throws YamlConversionException {
         final String wrongFileName = "wrong-configuration.yaml";
 
         Configuration result = yamlToObjectConverter.convert(wrongFileName, Configuration.class);
@@ -96,28 +97,23 @@ public class YamlToObjectConverterTest {
         assertNull(result);
     }
 
-    @Test
-    public void validateConvertWithFullFilePathReturnsNullIfClassDoesNotMathYaml() {
-
-        HttpClient result = yamlToObjectConverter.convert(filePath+fileName, HttpClient.class);
-
-        assertNull(result);
+    @Test(expected = YamlConversionException.class)
+    public void validateConvertWithFullFilePathThrowsExceptionIfClassDoesNotMathYaml() throws YamlConversionException {
+        yamlToObjectConverter.convert(filePath + fileName, HttpClient.class);
     }
 
     @Test
-    public void validateConvertWithFilePathAndFileNameReturnsValidObjectCreatedFromYaml() {
+    public void validateConvertWithFilePathAndFileNameReturnsValidObjectCreatedFromYaml()
+        throws YamlConversionException {
 
         Configuration result = yamlToObjectConverter.convert(filePath, Configuration.class, fileName);
 
         assertThatCreatedObjectIsValid(result);
     }
 
-    @Test
-    public void validateConvertWithFilePathAndFileNameReturnsNullIfClassIsNull() {
-
-        HttpClient result = yamlToObjectConverter.convert(filePath, null, fileName);
-
-        assertNull(result);
+    @Test(expected = IllegalArgumentException.class)
+    public void validateConvertWithFilePathAndFileNameThrowsExceptionIfClassIsNull() throws YamlConversionException {
+        yamlToObjectConverter.convert(filePath, null, fileName);
     }
 
     @Test

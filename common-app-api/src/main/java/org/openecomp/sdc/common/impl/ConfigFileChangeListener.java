@@ -20,22 +20,23 @@
 
 package org.openecomp.sdc.common.impl;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.jci.listeners.FileChangeListener;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.openecomp.sdc.exception.YamlConversionException;
 
 public class ConfigFileChangeListener extends FileChangeListener {
 
-	private static Logger log = Logger.getLogger(ConfigFileChangeListener.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ConfigFileChangeListener.class.getName());
 
 	private Map<String, List<ConfigurationListener>> fileChangeToCallBack = new HashMap<>();
 
@@ -45,45 +46,46 @@ public class ConfigFileChangeListener extends FileChangeListener {
 
 	@Override
 	public void onFileChange(File pFile) {
-
 		super.onFileChange(pFile);
 
-		if (pFile != null) {
-
-			if (fileChangeToCallBack != null) {
-
-				String id = findIdFromFileName(pFile.getName());
-
-				if (id != null) {
-
-					List<ConfigurationListener> listeners = fileChangeToCallBack.get(id);
-					if (listeners != null) {
-						for (ConfigurationListener configurationListener : listeners) {
-
-							Class<? extends BasicConfiguration> configClass = configurationListener.getType();
-
-							BasicConfiguration basicConfiguration = yamlToObjectConverter.convert(pFile.getAbsolutePath(), configClass);
-
-							if (basicConfiguration == null) {
-								log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Cannot update the listeners for file Change since the file content is invalid");
-								continue;
-							}
-							log.debug("Loaded configuration after converting is {}", basicConfiguration);
-
-
-							configurationListener.getCallBack().reconfigure(basicConfiguration);
-
-						}
-					}
-				} else {
-
-					log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Cannot calculate id from file {}", pFile.getName());
-				}
-			}
-
+		if (pFile == null) {
+			LOGGER.debug("Invalid file '{}'.", pFile);
+			return;
 		}
 
-		log.debug("File {} was changed.", pFile);
+		if (fileChangeToCallBack == null) {
+			LOGGER.debug("File '{}' callback is null.", pFile);
+			return;
+		}
+
+		final String id = findIdFromFileName(pFile.getName());
+		if (id == null) {
+			LOGGER.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","",
+				"Cannot calculate id from file {}", pFile.getName());
+			return;
+		}
+
+		final List<ConfigurationListener> listeners = fileChangeToCallBack.get(id);
+		if (CollectionUtils.isEmpty(listeners)) {
+			LOGGER.debug("No file listeners for file '{}', id '{}'.", pFile, id);
+			return;
+		}
+		for (final ConfigurationListener configurationListener : listeners) {
+			final Class<? extends BasicConfiguration> configClass = configurationListener.getType();
+			final BasicConfiguration basicConfiguration;
+			try {
+				basicConfiguration = yamlToObjectConverter.convert(pFile.getAbsolutePath(), configClass);
+			} catch (final YamlConversionException e) {
+				LOGGER.warn(EcompLoggerErrorCode.SCHEMA_ERROR,
+					"Configuration", "Configuration",
+					"Cannot update the listeners for file Change since the file content is invalid: {}",
+					e.getLocalizedMessage());
+				continue;
+			}
+			LOGGER.debug("Loaded configuration after converting is {}", basicConfiguration);
+			configurationListener.getCallBack().reconfigure(basicConfiguration);
+		}
+		LOGGER.debug("File {} was changed.", pFile);
 	}
 
 	private String findIdFromFileName(String name) {
@@ -95,10 +97,6 @@ public class ConfigFileChangeListener extends FileChangeListener {
 			if (name.contains(File.separator)) {
 				startIndex = name.lastIndexOf(File.separator);
 			}
-			// String subNameString = name.substring(startIndex, endIndex);
-			// if (subNameString.contains(".")) {
-			// endIndex = subNameString.indexOf(".");
-			// }
 
 			result = name.substring(startIndex, endIndex);
 
@@ -125,21 +123,5 @@ public class ConfigFileChangeListener extends FileChangeListener {
 		}
 
 	}
-
-	// public void notify(String id, BasicConfiguration object) {
-	//
-	// if (fileChangeToCallBack != null) {
-	// List<ConfigurationListener> listeners = fileChangeToCallBack
-	// .get(id);
-	// if (listeners != null) {
-	// for (ConfigurationListener configurationListener : listeners) {
-	//
-	// configurationListener.getCallBack().reconfigure(object);
-	//
-	// }
-	// }
-	// }
-	//
-	// }
 
 }

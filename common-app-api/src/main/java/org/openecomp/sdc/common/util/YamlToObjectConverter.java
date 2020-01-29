@@ -20,23 +20,6 @@
 
 package org.openecomp.sdc.common.util;
 
-import org.apache.commons.codec.binary.Base64;
-import org.openecomp.sdc.be.config.Configuration.*;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
-import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
-import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
-import org.yaml.snakeyaml.introspector.PropertyUtils;
-import org.yaml.snakeyaml.nodes.Node;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +28,28 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.codec.binary.Base64;
+import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
+import org.openecomp.sdc.be.config.Configuration.ApplicationL2CacheConfig;
+import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
+import org.openecomp.sdc.be.config.Configuration.BeMonitoringConfig;
+import org.openecomp.sdc.be.config.Configuration.EcompPortalConfig;
+import org.openecomp.sdc.be.config.Configuration.OnboardingConfig;
+import org.openecomp.sdc.be.config.Configuration.SwitchoverDetectorConfig;
+import org.openecomp.sdc.be.config.Configuration.ToscaValidatorsConfig;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionStatusTopicConfig;
+import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.YamlConversionException;
+import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 public class YamlToObjectConverter {
 
@@ -132,115 +137,51 @@ public class YamlToObjectConverter {
 		return yaml;
 	}
 
-	public <T> T convert(String dirPath, Class<T> className, String configFileName) {
-
-		T config = null;
-
-		try {
-
-			String fullFileName = dirPath + File.separator + configFileName;
-
-			config = convert(fullFileName, className);
-
-		} catch (Exception e) {
-			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Failed to convert yaml file {} to object.", configFileName,e);
+	public <T> T convert(final String dirPath, final Class<T> className,
+						 final String configFileName) throws YamlConversionException {
+		if (className == null) {
+			throw new IllegalArgumentException("className cannot be null");
 		}
-
-		return config;
+		final String fullFileName = dirPath + File.separator + configFileName;
+		return convert(fullFileName, className);
 	}
 
-	public class MyYamlConstructor extends org.yaml.snakeyaml.constructor.Constructor {
-		private HashMap<String, Class<?>> classMap = new HashMap<>();
-
-		public MyYamlConstructor(Class<? extends Object> theRoot) {
-			super(theRoot);
-			classMap.put(DistributionEngineConfiguration.class.getName(), DistributionEngineConfiguration.class);
-			classMap.put(DistributionStatusTopicConfig.class.getName(), DistributionStatusTopicConfig.class);
+	public <T> T convert(String fullFileName, Class<T> className) throws YamlConversionException {
+		if (!new File(fullFileName).exists()) {
+			log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","",
+				"The file {} cannot be found. Ignore reading configuration.", fullFileName);
+			return null;
 		}
 
-		/*
-		 * This is a modified version of the Constructor. Rather than using a
-		 * class loader to get external classes, they are already predefined
-		 * above. This approach works similar to the typeTags structure in the
-		 * original constructor, except that class information is pre-populated
-		 * during initialization rather than runtime.
-		 *
-		 * @see
-		 * org.yaml.snakeyaml.constructor.Constructor#getClassForNode(org.yaml.
-		 * snakeyaml.nodes.Node)
-		 */
-		protected Class<?> getClassForNode(Node node) {
-			String name = node.getTag().getClassName();
-			Class<?> cl = classMap.get(name);
-			if (cl == null)
-				throw new YAMLException("Class not found: " + name);
-			else
-				return cl;
-		}
-	}
+		final Yaml yaml = getYamlByClassName(className);
 
-	public <T> T convert(String fullFileName, Class<T> className) {
-
-		T config = null;
-
-		Yaml yaml = getYamlByClassName(className);
-
-		InputStream in = null;
-		try {
-
-			File f = new File(fullFileName);
-			if (!f.exists()) {
-				log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","The file {} cannot be found. Ignore reading configuration.",fullFileName);
-				return null;
-			}
-			in = Files.newInputStream(Paths.get(fullFileName));
-
-			config = yaml.loadAs(in, className);
-
-			// System.out.println(config.toString());
+		try (final InputStream in = Files.newInputStream(Paths.get(fullFileName))) {
+			return yaml.loadAs(in, className);
+		} catch (final IOException e) {
+			log.debug("Failed to open/close input stream", e);
 		} catch (Exception e) {
-			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Failed to convert yaml file {} to object.", fullFileName, e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					log.debug("Failed to close input stream", e);
-					e.printStackTrace();
-				}
-			}
+			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","",
+				"Failed to convert yaml file {} to object.", fullFileName, e);
+			final String errorMsg = String.format("Could not parse '%s' to class '%s'", fullFileName, className);
+			throw new YamlConversionException(errorMsg, e);
 		}
 
-		return config;
+		return null;
 	}
 
 	public <T> T convert(byte[] fileContents, Class<T> className) {
+		final Yaml yaml = getYamlByClassName(className);
 
-		T config = null;
-
-		Yaml yaml = getYamlByClassName(className);
-
-		InputStream in = null;
-		try {
-
-			in = new ByteArrayInputStream(fileContents);
-
-			config = yaml.loadAs(in, className);
-
-		} catch (Exception e) {
-			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Failed to convert yaml file to object", e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					log.debug("Failed to close input stream", e);
-					e.printStackTrace();
-				}
-			}
+		try (final InputStream in = new ByteArrayInputStream(fileContents)){
+			return yaml.loadAs(in, className);
+		} catch (final IOException e) {
+			log.debug("Failed to open or close input stream", e);
+		} catch (final Exception e) {
+			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,
+				"","","Failed to convert yaml file to object", e);
 		}
 
-		return config;
+		return null;
 	}
 
 	public boolean isValidYamlEncoded64(byte[] fileContents) {
@@ -261,7 +202,8 @@ public class YamlToObjectConverter {
 			 }
 			
 		} catch (Exception e) {
-			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","","Failed to convert yaml file to object - yaml is invalid", e);
+			log.error(EcompLoggerErrorCode.UNKNOWN_ERROR,"","",
+				"Failed to convert yaml file to object - yaml is invalid", e);
 			return false;
 		}
 		return true;

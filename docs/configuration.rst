@@ -790,9 +790,6 @@ BE-configuration.yaml
                 - VFC
                 - CVFC
 
-    # Resource informational deployment artifact placeholder
-    resourceInformationalDeployedArtifacts:
-
     # Requirements needed to be fulfilled before certification
     requirementsToFulfillBeforeCert:
 
