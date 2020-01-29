@@ -174,7 +174,7 @@ public class ArtifactUuidFixTest {
 
 		Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap<>();
 		ArtifactDefinition artifactDefinition = new ArtifactDefinition();
-		artifactDefinition.setArtifactType(ArtifactTypeEnum.VF_MODULES_METADATA.name());
+		artifactDefinition.setArtifactType(ArtifactTypeEnum.VF_MODULES_METADATA.getType());
 		artifactDefinition.setEsId("esID");
 		deploymentArtifacts.put("1",artifactDefinition);
 		List<GroupInstance> groupInstances = new ArrayList<>();

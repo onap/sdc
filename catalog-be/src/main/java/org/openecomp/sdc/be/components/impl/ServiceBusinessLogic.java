@@ -1909,7 +1909,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private ArtifactDefinition getVfModuleInstArtifactForCompInstance(ComponentInstance currVF, Service service, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper) {
         ArtifactDefinition vfModuleAertifact = null;
         if (MapUtils.isNotEmpty(currVF.getDeploymentArtifacts())) {
-            Optional<ArtifactDefinition> optionalVfModuleArtifact = currVF.getDeploymentArtifacts().values().stream().filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.name())).findAny();
+            Optional<ArtifactDefinition> optionalVfModuleArtifact = currVF.getDeploymentArtifacts().values().stream().filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.getType())).findAny();
             if (optionalVfModuleArtifact.isPresent()) {
                 vfModuleAertifact = optionalVfModuleArtifact.get();
             }
