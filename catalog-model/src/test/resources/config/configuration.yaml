@@ -515,8 +515,6 @@ resourceInformationalArtifacts:
             - VFC
             - CVFC
 
-resourceInformationalDeployedArtifacts:
-
 unLoggedUrls:
    - /sdc2/rest/healthCheck
 
@@ -655,5 +653,4 @@ dmaapConsumerConfiguration:
         password: hmXYcznAljMSisdy8zgcag==
         
 dmeConfiguration:
-    dme2Search: DME2SEARCH
-    dme2Resolve: DME2RESOLVE
+    lookupUriFormat: "http://DME2RESOLVE/service=%s/version=1.0.0/envContext=%s/routeOffer=DEFAULT"

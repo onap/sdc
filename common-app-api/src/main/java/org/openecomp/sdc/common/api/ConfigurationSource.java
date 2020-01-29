@@ -22,7 +22,7 @@ package org.openecomp.sdc.common.api;
 
 public interface ConfigurationSource {
 
-	public <T> T getAndWatchConfiguration(Class<T> className, ConfigurationListener configurationListener);
+	<T> T getAndWatchConfiguration(Class<T> className, ConfigurationListener configurationListener);
 
-	public <T> void addWatchConfiguration(Class<T> className, ConfigurationListener configurationListener);
+	<T> void addWatchConfiguration(Class<T> className, ConfigurationListener configurationListener);
 }

@@ -36,6 +36,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
 	ConfigurationSource configurationSource = null;
 	private static ConfigurationManager instance;
+	Map<String, Object> configurations = new HashMap<>();
 
     @VisibleForTesting
     public ConfigurationManager() {
@@ -43,7 +44,6 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
         instance = this;
     }
 
-    Map<String, Object> configurations = new HashMap<>();
 	public ConfigurationManager(ConfigurationSource configurationSource) {
 		super();
 		this.configurationSource = configurationSource;
@@ -124,7 +124,11 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 		return instance;
 	}
 
-    public void reconfigure(BasicConfiguration obj) { }
+    public void reconfigure(final BasicConfiguration basicConfiguration) {
+		if (basicConfiguration instanceof Configuration) {
+			configurations.put(getKey(Configuration.class), basicConfiguration);
+		}
+	}
 
 	/**
 	 * FOR TEST ONLY
