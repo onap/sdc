@@ -416,7 +416,7 @@ public abstract class Component implements PropertiesOwner {
         return safeGetComponentInstanceDeploymentArtifacts(componentInstanceId)
                 .values()
                 .stream()
-                .filter(artifact -> ArtifactTypeEnum.HEAT_ENV.name().equals(artifact.getArtifactType()))
+                .filter(artifact -> ArtifactTypeEnum.HEAT_ENV.getType().equals(artifact.getArtifactType()))
                 .collect(Collectors.toList());
     }
 

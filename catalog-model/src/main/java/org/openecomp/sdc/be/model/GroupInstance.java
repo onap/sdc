@@ -116,7 +116,7 @@ public class GroupInstance extends GroupInstanceDataDefinition {
                 String label = artifactId.substring(artifactId.lastIndexOf('.') + 1);
                 ArtifactDefinition artifact = deploymentArtifacts.get(label);
                 log.debug("current artifact id: {}, current artifact definition: {}", artifactId, artifact);
-                ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifact.getArtifactType());
+                ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(artifact.getArtifactType());
                 if (artifactType != ArtifactTypeEnum.HEAT_ENV){
                     addArtifactsIdToCollection(artifactUuids, artifact);
                 }else{
