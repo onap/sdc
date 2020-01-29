@@ -154,7 +154,7 @@ public class ComponentInstanceArtifactsMergeTest {
 		artifactCreatedOnTheInstance.setTimeout(30);
 		ArtifactDefinition artifactGeneratedBySubmitForTesting = new ArtifactDefinition();
 		artifactGeneratedBySubmitForTesting.setArtifactLabel("artifactThree");
-		artifactGeneratedBySubmitForTesting.setArtifactType(ArtifactTypeEnum.VF_MODULES_METADATA.name());
+		artifactGeneratedBySubmitForTesting.setArtifactType(ArtifactTypeEnum.VF_MODULES_METADATA.getType());
 		artifactGeneratedBySubmitForTesting.setTimeout(30);
 		Map<String, ArtifactDefinition> componentInstanceArtifacts = new HashMap<>();
 		componentInstanceArtifacts.put(artifactFromTheOriginalResource.getArtifactLabel(), artifactFromTheOriginalResource);

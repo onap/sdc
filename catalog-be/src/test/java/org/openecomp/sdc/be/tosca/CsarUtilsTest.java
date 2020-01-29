@@ -72,6 +72,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -108,7 +110,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	private NonMetaArtifactInfo createNonMetaArtifactInfoTestSubject() {
-		return new CsarUtils.NonMetaArtifactInfo("mock", "mock", ArtifactTypeEnum.AAI_SERVICE_MODEL,
+		return new CsarUtils.NonMetaArtifactInfo("mock", "mock", ArtifactTypeEnum.AAI_SERVICE_MODEL.getType(),
 				ArtifactGroupTypeEnum.DEPLOYMENT, new byte[0], "mock", true);
 	}
 
@@ -720,9 +722,9 @@ public class CsarUtilsTest extends BeConfDependentTest {
 
 	@Test
 	public void testNonMetaArtifactInfoGetArtifactType() {
-		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
-
-		testSubject.getArtifactType();
+		final NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
+		assertThat("The artifact type should be as expected",
+			testSubject.getArtifactType(), is(ArtifactTypeEnum.AAI_SERVICE_MODEL.getType()));
 	}
 
 	@Test

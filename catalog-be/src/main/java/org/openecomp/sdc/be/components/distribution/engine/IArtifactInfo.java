@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-
 public interface IArtifactInfo {
 
     /** Artifact File name */
@@ -32,7 +30,7 @@ public interface IArtifactInfo {
      * Following are valid values : HEAT , DG_XML. <br>
      * List of values will be extended in post-1510 releases.
      */
-    ArtifactTypeEnum getArtifactType();
+    String getArtifactType();
 
     /**
      * Relative artifact's URL. Should be used in REST GET API to download the artifact's payload.<br>
