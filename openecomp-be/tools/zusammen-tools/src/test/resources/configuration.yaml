@@ -221,12 +221,6 @@ resourceDeploymentArtifacts:
             - yaml
             - yml
 
-resourceInformationalDeployedArtifacts:
-    YANG_XML:
-        acceptedTypes:
-            - xml
-
-
 unLoggedUrls:
    - /sdc2/rest/healthCheck
 

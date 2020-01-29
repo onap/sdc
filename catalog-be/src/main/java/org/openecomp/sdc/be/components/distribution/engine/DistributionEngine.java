@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
+import org.openecomp.sdc.exception.YamlConversionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -76,7 +77,7 @@ public class DistributionEngine implements IDistributionEngine {
      * The main method for testing only
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws YamlConversionException {
 
         List<String> servers = new ArrayList<>();
         String server = "uebsb91kcdc.it.att.com:3904";

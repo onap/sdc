@@ -614,8 +614,6 @@ resourceInformationalArtifacts:
             - VFC
             - CVFC
 
-resourceInformationalDeployedArtifacts:
-
 unLoggedUrls:
    - /sdc2/rest/healthCheck
 
