@@ -27,7 +27,9 @@ import java.util.stream.Collectors;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.api.exception.LoadConfigurationException;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
+import org.openecomp.sdc.exception.YamlConversionException;
 
 /**
  * Read configuration from file system
@@ -55,16 +57,21 @@ public class FSConfigurationSource implements ConfigurationSource {
 	 * 
 	 * @see org.openecomp.sdc.common.api.ConfigurationSource#getAndWatchConfiguration (java.lang.Class, org.openecomp.sdc.common.api.ConfigurationListener)
 	 */
-	public <T> T getAndWatchConfiguration(Class<T> className, ConfigurationListener configurationListener) {
+	public <T> T getAndWatchConfiguration(final Class<T> className, final ConfigurationListener configurationListener) {
 
-		String configFileName = calculateFileName(className);
+		final String configFileName = calculateFileName(className);
 
-		T object = yamlToObjectConverter.convert(this.appConfigDir, className, configFileName);
+		T object;
+		try {
+			object = yamlToObjectConverter.convert(this.appConfigDir, className, configFileName);
+		} catch (final YamlConversionException e) {
+			final String errorMsg =
+				String.format("Could not load '%s' in '%s' for class '%s'", configFileName, appConfigDir, className);
+			throw new LoadConfigurationException(errorMsg, e);
+		}
 
 		if (configurationListener != null && changeListener != null) {
-			if (object != null) {
-				changeListener.register(configFileName, configurationListener);
-			}
+			changeListener.register(configFileName, configurationListener);
 		}
 
 		return object;

@@ -95,7 +95,6 @@ public class Configuration extends BasicConfiguration {
     private Map<String, ArtifactTypeConfig> serviceDeploymentArtifacts;
     private Map<String, ArtifactTypeConfig> resourceInstanceDeploymentArtifacts;
     private Map<String, ArtifactTypeConfig> resourceInformationalArtifacts;
-    private Map<String, ArtifactTypeConfig> resourceInformationalDeployedArtifacts;
     private Map<String, Object> serviceApiArtifacts;
     private List<String> excludeServiceCategory;
 
@@ -144,29 +143,23 @@ public class Configuration extends BasicConfiguration {
     private CadiFilterParams cadiFilterParams;
 
     private Boolean aafAuthNeeded;
-
     private String autoHealingOwner;
     private boolean enableAutoHealing;
-
     private Map<String, List<String>> resourcesForUpgrade;
     private DmaapConsumerConfiguration dmaapConsumerConfiguration;
     private DmaapProducerConfiguration dmaapProducerConfiguration;
-
     private boolean skipUpgradeFailedVfs;
     private boolean skipUpgradeVSPs;
     private DmeConfiguration dmeConfiguration;
-
     private boolean supportAllottedResourcesAndProxy;
     private Integer deleteLockTimeoutInSeconds;
     private Integer maxDeleteComponents;
     private CookieConfig authCookie;
-
-
     private String aafNamespace;
     private String workloadContext;
-
     private EnvironmentContext environmentContext;
-
+    private List<GabConfig> gabConfig;
+    private EcompPortalConfig ecompPortal;
 
     public String getAutoHealingOwner() {
         return autoHealingOwner;
@@ -207,7 +200,6 @@ public class Configuration extends BasicConfiguration {
     public void setDmaapConsumerConfiguration(DmaapConsumerConfiguration dmaapConsumerConfiguration) {
         this.dmaapConsumerConfiguration = dmaapConsumerConfiguration;
     }
-
     public DmeConfiguration getDmeConfiguration() {
         return dmeConfiguration;
     }
@@ -215,6 +207,7 @@ public class Configuration extends BasicConfiguration {
     public void setDmeConfiguration(DmeConfiguration dmeConfiguration) {
         this.dmeConfiguration = dmeConfiguration;
     }
+
     public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) { this.skipUpgradeVSPs = skipUpgradeVSPs; }
 
     public boolean getSkipUpgradeVSPsFlag() { return skipUpgradeVSPs; }
@@ -251,8 +244,6 @@ public class Configuration extends BasicConfiguration {
         this.artifactGeneratorConfig = artifactGeneratorConfig;
     }
 
-    private List<GabConfig> gabConfig;
-
     public Map<String, String> getGenericAssetNodeTypes() {
         return genericAssetNodeTypes;
     }
@@ -284,8 +275,6 @@ public class Configuration extends BasicConfiguration {
     public void setApplicationL2Cache(ApplicationL2CacheConfig applicationL2Cache) {
         this.applicationL2Cache = applicationL2Cache;
     }
-
-    private EcompPortalConfig ecompPortal;
 
     public CassandrConfig getCassandraConfig() {
         return cassandraConfig;
@@ -1212,6 +1201,8 @@ public class Configuration extends BasicConfiguration {
         private Integer port;
         private String healthCheckUri;
         private String defaultFunctionalMenu;
+        private Integer pollingInterval;
+        private Integer timeoutMs;
 
         public void setPollingInterval(Integer pollingInterval) {
             this.pollingInterval = pollingInterval;
@@ -1220,9 +1211,6 @@ public class Configuration extends BasicConfiguration {
         public void setTimeoutMs(Integer timeoutMs) {
             this.timeoutMs = timeoutMs;
         }
-
-        private Integer pollingInterval;
-        private Integer timeoutMs;
 
         public String getProtocol() {
             return protocol;
@@ -1581,15 +1569,6 @@ public class Configuration extends BasicConfiguration {
 
     public void setArtifactsIndex(String artifactsIndex) {
         this.artifactsIndex = artifactsIndex;
-    }
-
-    public Map<String, ArtifactTypeConfig> getResourceInformationalDeployedArtifacts() {
-        return resourceInformationalDeployedArtifacts;
-    }
-
-    public void setResourceInformationalDeployedArtifacts(
-            Map<String, ArtifactTypeConfig> resourceInformationalDeployedArtifacts) {
-        this.resourceInformationalDeployedArtifacts = resourceInformationalDeployedArtifacts;
     }
 
     public List<String> getResourceTypes() {
