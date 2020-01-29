@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -85,7 +86,7 @@ import java.util.Map;
 
 @Path("/v1/")
 
-/****
+/**
  *
  * UI oriented servlet - to return elements in specific format UI needs
  *
@@ -101,17 +102,18 @@ public class ElementServlet extends BeGenericServlet {
     private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
     private final ComponentsCleanBusinessLogic componentsCleanBusinessLogic;
     private final ElementBusinessLogic elementBusinessLogic;
-    private final UserBusinessLogic userBusinessLogic;
+    private final ArtifactsBusinessLogic artifactsBusinessLogic;
 
     @Inject
-    public ElementServlet(UserBusinessLogic userBusinessLogic,
-        ComponentsUtils componentsUtils,
-        ComponentsCleanBusinessLogic componentsCleanBusinessLogic,
-        ElementBusinessLogic elementBusinessLogic) {
+    public ElementServlet(final UserBusinessLogic userBusinessLogic,
+                          final ComponentsUtils componentsUtils,
+                          final ComponentsCleanBusinessLogic componentsCleanBusinessLogic,
+                          final ElementBusinessLogic elementBusinessLogic,
+                          final ArtifactsBusinessLogic artifactsBusinessLogic) {
         super(userBusinessLogic, componentsUtils);
         this.componentsCleanBusinessLogic = componentsCleanBusinessLogic;
         this.elementBusinessLogic = elementBusinessLogic;
-        this.userBusinessLogic = userBusinessLogic;
+        this.artifactsBusinessLogic = artifactsBusinessLogic;
     }
 
     /*
@@ -162,33 +164,6 @@ public class ElementServlet extends BeGenericServlet {
             throw e;
         }
     }
-
-    //TODO remove after UI alignment and tests after API consolidation ASDC-191
-   /* @GET
-    @Path("/categories")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Retrieve the all resource, service and product categories", httpMethod = "GET", notes = "Retrieve the all resource, service and product categories", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Returns categories Ok"), @ApiResponse(code = 403, message = "Missing information"),
-            @ApiResponse(code = 409, message = "Restricted operation"), @ApiResponse(code = 500, message = "Internal Server Error")})
-    public Response getAllCategories(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
-        try {
-            ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            Either<UiCategories, ResponseFormat> either = elementBL.getAllCategories(userId);
-            if (either.isRight()) {
-                log.debug("No categories were found");
-                return buildErrorResponse(either.right().value());
-            } else {
-                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), either.left().value());
-            }
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get All Categories");
-            log.debug("getAllCategories failed with exception", e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
-    }*/
-
 
     @POST
     @Path("/category/{componentType}")
@@ -712,7 +687,7 @@ public class ElementServlet extends BeGenericServlet {
 
         try {
             ServletContext servletContext = request.getSession().getServletContext();
-            Map<String, Object> configuration = getConfigurationUi(elementBusinessLogic, userId);
+            Map<String, Object> configuration = getConfigurationUi(elementBusinessLogic);
             if (!configuration.isEmpty()) {
                 consolidatedObject.put("configuration", configuration);
             } else {
@@ -743,22 +718,12 @@ public class ElementServlet extends BeGenericServlet {
         return version;
     }
 
-    private Map<String, Object> getConfigurationUi(ElementBusinessLogic elementBL, String userId) {
+    private Map<String, Object> getConfigurationUi(final ElementBusinessLogic elementBL) {
         Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> defaultHeatTimeout = elementBL.getDefaultHeatTimeout();
-        Either<Map<String, Object>, ActionStatus> deploymentEither = elementBL.getAllDeploymentArtifactTypes();
         Either<Map<String, String>, ActionStatus> resourceTypesMap = elementBL.getResourceTypesMap();
-        Either<List<ArtifactType>, ActionStatus> otherEither = elementBL.getAllArtifactTypes(userId);
 
         Map<String, Object> configuration = new HashMap<>();
 
-        if (otherEither.isRight() || otherEither.left().value() == null) {
-            log.debug("No other artifact types were found");
-            return configuration;
-        }
-        if (deploymentEither.isRight() || deploymentEither.left().value() == null) {
-            log.debug("No deployment artifact types were found");
-            return configuration;
-        }
         if (defaultHeatTimeout.isRight() || defaultHeatTimeout.left().value() == null) {
             log.debug("heat default timeout was not found");
             return configuration;
@@ -767,10 +732,7 @@ public class ElementServlet extends BeGenericServlet {
             log.debug("No resource types were found");
             return configuration;
         }
-        Map<String, Object> artifacts = new HashMap<>();
-        artifacts.put("other", otherEither.left().value());
-        artifacts.put("deployment", deploymentEither.left().value());
-        configuration.put("artifacts", artifacts);
+        configuration.put("artifact", artifactsBusinessLogic.getConfiguration());
         configuration.put("heatDeploymentTimeout", defaultHeatTimeout.left().value());
         configuration.put("componentTypes", elementBL.getAllComponentTypesParamNames());
         configuration.put("roles", elementBL.getAllSupportedRoles());

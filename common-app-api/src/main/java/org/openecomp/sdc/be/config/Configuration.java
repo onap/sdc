@@ -20,16 +20,15 @@
 
 package org.openecomp.sdc.be.config;
 
-import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.openecomp.sdc.common.api.BasicConfiguration;
+import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static java.lang.String.format;
-import static java.util.Collections.emptyMap;
+import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.openecomp.sdc.common.api.BasicConfiguration;
 
 public class Configuration extends BasicConfiguration {
 
@@ -91,14 +90,9 @@ public class Configuration extends BasicConfiguration {
     private Map<String, Object> toscaArtifacts;
     private Map<String, Object> informationalResourceArtifacts;
     private Map<String, Object> informationalServiceArtifacts;
-    private Map<String, ArtifactTypeConfig> resourceDeploymentArtifacts;
-    private Map<String, ArtifactTypeConfig> serviceDeploymentArtifacts;
-    private Map<String, ArtifactTypeConfig> resourceInstanceDeploymentArtifacts;
-    private Map<String, ArtifactTypeConfig> resourceInformationalArtifacts;
     private Map<String, Object> serviceApiArtifacts;
     private List<String> excludeServiceCategory;
 
-    private List<String> artifactTypes;
     private List<String> licenseTypes;
     private List<String> definedResourceNamespace;
 
@@ -161,6 +155,15 @@ public class Configuration extends BasicConfiguration {
     private EnvironmentContext environmentContext;
     private List<GabConfig> gabConfig;
     private EcompPortalConfig ecompPortal;
+    private List<ArtifactConfiguration> artifacts;
+
+    public List<ArtifactConfiguration> getArtifacts() {
+        return artifacts;
+    }
+
+    public void setArtifacts(List<ArtifactConfiguration> artifacts) {
+        this.artifacts = artifacts;
+    }
 
     public String getAutoHealingOwner() {
         return autoHealingOwner;
@@ -437,14 +440,6 @@ public class Configuration extends BasicConfiguration {
         this.janusGraphReconnectIntervalInSeconds = janusGraphReconnectIntervalInSeconds;
     }
 
-    public List<String> getArtifactTypes() {
-        return artifactTypes;
-    }
-
-    public void setArtifactTypes(List<String> artifactTypes) {
-        this.artifactTypes = artifactTypes;
-    }
-
     public List<String> getExcludeResourceCategory() {
         return excludeResourceCategory;
     }
@@ -507,31 +502,6 @@ public class Configuration extends BasicConfiguration {
 
     public void setServiceApiArtifacts(Map<String, Object> serviceApiArtifacts) {
         this.serviceApiArtifacts = serviceApiArtifacts;
-    }
-
-    public Map<String, ArtifactTypeConfig> getServiceDeploymentArtifacts() {
-        return serviceDeploymentArtifacts;
-    }
-
-    public void setServiceDeploymentArtifacts(Map<String, ArtifactTypeConfig> serviceDeploymentArtifacts) {
-        this.serviceDeploymentArtifacts = serviceDeploymentArtifacts;
-    }
-
-    public Map<String, ArtifactTypeConfig> getResourceDeploymentArtifacts() {
-        return resourceDeploymentArtifacts;
-    }
-
-    public void setResourceDeploymentArtifacts(Map<String, ArtifactTypeConfig> resourceDeploymentArtifacts) {
-        this.resourceDeploymentArtifacts = resourceDeploymentArtifacts;
-    }
-
-    public void setResourceInstanceDeploymentArtifacts(
-            Map<String, ArtifactTypeConfig> resourceInstanceDeploymentArtifacts) {
-        this.resourceInstanceDeploymentArtifacts = resourceInstanceDeploymentArtifacts;
-    }
-
-    public Map<String, ArtifactTypeConfig> getResourceInstanceDeploymentArtifacts() {
-        return resourceInstanceDeploymentArtifacts;
     }
 
     public List<String> getExcludeServiceCategory() {
@@ -1529,7 +1499,7 @@ public class Configuration extends BasicConfiguration {
                 .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
                 .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
                 .append(format("informationalServiceArtifacts: %s%n", informationalServiceArtifacts))
-                .append(format("Supported artifacts types: %s%n", artifactTypes))
+                .append(format("Supported artifacts types: %s%n", artifacts))
                 .append(format("Supported license types: %s%n", licenseTypes))
                 .append(format("Additional information Maximum number of preoperties: %s%n",
                         additionalInformationMaxNumberOfKeys))
@@ -1651,14 +1621,6 @@ public class Configuration extends BasicConfiguration {
 
     public void setDisableAudit(boolean enableAudit) {
         this.disableAudit = enableAudit;
-    }
-
-    public Map<String, ArtifactTypeConfig> getResourceInformationalArtifacts() {
-        return resourceInformationalArtifacts;
-    }
-
-    public void setResourceInformationalArtifacts(Map<String, ArtifactTypeConfig> resourceInformationalArtifacts) {
-        this.resourceInformationalArtifacts = resourceInformationalArtifacts;
     }
 
     public Map<String, VfModuleProperty> getVfModuleProperties() {

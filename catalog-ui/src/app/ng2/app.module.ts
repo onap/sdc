@@ -72,6 +72,7 @@ import { AutomatedUpgradeModule } from './pages/automated-upgrade/automated-upgr
 import {WorkspaceModule} from './pages/workspace/workspace.module';
 import { ModalsModule } from './components/modals/modals.module';
 import { SharingService, CacheService, HomeService } from 'app/services-ng2';
+import { ArtifactConfigService } from "./services/artifact-config.service";
 import { IUserProperties } from 'app/models';
 import { PluginsModule } from './pages/plugins/plugins-module';
 import {WorkspaceNg1BridgeService} from './pages/workspace/workspace-ng1-bridge-service';
@@ -173,6 +174,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
         SharingService,
         CacheService,
         HomeService,
+        ArtifactConfigService,
         ComponentFactoryProvider,
         CookieServiceProvider,
         StateServiceFactory,

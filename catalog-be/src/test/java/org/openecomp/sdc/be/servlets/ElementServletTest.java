@@ -305,7 +305,6 @@ public class ElementServletTest extends JerseyTest {
 		Either<UiCategories, ResponseFormat> getAllCategoriesEither = Either.left(new UiCategories());
 		Either<List<ArtifactType>, ActionStatus> otherEither = Either.left(new ArrayList<>());
 		when(elementBusinessLogic.getDefaultHeatTimeout()).thenReturn(Either.left(configurationManager.getConfiguration().getHeatArtifactDeploymentTimeout()));
-		when(elementBusinessLogic.getAllDeploymentArtifactTypes()).thenReturn(Either.left(new HashMap<String, Object>()));
 		when(elementBusinessLogic.getResourceTypesMap()).thenReturn(Either.left(new HashMap<String, String>()));
 		when(elementBusinessLogic.getAllArtifactTypes(designerUser.getUserId()))
 				.thenReturn(otherEither);
@@ -961,15 +960,12 @@ public class ElementServletTest extends JerseyTest {
 		Configuration.HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new Configuration.HeatDeploymentArtifactTimeout();
 		heatDeploymentArtifactTimeout.setDefaultMinutes(1);
 		Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> defaultHeatTimeoutEither = Either.left(heatDeploymentArtifactTimeout);
-		Either<Map<String, Object>, ActionStatus> deploymentEither = Either.left(new HashMap<>());
 		Either<Map<String, String>, ActionStatus> resourceTypesMapEither = Either.left(new HashMap<>());
 
 		when(elementBusinessLogic.getAllArtifactTypes(designerUser.getUserId()))
 				.thenReturn(otherEither);
 		when(elementBusinessLogic.getDefaultHeatTimeout())
 				.thenReturn(defaultHeatTimeoutEither);
-		when(elementBusinessLogic.getAllDeploymentArtifactTypes())
-				.thenReturn(deploymentEither);
 		when(elementBusinessLogic.getResourceTypesMap())
 				.thenReturn(resourceTypesMapEither);
 
@@ -1065,6 +1061,7 @@ public class ElementServletTest extends JerseyTest {
 						bind(componentUtils).to(ComponentsUtils.class);
 						bind(componentsCleanBusinessLogic).to(ComponentsCleanBusinessLogic.class);
 						bind(elementBusinessLogic).to(ElementBusinessLogic.class);
+						bind(artifactsBusinessLogic).to(ArtifactsBusinessLogic.class);
 					}
 				})
 				.property("contextConfig", context);

@@ -220,7 +220,7 @@ describe('artifact-tab component', () => {
         fixture.componentInstance.addOrUpdate(artifact);
 
 
-        expect(artifactsServiceMockService.openArtifactModal).toHaveBeenCalledWith(topologyTemplateId, topologyTemplateType, artifact, type, isViewOnly, component.uniqueId);
+        expect(artifactsServiceMockService.openArtifactModal).toHaveBeenCalledWith(topologyTemplateId, topologyTemplateType, artifact, type, isViewOnly, component.uniqueId, undefined);
     });
 
     it ('on addOrUpdate -> openArtifactModal is being called from artifactService when isComponentInstanceSelected = false', () => {

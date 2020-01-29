@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
@@ -33,9 +35,6 @@ import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.CategoryData;
 
-import java.util.List;
-import java.util.Map;
-
 public interface IElementOperation {
 
     Either<List<CategoryDefinition>, ActionStatus> getAllResourceCategories();
@@ -44,21 +43,19 @@ public interface IElementOperation {
 
     Either<List<CategoryDefinition>, ActionStatus> getAllProductCategories();
 
-    public Either<List<Tag>, ActionStatus> getAllTags();
+    Either<List<Tag>, ActionStatus> getAllTags();
 
-    public Either<List<PropertyScope>, ActionStatus> getAllPropertyScopes();
+    Either<List<PropertyScope>, ActionStatus> getAllPropertyScopes();
 
-    public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes();
+    List<ArtifactType> getAllArtifactTypes();
 
-    public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes();
+    Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> getDefaultHeatTimeout();
 
-    public Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> getDefaultHeatTimeout();
+    <T extends GraphNode> Either<CategoryData, StorageOperationStatus> getCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
 
-    public <T extends GraphNode> Either<CategoryData, StorageOperationStatus> getCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
+    <T extends GraphNode> Either<org.openecomp.sdc.be.resources.data.category.CategoryData, StorageOperationStatus> getNewCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
 
-    public <T extends GraphNode> Either<org.openecomp.sdc.be.resources.data.category.CategoryData, StorageOperationStatus> getNewCategoryData(String name, NodeTypeEnum type, Class<T> clazz);
-
-    public Either<Map<String, String>, ActionStatus> getResourceTypesMap();
+    Either<Map<String, String>, ActionStatus> getResourceTypesMap();
 
     Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType);
 

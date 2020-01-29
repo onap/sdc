@@ -1,0 +1,8 @@
+# Errors
+errors:
+    #---------POL5003------------------------------
+    AUTH_FAILED: {
+        code: 403  ,
+        message: "Error: Not authorized to use the API.",
+        messageId: "POL5003"
+    }

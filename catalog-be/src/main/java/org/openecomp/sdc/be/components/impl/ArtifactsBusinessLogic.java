@@ -22,13 +22,38 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.dao.api.ActionStatus.MISMATCH_BETWEEN_ARTIFACT_TYPE_AND_COMPONENT_TYPE;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -43,7 +68,9 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
+import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -61,7 +88,6 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -121,31 +147,6 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.dao.api.ActionStatus.MISMATCH_BETWEEN_ARTIFACT_TYPE_AND_COMPONENT_TYPE;
-
 @org.springframework.stereotype.Component("artifactBusinessLogic")
 public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private static final String RESOURCE_INSTANCE = "resource instance";
@@ -167,19 +168,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class.getName());
     private static final String FAILED_UPDATE_GROUPS = "Failed to update groups of the component {}. ";
-    private static final String FAILED_UPDATE_ARTIFACT = "Failed to delete or update the artifact {}. Parent uniqueId is {}";
     private static final String FAILED_SAVE_ARTIFACT = "Failed to save the artifact.";
     public static final String ARTIFACT_ACTION_LOCK = "Artifact action - lock ";
-    private static final String UPDATE_ARTIFACT_LOCK = "Update Artifact - lock ";
-    private static final String FAILED_DOWNLOAD_ARTIFACT = "Download artifact {} failed";
     public static final String FAILED_UPLOAD_ARTIFACT_TO_COMPONENT = "Failed to upload artifact to component with type {} and uuid {}. Status is {}. ";
-    private static final String FAILED_UPLOAD_ARTIFACT_TO_INSTANCE = "Failed to upload artifact to component instance {} of component with type {} and uuid {}. Status is {}. ";
     private static final String FAILED_FETCH_COMPONENT = "Could not fetch component with type {} and uuid {}. Status is {}. ";
     private static final String NULL_PARAMETER = "One of the function parameteres is null";
     public static final String COMPONENT_INSTANCE_NOT_FOUND = "Component instance {} was not found for component {}";
     private static final String ROLLBACK = "all changes rollback";
     private static final String COMMIT = "all changes committed";
-    private static final String ARTIFACT_SAVED = "Artifact saved into ES - {}";
     private static final String UPDATE_ARTIFACT = "Update Artifact";
     private static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -479,9 +475,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                                                        String operationName, AuditingActionEnum auditingAction, User user, Component parent,
                                                        boolean needUpdateGroup) {
         Either<ArtifactDefinition, Operation> result;
-        ArtifactTypeEnum artifactType = validateAndReturnArtifactType(artifactInfo);
-        if (componentType == ComponentTypeEnum.RESOURCE_INSTANCE
-                && (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_VOL || artifactType == ArtifactTypeEnum.HEAT_NET || artifactType == ArtifactTypeEnum.HEAT_ENV)) {
+        validateArtifactType(artifactInfo);
+        final String artifactType = artifactInfo.getArtifactType();
+        if (componentType == ComponentTypeEnum.RESOURCE_INSTANCE &&
+            (ArtifactTypeEnum.HEAT.getType().equals(artifactType) ||
+                ArtifactTypeEnum.HEAT_VOL.getType().equals(artifactType) ||
+                ArtifactTypeEnum.HEAT_NET.getType().equals(artifactType) ||
+                ArtifactTypeEnum.HEAT_ENV.getType().equals(artifactType))) {
             result = handleUpdateHeatEnvAndHeatMeta(componentId, artifactInfo, auditingAction, artifactId, user, componentType, parent, originData, origMd5, operation);
             if (needUpdateGroup) {
                 ActionStatus error = updateGroupInstance(artifactInfo, result.left().value(), parent, componentId);
@@ -490,7 +490,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 }
             }
         }
-        else if (componentType == ComponentTypeEnum.RESOURCE && artifactType == ArtifactTypeEnum.HEAT_ENV) {
+        else if (componentType == ComponentTypeEnum.RESOURCE && ArtifactTypeEnum.HEAT_ENV.getType().equals(artifactType)) {
             result = handleUpdateHeatWithHeatEnvParams(componentId, artifactInfo, auditingAction, componentType, parent, originData, origMd5, operation, needUpdateGroup);
         }
         else {
@@ -507,16 +507,70 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private ArtifactTypeEnum validateAndReturnArtifactType(ArtifactDefinition artifactInfo) {
-        ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactInfo.getArtifactType());
-        if (artifactType == null) {
+    private void validateArtifactType(final ArtifactDefinition artifactInfo) {
+        if (!isArtifactSupported(artifactInfo.getArtifactType())) {
             throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactInfo.getArtifactType());
         }
-        return artifactType;
     }
 
-    public ActionStatus updateGroupForHeatEnv(ArtifactDefinition artifactInfo, ArtifactDefinition artAfterUpdate, Component parent) {
-        return ActionStatus.OK;
+    private void validateArtifactType(final ArtifactDefinition artifactInfo,
+                                      final ComponentTypeEnum componentType) {
+        final ArtifactConfiguration artifactConfiguration =
+            loadArtifactTypeConfig(artifactInfo.getArtifactType()).orElse(null);
+        if (artifactConfiguration == null) {
+            BeEcompErrorManager.getInstance()
+                .logBeMissingArtifactInformationError("Artifact Update / Upload", "artifactLabel");
+            log.debug("Missing artifact type for artifact {}", artifactInfo.getArtifactName());
+            final ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_ARTIFACT_TYPE);
+            throw new ByResponseFormatComponentException(responseFormat);
+        }
+
+        final ArtifactGroupTypeEnum artifactGroupType = artifactInfo.getArtifactGroupType();
+        try {
+            validateArtifactType(componentType, artifactGroupType, artifactConfiguration);
+        } catch (final ComponentException e) {
+            log.debug("Artifact is invalid", e);
+            BeEcompErrorManager.getInstance()
+                .logBeInvalidTypeError("Artifact Upload / Delete / Update - Not supported artifact type", artifactInfo
+                    .getArtifactType(), "Artifact " + artifactInfo.getArtifactName());
+            log.debug("Not supported artifact type = {}", artifactInfo.getArtifactType());
+            final ResponseFormat responseFormat = componentsUtils
+                .getResponseFormat(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactInfo
+                    .getArtifactType());
+            throw new ByResponseFormatComponentException(responseFormat);
+        }
+    }
+
+    private void validateArtifactType(final ComponentTypeEnum componentType, final ArtifactGroupTypeEnum groupType,
+                                      final ArtifactConfiguration artifactConfiguration) {
+        final boolean supportComponentType =
+            CollectionUtils.isNotEmpty(artifactConfiguration.getComponentTypes()) &&
+                artifactConfiguration.getComponentTypes().stream()
+                    .anyMatch(componentType1 -> componentType1.getValue().equalsIgnoreCase(componentType.getValue()));
+        if (!supportComponentType) {
+            log.debug("Artifact Type '{}' not supported for Component Type '{}'",
+                artifactConfiguration.getType(), componentType.getValue());
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED,
+                artifactConfiguration.getType());
+        }
+
+        final boolean supportResourceType = artifactConfiguration.hasSupport(groupType);
+        if (!supportResourceType) {
+            log.debug("Artifact Type '{}' not supported for Component Type '{}' and Category '{}'",
+                artifactConfiguration.getType(), componentType.getValue(), groupType.getType());
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED,
+                artifactConfiguration.getType());
+        }
+    }
+
+    private boolean isArtifactSupported(final String artifactType) {
+        final Configuration configuration = ConfigurationManager.getConfigurationManager().getConfiguration();
+        final List<ArtifactConfiguration> artifactConfigurationList = configuration.getArtifacts();
+        if (CollectionUtils.isEmpty(artifactConfigurationList)) {
+            return false;
+        }
+        return artifactConfigurationList.stream()
+            .anyMatch(artifactConfiguration -> artifactConfiguration.getType().equalsIgnoreCase(artifactType));
     }
 
     @VisibleForTesting
@@ -706,7 +760,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         // step 1
         // detect auditing type
         Map<String, ArtifactDefinition> resMap = null;
-//        Either<Map<String, ArtifactDefinition>, ResponseFormat> resultOp = null;
 
         new Wrapper<>();
         // step 2
@@ -745,7 +798,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 throw new ByActionStatusComponentException(ActionStatus.MISSING_INFORMATION);
             }
             if (groupType == ArtifactGroupTypeEnum.DEPLOYMENT) {
-                List<ArtifactDefinition> list = getDeploymentArtifacts(component, componentType.getNodeType(), componentId);
+                List<ArtifactDefinition> list = getDeploymentArtifacts(component, componentId);
                 if (list != null && !list.isEmpty()) {
                     resMap = list.stream().collect(Collectors.toMap(ArtifactDataDefinition::getArtifactLabel, Function.identity()));
                 }
@@ -1011,14 +1064,31 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> validateInput(String componentId, ArtifactDefinition artifactInfo, ArtifactOperationInfo operation, String artifactId, User user, String interfaceName, String operationName,
-                                                                     ComponentTypeEnum componentType, Component parentComponent) {
+    private Either<ArtifactDefinition, ResponseFormat> validateInput(final String componentId,
+                                                                     final ArtifactDefinition artifactInfo,
+                                                                     final ArtifactOperationInfo operation,
+                                                                     final String artifactId, final User user,
+                                                                     String interfaceName,
+                                                                     String operationName,
+                                                                     final ComponentTypeEnum componentType,
+                                                                     final Component parentComponent) {
 
-        ArtifactDefinition currentArtifactInfo = findArtifactOnParentComponent(parentComponent, componentType, componentId, operation, artifactId);
-        ignoreUnupdateableFieldsInUpdate(operation, artifactInfo, currentArtifactInfo);
-        validateInformationalArtifact(artifactInfo, parentComponent);
-        Either<Boolean, ResponseFormat> validateAndSetArtifactname = validateAndSetArtifactName(
-                artifactInfo);
+        final ArtifactDefinition existingArtifactInfo =
+            findArtifact(parentComponent, componentType, componentId, operation, artifactId);
+        final Component component;
+        if (parentComponent.getUniqueId().equals(componentId)) {
+            component = parentComponent;
+        } else {
+            final ComponentInstance componentInstance = findComponentInstance(componentId, parentComponent);
+            component = findComponent(componentInstance.getComponentUid());
+            component.setComponentType(componentType);
+        }
+
+        ignoreUnupdateableFieldsInUpdate(operation, artifactInfo, existingArtifactInfo);
+        if (isInformationalArtifact(artifactInfo)) {
+            validateInformationalArtifact(artifactInfo, component);
+        }
+        Either<Boolean, ResponseFormat> validateAndSetArtifactname = validateAndSetArtifactName(artifactInfo);
         if (validateAndSetArtifactname.isRight()) {
             return Either.right(validateAndSetArtifactname.right().value());
         }
@@ -1036,37 +1106,43 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         // This is a patch to block possibility of updating service api fields
         // through other artifacts flow
 
-        ArtifactGroupTypeEnum artifactGroupType = operationName != null ? ArtifactGroupTypeEnum.LIFE_CYCLE : ArtifactGroupTypeEnum.INFORMATIONAL;
-        if (!ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum())) {
-            checkAndSetUnUpdatableFields(user, artifactInfo, currentArtifactInfo, artifactGroupType);
-        }
-        else {
+        final ArtifactGroupTypeEnum artifactGroupType =
+            operationName != null ? ArtifactGroupTypeEnum.LIFE_CYCLE : ArtifactGroupTypeEnum.INFORMATIONAL;
+        final boolean isCreateOrLink = ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum());
+        if (!isCreateOrLink) {
+            checkAndSetUnUpdatableFields(user, artifactInfo, existingArtifactInfo, artifactGroupType);
+        } else {
             checkCreateFields(user, artifactInfo, artifactGroupType);
         }
 
         composeArtifactId(componentId, artifactId, artifactInfo, interfaceName, operationName);
-        if (currentArtifactInfo != null) {
-            artifactInfo.setMandatory(currentArtifactInfo.getMandatory());
+        if (existingArtifactInfo != null) {
+            artifactInfo.setMandatory(existingArtifactInfo.getMandatory());
+            if (!isCreateOrLink) {
+                validateArtifactTypeNotChanged(artifactInfo, existingArtifactInfo);
+            }
         }
 
         // artifactGroupType is not allowed to be updated
-        if (!ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum())) {
-            Either<ArtifactDefinition, ResponseFormat> validateGroupType = validateOrSetArtifactGroupType(artifactInfo, currentArtifactInfo);
+        if (!isCreateOrLink) {
+            Either<ArtifactDefinition, ResponseFormat> validateGroupType = validateOrSetArtifactGroupType(artifactInfo, existingArtifactInfo);
             if (validateGroupType.isRight()) {
                 return Either.right(validateGroupType.right().value());
             }
         }
-        // TODO TEMP !!!
-        NodeTypeEnum parentType = convertParentType(componentType);
 
-        // TODO TEMP !!!
-        boolean isCreate = ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum());
-
-        if (isDeploymentArtifact(artifactInfo)) {
-            validateDeploymentArtifact(parentComponent, componentId, isCreate, artifactInfo, currentArtifactInfo, parentType);
+        setArtifactTimeout(artifactInfo, existingArtifactInfo);
+        if (isHeatArtifact(artifactInfo)) {
+            validateHeatArtifact(parentComponent, componentId, artifactInfo);
         }
-        else {
-            artifactInfo.setTimeout(NodeTemplateOperation.NON_HEAT_TIMEOUT);
+        if (isDeploymentArtifact(artifactInfo)) {
+            if (componentType != ComponentTypeEnum.RESOURCE_INSTANCE) {
+                final String artifactName = artifactInfo.getArtifactName();
+                if (isCreateOrLink || !artifactName.equalsIgnoreCase(existingArtifactInfo.getArtifactName())) {
+                    validateSingleDeploymentArtifactName(artifactName, parentComponent);
+                }
+            }
+            validateDeploymentArtifact(artifactInfo, component);
         }
 
         Either<Boolean, ResponseFormat> descriptionResult = validateAndCleanDescription(artifactInfo);
@@ -1074,11 +1150,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             return Either.right(descriptionResult.right().value());
         }
 
-        if (currentArtifactInfo != null && currentArtifactInfo.getArtifactGroupType() == ArtifactGroupTypeEnum.SERVICE_API) {
-            Either<ActionStatus, ResponseFormat> validateServiceApiType = validateArtifactType(user.getUserId(), artifactInfo, parentType);
-            if (validateServiceApiType.isRight()) {
-                return Either.right(validateServiceApiType.right().value());
-            }
+        validateArtifactType(artifactInfo, component.getComponentType());
+        artifactInfo.setArtifactType(artifactInfo.getArtifactType().toUpperCase());
+        if (existingArtifactInfo != null && existingArtifactInfo.getArtifactGroupType() == ArtifactGroupTypeEnum.SERVICE_API) {
             // Change of type is not allowed and should be ignored
 
             artifactInfo.setArtifactType(ARTIFACT_TYPE_OTHER);
@@ -1088,29 +1162,34 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 return Either.right(validateUrl.right().value());
             }
 
-            Either<Boolean, ResponseFormat> validateUpdate = validateFirstUpdateHasPayload(artifactInfo, currentArtifactInfo);
+            Either<Boolean, ResponseFormat> validateUpdate = validateFirstUpdateHasPayload(artifactInfo, existingArtifactInfo);
             if (validateUpdate.isRight()) {
                 log.debug("serviceApi first update cnnot be without payload.");
                 return Either.right(validateUpdate.right().value());
             }
-        }
-        else {
-            Either<ActionStatus, ResponseFormat> validateArtifactType = validateArtifactType(user.getUserId(), artifactInfo, parentType);
-            if (validateArtifactType.isRight()) {
-                return Either.right(validateArtifactType.right().value());
-            }
+        } else {
             if (artifactInfo.getApiUrl() != null) {
                 artifactInfo.setApiUrl(null);
                 log.error("Artifact URL cannot be set through this API - ignoring");
             }
 
-            if (artifactInfo.getServiceApi() != null && artifactInfo.getServiceApi()) {
+            if (Boolean.TRUE.equals(artifactInfo.getServiceApi())) {
                 artifactInfo.setServiceApi(false);
                 log.error("Artifact service API flag cannot be changed - ignoring");
             }
         }
 
         return Either.left(artifactInfo);
+    }
+
+    private Component findComponent(final String componentId) {
+        Either<? extends Component, StorageOperationStatus> component = toscaOperationFacade.getToscaFullElement(componentId);
+        if (component.isRight()) {
+            log.debug("Component '{}' not found ", componentId);
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NOT_FOUND, componentId);
+        }
+
+        return component.left().value();
     }
 
     private void ignoreUnupdateableFieldsInUpdate(ArtifactOperationInfo operation, ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifactInfo) {
@@ -1121,8 +1200,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ArtifactDefinition findArtifactOnParentComponent(Component parentComponent, ComponentTypeEnum componentType, String parentId, ArtifactOperationInfo operation, String artifactId) {
-
+    private ArtifactDefinition findArtifact(final Component parentComponent, final ComponentTypeEnum componentType,
+                                            final String parentId, final ArtifactOperationInfo operation,
+                                            final String artifactId) {
         ArtifactDefinition foundArtifact = null;
         if (StringUtils.isNotEmpty(artifactId)) {
             foundArtifact = findArtifact(parentComponent, componentType, parentId, artifactId);
@@ -1132,7 +1212,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_EXIST, foundArtifact.getArtifactLabel());
         }
         if (foundArtifact == null && !ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum())) {
-            log.debug("The artifact {} was not found on parent {}. ", artifactId, parentId);
+            log.debug("The artifact {} was not found on parent component or instance {}. ", artifactId, parentId);
             throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_NOT_FOUND, "");
         }
         return foundArtifact;
@@ -1150,31 +1230,26 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return foundArtifact;
     }
 
-    private void validateInformationalArtifact(ArtifactDefinition artifactInfo, Component parentComponent) {
-        ComponentTypeEnum parentComponentType = parentComponent.getComponentType();
-        ArtifactGroupTypeEnum groupType = artifactInfo.getArtifactGroupType();
-        ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactInfo.getArtifactType());
-        if (artifactType == null) {
-            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactInfo.getArtifactType());
+    private void validateInformationalArtifact(final ArtifactDefinition artifactInfo, final Component component) {
+        final ArtifactGroupTypeEnum groupType = artifactInfo.getArtifactGroupType();
+        if (groupType != ArtifactGroupTypeEnum.INFORMATIONAL) {
+            return;
         }
-        else if (parentComponentType == ComponentTypeEnum.RESOURCE && groupType == ArtifactGroupTypeEnum.INFORMATIONAL) {
-            String artifactTypeName = artifactType.getType();
-            ResourceTypeEnum parentResourceType = ((Resource) parentComponent).getResourceType();
-            Map<String, ArtifactTypeConfig> resourceInformationalArtifacts = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getResourceInformationalArtifacts();
-            Set<String> validArtifactTypes = resourceInformationalArtifacts.keySet();
-            if (!validArtifactTypes.contains(artifactTypeName)) {
-                throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactTypeName);
-            }
-            else {
-                List<String> validResourceType = resourceInformationalArtifacts.get(artifactTypeName)
-                        .getValidForResourceTypes();
-                if (!validResourceType.contains(parentResourceType.name())) {
-                    throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactTypeName);
-                }
-            }
+        final ComponentTypeEnum parentComponentType = component.getComponentType();
+        final String artifactType = artifactInfo.getArtifactType();
+        final ArtifactConfiguration artifactConfiguration = loadArtifactTypeConfig(artifactType).orElse(null);
+        if (artifactConfiguration == null) {
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactType);
         }
+        validateArtifactType(parentComponentType, artifactInfo.getArtifactGroupType(), artifactConfiguration);
+
+        if (component.getComponentType() == ComponentTypeEnum.RESOURCE ||
+            component.getComponentType() == ComponentTypeEnum.RESOURCE_INSTANCE) {
+
+            final ResourceTypeEnum resourceType = ((Resource) component).getResourceType();
+            validateResourceType(resourceType, artifactInfo, artifactConfiguration.getResourceTypes());
+        }
+        validateArtifactExtension(artifactConfiguration, artifactInfo);
     }
 
     private NodeTypeEnum convertParentType(ComponentTypeEnum componentType) {
@@ -1750,54 +1825,77 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return foundInstance;
     }
 
-    private void validateDeploymentArtifact(Component parentComponent, String parentId, boolean isCreate, ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact, NodeTypeEnum parentType) {
-
-        ArtifactTypeEnum artifactType = getValidArtifactType(artifactInfo);
-        Map<String, ArtifactTypeConfig> resourceDeploymentArtifacts = fillDeploymentArtifactTypeConf(parentType);
-        validateDeploymentArtifactTypeIsLegalForParent(artifactInfo, artifactType, resourceDeploymentArtifacts);
-        if (!isCreate) {
-            validateArtifactTypeNotChanged(artifactInfo, currentArtifact);
+    private void validateDeploymentArtifact(final ArtifactDefinition artifactInfo, final Component component) {
+        final ComponentTypeEnum componentType = component.getComponentType();
+        if (componentType != ComponentTypeEnum.RESOURCE &&
+            componentType != ComponentTypeEnum.SERVICE &&
+            componentType != ComponentTypeEnum.RESOURCE_INSTANCE) {
+            log.debug("Invalid component type '{}' for artifact. "
+                + "Expected Resource, Component or Resource Instance", componentType.getValue());
+            throw new ByActionStatusComponentException(MISMATCH_BETWEEN_ARTIFACT_TYPE_AND_COMPONENT_TYPE,
+                componentType.getValue(), "Service, Resource or ResourceInstance", componentType.getValue());
         }
-        if (parentType == NodeTypeEnum.Resource) {
-            Resource resource = (Resource) parentComponent;
-            ResourceTypeEnum resourceType = resource.getResourceType();
-            ArtifactTypeConfig config = resourceDeploymentArtifacts.get(artifactType.getType());
-            if (config == null) {
-                throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactInfo.getArtifactType());
-            }
-            List<String> myList = config.getValidForResourceTypes();
-            validateResourceType(resourceType, artifactInfo, myList);
+        final String artifactType = artifactInfo.getArtifactType();
+        final ArtifactConfiguration artifactConfiguration = loadArtifactTypeConfig(artifactType).orElse(null);
+        if (artifactConfiguration == null) {
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactType);
         }
+        validateArtifactType(componentType, artifactInfo.getArtifactGroupType(), artifactConfiguration);
+        if (componentType == ComponentTypeEnum.RESOURCE || componentType == ComponentTypeEnum.RESOURCE_INSTANCE) {
+            final Resource resource = (Resource) component;
+            final ResourceTypeEnum resourceType = resource.getResourceType();
 
-        validateFileExtension(() -> getDeploymentArtifactTypeConfig(parentType, artifactType), artifactInfo, parentType, artifactType);
-
-        if (NodeTypeEnum.ResourceInstance != parentType) {
-            String artifactName = artifactInfo.getArtifactName();
-            if (isCreate || !artifactName.equalsIgnoreCase(currentArtifact.getArtifactName())) {
-                validateSingleDeploymentArtifactName(artifactName, parentComponent, parentType);
-            }
+            validateResourceType(resourceType, artifactInfo, artifactConfiguration.getResourceTypes());
         }
 
-        switch (artifactType) {
+        validateArtifactExtension(artifactConfiguration, artifactInfo);
+    }
+
+    private void validateHeatArtifact(final Component parentComponent, final String componentId,
+                                      final ArtifactDefinition artifactDefinition) {
+        final String artifactType = artifactDefinition.getArtifactType();
+        final ArtifactTypeEnum artifactTypeEnum = ArtifactTypeEnum.parse(artifactType);
+        if (artifactTypeEnum == null) {
+            return;
+        }
+
+        switch (artifactTypeEnum) {
             case HEAT:
             case HEAT_VOL:
             case HEAT_NET:
-                validateHeatTimeoutValue(isCreate, artifactInfo, currentArtifact);
+                validateHeatTimeoutValue(artifactDefinition);
                 break;
             case HEAT_ENV:
-                validateHeatEnvDeploymentArtifact(parentComponent, parentId, artifactInfo, parentType);
-                artifactInfo.setTimeout(NodeTemplateOperation.NON_HEAT_TIMEOUT);
+                validateHeatEnvDeploymentArtifact(parentComponent, componentId, artifactDefinition);
                 break;
-            case DCAE_INVENTORY_TOSCA:
-            case DCAE_INVENTORY_JSON:
-            case DCAE_INVENTORY_POLICY:
-                // Validation is done in handle payload.
-            case DCAE_INVENTORY_DOC:
-            case DCAE_INVENTORY_BLUEPRINT:
-            case DCAE_INVENTORY_EVENT:
-                // No specific validation
             default:
-                artifactInfo.setTimeout(NodeTemplateOperation.NON_HEAT_TIMEOUT);
+                break;
+        }
+    }
+
+    private void setArtifactTimeout(final ArtifactDefinition newArtifactInfo,
+                                    final ArtifactDefinition existingArtifactInfo) {
+
+        final String artifactType = newArtifactInfo.getArtifactType();
+        final ArtifactTypeEnum artifactTypeEnum = ArtifactTypeEnum.parse(artifactType);
+        if (artifactTypeEnum == null) {
+            newArtifactInfo.setTimeout(NodeTemplateOperation.NON_HEAT_TIMEOUT);
+            return;
+        }
+        switch (artifactTypeEnum) {
+            case HEAT:
+            case HEAT_VOL:
+            case HEAT_NET:
+                if (newArtifactInfo.getTimeout() == null) {
+                    if (existingArtifactInfo == null) {
+                        newArtifactInfo.setTimeout(NodeTemplateOperation.getDefaultHeatTimeout());
+                    } else {
+                        newArtifactInfo.setTimeout(existingArtifactInfo.getTimeout());
+                    }
+                }
+                break;
+            default:
+                newArtifactInfo.setTimeout(NodeTemplateOperation.NON_HEAT_TIMEOUT);
                 break;
         }
     }
@@ -1810,57 +1908,19 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Map<String, ArtifactTypeConfig> fillDeploymentArtifactTypeConf(NodeTypeEnum parentType) {
-        Map<String, ArtifactTypeConfig> resourceDeploymentArtifacts;
-        if (parentType == NodeTypeEnum.Resource) {
-            resourceDeploymentArtifacts = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getResourceDeploymentArtifacts();
-        }
-        else if (parentType == NodeTypeEnum.ResourceInstance) {
-            resourceDeploymentArtifacts = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getResourceInstanceDeploymentArtifacts();
-        }
-        else {
-            resourceDeploymentArtifacts = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getServiceDeploymentArtifacts();
-        }
-        return resourceDeploymentArtifacts;
-    }
-
-    public ArtifactTypeEnum getValidArtifactType(ArtifactDefinition artifactInfo) {
-        ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactInfo.getArtifactType());
+    Optional<ArtifactConfiguration> loadArtifactTypeConfig(final String artifactType) {
         if (artifactType == null) {
-            log.debug("Artifact Type: {} Not found !", artifactInfo.getArtifactType());
-            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactInfo.getArtifactType());
+            return Optional.empty();
         }
-        return artifactType;
-    }
+        final List<ArtifactConfiguration> artifactConfigurationList =
+            ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
+        if (CollectionUtils.isEmpty(artifactConfigurationList)) {
+            return Optional.empty();
+        }
 
-    private ArtifactTypeConfig getDeploymentArtifactTypeConfig(NodeTypeEnum parentType, ArtifactTypeEnum artifactType) {
-        ArtifactTypeConfig retConfig = null;
-        String fileType = artifactType.getType();
-        if (parentType == NodeTypeEnum.Resource) {
-            retConfig = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getResourceDeploymentArtifacts()
-                    .get(fileType);
-        }
-        else if (parentType == NodeTypeEnum.Service) {
-            retConfig = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getServiceDeploymentArtifacts()
-                    .get(fileType);
-        }
-        else if (parentType == NodeTypeEnum.ResourceInstance) {
-            retConfig = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getResourceInstanceDeploymentArtifacts()
-                    .get(fileType);
-        }
-        return retConfig;
+        return artifactConfigurationList.stream()
+            .filter(artifactConfiguration -> artifactConfiguration.getType().equalsIgnoreCase(artifactType))
+            .findFirst();
     }
 
     private Either<Boolean, ResponseFormat> extractHeatParameters(ArtifactDefinition artifactInfo) {
@@ -1884,42 +1944,33 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     @VisibleForTesting
-    public void validateFileExtension(IDeploymentArtifactTypeConfigGetter deploymentConfigGetter, ArtifactDefinition artifactInfo, NodeTypeEnum parentType, ArtifactTypeEnum artifactType) {
-        if (parentType != NodeTypeEnum.Resource && parentType != NodeTypeEnum.Service && parentType != NodeTypeEnum.ResourceInstance) {
-            log.debug("parent type of artifact can be either resource or service");
-            throw new ByActionStatusComponentException(MISMATCH_BETWEEN_ARTIFACT_TYPE_AND_COMPONENT_TYPE, artifactType.name(), "Service, Resource or ResourceInstance", parentType.getName());
-        }
-
-        String fileType = artifactType.getType();
-        ArtifactTypeConfig deploymentAcceptedTypes = deploymentConfigGetter.getDeploymentArtifactConfig();
-        if (deploymentAcceptedTypes == null) {
-            log.debug("invalid artifact type {}", fileType);
-            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, fileType);
-        }
+    void validateArtifactExtension(final ArtifactConfiguration artifactConfiguration,
+                                   final ArtifactDefinition artifactDefinition) {
+        final List<String> acceptedTypes = artifactConfiguration.getAcceptedTypes();
         /*
          * No need to check specific types. In case there are no acceptedTypes in configuration, then any type is accepted.
          */
+        if (CollectionUtils.isEmpty(acceptedTypes)) {
+            return;
+        }
+        final String artifactName = artifactDefinition.getArtifactName();
+        final String fileExtension = FilenameUtils.getExtension(artifactName);
 
-        List<String> acceptedTypes = deploymentAcceptedTypes.getAcceptedTypes();
-        String artifactName = artifactInfo.getArtifactName();
-        String fileExtension = GeneralUtility.getFilenameExtension(artifactName);
-        // Pavel - File extension validation is case-insensitive - Ella,
-        // 21/02/2016
-        if (CollectionUtils.isNotEmpty(acceptedTypes) && !acceptedTypes.contains(fileExtension.toLowerCase())) {
-            log.debug("File extension \"{}\" is not allowed for {} which is of type:{}", fileExtension, artifactName, fileType);
-            throw new ByActionStatusComponentException(ActionStatus.WRONG_ARTIFACT_FILE_EXTENSION, fileType);
+        if (fileExtension == null || !acceptedTypes.contains(fileExtension.toLowerCase())) {
+            final String artifactType = artifactDefinition.getArtifactType();
+            log.debug("File extension \"{}\" is not allowed for artifact type \"{}\"", fileExtension, artifactType);
+            throw new ByActionStatusComponentException(ActionStatus.WRONG_ARTIFACT_FILE_EXTENSION, artifactType);
         }
     }
 
     @VisibleForTesting
-    void validateHeatEnvDeploymentArtifact(Component parentComponent, String parentId, ArtifactDefinition artifactInfo, NodeTypeEnum parentType) {
-
-        Wrapper<ArtifactDefinition> heatMDWrapper = new Wrapper<>();
-        Wrapper<byte[]> payloadWrapper = new Wrapper<>();
+    void validateHeatEnvDeploymentArtifact(final Component parentComponent, final String parentId,
+                                           final ArtifactDefinition artifactInfo) {
+        final Wrapper<ArtifactDefinition> heatMDWrapper = new Wrapper<>();
+        final Wrapper<byte[]> payloadWrapper = new Wrapper<>();
 
         validateYaml(artifactInfo);
-        validateHeatExist(parentComponent.getUniqueId(), parentId, heatMDWrapper, artifactInfo,
-                parentType, parentComponent.getComponentType());
+        validateHeatExist(parentComponent.getUniqueId(), parentId, heatMDWrapper, artifactInfo, parentComponent.getComponentType());
 
         if (!heatMDWrapper.isEmpty()) {
             fillArtifactPayload(payloadWrapper, heatMDWrapper.getInnerElement());
@@ -2005,42 +2056,38 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateSingleDeploymentArtifactName(String artifactName, Component parentComponent, NodeTypeEnum parentType) {
+    private void validateSingleDeploymentArtifactName(final String artifactName, final Component parentComponent) {
         boolean artifactNameFound = false;
-        Iterator<ArtifactDefinition> parentDeploymentArtifactsItr = getDeploymentArtifacts(parentComponent, parentType, null)
-                .iterator();
+        final Iterator<ArtifactDefinition> parentDeploymentArtifactsItr =
+            getDeploymentArtifacts(parentComponent, null).iterator();
 
         while (!artifactNameFound && parentDeploymentArtifactsItr.hasNext()) {
             artifactNameFound = artifactName.equalsIgnoreCase(parentDeploymentArtifactsItr.next().getArtifactName());
         }
         if (artifactNameFound) {
+            final ComponentTypeEnum componentType = parentComponent.getComponentType();
             log.debug("Can't upload artifact: {}, because another artifact with this name already exist.", artifactName);
-            throw new ByActionStatusComponentException(ActionStatus.DEPLOYMENT_ARTIFACT_NAME_ALREADY_EXISTS, parentType.name(),
-                    parentComponent.getName(), artifactName);
+            throw new ByActionStatusComponentException(ActionStatus.DEPLOYMENT_ARTIFACT_NAME_ALREADY_EXISTS,
+                componentType.getValue(), parentComponent.getName(), artifactName);
         }
     }
 
-    private void validateHeatExist(String componentId, String parentRiId, Wrapper<ArtifactDefinition> heatArtifactMDWrapper, ArtifactDefinition heatEnvArtifact, NodeTypeEnum parentType,
+    private void validateHeatExist(String componentId, String parentRiId, Wrapper<ArtifactDefinition> heatArtifactMDWrapper, ArtifactDefinition heatEnvArtifact,
                                    ComponentTypeEnum componentType) {
-        Either<ArtifactDefinition, StorageOperationStatus> res = artifactToscaOperation.getHeatArtifactByHeatEnvId(parentRiId, heatEnvArtifact, parentType, componentId, componentType);
+        final Either<ArtifactDefinition, StorageOperationStatus> res = artifactToscaOperation
+            .getHeatArtifactByHeatEnvId(parentRiId, heatEnvArtifact, componentId, componentType);
         if (res.isRight()) {
             throw new ByActionStatusComponentException(ActionStatus.MISSING_HEAT);
-        } else {
-            heatArtifactMDWrapper.setInnerElement(res.left().value());
         }
+
+        heatArtifactMDWrapper.setInnerElement(res.left().value());
     }
 
     @VisibleForTesting
-    void validateHeatTimeoutValue(boolean isCreate, ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact) {
+    void validateHeatTimeoutValue(final ArtifactDefinition artifactInfo) {
         log.trace("Started HEAT pre-payload validation for artifact {}", artifactInfo.getArtifactLabel());
         // timeout > 0 for HEAT artifacts
-        Integer timeout = artifactInfo.getTimeout();
-        if (timeout == null) {
-            Integer defaultTimeout = isCreate ? NodeTemplateOperation.getDefaultHeatTimeout() : currentArtifact.getTimeout();
-            artifactInfo.setTimeout(defaultTimeout);
-            // HEAT artifact but timeout is invalid
-        }
-        else if (timeout < 1) {
+        if (artifactInfo.getTimeout() == null || artifactInfo.getTimeout() < 1) {
             throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_INVALID_TIMEOUT);
         }
         // US649856 - Allow several HEAT files on Resource
@@ -2048,12 +2095,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     @VisibleForTesting
-    void validateResourceType(ResourceTypeEnum resourceType, ArtifactDefinition artifactInfo, List<String> typeList) {
-        if (typeList == null || !typeList.contains(resourceType.name())) {
-            String listToString = (typeList != null) ? typeList.toString() : "";
-            throw new ByActionStatusComponentException(MISMATCH_BETWEEN_ARTIFACT_TYPE_AND_COMPONENT_TYPE, artifactInfo.getArtifactName(),
-                    listToString, resourceType.getValue());
+    void validateResourceType(final ResourceTypeEnum resourceType, final ArtifactDefinition artifactInfo,
+                              final List<String> typeList) {
+        if (CollectionUtils.isEmpty(typeList) || typeList.contains(resourceType.getValue())) {
+            return;
         }
+        final String listToString = typeList.stream().collect(Collectors.joining(", "));
+        throw new ByActionStatusComponentException(MISMATCH_BETWEEN_ARTIFACT_TYPE_AND_COMPONENT_TYPE,
+            artifactInfo.getArtifactGroupType().getType(), listToString, resourceType.getValue());
     }
 
     @VisibleForTesting
@@ -2082,22 +2131,24 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(artifactInfo);
     }
 
-    public List<ArtifactDefinition> getDeploymentArtifacts(Component parentComponent, NodeTypeEnum parentType, String ciId) {
-        List<ArtifactDefinition> deploymentArtifacts = new ArrayList<>();
-        if (parentComponent.getDeploymentArtifacts() != null) {
-            if (NodeTypeEnum.ResourceInstance == parentType && ciId != null) {
-                Either<ComponentInstance, ResponseFormat> getRI = getRIFromComponent(parentComponent, ciId, null, null, null);
-                if (getRI.isRight()) {
-                    return deploymentArtifacts;
-                }
-                ComponentInstance ri = getRI.left().value();
-                if (ri.getDeploymentArtifacts() != null) {
-                    deploymentArtifacts.addAll(ri.getDeploymentArtifacts().values());
-                }
+    public List<ArtifactDefinition> getDeploymentArtifacts(final Component component, final String ciId) {
+        final ComponentTypeEnum componentType = component.getComponentType();
+        if (component.getDeploymentArtifacts() == null) {
+            return Collections.emptyList();
+        }
+        final List<ArtifactDefinition> deploymentArtifacts = new ArrayList<>();
+        if (ComponentTypeEnum.RESOURCE == componentType && ciId != null) {
+            final Either<ComponentInstance, ResponseFormat> getRI =
+                getRIFromComponent(component, ciId, null, null, null);
+            if (getRI.isRight()) {
+                return Collections.emptyList();
             }
-            else if (parentComponent.getDeploymentArtifacts() != null) {
-                deploymentArtifacts.addAll(parentComponent.getDeploymentArtifacts().values());
+            final ComponentInstance ri = getRI.left().value();
+            if (ri.getDeploymentArtifacts() != null) {
+                deploymentArtifacts.addAll(ri.getDeploymentArtifacts().values());
             }
+        } else {
+            deploymentArtifacts.addAll(component.getDeploymentArtifacts().values());
         }
         return deploymentArtifacts;
     }
@@ -2182,90 +2233,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             artifactInfo.setEsId(artifactId);
         }
         return id;
-    }
-
-    private Either<ActionStatus, ResponseFormat> validateArtifactType(String userId, ArtifactDefinition artifactInfo, NodeTypeEnum parentType) {
-        if (artifactInfo.getArtifactType() == null || artifactInfo.getArtifactType().isEmpty()) {
-            BeEcompErrorManager.getInstance()
-                    .logBeMissingArtifactInformationError("Artifact Update / Upload", "artifactLabel");
-            log.debug("Missing artifact type for artifact {}", artifactInfo.getArtifactName());
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_ARTIFACT_TYPE));
-        }
-
-        boolean artifactTypeExist = false;
-        Either<List<ArtifactType>, ActionStatus> allArtifactTypes = null;
-        ArtifactGroupTypeEnum artifactGroupType = artifactInfo.getArtifactGroupType();
-
-        if ((artifactGroupType != null) && artifactGroupType == ArtifactGroupTypeEnum.DEPLOYMENT) {
-            allArtifactTypes = getDeploymentArtifactTypes(parentType);
-        }
-        else {
-
-            allArtifactTypes = elementOperation.getAllArtifactTypes();
-        }
-        if (allArtifactTypes.isRight()) {
-            BeEcompErrorManager.getInstance()
-                    .logBeInvalidConfigurationError("Artifact Upload / Update", "artifactTypes", allArtifactTypes
-                            .right()
-                            .value()
-                            .name());
-            log.debug("Failed to retrieve list of suported artifact types. error: {}", allArtifactTypes.right()
-                    .value());
-            return Either.right(componentsUtils.getResponseFormatByUserId(allArtifactTypes.right().value(), userId));
-        }
-
-        for (ArtifactType type : allArtifactTypes.left().value()) {
-            if (type.getName().equalsIgnoreCase(artifactInfo.getArtifactType())) {
-                artifactInfo.setArtifactType(artifactInfo.getArtifactType().toUpperCase());
-                artifactTypeExist = true;
-                break;
-            }
-        }
-
-        if (!artifactTypeExist) {
-            BeEcompErrorManager.getInstance()
-                    .logBeInvalidTypeError("Artifact Upload / Delete / Update - Not supported artifact type", artifactInfo
-                            .getArtifactType(), "Artifact " + artifactInfo.getArtifactName());
-            log.debug("Not supported artifact type = {}", artifactInfo.getArtifactType());
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, artifactInfo
-                    .getArtifactType()));
-        }
-
-        return Either.left(ActionStatus.OK);
-    }
-
-    private Either<List<ArtifactType>, ActionStatus> getDeploymentArtifactTypes(NodeTypeEnum parentType) {
-
-        Map<String, ArtifactTypeConfig> deploymentArtifacts ;
-        List<ArtifactType> artifactTypes = new ArrayList<>();
-
-        if (parentType == NodeTypeEnum.Service) {
-            deploymentArtifacts = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getServiceDeploymentArtifacts();
-        }
-        else if (parentType == NodeTypeEnum.ResourceInstance) {
-            deploymentArtifacts = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getResourceInstanceDeploymentArtifacts();
-        }
-        else {
-            deploymentArtifacts = ConfigurationManager.getConfigurationManager()
-                    .getConfiguration()
-                    .getResourceDeploymentArtifacts();
-        }
-        if (deploymentArtifacts != null) {
-            for (String artifactType : deploymentArtifacts.keySet()) {
-                ArtifactType artifactT = new ArtifactType();
-                artifactT.setName(artifactType);
-                artifactTypes.add(artifactT);
-            }
-            return Either.left(artifactTypes);
-        }
-        else {
-            return Either.right(ActionStatus.GENERAL_ERROR);
-        }
-
     }
 
     private Either<Boolean, ResponseFormat> validateFirstUpdateHasPayload(ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifact) {
@@ -2922,18 +2889,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return resourceListBySystemName.left().value();
     }
 
-    /*private Either<Resource, ResponseFormat> validateResourceNameAndVersion(String resourceName, String resourceVersion) {
-
-        Either<Resource, StorageOperationStatus> resourceListBySystemName = toscaOperationFacade.getComponentByNameAndVersion(ComponentTypeEnum.RESOURCE, resourceName, resourceVersion, JsonParseFlagEnum.ParseMetadata);
-        if (resourceListBySystemName.isRight()) {
-            log.debug("Couldn't fetch any resource with name {} and version {}. ", resourceName, resourceVersion);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resourceListBySystemName
-                    .right()
-                    .value()), resourceName));
-        }
-        return Either.left(resourceListBySystemName.left().value());
-    }*/
-
     public byte[] downloadServiceArtifactByNames(String serviceName, String serviceVersion, String artifactName) {
         // Validation
         log.trace("Starting download of service interface artifact, serviceName {}, serviceVersion {}, artifact name {}", serviceName, serviceVersion, artifactName);
@@ -3241,6 +3196,29 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private boolean isDeploymentArtifact(ArtifactDefinition artifactInfo) {
         return ArtifactGroupTypeEnum.DEPLOYMENT == artifactInfo.getArtifactGroupType();
     }
+
+    private boolean isInformationalArtifact(final ArtifactDefinition artifactInfo) {
+        return ArtifactGroupTypeEnum.INFORMATIONAL == artifactInfo.getArtifactGroupType();
+    }
+
+    private boolean isHeatArtifact(final ArtifactDefinition artifactInfo) {
+        final String artifactType = artifactInfo.getArtifactType();
+        final ArtifactTypeEnum artifactTypeEnum = ArtifactTypeEnum.parse(artifactType);
+        if (artifactTypeEnum == null) {
+            artifactInfo.setTimeout(NodeTemplateOperation.NON_HEAT_TIMEOUT);
+            return false;
+        }
+        switch (artifactTypeEnum) {
+            case HEAT:
+            case HEAT_VOL:
+            case HEAT_NET:
+            case HEAT_ENV:
+                return true;
+            default:
+                return false;
+        }
+    }
+
 
     public ArtifactDefinition createArtifactPlaceHolderInfo(String resourceId, String logicalName, Map<String, Object> artifactInfoMap, String userUserId, ArtifactGroupTypeEnum groupType, boolean inTransaction) {
         User user = userBusinessLogic.getUser(userUserId, inTransaction);
@@ -3670,7 +3648,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (origMd5 != null) {
             validateMd5(origMd5, originData, artifactInfo.getPayloadData(), operation);
             if (ArrayUtils.isNotEmpty(artifactInfo.getPayloadData())) {
-                validateDeploymentArtifact(parent, componentId, false, artifactInfo, artifactInfo, NodeTypeEnum.ResourceInstance);
+                validateDeploymentArtifact(artifactInfo, parent);
                 handlePayload(artifactInfo, isArtifactMetadataUpdate(auditingAction));
             } else { // duplicate
                 throw new ByActionStatusComponentException(ActionStatus.MISSING_DATA, ARTIFACT_PAYLOAD);
@@ -4305,7 +4283,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         Either<ComponentMetadataData, StorageOperationStatus> getComponentRes = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
         if (getComponentRes.isRight()) {
             StorageOperationStatus status = getComponentRes.right().value();
-            log.debug("Could not fetch component with type {} and uuid {}. Status is {}. ", componentType, componentUuid, status);
+            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
             errorWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status)));
         }
 
@@ -4346,7 +4324,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
                 if (errorWrapper.isEmpty()) {
                     NodeTypeEnum parentType = convertParentType(componentType);
-                    List<ArtifactDefinition> existingDeploymentArtifacts = getDeploymentArtifacts(toscaComponentEither.left().value(), parentType,null);
+                    final List<ArtifactDefinition> existingDeploymentArtifacts =
+                        getDeploymentArtifacts(toscaComponentEither.left().value(),null);
                     for (ArtifactDefinition artifactDefinition: existingDeploymentArtifacts){
                         if(artifactInfo.getArtifactName().equalsIgnoreCase(artifactDefinition.getArtifactName())){
                             existingArtifactInfo = artifactDefinition;
@@ -4907,6 +4886,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     @Autowired
     void setNodeTemplateOperation(NodeTemplateOperation nodeTemplateOperation) {
         this.nodeTemplateOperation = nodeTemplateOperation;
+    }
+
+    public List<ArtifactConfiguration> getConfiguration() {
+        return ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
     }
 
 }

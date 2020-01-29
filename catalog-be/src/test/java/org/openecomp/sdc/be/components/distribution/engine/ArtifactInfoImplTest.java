@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
@@ -130,23 +133,11 @@ public class ArtifactInfoImplTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testGetArtifactType() throws Exception {
-		ArtifactInfoImpl testSubject;
-		ArtifactTypeEnum result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getArtifactType();
-	}
-
-	@Test
-	public void testSetArtifactType() throws Exception {
-		ArtifactInfoImpl testSubject;
-		ArtifactTypeEnum artifactType = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setArtifactType(ArtifactTypeEnum.AAI_SERVICE_MODEL);
+	public void testSetArtifactType() {
+		final ArtifactInfoImpl testSubject = createTestSubject();
+		final String expectedType = ArtifactTypeEnum.AAI_SERVICE_MODEL.getType();
+		testSubject.setArtifactType(expectedType);
+		assertThat("Artifact type should be the same", testSubject.getArtifactType(), is(expectedType));
 	}
 
 	@Test

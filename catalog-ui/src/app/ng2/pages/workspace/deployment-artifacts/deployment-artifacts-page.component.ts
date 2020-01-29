@@ -1,23 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-import { ArtifactModel } from 'app/models';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {Select, Store} from '@ngxs/store';
+import {ArtifactModel} from 'app/models';
 import * as _ from 'lodash';
-import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
-import { Observable } from 'rxjs/index';
-import { map } from 'rxjs/operators';
-import { GabConfig } from '../../../../models/gab-config';
-import { PathsAndNamesDefinition } from '../../../../models/paths-and-names';
-import { GenericArtifactBrowserComponent } from '../../../../ng2/components/logic/generic-artifact-browser/generic-artifact-browser.component';
-import { ArtifactGroupType, ArtifactType } from '../../../../utils/constants';
-import { ArtifactsService } from '../../../components/forms/artifacts-form/artifacts.service';
-import { PopoverContentComponent } from '../../../components/ui/popover/popover-content.component';
-import { CacheService } from '../../../services/cache.service';
-import { TranslateService } from '../../../shared/translator/translate.service';
-import { GetArtifactsByTypeAction } from '../../../store/actions/artifacts.action';
-import { ArtifactsState } from '../../../store/states/artifacts.state';
-import { WorkspaceState, WorkspaceStateModel } from '../../../store/states/workspace.state';
-import { WorkspaceService } from '../workspace.service';
-import { ModalService } from 'app/ng2/services/modal.service';
+import {SdcUiCommon, SdcUiServices} from 'onap-ui-angular';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {GabConfig} from '../../../../models/gab-config';
+import {PathsAndNamesDefinition} from '../../../../models/paths-and-names';
+import {GenericArtifactBrowserComponent} from '../../../components/logic/generic-artifact-browser/generic-artifact-browser.component';
+import {ArtifactGroupType, ArtifactType} from '../../../../utils/constants';
+import {ArtifactsService} from '../../../components/forms/artifacts-form/artifacts.service';
+import {PopoverContentComponent} from '../../../components/ui/popover/popover-content.component';
+import {CacheService} from '../../../services/cache.service';
+import {TranslateService} from '../../../shared/translator/translate.service';
+import {GetArtifactsByTypeAction} from '../../../store/actions/artifacts.action';
+import {ArtifactsState} from '../../../store/states/artifacts.state';
+import {WorkspaceState, WorkspaceStateModel} from '../../../store/states/workspace.state';
+import {WorkspaceService} from '../workspace.service';
 
 export interface IPoint {
     x: number;
@@ -33,6 +32,7 @@ export class DeploymentArtifactsPageComponent implements OnInit {
 
     public componentId: string;
     public componentType: string;
+    public resourceType: string;
     public deploymentArtifacts$: Observable<ArtifactModel[]>;
     public isComponentInstanceSelected: boolean;
 
@@ -68,11 +68,12 @@ export class DeploymentArtifactsPageComponent implements OnInit {
             }
         });
         return sortedArtifacts;
-    })
+    });
 
     ngOnInit(): void {
         this.componentId = this.workspaceService.metadata.uniqueId;
         this.componentType = this.workspaceService.metadata.componentType;
+        this.resourceType = this.workspaceService.metadata.resourceType;
 
         this.store.dispatch(new GetArtifactsByTypeAction({
             componentType: this.componentType,
@@ -91,8 +92,8 @@ export class DeploymentArtifactsPageComponent implements OnInit {
     }
 
     public addOrUpdateArtifact = (artifact: ArtifactModel, isViewOnly: boolean) => {
-        this.artifactsService.openArtifactModal(this.componentId, this.componentType, artifact, ArtifactGroupType.DEPLOYMENT, isViewOnly);
-    }
+        this.artifactsService.openArtifactModal(this.componentId, this.componentType, artifact, ArtifactGroupType.DEPLOYMENT, isViewOnly, null, this.resourceType);
+    };
 
     public deleteArtifact = (artifactToDelete) => {
         this.artifactsService.deleteArtifact(this.componentType, this.componentId, artifactToDelete);

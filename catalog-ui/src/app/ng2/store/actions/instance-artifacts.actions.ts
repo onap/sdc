@@ -13,14 +13,14 @@ export class GetInstanceArtifactsByTypeAction {
 export class CreateInstanceArtifactAction {
     static readonly type = '[INSTANCE_ARTIFACTS] CreateInstanceArtifactAction';
 
-    constructor(public payload: { componentType: string, componentId: string, instanceId: string, artifact: ArtifactModel }) {
+    constructor(public payload: { componentType: string, componentId: string, instanceId: string, artifact: ArtifactModel, resourceType: string }) {
     }
 }
 
 export class UpdateInstanceArtifactAction {
     static readonly type = '[INSTANCE_ARTIFACTS] UpdateInstanceArtifactAction';
 
-    constructor(public payload: { componentType: string, componentId: string, instanceId: string, artifact: ArtifactModel }) {
+    constructor(public payload: { componentType: string, componentId: string, instanceId: string, artifact: ArtifactModel, resourceType: string }) {
     }
 }
 

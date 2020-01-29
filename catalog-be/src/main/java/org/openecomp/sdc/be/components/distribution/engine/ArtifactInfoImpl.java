@@ -20,11 +20,12 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,10 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class ArtifactInfoImpl implements IArtifactInfo {
 
     private String artifactName;
-    private ArtifactTypeEnum artifactType;
+    private String artifactType;
     private String artifactURL;
     private String artifactChecksum;
     private String artifactDescription;
@@ -50,7 +53,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
 
     private ArtifactInfoImpl(ArtifactDefinition artifactDef, String generatedFromUUID, List<String> relatedArtifacts) {
         artifactName = artifactDef.getArtifactName();
-        artifactType = ArtifactTypeEnum.findType(artifactDef.getArtifactType());
+        artifactType = artifactDef.getArtifactType();
         artifactChecksum = artifactDef.getArtifactChecksum();
         artifactDescription = artifactDef.getDescription();
         artifactTimeout = artifactDef.getTimeout();
@@ -108,90 +111,10 @@ public class ArtifactInfoImpl implements IArtifactInfo {
         return requiredArtifacts;
     }
 
-    public String getArtifactName() {
-        return artifactName;
-    }
-
-    public void setArtifactName(String artifactName) {
-        this.artifactName = artifactName;
-    }
-
-    public ArtifactTypeEnum getArtifactType() {
-        return artifactType;
-    }
-
-    public void setArtifactType(ArtifactTypeEnum artifactType) {
-        this.artifactType = artifactType;
-    }
-
-    public String getArtifactURL() {
-        return artifactURL;
-    }
-
-    public void setArtifactURL(String artifactURL) {
-        this.artifactURL = artifactURL;
-    }
-
-    public String getArtifactChecksum() {
-        return artifactChecksum;
-    }
-
-    public void setArtifactChecksum(String artifactChecksum) {
-        this.artifactChecksum = artifactChecksum;
-    }
-
-    public String getArtifactDescription() {
-        return artifactDescription;
-    }
-
-    public void setArtifactDescription(String artifactDescription) {
-        this.artifactDescription = artifactDescription;
-    }
-
-    public Integer getArtifactTimeout() {
-        return artifactTimeout;
-    }
-
-    public void setArtifactTimeout(Integer artifactTimeout) {
-        this.artifactTimeout = artifactTimeout;
-    }
-
-    public List<String> getRelatedArtifacts() {
-        return relatedArtifacts;
-    }
-
-    public void setRelatedArtifacts(List<String> relatedArtifacts) {
-        this.relatedArtifacts = relatedArtifacts;
-    }
-
     @Override
     public String toString() {
         return "ArtifactInfoImpl [artifactName=" + artifactName + ", artifactType=" + artifactType + ", artifactURL=" + artifactURL + ", artifactChecksum=" + artifactChecksum + ", artifactDescription=" + artifactDescription + ", artifactTimeout="
                 + artifactTimeout + ", artifactUUID=" + artifactUUID + ", artifactVersion=" + artifactVersion + ", generatedFromUUID=" + generatedFromUUID + ", relatedArtifacts=" + relatedArtifacts + "]";
-    }
-
-    public String getArtifactUUID() {
-        return artifactUUID;
-    }
-
-    public void setArtifactUUID(String artifactUUID) {
-        this.artifactUUID = artifactUUID;
-    }
-
-    public String getArtifactVersion() {
-        return artifactVersion;
-    }
-
-    public void setArtifactVersion(String artifactVersion) {
-        this.artifactVersion = artifactVersion;
-    }
-
-    public String getGeneratedFromUUID() {
-        return generatedFromUUID;
-    }
-
-    public void setGeneratedFromUUID(String generatedFromUUID) {
-        this.generatedFromUUID = generatedFromUUID;
     }
 
 }

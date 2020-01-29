@@ -53,7 +53,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class RoleAuthorizationHandlerTest {
 
-    private RoleAuthorizationHandler roleAuthorizationHandler = new RoleAuthorizationHandler();
+    private RoleAuthorizationHandler roleAuthorizationHandler;
     @Mock
     JoinPoint joinPoint;
     @Mock
@@ -72,6 +72,7 @@ public class RoleAuthorizationHandlerTest {
         when(beGenericServlet.getServletRequest()).thenReturn(httpServletRequest);
         ThreadLocalsHolder.setApiType(FilterDecisionEnum.EXTERNAL);
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be/auth"));
+        roleAuthorizationHandler = new RoleAuthorizationHandler();
     }
 
     @Test

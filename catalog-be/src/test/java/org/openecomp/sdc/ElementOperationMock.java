@@ -110,13 +110,7 @@ public class ElementOperationMock implements IElementOperation {
     }
 
     @Override
-    public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes() {
+    public List<ArtifactType> getAllArtifactTypes() {
         // TODO Auto-generated method stub
         return null;
     }

@@ -358,7 +358,7 @@ public class ArtifactUuidFix {
 			List<VfModuleArtifactPayloadEx> vfModules = null;
 			if(isCheckVFModules){
 				Optional<ArtifactDefinition> optionalVfModuleArtifact = deploymentArtifacts.values().stream()
-						.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.name())).findAny();
+						.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.getType())).findAny();
 
 				if(!optionalVfModuleArtifact.isPresent())
 					return true;
@@ -436,7 +436,7 @@ public class ArtifactUuidFix {
 						resourceName);
 				return true;
 			}
-			ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactDefinition.getArtifactType());
+			ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(artifactDefinition.getArtifactType());
 			if (artifactType != ArtifactTypeEnum.HEAT_ENV) {
 				if (!artifactId.equals(artifactDefinition.getUniqueId())) {
 					log.info(
@@ -520,7 +520,7 @@ public class ArtifactUuidFix {
 						servicename);
 				return true;
 			}
-			ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactDefinition.getArtifactType());
+			ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(artifactDefinition.getArtifactType());
 			if (artifactType != ArtifactTypeEnum.HEAT_ENV) {
 				if (!artifactId.equals(artifactDefinition.getUniqueId())) {
 					log.info(
@@ -856,7 +856,7 @@ public class ArtifactUuidFix {
 			}
 
 			Optional<ArtifactDefinition> optionalVfModuleArtifact = artifactsMap.values().stream()
-					.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.name())).findAny();
+					.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.VF_MODULES_METADATA.getType())).findAny();
 			ArtifactDefinition vfModuleArtifact;
 			if(!optionalVfModuleArtifact.isPresent()){
 				vfModuleArtifact = createVfModuleArtifact(instance, service);
@@ -925,7 +925,7 @@ public class ArtifactUuidFix {
 				group.getName(), artifactId, artifactlabel);
 		if (!artifactlabel.isEmpty() && artifactsMap.containsKey(artifactlabel)) {
 			ArtifactDefinition artifact = artifactsMap.get(artifactlabel);
-			ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifact.getArtifactType());
+			ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(artifact.getArtifactType());
 			String correctArtifactId = artifact.getUniqueId();
 			String correctArtifactUUID = artifact.getArtifactUUID();
 			if (artifactType != ArtifactTypeEnum.HEAT_ENV) {
@@ -1018,7 +1018,7 @@ public class ArtifactUuidFix {
 			String correctArtifactUUID = artifact.getArtifactUUID();
 			boolean isAddToGroup = true;
 			if (groupArtifacts.size() == 1) {
-				ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifact.getArtifactType());
+				ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(artifact.getArtifactType());
 				if (artifactType == ArtifactTypeEnum.HEAT_ARTIFACT) {
 					isAddToGroup = false;
 					artifact.setArtifactType(ArtifactTypeEnum.OTHER.getType());

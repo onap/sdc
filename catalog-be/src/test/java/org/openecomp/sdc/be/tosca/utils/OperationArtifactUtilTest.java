@@ -62,7 +62,7 @@ public class OperationArtifactUtilTest {
         final String actualArtifactPath = OperationArtifactUtil.createOperationArtifactPath(component, null, op, false);
         String expectedArtifactPath = CsarUtils.ARTIFACTS + File.separator +
                 WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name()) + File.separator +
-                ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH + File.separator +
+                ArtifactTypeEnum.WORKFLOW.getType() + File.separator + BPMN_ARTIFACT_PATH + File.separator +
                 "createBPMN.bpmn";
 
 
@@ -84,7 +84,7 @@ public class OperationArtifactUtilTest {
         String expectedArtifactPath = CsarUtils.ARTIFACTS + File.separator +
                 "org.openecomp.resource.vf.TestResource_v1.0" + File.separator +
                 WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name()) + File.separator +
-                ArtifactTypeEnum.WORKFLOW.name() +
+                ArtifactTypeEnum.WORKFLOW.getType() +
                 File.separator + BPMN_ARTIFACT_PATH + File.separator + "createBPMN.bpmn";
 
 

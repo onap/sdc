@@ -20,22 +20,29 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
+import org.openecomp.sdc.be.config.ArtifactConfigManager;
+import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
 import org.openecomp.sdc.be.datatypes.category.GroupingDataDefinition;
 import org.openecomp.sdc.be.datatypes.category.SubCategoryDataDefinition;
@@ -57,8 +64,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import java.util.*;
 
 @Component("element-operation")
 public class ElementOperation implements IElementOperation {
@@ -781,32 +786,13 @@ public class ElementOperation implements IElementOperation {
     }
 
     @Override
-    public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes() {
-        List<ArtifactType> artifactTypes = new ArrayList<>();
-
-        List<String> artifactTypesList = ConfigurationManager.getConfigurationManager().getConfiguration().getArtifactTypes();
-        for (String artifactType : artifactTypesList) {
-            ArtifactType artifactT = new ArtifactType();
-            artifactT.setName(artifactType);
-            artifactTypes.add(artifactT);
-        }
-        return Either.left(artifactTypes);
-    }
-
-    @Override
-    public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes() {
-
-        Map<String, Object> artifactTypes = new HashMap<>();
-        Map<String, ArtifactTypeConfig> artifactResourceTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getResourceDeploymentArtifacts();
-        Map<String, ArtifactTypeConfig> artifactServiceTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceDeploymentArtifacts();
-        Map<String, ArtifactTypeConfig> artifactResourceInstanceTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getResourceInstanceDeploymentArtifacts();
-
-        artifactTypes.put("resourceDeploymentArtifacts", artifactResourceTypes);
-        artifactTypes.put("serviceDeploymentArtifacts", artifactServiceTypes);
-        artifactTypes.put("resourceInstanceDeploymentArtifacts", artifactResourceInstanceTypes);
-
-        return Either.left(artifactTypes);
-
+    public List<ArtifactType> getAllArtifactTypes() {
+        final List<ArtifactConfiguration> artifactTypesList = ArtifactConfigManager.getInstance().getConfiguration();
+        return artifactTypesList.stream().map(artifactConfiguration -> {
+            final ArtifactType artifactType = new ArtifactType();
+            artifactType.setName(artifactConfiguration.getType());
+            return artifactType;
+        }).collect(Collectors.toList());
     }
 
     @Override

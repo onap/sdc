@@ -64,7 +64,7 @@ export class ArtifactsTabComponent {
 
     public addOrUpdate = (artifact: ArtifactModel): void => {
         if (this.isComponentInstanceSelected) {
-            this.artifactService.openArtifactModal(this.topologyTemplateId, this.topologyTemplateType, artifact, this.type, this.isViewOnly, this.component.uniqueId);
+            this.artifactService.openArtifactModal(this.topologyTemplateId, this.topologyTemplateType, artifact, this.type, this.isViewOnly, this.component.uniqueId, this.resourceType);
         } else {
             this.artifactService.openArtifactModal(this.topologyTemplateId, this.topologyTemplateType, artifact, this.type, this.isViewOnly);
         }
