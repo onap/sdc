@@ -312,7 +312,11 @@ public class ArtifactsOperations extends BaseOperation {
         String currentChecksum = updateArtifactData.getArtifactChecksum();
 
         if (isUpdate) {
-            ArtifactTypeEnum type = ArtifactTypeEnum.findType(updateArtifactData.getArtifactType());
+            final ArtifactTypeEnum type = ArtifactTypeEnum.parse(updateArtifactData.getArtifactType());
+            if(type == null) {
+                generateUUIDForNonHeatArtifactType(updateArtifactData, oldChecksum, oldVesrion, currentChecksum);
+                return;
+            }
             switch (type) {
                 case HEAT_ENV:
                     if (edgeLabel == EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS) {
@@ -384,17 +388,11 @@ public class ArtifactsOperations extends BaseOperation {
         return addArtifactToComponent(artifactHeatEnv, component, parentType, failIfExist, instanceId);
     }
 
-    public Either<ArtifactDefinition, StorageOperationStatus> getHeatArtifactByHeatEnvId(String parentId, ArtifactDefinition heatEnv, NodeTypeEnum parentType, String containerId, ComponentTypeEnum componentType) {
-        String id = heatEnv.getGeneratedFromId();
-        ComponentTypeEnum compType;
-        switch (parentType) {
-            case ResourceInstance:
-                compType = ComponentTypeEnum.RESOURCE_INSTANCE;
-                break;
-            default:
-                compType = componentType;
-        }
-        return getArtifactById(parentId, id, compType, containerId);
+    public Either<ArtifactDefinition, StorageOperationStatus> getHeatArtifactByHeatEnvId(final String parentId,
+                                                                                         final ArtifactDefinition heatEnv,
+                                                                                         final String containerId,
+                                                                                         final ComponentTypeEnum componentType) {
+        return getArtifactById(parentId, heatEnv.getGeneratedFromId(), componentType, containerId);
     }
 
     public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvArtifact(Component component, ArtifactDefinition artifactEnvInfo, String artifactId, String newArtifactId, NodeTypeEnum type, String instanceId) {

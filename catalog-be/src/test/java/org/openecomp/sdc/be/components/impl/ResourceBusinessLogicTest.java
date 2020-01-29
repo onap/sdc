@@ -1830,27 +1830,27 @@ public class ResourceBusinessLogicTest {
 		List<NonMetaArtifactInfo> artifactPathAndNameList = new ArrayList<>();
 		NonMetaArtifactInfo deploymentArtifactInfoToUpdate = new NonMetaArtifactInfo(
 				deploymentArtifactToUpdate.getArtifactName(), null,
-				ArtifactTypeEnum.findType(deploymentArtifactToUpdate.getArtifactType()),
+				deploymentArtifactToUpdate.getArtifactType(),
 				ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData, deploymentArtifactToUpdate.getArtifactName(), false);
 
 		NonMetaArtifactInfo informationalArtifactInfoToUpdate = new NonMetaArtifactInfo(
-				artifactToUpdate.getArtifactName(), null, ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()),
+				artifactToUpdate.getArtifactName(), null, artifactToUpdate.getArtifactType(),
 				ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData, artifactToUpdate.getArtifactName(), false);
 
 		NonMetaArtifactInfo informationalArtifactInfoToUpdateFromCsar = new NonMetaArtifactInfo(
-				artifactToUpdate.getArtifactName(), null, ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()),
+				artifactToUpdate.getArtifactName(), null, artifactToUpdate.getArtifactType(),
 				ArtifactGroupTypeEnum.INFORMATIONAL, newPayloadData, artifactToUpdate.getArtifactName(), true);
 
 		NonMetaArtifactInfo deploymentArtifactInfoToUpdateFromCsar = new NonMetaArtifactInfo(
-				artifactToUpdate.getArtifactName(), null, ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()),
+				artifactToUpdate.getArtifactName(), null, artifactToUpdate.getArtifactType(),
 				ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData, artifactToUpdate.getArtifactName(), true);
 
 		NonMetaArtifactInfo deploymentArtifactInfoToCreate = new NonMetaArtifactInfo(deploymentArtifactToCreateFileName,
-				null, ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData,
+				null, ArtifactTypeEnum.OTHER.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData,
 				deploymentArtifactToCreateFileName, false);
 
 		NonMetaArtifactInfo informationalArtifactInfoToCreate = new NonMetaArtifactInfo(artifactInfoToCreateFileName,
-				null, ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.INFORMATIONAL, newPayloadData,
+				null, ArtifactTypeEnum.OTHER.getType(), ArtifactGroupTypeEnum.INFORMATIONAL, newPayloadData,
 				artifactInfoToCreateFileName, false);
 
 		artifactPathAndNameList.add(deploymentArtifactInfoToUpdate);

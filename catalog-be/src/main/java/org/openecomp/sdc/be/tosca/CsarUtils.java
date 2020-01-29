@@ -647,14 +647,16 @@ public class CsarUtils {
         private final String artifactName;
         private final String displayName;
         private final String artifactLabel;
-        private final ArtifactTypeEnum artifactType;
+        private final String artifactType;
         private final ArtifactGroupTypeEnum artifactGroupType;
         private String payloadData;
         private String artifactChecksum;
         private String artifactUniqueId;
         private final boolean isFromCsar;
 
-        public NonMetaArtifactInfo(String artifactName, String path, ArtifactTypeEnum artifactType, ArtifactGroupTypeEnum artifactGroupType, byte[] payloadData, String artifactUniqueId, boolean isFromCsar) {
+        public NonMetaArtifactInfo(String artifactName, String path, String artifactType,
+                                   ArtifactGroupTypeEnum artifactGroupType, byte[] payloadData,
+                                   String artifactUniqueId, boolean isFromCsar) {
             super();
             this.path = path;
             this.isFromCsar = isFromCsar;
@@ -683,7 +685,7 @@ public class CsarUtils {
             return artifactName;
         }
 
-        public ArtifactTypeEnum getArtifactType() {
+        public String getArtifactType() {
             return artifactType;
         }
 
@@ -743,7 +745,7 @@ public class CsarUtils {
                 artifactType = detectArtifactTypeVF(groupTypeEnum, artifactType, collectedWarningMessages);
 
                 String artifactFileNameType = parsedArtifactPath[3];
-                ret = Either.left(new NonMetaArtifactInfo(artifactFileNameType, artifactPath, ArtifactTypeEnum.findType(artifactType), groupTypeEnum, payloadData, null, true));
+                ret = Either.left(new NonMetaArtifactInfo(artifactFileNameType, artifactPath, artifactType, groupTypeEnum, payloadData, null, true));
 
             } else {
                 ret = Either.right(eitherGroupType.right().value());
@@ -766,9 +768,10 @@ public class CsarUtils {
         return detectArtifactType(artifactGroupType, receivedTypeName, warningMessage, collectedWarningMessages);
     }
 
-    private static String detectArtifactType(ArtifactGroupTypeEnum artifactGroupType, String receivedTypeName, String warningMessage, Map<String, Set<List<String>>> collectedWarningMessages, String... arguments) {
-
-        ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(receivedTypeName);
+    private static String detectArtifactType(final ArtifactGroupTypeEnum artifactGroupType,
+                                             final String receivedTypeName, final String warningMessage,
+                                             final Map<String, Set<List<String>>> collectedWarningMessages,
+                                             final String... arguments) {
         Map<String, ArtifactTypeConfig> resourceValidTypeArtifacts = null;
 
         if(artifactGroupType != null){
@@ -786,17 +789,16 @@ public class CsarUtils {
             }
         }
 
-        Set<String> validArtifactTypes = null;
-        if(resourceValidTypeArtifacts != null){
-            validArtifactTypes = resourceValidTypeArtifacts.keySet();
+        ArtifactTypeConfig artifactTypeConfig = null;
+        if (resourceValidTypeArtifacts != null) {
+            artifactTypeConfig = resourceValidTypeArtifacts.get(receivedTypeName);
         }
-
-        if (validArtifactTypes == null || artifactType == null || !validArtifactTypes.contains(artifactType.getType())) {
-            List<String> messageArguments = new ArrayList<>();
+        if (artifactTypeConfig == null) {
+            final List<String> messageArguments = new ArrayList<>();
             messageArguments.add(receivedTypeName);
             messageArguments.addAll(Arrays.asList(arguments));
             if (!collectedWarningMessages.containsKey(warningMessage)) {
-                Set<List<String>> messageArgumentLists = new HashSet<>();
+                final Set<List<String>> messageArgumentLists = new HashSet<>();
                 messageArgumentLists.add(messageArguments);
                 collectedWarningMessages.put(warningMessage, messageArgumentLists);
             } else {
@@ -804,7 +806,7 @@ public class CsarUtils {
             }
         }
 
-        return artifactType == null ? ArtifactTypeEnum.OTHER.getType() : artifactType.getType();
+        return artifactTypeConfig == null ? ArtifactTypeEnum.OTHER.getType() : receivedTypeName;
     }
 
     private Either<ZipOutputStream, ResponseFormat> writeAllFilesToCsar(Component mainComponent, CsarDefinition csarDefinition, ZipOutputStream zipstream, boolean isInCertificationRequest) throws IOException{
@@ -817,7 +819,7 @@ public class CsarUtils {
         }
 
         ComponentTypeArtifacts mainTypeAndCIArtifacts = componentArtifacts.getMainTypeAndCIArtifacts();
-        writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, mainTypeAndCIArtifacts.getComponentArtifacts(), zipstream, ARTIFACTS_PATH, isInCertificationRequest);
+        writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(mainComponent, mainTypeAndCIArtifacts.getComponentArtifacts(), zipstream, ARTIFACTS_PATH, isInCertificationRequest);
 
         if(writeComponentArtifactsToSpecifiedPath.isRight()){
             return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
@@ -830,7 +832,7 @@ public class CsarUtils {
         for (String keyAssetName : keySet) {
             ArtifactsInfo artifactsInfo = componentInstancesArtifacts.get(keyAssetName);
             String pathWithAssetName = currentPath + keyAssetName + PATH_DELIMITER;
-            writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName, isInCertificationRequest);
+            writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName, isInCertificationRequest);
 
             if(writeComponentArtifactsToSpecifiedPath.isRight()){
                 return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
@@ -918,7 +920,7 @@ public class CsarUtils {
             ComponentTypeArtifacts componentInstanceArtifacts = componentTypeArtifacts.get(keyAssetName);
             ArtifactsInfo componentArtifacts2 = componentInstanceArtifacts.getComponentArtifacts();
             String pathWithAssetName = currentPath + keyAssetName + PATH_DELIMITER;
-            Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedPath = writeArtifactsInfoToSpecifiedtPath(mainComponent, componentArtifacts2, zipstream, pathWithAssetName, isInCertificationRequest);
+            Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(mainComponent, componentArtifacts2, zipstream, pathWithAssetName, isInCertificationRequest);
 
             if(writeArtifactsInfoToSpecifiedPath.isRight()){
                 return writeArtifactsInfoToSpecifiedPath;
@@ -928,32 +930,34 @@ public class CsarUtils {
         return Either.left(zipstream);
     }
 
-    private Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedtPath(Component mainComponent, ArtifactsInfo currArtifactsInfo, ZipOutputStream zip, String path, boolean isInCertificationRequest) throws IOException {
-        Map<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> artifactsInfo = currArtifactsInfo
-                                                                                                            .getArtifactsInfo();
-        Set<ArtifactGroupTypeEnum> groupTypeEnumKeySet = artifactsInfo.keySet();
+    private Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedPath(final Component mainComponent,
+                                                                                      final ArtifactsInfo currArtifactsInfo,
+                                                                                      final ZipOutputStream zip,
+                                                                                      final String path,
+                                                                                      final boolean isInCertificationRequest) throws IOException {
+        final Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> artifactsInfo =
+            currArtifactsInfo.getArtifactsInfo();
+        for (final ArtifactGroupTypeEnum artifactGroupTypeEnum : artifactsInfo.keySet()) {
+            final String groupTypeFolder = path + WordUtils.capitalizeFully(artifactGroupTypeEnum.getType()) + PATH_DELIMITER;
 
-        for (ArtifactGroupTypeEnum artifactGroupTypeEnum : groupTypeEnumKeySet) {
-            String groupTypeFolder = path + WordUtils.capitalizeFully(artifactGroupTypeEnum.getType()) + PATH_DELIMITER;
+            final Map<String, List<ArtifactDefinition>> artifactTypesMap = artifactsInfo.get(artifactGroupTypeEnum);
 
-            Map<ArtifactTypeEnum, List<ArtifactDefinition>> artifactTypesMap = artifactsInfo.get(artifactGroupTypeEnum);
-            Set<ArtifactTypeEnum> artifactTypeEnumKeySet = artifactTypesMap.keySet();
+            for (final String artifactType : artifactTypesMap.keySet()) {
+                final List<ArtifactDefinition> artifactDefinitionList = artifactTypesMap.get(artifactType);
+				String artifactTypeFolder = groupTypeFolder + artifactType + PATH_DELIMITER;
 
-            for (ArtifactTypeEnum artifactTypeEnum : artifactTypeEnumKeySet) {
-                List<ArtifactDefinition> artifactDefinitionList = artifactTypesMap.get(artifactTypeEnum);
-				String artifactTypeFolder = groupTypeFolder + artifactTypeEnum.toString() + PATH_DELIMITER;
-
-				if(artifactTypeEnum == ArtifactTypeEnum.WORKFLOW && path.contains(ARTIFACTS_PATH + RESOURCES_PATH)){
+				if(ArtifactTypeEnum.WORKFLOW.getType().equals(artifactType) && path.contains(ARTIFACTS_PATH + RESOURCES_PATH)){
 					// Ignore this packaging as BPMN artifacts needs to be packaged in different manner
 					continue;
 				}
-				if (artifactTypeEnum == ArtifactTypeEnum.WORKFLOW) {
+				if (ArtifactTypeEnum.WORKFLOW.getType().equals(artifactType)) {
 					artifactTypeFolder += OperationArtifactUtil.BPMN_ARTIFACT_PATH + File.separator;
 				}
 
-                Either<ZipOutputStream, ResponseFormat> writeArtifactDefinition = writeArtifactDefinition(mainComponent, zip, artifactDefinitionList, artifactTypeFolder, isInCertificationRequest);
+                Either<ZipOutputStream, ResponseFormat> writeArtifactDefinition =
+                    writeArtifactDefinition(mainComponent, zip, artifactDefinitionList, artifactTypeFolder, isInCertificationRequest);
 
-                if(writeArtifactDefinition.isRight()){
+                if (writeArtifactDefinition.isRight()) {
                     return writeArtifactDefinition;
                 }
             }
@@ -1003,29 +1007,22 @@ public class CsarUtils {
     private class ArtifactsInfo {
         //Key is the type of artifacts(Informational/Deployment)
         //Value is a map between an artifact type and a list of all artifacts of this type
-        private Map<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> artifactsInfoField;
+        private Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> artifactsInfoField;
 
         public ArtifactsInfo() {
             this.artifactsInfoField = new EnumMap<>(ArtifactGroupTypeEnum.class);
         }
 
-        public Map<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> getArtifactsInfo() {
+        public Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> getArtifactsInfo() {
             return artifactsInfoField;
         }
 
-        public List<ArtifactDefinition> getFlatArtifactsListByType(ArtifactTypeEnum artifactType){
-            List<ArtifactDefinition> artifacts = new ArrayList<>();
-            for (List<ArtifactDefinition> artifactsByType:artifactsInfoField.get(artifactType).values()){
-                artifacts.addAll(artifactsByType);
-            }
-            return artifacts;
-        }
-
-        public void addArtifactsToGroup(ArtifactGroupTypeEnum artifactGroup,Map<ArtifactTypeEnum, List<ArtifactDefinition>> artifactsDefinition){
+        public void addArtifactsToGroup(ArtifactGroupTypeEnum artifactGroup,
+                                        Map<String, List<ArtifactDefinition>> artifactsDefinition) {
 			if (artifactsInfoField.get(artifactGroup) == null) {
 				artifactsInfoField.put(artifactGroup, artifactsDefinition);
 			} else {
-				Map<ArtifactTypeEnum, List<ArtifactDefinition>> artifactTypeEnumListMap =
+				Map<String, List<ArtifactDefinition>> artifactTypeEnumListMap =
 						artifactsInfoField.get(artifactGroup);
 				artifactTypeEnumListMap.putAll(artifactsDefinition);
 				artifactsInfoField.put(artifactGroup, artifactTypeEnumListMap);
@@ -1177,8 +1174,8 @@ public class CsarUtils {
     private String printArtifacts(ComponentTypeArtifacts componentInstanceArtifacts) {
         StringBuilder result = new StringBuilder();
         ArtifactsInfo artifactsInfo = componentInstanceArtifacts.getComponentArtifacts();
-        Map<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> componetArtifacts = artifactsInfo.getArtifactsInfo();
-        printArtifacts(componetArtifacts);
+        Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> componentArtifacts = artifactsInfo.getArtifactsInfo();
+        printArtifacts(componentArtifacts);
         result = result.append("Resources\n");
         for (Map.Entry<String, ArtifactsInfo> resourceInstance:componentInstanceArtifacts.getComponentInstancesArtifacts().entrySet()){
             result.append("Folder" + resourceInstance.getKey() + "\n");
@@ -1188,12 +1185,12 @@ public class CsarUtils {
         return result.toString();
     }
 
-    private String  printArtifacts(Map<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> componetArtifacts) {
+    private String printArtifacts(Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> componetArtifacts) {
         StringBuilder result = new StringBuilder();
-        for (Map.Entry<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> artifactGroup:componetArtifacts.entrySet()){
+        for (Map.Entry<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> artifactGroup:componetArtifacts.entrySet()){
             result.append("    " + artifactGroup.getKey().getType());
-            for (Map.Entry<ArtifactTypeEnum, List<ArtifactDefinition>> groupArtifacts:artifactGroup.getValue().entrySet()){
-                result.append("        " + groupArtifacts.getKey().getType());
+            for (Map.Entry<String, List<ArtifactDefinition>> groupArtifacts:artifactGroup.getValue().entrySet()){
+                result.append("        " + groupArtifacts.getKey());
                 for (ArtifactDefinition artifact:groupArtifacts.getValue()){
                     result.append("            " + artifact.getArtifactDisplayName());
                 }
@@ -1243,10 +1240,10 @@ public class CsarUtils {
         ComponentTypeArtifacts componentParentArtifacts = collectComponentTypeArtifacts(resourcesTypeArtifacts, componentInstance, fetchedComponent);
 
         //3. find the artifacts specific to the instance
-        Map<ArtifactTypeEnum, List<ArtifactDefinition>> componentInstanceSpecificInformationalArtifacts =
+        Map<String, List<ArtifactDefinition>> componentInstanceSpecificInformationalArtifacts =
                 getComponentInstanceSpecificArtifacts(componentInstance.getArtifacts(),
                         componentParentArtifacts.getComponentArtifacts().getArtifactsInfo(), ArtifactGroupTypeEnum.INFORMATIONAL);
-        Map<ArtifactTypeEnum, List<ArtifactDefinition>> componentInstanceSpecificDeploymentArtifacts =
+        Map<String, List<ArtifactDefinition>> componentInstanceSpecificDeploymentArtifacts =
                 getComponentInstanceSpecificArtifacts(componentInstance.getDeploymentArtifacts(),
                         componentParentArtifacts.getComponentArtifacts().getArtifactsInfo(), ArtifactGroupTypeEnum.DEPLOYMENT);
 
@@ -1284,24 +1281,23 @@ public class CsarUtils {
     public void setVersionFirstThreeOctets(String versionFirstThreeOctetes) {
         this.versionFirstThreeOctets = versionFirstThreeOctetes;
     }
-    private Map<ArtifactTypeEnum, List<ArtifactDefinition>> getComponentInstanceSpecificArtifacts(Map<String, ArtifactDefinition> componentArtifacts,
-            Map<ArtifactGroupTypeEnum, Map<ArtifactTypeEnum, List<ArtifactDefinition>>> componentTypeArtifacts, ArtifactGroupTypeEnum artifactGroupTypeEnum) {
-        Map<ArtifactTypeEnum, List<ArtifactDefinition>> parentArtifacts = componentTypeArtifacts.get(artifactGroupTypeEnum);    //the artfiacts of the component itself and not the instance
+    private Map<String, List<ArtifactDefinition>> getComponentInstanceSpecificArtifacts(Map<String, ArtifactDefinition> componentArtifacts,
+            Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> componentTypeArtifacts, ArtifactGroupTypeEnum artifactGroupTypeEnum) {
+        Map<String, List<ArtifactDefinition>> parentArtifacts = componentTypeArtifacts.get(artifactGroupTypeEnum);    //the artfiacts of the component itself and not the instance
 
-        Map<ArtifactTypeEnum, List<ArtifactDefinition>> artifactsByTypeOfComponentInstance = new EnumMap<>(ArtifactTypeEnum.class);
+        Map<String, List<ArtifactDefinition>> artifactsByTypeOfComponentInstance = new HashMap<>();
         if (componentArtifacts!=null){
             for (ArtifactDefinition artifact:componentArtifacts.values()){
-                ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifact.getArtifactType());
                 List<ArtifactDefinition> parentArtifactsByType = null;
                 if (parentArtifacts!=null){
-                    parentArtifactsByType = parentArtifacts.get(artifactType);
+                    parentArtifactsByType = parentArtifacts.get(artifact.getArtifactType());
                 }
                 //the artifact is of instance
                 if (parentArtifactsByType == null || !parentArtifactsByType.contains(artifact)){
-                    List<ArtifactDefinition> typeArtifacts = artifactsByTypeOfComponentInstance.get(artifactType);
+                    List<ArtifactDefinition> typeArtifacts = artifactsByTypeOfComponentInstance.get(artifact.getArtifactType());
                     if (typeArtifacts == null){
                         typeArtifacts = new ArrayList<>();
-                        artifactsByTypeOfComponentInstance.put(artifactType, typeArtifacts);
+                        artifactsByTypeOfComponentInstance.put(artifact.getArtifactType(), typeArtifacts);
                     }
                     typeArtifacts.add(artifact);
                 }
@@ -1313,12 +1309,12 @@ public class CsarUtils {
 
     private ArtifactsInfo collectComponentArtifacts(Component component) {
         Map<String, ArtifactDefinition> informationalArtifacts = component.getArtifacts();
-        Map<ArtifactTypeEnum, List<ArtifactDefinition>> informationalArtifactsByType = collectGroupArtifacts(informationalArtifacts);
+        Map<String, List<ArtifactDefinition>> informationalArtifactsByType = collectGroupArtifacts(informationalArtifacts);
         Map<String, ArtifactDefinition> deploymentArtifacts = component.getDeploymentArtifacts();
-        Map<ArtifactTypeEnum, List<ArtifactDefinition>> deploymentArtifactsByType = collectGroupArtifacts(deploymentArtifacts);
+        Map<String, List<ArtifactDefinition>> deploymentArtifactsByType = collectGroupArtifacts(deploymentArtifacts);
 		Map<String, ArtifactDefinition> interfaceOperationArtifacts =
 				OperationArtifactUtil.getDistinctInterfaceOperationArtifactsByName(component);
-		Map<ArtifactTypeEnum, List<ArtifactDefinition>> interfaceOperationArtifactsByType = collectGroupArtifacts(
+		Map<String, List<ArtifactDefinition>> interfaceOperationArtifactsByType = collectGroupArtifacts(
 				interfaceOperationArtifacts);
         ArtifactsInfo artifactsInfo = new ArtifactsInfo();
         if (!informationalArtifactsByType.isEmpty()){
@@ -1335,16 +1331,12 @@ public class CsarUtils {
         return artifactsInfo;
     }
 
-    private Map<ArtifactTypeEnum, List<ArtifactDefinition>> collectGroupArtifacts(Map<String, ArtifactDefinition> componentArtifacts) {
-        Map<ArtifactTypeEnum, List<ArtifactDefinition>> artifactsByType = new EnumMap<>(ArtifactTypeEnum.class);
-        for (ArtifactDefinition artifact:componentArtifacts.values()){
-            if (artifact.getArtifactUUID()!=null){
-                ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifact.getArtifactType());
-                List<ArtifactDefinition> typeArtifacts = artifactsByType.get(artifactType);
-                if (typeArtifacts==null){
-                    typeArtifacts = new ArrayList<>();
-                    artifactsByType.put(artifactType, typeArtifacts);
-                }
+    private Map<String, List<ArtifactDefinition>> collectGroupArtifacts(Map<String, ArtifactDefinition> componentArtifacts) {
+        Map<String, List<ArtifactDefinition>> artifactsByType = new HashMap<>();
+        for (final ArtifactDefinition artifact : componentArtifacts.values()) {
+            if (artifact.getArtifactUUID() != null) {
+                artifactsByType.putIfAbsent(artifact.getArtifactType(), new ArrayList<>());
+                final List<ArtifactDefinition> typeArtifacts = artifactsByType.get(artifact.getArtifactType());
                 typeArtifacts.add(artifact);
             }
         }

@@ -20,43 +20,36 @@
 
 package org.openecomp.sdc.common.api;
 
-import java.util.List;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
 
 public class ArtifactTypeEnumTest {
-
-	private ArtifactTypeEnum createTestSubject() {
-		return ArtifactTypeEnum.AAI_SERVICE_MODEL;
-	}
-
 	
 	@Test
-	public void testGetType() throws Exception {
-		ArtifactTypeEnum testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getType();
+	public void testGetType() {
+		assertThat("The artifact type should match", ArtifactTypeEnum.WORKFLOW.getType(), is("WORKFLOW"));
+		assertThat("The artifact type should match", ArtifactTypeEnum.OTHER.getType(), is("OTHER"));
+		assertThat("The artifact type should match", ArtifactTypeEnum.HEAT.getType(), is("HEAT"));
 	}
 	
 	@Test
-	public void testFindType() throws Exception {
-		String type = "";
-		ArtifactTypeEnum result;
-
-		// default test
-		result = ArtifactTypeEnum.findType(type);
+	public void testParse() {
+		ArtifactTypeEnum actual = ArtifactTypeEnum.parse("HEAT");
+		assertThat("The artifact type should not be null", actual, notNullValue());
+		assertThat("The artifact type should match", actual, is(ArtifactTypeEnum.HEAT));
+		actual = ArtifactTypeEnum.parse("OTHER");
+		assertThat("The artifact type should not be null", actual, notNullValue());
+		assertThat("The artifact type should match", actual, is(ArtifactTypeEnum.OTHER));
+		actual = ArtifactTypeEnum.parse("WORKFLOW");
+		assertThat("The artifact type should not be null", actual, notNullValue());
+		assertThat("The artifact type should match", actual, is(ArtifactTypeEnum.WORKFLOW));
+		actual = ArtifactTypeEnum.parse("anyNotKnownType");
+		assertThat("The artifact type should be null", actual, nullValue());
 	}
 
-	
-	@Test
-	public void testGetAllTypes() throws Exception {
-		List<String> result;
-
-		// default test
-		result = ArtifactTypeEnum.getAllTypes();
-	}
 }

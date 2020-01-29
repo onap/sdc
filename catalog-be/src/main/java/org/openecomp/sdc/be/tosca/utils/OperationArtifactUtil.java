@@ -80,7 +80,7 @@ public class OperationArtifactUtil {
 
     private static String createOperationArtifactPathInComponent(OperationDataDefinition operation) {
         return CsarUtils.ARTIFACTS + File.separator + WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name())
-                + File.separator + ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH
+                + File.separator + ArtifactTypeEnum.WORKFLOW.getType() + File.separator + BPMN_ARTIFACT_PATH
                 + File.separator + operation.getImplementation().getArtifactName();
     }
 
@@ -88,7 +88,7 @@ public class OperationArtifactUtil {
                                                           OperationDataDefinition operation) {
         return CsarUtils.ARTIFACTS + File.separator + toscaComponentName + File.separator +
                 WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name()) + File.separator +
-                ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH + File.separator +
+                ArtifactTypeEnum.WORKFLOW.getType() + File.separator + BPMN_ARTIFACT_PATH + File.separator +
                 operation.getImplementation().getArtifactName();
     }
 
