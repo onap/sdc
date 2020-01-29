@@ -37,6 +37,7 @@ export class GeneralStatus {
 export class ComponentType {
     static SERVICE = 'SERVICE';
     static RESOURCE = 'RESOURCE';
+    static RESOURCE_INSTANCE = 'RESOURCE_INSTANCE';
     static SERVICE_PROXY = 'ServiceProxy'
 }
 

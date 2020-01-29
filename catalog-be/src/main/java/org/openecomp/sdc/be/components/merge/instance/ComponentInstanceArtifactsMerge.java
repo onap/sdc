@@ -55,7 +55,7 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
         Map<String, ArtifactDefinition> deploymentArtifactsCreatedOnTheInstance = componentInstancesDeploymentArtifacts.entrySet()
                 .stream()
                 .filter(i -> !originalComponentDeploymentArtifacts.containsKey(i.getKey()))
-                .filter(i -> !ArtifactTypeEnum.VF_MODULES_METADATA.name().equals(i.getValue().getArtifactType()))
+                .filter(i -> !ArtifactTypeEnum.VF_MODULES_METADATA.getType().equals(i.getValue().getArtifactType()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         dataHolder.setOrigComponentDeploymentArtifactsCreatedOnTheInstance(deploymentArtifactsCreatedOnTheInstance);

@@ -84,18 +84,6 @@ elasticSearch:
       - indexPrefix: monitoring_events
         creationPeriod: month
 
-artifactTypes:
-   - CHEF
-   - PUPPET
-   - SHELL
-   - YANG
-   - YANG_XML
-   - HEAT
-   - BPEL
-   - DG_XML
-   - MURANO_PKG
-   - OTHER
-
 licenseTypes:
    - User
    - Installation
@@ -212,14 +200,6 @@ systemMonitoring:
     probeIntervalInSeconds: 15
 
 defaultHeatArtifactTimeoutMinutes: 60
-
-serviceDeploymentArtifacts:
-
-resourceDeploymentArtifacts:
-    HEAT:
-        acceptedTypes:
-            - yaml
-            - yml
 
 unLoggedUrls:
    - /sdc2/rest/healthCheck

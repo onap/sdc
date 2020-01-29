@@ -28,6 +28,11 @@
                 </div>
             </ng-template>
         </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="Filename" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span sdc-tooltip [tooltip-text]="row.artifactName" [tooltip-placement]="3" [attr.data-tests-id]="'artifactName_' + row.artifactName">{{row.artifactName}}</span>
+            </ng-template>
+        </ngx-datatable-column>
         <ngx-datatable-column [resizeable]="false" name="Type" [flexGrow]="1">
             <ng-template ngx-datatable-cell-template let-row="row">
                 {{row.artifactType}}

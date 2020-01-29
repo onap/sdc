@@ -1,13 +1,11 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {WorkspaceService} from "../workspace.service";
-import {SdcUiCommon, SdcUiComponents, SdcUiServices} from "onap-ui-angular";
-import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import * as _ from "lodash";
 import {ArtifactGroupType, ArtifactType} from "../../../../utils/constants";
 import {ArtifactsService} from "../../../components/forms/artifacts-form/artifacts.service";
-import {DeleteArtifactAction, GetArtifactsByTypeAction} from "../../../store/actions/artifacts.action";
+import {GetArtifactsByTypeAction} from "../../../store/actions/artifacts.action";
 import {Select, Store} from "@ngxs/store";
-import {Observable} from "rxjs/index";
+import {Observable} from "rxjs";
 import {ArtifactsState} from "../../../store/states/artifacts.state";
 import {map} from "rxjs/operators";
 import {WorkspaceState} from "../../../store/states/workspace.state";
@@ -22,6 +20,7 @@ export class InformationArtifactPageComponent implements OnInit {
 
     public componentId: string;
     public componentType: string;
+    public resourceType: string;
     public informationArtifacts$: Observable<ArtifactModel[]>;
     public informationArtifactsAsButtons$: Observable<ArtifactModel[]>;
     @Select(WorkspaceState.isViewOnly) isViewOnly$: boolean;
@@ -35,6 +34,7 @@ export class InformationArtifactPageComponent implements OnInit {
     ngOnInit(): void {
         this.componentId = this.workspaceService.metadata.uniqueId;
         this.componentType = this.workspaceService.metadata.componentType;
+        this.resourceType = this.workspaceService.metadata.resourceType;
 
         this.store.dispatch(new GetArtifactsByTypeAction({
             componentType: this.componentType,
@@ -59,11 +59,11 @@ export class InformationArtifactPageComponent implements OnInit {
     }
 
     public addOrUpdateArtifact = (artifact: ArtifactModel, isViewOnly?: boolean) => {
-        this.artifactsService.openArtifactModal(this.componentId, this.componentType, artifact, ArtifactGroupType.INFORMATION, isViewOnly);
-    }
+        this.artifactsService.openArtifactModal(this.componentId, this.componentType, artifact, ArtifactGroupType.INFORMATION, isViewOnly, null, this.resourceType);
+    };
 
     public deleteArtifact = (artifactToDelete) => {
       this.artifactsService.deleteArtifact(this.componentType, this.componentId, artifactToDelete)
-    }
+    };
 
 }

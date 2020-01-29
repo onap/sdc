@@ -23,26 +23,28 @@ package org.openecomp.sdc.be.info;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fj.data.Either;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import lombok.Setter;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactType;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.sdc.be.config.ArtifactConfiguration;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.ComponentType;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
 
 @Getter
 @Setter
@@ -281,27 +283,36 @@ public class ArtifactTemplateInfo {
         return Either.left(true);
     }
 
-    private static Either<List<ArtifactType>, ActionStatus> getDeploymentArtifactTypes(NodeTypeEnum parentType) {
+    private static Either<List<ArtifactType>, ActionStatus> getDeploymentArtifactTypes(final NodeTypeEnum parentType) {
 
-        Map<String, ArtifactTypeConfig> deploymentArtifacts = null;
-        List<ArtifactType> artifactTypes = new ArrayList<>();
+        final List<ArtifactConfiguration> deploymentArtifacts;
+        final List<ArtifactConfiguration> artifactConfigurationList =
+            ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
 
-        if (parentType.equals(NodeTypeEnum.Service)) {
-            deploymentArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceDeploymentArtifacts();
+        if (parentType == NodeTypeEnum.Service) {
+            deploymentArtifacts = artifactConfigurationList.stream()
+                .filter(artifactConfiguration ->
+                    artifactConfiguration.hasSupport(ArtifactGroupTypeEnum.DEPLOYMENT)
+                        && artifactConfiguration.hasSupport(ComponentType.SERVICE))
+                .collect(Collectors.toList());
         } else {
-            deploymentArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getResourceDeploymentArtifacts();
+            deploymentArtifacts = artifactConfigurationList.stream()
+                .filter(artifactConfiguration ->
+                    artifactConfiguration.hasSupport(ArtifactGroupTypeEnum.DEPLOYMENT)
+                        && artifactConfiguration.hasSupport(ComponentType.RESOURCE))
+                .collect(Collectors.toList());
         }
-        if (deploymentArtifacts != null) {
-            for (String artifactType : deploymentArtifacts.keySet()) {
-                ArtifactType artifactT = new ArtifactType();
-                artifactT.setName(artifactType);
-                artifactTypes.add(artifactT);
-            }
+        final List<ArtifactType> artifactTypes = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(deploymentArtifacts)) {
+            deploymentArtifacts.forEach(artifactConfiguration -> {
+                final ArtifactType artifactType = new ArtifactType();
+                artifactType.setName(artifactConfiguration.getType());
+                artifactTypes.add(artifactType);
+            });
             return Either.left(artifactTypes);
-        } else {
-            return Either.right(ActionStatus.GENERAL_ERROR);
         }
 
+        return Either.right(ActionStatus.GENERAL_ERROR);
     }
 
     public static int compareByGroupName(ArtifactTemplateInfo art1, ArtifactTemplateInfo art2) {

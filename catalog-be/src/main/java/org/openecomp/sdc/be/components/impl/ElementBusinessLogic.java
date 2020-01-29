@@ -948,16 +948,12 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return elementOperation.getAllPropertyScopes();
     }
 
-    public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes(String userId) {
+    public Either<List<ArtifactType>, ActionStatus> getAllArtifactTypes(final String userId) {
         ActionStatus status = validateUserExistsActionStatus(userId);
         if (ActionStatus.OK != status) {
             return Either.right(status);
         }
-        return elementOperation.getAllArtifactTypes();
-    }
-
-    public Either<Map<String, Object>, ActionStatus> getAllDeploymentArtifactTypes() {
-        return elementOperation.getAllDeploymentArtifactTypes();
+        return Either.left(elementOperation.getAllArtifactTypes());
     }
 
     public Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> getDefaultHeatTimeout() {

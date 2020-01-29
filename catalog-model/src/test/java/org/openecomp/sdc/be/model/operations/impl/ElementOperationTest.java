@@ -25,6 +25,7 @@ import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,51 +66,43 @@ public class ElementOperationTest extends ModelTestBase {
 
     @BeforeClass
     public static void setupBeforeClass() {
-        // ExternalConfiguration.setAppName("catalog-model");
-        // String appConfigDir = "src/test/resources/config/catalog-model";
-        // ConfigurationSource configurationSource = new
-        // FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-        // appConfigDir);
-
         ModelTestBase.init();
-
     }
 
     @Test
     public void testGetArtifactsTypes() {
+        final List<ArtifactConfiguration> expectedArtifactConfigurationList = new ArrayList<>();
+		final ArtifactConfiguration artifactConfiguration1 = new ArtifactConfiguration();
+		artifactConfiguration1.setType("type1");
+		expectedArtifactConfigurationList.add(artifactConfiguration1);
+		final ArtifactConfiguration artifactConfiguration2 = new ArtifactConfiguration();
+		artifactConfiguration2.setType("type2");
+		expectedArtifactConfigurationList.add(artifactConfiguration2);
+		final ArtifactConfiguration artifactConfiguration3 = new ArtifactConfiguration();
+		artifactConfiguration3.setType("type3");
+		expectedArtifactConfigurationList.add(artifactConfiguration3);
+		configurationManager.getConfiguration().setArtifacts(expectedArtifactConfigurationList);
 
-        List<String> artifactTypesCfg = new ArrayList<>();
-        artifactTypesCfg.add("type1");
-        artifactTypesCfg.add("type2");
-        artifactTypesCfg.add("type3");
-        artifactTypesCfg.add("type4");
-        configurationManager.getConfiguration().setArtifactTypes(artifactTypesCfg);
-        Either<List<ArtifactType>, ActionStatus> allArtifactTypes = elementOperation.getAllArtifactTypes();
-        assertTrue(allArtifactTypes.isLeft());
-        assertEquals(artifactTypesCfg.size(), allArtifactTypes.left().value().size());
+        List<ArtifactType> actualArtifactTypes = elementOperation.getAllArtifactTypes();
+		assertNotNull(actualArtifactTypes);
+        assertEquals(expectedArtifactConfigurationList.size(), actualArtifactTypes.size());
+		boolean allMatch = actualArtifactTypes.stream().allMatch(artifactType ->
+			expectedArtifactConfigurationList.stream()
+				.anyMatch(artifactConfiguration -> artifactConfiguration.getType().equals(artifactType.getName()))
+		);
+		assertTrue(allMatch);
 
-        artifactTypesCfg.remove(0);
-        allArtifactTypes = elementOperation.getAllArtifactTypes();
-        assertTrue(allArtifactTypes.isLeft());
-        assertEquals(artifactTypesCfg.size(), allArtifactTypes.left().value().size());
+        expectedArtifactConfigurationList.remove(0);
+        actualArtifactTypes = elementOperation.getAllArtifactTypes();
+		assertNotNull(actualArtifactTypes);
+        assertEquals(expectedArtifactConfigurationList.size(), actualArtifactTypes.size());
 
-        artifactTypesCfg.add("type5");
+		allMatch = actualArtifactTypes.stream().allMatch(artifactType ->
+			expectedArtifactConfigurationList.stream()
+				.anyMatch(artifactConfiguration -> artifactConfiguration.getType().equals(artifactType.getName()))
+		);
+		assertTrue(allMatch);
     }
-
-	@Test
-	public void testAllDeploymentArtifactTypes() {
-
-		List<String> artifactTypesCfg = new ArrayList<String>();
-		artifactTypesCfg.add("type1");
-		artifactTypesCfg.add("type2");
-		artifactTypesCfg.add("type3");
-		configurationManager.getConfiguration().setArtifactTypes(artifactTypesCfg);
-		Either<Map<String, Object>, ActionStatus> allDeploymentArtifactTypes = elementOperation
-				.getAllDeploymentArtifactTypes();
-		assertTrue(allDeploymentArtifactTypes.isLeft());
-		assertEquals(artifactTypesCfg.size(), allDeploymentArtifactTypes.left().value().size());
-
-	}
 
     // @Test
     public void testGetResourceAndServiceCategoty() {
@@ -431,29 +425,6 @@ public class ElementOperationTest extends ModelTestBase {
 		testSubject = createTestSubject();
 		result = testSubject.getAllPropertyScopes();
 	}
-
-	
-	@Test
-	public void testGetAllArtifactTypes() throws Exception {
-		ElementOperation testSubject;
-		Either<List<ArtifactType>, ActionStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAllArtifactTypes();
-	}
-
-	
-	@Test
-	public void testGetAllDeploymentArtifactTypes() throws Exception {
-		ElementOperation testSubject;
-		Either<Map<String, Object>, ActionStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAllDeploymentArtifactTypes();
-	}
-
 	
 	@Test
 	public void testGetResourceTypesMap() throws Exception {
@@ -465,7 +436,6 @@ public class ElementOperationTest extends ModelTestBase {
 		result = testSubject.getResourceTypesMap();
 	}
 
-	
 	@Test
 	public void testGetNewCategoryData() throws Exception {
 		ElementOperation testSubject;

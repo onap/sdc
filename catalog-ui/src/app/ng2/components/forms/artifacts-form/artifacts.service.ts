@@ -25,12 +25,13 @@ export class ArtifactsService {
                 private store: Store) {
     }
 
-    public dispatchArtifactAction = (componentId: string, componentType: string, artifact: ArtifactModel, artifactType: ArtifactGroupType, instanceId: string) => {
+    public dispatchArtifactAction = (componentId: string, componentType: string, artifact: ArtifactModel, artifactType: ArtifactGroupType, instanceId: string, resourceType?: string) => {
         const artifactObj = {
             componentType,
             componentId,
             instanceId,
-            artifact
+            artifact,
+            resourceType
         };
 
         // Create or update instance artifact
@@ -48,14 +49,14 @@ export class ArtifactsService {
         }
     }
 
-    public openArtifactModal = (componentId: string, componentType: string, artifact: ArtifactModel, artifactType: ArtifactGroupType, isViewOnly?: boolean, instanceId?: string) => {
+    public openArtifactModal = (componentId: string, componentType: string, artifact: ArtifactModel, artifactType: ArtifactGroupType, isViewOnly?: boolean, instanceId?: string, resourceType?: string) => {
 
         let modalInstance;
 
         const onOkPressed = () => {
             const updatedArtifact = modalInstance.innerModalContent.instance.artifact;
             this.serviceLoader.activate();
-            this.dispatchArtifactAction(componentId, componentType, updatedArtifact, artifactType, instanceId)
+            this.dispatchArtifactAction(componentId, componentType, updatedArtifact, artifactType, instanceId, resourceType)
                     .subscribe().add(() => this.serviceLoader.deactivate());
         };
 
@@ -82,6 +83,7 @@ export class ArtifactsService {
             artifactType,
             instanceId,
             componentType,
+            resourceType: resourceType,
             isViewOnly
         });
 

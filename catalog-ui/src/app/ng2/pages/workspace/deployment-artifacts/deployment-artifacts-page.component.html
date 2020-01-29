@@ -16,9 +16,14 @@
                      <div class="env-artifact"></div>
                 </div>
                 <span sdc-tooltip [tooltip-text]="row.artifactDisplayName" [tooltip-placement]="3" [attr.data-tests-id]="'artifactDisplayName_' + row.artifactDisplayName">{{row.artifactDisplayName}}</span>
-                <span *ngIf="row.description.length > 0" class="info">
+                <span *ngIf="row.description && row.description.length > 0" class="info">
                     <svg-icon [clickable]="true" [name]="'comment'" [mode]="'primary2'" (click)="openPopOver('Description',row.description,{x:$event.pageX , y:$event.pageY },'bottom')"></svg-icon>
                 </span>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="Filename" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <span sdc-tooltip [tooltip-text]="row.artifactName" [tooltip-placement]="3" [attr.data-tests-id]="'artifactName_' + row.artifactName">{{row.artifactName}}</span>
             </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column [resizeable]="false" name="Type" [flexGrow]="0.6">

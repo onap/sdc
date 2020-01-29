@@ -2448,8 +2448,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 							.stream()
 							// create each artifact
 							.map(e -> createOrUpdateSingleNonMetaArtifact(resource, csarInfo, e.getPath(),
-									e.getArtifactName(), e.getArtifactType()
-											.getType(),
+									e.getArtifactName(), e.getArtifactType(),
 									e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(),
 									CsarUtils.ARTIFACT_CREATED_FROM_CSAR, e.getArtifactUniqueId(),
 									artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
@@ -2555,8 +2554,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private boolean isValidArtifactType(ArtifactDefinition artifact) {
 		boolean result = true;
 		if (artifact.getArtifactType() == null
-				|| ArtifactTypeEnum.findType(artifact.getArtifactType()) == ArtifactTypeEnum.VENDOR_LICENSE
-				|| ArtifactTypeEnum.findType(artifact.getArtifactType()) == ArtifactTypeEnum.VF_LICENSE) {
+				|| ArtifactTypeEnum.parse(artifact.getArtifactType()) == ArtifactTypeEnum.VENDOR_LICENSE
+				|| ArtifactTypeEnum.parse(artifact.getArtifactType()) == ArtifactTypeEnum.VF_LICENSE) {
 			result = false;
 		}
 		return result;
@@ -2833,10 +2832,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	private void setResourceInstanceRelationsOnComponent(Resource resource, List<RequirementCapabilityRelDef> relations) {
 		if (resource.getComponentInstancesRelations() != null) {
-			/*Map<String, RequirementCapabilityRelDef> relationsMapByUid = resource.getComponentInstancesRelations().stream().collect(Collectors.toMap(r -> r.getUid(), r -> r));
-			Map<String, RequirementCapabilityRelDef> updatedRelationsByUid = relations.stream().collect(Collectors.toMap(r -> r.getUid(), r -> r));
-			relationsMapByUid.putAll(updatedRelationsByUid);
-			resource.setComponentInstancesRelations(new ArrayList<>(relationsMapByUid.values()));*/
 			resource.getComponentInstancesRelations().addAll(relations);
 		} else {
 			resource.setComponentInstancesRelations(relations);
@@ -5816,8 +5811,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 							.findFirst()
 							.orElse(null);
 					if (foundArtifact != null) {
-						if (ArtifactTypeEnum.findType(foundArtifact.getArtifactType()) == currNewArtifact
-								.getArtifactType()) {
+						if (foundArtifact.getArtifactType().equals(currNewArtifact.getArtifactType())) {
 							if (!foundArtifact.getArtifactChecksum()
 									.equals(currNewArtifact.getArtifactChecksum())) {
 								currNewArtifact.setArtifactUniqueId(foundArtifact.getUniqueId());
@@ -5839,8 +5833,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 									currNewArtifact.getArtifactName());
 							ResponseFormat responseFormat = ResponseFormatManager.getInstance()
 									.getResponseFormat(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
-											currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType()
-													.name(),
+											currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
 											foundArtifact.getArtifactType());
 							AuditingActionEnum auditingAction = artifactsBusinessLogic
 									.detectAuditingType(artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
@@ -5858,14 +5851,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				for (ArtifactDefinition currArtifact : existingArtifactsToHandle) {
 					if (currArtifact.getIsFromCsar()) {
 						artifactsToDelete.add(new NonMetaArtifactInfo(currArtifact.getArtifactName(), null,
-								ArtifactTypeEnum.findType(currArtifact.getArtifactType()),
-								currArtifact.getArtifactGroupType(), null, currArtifact.getUniqueId(),
-								currArtifact.getIsFromCsar()));
+							currArtifact.getArtifactType(),
+							currArtifact.getArtifactGroupType(), null, currArtifact.getUniqueId(),
+							currArtifact.getIsFromCsar()));
 					} else {
 						artifactsToUpdate.add(new NonMetaArtifactInfo(currArtifact.getArtifactName(), null,
-								ArtifactTypeEnum.findType(currArtifact.getArtifactType()),
-								currArtifact.getArtifactGroupType(), null, currArtifact.getUniqueId(),
-								currArtifact.getIsFromCsar()));
+							currArtifact.getArtifactType(),
+							currArtifact.getArtifactGroupType(), null, currArtifact.getUniqueId(),
+							currArtifact.getIsFromCsar()));
 
 					}
 				}

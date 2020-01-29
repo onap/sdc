@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import fj.data.Either;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,11 +38,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
+import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
-import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
-import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.config.ArtifactConfiguration;
+import org.openecomp.sdc.be.config.ComponentType;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -432,15 +434,22 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
     }
 
     @Test
-    public void testValidMibAritactsConfiguration() {
-        Map<String, ArtifactTypeConfig> componentDeploymentArtifacts =
-                    ConfigurationManager.getConfigurationManager().getConfiguration().getResourceDeploymentArtifacts();
-        Map<String, ArtifactTypeConfig> componentInstanceDeploymentArtifacts =
-                    ConfigurationManager.getConfigurationManager().getConfiguration().getResourceInstanceDeploymentArtifacts();
-        assertThat(componentDeploymentArtifacts.containsKey(ArtifactTypeEnum.SNMP_POLL.getType())).isTrue();
-        assertThat(componentDeploymentArtifacts.containsKey(ArtifactTypeEnum.SNMP_TRAP.getType())).isTrue();
-        assertThat(componentInstanceDeploymentArtifacts.containsKey(ArtifactTypeEnum.SNMP_POLL.getType())).isTrue();
-        assertThat(componentInstanceDeploymentArtifacts.containsKey(ArtifactTypeEnum.SNMP_TRAP.getType())).isTrue();
+    public void testValidMibArtifactsConfiguration() {
+        final ArtifactConfigManager artifactConfigManager = ArtifactConfigManager.getInstance();
+        Optional<ArtifactConfiguration> artifactConfiguration = artifactConfigManager
+            .find(ArtifactTypeEnum.SNMP_POLL.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, ComponentType.RESOURCE);
+        assertThat(artifactConfiguration.isPresent()).isTrue();
+
+        artifactConfiguration = artifactConfigManager
+            .find(ArtifactTypeEnum.SNMP_TRAP.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, ComponentType.RESOURCE);
+        assertThat(artifactConfiguration.isPresent()).isTrue();
+
+        artifactConfiguration = artifactConfigManager
+            .find(ArtifactTypeEnum.SNMP_POLL.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, ComponentType.RESOURCE_INSTANCE);
+        assertThat(artifactConfiguration.isPresent()).isTrue();
+        artifactConfiguration = artifactConfigManager
+            .find(ArtifactTypeEnum.SNMP_TRAP.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, ComponentType.RESOURCE_INSTANCE);
+        assertThat(artifactConfiguration.isPresent()).isTrue();
     }
 
     @Test

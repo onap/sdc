@@ -83,18 +83,6 @@ elasticSearch:
       - indexPrefix: monitoring_events
         creationPeriod: month
 
-artifactTypes:
-   - CHEF
-   - PUPPET
-   - SHELL
-   - YANG
-   - YANG_XML
-   - HEAT
-   - BPEL
-   - DG_XML
-   - MURANO_PKG
-   - OTHER
-
 licenseTypes:
    - User
    - Installation

@@ -2,6 +2,7 @@
 
 exports[`artifact form component should match current snapshot of artifact form component 1`] = `
 <artifact-form
+  artifactConfigService={[Function Object]}
   artifactTypesOptions={[Function Array]}
   cacheService={[Function Object]}
   initArtifactTypes={[Function Function]}

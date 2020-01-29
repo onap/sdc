@@ -9,6 +9,7 @@ import { ArtifactModel } from '../../../../models';
 import { ArtifactType, ComponentType } from '../../../../utils';
 import { Dictionary } from '../../../../utils/dictionary/dictionary';
 import { CacheService } from '../../../services/cache.service';
+import { ArtifactConfigService } from '../../../services/artifact-config.service';
 
 @Component({
     selector: 'artifact-form',
@@ -20,6 +21,7 @@ export class ArtifactFormComponent {
     @Input() artifact: ArtifactModel;
     @Input() artifactType: ArtifactType;
     @Input() componentType: string;
+    @Input() resourceType: string;
     @Input() instanceId: string;
     @Input() isViewOnly: boolean;
 
@@ -31,7 +33,8 @@ export class ArtifactFormComponent {
     private descriptionIsValid: boolean;
     private labelIsValid: boolean;
 
-    constructor(private cacheService: CacheService) {
+    constructor(private cacheService: CacheService,
+                private artifactConfigService: ArtifactConfigService) {
     }
 
     ngOnInit(): void {
@@ -44,7 +47,7 @@ export class ArtifactFormComponent {
     public onTypeChange = (selectedFileType: IDropDownOption) => {
         this.artifact.artifactType = selectedFileType.value;
         this.verifyTypeAndFileWereFilled();
-    }
+    };
 
     public onUploadFile = (file) => {
         if (file) {
@@ -55,34 +58,24 @@ export class ArtifactFormComponent {
             this.artifact.artifactName = null;
         }
         this.verifyTypeAndFileWereFilled();
-    }
+    };
 
     private initArtifactTypes = (): void => {
-        const artifactTypes: any = this.cacheService.get('UIConfiguration');
-        let validExtensions: string[];
         let artifactTypesList: string[];
-
         switch (this.artifactType) {
             case ArtifactType.DEPLOYMENT:
                 if (this.artifact.artifactType === ArtifactType.HEAT_ENV || this.instanceId) {
-                    validExtensions = artifactTypes.artifacts.deployment.resourceInstanceDeploymentArtifacts;
-                } else if (this.componentType === ComponentType.RESOURCE) {
-                    validExtensions = artifactTypes.artifacts.deployment.resourceDeploymentArtifacts;
+                    artifactTypesList = this.artifactConfigService.findAllTypeBy(this.artifactType, ComponentType.RESOURCE_INSTANCE, this.resourceType);
                 } else {
-                    validExtensions = artifactTypes.artifacts.deployment.serviceDeploymentArtifacts;
-                }
-                if (validExtensions) {
-                    artifactTypesList = Object.keys(validExtensions);
+                    artifactTypesList = this.artifactConfigService.findAllTypeBy(this.artifactType, this.componentType, this.resourceType);
                 }
                 break;
             case ArtifactType.INFORMATION:
-                artifactTypesList = artifactTypes.artifacts.other.map((element: any) => {
-                    return element.name;
-                });
-                _.remove(artifactTypesList, (item: string) => {
-                    return _.has(ArtifactType.THIRD_PARTY_RESERVED_TYPES, item) ||
-                        _.has(ArtifactType.TOSCA, item);
-                });
+                if (this.instanceId) {
+                    artifactTypesList = this.artifactConfigService.findAllTypeBy(this.artifactType, ComponentType.RESOURCE_INSTANCE, this.resourceType);
+                } else {
+                    artifactTypesList = this.artifactConfigService.findAllTypeBy(this.artifactType, this.componentType, this.resourceType);
+                }
                 break;
         }
 
@@ -94,7 +87,7 @@ export class ArtifactFormComponent {
             return artifactType.value === this.artifact.artifactType;
         });
 
-    }
+    };
 
     // Verify that the Type and the Name (file) are filled in the Modal
     // For Description and Label - I used this.descriptionIsValid:boolean & this.labelIsValid:boolean as part of the sdc-validation Element
@@ -116,17 +109,17 @@ export class ArtifactFormComponent {
                 this.onValidationChange.next(false);
             }
         }
-    }
+    };
 
     // sdc-validation for Description
     private onDescriptionChange = (isValid: boolean): void => {
         this.descriptionIsValid = isValid;
         this.onValidationChange.next(isValid) && this.verifyTypeAndFileWereFilled();
-    }
+    };
 
     // sdc-validation for Label
     private onLabelChange = (isValid: boolean): void => {
         this.labelIsValid = isValid;
         this.onValidationChange.next(isValid) && this.verifyTypeAndFileWereFilled();
-    }
+    };
 }
