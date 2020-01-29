@@ -41,7 +41,7 @@ public class WorkspaceConfigurationTest {
 
     @Before
     public void setUp() {
-        String appConfigDir = "src/test/resources/config/common";
+        String appConfigDir = "src/test/resources/config/fe";
         ConfigurationSource configurationSource =
                 new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         configurationManager = new ConfigurationManager(configurationSource);

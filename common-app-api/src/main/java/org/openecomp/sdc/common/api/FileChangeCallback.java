@@ -20,8 +20,9 @@
 
 package org.openecomp.sdc.common.api;
 
+@FunctionalInterface
 public interface FileChangeCallback {
 
-	public void reconfigure(BasicConfiguration obj);
+	void reconfigure(BasicConfiguration obj);
 
 }

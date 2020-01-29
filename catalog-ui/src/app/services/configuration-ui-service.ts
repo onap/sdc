@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-'use strict'
+'use strict';
 import {IAppConfigurtaion, IApi} from "../models/app-config";
 
 interface IConfigurationUiService {

@@ -536,8 +536,6 @@ resourceInformationalArtifacts:
             - VFC
             - CVFC
 
-resourceInformationalDeployedArtifacts:
-
 requirementsToFulfillBeforeCert:
 
 capabilitiesToConsumeBeforeCert:
@@ -680,5 +678,4 @@ dmaapConsumerConfiguration:
         password: Pass
         
 dmeConfiguration:
-    dme2Search: DME2SEARCH
-    dme2Resolve: DME2RESOLVE
+    lookupUriFormat: "http://DME2RESOLVE/service=%s/version=1.0.0/envContext=%s/routeOffer=DEFAULT"
