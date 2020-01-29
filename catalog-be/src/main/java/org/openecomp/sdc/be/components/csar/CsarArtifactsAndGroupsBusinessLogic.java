@@ -736,7 +736,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             artifactUid = newArtifact.getUniqueId();
             artifactUUID = newArtifact.getArtifactUUID();
 
-            ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(newArtifact.getArtifactType());
+            ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(newArtifact.getArtifactType());
             if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET
                     || artifactType == ArtifactTypeEnum.HEAT_VOL) {
                 ArtifactDefinition createHeatEnvPlaceHolder = artifactsBusinessLogic
@@ -771,7 +771,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private String checkAndGetHeatEnvId(ArtifactDefinition createdArtifact) {
         String artifactEnvUid = "";
-        ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(createdArtifact.getArtifactType());
+        ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(createdArtifact.getArtifactType());
         if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET
                 || artifactType == ArtifactTypeEnum.HEAT_VOL) {
             artifactEnvUid = createdArtifact.getUniqueId() + ArtifactsBusinessLogic.HEAT_ENV_SUFFIX;
@@ -1245,7 +1245,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         if (!artifactsToDelete.isEmpty()) {
             for (ArtifactDefinition artifact : artifactsToDelete) {
                 String artifactType = artifact.getArtifactType();
-                ArtifactTypeEnum artifactTypeEnum = ArtifactTypeEnum.findType(artifactType);
+                ArtifactTypeEnum artifactTypeEnum = ArtifactTypeEnum.parse(artifactType);
                 if (artifactTypeEnum != ArtifactTypeEnum.HEAT_ENV) {
                     Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic
                             .handleDelete(resourceId, artifact.getUniqueId(), user, AuditingActionEnum.ARTIFACT_DELETE,
@@ -1460,7 +1460,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             ArtifactDefinition newArtifact = newArtifactEither.left().value();
             artifactUid = newArtifact.getUniqueId();
             artifactUUID = newArtifact.getArtifactUUID();
-            ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(newArtifact.getArtifactType());
+            ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(newArtifact.getArtifactType());
             if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET
                     || artifactType == ArtifactTypeEnum.HEAT_VOL) {
                 ArtifactDefinition createHeatEnvPlaceHolder = artifactsBusinessLogic
@@ -1619,7 +1619,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     ArtifactDefinition createdArtifact = createArtifactEither.left().value();
                     arifactsUids.add(createdArtifact.getUniqueId());
                     arifactsUuids.add(createdArtifact.getArtifactUUID());
-                    ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(createdArtifact.getArtifactType());
+                    ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(createdArtifact.getArtifactType());
                     if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET
                             || artifactType == ArtifactTypeEnum.HEAT_VOL) {
                         ArtifactDefinition createHeatEnvPlaceHolder = artifactsBusinessLogic

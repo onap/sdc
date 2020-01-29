@@ -24,7 +24,6 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 public class ArtifactInfoImpl implements IArtifactInfo {
 
     private String artifactName;
-    private ArtifactTypeEnum artifactType;
+    private String artifactType;
     private String artifactURL;
     private String artifactChecksum;
     private String artifactDescription;
@@ -50,7 +49,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
 
     private ArtifactInfoImpl(ArtifactDefinition artifactDef, String generatedFromUUID, List<String> relatedArtifacts) {
         artifactName = artifactDef.getArtifactName();
-        artifactType = ArtifactTypeEnum.findType(artifactDef.getArtifactType());
+        artifactType = artifactDef.getArtifactType();
         artifactChecksum = artifactDef.getArtifactChecksum();
         artifactDescription = artifactDef.getDescription();
         artifactTimeout = artifactDef.getTimeout();
@@ -116,11 +115,11 @@ public class ArtifactInfoImpl implements IArtifactInfo {
         this.artifactName = artifactName;
     }
 
-    public ArtifactTypeEnum getArtifactType() {
+    public String getArtifactType() {
         return artifactType;
     }
 
-    public void setArtifactType(ArtifactTypeEnum artifactType) {
+    public void setArtifactType(String artifactType) {
         this.artifactType = artifactType;
     }
 

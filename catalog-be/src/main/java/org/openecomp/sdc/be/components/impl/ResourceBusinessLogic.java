@@ -20,8 +20,36 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.collections.MapUtils.isEmpty;
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
+import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
+import static org.openecomp.sdc.common.api.Constants.DEFAULT_GROUP_VF_MODULE;
+
 import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import javax.servlet.ServletContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -157,35 +185,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.collections.MapUtils.isEmpty;
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
-import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
-import static org.openecomp.sdc.common.api.Constants.DEFAULT_GROUP_VF_MODULE;
 
 @org.springframework.stereotype.Component("resourceBusinessLogic")
 public class ResourceBusinessLogic extends ComponentBusinessLogic {
@@ -2397,8 +2396,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 							.stream()
 							// create each artifact
 							.map(e -> createOrUpdateSingleNonMetaArtifact(resource, csarInfo, e.getPath(),
-									e.getArtifactName(), e.getArtifactType()
-											.getType(),
+									e.getArtifactName(), e.getArtifactType(),
 									e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(),
 									CsarUtils.ARTIFACT_CREATED_FROM_CSAR, e.getArtifactUniqueId(),
 									artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
@@ -2504,8 +2502,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private boolean isValidArtifactType(ArtifactDefinition artifact) {
 		boolean result = true;
 		if (artifact.getArtifactType() == null
-				|| ArtifactTypeEnum.findType(artifact.getArtifactType()) == ArtifactTypeEnum.VENDOR_LICENSE
-				|| ArtifactTypeEnum.findType(artifact.getArtifactType()) == ArtifactTypeEnum.VF_LICENSE) {
+				|| ArtifactTypeEnum.parse(artifact.getArtifactType()) == ArtifactTypeEnum.VENDOR_LICENSE
+				|| ArtifactTypeEnum.parse(artifact.getArtifactType()) == ArtifactTypeEnum.VF_LICENSE) {
 			result = false;
 		}
 		return result;
@@ -2782,10 +2780,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	private void setResourceInstanceRelationsOnComponent(Resource resource, List<RequirementCapabilityRelDef> relations) {
 		if (resource.getComponentInstancesRelations() != null) {
-			/*Map<String, RequirementCapabilityRelDef> relationsMapByUid = resource.getComponentInstancesRelations().stream().collect(Collectors.toMap(r -> r.getUid(), r -> r));
-			Map<String, RequirementCapabilityRelDef> updatedRelationsByUid = relations.stream().collect(Collectors.toMap(r -> r.getUid(), r -> r));
-			relationsMapByUid.putAll(updatedRelationsByUid);
-			resource.setComponentInstancesRelations(new ArrayList<>(relationsMapByUid.values()));*/
 			resource.getComponentInstancesRelations().addAll(relations);
 		} else {
 			resource.setComponentInstancesRelations(relations);
@@ -5761,8 +5755,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 							.findFirst()
 							.orElse(null);
 					if (foundArtifact != null) {
-						if (ArtifactTypeEnum.findType(foundArtifact.getArtifactType()) == currNewArtifact
-								.getArtifactType()) {
+						if (currNewArtifact.getArtifactType().equals(foundArtifact.getArtifactType())) {
 							if (!foundArtifact.getArtifactChecksum()
 									.equals(currNewArtifact.getArtifactChecksum())) {
 								currNewArtifact.setArtifactUniqueId(foundArtifact.getUniqueId());
@@ -5784,8 +5777,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 									currNewArtifact.getArtifactName());
 							ResponseFormat responseFormat = ResponseFormatManager.getInstance()
 									.getResponseFormat(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR,
-											currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType()
-													.name(),
+											currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
 											foundArtifact.getArtifactType());
 							AuditingActionEnum auditingAction = artifactsBusinessLogic
 									.detectAuditingType(artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
@@ -5803,14 +5795,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				for (ArtifactDefinition currArtifact : existingArtifactsToHandle) {
 					if (currArtifact.getIsFromCsar()) {
 						artifactsToDelete.add(new NonMetaArtifactInfo(currArtifact.getArtifactName(), null,
-								ArtifactTypeEnum.findType(currArtifact.getArtifactType()),
-								currArtifact.getArtifactGroupType(), null, currArtifact.getUniqueId(),
-								currArtifact.getIsFromCsar()));
+							currArtifact.getArtifactType(),
+							currArtifact.getArtifactGroupType(), null, currArtifact.getUniqueId(),
+							currArtifact.getIsFromCsar()));
 					} else {
 						artifactsToUpdate.add(new NonMetaArtifactInfo(currArtifact.getArtifactName(), null,
-								ArtifactTypeEnum.findType(currArtifact.getArtifactType()),
-								currArtifact.getArtifactGroupType(), null, currArtifact.getUniqueId(),
-								currArtifact.getIsFromCsar()));
+							currArtifact.getArtifactType(),
+							currArtifact.getArtifactGroupType(), null, currArtifact.getUniqueId(),
+							currArtifact.getIsFromCsar()));
 
 					}
 				}

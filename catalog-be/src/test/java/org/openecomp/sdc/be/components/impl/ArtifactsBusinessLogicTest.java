@@ -33,6 +33,7 @@ import fj.data.Either;
 import mockit.Deencapsulation;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +50,7 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.components.validation.UserValidations;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -116,6 +118,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -1154,9 +1157,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
                 new Object[]{componentId, instanceId, componentType});
     }
 
-
     @Test
-    public void testFindComponentInstance() throws Exception {
+    public void testFindComponentInstance() {
         ArtifactsBusinessLogic testSubject;
         String componentInstanceId = "";
         Component component = createResourceObject(true);
@@ -1168,9 +1170,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
                 new Object[]{componentInstanceId, component});
     }
 
-
-    @Test(expected= ComponentException.class)
-    public void testDeploymentArtifactTypeIsLegalForParent_shouldThrowException() throws Exception {
+    @Test(expected = ComponentException.class)
+    public void testDeploymentArtifactTypeIsLegalForParent_shouldThrowException() {
         ArtifactsBusinessLogic testSubject;
         ArtifactDefinition artifactInfo = buildArtifactPayload();
         ArtifactTypeEnum artifactType = ArtifactTypeEnum.AAI_SERVICE_MODEL;
@@ -1182,32 +1183,52 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
 
     @Test
-    public void testFillDeploymentArtifactTypeConf() throws Exception {
-        ArtifactsBusinessLogic testSubject;
-        NodeTypeEnum parentType = NodeTypeEnum.AdditionalInfoParameters;
-        Map<String, ArtifactTypeConfig> result;
+    public void testLoadArtifactTypeConfig() {
+        final ArtifactsBusinessLogic artifactsBusinessLogic = createTestSubject();
 
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "fillDeploymentArtifactTypeConf",
-                new Object[]{parentType});
+        final Configuration configuration = ConfigurationManager.getConfigurationManager().getConfiguration();
+
+        final Map<String, ArtifactTypeConfig> expectedResourceArtifactTypeConfig =
+            configuration.getResourceDeploymentArtifacts();
+
+        Map<String, ArtifactTypeConfig> actualArtifactTypeConfigMap =
+            artifactsBusinessLogic.loadArtifactTypeConfig(ComponentTypeEnum.RESOURCE).orElse(null);
+        org.hamcrest.MatcherAssert.assertThat("Should load RESOURCE configuration",
+            actualArtifactTypeConfigMap, Matchers.notNullValue());
+        org.hamcrest.MatcherAssert.assertThat("Should contain all RESOURCE artifact types",
+            actualArtifactTypeConfigMap.keySet(),
+            containsInAnyOrder(expectedResourceArtifactTypeConfig.keySet().toArray(new String[0]))
+        );
+
+        actualArtifactTypeConfigMap =
+            artifactsBusinessLogic.loadArtifactTypeConfig(ComponentTypeEnum.RESOURCE_INSTANCE).orElse(null);
+        org.hamcrest.MatcherAssert.assertThat("Should load RESOURCE_INSTANCE configuration",
+            actualArtifactTypeConfigMap, Matchers.notNullValue());
+        final Map<String, ArtifactTypeConfig> expectedResourceInstanceArtifactTypeConfig =
+            configuration.getResourceInstanceDeploymentArtifacts();
+        org.hamcrest.MatcherAssert.assertThat("Should contain all RESOURCE_INSTANCE artifact types",
+            actualArtifactTypeConfigMap.keySet(),
+            containsInAnyOrder(expectedResourceInstanceArtifactTypeConfig.keySet().toArray(new String[0]))
+        );
+
+        actualArtifactTypeConfigMap =
+            artifactsBusinessLogic.loadArtifactTypeConfig(ComponentTypeEnum.SERVICE).orElse(null);
+        org.hamcrest.MatcherAssert.assertThat("Should load SERVICE configuration",
+            actualArtifactTypeConfigMap, Matchers.notNullValue());
+        final Map<String, ArtifactTypeConfig> expectedServiceArtifactTypeConfig =
+            configuration.getServiceDeploymentArtifacts();
+        org.hamcrest.MatcherAssert.assertThat("Should contain all SERVICE artifact types",
+            actualArtifactTypeConfigMap.keySet(),
+            containsInAnyOrder(expectedServiceArtifactTypeConfig.keySet().toArray(new String[0]))
+        );
+
+        actualArtifactTypeConfigMap = artifactsBusinessLogic.loadArtifactTypeConfig(null).orElse(null);
+        org.hamcrest.MatcherAssert.assertThat("Configuration should be empty",
+            actualArtifactTypeConfigMap, Matchers.nullValue());
     }
 
-
     @Test
-    public void testValidateArtifactTypeExists() throws Exception {
-        ArtifactsBusinessLogic testSubject;
-        Wrapper<ResponseFormat> responseWrapper = null;
-        ArtifactDefinition artifactInfo = buildArtifactPayload();
-
-        // default test
-        testSubject = createTestSubject();
-        testSubject.getValidArtifactType(artifactInfo);
-    }
-
-
-    @Test
-    public void testGetDeploymentArtifactTypeConfig() throws Exception {
+    public void testGetDeploymentArtifactTypeConfig() {
         ArtifactsBusinessLogic testSubject;
         NodeTypeEnum parentType = NodeTypeEnum.AdditionalInfoParameters;
         ArtifactTypeEnum artifactType = ArtifactTypeEnum.AAI_SERVICE_MODEL;
@@ -1220,16 +1241,15 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
     }
 
 
-    @Test(expected= ComponentException.class)
-    public void testValidateHeatEnvDeploymentArtifact_shouldThrowException() throws Exception {
+    @Test(expected = ComponentException.class)
+    public void testValidateHeatEnvDeploymentArtifact_shouldThrowException() {
         ArtifactsBusinessLogic testSubject;
         Component component = createResourceObject(true);
         String parentId = "";
         ArtifactDefinition artifactInfo = buildArtifactPayload();
-        NodeTypeEnum parentType = NodeTypeEnum.AdditionalInfoParameters;
         // default test
         testSubject = createTestSubject();
-        testSubject.validateHeatEnvDeploymentArtifact(component, parentId, artifactInfo, parentType);
+        testSubject.validateHeatEnvDeploymentArtifact(component, parentId, artifactInfo);
     }
 
     @Test
@@ -1321,7 +1341,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         // default test
         testSubject = createTestSubject();
-        result = testSubject.getDeploymentArtifacts(component, parentType, ciId);
+        result = testSubject.getDeploymentArtifacts(component, ciId);
     }
 
 
@@ -1774,7 +1794,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         artifactDefinition.setPayload("Test".getBytes());
         artifactDefinition.setArtifactLabel("other");
         artifactDefinition.setDescription("Test artifact");
-        artifactDefinition.setArtifactType(ArtifactTypeEnum.OTHER.name());
+        artifactDefinition.setArtifactType(ArtifactTypeEnum.OTHER.getType());
         artifactDefinition.setArtifactUUID("artifactUId");
         artifactDefinition.setArtifactLabel("test");
         artifactDefinition.setArtifactDisplayName("Test");
@@ -1859,7 +1879,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setUniqueId("artifactId");
-        artifactDefinition.setArtifactType(ArtifactTypeEnum.TOSCA_CSAR.name());
+        artifactDefinition.setArtifactType(ArtifactTypeEnum.TOSCA_CSAR.getType());
         User user = new User();
         boolean inCertificationRequest = false;
         boolean fetchTemplatesFromDB = false;
@@ -1893,7 +1913,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         ArtifactDefinition csarArtifact = new ArtifactDefinition();
         csarArtifact.setArtifactName("csarArtifact");
-        csarArtifact.setArtifactType(ArtifactTypeEnum.HEAT_ENV.name());
+        csarArtifact.setArtifactType(ArtifactTypeEnum.HEAT_ENV.getType());
         csarArtifact.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
         when(csarUtils.createCsar(any(Component.class), anyBoolean(), anyBoolean()))
@@ -1919,7 +1939,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
         artifactDefinition.setArtifactName("test.csar");
         artifactDefinition.setArtifactType(ComponentTypeEnum.RESOURCE.name());
-        artifactDefinition.setArtifactType(ArtifactTypeEnum.HEAT.name());
+        artifactDefinition.setArtifactType(ArtifactTypeEnum.HEAT.getType());
         artifactDefinition.setUniqueId(artifactId);
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.TOSCA);
 
@@ -2023,7 +2043,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
         resource.setComponentInstances(componentInstanceList);
         componentInstance.setDeploymentArtifacts(deploymentArtifacts);
 
-        List<ArtifactDefinition> result = artifactBL.getDeploymentArtifacts(resource, parentType, ciId);
+        List<ArtifactDefinition> result = artifactBL.getDeploymentArtifacts(resource, ciId);
         Assert.assertTrue(result.size() == 1);
         Assert.assertEquals(artifactDefinition.getArtifactName(), result.get(0).getArtifactName());
     }
