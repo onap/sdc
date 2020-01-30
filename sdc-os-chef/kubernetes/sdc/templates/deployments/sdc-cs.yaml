@@ -46,7 +46,6 @@ spec:
           name: sdc-logs
         ports:
         - containerPort: 9042
-        - containerPort: 9160
         readinessProbe:
           exec:
             command:

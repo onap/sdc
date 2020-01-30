@@ -24,12 +24,13 @@ template "janusgraph.properties" do
    mode "0755"
    variables({
       :cassandra_ip             => node['Nodes']['CS'].join(",").gsub(/[|]/,''),
+      :cassandra_cql_port       => node['cassandra'][:cassandra_port],
       :cassandra_pwd            => node['cassandra'][:cassandra_password],
       :cassandra_usr            => node['cassandra'][:cassandra_user],
       :rep_factor               => replication_factor,
       :DC_NAME                  => node['cassandra']['datacenter_name'],
       :DC_NAME_WITH_REP         => janusgraph_dcname_with_rep,
-      :janusgraph_connection_timeout => node['cassandra']['janusgraph_connection_timeout'],
+      :janus_connection_timeout => node['cassandra']['janusgraph_connection_timeout'],
       :cassandra_truststore_password => node['cassandra'][:truststore_password],
       :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}"
    })

@@ -30,6 +30,7 @@ import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
+import com.datastax.driver.mapping.annotations.Transient;
 
 import java.util.Map;
 
@@ -92,6 +93,7 @@ public class FeatureToggleEvent {
         this.parameters = Joiner.on(",").withKeyValueSeparator("=").join(featureState.getParameterMap());
     }
 
+    @Transient
     public FeatureState getFeatureState() {
         Feature feature = ToggleableFeature.getFeatureByName(featureName);
         if (feature == null) {

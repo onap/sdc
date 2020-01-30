@@ -22,7 +22,7 @@ package org.openecomp.sdc.be.resources.data.auditing;
 
 
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-
+import com.datastax.driver.mapping.annotations.Transient;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,16 +30,23 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class AuditingGenericEvent {
+    @Transient
     protected SimpleDateFormat simpleDateFormat;
     protected static String dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSS z";
 
+    @Transient
     protected String requestId;
+    @Transient
     protected String serviceInstanceId;
+    @Transient
     protected String action;
+    @Transient
     protected String status;
+    @Transient
     protected String timestamp;
-
+    @Transient
     protected String desc;
+    @Transient
     protected Map<String, Object> fields = new HashMap<>();
 
 

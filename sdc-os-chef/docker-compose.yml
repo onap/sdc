@@ -1,39 +1,7 @@
 version: "2.1"
 services:
 ################################################################
-  elasticsearch:
-    build: .
-#    context: elasticsearch
-    container_name: "sdc-es"
-    restart: "always"
-    image: "ecomp-nexus:51212/ecomp/sdc-elasticsearch:1610.2.13"
-    mem_limit: "1g"
-    memswap_limit: "1g"
-    logging:
-        driver: "json-file"
-        options:
-            max-size: "100m"
-            max-file: "10"
-    ports:
-        - "9200:9200"
-        - "9300:9300"
-    environment:
-#        - ES_JAVA_OPTS="-Xms1g -Xmx1g"
-        - ES_HEAP_SIZE=1073741824
-        - HOST_IP:HOSTIP
-        - ENVNAME:DEP_ENV
-    volumes:
-        - /etc/localtime:/etc/localtime:ro
-        - /data/ES:/usr/share/elasticsearch/data
-        - /data/ASDC/environments:/root/chef-solo/environments      
-    ulimits:
-        memlock: -1
-        nproc: 65535
-        nofile:
-            soft: 100000
-            hard: 100000
 
-  
   cassandra:
     build: .
 #    context: cassandra
@@ -47,7 +15,6 @@ services:
             max-file: "10"
     ports:
         - "9042:9042"
-        - "9160:9160"
     environment:
         - ES_HEAP_SIZE=1073741824
         - HOST_IP:HOSTIP
@@ -62,38 +29,6 @@ services:
         nofile:
             soft: 100000
             hard: 100000
-
-            
-
-  kibana:
-    build: .
-    container_name: "sdc-kbn"
-    restart: "always"
-    image: "ecomp-nexus:51212/ecomp/sdc-kibana:1610.2.13"
-    mem_limit: "1g"
-    memswap_limit: "1g"
-    logging:
-        driver: "json-file"
-        options:
-            max-size: "100m"
-            max-file: "10"
-    ports:
-        - "5601:5601"
-    environment:
-        - ENVNAME:DEP_ENV   
-    volumes:
-        - /etc/localtime:/etc/localtime:ro
-        - /data/ASDC/environments:/root/chef-solo/environments
-    ulimits:
-        memlock: -1
-        nproc: 65535
-        nofile:
-            soft: 100000
-            hard: 100000
-    depends_on:
-        - elasticsearch
-
-
 
 
   jettyBE:
