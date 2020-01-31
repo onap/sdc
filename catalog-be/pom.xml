@@ -372,13 +372,6 @@
 
         </dependency>
 
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${elastic-search.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- functional java -->
         <dependency>
             <groupId>org.functionaljava</groupId>
