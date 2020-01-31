@@ -1,35 +1,4 @@
 {
-  "heat": [
-    "AbstractSubstitute",
-    "cinderVolume",
-    "contrailAbstractSubstitute",
-    "contrailCompute",
-    "contrailNetworkRules",
-    "contrailPort",
-    "contrailV2NetworkRules",
-    "contrailV2VirtualMachineInterface",
-    "contrailVirtualNetwork",
-    "contrailV2VLANSubInterface",
-    "contrailV2VLANSubInterfaceV2",
-    "contrailVirtualNetwork",
-    "extContrailCP",
-    "extCp",
-    "extNeutronCP",
-    "extVirtualMachineInterfaceCP",
-    "extVl",
-    "forwardingPath",
-    "Generic_PNF",
-    "Generic_Service",
-    "Generic_VF",
-    "Generic_VFC",
-    "globalCompute",
-    "globalPort",
-    "neutronNet",
-    "neutronPort",
-    "novaServer",
-    "securityRules"
-  ],
-  "normative": [
-    "loadBalancer"
-  ]
+    "heat": [],
+    "normative": []
 }
