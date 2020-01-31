@@ -68,48 +68,6 @@
                             </authConfig>
                             <images>
 
-                                <!-- Build init-elastic search image -->
-                                <image>
-                                    <name>onap/sdc-init-elasticsearch</name>
-                                    <alias>sdc-init-elasticsearch</alias>
-                                    <build>
-                                        <cleanup>try</cleanup>
-                                        <dockerFileDir>${project.basedir}/sdc-init-elasticsearch</dockerFileDir>
-                                        <tags>
-                                            <tag>${docker.tag}</tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
-                                        </tags>
-                                    </build>
-                                </image>
-
-                                <!-- Build elastic search image -->
-                                <image>
-                                    <name>onap/sdc-elasticsearch</name>
-                                    <alias>sdc-elasticsearch</alias>
-                                    <build>
-                                        <cleanup>try</cleanup>
-                                        <dockerFileDir>${project.basedir}/sdc-elasticsearch</dockerFileDir>
-                                        <tags>
-                                            <tag>${docker.tag}</tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
-                                        </tags>
-                                    </build>
-                                </image>
-
-                                <!-- Build kibana image -->
-                                <image>
-                                    <name>onap/sdc-kibana</name>
-                                    <alias>sdc-kibana</alias>
-                                    <build>
-                                        <cleanup>try</cleanup>
-                                        <dockerFileDir>${project.basedir}/sdc-kibana</dockerFileDir>
-                                        <tags>
-                                            <tag>${docker.tag}</tag>
-                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
-                                        </tags>
-                                    </build>
-                                </image>
-
                                 <!-- Build cassandra image -->
                                 <image>
                                     <name>onap/sdc-cassandra</name>
@@ -124,8 +82,6 @@
                                     </build>
                                 </image>
 
-
-
                             </images>
                         </configuration>
                         <executions>
@@ -137,7 +93,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra</image>
+                                    <image>onap/sdc-cassandra</image>
                                 </configuration>
                             </execution>
 
@@ -156,7 +112,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>onap/sdc-init-elasticsearch,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra</image>
+                                    <image>onap/sdc-cassandra</image>
                                 </configuration>
                             </execution>
                         </executions>
