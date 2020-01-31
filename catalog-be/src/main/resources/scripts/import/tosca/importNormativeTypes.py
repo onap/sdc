@@ -27,6 +27,8 @@ def createNormativeType(scheme, beHost, bePort, adminUser, fileDir, ELEMENT_NAME
 		
 		buffer = StringIO()
 		c = pycurl.Curl()
+		if is_debug():
+			c.setopt(pycurl.VERBOSE, 1)
 
 		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/catalog/upload/multipart'
 		if updateversion != None:
@@ -70,6 +72,7 @@ def createNormativeType(scheme, beHost, bePort, adminUser, fileDir, ELEMENT_NAME
 
 		#c.setopt(c.WRITEFUNCTION, lambda x: None)
 		c.setopt(c.WRITEFUNCTION, buffer.write)
+
 		#print("before perform")	
 		res = c.perform()
 	

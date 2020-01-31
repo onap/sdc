@@ -27,6 +27,10 @@ def debug(desc, *args):
         print desc, join_strings(args)
 
 
+def is_debug():
+    return debugFlag
+
+
 def log(desc, arg=None):
     print desc, arg
 
