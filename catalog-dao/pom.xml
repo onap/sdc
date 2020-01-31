@@ -55,13 +55,6 @@ Modifications copyright (c) 2018 Nokia
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>${elastic-search.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
 		<!-- SPRING -->
 		<dependency>
 			<groupId>org.springframework</groupId>

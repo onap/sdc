@@ -1,8 +1,0 @@
-#!/bin/bash
-
-health_Check_http_code=$(curl -o /dev/null -w '%{http_code}' http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
-if [[ "$health_Check_http_code" -eq 200 ]]; then
-   exit 200
-else
-   exit $health_Check_http_code
-fi
