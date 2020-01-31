@@ -1,6 +1,6 @@
 {
   "heat": [
-    "AbstractSubstitute",
+    "abstractSubstitute",
     "cinderVolume",
     "contrailAbstractSubstitute",
     "contrailCompute",
