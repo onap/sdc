@@ -20,7 +20,31 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.servlet.ServletContext;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -112,30 +136,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 public class ResourceBusinessLogicTest {
 
@@ -1582,6 +1582,17 @@ public class ResourceBusinessLogicTest {
 				.changeState(anyString(), eq(user), eq(LifeCycleTransitionEnum.CHECKOUT),
 						any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
+	}
+
+	@Test
+	public void testIfNodeTypeNameHasValidPrefix() {
+		final List<String> definedNodeTypeNamespaceList = ConfigurationManager.getConfigurationManager()
+			.getConfiguration().getDefinedResourceNamespace();
+		for (final String validNodeTypePrefix : definedNodeTypeNamespaceList) {
+			final String nodeName = validNodeTypePrefix + "." + "abc";
+			final Optional<String> result = bl.validateNodeTypeNamePrefix(nodeName, definedNodeTypeNamespaceList);
+			assertTrue(result.isPresent());
+		}
 	}
 
 	@Test
