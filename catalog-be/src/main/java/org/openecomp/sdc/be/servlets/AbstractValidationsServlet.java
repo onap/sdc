@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import fj.data.Either;
+import java.util.Optional;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -41,6 +42,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -378,33 +380,63 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    protected void validatePayloadNameSpace(Wrapper<Response> responseWrapper, UploadResourceInfo resourceInfo, User user, String toscaPayload) {
+    /**
+     * Gets the Resource type from the given node type name.
+     *
+     * @param nodeTypeFullName - Node type Name
+     * @return Resource Type name
+     */
+    private String getResourceType(final String nodeTypeFullName) {
+
+        final Optional<String> nodeTypeNamePrefix = getNodeTypeNamePrefix(nodeTypeFullName);
+        if (nodeTypeNamePrefix.isPresent()) {
+            final String nameWithouNamespacePrefix = nodeTypeFullName.substring(nodeTypeNamePrefix.get().length());
+            final String[] findTypes = nameWithouNamespacePrefix.split("\\.");
+            final ResourceTypeEnum resourceType = ResourceTypeEnum.getType(findTypes[0].toUpperCase());
+            if (resourceType != null) {
+                return resourceType.name();
+            }
+        }
+        return ResourceTypeEnum.VFC.name();
+    }
+
+    /**
+     * Extracts the Node Type Name prefix from the given Node Type Name.
+     * @param nodeName - Node Type Name
+     * @return Node Type Name prefix
+     */
+    private Optional<String> getNodeTypeNamePrefix(final String nodeName) {
+        final List<String> definedNodeTypeNamespaceList = ConfigurationManager.getConfigurationManager()
+            .getConfiguration().getDefinedResourceNamespace();
+        for (final String validNamespace : definedNodeTypeNamespaceList) {
+            if (nodeName.startsWith(validNamespace)) {
+                return Optional.of(validNamespace);
+            }
+        }
+        return Optional.empty();
+    }
+
+    protected void validatePayloadNameSpace(final Wrapper<Response> responseWrapper,
+                                            final UploadResourceInfo resourceInfo,
+                                            final User user, final String toscaPayload) {
         boolean isValid;
-        String nameSpace = "";
-        Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
-        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
+        String namespace = "";
+        final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
+        final Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
         if (toscaElement.isRight() || toscaElement.left().value().size() != 1) {
             isValid = false;
         } else {
-            nameSpace = toscaElement.left().value().keySet().iterator().next();
-            isValid = nameSpace.startsWith(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
+            namespace = toscaElement.left().value().keySet().iterator().next();
+            isValid = getNodeTypeNamePrefix(namespace).isPresent();
         }
         if (!isValid) {
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_RESOURCE_NAMESPACE);
-            Response errorResponse = buildErrorResponse(responseFormat);
+            final ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_RESOURCE_NAMESPACE);
+            final Response errorResponse = buildErrorResponse(responseFormat);
             getComponentsUtils().auditResource(responseFormat, user, resourceInfo.getName(), AuditingActionEnum.IMPORT_RESOURCE);
             responseWrapper.setInnerElement(errorResponse);
         } else {
-            String str1 = nameSpace.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
-            String[] findTypes = str1.split("\\.");
-            if (ResourceTypeEnum.containsName(findTypes[0].toUpperCase())) {
-                String type = findTypes[0].toUpperCase();
-                resourceInfo.setResourceType(type);
-            } else {
-                resourceInfo.setResourceType(ResourceTypeEnum.VFC.name());
-            }
+            resourceInfo.setResourceType(getResourceType(namespace));
         }
-
     }
 
     private void validatePayloadIsSingleResource(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user, String toscaPayload) {
