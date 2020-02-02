@@ -1000,6 +1000,9 @@ BE-configuration.yaml
        - DMAAP
        - DCAE
 
+    # This configuration entry lists all node type names prefix that shall be allowed on SDC.
+    definedResourceNamespace:
+       - org.openecomp.resource.
 
 BE-distribution-engine-configuration.yaml
 *****************************************
