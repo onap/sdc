@@ -880,3 +880,6 @@ cadiFilterParams:
     AFT_ENVIRONMENT: AFTUAT
     cadiX509Issuers: "CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US"
 
+# This configuration entry lists all node type names prefix that shall be allowed on SDC.
+definedResourceNamespace:
+  - org.openecomp.resource.
