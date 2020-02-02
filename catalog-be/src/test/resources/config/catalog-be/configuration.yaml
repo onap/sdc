@@ -744,4 +744,6 @@ cadiFilterParams:
     cadi_truststore:          /opt/app/jetty/base/be/etc/cadi_truststore.jks
     cadi_truststore_password: changeit
 
-
+# This configuration entry lists all node type names prefix that shall be allowed on SDC.
+definedResourceNamespace:
+  - org.openecomp.resource.

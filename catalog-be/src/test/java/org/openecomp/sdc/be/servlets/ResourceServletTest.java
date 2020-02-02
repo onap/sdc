@@ -42,6 +42,7 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
@@ -56,8 +57,10 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
@@ -107,6 +110,9 @@ public class ResourceServletTest extends JerseyTest {
     private static final ResponseFormat noContentResponseFormat = new ResponseFormat(HttpStatus.SC_NO_CONTENT);
     private static final ResponseFormat notFoundResponseFormat = new ResponseFormat(HttpStatus.SC_NOT_FOUND);
     private static final ResponseFormat badRequestResponseFormat = new ResponseFormat(HttpStatus.SC_BAD_REQUEST);
+    private static final ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration
+        .getChangeListener(), "src/test/resources/config/catalog-be");
+    private static final ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
     private static final String RESOURCE_NAME = "resourceName";
     private static final String VERSION = "version";
     private static final String RESOURCE_ID = "resourceId";
@@ -162,11 +168,12 @@ public class ResourceServletTest extends JerseyTest {
 
     @Test
     public void testHappyScenarioTest() {
-        when(componentUtils.getResponseFormat(ActionStatus.OK)) .thenReturn(createdResponseFormat);
+        when(componentUtils.getResponseFormat(ActionStatus.OK)).thenReturn(createdResponseFormat);
 
         UploadResourceInfo validJson = buildValidJson();
         setMD5OnRequest(true, validJson);
-        Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).post(Entity.json(gson.toJson(validJson)), Response.class);
+        Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(gson.toJson(validJson)), Response.class);
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(Mockito.any(ActionStatus.class));
         Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(ActionStatus.OK);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
@@ -250,11 +257,12 @@ public class ResourceServletTest extends JerseyTest {
     public void testNonValidNameSpaceInPayloadFail() {
         UploadResourceInfo mdJson = buildValidJson();
 
-        String payload = "tosca_definitions_version: tosca_simple_yaml_1_0_0\r\n" + "node_types: \r\n" + "  org.openecomp.resourceX.importResource4test:\r\n" + "    derived_from: tosca.nodes.Root\r\n" + "    description: update update";
+        String payload = "tosca_definitions_version: tosca_simple_yaml_1_0_0\r\n" + "node_types: \r\n"
+            + "  org.openecomp.resourceX.importResource4test:\r\n" + "    derived_from: tosca.nodes.Root\r\n"
+            + "    description: update update";
 
         encodeAndSetPayload(mdJson, payload);
         runAndVerifyActionStatusError(mdJson, ActionStatus.INVALID_RESOURCE_NAMESPACE);
-
     }
 
     @Test

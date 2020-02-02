@@ -950,3 +950,6 @@ cadiFilterParams:
     cadi_truststore: <%= node['access_restriction']['cadi_truststore'] %>
     cadi_truststore_password: <%= node['access_restriction']['cadi_truststore_password'] %>
 
+# This configuration entry lists all node type names prefix that shall be allowed on SDC.
+definedResourceNamespace:
+  - org.openecomp.resource.
