@@ -36,3 +36,9 @@
     background-color: $tlv-light-gray;
 }
 }
+div.testresults {
+  div.open {
+    max-height: 100000px !important;
+  }
+}
+

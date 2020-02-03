@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -392,6 +393,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
         if (rv == null) {
             rv = new ArrayList<>();
         }
+        rv.sort(Comparator.comparing(VtpNameDescriptionPair::getName));
         return rv;
     }
 
@@ -423,6 +425,7 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
         if (rv == null) {
             rv = new ArrayList<>();
         }
+        rv.sort(Comparator.comparing(VtpTestCase::getTestCaseName));
         return rv;
     }
 

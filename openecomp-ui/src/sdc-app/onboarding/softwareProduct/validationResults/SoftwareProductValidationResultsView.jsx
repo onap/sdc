@@ -51,7 +51,7 @@ class SoftwareProductValidationResultsView extends React.Component {
                 this.prepareDataForCheckboxes(val.children, ftm);
             } else if (val.tests) {
                 for (var test of val.tests) {
-                    ftm[test.testCaseName] = test.description;
+                    ftm[test.testCaseName] = test;
                 }
             }
         }
@@ -61,14 +61,15 @@ class SoftwareProductValidationResultsView extends React.Component {
     getTitle(result) {
         let { flatTestsMap: vspTestsMap } = this.state;
         let title = vspTestsMap[result.testCaseName]
-            ? vspTestsMap[result.testCaseName].split(/\r?\n/)[0]
+            ? vspTestsMap[result.testCaseName].description.split(/\r?\n/)[0]
             : i18n('Unknown');
         return i18n(
-            'Scenario: {scenario} | Title: {title} | Test Case: {testCaseName} | Status: {status}',
+            'Scenario: {scenario} | Test Suite: {testSuiteName} | Test Case: {testCaseName} | Title: {title} | Status: {status}',
             {
                 scenario: result.scenario || i18n('Unknown'),
                 status: result.status || i18n('Unknown'),
                 testCaseName: result.testCaseName || i18n('Unknown'),
+                testSuiteName: result.testSuiteName || i18n('Unkonwn'),
                 title: title
             }
         );
@@ -103,51 +104,123 @@ class SoftwareProductValidationResultsView extends React.Component {
             </li>
         );
     }
-    renderError(result, indexKey) {
+
+    renderIcon(testResult) {
+        if (typeof testResult === 'string') {
+            return (
+                <SVGIcon
+                    color="negative"
+                    name="errorCircle"
+                    labelPosition="right"
+                />
+            );
+        } else if (testResult.hasOwnProperty('result')) {
+            if ('pass' === testResult['result'].toLowerCase()) {
+                return (
+                    <SVGIcon
+                        color="positive"
+                        name="checkCircle"
+                        labelPosition="right"
+                    />
+                );
+            } else if ('fail' === testResult['result'].toLowerCase()) {
+                return (
+                    <SVGIcon
+                        color="negative"
+                        name="errorCircle"
+                        labelPosition="right"
+                    />
+                );
+            } else {
+                return (
+                    <SVGIcon
+                        color="warning"
+                        name="exclamationTriangleFull"
+                        labelPosition="right"
+                    />
+                );
+            }
+        } else {
+            return (
+                <SVGIcon
+                    color="negative"
+                    name="errorCircle"
+                    labelPosition="right"
+                />
+            );
+        }
+    }
+
+    renderResultText(item) {
+        if (typeof item === 'string') {
+            return item;
+        }
+        let items = [];
+        if (item.testname) {
+            items.push(item.testname);
+        }
+        if (item.result) {
+            items.push(item.result.toUpperCase());
+        }
+        if (item.code) {
+            items.push(item.code);
+        }
+        let errorOrMessage = item.message || item.error;
+        if (typeof errorOrMessage === 'object') {
+            items.push(this.renderResultText(errorOrMessage));
+        } else if (errorOrMessage) {
+            items.push(errorOrMessage);
+        }
+        if (item.advice) {
+            items.push(item.advice);
+        }
+        if (item.description) {
+            items.push(item.description);
+        }
+        return items.join(' | ');
+    }
+
+    renderSpan(item) {
+        return (
+            <span className="validation-results-test-result-label">
+                {this.renderResultText(item)}
+            </span>
+        );
+    }
+
+    renderTestResult(result, indexKey) {
         if (Array.isArray(result)) {
-            return result.map((parameter, index) => {
+            return result.map((item, index) => {
                 return (
                     <li type="none" key={index}>
-                        <SVGIcon
-                            color="negative"
-                            name="errorCircle"
-                            labelPosition="right"
-                        />
-                        <span className="validation-results-test-result-label">
-                            {(parameter.code || '') +
-                                ' | ' +
-                                (parameter.advice || parameter.message)}
-                        </span>
+                        {this.renderIcon(item)}
+                        {this.renderSpan(item)}
                     </li>
                 );
             });
         } else if (
             typeof result === 'string' ||
             result.hasOwnProperty('code') ||
+            result.hasOwnProperty('testname') ||
             result.hasOwnProperty('advice') ||
             result.hasOwnProperty('message') ||
             result.hasOwnProperty('error')
         ) {
-            result =
-                result instanceof Object && result.error instanceof Object
-                    ? result.error
-                    : result;
             return (
                 <li key={indexKey} type="none">
-                    <SVGIcon
-                        color="negative"
-                        name="errorCircle"
-                        labelPosition="right"
-                    />
-                    <span className="validation-results-test-result-label">
-                        {typeof result === 'string'
-                            ? result
-                            : (result.code || '') +
-                              ' | ' +
-                              (result.advice || result.message || result.error)}
-                    </span>
+                    {this.renderIcon(result)}
+                    {this.renderSpan(result)}
                 </li>
             );
+        } else if (result.hasOwnProperty('errors')) {
+            return result.errors.map((item, index) => {
+                return (
+                    <li type="none" key={index}>
+                        {this.renderIcon(item)}
+                        {this.renderSpan(item)}
+                    </li>
+                );
+            });
         } else {
             return (
                 <Accordion key={indexKey} defaultExpanded>
@@ -160,14 +233,30 @@ class SoftwareProductValidationResultsView extends React.Component {
     renderResults(result, indexKey) {
         return (
             <li key={indexKey} type="none">
-                <SVGIcon
-                    color="positive"
-                    name="checkCircle"
-                    labelPosition="right"
+                {this.renderIcon(result)}
+                {this.renderSpan(result)}
+            </li>
+        );
+    }
+
+    renderString(result, indexKey) {
+        return (
+            <li key={indexKey} type="none">
+                <textarea
+                    type="textarea"
+                    disabled={true}
+                    className="validation-results-test-result-string"
+                    value={result}
                 />
-                <span className="validation-results-test-result-label">
-                    {result}
-                </span>
+            </li>
+        );
+    }
+
+    renderResults(result, indexKey) {
+        return (
+            <li key={indexKey} type="none">
+                {this.renderIcon(result)}
+                {this.renderSpan(result)}
             </li>
         );
     }
@@ -235,13 +324,13 @@ class SoftwareProductValidationResultsView extends React.Component {
                                         indexKey
                                     );
                                 } else {
-                                    return this.renderError(
+                                    return this.renderTestResult(
                                         results[key],
                                         indexKey
                                     );
                                 }
                             })
-                          : this.renderError(results, indexKey)}
+                          : this.renderTestResult(results, indexKey)}
                 </Accordion>
             );
         }

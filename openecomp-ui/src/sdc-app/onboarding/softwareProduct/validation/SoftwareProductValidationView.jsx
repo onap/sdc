@@ -279,7 +279,10 @@ class SoftwareProductValidation extends Component {
         }
     }
 
-    fetchDefaultValue(value) {
+    fetchDefaultValue(value, metadata) {
+        if (metadata && metadata.uidefault) {
+            value = metadata.uidefault;
+        }
         let { softwareProductId, version } = this.props;
         let versionName = parseFloat(version.name).toFixed(1),
             versionNumber =
@@ -305,7 +308,10 @@ class SoftwareProductValidation extends Component {
         vspTestsMap[item].parameters.forEach(parameter => {
             testsRequest[item].parameters[
                 parameter.name
-            ] = this.fetchDefaultValue(parameter.defaultValue);
+            ] = this.fetchDefaultValue(
+                parameter.defaultValue,
+                parameter.metadata
+            );
         });
         return testsRequest;
     }
