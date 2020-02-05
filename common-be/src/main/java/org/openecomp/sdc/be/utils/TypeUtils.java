@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 
 public class TypeUtils {
 
-
     private static final String FIRST_CERTIFIED_VERSION_VERSION = "1.0";
 
     public static <FieldType> void setField(Map<String, Object> toscaJson, ToscaTagNamesEnum tagName, Consumer<FieldType> setter) {
@@ -62,8 +61,8 @@ public class TypeUtils {
         // Attributes
         ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), ANNOTATIONS("annotations"),
         //functions
-        GET_INPUT("get_input");
-
+        GET_INPUT("get_input"),
+        DATA_TYPES("data_types");
 
         private String elementName;
 
@@ -74,5 +73,6 @@ public class TypeUtils {
         public String getElementName() {
             return elementName;
         }
+
     }
 }

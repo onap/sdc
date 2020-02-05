@@ -33,7 +33,6 @@ import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_IND
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.ONAP_INDEX_IMPORT_FILE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +42,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.collections.MapUtils;
+import org.onap.sdc.tosca.datatypes.model.DataType;
 import org.onap.sdc.tosca.datatypes.model.Import;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -60,11 +61,14 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.error.YAMLException;
 
 public abstract class AbstractToscaConverter implements ToscaConverter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractToscaConverter.class);
 
-    public abstract void convertTopologyTemplate(ServiceTemplate serviceTemplate,
+    public abstract void convertTopologyTemplate(@NotNull ServiceTemplate serviceTemplate,
                                                  ServiceTemplateReaderService readerService);
 
     protected void handleMetadataFile(Map<String, byte[]> csarFiles) {
@@ -74,8 +78,8 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
         }
     }
 
-    protected void handleDefintionTemplate(String key, Map<String, byte[]> csarFiles,
-                                           GlobalSubstitutionServiceTemplate gsst) {
+    protected void handleDefinitionTemplate(String key, Map<String, byte[]> csarFiles,
+                                            GlobalSubstitutionServiceTemplate gsst) {
         try {
             ServiceTemplateReaderService readerService = new ServiceTemplateReaderServiceImpl(csarFiles.get(key));
             Object nodeTypes = readerService.getNodeTypes();
@@ -83,6 +87,7 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
                 Map<String, NodeType> nodeTypeMap = (Map<String, NodeType>) nodeTypes;
                 gsst.appendNodes(nodeTypeMap);
             }
+            gsst.appendDataTypes((Map) readerService.getDataTypes());
         } catch (YAMLException ye) {
             throw new CoreException(new ErrorCode.ErrorCodeBuilder()
                     .withMessage("Invalid YAML content in file " + key)
@@ -158,6 +163,7 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
             convertToscaVersion(serviceTemplate, readerService);
             convertImports(serviceTemplate);
             convertNodeTypes(serviceTemplate, readerService);
+            convertDataTypes(serviceTemplate, readerService);
             convertTopologyTemplate(serviceTemplate, readerService);
         } catch (YAMLException ye) {
             throw new CoreException(new ErrorCode.ErrorCodeBuilder()
@@ -225,6 +231,22 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
 
             nodeType.ifPresent(nodeTypeValue -> DataModelUtil
                     .addNodeType(serviceTemplate, nodeTypeEntry.getKey(), nodeTypeValue));
+        }
+    }
+    
+    protected void convertDataTypes(final ServiceTemplate serviceTemplate,
+                                    final ServiceTemplateReaderService readerService) {
+        try {
+            final Map<String, Object> dataTypes = readerService.getDataTypes();
+            for (final Map.Entry<String, Object> entry : dataTypes.entrySet()) {
+                final Optional<DataType> dataType =
+                        ToscaConverterUtil.createObjectFromClass(entry.getKey(), entry.getValue(), DataType.class);
+
+                dataType.ifPresent(
+                        nodeTypeValue -> DataModelUtil.addDataType(serviceTemplate, entry.getKey(), nodeTypeValue));
+            }
+        } catch (final Exception ex) {
+            LOGGER.error("Unable to process data types: ", ex);
         }
     }
 

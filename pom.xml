@@ -582,6 +582,21 @@ Modifications copyright (c) 2018-2019 Nokia
     </profile>
 
     <profile>
+      <id>catalog-be</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>common-app-logging</module>
+        <module>common-app-api</module>
+        <module>common-be</module>
+        <module>catalog-dao</module>
+        <module>catalog-model</module>
+        <module>catalog-be</module>
+      </modules>
+    </profile>
+
+    <profile>
       <id>onboarding</id>
       <activation>
         <activeByDefault>false</activeByDefault>

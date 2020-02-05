@@ -39,6 +39,7 @@ import org.onap.sdc.tosca.datatypes.model.AttributeDefinition;
 import org.onap.sdc.tosca.datatypes.model.CapabilityAssignment;
 import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.onap.sdc.tosca.datatypes.model.Constraint;
+import org.onap.sdc.tosca.datatypes.model.DataType;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 import org.onap.sdc.tosca.datatypes.model.GroupDefinition;
 import org.onap.sdc.tosca.datatypes.model.Import;
@@ -316,6 +317,20 @@ public class DataModelUtil {
         }
         serviceTemplate.getNode_types().put(nodeTypeId, nodeType);
     }
+
+    public static void addDataType(final ServiceTemplate serviceTemplate, final String key,
+                                   final DataType nodeTypeValue) {
+        if (serviceTemplate == null) {
+            throw new CoreException(new InvalidAddActionNullEntityErrorBuilder("Data Type", SERVICE_TEMPLATE).build());
+        }
+        
+        if (serviceTemplate.getData_types() == null) {
+            serviceTemplate.setData_types(new HashMap<>());
+        }
+        
+        serviceTemplate.getData_types().put(key, nodeTypeValue);
+    }
+
 
     /**
      * Add relationship template.

@@ -33,7 +33,7 @@ public class Constants {
     private static final String TEMPLATE_AUTHOR = "template_author";
     private static final String TEMPLATE_VERSION = "template_version";
     private static final String DESCRIPTION = "description";
-    private static final String IMPORTS = "imports";
+    public static final String IMPORTS = "imports";
     private static final String DSL_DEFINITIONS = "dsl_definitions";
     public static final String nodeType = "node_type";
     public static final String nodeTypes = "node_types";
@@ -41,7 +41,7 @@ public class Constants {
     private static final String RELATIONSHIP_TEMPLATES = "relationship_templates";
     private static final String CAPABILITY_TYPES = "capability_types";
     private static final String ARTIFACT_TYPES = "artifact_types";
-    private static final String DATA_TYPES = "data_types";
+    public static final String DATA_TYPES = "data_types";
     private static final String INTERFACE_TYPES = "interface_types";
     private static final String POLICY_TYPES = "policy_types";
     private static final String GROUP_TYPES = "group_types";
