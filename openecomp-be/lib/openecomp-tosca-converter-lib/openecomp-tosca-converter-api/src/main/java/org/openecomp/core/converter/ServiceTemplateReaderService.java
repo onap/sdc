@@ -1,5 +1,4 @@
-
-/*-
+/*
  * ============LICENSE_START=======================================================
  *  Modification Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
@@ -26,7 +25,7 @@ import java.util.Map;
 
 public interface ServiceTemplateReaderService {
 
-    Map<String, Object> readServiceTemplate(byte[] serivceTemplateContent);
+    Map<String, Object> readServiceTemplate(byte[] serviceTemplateContent);
 
     Object getMetadata();
 
@@ -47,4 +46,6 @@ public interface ServiceTemplateReaderService {
     List<Object> getImports();
 
     Map<String, Object> getPolicies();
+
+    Map<String, Object> getDataTypes();
 }

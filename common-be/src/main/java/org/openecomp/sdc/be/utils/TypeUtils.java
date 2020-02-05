@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 
 public class TypeUtils {
 
-
     private static final String FIRST_CERTIFIED_VERSION_VERSION = "1.0";
 
     public static <FieldType> void setField(Map<String, Object> toscaJson, ToscaTagNamesEnum tagName, Consumer<FieldType> setter) {
@@ -57,13 +56,15 @@ public class TypeUtils {
         // Heat env Validation
         PARAMETERS("parameters"),
         // Import Validations
-        TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), NODE_TYPES("node_types"), OCCURRENCES("occurrences"), NODE_TEMPLATES("node_templates"), GROUPS("groups"), INPUTS("inputs"),
+        TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), OCCURRENCES("occurrences"), NODE_TEMPLATES("node_templates"), GROUPS("groups"), INPUTS("inputs"),
         SUBSTITUTION_MAPPINGS("substitution_mappings"), NODE_TYPE("node_type"), DIRECTIVES("directives"),
         // Attributes
         ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), ANNOTATIONS("annotations"),
         VERSION("version"), OPERATIONS("operations"), NOTIFICATIONS("notifications"),
         //functions
-        GET_INPUT("get_input");
+        GET_INPUT("get_input"),
+        // Definitions
+        DATA_TYPES("data_types"), NODE_TYPES("node_types"), IMPORTS("imports");
 
         private final String elementName;
 
@@ -74,5 +75,6 @@ public class TypeUtils {
         public String getElementName() {
             return elementName;
         }
+
     }
 }
