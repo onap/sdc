@@ -55,7 +55,7 @@ public class ToscaConverterImpl extends AbstractToscaConverter {
                   break;
 
               case definitionsFile:
-                  handleDefintionTemplate(fileEntry.getKey(), csarFiles, gsst);
+                  handleDefinitionTemplate(fileEntry.getKey(), csarFiles, gsst);
                   break;
 
               default:

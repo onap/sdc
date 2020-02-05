@@ -149,6 +149,7 @@ public enum Messages {
     /*definition errors*/
     MISSING_DEFINITION_FILE("Definition file %s referenced in TOSCA.meta does not exist"),
     MISSING_IMPORT_FILE("Package must contain the referenced import file '%s'"),
+    MISSING_MAIN_DEFINITION_FILE("Package must contain the given main definition file '%s'"),
     INVALID_IMPORT_STATEMENT("Definition file '%s' contains an invalid import statement: '%s'"),
     INVALID_YAML_EXTENSION("Expecting yaml or yml extension for file: %s"),
 
