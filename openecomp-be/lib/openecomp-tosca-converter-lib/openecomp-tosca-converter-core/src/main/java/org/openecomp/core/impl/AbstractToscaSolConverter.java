@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -87,9 +88,11 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
         if (toscaDefinitionImportHandler.hasError()) {
             throw new InvalidToscaDefinitionImportException(toscaDefinitionImportHandler.getErrors());
         }
-        handledDefinitionFilesList.addAll(toscaDefinitionImportHandler.getHandledDefinitionFilesList());
+        final Map<String, ServiceTemplateReaderService> handledImportDefinitionFileMap =
+            toscaDefinitionImportHandler.getHandledImportDefinitionFileMap();
+        handledDefinitionFilesList.addAll(handledImportDefinitionFileMap.keySet());
         for (final String file : handledDefinitionFilesList) {
-            handleDefintionTemplate(file, csarFiles, gsst);
+            handleDefinitionTemplate(file, csarFiles, gsst);
         }
     }
 
