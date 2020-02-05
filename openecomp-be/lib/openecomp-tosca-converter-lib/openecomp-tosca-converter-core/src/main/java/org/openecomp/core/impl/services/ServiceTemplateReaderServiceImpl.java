@@ -20,20 +20,29 @@
 
 package org.openecomp.core.impl.services;
 
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.core.converter.ServiceTemplateReaderService;
+import static org.openecomp.core.converter.datatypes.Constants.DATA_TYPES;
+import static org.openecomp.core.converter.datatypes.Constants.IMPORTS;
+import static org.openecomp.core.converter.datatypes.Constants.POLICIES;
+import static org.openecomp.core.converter.datatypes.Constants.definitionVersion;
+import static org.openecomp.core.converter.datatypes.Constants.inputs;
+import static org.openecomp.core.converter.datatypes.Constants.metadata;
+import static org.openecomp.core.converter.datatypes.Constants.nodeTemplates;
+import static org.openecomp.core.converter.datatypes.Constants.nodeTypes;
+import static org.openecomp.core.converter.datatypes.Constants.outputs;
+import static org.openecomp.core.converter.datatypes.Constants.substitutionMappings;
+import static org.openecomp.core.converter.datatypes.Constants.topologyTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static org.openecomp.core.converter.datatypes.Constants.*;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.core.converter.ServiceTemplateReaderService;
 
 public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderService {
 
-    private Map<String, Object> readServiceTemplate = new HashMap<>();
+    private final Map<String, Object> readServiceTemplate;
 
     public ServiceTemplateReaderServiceImpl(byte[] serviceTemplateContent) {
         this.readServiceTemplate = readServiceTemplate(serviceTemplateContent);
@@ -41,15 +50,13 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
 
     @Override
     public Map<String, Object> readServiceTemplate(byte[] serviceTemplateContent) {
-
         return new YamlUtil().yamlToObject(new String(serviceTemplateContent), Map.class);
-
     }
 
     @Override
     public List<Object> getImports() {
-        return Objects.isNull(this.readServiceTemplate.get("imports")) ? new ArrayList<>()
-                       : (List<Object>) this.readServiceTemplate.get("imports");
+        return Objects.isNull(this.readServiceTemplate.get(IMPORTS)) ? new ArrayList<>()
+                       : (List<Object>) this.readServiceTemplate.get(IMPORTS);
     }
 
     @Override
@@ -106,5 +113,11 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
         return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
                        : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate())
                                                        .get(substitutionMappings);
+    }
+
+  @Override
+    public Map<String, Object> getDataTypes() {
+      return Objects.isNull(this.readServiceTemplate.get(DATA_TYPES)) ? new HashMap<>()
+          : (Map<String, Object>) this.readServiceTemplate.get(DATA_TYPES);
     }
 }

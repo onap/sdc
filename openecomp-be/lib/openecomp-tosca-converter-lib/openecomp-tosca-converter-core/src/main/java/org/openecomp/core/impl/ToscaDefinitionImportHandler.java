@@ -23,10 +23,11 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.NON_FILE_IMPORT_ATTRIBU
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
@@ -34,14 +35,18 @@ import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles TOSCA definition imports, checking for import definition errors.
  */
 public class ToscaDefinitionImportHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ToscaDefinitionImportHandler.class);
+
     private final Map<String, byte[]> fileMap;
-    private final Set<String> handledDefinitionFilesList = new LinkedHashSet<>();
+    private final Map<String, ServiceTemplateReaderService> handledImportDefinitionFileMap = new HashMap<>();
     private final List<ErrorMessage> validationErrorList = new ArrayList<>();
     private String currentFile;
 
@@ -50,9 +55,39 @@ public class ToscaDefinitionImportHandler {
      * @param fileStructureMap      The package structure with file path and respective file byte
      * @param mainDefinitionFilePath    The main descriptor yaml file to start the reading
      */
-    public ToscaDefinitionImportHandler(final Map<String, byte[]> fileStructureMap, final String mainDefinitionFilePath) {
+    public ToscaDefinitionImportHandler(final Map<String, byte[]> fileStructureMap,
+                                        final String mainDefinitionFilePath) {
         this.fileMap = fileStructureMap;
-        handleImports(mainDefinitionFilePath);
+        readImportsFromMainDefinition(mainDefinitionFilePath);
+    }
+
+    private void readImportsFromMainDefinition(final String mainDefinitionFilePath) {
+        if(!checkMainDefinitionExists(mainDefinitionFilePath)) {
+            return;
+        }
+        final ServiceTemplateReaderService readerService = parseToServiceTemplate(mainDefinitionFilePath).orElse(null);
+        if (readerService == null) {
+            return;
+        }
+        final List<String> importFileList = extractFileImports(readerService.getImports());
+        if (CollectionUtils.isNotEmpty(importFileList)) {
+            for (final String importFilePath : importFileList) {
+                final String resolvedPath = resolveImportPath(FilenameUtils.getPath(mainDefinitionFilePath), importFilePath);
+                handleImports(resolvedPath);
+            }
+        }
+    }
+
+    private Optional<ServiceTemplateReaderService> parseToServiceTemplate(final String definitionFile) {
+        try {
+            return Optional.of(new ServiceTemplateReaderServiceImpl(fileMap.get(definitionFile)));
+        } catch (final Exception ex) {
+            LOGGER.debug(String.format("Could not parse '%s' to a ServiceTemplateReader", definitionFile), ex);
+            reportError(ErrorLevel.ERROR,
+                String.format(Messages.INVALID_YAML_FORMAT.getErrorMessage(), ex.getMessage()));
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -67,20 +102,15 @@ public class ToscaDefinitionImportHandler {
         if (!checkImportExists(fileName)) {
             return;
         }
-        final ServiceTemplateReaderService readerService;
-        try {
-            readerService = new ServiceTemplateReaderServiceImpl(fileMap.get(fileName));
-        } catch (final Exception ex) {
-            reportError(ErrorLevel.ERROR,
-                String.format(Messages.INVALID_YAML_FORMAT.getErrorMessage(), ex.getMessage()));
+        final ServiceTemplateReaderService readerService = parseToServiceTemplate(fileName).orElse(null);
+        if (readerService == null)
             return;
-        }
-        handledDefinitionFilesList.add(fileName);
+        handledImportDefinitionFileMap.put(fileName, readerService);
         final List<Object> imports = readerService.getImports();
         final List<String> extractImportFiles = extractFileImports(imports);
         for (final String importedFile : extractImportFiles) {
             final String resolvedPath = resolveImportPath(FilenameUtils.getPath(fileName), importedFile);
-            if (!handledDefinitionFilesList.contains(resolvedPath)) {
+            if (!handledImportDefinitionFileMap.containsKey(resolvedPath)) {
                 handleImports(resolvedPath);
             }
         }
@@ -175,17 +205,26 @@ public class ToscaDefinitionImportHandler {
         return resolvedImportPath;
     }
 
+    private boolean checkImportExists(final String filePath) {
+        return checkFileExists(filePath, Messages.MISSING_IMPORT_FILE.formatMessage(filePath));
+    }
+
+    private boolean checkMainDefinitionExists(final String filePath) {
+        return checkFileExists(filePath, Messages.MISSING_MAIN_DEFINITION_FILE.formatMessage(filePath));
+    }
+
     /**
      * Checks if the given file path exists inside the file structure.
      * Reports an error if the file was not found.
      *
      * @param filePath  file path to check inside the file structure
+     * @param errorMsg  the error message to report
      * @return
      *  {@code true} if the file exists, {@code false} otherwise
      */
-    private boolean checkImportExists(final String filePath) {
-        if (!fileMap.keySet().contains(filePath)) {
-            reportError(ErrorLevel.ERROR, Messages.MISSING_IMPORT_FILE.formatMessage(filePath));
+    private boolean checkFileExists(final String filePath, final String errorMsg) {
+        if (!fileMap.containsKey(filePath)) {
+            reportError(ErrorLevel.ERROR, errorMsg);
             return false;
         }
 
@@ -197,8 +236,8 @@ public class ToscaDefinitionImportHandler {
      * @return
      *  A list containing the processed files paths
      */
-    public Set<String> getHandledDefinitionFilesList() {
-        return handledDefinitionFilesList;
+    public Map<String, ServiceTemplateReaderService> getHandledImportDefinitionFileMap() {
+        return handledImportDefinitionFileMap;
     }
 
     /**
