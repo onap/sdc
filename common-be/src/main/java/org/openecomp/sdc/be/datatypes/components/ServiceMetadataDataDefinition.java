@@ -20,219 +20,67 @@
 
 package org.openecomp.sdc.be.datatypes.components;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 
-
-
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefinition {
+
     private static final String EMPTY_STR = "";
 
+    @Getter
+    @Setter
     private String distributionStatus;
-    private String serviceType;
-    private String serviceRole;
-    private String instantiationType = EMPTY_STR;
-	private String serviceFunction;
 
+    @Getter
+    @Setter
+    private String serviceType = EMPTY_STR;
+
+    @Getter
+    @Setter
+    private String serviceRole = EMPTY_STR;
+
+    @Getter
+    @Setter
+    private String instantiationType = EMPTY_STR;
+
+    @Getter
+    @Setter
+    private String serviceFunction = EMPTY_STR;
+
+    @Getter
+    @Setter
     private Boolean ecompGeneratedNaming = true;
 
+    @Getter
+    @Setter
     private String namingPolicy = EMPTY_STR;
 
+    @Getter
+    @Setter
     private String environmentContext;
-
-    public ServiceMetadataDataDefinition() {
-        super();
-        serviceType = "";
-        serviceRole = "";
-		serviceFunction = "";
-    }
 
 
     public ServiceMetadataDataDefinition(ServiceMetadataDataDefinition other) {
         super(other);
         serviceType = other.getServiceType();
         serviceRole = other.getServiceRole();
-		serviceFunction = other.getServiceFunction();
-	}
-
-	public ServiceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
-		super(extractor);
-		serviceType = extractor.getServiceType();
-		serviceRole = extractor.getServiceRole();
-		serviceFunction = extractor.getServiceFunction();
+        serviceFunction = other.getServiceFunction();
     }
 
-    public String getDistributionStatus() {
-        return distributionStatus;
+    public ServiceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
+        super(extractor);
+        serviceType = extractor.getServiceType();
+        serviceRole = extractor.getServiceRole();
+        serviceFunction = extractor.getServiceFunction();
     }
 
-    public void setDistributionStatus(String distributionStatus) {
-        this.distributionStatus = distributionStatus;
-    }
-
-    public String getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
-
-    public String getServiceRole() {
-        return serviceRole;
-    }
-
-    public String getInstantiationType() {
-        return instantiationType;
-    }
-
-    public void setInstantiationType(String instantiationType) {
-        this.instantiationType = instantiationType;
-    }
-
-    public void setServiceRole(String serviceRole) {
-        this.serviceRole = serviceRole;
-    }
-
-    public Boolean isEcompGeneratedNaming() {
-        return ecompGeneratedNaming;
-    }
-
-	public Boolean getEcompGeneratedNaming() {
-		return ecompGeneratedNaming;
-	}
-
-    public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
-        this.ecompGeneratedNaming = ecompGeneratedNaming;
-    }
-
-    public String getNamingPolicy() {
-        return namingPolicy;
-    }
-
-    public void setNamingPolicy(String namingPolicy) {
-        this.namingPolicy = namingPolicy;
-    }
-
-    public String getEnvironmentContext() {
-        return environmentContext;
-    }
-
-    public void setEnvironmentContext(String environmentContext) {
-        this.environmentContext = environmentContext;
-    }
-
-	public String getServiceFunction() {
-		return serviceFunction;
-	}
-
-	public void setServiceFunction(String serviceFunction) {
-		this.serviceFunction = serviceFunction;
-	}
-
-	@Override
-	public String toString() {
-		return "ServiceMetadataDataDefinition{" +
-				"distributionStatus='" + distributionStatus + '\'' +
-				", serviceType='" + serviceType + '\'' +
-				", serviceRole='" + serviceRole + '\'' +
-				", serviceFunction='" + serviceFunction + '\'' +
-				", ecompGeneratedNaming=" + ecompGeneratedNaming +
-				", namingPolicy='" + namingPolicy + '\'' +
-				", environmentContext='" + environmentContext + '\'' +
-				", instantiationType='" + instantiationType + '\'' +
-				'}';
-	}
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((distributionStatus == null) ? 0 : distributionStatus.hashCode());
-        result = prime * result + ((ecompGeneratedNaming == null) ? 0 : ecompGeneratedNaming.hashCode());
-        result = prime * result + ((namingPolicy == null) ? 0 : namingPolicy.hashCode());
-        result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
-        result = prime * result + ((serviceRole == null) ? 0 : serviceRole.hashCode());
-		result = prime * result + ((serviceFunction == null) ? 0 : serviceFunction.hashCode());
-        result = prime * result + ((environmentContext == null) ? 0 : environmentContext.hashCode());
-        result = prime * result + ((instantiationType == null) ? 0 : instantiationType.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof ComponentMetadataDataDefinition)) {
-            return false;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ServiceMetadataDataDefinition other = (ServiceMetadataDataDefinition) obj;
-        if (distributionStatus == null) {
-            if (other.distributionStatus != null) {
-                return false;
-            }
-        } else if (!distributionStatus.equals(other.distributionStatus)) {
-            return false;
-        }
-        if (ecompGeneratedNaming == null) {
-            if (other.ecompGeneratedNaming != null) {
-                return false;
-            }
-        } else if (!ecompGeneratedNaming.equals(other.ecompGeneratedNaming)) {
-            return false;
-        }
-        if (namingPolicy == null) {
-            if (other.namingPolicy != null) {
-                return false;
-            }
-        } else if (!namingPolicy.equals(other.namingPolicy)) {
-            return false;
-        }
-        if (serviceType == null) {
-            if (other.serviceType != null) {
-                return false;
-            }
-        } else if (!serviceType.equals(other.serviceType)) {
-            return false;
-        }
-        if (serviceRole == null) {
-            if (other.serviceRole != null) {
-                return false;
-            }
-        } else if (!serviceRole.equals(other.serviceRole)) {
-            return false;
-        }
-        if (environmentContext == null) {
-            if (other.environmentContext != null) {
-                return false;
-            }
-        } else if (!environmentContext.equals(other.environmentContext)) {
-            return false;
-        }
-        if (instantiationType == null) {
-            if (other.instantiationType != null) {
-                return false;
-            }
-        } else if (!instantiationType.equals(other.instantiationType)) {
-            return false;
-        }
-        if (serviceFunction == null){
-            if (other.serviceFunction != null) {
-                return false;
-        } else if (!serviceFunction.equals(other.serviceFunction))
-            return false;
-        }
-        return super.equals(obj);
-    }
 
     @Override
     public String getActualComponentType() {
