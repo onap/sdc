@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43997f75_42f53f9b",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/components/ServiceMetadataDataDefinition.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-06T09:47:24Z",
+      "side": 1,
+      "message": "if all fields are with Getter and Setter move Annotation to class.",
+      "range": {
+        "startLine": 37,
+        "startChar": 3,
+        "endLine": 67,
+        "endChar": 38
+      },
+      "revId": "71d566aadd3ec49d636ba6947ee9f6d1fde015e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
