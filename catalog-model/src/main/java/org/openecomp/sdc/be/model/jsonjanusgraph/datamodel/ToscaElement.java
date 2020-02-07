@@ -20,6 +20,12 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.datamodel;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
@@ -35,25 +41,21 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
 import org.openecomp.sdc.common.log.api.ILogConfiguration;
 import org.slf4j.MDC;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+@Getter
+@Setter
 public abstract class ToscaElement {
 
     protected Map<String, Object> metadata;
     protected List<CategoryDefinition> categories;
     protected Map<String, ArtifactDataDefinition> toscaArtifacts;
+    protected ToscaElementTypeEnum toscaType;
     private Map<String, ArtifactDataDefinition> artifacts;
     private Map<String, ArtifactDataDefinition> deploymentArtifacts;
     private Map<String, AdditionalInfoParameterDataDefinition> additionalInformation;
     private Map<String, PropertyDataDefinition> properties;
     private Map<String, ListCapabilityDataDefinition> capabilities;
-    private Map<String, MapPropertiesDataDefinition> capabiltiesProperties;
+    private Map<String, MapPropertiesDataDefinition> capabilitiesProperties;
     private Map<String, ListRequirementDataDefinition> requirements;
-
-    protected ToscaElementTypeEnum toscaType;
     // User
     private String creatorUserId;
     private String creatorFullName;
@@ -61,99 +63,10 @@ public abstract class ToscaElement {
     private String lastUpdaterFullName;
 
     private Map<String, String> allVersions;
+    private String toscaVersion;
 
     public ToscaElement(ToscaElementTypeEnum toscaType){
         this.toscaType = toscaType;
-    }
-
-    public Map<String, Object> getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(Map<String, Object> metadata) {
-        this.metadata = metadata;
-    }
-
-    public List<CategoryDefinition> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<CategoryDefinition> categories) {
-        this.categories = categories;
-    }
-    public Map<String, ArtifactDataDefinition> getToscaArtifacts() {
-        return toscaArtifacts;
-    }
-
-    public void setToscaArtifacts(Map<String, ArtifactDataDefinition> toscaArtifacts) {
-        this.toscaArtifacts = toscaArtifacts;
-    }
-
-    public ToscaElementTypeEnum getToscaType() {
-        return toscaType;
-    }
-
-    public void setToscaType(ToscaElementTypeEnum toscaType) {
-        this.toscaType = toscaType;
-    }
-    public Map<String, ArtifactDataDefinition> getArtifacts() {
-        return artifacts;
-    }
-
-    public void setArtifacts(Map<String, ArtifactDataDefinition> artifacts) {
-        this.artifacts = artifacts;
-    }
-
-    public Map<String, ArtifactDataDefinition> getDeploymentArtifacts() {
-        return deploymentArtifacts;
-    }
-
-    public void setDeploymentArtifacts(Map<String, ArtifactDataDefinition> deploymentArtifacts) {
-        this.deploymentArtifacts = deploymentArtifacts;
-    }
-    public Map<String, AdditionalInfoParameterDataDefinition> getAdditionalInformation() {
-        return additionalInformation;
-    }
-    public void setAdditionalInformation(Map<String, AdditionalInfoParameterDataDefinition> additionalInformation) {
-        this.additionalInformation = additionalInformation;
-    }
-    public Map<String, PropertyDataDefinition> getProperties() {
-        return properties;
-    }
-    public void setProperties(Map<String, PropertyDataDefinition> properties) {
-        this.properties = properties;
-    }
-
-    public Map<String, String> getAllVersions() {
-        return allVersions;
-    }
-
-    public void setAllVersions(Map<String, String> allVersions) {
-        this.allVersions = allVersions;
-    }
-
-    public Map<String, ListCapabilityDataDefinition> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(Map<String, ListCapabilityDataDefinition> capabilities) {
-        this.capabilities = capabilities;
-    }
-
-    public Map<String, ListRequirementDataDefinition> getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(Map<String, ListRequirementDataDefinition> requirements) {
-        this.requirements = requirements;
-    }
-
-    public Map<String, MapPropertiesDataDefinition> getCapabilitiesProperties() {
-        return capabiltiesProperties;
-    }
-
-    public void setCapabilitiesProperties(Map<String, MapPropertiesDataDefinition> capabiltiesProperties) {
-        this.capabiltiesProperties = capabiltiesProperties;
     }
 
     // metadata properties
@@ -294,42 +207,16 @@ public abstract class ToscaElement {
         return (Long)archiveTime;
     }
 
-    public void setArchiveTime(Long archiveTime) { setMetadataValue(JsonPresentationFields.ARCHIVE_TIME, archiveTime); }
-
-    public Boolean isVspArchived() { return (Boolean) getMetadataValue(JsonPresentationFields.IS_VSP_ARCHIVED); }
-
-    public void setVspArchived(Boolean vspArchived) { setMetadataValue(JsonPresentationFields.IS_VSP_ARCHIVED, vspArchived); }
-
-    public String getCreatorUserId() {
-        return creatorUserId;
+    public void setArchiveTime(Long archiveTime) {
+        setMetadataValue(JsonPresentationFields.ARCHIVE_TIME, archiveTime);
     }
 
-    public void setCreatorUserId(String creatorUserId) {
-        this.creatorUserId = creatorUserId;
+    public Boolean isVspArchived() {
+        return (Boolean) getMetadataValue(JsonPresentationFields.IS_VSP_ARCHIVED);
     }
 
-    public String getCreatorFullName() {
-        return creatorFullName;
-    }
-
-    public void setCreatorFullName(String creatorFullName) {
-        this.creatorFullName = creatorFullName;
-    }
-
-    public String getLastUpdaterUserId() {
-        return lastUpdaterUserId;
-    }
-
-    public void setLastUpdaterUserId(String lastUpdaterUserId) {
-        this.lastUpdaterUserId = lastUpdaterUserId;
-    }
-
-    public String getLastUpdaterFullName() {
-        return lastUpdaterFullName;
-    }
-
-    public void setLastUpdaterFullName(String lastUpdaterFullName) {
-        this.lastUpdaterFullName = lastUpdaterFullName;
+    public void setVspArchived(Boolean vspArchived) {
+        setMetadataValue(JsonPresentationFields.IS_VSP_ARCHIVED, vspArchived);
     }
 
     public void generateUUID() {

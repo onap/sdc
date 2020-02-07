@@ -26,7 +26,6 @@ public class Constants {
     public static final String metadataFile = "TOSCA-Metadata/TOSCA.meta";
 
 
-    public static final String definitionVersion = "tosca_definitions_version";
     private static final String DEFAULT_NAMESPACE = "tosca_default_namespace";
     private static final String TEMPLATE_NAME = "template_name";
     public static final String topologyTemplate = "topology_template";

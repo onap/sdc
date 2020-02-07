@@ -246,6 +246,10 @@ public class ModelConverter {
             resource.setDerivedList(nodeType.getDerivedList());
             resource.setDerivedFromMapOfIdToName(nodeType.getDerivedFromMapOfIdToName());
             resource.setAbstract((Boolean) nodeType.getMetadataValue(JsonPresentationFields.IS_ABSTRACT));
+            final String toscaVersion = nodeType.getToscaVersion();
+            if (toscaVersion != null) {
+                resource.setToscaVersion(toscaVersion);
+            }
             convertAttributes(nodeType, resource);
             convertCapabilities(nodeType, resource);
             convertRequirements(nodeType, resource);
@@ -798,6 +802,10 @@ public class ModelConverter {
         nodeType.setDerivedFrom(resource.getDerivedFrom());
         nodeType.setDerivedList(resource.getDerivedList());
         nodeType.setResourceType(resource.getResourceType());
+        final String toscaVersion = resource.getToscaVersion();
+        if (toscaVersion != null) {
+            nodeType.setToscaVersion(toscaVersion);
+        }
         convertCommonToscaData(component, nodeType);
         convertAdditionalInformation(component, nodeType);
         convertArtifacts(resource, nodeType);

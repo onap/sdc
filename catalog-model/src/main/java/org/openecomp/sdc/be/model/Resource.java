@@ -57,9 +57,7 @@ public class Resource extends Component {
 
     private List<PropertyDefinition> attributes;
 
-    private Map<String, InterfaceInstanceDataDefinition> instInterfaces;
-
-    private List<String> defaultCapabilities;
+    private String toscaVersion;
 
     public Resource() {
         super(new ResourceMetadataDefinition());
@@ -73,16 +71,6 @@ public class Resource extends Component {
             this.getComponentMetadataDefinition().componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
         }
         this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
-    }
-
-    @Override
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    @Override
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
     }
 
     public Boolean isAbstract() {
@@ -115,7 +103,6 @@ public class Resource extends Component {
             .setLicenseType(licenseType);
     }
 
-
     public String getToscaResourceName() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
             .getToscaResourceName();
@@ -136,24 +123,14 @@ public class Resource extends Component {
             .setResourceType(resourceType);
     }
 
-    public void setVendorName(String vendorName) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setVendorName(vendorName);
-    }
-
-    public void setVendorRelease(String vendorRelease) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setVendorRelease(vendorRelease);
-    }
-
-    public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
-            setResourceVendorModelNumber(resourceVendorModelNumber);
-    }
-
     public String getVendorName() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
             .getVendorName();
+    }
+
+    public void setVendorName(String vendorName) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setVendorName(vendorName);
     }
 
     public String getVendorRelease() {
@@ -161,9 +138,19 @@ public class Resource extends Component {
             .getVendorRelease();
     }
 
+    public void setVendorRelease(String vendorRelease) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setVendorRelease(vendorRelease);
+    }
+
     public String getResourceVendorModelNumber() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
             .getResourceVendorModelNumber();
+    }
+
+    public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
+            setResourceVendorModelNumber(resourceVendorModelNumber);
     }
 
     @Override

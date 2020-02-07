@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 
 import static org.openecomp.core.converter.datatypes.Constants.*;
 
@@ -69,7 +70,7 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
 
     @Override
     public Object getToscaVersion() {
-        return this.readServiceTemplate.get(definitionVersion);
+        return this.readServiceTemplate.get(ToscaTagNamesEnum.TOSCA_VERSION.getElementName());
     }
 
     @Override
