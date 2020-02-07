@@ -23,6 +23,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -614,13 +615,16 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         List<InputDefinition> resourceProperties = component.getInputs();
 
-        Map<String, DataTypeDefinition> dataTypes = getAllDataTypes(applicationDataTypeCache);
+        final Map<String, DataTypeDefinition> dataTypeMap = getAllDataTypes(applicationDataTypeCache);
+        if (CollectionUtils.isNotEmpty(component.getDataTypes())) {
+            component.getDataTypes().forEach(dataTypeDefinition -> dataTypeMap.put(dataTypeDefinition.getName(), dataTypeDefinition));
+        }
 
         for (Map.Entry<String, InputDefinition> inputDefinition : inputs.entrySet()) {
             String inputName = inputDefinition.getKey();
             inputDefinition.getValue().setName(inputName);
 
-            Either<InputDefinition, ResponseFormat> preparedInputEither = prepareAndValidateInputBeforeCreate(inputDefinition.getValue(), dataTypes);
+            Either<InputDefinition, ResponseFormat> preparedInputEither = prepareAndValidateInputBeforeCreate(inputDefinition.getValue(), dataTypeMap);
             if(preparedInputEither.isRight()){
                 return Either.right(preparedInputEither.right().value());
             }

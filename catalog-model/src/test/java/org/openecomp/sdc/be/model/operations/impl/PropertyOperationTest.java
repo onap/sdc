@@ -20,13 +20,29 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.janusgraph.core.JanusGraphVertex;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.janusgraph.core.JanusGraphVertex;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
@@ -34,7 +50,12 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.IComplexDefaultValue;
+import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -44,11 +65,6 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
-
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class PropertyOperationTest extends ModelTestBase {
 
@@ -62,87 +78,12 @@ public class PropertyOperationTest extends ModelTestBase {
 
     }
 
-    /*
-     * @Test public void addPropertyToResourceTest() {
-     *
-     * String propName = "myProp"; PropertyDefinition property = buildPropertyDefinition(); List<PropertyConstraint> constraints = buildConstraints(); property.setConstraints(constraints);
-     *
-     * PropertyData propertyData = new PropertyData(property, propertyOperation.convertConstraintsToString(constraints));
-     *
-     * Either<PropertyData, JanusGraphOperationStatus> either = Either.left(propertyData); //when(propertyDao.create((GraphNeighbourTable)anyObject(), eq(PropertyData.class), eq(NodeTypeEnum.Property))).thenReturn(either); GraphRelation graphRelation =
-     * new GraphRelation(); Either<GraphRelation, JanusGraphOperationStatus> relationResult = Either.left(graphRelation);
-     *
-     * when(janusGraphGenericDao.createNode((PropertyData)anyObject(), eq(PropertyData.class))).thenReturn(either); when(janusGraphGenericDao.createRelation((GraphNode)anyObject(), (GraphNode)anyObject(), eq(GraphEdgeLabels.PROPERTY),
-     * anyMap())).thenReturn(relationResult);
-     *
-     * Either<PropertyDefinition, StorageOperationStatus> result = propertyOperation.addPropertyToResource(propName, property, NodeTypeEnum.Resource, "my-resource.1.0");
-     *
-     * assertTrue(result.isLeft()); System.out.println(result.left().value()); PropertyDefinition propertyDefinition = result.left().value();
-     *
-     * List<PropertyConstraint> originalConstraints = property.getConstraints(); List<PropertyConstraint> propertyConstraintsResult = propertyDefinition.getConstraints(); assertEquals(propertyConstraintsResult.size(), originalConstraints.size());
-     *
-     * }
-     */
     private PropertyDefinition buildPropertyDefinition() {
         PropertyDefinition property = new PropertyDefinition();
         property.setDefaultValue("10");
         property.setDescription("Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
         property.setType(ToscaType.INTEGER.name().toLowerCase());
         return property;
-    }
-
-    @Test
-    public void addPropertiesToGraphTableTest() {
-
-        // Map<String, PropertyDefinition> properties = new HashMap<String,
-        // PropertyDefinition>();
-        // String propName = "myProp";
-        // PropertyDefinition property = buildPropertyDefinition();
-        //
-        // List<PropertyConstraint> constraints = buildConstraints();
-        // property.setConstraints(constraints);
-        //
-        // properties.put(propName, property);
-        //
-        // GraphNeighbourTable graphNeighbourTable = new GraphNeighbourTable();
-        // ResourceData resourceData = new ResourceData();
-        // String resourceName = "my-resource";
-        // String resourceVersion = "1.0";
-        // String resourceId = resourceName + "." + resourceVersion;
-        // resourceData.setUniqueId(resourceId);
-        // int resourceIndex = graphNeighbourTable.addNode(resourceData);
-        //
-        // heatParametersOperation.addPropertiesToGraphTable(properties,
-        // graphNeighbourTable, resourceIndex, resourceId);
-        //
-        // assertEquals(2, graphNeighbourTable.getNodes().size());
-        // assertEquals(1, graphNeighbourTable.getDirectedEdges().size());
-        // List<GraphNode> nodes = graphNeighbourTable.getNodes();
-        // boolean nodeFound = false;
-        // for (GraphNode neo4jNode : nodes) {
-        // if (neo4jNode instanceof PropertyData) {
-        // PropertyData propertyData = (PropertyData)neo4jNode;
-        // assertEquals("check property unique id", resourceId + "." + propName,
-        // propertyData.getUniqueId());
-        // assertEquals(property.getDescription(),
-        // propertyData.getPropertyDataDefinition().getDescription());
-        // nodeFound = true;
-        // }
-        // }
-        // assertEquals("looking for PropertyData object in table", true,
-        // nodeFound);
-        //
-        // NodeRelation nodeRelation =
-        // graphNeighbourTable.getDirectedEdges().get(0);
-        // assertEquals("check from index to index edge", 0,
-        // nodeRelation.getFromIndex());
-        // assertEquals("check from index to index edge", 1,
-        // nodeRelation.getToIndex());
-        // assertEquals("check edge type",
-        // GraphEdgePropertiesDictionary.PROPERTY,
-        // nodeRelation.getEdge().getEdgeType());
-        // assertEquals("check propert name on edge", true,
-        // nodeRelation.getEdge().getProperties().values().contains(propName));
     }
 
     @Test
@@ -849,21 +790,75 @@ public class PropertyOperationTest extends ModelTestBase {
 		Assert.assertEquals(false, result);
 	}
 
-	
-	@Test
-	public void testIsPropertyTypeValid() throws Exception {
-		PropertyOperation testSubject;
-		IComplexDefaultValue property = null;
-		boolean result;
+    @Test
+    public void testIsPropertyTypeValidForNullPropertyOrPropertyType() {
+        final PropertyOperation propertyOperation = createTestSubject();
+        assertFalse("Property type should not be valid", propertyOperation.isPropertyTypeValid(null));
+        assertFalse("Property type should not be valid",
+            propertyOperation.isPropertyTypeValid(new PropertyDefinition()));
+        assertFalse("Property type should not be valid", propertyOperation.isPropertyTypeValid(null, null));
+        assertFalse("Property type should not be valid",
+            propertyOperation.isPropertyTypeValid(new PropertyDefinition(), null));
+    }
 
-		// test 1
-		testSubject = createTestSubject();
-		property = null;
-		result = testSubject.isPropertyTypeValid(property);
-		Assert.assertEquals(false, result);
-	}
+    @Test
+    public void testIsPropertyTypeValidForFoundType() {
+        final PropertyOperation propertyOperation = spy(createTestSubject());
+        final String nonToscaType = "non.tosca.type";
+        final PropertyDefinition propertyDefinition = buildPropertyDefinition();
+        propertyDefinition.setType(nonToscaType);
+        doCallRealMethod().when(propertyOperation).isPropertyTypeValid(any());
+        doReturn(Either.left(true)).when(propertyOperation).isDefinedInDataTypes(any());
+        assertTrue("Property type should be valid", propertyOperation.isPropertyTypeValid(propertyDefinition));
+        assertTrue("Property type should be valid", propertyOperation.isPropertyTypeValid(propertyDefinition, null));
+    }
 
-	
+    @Test
+    public void testIsPropertyTypeValidForNotFoundType() {
+        final PropertyOperation propertyOperation = spy(createTestSubject());
+        final String nonToscaType = "non.tosca.type";
+        final PropertyDefinition propertyDefinition = buildPropertyDefinition();
+        propertyDefinition.setType(nonToscaType);
+        doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND))
+            .when(propertyOperation).isDefinedInDataTypes(any());
+        assertFalse("Property type should not be valid", propertyOperation.isPropertyTypeValid(propertyDefinition));
+        assertFalse("Property type should not be valid",
+            propertyOperation.isPropertyTypeValid(propertyDefinition, null));
+        doReturn(Either.left(false)).when(propertyOperation).isDefinedInDataTypes(any());
+        assertFalse("Property type should not be valid", propertyOperation.isPropertyTypeValid(propertyDefinition));
+        assertFalse("Property type should not be valid",
+            propertyOperation.isPropertyTypeValid(propertyDefinition, null));
+    }
+
+    @Test
+    public void testIsPropertyTypeValidForValidToscaType() {
+        final PropertyOperation propertyOperation = createTestSubject();
+        final PropertyDefinition propertyDefinition = buildPropertyDefinition();
+        assertTrue("Property type should be valid",
+            propertyOperation.isPropertyTypeValid(propertyDefinition));
+        assertTrue("Property type should be valid",
+            propertyOperation.isPropertyTypeValid(propertyDefinition, null));
+    }
+
+    @Test
+    public void testIsPropertyTypeValidForNonToscaTypeProvidedInList() {
+        final PropertyOperation propertyOperation = spy(createTestSubject());
+        final String nonToscaType = "non.tosca.type";
+        final PropertyDefinition propertyDefinition = buildPropertyDefinition();
+        propertyDefinition.setType(nonToscaType);
+        doCallRealMethod().when(propertyOperation).isPropertyTypeValid(any());
+        doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(propertyOperation).isDefinedInDataTypes(any());
+        final List<DataTypeDefinition> dataTypeDefinitionList = new ArrayList<>();
+        final DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setName(nonToscaType);
+        dataTypeDefinitionList.add(dataTypeDefinition);
+        assertTrue("Property type should match a data type in list",
+            propertyOperation.isPropertyTypeValid(propertyDefinition, dataTypeDefinitionList));
+        dataTypeDefinition.setName(nonToscaType + "dummyValue");
+        assertFalse("Property type should match a data type in list",
+            propertyOperation.isPropertyTypeValid(propertyDefinition, dataTypeDefinitionList));
+    }
+
 	@Test
 	public void testIsPropertyInnerTypeValid() throws Exception {
 		PropertyOperation testSubject;

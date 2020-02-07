@@ -270,7 +270,7 @@ public class CommonImportManager {
             Function<String, Either<T, StorageOperationStatus>> elementFetcher, Function<T, Either<T, StorageOperationStatus>> elementAdder,
             BiFunction<T, T, Either<T, StorageOperationStatus>> elementUpgrader) {
 
-        List<ImmutablePair<T, Boolean>> createdElementTypes = new ArrayList<>();
+        final List<ImmutablePair<T, Boolean>> createdElementTypes = new ArrayList<>();
 
         Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> eitherResult = Either.left(createdElementTypes);
         Iterator<T> elementTypeItr = elementTypesToCreate.iterator();

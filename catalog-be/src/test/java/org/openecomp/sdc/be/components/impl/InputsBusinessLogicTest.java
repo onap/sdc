@@ -21,6 +21,7 @@ import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -97,8 +98,6 @@ public class InputsBusinessLogicTest {
     private static final String LISTINPUT_PROP1_TYPE = "string";
     private static final String LISTINPUT_PROP2_NAME = "prop2";
     private static final String LISTINPUT_PROP2_TYPE = "integer";
-    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @Mock
     private ComponentsUtils componentsUtilsMock;
@@ -143,6 +142,13 @@ public class InputsBusinessLogicTest {
 
     private Map<String, List<ComponentInstanceInput>> instanceInputMap;
     private List<ComponentInstanceInput> inputsList;
+
+    @BeforeClass
+    public static void beforeClassSetup() {
+        final ConfigurationSource configurationSource = new FSConfigurationSource(
+            ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+        new ConfigurationManager(configurationSource);
+    }
 
     @Before
     public void setUp() {
@@ -448,7 +454,7 @@ public class InputsBusinessLogicTest {
     }
 
     @Test
-    public void test_createListInput_success() throws Exception {
+    public void test_createListInput_success() {
         ComponentInstListInput createListInputParams = setUpCreateListInputParams();
         ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
         List<ComponentInstancePropInput> propInputsList = componentInstInputsMap.getComponentInstanceInputsMap().get(COMPONENT_INSTANCE_ID);
@@ -465,7 +471,7 @@ public class InputsBusinessLogicTest {
         // for BaseOperation.getAllDataTypes:
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
         // for BaseOperation.validatePropertyDefaultValue:
-        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(true);
+        when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(true);
         when(propertyOperation.isPropertyInnerTypeValid(any(),any())).thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
         when(propertyOperation.isPropertyDefaultValueValid(any(), any())).thenReturn(true);
         // for createListInputsInGraph:
@@ -478,13 +484,13 @@ public class InputsBusinessLogicTest {
         Either<List<InputDefinition>, ResponseFormat> result =
                 testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
         // validate result
-        assertEquals(true, result.isLeft());
+        assertTrue(result.isLeft());
         List<InputDefinition> resultInputList = result.left().value();
         assertEquals(1, resultInputList.size());
         //InputDefinition resultInput = resultInputList.get(0);
         Map<String, DataTypeDefinition> captoredDataTypeMap = dataTypesMapCaptor.getValue();
         assertEquals(1, captoredDataTypeMap.size());
-        assertEquals(true, captoredDataTypeMap.containsKey(LISTINPUT_SCHEMA_TYPE));
+        assertTrue(captoredDataTypeMap.containsKey(LISTINPUT_SCHEMA_TYPE));
         DataTypeDefinition captoredDataType = captoredDataTypeMap.get(LISTINPUT_SCHEMA_TYPE);
         assertEquals("tosca.datatypes.Root", captoredDataType.getDerivedFromName());
         assertEquals( propInputsList.size(), captoredDataType.getProperties().size());
@@ -492,7 +498,7 @@ public class InputsBusinessLogicTest {
         captoredDataType.getProperties().forEach(dataTypeProp -> {
             Optional<ComponentInstancePropInput> find = propInputsList.stream()
                     .filter(propInput -> propInput.getName().equals(dataTypeProp.getName())).findAny();
-            assertEquals(true, find.isPresent());
+            assertTrue(find.isPresent());
         });
     }
 
@@ -550,46 +556,55 @@ public class InputsBusinessLogicTest {
     }
 
     @Test
-    public void test_createListInput_fail_prepareAndValidateInput() throws Exception {
-        ComponentInstListInput createListInputParams = setUpCreateListInputParams();
-        ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
-        InputDefinition listInput = createListInputParams.getListInput();
+    public void test_createListInput_fail_prepareAndValidateInput() {
+        final ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        final ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
 
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
-        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
-        when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID)))
+            .thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
-        // for BaseOperation.validatePropertyDefaultValue:
-        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(false);
+        when(applicationDataTypeCache.getAll())
+            .thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
+        when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(false);
 
         Either<List<InputDefinition>, ResponseFormat> result =
-                testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
-        assertEquals(true, result.isRight());
-        verify(propertyOperation, times(1)).isPropertyTypeValid(any());
+            testInstance
+                .createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
+        assertTrue(result.isRight());
+        verify(propertyOperation).isPropertyTypeValid(any(), any());
     }
 
     @Test
-    public void test_createListInput_fail_addInputsToComponent() throws Exception {
-        ComponentInstListInput createListInputParams = setUpCreateListInputParams();
-        ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
-        InputDefinition listInput = createListInputParams.getListInput();
+    public void test_createListInput_fail_addInputsToComponent() {
+        final ComponentInstListInput createListInputParams = setUpCreateListInputParams();
+        final ComponentInstInputsMap componentInstInputsMap = createListInputParams.getComponentInstInputsMap();
+        final InputDefinition listInput = createListInputParams.getListInput();
 
-        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
-        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
-        when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(service));
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID)))
+            .thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
-        // for BaseOperation.validatePropertyDefaultValue:
-        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(true);
-        when(propertyOperation.isPropertyInnerTypeValid(any(),any())).thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
+        when(applicationDataTypeCache.getAll())
+            .thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
+        when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(true);
+        when(propertyOperation.isPropertyInnerTypeValid(any(), any()))
+            .thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
         when(propertyOperation.isPropertyDefaultValueValid(any(), any())).thenReturn(true);
-        when(toscaOperationFacadeMock.addInputsToComponent(anyMap(), eq(COMPONENT_ID))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacadeMock.addInputsToComponent(anyMap(), eq(COMPONENT_ID)))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         Either<List<InputDefinition>, ResponseFormat> result =
-                testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
-        assertEquals(true, result.isRight());
-        verify(toscaOperationFacadeMock, times(1)).addInputsToComponent(anyMap(), eq(COMPONENT_ID));
+            testInstance
+                .createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
+        assertTrue(result.isRight());
+        verify(toscaOperationFacadeMock).addInputsToComponent(anyMap(), eq(COMPONENT_ID));
     }
 
     @Test

@@ -654,7 +654,7 @@ public abstract class Component implements PropertiesOwner {
 	        this.properties = new ArrayList<>();
         }
 
-        this.properties.add(propertyDefinition);;
+        this.properties.add(propertyDefinition);
     }
 
 	@Override
@@ -1079,6 +1079,17 @@ public abstract class Component implements PropertiesOwner {
         componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID,this.getCsarUUID());
         componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION,this.getCsarVersion());
         return componentMetadata;
+    }
+
+    public void addToDataTypes(final List<DataTypeDefinition> dataTypeDefinition) {
+        dataTypeDefinition.forEach(this::addToDataTypes);
+    }
+
+    public void addToDataTypes(final DataTypeDefinition dataTypeDefinition) {
+        if (dataTypes == null) {
+            dataTypes = new ArrayList<>();
+        }
+        dataTypes.add(dataTypeDefinition);
     }
 
 
