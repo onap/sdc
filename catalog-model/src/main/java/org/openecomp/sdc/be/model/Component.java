@@ -1079,5 +1079,16 @@ public abstract class Component implements PropertiesOwner {
         return componentMetadata;
     }
 
+    public void addToDataTypes(final List<DataTypeDefinition> dataTypeDefinition) {
+        dataTypeDefinition.forEach(this::addToDataTypes);
+    }
+
+    public void addToDataTypes(final DataTypeDefinition dataTypeDefinition) {
+        if (dataTypes == null) {
+            dataTypes = new ArrayList<>();
+        }
+        dataTypes.add(dataTypeDefinition);
+    }
+
 
 }

@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.cache;
 
 import fj.data.Either;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -155,16 +156,12 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 
     @Override
     public Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAll() {
-
         try {
-
             r.lock();
-            if (data == null || data.isEmpty()) {
+            if (MapUtils.isEmpty(data)) {
                 return getAllDataTypesFromGraph();
             }
-
             return Either.left(data);
-
         } finally {
             r.unlock();
         }
@@ -257,6 +254,17 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
             }
         }
 
+    }
+
+    public void refresh() {
+        try {
+            replaceAllData();
+        } catch (final Exception e) {
+            final String errorMsg = "Could not refresh data types cache";
+            log.debug(errorMsg, e);
+            BeEcompErrorManager.getInstance()
+                .logInternalUnexpectedError(APPLICATION_DATA_TYPES_CACHE, errorMsg, ErrorSeverity.ERROR);
+        }
     }
 
     private boolean compareDataTypes(Map<String, ImmutablePair<Long, Long>> dataTypeNameToModificationTime,
