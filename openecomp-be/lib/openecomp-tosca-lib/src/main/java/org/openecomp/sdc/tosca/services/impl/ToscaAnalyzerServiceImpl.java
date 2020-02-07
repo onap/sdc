@@ -56,6 +56,7 @@ import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.common.zip.ZipUtils;
@@ -192,8 +193,8 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     }
 
     private boolean isToscaYamlFile(byte[] fileContent) {
-        Map fileMap = new YamlUtil().yamlToObject(new String(fileContent), Map.class);
-        return fileMap.containsKey("tosca_definitions_version");
+        final Map fileMap = new YamlUtil().yamlToObject(new String(fileContent), Map.class);
+        return fileMap.containsKey(ToscaTagNamesEnum.TOSCA_VERSION.getElementName());
     }
 
     private void updateMinMaxOccurencesForNodeTypeRequirement(Map.Entry<String, RequirementAssignment> entry,

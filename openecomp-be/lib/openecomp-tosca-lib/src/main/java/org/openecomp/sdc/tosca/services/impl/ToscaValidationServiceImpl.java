@@ -26,6 +26,7 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
@@ -55,7 +56,6 @@ public class ToscaValidationServiceImpl implements ToscaValidationService {
   private static final String SDCPARSER_JTOSCA_VALIDATIONISSUE_CONFIG =
       "SDCParser_jtosca-validation-issue-configuration.yaml";
   private static final String SDCPARSER_ERROR_CONFIG = "SDCParser_error-configuration.yaml";
-  private static final String TOSCA_DEFINITION_VERSION = "tosca_definitions_version";
 
   static {
     // Override default SDC Parser configuration
@@ -119,17 +119,17 @@ public class ToscaValidationServiceImpl implements ToscaValidationService {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private boolean isToscaYaml(String filePath) {
+  private boolean isToscaYaml(final String filePath) {
    boolean retValue = false;
 
-    try (InputStream input = new BufferedInputStream(new FileInputStream(new File(filePath)));) {
-      Yaml yaml = new Yaml();
-      LinkedHashMap<String,Object> data = (LinkedHashMap) yaml.load(input);
-      if(data.get(TOSCA_DEFINITION_VERSION) != null) {
+    try (final InputStream input = new BufferedInputStream(new FileInputStream(new File(filePath)));) {
+      final Yaml yaml = new Yaml();
+      final LinkedHashMap<String,Object> data = (LinkedHashMap) yaml.load(input);
+      if(data.get(ToscaTagNamesEnum.TOSCA_VERSION.getElementName()) != null) {
         retValue = true;
       }
     }
-    catch(Exception e){
+    catch(final Exception e){
       LOGGER.info("Ignore the exception as the input file may not be a Tosca Yaml; let the " +
           "default value return", e);
     }
