@@ -85,7 +85,13 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(AbstractValidationsServlet.class);
     private static final String TOSCA_SIMPLE_YAML_PREFIX = "tosca_simple_yaml_";
-    private static final List<String> TOSCA_DEFINITION_VERSIONS = Arrays.asList(TOSCA_SIMPLE_YAML_PREFIX + "1_0_0", TOSCA_SIMPLE_YAML_PREFIX + "1_1_0", "tosca_simple_profile_for_nfv_1_0_0", TOSCA_SIMPLE_YAML_PREFIX + "1_0", TOSCA_SIMPLE_YAML_PREFIX + "1_1");
+    private static final List<String> TOSCA_DEFINITION_VERSIONS = Arrays.asList(
+        TOSCA_SIMPLE_YAML_PREFIX + "1_0_0",
+        TOSCA_SIMPLE_YAML_PREFIX + "1_1_0",
+        "tosca_simple_profile_for_nfv_1_0_0",
+        TOSCA_SIMPLE_YAML_PREFIX + "1_0",
+        TOSCA_SIMPLE_YAML_PREFIX + "1_1",
+        TOSCA_SIMPLE_YAML_PREFIX + "1_2");
     private static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(".yml", ".yaml", ".csar");
 
     protected ServletUtils servletUtils;

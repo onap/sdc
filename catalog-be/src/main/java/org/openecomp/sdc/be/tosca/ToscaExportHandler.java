@@ -182,18 +182,22 @@ public class ToscaExportHandler {
         return Either.left(toscaRepresentation);
     }
 
-    public Either<ToscaRepresentation, ToscaError> exportComponentInterface(Component component,
-            boolean isAssociatedComponent) {
+    public Either<ToscaRepresentation, ToscaError> exportComponentInterface(final Component component,
+                                                                            final boolean isAssociatedComponent) {
         if (null == DEFAULT_IMPORTS) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
         }
 
-        ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
+        String toscaVersion = null;
+        if (component instanceof Resource) {
+            toscaVersion = ((Resource) component).getToscaVersion();
+        }
+        ToscaTemplate toscaTemplate = new ToscaTemplate(toscaVersion != null ? toscaVersion : TOSCA_VERSION);
         toscaTemplate.setImports(new ArrayList<>(DEFAULT_IMPORTS));
-        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertInterfaceNodeType(new HashMap<>(), component,
-                toscaTemplate, nodeTypes, isAssociatedComponent);
+        final Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
+        final Either<ToscaTemplate, ToscaError> toscaTemplateRes =
+            convertInterfaceNodeType(new HashMap<>(), component, toscaTemplate, nodeTypes, isAssociatedComponent);
         if (toscaTemplateRes.isRight()) {
             return Either.right(toscaTemplateRes.right().value());
         }
@@ -241,18 +245,21 @@ public class ToscaExportHandler {
         return Either.left(fillImports.left().value().left);
     }
 
-    private Either<ToscaTemplate, ToscaError> convertToToscaTemplate(Component component) {
+    private Either<ToscaTemplate, ToscaError> convertToToscaTemplate(final Component component) {
         if (null == DEFAULT_IMPORTS) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
         }
 
         log.trace("start tosca export for {}", component.getUniqueId());
-        ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
-
+        String toscaVersion = null;
+        if (component instanceof Resource) {
+            toscaVersion = ((Resource) component).getToscaVersion();
+        }
+        final ToscaTemplate toscaTemplate = new ToscaTemplate(toscaVersion != null ? toscaVersion : TOSCA_VERSION);
         toscaTemplate.setMetadata(convertMetadata(component));
         toscaTemplate.setImports(new ArrayList<>(DEFAULT_IMPORTS));
-        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
+        final Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         if (ModelConverter.isAtomicComponent(component)) {
             log.trace("convert component as node type");
             return convertNodeType(new HashMap<>(), component, toscaTemplate, nodeTypes);

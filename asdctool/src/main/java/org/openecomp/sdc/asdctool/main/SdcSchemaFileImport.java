@@ -28,6 +28,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
@@ -174,9 +175,8 @@ public class SdcSchemaFileImport {
 		yaml.setName(fileName);
 		 
 		//Initialize the yaml contents
-		Map<String, Object> data = new LinkedHashMap<>();
-					
-		data.put("tosca_definitions_version", TOSCA_VERSION);
+		final Map<String, Object> data = new LinkedHashMap<>();
+		data.put(ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), TOSCA_VERSION);
 		
 		if (importFileList.length > 0)  {
 			data.put("imports", importFileList);

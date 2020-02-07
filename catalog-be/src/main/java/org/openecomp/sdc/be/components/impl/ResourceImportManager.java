@@ -23,6 +23,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
@@ -752,11 +753,25 @@ public class ResourceImportManager {
 
     }
 
-    private void setMetaDataFromJson(UploadResourceInfo resourceMetaData, Resource resource) {
+    private void setMetaDataFromJson(final UploadResourceInfo resourceMetaData, final Resource resource) {
         this.populateResourceMetadata(resourceMetaData, resource);
         resource.setCreatorUserId(resourceMetaData.getContactId());
-        List<CategoryDefinition> categories = resourceMetaData.getCategories();
+
+        final String payloadData = resourceMetaData.getPayloadData();
+        if (payloadData != null) {
+            resource.setToscaVersion(getToscaVersion(payloadData));
+        }
+
+        final List<CategoryDefinition> categories = resourceMetaData.getCategories();
         calculateResourceIsAbstract(resource, categories);
+    }
+
+    private String getToscaVersion(final String payloadData) {
+        final String decodedPayload = new String(Base64.decodeBase64(payloadData));
+        final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(decodedPayload);
+        final Either<String, ResultStatusEnum> findFirstToscaStringElement =
+            ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
+        return findFirstToscaStringElement.left().value();
     }
 
     private void calculateResourceIsAbstract(Resource resource, List<CategoryDefinition> categories) {

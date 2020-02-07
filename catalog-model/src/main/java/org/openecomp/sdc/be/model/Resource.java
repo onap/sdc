@@ -20,6 +20,13 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
@@ -27,16 +34,20 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+@Getter
+@Setter
 public class Resource extends Component {
 
+    /**
+     * Please note that more than one "derivedFrom" resource is not currently supported by the app. The first list
+     * element is always addressed.
+     */
     private List<String> derivedFrom;
 
+    /**
+     * The derivedList is a chain of derivedFrom. e.g. if resource C is derived from resource B that is derived from
+     * resource A - then A, B is the "DerivedList" of resource C
+     */
     private List<String> derivedList;
 
     private List<PropertyDefinition> attributes;
@@ -44,6 +55,7 @@ public class Resource extends Component {
     private Map<String, InterfaceInstanceDataDefinition> instInterfaces;
 
     private List<String> defaultCapabilities;
+    private String toscaVersion;
 
     public Resource() {
         super(new ResourceMetadataDefinition());
@@ -59,58 +71,12 @@ public class Resource extends Component {
         this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
     }
 
-    /**
-     * Please note that more than one "derivedFrom" resource is not currently
-     * supported by the app. The first list element is always addressed.
-     *
-     * @return
-     */
-    public List<String> getDerivedFrom() {
-        return derivedFrom;
-    }
-
-    public void setDerivedFrom(List<String> derivedFrom) {
-        this.derivedFrom = derivedFrom;
-    }
-
-    /**
-     * The derivedList is a chain of derivedFrom. e.g. if resource C is derived
-     * from resource B that is derived from resource A - then A, B is the
-     * "DerivedList" of resource C
-     *
-     * @return
-     */
-    public List<String> getDerivedList() {
-        return derivedList;
-    }
-
-    public void setDerivedList(List<String> derivedList) {
-        this.derivedList = derivedList;
-    }
-
     public List<PropertyDefinition> getProperties() {
         return properties;
     }
 
     public void setProperties(List<PropertyDefinition> properties) {
         this.properties = properties;
-    }
-
-    public List<PropertyDefinition> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(List<PropertyDefinition> attributes) {
-        this.attributes = attributes;
-    }
-
-    public Map<String, InterfaceInstanceDataDefinition> getInstInterfaces() {
-        return instInterfaces;
-    }
-
-    public void setInstInterfaces(
-            Map<String, InterfaceInstanceDataDefinition> instInterfaces) {
-        this.instInterfaces = instInterfaces;
     }
 
     public Boolean isAbstract() {
@@ -122,14 +88,6 @@ public class Resource extends Component {
     public void setAbstract(Boolean isAbstract) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
                 .setAbstract(isAbstract);
-    }
-
-    public List<String> getDefaultCapabilities() {
-        return defaultCapabilities;
-    }
-
-    public void setDefaultCapabilities(List<String> defaultCapabilities) {
-        this.defaultCapabilities = defaultCapabilities;
     }
 
     public String getCost() {
@@ -205,24 +163,14 @@ public class Resource extends Component {
                 .setResourceType(resourceType);
     }
 
-    public void setVendorName(String vendorName) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .setVendorName(vendorName);
-    }
-
-    public void setVendorRelease(String vendorRelease) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .setVendorRelease(vendorRelease);
-    }
-
-    public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
-                setResourceVendorModelNumber(resourceVendorModelNumber);
-    }
-
     public String getVendorName() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
                 .getVendorName();
+    }
+
+    public void setVendorName(String vendorName) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setVendorName(vendorName);
     }
 
     public String getVendorRelease() {
@@ -230,9 +178,19 @@ public class Resource extends Component {
                 .getVendorRelease();
     }
 
+    public void setVendorRelease(String vendorRelease) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+            .setVendorRelease(vendorRelease);
+    }
+
     public String getResourceVendorModelNumber() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
                 .getResourceVendorModelNumber();
+    }
+
+    public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
+            setResourceVendorModelNumber(resourceVendorModelNumber);
     }
 
     @Override
