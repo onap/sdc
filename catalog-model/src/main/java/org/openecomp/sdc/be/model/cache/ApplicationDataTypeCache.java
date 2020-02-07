@@ -21,7 +21,23 @@
 package org.openecomp.sdc.be.model.cache;
 
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import lombok.Getter;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -39,22 +55,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 
 @Component("application-datatype-cache")
 public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefinition>, Runnable {
@@ -162,16 +162,12 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 
     @Override
     public Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAll() {
-
         try {
-
             r.lock();
-            if (data == null || data.isEmpty()) {
+            if (MapUtils.isEmpty(data)) {
                 return getAllDataTypesFromGraph();
             }
-
             return Either.left(data);
-
         } finally {
             r.unlock();
         }
@@ -264,6 +260,17 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
             }
         }
 
+    }
+
+    public void refresh() {
+        try {
+            replaceAllData();
+        } catch (final Exception e) {
+            final String errorMsg = "Could not refresh data types cache";
+            log.debug(errorMsg, e);
+            BeEcompErrorManager.getInstance()
+                .logInternalUnexpectedError(APPLICATION_DATA_TYPES_CACHE, errorMsg, ErrorSeverity.ERROR);
+        }
     }
 
     private boolean compareDataTypes(Map<String, ImmutablePair<Long, Long>> dataTypeNameToModificationTime,

@@ -80,6 +80,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -1502,9 +1503,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			return Either.right(operationStatus);
 		}
 
-		DataTypeData resultCTD = createDataTypeResult.left().value();
-		List<PropertyDefinition> properties = dataTypeDefinition.getProperties();
-		Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToDataType = addPropertiesToDataType(resultCTD.getUniqueId(), properties);
+		final DataTypeData createdDataType = createDataTypeResult.left().value();
+		final List<PropertyDefinition> properties = dataTypeDefinition.getProperties();
+		final Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToDataType =
+			addPropertiesToDataType(createdDataType.getUniqueId(), properties);
 		if (addPropertiesToDataType.isRight()) {
 			log.debug("Failed add properties {} to data type {}", properties, dataTypeDefinition.getName());
 			return Either.right(addPropertiesToDataType.right().value());
@@ -1525,7 +1527,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			}
 		}
 
-		return Either.left(createDataTypeResult.left().value());
+		return Either.left(createdDataType);
 
 	}
 
@@ -2012,9 +2014,14 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return result;
 	}
 
-	private Either<DataTypeDefinition, JanusGraphOperationStatus> getDataTypeUsingName(String name) {
-		String uid = UniqueIdBuilder.buildDataTypeUid(name);
-		return getDataTypeByUid(uid);
+	public DataTypeDefinition findDataTypeByName(final String name) {
+		final String uid = UniqueIdBuilder.buildDataTypeUid(name);
+		final Either<DataTypeDefinition, JanusGraphOperationStatus> operationResult = getDataTypeByUid(uid);
+		if (operationResult.isRight()) {
+			final JanusGraphOperationStatus janusGraphOperationStatus = operationResult.right().value();
+			throw new StorageException(janusGraphOperationStatus);
+		}
+		return operationResult.left().value();
 	}
 
 	public Either<String, JanusGraphOperationStatus> checkInnerType(PropertyDataDefinition propDataDef) {

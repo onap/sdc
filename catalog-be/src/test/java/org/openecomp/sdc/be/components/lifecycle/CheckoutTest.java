@@ -29,6 +29,7 @@ import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CompositionBusinessLogic;
+import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
@@ -65,7 +66,9 @@ public class CheckoutTest extends LifecycleTestBase {
     private final PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
     protected ComponentContactIdValidator componentContactIdValidator = new ComponentContactIdValidator(componentsUtils);
     protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
+    private final DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
     private final PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
+
     @InjectMocks
     ResourceBusinessLogic bl = new ResourceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
         groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
@@ -73,7 +76,8 @@ public class CheckoutTest extends LifecycleTestBase {
         resourceDataMergeBusinessLogic, csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils,
         uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation, propertyBusinessLogic,
         componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
-            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator ,policyBusinessLogic);
+            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator, dataTypeBusinessLogic
+    , policyBusinessLogic);
 
     @Before
     public void setup() {

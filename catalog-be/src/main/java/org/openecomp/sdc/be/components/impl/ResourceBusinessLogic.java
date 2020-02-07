@@ -205,19 +205,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(ResourceBusinessLogic.class.getName());
 
 
-    private IInterfaceLifecycleOperation interfaceTypeOperation;
-    private LifecycleBusinessLogic lifecycleBusinessLogic;
+	private IInterfaceLifecycleOperation interfaceTypeOperation;
+	private LifecycleBusinessLogic lifecycleBusinessLogic;
 
-    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    private final ResourceImportManager resourceImportManager;
-    private final InputsBusinessLogic inputsBusinessLogic;
-    private final CompositionBusinessLogic compositionBusinessLogic;
-    private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
-    private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
-    private final MergeInstanceUtils mergeInstanceUtils;
-    private final UiComponentDataConverter uiComponentDataConverter;
-    private final CsarBusinessLogic csarBusinessLogic;
-    private final PropertyBusinessLogic propertyBusinessLogic;
+	private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+	private final ResourceImportManager resourceImportManager;
+	private final InputsBusinessLogic inputsBusinessLogic;
+	private final CompositionBusinessLogic compositionBusinessLogic;
+	private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
+	private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
+	private final MergeInstanceUtils mergeInstanceUtils;
+	private final UiComponentDataConverter uiComponentDataConverter;
+	private final CsarBusinessLogic csarBusinessLogic;
+	private final PropertyBusinessLogic propertyBusinessLogic;
+	private final DataTypeBusinessLogic dataTypeBusinessLogic;
 	private final PolicyBusinessLogic policyBusinessLogic;
 
 	@Autowired
@@ -240,7 +241,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	 	ComponentValidator componentValidator,
 	 	ComponentIconValidator componentIconValidator,
 	 	ComponentProjectCodeValidator componentProjectCodeValidator,
-	 	ComponentDescriptionValidator componentDescriptionValidator, PolicyBusinessLogic policyBusinessLogic) {
+	 	ComponentDescriptionValidator componentDescriptionValidator, DataTypeBusinessLogic dataTypeBusinessLogic,
+		PolicyBusinessLogic policyBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation,
 				componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
@@ -255,6 +257,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.csarBusinessLogic = csarBusinessLogic;
         this.propertyBusinessLogic = propertyBusinessLogic;
+        this.dataTypeBusinessLogic = dataTypeBusinessLogic;
 		this.policyBusinessLogic = policyBusinessLogic;
     }
 
@@ -1606,21 +1609,24 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		final List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
 
-        if (shouldLock) {
-            final Either<Boolean, ResponseFormat> lockResult = lockComponentByName(resource.getSystemName(), resource,
+		if (shouldLock) {
+			final Either<Boolean, ResponseFormat> lockResult = lockComponentByName(resource.getSystemName(), resource,
                     CREATE_RESOURCE);
-            if (lockResult.isRight()) {
-                rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
-                throw new ByResponseFormatComponentException(lockResult.right().value());
-            }
-            log.debug("name is locked {} status = {}", resource.getSystemName(), lockResult);
-        }
-        try {
-            log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS,resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,"Starting to add inputs from yaml: {}",yamlName);
-            final Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
-            resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
-            log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
+			if (lockResult.isRight()) {
+				rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
+				throw new ByResponseFormatComponentException(lockResult.right().value());
+			}
+			log.debug("name is locked {} status = {}", resource.getSystemName(), lockResult);
+		}
+		try {
+			log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
+			loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS,resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,"Starting to add inputs from yaml: {}",yamlName);
+			final Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
+			resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
+			final List<DataTypeDefinition> addedDataTypeList =
+				dataTypeBusinessLogic.addToComponent(resource.getUniqueId(), parsedToscaYamlInfo.getDataTypes());
+			resource.addToDataTypes(addedDataTypeList);
+			log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
             log.trace("************* Going to add inputs from yaml {}", yamlName);
             if (resource.shouldGenerateInputs())
                 generateAndAddInputsFromGenericTypeProperties(resource, genericResource);

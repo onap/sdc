@@ -25,7 +25,6 @@ import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -67,7 +66,6 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         IGroupOperation groupOperation,
         IGroupInstanceOperation groupInstanceOperation,
         IGroupTypeOperation groupTypeOperation,
-        GroupBusinessLogic groupBusinessLogic,
         InterfaceOperation interfaceOperation,
         InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
         YamlTemplateParsingHandler yamlHandler,
