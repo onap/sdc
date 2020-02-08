@@ -60,6 +60,7 @@ import org.springframework.core.annotation.Order;
         "org.openecomp.sdc.be.externalapi.servlet",
         "org.openecomp.sdc.be.servlets",
         "org.openecomp.sdc.be.filters",
+        "org.openecomp.sdc.be.plugins",
         "org.openecomp.sdc.be.togglz"
 })
 public class CatalogBESpringConfig {
