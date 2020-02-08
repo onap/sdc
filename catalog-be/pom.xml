@@ -974,6 +974,39 @@
             <build>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-context-file</id>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <target>
+                                        <copy file="sdc-backend/context.xml.template" tofile="sdc-backend/context.xml"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>set-version-in-context-file</id>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <target>
+                                        <replace file="sdc-backend/context.xml">
+                                            <replacetoken>projectversion</replacetoken>
+                                            <replacevalue>${project.version}</replacevalue>
+                                        </replace>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                               </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
                         <executions>
