@@ -186,6 +186,7 @@ sdc-os-chef/.idea/*
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/ecomp-error-configuration.yaml
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml
 catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
+catalog-be/sdc-backend/context.xml
 
 test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/testSuites/*
  

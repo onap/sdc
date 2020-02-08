@@ -54,6 +54,7 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
+import org.openecomp.sdc.be.tosca.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -108,6 +109,9 @@ public class CsarUtils {
     private ToscaExportHandler toscaExportUtils;
     @Autowired
     protected ToscaOperationFacade toscaOperationFacade;
+  
+    @Autowired(required = false)
+    private List<CsarEntryGenerator> generators;
 
     private static final String CONFORMANCE_LEVEL = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
     private static final String SDC_VERSION = ExternalConfiguration.getAppVersion();
@@ -301,6 +305,16 @@ public class CsarUtils {
 
         if (collectedComponentCsarDefinition.isRight()) {
             return Either.right(collectedComponentCsarDefinition.right().value());
+        }
+        
+        if (generators != null) {
+	        for (CsarEntryGenerator generator: generators) {
+	            log.debug("Invoking CsarEntryGenerator: {}", generator.getClass().getName());
+		        for (Entry<String, byte[]> pluginGeneratedFile : generator.generateCsarEntries(component).entrySet()) {
+		        	zip.putNextEntry(new ZipEntry(pluginGeneratedFile.getKey()));
+		            zip.write(pluginGeneratedFile.getValue());
+		        }
+	        }
         }
 
         return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
