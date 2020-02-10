@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "35cbfdce_d6c98647",
+        "filename": "releases/1.6.1-container.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-02-10T06:16:33Z",
+      "side": 1,
+      "message": "Why releasing 1.6.0?",
+      "range": {
+        "startLine": 8,
+        "startChar": 14,
+        "endLine": 8,
+        "endChar": 19
+      },
+      "revId": "45385698fa00c98171d17cbce6b4d8cde5d5ebf4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
