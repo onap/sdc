@@ -907,6 +907,12 @@ public class CsarUtils {
                     operation.getName());
             return true;
         }
+        if (operation.getImplementation().getArtifactName().startsWith("\"") && operation.getImplementation().getArtifactName().endsWith("\"")) {
+            log.debug("Component Name {}, Interface Id {}, Operation Name {} - artifact name is a literal value rather than an SDC artifact",
+                    component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
+                    operation.getName());
+            return true;
+        }
         return false;
     }
 

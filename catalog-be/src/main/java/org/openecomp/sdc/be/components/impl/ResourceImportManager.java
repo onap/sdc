@@ -38,6 +38,8 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -335,10 +337,28 @@ public class ResourceImportManager {
             }
             else if (interfaceJson instanceof Map) {
                 Map<String, Object> requirementJsonMap = (Map<String, Object>) interfaceJson;
-                if (requirementJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
-                    String type = (String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName());
-                    interf.setType(type);
-                    interf.setUniqueId(type.toLowerCase());
+            	Map<String, OperationDataDefinition> operations = new HashMap<>();;
+
+                for (final Entry<String, Object> entry : requirementJsonMap.entrySet()) {
+                	if (entry.getKey().equals(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
+                        String type = (String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName());
+                        interf.setType(type);
+                        interf.setUniqueId(type.toLowerCase());
+                    } else if (entry.getValue() instanceof Map && ((Map<?, ?>)entry.getValue()).containsKey("implementation")){
+                    	OperationDataDefinition operation = new OperationDataDefinition();
+                    	operation.setName(entry.getKey());
+
+                    	ArtifactDataDefinition implementation = new ArtifactDataDefinition();
+                    	// Adding the artifact name in quotes to indicate that this is a literal value, rather than a reference to
+                    	// an SDC artifact
+                    	implementation.setArtifactName("\"" + ((Map<String, String>)entry.getValue()).get("implementation") + "\"");
+                    	operation.setImplementation(implementation);
+
+                    	operations.put(entry.getKey(), operation);
+                    }
+                }
+                if (!operations.isEmpty()) {
+                	interf.setOperations(operations);
                 }
             }
             else {

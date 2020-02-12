@@ -540,10 +540,20 @@ public class ImportUtilsTest {
 
     public static String loadFileNameToJsonString(String fileName) throws IOException {
         String sourceDir = "src/test/resources/normativeTypes";
+    	return loadFileNameToJsonString(sourceDir, fileName);
+    }
+    
+    public static String loadCustomTypeFileNameToJsonString(String fileName) throws IOException {
+        String sourceDir = "src/test/resources/customTypes";
+    	return loadFileNameToJsonString(sourceDir, fileName);
+    }
+    
+    private static String loadFileNameToJsonString(String sourceDir, String fileName) throws IOException {
         java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir, fileName);
         byte[] fileContent = Files.readAllBytes(filePath);
         return new String(fileContent);
     }
+
 
     private static Object loadJsonFromFile(String fileName) throws IOException {
         String content = loadFileNameToJsonString(fileName);

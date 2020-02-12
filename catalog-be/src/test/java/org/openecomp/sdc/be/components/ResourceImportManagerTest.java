@@ -40,8 +40,10 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
@@ -195,6 +197,22 @@ public class ResourceImportManagerTest {
         testSetRequirments(createResource.left);
 
     }
+    
+    @Test
+    public void testResourceCreationWitInterfaceImplementation() throws IOException {
+        UploadResourceInfo resourceMD = createDummyResourceMD();
+        User user = new User();
+        user.setUserId(resourceMD.getContactId());
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+
+        setResourceBusinessLogicMock();
+
+        String jsonContent = ImportUtilsTest.loadCustomTypeFileNameToJsonString("custom-types-node-type-with-interface-impl.yml");
+
+        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        testSetInterfaceImplementation(createResource.left);
+
+    }
 
     private void setResourceBusinessLogicMock() {
         when(resourceBusinessLogic.getUserAdmin()).thenReturn(userAdmin);
@@ -316,6 +334,22 @@ public class ResourceImportManagerTest {
         assertEquals("tosca.capabilities.network.Bindable", requirement.getCapability());
         assertEquals("tosca.relationships.network.BindsTo", requirement.getRelationship());
         assertEquals("binding", requirement.getName());
+
+    }
+    
+    private void testSetInterfaceImplementation(Resource resource) {
+    	Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
+        assertEquals(1, interfaces.size());
+        assertTrue(interfaces.containsKey("Standard"));
+        
+        InterfaceDefinition interfaceDefinition = interfaces.get("Standard");
+        assertEquals("tosca.interfaces.node.lifecycle.Standard", interfaceDefinition.getType());
+        assertEquals("tosca.interfaces.node.lifecycle.standard", interfaceDefinition.getUniqueId());
+        Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
+        assertEquals(1, operations.size());
+
+        OperationDataDefinition operation = operations.get("configure");
+        assertEquals("\"camunda/vnfConfigure\"", operation.getImplementation().getArtifactName());
 
     }
 
