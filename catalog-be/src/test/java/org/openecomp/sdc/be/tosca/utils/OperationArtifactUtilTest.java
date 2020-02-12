@@ -90,6 +90,23 @@ public class OperationArtifactUtilTest {
 
         assertEquals(expectedArtifactPath,actualArtifactPath);
     }
+    
+    @Test
+    public void testCorrectPathForLiteralInterfaceImplementationValue() {
+        ResourceMetadataDataDefinition componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
+        componentMetadataDataDefinition.setToscaResourceName("org.openecomp.resource.vf.TestResource");
+        final ComponentMetadataDefinition componentMetadataDefinition =
+                new ComponentMetadataDefinition(componentMetadataDataDefinition);
+        Component component = new Resource(componentMetadataDefinition);
+        final OperationDataDefinition op = new OperationDataDefinition();
+        final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
+        implementation.setArtifactName("\"createBPMN.bpmn\"");
+        op.setImplementation(implementation);
+        final String actualArtifactPath = OperationArtifactUtil.createOperationArtifactPath(component, null, op, false);
+        String expectedArtifactPath = "createBPMN.bpmn";
+
+        assertEquals(expectedArtifactPath,actualArtifactPath);
+    }
 
     @Test
     public void testGetDistinctInterfaceOperationArtifactsByName() {

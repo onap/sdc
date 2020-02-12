@@ -51,6 +51,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -1000,6 +1001,12 @@ public class CsarUtils {
         }
         if (Objects.isNull(operation.getImplementation().getArtifactName())) {
             log.debug("Component Name {}, Interface Id {}, Operation Name {} - no artifact found",
+                    component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
+                    operation.getName());
+            return true;
+        }
+        if (operation.getImplementation().getArtifactName().startsWith(Constants.ESCAPED_DOUBLE_QUOTE) && operation.getImplementation().getArtifactName().endsWith(Constants.ESCAPED_DOUBLE_QUOTE)) {
+            log.debug("Component Name {}, Interface Id {}, Operation Name {} - artifact name is a literal value rather than an SDC artifact",
                     component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
                     operation.getName());
             return true;
