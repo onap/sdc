@@ -32,6 +32,7 @@ import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtilsTest;
+import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
@@ -40,8 +41,10 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
@@ -68,6 +71,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -79,6 +83,8 @@ public class ResourceImportManagerTest {
     static AuditingManager auditingManager = Mockito.mock(AuditingManager.class);
     static ResponseFormatManager responseFormatManager = Mockito.mock(ResponseFormatManager.class);
     static ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
+    static InterfaceOperationBusinessLogic interfaceOperationBusinessLogic = Mockito.mock(InterfaceOperationBusinessLogic.class);
+
     static UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
     static ToscaOperationFacade toscaOperationFacade =  Mockito.mock(ToscaOperationFacade.class);
 
@@ -92,6 +98,7 @@ public class ResourceImportManagerTest {
         when(toscaOperationFacade.getLatestByToscaResourceName(Mockito.anyString())).thenReturn(Either.left(null));
         importManager.setResponseFormatManager(responseFormatManager);
         importManager.setResourceBusinessLogic(resourceBusinessLogic);
+        importManager.setInterfaceOperationBusinessLogic(interfaceOperationBusinessLogic);
         importManager.setToscaOperationFacade(toscaOperationFacade);
 
         String appConfigDir = "src/test/resources/config/catalog-be";
@@ -194,6 +201,78 @@ public class ResourceImportManagerTest {
         ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
         testSetRequirments(createResource.left);
 
+    }
+    
+    @Test
+    public void testResourceCreationWithInterfaceImplementation() throws IOException {
+        UploadResourceInfo resourceMD = createDummyResourceMD();
+        User user = new User();
+        user.setUserId(resourceMD.getContactId());
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+
+        setResourceBusinessLogicMock();
+
+        String jsonContent = ImportUtilsTest.loadCustomTypeFileNameToJsonString("custom-types-node-type-with-interface-impl.yml");
+        
+        Map<String, InterfaceDefinition> interfaceTypes = new HashMap<>();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        Map<String, OperationDataDefinition> operations = new HashMap<>();
+        operations.put("configure", new OperationDataDefinition());
+		interfaceDefinition.setOperations(operations );
+        interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
+		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
+
+        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        testSetInterfaceImplementation(createResource.left);
+    }
+    
+    @Test
+    public void testResourceCreationWithInterfaceImplementation_UnknownInterface() throws IOException {
+        UploadResourceInfo resourceMD = createDummyResourceMD();
+        User user = new User();
+        user.setUserId(resourceMD.getContactId());
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+
+        setResourceBusinessLogicMock();
+
+        String jsonContent = ImportUtilsTest.loadCustomTypeFileNameToJsonString("custom-types-node-type-with-unknown-interface-impl.yml");
+        
+        Map<String, InterfaceDefinition> interfaceTypes = new HashMap<>();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        Map<String, OperationDataDefinition> operations = new HashMap<>();
+        operations.put("configure", new OperationDataDefinition());
+		interfaceDefinition.setOperations(operations );
+        interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
+		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
+
+        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        assertNull(createResource.left.getInterfaces());
+    }
+    
+    @Test
+    public void testResourceCreationWitInterfaceImplementation_UnknownOperation() throws IOException {
+        UploadResourceInfo resourceMD = createDummyResourceMD();
+        User user = new User();
+        user.setUserId(resourceMD.getContactId());
+        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+
+        setResourceBusinessLogicMock();
+
+        String jsonContent = ImportUtilsTest.loadCustomTypeFileNameToJsonString("custom-types-node-type-with-interface-impl-unknown-operation.yml");
+        
+        Map<String, InterfaceDefinition> interfaceTypes = new HashMap<>();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        Map<String, OperationDataDefinition> operations = new HashMap<>();
+        operations.put("configure", new OperationDataDefinition());
+		interfaceDefinition.setOperations(operations );
+        interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
+		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
+
+        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        assertNull(createResource.left.getInterfaces());
     }
 
     private void setResourceBusinessLogicMock() {
@@ -316,6 +395,22 @@ public class ResourceImportManagerTest {
         assertEquals("tosca.capabilities.network.Bindable", requirement.getCapability());
         assertEquals("tosca.relationships.network.BindsTo", requirement.getRelationship());
         assertEquals("binding", requirement.getName());
+
+    }
+    
+    private void testSetInterfaceImplementation(Resource resource) {
+    	Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
+        assertEquals(1, interfaces.size());
+        assertTrue(interfaces.containsKey("Standard"));
+        
+        InterfaceDefinition interfaceDefinition = interfaces.get("Standard");
+        assertEquals("tosca.interfaces.node.lifecycle.Standard", interfaceDefinition.getType());
+        assertEquals("tosca.interfaces.node.lifecycle.standard", interfaceDefinition.getUniqueId());
+        Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
+        assertEquals(1, operations.size());
+
+        OperationDataDefinition operation = operations.get("configure");
+        assertEquals("\"camunda/vnfConfigure\"", operation.getImplementation().getArtifactName());
 
     }
 
