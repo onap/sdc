@@ -79,9 +79,18 @@ public class OperationArtifactUtil {
 
 
     private static String createOperationArtifactPathInComponent(OperationDataDefinition operation) {
-        return CsarUtils.ARTIFACTS + File.separator + WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name())
-                + File.separator + ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH
-                + File.separator + operation.getImplementation().getArtifactName();
+    	if (artifactNameIsALiteralValue(operation.getImplementation().getArtifactName())) {
+    		final String implementationArtifactName = operation.getImplementation().getArtifactName();
+    		return implementationArtifactName.substring(1, implementationArtifactName.length()-1);
+    	} else {
+    		return CsarUtils.ARTIFACTS + File.separator + WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name())
+	            + File.separator + ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH
+	            + File.separator + operation.getImplementation().getArtifactName();
+    	}
+    }
+    
+    private static boolean artifactNameIsALiteralValue(final String artifactName) {
+    	return artifactName.startsWith("\"") && artifactName.endsWith("\"");
     }
 
     private static String createOperationArtifactPathInService(String toscaComponentName,

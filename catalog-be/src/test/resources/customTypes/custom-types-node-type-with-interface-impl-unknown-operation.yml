@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resources.customNodeType:
+    derived_from: tosca.nodes.Root
+    description: A node type derived from tosca.nodes.Root with an interface implementation
+    attributes:
+      tosca_id:
+        type: string
+      tosca_name:
+        type: string
+      state:
+        type: string
+    capabilities:
+      feature: 
+        type: tosca.capabilities.Node
+    requirements:
+      - dependency :
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root 
+          relationship: tosca.relationships.DependsOn
+          occurrences: [ 0, UNBOUNDED ]
+    interfaces: 
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        unknownoperation:
+          implementation: 'camunda/vnfConfigure'

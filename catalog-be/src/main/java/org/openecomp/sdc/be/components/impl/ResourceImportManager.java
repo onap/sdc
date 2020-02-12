@@ -38,6 +38,8 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -96,6 +98,8 @@ public class ResourceImportManager {
 
     private AuditingManager auditingManager;
     private ResourceBusinessLogic resourceBusinessLogic;
+    private InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
+
     private IGraphLockOperation graphLockOperation;
     protected ToscaOperationFacade toscaOperationFacade;
 
@@ -309,7 +313,7 @@ public class ResourceImportManager {
             while (interfacesNameValue.hasNext()) {
                 Entry<String, Object> interfaceNameValue = interfacesNameValue.next();
                 Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue
-                        .getValue());
+                        .getValue(), resource);
                 if (eitherInterface.isRight()) {
                     log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(), resource.getName());
                 }
@@ -324,7 +328,7 @@ public class ResourceImportManager {
         }
     }
 
-    private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(Object interfaceJson) {
+    private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(Object interfaceJson, Resource resource) {
         InterfaceDefinition interf = new InterfaceDefinition();
         Either<InterfaceDefinition, ResultStatusEnum> result = Either.left(interf);
 
@@ -333,12 +337,31 @@ public class ResourceImportManager {
                 String requirementJsonString = (String) interfaceJson;
                 interf.setType(requirementJsonString);
             }
-            else if (interfaceJson instanceof Map) {
+            else if (interfaceJson instanceof Map && ResourceTypeEnum.VFC.equals(resource.getResourceType())) {
                 Map<String, Object> requirementJsonMap = (Map<String, Object>) interfaceJson;
-                if (requirementJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
-                    String type = (String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName());
-                    interf.setType(type);
-                    interf.setUniqueId(type.toLowerCase());
+            	Map<String, OperationDataDefinition> operations = new HashMap<>();
+
+                for (final Entry<String, Object> entry : requirementJsonMap.entrySet()) {
+                	if (entryIsInterfaceType(entry)) {
+                        String type = (String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName());
+                        interf.setType(type);
+                        interf.setUniqueId(type.toLowerCase());
+                    } else if (entryContainsImplementationForAKnownOperation(entry, interf.getType())){
+                    	
+                    	OperationDataDefinition operation = new OperationDataDefinition();
+                    	operation.setName(entry.getKey());
+
+                    	ArtifactDataDefinition implementation = new ArtifactDataDefinition();
+                    	// Adding the artifact name in quotes to indicate that this is a literal value, rather than a reference to
+                    	// an SDC artifact
+                    	implementation.setArtifactName("\"" + ((Map<String, String>)entry.getValue()).get("implementation") + "\"");
+                    	operation.setImplementation(implementation);
+
+                    	operations.put(entry.getKey(), operation);
+                    }
+                }
+                if (!operations.isEmpty()) {
+                	interf.setOperations(operations);
                 }
             }
             else {
@@ -353,6 +376,38 @@ public class ResourceImportManager {
         }
 
         return result;
+    }
+    
+    private boolean entryIsInterfaceType(final Entry<String, Object> entry) {
+    	if(entry.getKey().equals(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
+    		if (entry.getValue() instanceof String) {
+    			return true;
+    		}
+    		throw new ByActionStatusComponentException(ActionStatus.INVALID_YAML);
+    	}
+    	return false;
+    }
+    
+    private boolean entryContainsImplementationForAKnownOperation(final Entry<String, Object> entry, final String interfaceType) {
+    	if (entry.getValue() instanceof Map && ((Map<?, ?>)entry.getValue()).containsKey("implementation")) {
+    		if (isAKnownOperation(interfaceType, entry.getKey())){
+    			return true;
+    		}
+    		throw new ByActionStatusComponentException(ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
+    	}
+    	return false;
+    }
+    
+    private boolean isAKnownOperation(String interfaceType, String operation) {    	
+    	 Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceLifecycleTypes = interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
+         if (interfaceLifecycleTypes.isRight()) {
+             return false;
+         }
+         
+         return interfaceLifecycleTypes.left().value().entrySet().stream()
+        		 .filter(e -> e.getKey().equalsIgnoreCase(interfaceType))
+        		 .anyMatch(o -> o.getValue().getOperations().entrySet().stream()
+        				 .anyMatch(p -> p.getKey().equalsIgnoreCase(operation)));
     }
 
     private void setRequirements(Map<String, Object> toscaJson, Resource resource, Resource parentResource) {// Note that parentResource can be null
@@ -882,6 +937,11 @@ public class ResourceImportManager {
     @Autowired
     public void setResourceBusinessLogic(ResourceBusinessLogic resourceBusinessLogic) {
         this.resourceBusinessLogic = resourceBusinessLogic;
+    }
+    
+    @Autowired
+    public void setInterfaceOperationBusinessLogic(InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
+        this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
     }
 
     public IGraphLockOperation getGraphLockOperation() {
