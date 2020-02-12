@@ -18,6 +18,7 @@ package org.openecomp.sdc.be.tosca.utils;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.WordUtils;
+import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
@@ -31,6 +32,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+
 
 import java.io.File;
 import java.util.HashMap;
@@ -79,9 +81,18 @@ public class OperationArtifactUtil {
 
 
     private static String createOperationArtifactPathInComponent(OperationDataDefinition operation) {
-        return CsarUtils.ARTIFACTS + File.separator + WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name())
-                + File.separator + ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH
-                + File.separator + operation.getImplementation().getArtifactName();
+    	if (artifactNameIsALiteralValue(operation.getImplementation().getArtifactName())) {
+    		final String implementationArtifactName = operation.getImplementation().getArtifactName();
+    		return implementationArtifactName.substring(1, implementationArtifactName.length()-1);
+    	} else {
+    		return CsarUtils.ARTIFACTS + File.separator + WordUtils.capitalizeFully(ArtifactGroupTypeEnum.DEPLOYMENT.name())
+	            + File.separator + ArtifactTypeEnum.WORKFLOW.name() + File.separator + BPMN_ARTIFACT_PATH
+	            + File.separator + operation.getImplementation().getArtifactName();
+    	}
+    }
+    
+    private static boolean artifactNameIsALiteralValue(final String artifactName) {
+    	return artifactName.startsWith(Constants.ESCAPED_DOUBLE_QUOTE) && artifactName.endsWith(Constants.ESCAPED_DOUBLE_QUOTE);
     }
 
     private static String createOperationArtifactPathInService(String toscaComponentName,
