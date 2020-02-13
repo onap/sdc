@@ -2330,12 +2330,12 @@ onap.datatypes.monitoring.subscription:
       required: true
       entry_schema:
         type: onap.datatypes.monitoring.nfFilter
-    measurementGroup:
-      type: map
-      description: Measurement Group
+    measurementGroups:
+      type: list
+      description: Measurement Groups
       required: true
       entry_schema:
-        type: onap.datatypes.monitoring.MeasurementGroup
+        type: onap.datatypes.monitoring.measurementGroups
 
 onap.datatypes.monitoring.nfFilter:
   derived_from: tosca.datatypes.Root
@@ -2354,6 +2354,16 @@ onap.datatypes.monitoring.nfFilter:
       default: []
       entry_schema:
         type: string
+
+onap.datatypes.monitoring.measurementGroups:
+  derived_from: tosca.datatypes.Root
+  properties:
+    measurementGroup:
+      type: map
+      description: Measurement Group
+      required: true
+      entry_schema:
+        type: onap.datatypes.monitoring.measurementGroup
 
 onap.datatypes.monitoring.MeasurementGroup:
   derived_from: tosca.datatypes.Root
