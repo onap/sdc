@@ -20,9 +20,25 @@
 
 package org.openecomp.sdc.be.tosca;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -32,29 +48,20 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+@RunWith(MockitoJUnitRunner.class)
 public class PropertyConvertorTest {
     private PropertyDefinition property;
-    Map<String, DataTypeDefinition> dataTypes;
+    private Map<String, DataTypeDefinition> dataTypes;
+
+    @InjectMocks
+    private PropertyConvertor propertyConvertor;
 
     @Before
     public void setUp(){
         property = new PropertyDefinition();
         property.setName("myProperty");
         property.setType(ToscaPropertyType.INTEGER.getType());
-        dataTypes = new HashMap();
+        dataTypes = new HashMap<>();
         dataTypes.put(property.getName(), new DataTypeDefinition());
     }
 
@@ -65,12 +72,12 @@ public class PropertyConvertorTest {
     	
     	property.setSchema(schema);
     	
-    	PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
+    	propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
     }
 
     @Test
     public void convertPropertyWhenValueAndDefaultNull() {
-        ToscaProperty prop = PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
+        ToscaProperty prop = propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
         assertNotNull(prop);
         assertNull(prop.getDefaultp());
     }
@@ -79,7 +86,7 @@ public class PropertyConvertorTest {
     public void convertPropertyWhenValueNullAndDefaultNotEmpty() {
         final String def = "1";
         property.setDefaultValue(def);
-        ToscaProperty result = PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
+        ToscaProperty result = propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
         assertNotNull(result);
         assertEquals(Integer.valueOf(def), result.getDefaultp());
     }
@@ -92,16 +99,15 @@ public class PropertyConvertorTest {
         property1.setDefaultValue("2");
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList();
+        List<PropertyDefinition> properties = new ArrayList<>();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
-        Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
+        Either<ToscaNodeType, ToscaError> result = propertyConvertor.convertProperties(resource, new ToscaNodeType(), dataTypes);
         assertTrue(result.isLeft());
         assertEquals(2, result.left().value().getProperties().size());
         int cnt = 0;
-        for (Iterator<ToscaProperty> it = result.left().value().getProperties().values().iterator(); it.hasNext(); ) {
-            ToscaProperty prop = it.next();
+        for (ToscaProperty prop : result.left().value().getProperties().values()) {
             if (prop.getDefaultp() == null) {
                 cnt++;
             }
@@ -118,15 +124,14 @@ public class PropertyConvertorTest {
         property.setDefaultValue("1");
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList();
+        List<PropertyDefinition> properties = new ArrayList<>();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
-        Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
+        Either<ToscaNodeType, ToscaError> result = propertyConvertor.convertProperties(resource, new ToscaNodeType(), dataTypes);
         assertTrue(result.isLeft());
         assertEquals(2, result.left().value().getProperties().size());
-        for (Iterator<ToscaProperty> it = result.left().value().getProperties().values().iterator(); it.hasNext(); ) {
-            ToscaProperty prop = it.next();
+        for (ToscaProperty prop : result.left().value().getProperties().values()) {
             assertNotNull(prop.getDefaultp());
         }
     }
@@ -138,15 +143,14 @@ public class PropertyConvertorTest {
         property1.setType(ToscaPropertyType.INTEGER.getType());
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList();
+        List<PropertyDefinition> properties = new ArrayList<>();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
-        Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
+        Either<ToscaNodeType, ToscaError> result = propertyConvertor.convertProperties(resource, new ToscaNodeType(), dataTypes);
         assertTrue(result.isLeft());
         assertEquals(2, result.left().value().getProperties().size());
-        for (Iterator<ToscaProperty> it = result.left().value().getProperties().values().iterator(); it.hasNext(); ) {
-            ToscaProperty prop = it.next();
+        for (ToscaProperty prop : result.left().value().getProperties().values()) {
             assertNull(prop.getDefaultp());
         }
      }
@@ -157,7 +161,7 @@ public class PropertyConvertorTest {
                 .setDefaultValue("::")
                 .setType(ToscaPropertyType.STRING.getType())
                 .build();
-        ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, PropertyConvertor.PropertyType.PROPERTY);
+        ToscaProperty toscaProperty = propertyConvertor.convertProperty(Collections.emptyMap(), property1, PropertyConvertor.PropertyType.PROPERTY);
         assertThat(toscaProperty.getDefaultp()).isEqualTo("::");
     }
 
@@ -167,7 +171,7 @@ public class PropertyConvertorTest {
                 .setDefaultValue("/")
                 .setType(ToscaPropertyType.STRING.getType())
                 .build();
-        ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, PropertyConvertor.PropertyType.PROPERTY);
+        ToscaProperty toscaProperty = propertyConvertor.convertProperty(Collections.emptyMap(), property1, PropertyConvertor.PropertyType.PROPERTY);
         assertThat(toscaProperty.getDefaultp()).isEqualTo("/");
     }
 

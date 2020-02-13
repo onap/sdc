@@ -77,10 +77,10 @@ public class InputAnnotationConvertToToscaTest {
         property3.setType(ToscaPropertyType.BOOLEAN.getType());
         property3.setValue("True");
 
-        dataTypes = new HashMap();
+        dataTypes = new HashMap<>();
         DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
 
-        List<PropertyDefinition> properties = new ArrayList();
+        List<PropertyDefinition> properties = new ArrayList<>();
         properties.add(property1);
 
         dataTypeDefinition.setProperties(properties);
@@ -91,7 +91,7 @@ public class InputAnnotationConvertToToscaTest {
         annotation.setName("Annotation1");
         annotation.setDescription("description1");
 
-        List<PropertyDataDefinition> propertiesAnnotation = new ArrayList();
+        List<PropertyDataDefinition> propertiesAnnotation = new ArrayList<>();
         propertiesAnnotation.add(property2);
         propertiesAnnotation.add(property3);
         annotation.setProperties(propertiesAnnotation);
@@ -107,7 +107,7 @@ public class InputAnnotationConvertToToscaTest {
 
         ArrayList<InputDefinition> inputDefList = new ArrayList<> ();
         inputDefList.add(inputDefinition);
-        inputConverter = new InputConverter();
+        inputConverter = new InputConverter(new PropertyConvertor());
         Map<String, ToscaProperty> resultInputs ;
         resultInputs = inputConverter.convertInputs(inputDefList,dataTypes);
         //verify one Input only

@@ -63,6 +63,8 @@ public class PolicyExportParserImplTest {
     
 	@Mock
 	private ApplicationDataTypeCache dataTypeCache;
+	@Mock
+	private PropertyConvertor propertyConvertor;
 	
 	@Mock
 	private Component component;
@@ -71,7 +73,8 @@ public class PolicyExportParserImplTest {
 	public void failToGetAllDataTypes() {
 		
 		when(dataTypeCache.getAll()).thenReturn(Either.right(null));
-		assertThatExceptionOfType(SdcResourceNotFoundException.class).isThrownBy(() -> policiyExportParser = new PolicyExportParserImpl(dataTypeCache));
+		assertThatExceptionOfType(SdcResourceNotFoundException.class).isThrownBy(() -> policiyExportParser = new PolicyExportParserImpl(dataTypeCache,
+                propertyConvertor));
 	}
 	
 	@Test
@@ -79,7 +82,7 @@ public class PolicyExportParserImplTest {
 		
 		when(dataTypeCache.getAll()).thenReturn(Either.left(null));
 		when(component.getPolicies()).thenReturn(null);
-		policiyExportParser = new PolicyExportParserImpl(dataTypeCache);
+		policiyExportParser = new PolicyExportParserImpl(dataTypeCache, propertyConvertor);
 		Map<String, ToscaPolicyTemplate> policies = policiyExportParser.getPolicies(component);
 		assertThat(policies).isEqualTo(null);
 	}
@@ -105,7 +108,7 @@ public class PolicyExportParserImplTest {
 		when(component.getPolicies()).thenReturn(policiesToAdd);
 		when(component.getComponentInstances()).thenReturn(getComponentInstances());
 		when(component.getGroups()).thenReturn(getGroups());
-		policiyExportParser = new PolicyExportParserImpl(dataTypeCache);
+		policiyExportParser = new PolicyExportParserImpl(dataTypeCache, propertyConvertor);
 		
 		Map<String, ToscaPolicyTemplate> policies = policiyExportParser.getPolicies(component);
 		

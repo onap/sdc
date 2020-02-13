@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
 import org.openecomp.sdc.be.tosca.PropertyConvertor;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -47,13 +48,15 @@ public class PropertyDataValueMergeBusinessLogic {
     private final PropertyValueMerger propertyValueMerger;
     private final ApplicationDataTypeCache dataTypeCache;
     
-    private final PropertyConvertor propertyConvertor = PropertyConvertor.getInstance();
+    private final PropertyConvertor propertyConvertor;
     private final Gson gson = new Gson();
 
-    
-    public PropertyDataValueMergeBusinessLogic(PropertyValueMerger propertyValueMerger, ApplicationDataTypeCache dataTypeCache) {
+    @Autowired
+    public PropertyDataValueMergeBusinessLogic(PropertyValueMerger propertyValueMerger,
+            ApplicationDataTypeCache dataTypeCache, PropertyConvertor propertyConvertor) {
         this.propertyValueMerger = propertyValueMerger;
         this.dataTypeCache = dataTypeCache;
+        this.propertyConvertor = propertyConvertor;
     }
 
     /**
@@ -94,7 +97,7 @@ public class PropertyDataValueMergeBusinessLogic {
         String propValue = propertyDataDefinition.getValue() == null ? "": propertyDataDefinition.getValue();
         String propertyType = propertyDataDefinition.getType();
         String innerType = propertyDataDefinition.getSchemaType();
-        return propertyConvertor.convertToToscaObject(propertyType, propValue, innerType, dataTypes, true);
+        return propertyConvertor.convertToToscaObject(propertyDataDefinition, propValue, dataTypes, true);
     }
 
     protected void mergePropertyGetInputsValues(PropertyDataDefinition oldProp, PropertyDataDefinition newProp) {

@@ -20,9 +20,22 @@
 
 package org.openecomp.sdc.be.tosca;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNoneBlank;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,20 +68,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNoneBlank;
-
 /**
  * Allows to convert requirements\capabilities of a component to requirements\capabilities of a substitution mappings section of a tosca template
  *
@@ -86,6 +85,8 @@ public class CapabilityRequirementConverter {
 
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
+    @Autowired
+    private PropertyConvertor propertyConvertor;
 
     public CapabilityRequirementConverter() {}
 
@@ -182,7 +183,7 @@ public class CapabilityRequirementConverter {
             innerType = prop.getSchema().getProperty().getType();
         }
         String propValue = prop.getValue() == null ? prop.getDefaultValue() : prop.getValue();
-        return PropertyConvertor.getInstance().convertToToscaObject(propertyType, propValue, innerType, dataTypes, false);
+        return propertyConvertor.convertToToscaObject(prop, propValue, dataTypes, false);
     }
     /**
      * Allows to convert requirements of a node type to tosca template requirements representation
@@ -573,7 +574,7 @@ public class CapabilityRequirementConverter {
         if (isNotEmpty(properties)) {
             Map<String, ToscaProperty> toscaProperties = new HashMap<>();
             for (PropertyDefinition property : properties) {
-                ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(dataTypes, property, PropertyConvertor.PropertyType.CAPABILITY);
+                ToscaProperty toscaProperty = propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.CAPABILITY);
                 toscaProperties.put(property.getName(), toscaProperty);
             }
             toscaCapability.setProperties(toscaProperties);

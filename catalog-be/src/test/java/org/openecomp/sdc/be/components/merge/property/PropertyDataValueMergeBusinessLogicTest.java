@@ -20,10 +20,24 @@
 
 package org.openecomp.sdc.be.components.merge.property;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import fj.data.Either;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,21 +51,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import org.openecomp.sdc.be.tosca.PropertyConvertor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PropertyDataValueMergeBusinessLogicTest {
@@ -67,7 +67,8 @@ public class PropertyDataValueMergeBusinessLogicTest {
     public void setUp() throws Exception {
         PropertyValueMerger propertyValueMerger = new PropertyValueMerger();
         
-        testInstance = new PropertyDataValueMergeBusinessLogic(propertyValueMerger, applicationDataTypeCache);
+        testInstance = new PropertyDataValueMergeBusinessLogic(propertyValueMerger, applicationDataTypeCache,
+                new PropertyConvertor());
     }
 
     @Test

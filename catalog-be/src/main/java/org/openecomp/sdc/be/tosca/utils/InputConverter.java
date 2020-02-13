@@ -33,17 +33,18 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component
 public class InputConverter {
     private PropertyConvertor propertyConvertor;
     private static final Logger log = Logger.getLogger(ToscaExportHandler.class);
 
-
-    public InputConverter() {
-        this.propertyConvertor = PropertyConvertor.getInstance();
-
+    @Autowired
+    public InputConverter(PropertyConvertor propertyConvertor) {
+        this.propertyConvertor = propertyConvertor;
     }
+
     /**
      * This is the converter made for input
      * input is derived from properties and  is similar to properties

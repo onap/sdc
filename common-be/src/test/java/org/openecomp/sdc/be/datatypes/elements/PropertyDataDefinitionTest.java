@@ -623,7 +623,8 @@ public class PropertyDataDefinitionTest {
 		Assert.assertEquals(false, result);
 		result = testSubject.equals(testSubject);
 		Assert.assertEquals(true, result);
-		result = testSubject.equals(createTestSubject());
+		PropertyDataDefinition other = createTestSubject();
+		result = testSubject.equals(other);
 		Assert.assertEquals(true, result);
 	}
 

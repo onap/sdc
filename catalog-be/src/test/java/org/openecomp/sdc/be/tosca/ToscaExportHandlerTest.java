@@ -23,10 +23,14 @@ package org.openecomp.sdc.be.tosca;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
+import static org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType.PROPERTY;
 
 import fj.data.Either;
 import java.util.ArrayList;
@@ -35,6 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import mockit.Deencapsulation;
 import org.apache.commons.collections.MapUtils;
@@ -50,9 +55,11 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
@@ -103,6 +110,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     private static final String COMPONENT_INPUT_TYPE = "integer";
     private static final String RESOURCE_NAME = "resource";
     private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
+    private static final Map<String, DataTypeDefinition> DATA_TYPES = new HashMap<>();
 
     @InjectMocks
     private ToscaExportHandler testSubject;
@@ -123,10 +131,16 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     private GroupExportParser groupExportParser;
 
     @Mock
+    private PropertyConvertor propertyConvertor;
+
+    @Mock
     private GroupExportParserImpl groupExportParserImpl;
 
     @Mock
     private InterfaceLifecycleOperation interfaceLifecycleOperation;
+
+    @Mock
+    private InterfacesOperationsConverter interfacesOperationsConverter;
 
     @Mock
     private PolicyExportParser policyExportParser;
@@ -134,6 +148,9 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     @Before
     public void setUpMock() throws Exception {
         MockitoAnnotations.initMocks(this);
+		doReturn(new ToscaProperty()).when(propertyConvertor).convertProperty(any(), any(), eq(PROPERTY));
+        doReturn(new HashMap<String, Object>()).when(interfacesOperationsConverter)
+                .getInterfacesMap(any(), isNull(), anyMap(), anyMap(), anyBoolean(), anyBoolean());
     }
 
     private Resource getNewResource() {
@@ -1427,4 +1444,151 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         Assert.assertTrue(result.get("test_art").getFile().equals("test_file"));
         Assert.assertTrue(result.get("test_art").getType().equals("test_type"));
     }
+
+    @Test
+    public void testGetProxyNodeTypeInterfacesNoInterfaces() {
+        Component service = new Service();
+        Optional<Map<String, Object>> proxyNodeTypeInterfaces =
+                testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
+        Assert.assertFalse(proxyNodeTypeInterfaces.isPresent());
+    }
+
+    @Test
+    public void testGetProxyNodeTypeInterfaces() {
+        Component service = getTestComponent();
+        Optional<Map<String, Object>> proxyNodeTypeInterfaces =
+                testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
+        Assert.assertTrue(proxyNodeTypeInterfaces.isPresent());
+        Map<String, Object> componentInterfaces = proxyNodeTypeInterfaces.get();
+        Assert.assertNotNull(componentInterfaces);
+    }
+
+
+    @Test
+    public void testGetProxyNodeTypePropertiesComponentNull() {
+        Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
+                testSubject.getProxyNodeTypeProperties(null, DATA_TYPES);
+        Assert.assertFalse(proxyNodeTypeProperties.isPresent());
+    }
+
+    @Test
+    public void testGetProxyNodeTypePropertiesNoProperties() {
+        Component service = new Service();
+        Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
+                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+        Assert.assertFalse(proxyNodeTypeProperties.isPresent());
+    }
+
+    @Test
+    public void testGetProxyNodeTypeProperties() {
+        Component service = getTestComponent();
+        service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
+                createMockProperty("componentPropInt", null)));
+        Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
+                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+        Assert.assertTrue(proxyNodeTypeProperties.isPresent());
+        Map<String, ToscaProperty> componentProperties = proxyNodeTypeProperties.get();
+        Assert.assertNotNull(componentProperties);
+        Assert.assertEquals(2, componentProperties.size());
+    }
+
+    @Test
+    public void testAddInputsToPropertiesNoInputs() {
+        Component service = getTestComponent();
+        service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
+                createMockProperty("componentPropInt", null)));
+        Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
+                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+
+        Assert.assertTrue(proxyNodeTypePropertiesResult.isPresent());
+        Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
+        testSubject.addInputsToProperties(DATA_TYPES, null, proxyNodeTypeProperties);
+        Assert.assertNotNull(proxyNodeTypeProperties);
+        Assert.assertEquals(2, proxyNodeTypeProperties.size());
+        testSubject.addInputsToProperties(DATA_TYPES, new ArrayList<>(), proxyNodeTypeProperties);
+        Assert.assertEquals(2, proxyNodeTypeProperties.size());
+    }
+
+    @Test
+    public void testAddInputsToPropertiesWithInputs() {
+        Component service = getTestComponent();
+        service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
+                createMockProperty("componentPropInt", null)));
+        service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
+                "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
+        Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
+                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+
+        Assert.assertTrue(proxyNodeTypePropertiesResult.isPresent());
+        Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
+        testSubject.addInputsToProperties(DATA_TYPES, service.getInputs(), proxyNodeTypeProperties);
+        Assert.assertNotNull(proxyNodeTypeProperties);
+        Assert.assertEquals(4, proxyNodeTypeProperties.size());
+    }
+
+    @Test
+    public void testAddInputsToPropertiesOnlyInputs() {
+        Component service = getTestComponent();
+        service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
+                "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
+        Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
+                testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
+
+        Assert.assertTrue(proxyNodeTypePropertiesResult.isPresent());
+        Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
+        testSubject.addInputsToProperties(DATA_TYPES, service.getInputs(), proxyNodeTypeProperties);
+        Assert.assertNotNull(proxyNodeTypeProperties);
+        Assert.assertEquals(2, proxyNodeTypeProperties.size());
+    }
+
+    @Test
+    public void testOperationImplementationInProxyNodeTypeNotPresent() {
+        Component service = getTestComponent();
+        InterfaceDefinition interfaceDefinition =
+                service.getInterfaces().get("normalizedServiceComponentName-interface");
+        interfaceDefinition.setOperations(new HashMap<>());
+        final OperationDataDefinition operation = new OperationDataDefinition();
+        operation.setName("start");
+        operation.setDescription("op description");
+        final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
+        implementation.setArtifactName("createBPMN.bpmn");
+        operation.setImplementation(implementation);
+        interfaceDefinition.getOperations().put(operation.getName(), operation);
+        service.getInterfaces().put("normalizedServiceComponentName-interface", interfaceDefinition);
+        service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
+                "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
+        Optional<Map<String, Object>> proxyNodeTypeInterfaces =
+                testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
+        Assert.assertTrue(proxyNodeTypeInterfaces.isPresent());
+        Map<String, Object> componentInterfaces = proxyNodeTypeInterfaces.get();
+        Assert.assertNotNull(componentInterfaces);
+    }
+
+    private Component getTestComponent() {
+        Component component = new Service();
+        component.setNormalizedName("normalizedServiceComponentName");
+        InterfaceDefinition addedInterface = new InterfaceDefinition();
+        addedInterface.setType("com.some.service.or.other.serviceName");
+        final String interfaceType = "normalizedServiceComponentName-interface";
+        component.setInterfaces(new HashMap<>());
+        component.getInterfaces().put(interfaceType, addedInterface);
+        return component;
+    }
+
+    private PropertyDefinition createMockProperty(String propertyName, String defaultValue){
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setName(propertyName);
+        propertyDefinition.setType("string");
+        propertyDefinition.setDefaultValue(defaultValue);
+        return propertyDefinition;
+    }
+
+    private InputDefinition createMockInput(String inputName, String defaultValue){
+        InputDefinition inputDefinition = new InputDefinition();
+        inputDefinition.setName(inputName);
+        inputDefinition.setType("string");
+        inputDefinition.setDefaultValue(defaultValue);
+        return inputDefinition;
+    }
+
 }
