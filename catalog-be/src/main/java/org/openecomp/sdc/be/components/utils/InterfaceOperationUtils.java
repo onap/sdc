@@ -28,7 +28,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
-import org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil;
+import org.openecomp.sdc.be.tosca.InterfacesOperationsConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,7 +116,7 @@ public class InterfaceOperationUtils {
     public static Map<String, List<String>> createMappedInputPropertyDefaultValue(String propertyName) {
         Map<String, List<String>> getPropertyMap = new HashMap<>();
         List<String> values = new ArrayList<>();
-        values.add(InterfacesOperationsToscaUtil.SELF);
+        values.add(InterfacesOperationsConverter.SELF);
         if (Objects.nonNull(propertyName) && !propertyName.isEmpty()) {
             values.addAll(Arrays.asList(propertyName.split("\\.")));
         }
@@ -128,7 +128,7 @@ public class InterfaceOperationUtils {
                                                                                        String propertyName) {
         Map<String, List<String>> getPropertyMap = new HashMap<>();
         List<String> values = new ArrayList<>();
-        values.add(InterfacesOperationsToscaUtil.SELF);
+        values.add(InterfacesOperationsConverter.SELF);
         values.add(capabilityName);
 
         if (Objects.nonNull(propertyName) && !propertyName.isEmpty()) {

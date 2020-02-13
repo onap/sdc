@@ -58,11 +58,12 @@ public class PolicyExportParserImpl implements PolicyExportParser {
    
 	private ApplicationDataTypeCache dataTypeCache;
 	private Map<String, DataTypeDefinition> dataTypes;
-	private PropertyConvertor propertyConvertor = PropertyConvertor.getInstance();
+	private PropertyConvertor propertyConvertor;
 	
 	@Autowired
-	public PolicyExportParserImpl(ApplicationDataTypeCache dataTypeCache) {
+	public PolicyExportParserImpl(ApplicationDataTypeCache dataTypeCache, PropertyConvertor propertyConvertor) {
 		this.dataTypeCache = dataTypeCache;
+		this.propertyConvertor = propertyConvertor;
 		this.dataTypes = getDataTypes();
 	}
 	

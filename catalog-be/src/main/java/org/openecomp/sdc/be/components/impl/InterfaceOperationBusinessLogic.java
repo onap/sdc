@@ -75,7 +75,7 @@ import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getO
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToComponentInput;
 import static org.openecomp.sdc.be.components.utils.PropertiesUtils.getPropertyCapabilityFromAllCapProps;
 import static org.openecomp.sdc.be.components.utils.PropertiesUtils.isCapabilityProperty;
-import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
+import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
 
 @Component("interfaceOperationBusinessLogic")
 public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {

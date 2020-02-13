@@ -29,9 +29,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
+@EqualsAndHashCode(callSuper = false)
+@Data
 public class PropertyDataDefinition extends ToscaDataDefinition {
 
     private String uniqueId;
@@ -125,119 +129,23 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setIsDeclaredListInput(propertyDataDefinition.getIsDeclaredListInput());
     }
 
-    public String getParentPropertyType() {
-        return parentPropertyType;
-    }
-
-    public void setParentPropertyType(String parentPropertyType) {
-        this.parentPropertyType = parentPropertyType;
-    }
-
-    public String getSubPropertyInputPath() {
-        return subPropertyInputPath;
-    }
-
-    public void setSubPropertyInputPath(String subPropertyInputPath) {
-        this.subPropertyInputPath = subPropertyInputPath;
-    }
-
-    public String getInputPath() {
-        return inputPath;
-    }
-
-    public void setInputPath(String inputPath) {
-        this.inputPath = inputPath;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     // @Override
     public boolean isDefinition() {
         return true;
     }
 
-    public void setDefinition(boolean definition) {
-        this.definition = definition;
-    }
-
-	public boolean getDefinition() {
-		return definition;
-	}
-
-    public String getType() {
-        return type;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public boolean getDefinition() {
+        return definition;
     }
 
     public Boolean isRequired() {
         return required;
     }
 
-    public void setRequired(Boolean required) {
-        this.required = required;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isPassword() {
-        return password;
-    }
-
-    public void setPassword(boolean password) {
-        this.password = password;
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public SchemaDefinition getSchema() {
-        return schema;
-    }
-
     public void setSchemaType(String schemaType) {
         if (schema != null && schema.getProperty() != null) {
             schema.getProperty().setType(schemaType);
         }
-    }
-
-    public void setSchema(SchemaDefinition entrySchema) {
-        this.schema = entrySchema;
     }
 
     public String getSchemaType() {
@@ -255,28 +163,12 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return null;
     }
 
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     public Boolean isHidden() {
         return hidden;
     }
 
-    public void setHidden(Boolean hidden) {
-        this.hidden = hidden;
-    }
-
     public Boolean isImmutable() {
         return immutable;
-    }
-
-    public void setImmutable(Boolean immutable) {
-        this.immutable = immutable;
     }
 
     public String getParentUniqueId() {
@@ -287,93 +179,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         setOwnerId(parentUniqueId);
     }
 
-    public List<GetInputValueDataDefinition> getGetInputValues() {
-        return getInputValues;
-    }
-
-    public void setGetInputValues(List<GetInputValueDataDefinition> getInputValues) {
-        this.getInputValues = getInputValues;
-    }
-
     public List<GetPolicyValueDataDefinition> safeGetGetPolicyValues() {
         return CollectionUtils.isEmpty(getPolicyValues) ? new ArrayList<>() : getPolicyValues;
-    }
-
-    public List<GetPolicyValueDataDefinition> getGetPolicyValues() {
-        return getPolicyValues;
-    }
-
-    public void setGetPolicyValues(List<GetPolicyValueDataDefinition> getPolicyValues) {
-        this.getPolicyValues = getPolicyValues;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getInputId() {
-        return inputId;
-    }
-
-    public void setInputId(String inputId) {
-        this.inputId = inputId;
-    }
-
-    public String getInstanceUniqueId() {
-        return instanceUniqueId;
-    }
-
-    public void setInstanceUniqueId(String instanceUniqueId) {
-        this.instanceUniqueId = instanceUniqueId;
-    }
-
-    public String getPropertyId() {
-        return propertyId;
-    }
-
-    public void setPropertyId(String propertyId) {
-        this.propertyId = propertyId;
-    }
-
-    public Boolean getIsDeclaredListInput() {
-        return isDeclaredListInput;
-    }
-
-    public void setIsDeclaredListInput(Boolean isDeclaredListInput) {
-        this.isDeclaredListInput = isDeclaredListInput;
-    }
-
-    @Override
-    public String toString() {
-        return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", definition=" + definition + ", defaultValue=" + defaultValue + ", description=" + description + ", schema=" + schema + ", password="
-                + password + ", name=" + name + ", value=" + value + ", label=" + label + ", hidden=" + hidden + ", immutable=" + immutable + ", inputPath=" + inputPath + ", status=" + status + ", inputId=" + inputId + ", instanceUniqueId="
-                + instanceUniqueId + ", propertyId=" + propertyId + ", parentUniqueId=" + parentUniqueId + ", getInputValues=" + getInputValues + ", isDeclaredListInput=" + isDeclaredListInput
-                + ", parentPropertyType=" + parentPropertyType
-                + ", subPropertyInputPath=" + subPropertyInputPath + "]";
-    }
-
-    @Override
-    public int hashCode() {
-        final int hashingValueDefinition = 1231;
-        final int hashingValueNoDefinition = 1237;
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        result = prime * result + (definition ? hashingValueDefinition : hashingValueNoDefinition);
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + (password ? hashingValueDefinition : hashingValueNoDefinition);
-        result = prime * result + ((required == null) ? 0 : required.hashCode());
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
-        result = prime * result + ((parentUniqueId == null) ? 0 : parentUniqueId.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((isDeclaredListInput == null) ? 0 : isDeclaredListInput.hashCode());
-        return result;
     }
 
     public boolean typeEquals(Object obj) {
@@ -399,90 +206,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
             return otherSchemaType == null;
         }
         return thisSchemaType.equals(otherSchemaType);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        PropertyDataDefinition other = (PropertyDataDefinition) obj;
-        if (defaultValue == null) {
-            if (other.defaultValue != null) {
-                return false;
-            }
-        } else if (!defaultValue.equals(other.defaultValue)) {
-            return false;
-        }
-        if (definition != other.definition) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (password != other.password) {
-            return false;
-        }
-        if (required == null) {
-            if (other.required != null) {
-                return false;
-            }
-        } else if (!required.equals(other.required)) {
-            return false;
-        }
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        if (parentUniqueId == null) {
-            if (other.parentUniqueId != null) {
-                return false;
-            }
-        } else if (!parentUniqueId.equals(other.parentUniqueId)) {
-            return false;
-        }
-        if (uniqueId == null) {
-            if (other.uniqueId != null) {
-                return false;
-            }
-        } else if (!uniqueId.equals(other.uniqueId)) {
-            return false;
-        }
-        if (status == null) {
-            if (other.status != null) {
-                return false;
-            }
-        } else if (!status.equals(other.status)) {
-            return false;
-        }
-        if (isDeclaredListInput == null) {
-            if (other.isDeclaredListInput != null) {
-                return false;
-            }
-        } else if (!isDeclaredListInput.equals(other.isDeclaredListInput)) {
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -571,9 +294,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         Set<Annotation> annotationSet = isNotEmpty(newAnnotations) ? new HashSet<>(newAnnotations) : new HashSet<>();
         //We would to prioritize the new valid annotations over the old ones if the same one existed.
         if (this.annotations != null) {
-            for (Annotation oldInputAnnotation : this.annotations) {
-                annotationSet.add(oldInputAnnotation);
-            }
+            annotationSet.addAll(this.annotations);
         }
 
         this.annotations = new ArrayList<>(annotationSet);
@@ -583,12 +304,4 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     public List<Annotation> getAnnotations() {
         return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
     }
-
-	public List<String> getPropertyConstraints() {
-		return propertyConstraints;
-	}
-
-	public void setPropertyConstraints(List<String> constraints) {
-		this.propertyConstraints = constraints;
-	}
 }

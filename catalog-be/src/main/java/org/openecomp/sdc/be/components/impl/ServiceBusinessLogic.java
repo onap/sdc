@@ -167,7 +167,7 @@ import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.isAssignedV
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
 import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
-import static org.openecomp.sdc.be.tosca.utils.InterfacesOperationsToscaUtil.SELF;
+import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
 import static org.openecomp.sdc.be.types.ServiceConsumptionSource.SERVICE_INPUT;
 import static org.openecomp.sdc.be.types.ServiceConsumptionSource.STATIC;
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package org.openecomp.sdc.be.components.impl.utils;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

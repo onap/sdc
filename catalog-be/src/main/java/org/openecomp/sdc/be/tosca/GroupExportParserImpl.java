@@ -69,11 +69,12 @@ public class GroupExportParserImpl implements GroupExportParser {
 
     private Map<String, DataTypeDefinition> dataTypes;
     private ApplicationDataTypeCache dataTypeCache;
-    private PropertyConvertor propertyConvertor = PropertyConvertor.getInstance();
+    private final PropertyConvertor propertyConvertor;
     
     @Autowired
-	public GroupExportParserImpl(ApplicationDataTypeCache dataTypeCache) {
+	public GroupExportParserImpl(ApplicationDataTypeCache dataTypeCache, PropertyConvertor propertyConvertor) {
 		this.dataTypeCache = dataTypeCache;
+		this.propertyConvertor = propertyConvertor;
 		this.dataTypes = getDataTypes();
 	}
     

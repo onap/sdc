@@ -19,6 +19,8 @@ package org.openecomp.sdc.be.tosca;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -35,12 +37,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 public class CapabilityRequirementConverterTest {
+
+	@InjectMocks
+	CapabilityRequirementConverter testSubject;
+
+	@Mock
+	ToscaOperationFacade toscaOperationFacade;
+	@Mock
+	private PropertyConvertor propertyConvertorMock;
 
     CapabilityRequirementConverter capabiltyRequirementConvertor =  Mockito.spy(new CapabilityRequirementConverter());
     ComponentInstance instanceProxy  =  Mockito.spy( new ComponentInstance() );

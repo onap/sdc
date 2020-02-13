@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2018 European Support Limited
+ * Copyright © 2016-2020 European Support Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openecomp.sdc.be.tosca.utils;
+package org.openecomp.sdc.be.tosca;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,20 +28,23 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
-import org.openecomp.sdc.be.tosca.PropertyConvertor;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
+import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Service
+public class InterfacesOperationsConverter {
 
-public class InterfacesOperationsToscaUtil {
 
     private static final String DERIVED_FROM_STANDARD_INTERFACE = "tosca.interfaces.node.lifecycle.Standard";
     private static final String DERIVED_FROM_BASE_DEFAULT = "org.openecomp.interfaces.node.lifecycle.";
@@ -55,7 +58,11 @@ public class InterfacesOperationsToscaUtil {
     public static final String SELF = "SELF";
     private static final String LOCAL_INTERFACE_TYPE = "Local";
 
-    private InterfacesOperationsToscaUtil() {
+    private PropertyConvertor propertyConvertor;
+
+    @Autowired
+    public InterfacesOperationsConverter(PropertyConvertor propertyConvertor) {
+        this.propertyConvertor = propertyConvertor;
     }
 
     /**
@@ -104,7 +111,7 @@ public class InterfacesOperationsToscaUtil {
      * @param component to work on
      * @param nodeType  to which the interfaces element will be added
      */
-    public static void addInterfaceDefinitionElement(Component component, ToscaNodeType nodeType,
+    public void addInterfaceDefinitionElement(Component component, ToscaNodeType nodeType,
                                                      Map<String, DataTypeDefinition> dataTypes,
                                                      boolean isAssociatedComponent) {
         if (component instanceof Product) {
@@ -121,13 +128,13 @@ public class InterfacesOperationsToscaUtil {
         }
     }
 
-    private static Map<String, Object> getInterfacesMap(Component component,
+    private Map<String, Object> getInterfacesMap(Component component,
                                                         Map<String, DataTypeDefinition> dataTypes,
                                                         boolean isAssociatedComponent) {
         return getInterfacesMap(component, null, component.getInterfaces(), dataTypes, isAssociatedComponent, false);
     }
 
-    public static Map<String, Object> getInterfacesMap(Component component,
+    public Map<String, Object> getInterfacesMap(Component component,
                                                        ComponentInstance componentInstance,
                                                        Map<String, InterfaceDefinition> interfaces,
                                                        Map<String, DataTypeDefinition> dataTypes,
@@ -242,7 +249,7 @@ public class InterfacesOperationsToscaUtil {
         return false;
     }
 
-    private static void fillToscaOperationInputs(OperationDataDefinition operation,
+    private void fillToscaOperationInputs(OperationDataDefinition operation,
                                                  Map<String, DataTypeDefinition> dataTypes,
                                                  ToscaLifecycleOperationDefinition toscaOperation,
                                                  boolean isServiceProxyInterface) {
@@ -260,11 +267,11 @@ public class InterfacesOperationsToscaUtil {
             if (isServiceProxyInterface) {
                 String inputValue = Objects.nonNull(input.getValue()) ? getInputValue(input.getValue()) :
                         getInputValue(input.getToscaDefaultValue());
-                toscaInput.setDefaultp(new PropertyConvertor().convertToToscaObject(input.getType(),
-                        inputValue, input.getSchemaType(), dataTypes, false));
+                toscaInput.setDefaultp(propertyConvertor.convertToToscaObject(input, inputValue, dataTypes, false));
             } else {
-                toscaInput.setDefaultp(new PropertyConvertor().convertToToscaObject(input.getType(),
-                        getInputValue(input.getToscaDefaultValue()), input.getSchemaType(), dataTypes, false));
+                toscaInput.setDefaultp(propertyConvertor
+                                               .convertToToscaObject(input, getInputValue(input.getToscaDefaultValue()),
+                                                       dataTypes, false));
             }
             toscaInputs.put(input.getName(), toscaInput);
         }

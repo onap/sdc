@@ -68,9 +68,10 @@ public class GroupExportParserImplTest {
 
 	@Mock
 	private ApplicationDataTypeCache dataTypeCache;
-
 	@Mock
 	private Component component;
+	@Mock
+	private PropertyConvertor propertyConvertor;
 
 	@Before
 	public void setUp() throws Exception {
@@ -79,13 +80,14 @@ public class GroupExportParserImplTest {
 
 	private void initGroupExportParser() {
 		when(dataTypeCache.getAll()).thenReturn(Either.left(null));
-		groupExportParser = new GroupExportParserImpl(dataTypeCache);
+		groupExportParser = new GroupExportParserImpl(dataTypeCache, propertyConvertor);
 	}
 
 	@Test
 	public void failToGetAllDataTypes() {
 		when(dataTypeCache.getAll()).thenReturn(Either.right(null));
-		assertThatExceptionOfType(SdcResourceNotFoundException.class).isThrownBy(() -> groupExportParser = new GroupExportParserImpl(dataTypeCache));
+		assertThatExceptionOfType(SdcResourceNotFoundException.class).isThrownBy(() -> groupExportParser = new GroupExportParserImpl(dataTypeCache,
+                propertyConvertor));
 	}
 
 	@Test
