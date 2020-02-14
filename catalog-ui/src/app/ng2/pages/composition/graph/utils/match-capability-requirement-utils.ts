@@ -113,13 +113,12 @@ export class MatchCapabilitiesRequirementsUtils {
     public getUnfulfilledRequirements = (fromNodeId: string, requirements: RequirementsGroup, links: CompositionCiLinkBase[]): Requirement[] => {
         const requirementArray: Requirement[] = [];
         _.forEach(_.flatten(_.values(requirements)), (requirement: Requirement) => {
-            const reqFulfilled = this.isRequirementFulfilled(fromNodeId, requirement, links);
-            if (requirement.name !== 'dependency' && requirement.parentName !== 'dependency' && !reqFulfilled) {
+            if (!this.isRequirementFulfilled(fromNodeId, requirement, links)) {
                 requirementArray.push(requirement);
             }
         });
         return requirementArray;
-    }
+    };
 
     /**
      * Returns true if there is a match between the capabilities and requirements that are passed in
