@@ -8,7 +8,7 @@ import {CommonGraphUtils} from "./common/common-graph-utils";
 import {LinksFactory} from "app/models/graph/graph-links/links-factory";
 import {NodesFactory} from "app/models/graph/nodes/nodes-factory";
 import {ImageCreatorService} from "./common/image-creator.service";
-import {MatchCapabilitiesRequirementsUtils} from "./utils/match-capability-requierment-utils";
+import {MatchCapabilitiesRequirementsUtils} from "./utils/match-capability-requirement-utils";
 import {CompositionGraphNodesUtils} from "./utils/composition-graph-nodes-utils";
 import {ConnectionWizardService} from "app/ng2/pages/composition/graph/connection-wizard/connection-wizard.service";
 import {CompositionGraphPaletteUtils} from "./utils/composition-graph-palette-utils";

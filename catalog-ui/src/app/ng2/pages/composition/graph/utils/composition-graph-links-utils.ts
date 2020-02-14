@@ -40,7 +40,7 @@ import {
 } from "app/models";
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {CompositionGraphGeneralUtils} from "./composition-graph-general-utils";
-import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requierment-utils";
+import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement-utils";
 import {CompositionCiServicePathLink} from "app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link";
 import {Injectable} from "@angular/core";
 import {QueueServiceUtils} from "app/ng2/utils/queue-service-utils";

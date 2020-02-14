@@ -21,7 +21,7 @@
 import * as _ from "lodash";
 import {ComponentInstance, Match, CompositionCiLinkBase, CompositionCiNodeUcpeCp} from "app/models";
 import {Dictionary, GraphUIObjects} from "app/utils";
-import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requierment-utils";
+import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement-utils";
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {Injectable} from "@angular/core";
 import {QueueServiceUtils} from "app/ng2/utils/queue-service-utils";

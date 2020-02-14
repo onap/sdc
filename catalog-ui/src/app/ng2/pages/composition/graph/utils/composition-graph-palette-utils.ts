@@ -34,7 +34,7 @@ import {CompositionService} from "../../composition.service";
 import {WorkspaceService} from "app/ng2/pages/workspace/workspace.service";
 import { QueueServiceUtils } from "app/ng2/utils/queue-service-utils";
 import {ComponentGenericResponse} from "../../../../services/responses/component-generic-response";
-import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requierment-utils";
+import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requirement-utils";
 import {CompositionGraphNodesUtils} from "./index";
 
 @Injectable()

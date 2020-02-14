@@ -1,12 +1,17 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { Mock } from 'ts-mockery';
 import {
     CapabilitiesGroup,
-    Capability, ComponentInstance, CompositionCiLinkBase, CompositionCiNodeBase, CompositionCiNodeCp,
-    CompositionCiNodeVf, CompositionCiNodeVl,
-    Requirement, RequirementsGroup
+    Capability,
+    ComponentInstance,
+    CompositionCiLinkBase,
+    CompositionCiNodeCp,
+    CompositionCiNodeVf,
+    CompositionCiNodeVl,
+    Requirement,
+    RequirementsGroup
 } from '../../../../../models';
-import { MatchCapabilitiesRequirementsUtils } from './match-capability-requierment-utils';
+import { MatchCapabilitiesRequirementsUtils } from './match-capability-requirement-utils';
 
 describe('match capability requirements utils service ', () => {
 
@@ -38,43 +43,21 @@ describe('match capability requirements utils service ', () => {
         ownerName : 's'
     });
 
-    const vlAttachmentReq = Mock.of<Requirement>({
-        capability: 'tosca.capabilities.Attachment',
-        name: 'local_storage',
-        relationship: 'tosca.relationships.AttachesTo',
-        uniqueId: 'eef99154-8039-4227-ba68-62a32e6b0d98.local_storage',
-        node: 'tosca.nodes.BlockStorage',
-        ownerId : '',
-        ownerName : 's'
-    });
-
-    const extVirtualLinkReq = Mock.of<Requirement>({
-        capability: 'tosca.capabilities.network.Linkable',
-        name: 'external_virtualLink',
-        relationship: 'tosca.relationships.network.LinksTo',
-        uniqueId: 'eef99154-8039-4227-ba68-62a32e6b0d98.external_virtualLink'
-    });
-
     const dependencyReq = Mock.of<Requirement>({
         capability: 'tosca.capabilities.Node',
         name: 'dependency',
+        node: 'tosca.nodes.Root',
         relationship: 'tosca.relationships.DependsOn',
-        uniqueId: 'eef99154-8039-4227-ba68-62a32e6b0d98.dependency'
+        uniqueId: 'eef99154-8039-4227-ba68-62a32e6b0d98.dependency',
+        minOccurrences: 0,
+        maxOccurrences: 'UNBOUNDED'
     });
 
     const featureCap = Mock.of<Capability>({
         type: 'tosca.capabilities.Node',
         name: 'feature',
+        capabilitySources: ['tosca.nodes.Root'],
         uniqueId: 'capability.ddf1301e-866b-4fa3-bc4f-edbd81e532cd.feature',
-        maxOccurrences: 'UNBOUNDED',
-        minOccurrences: '1'
-    });
-
-    const internalConnPointCap = Mock.of<Capability>({
-        type: 'tosca.capabilities.Node',
-        name: 'internal_connectionPoint',
-        capabilitySources : ['org.openecomp.resource.cp.extCP'],
-        uniqueId: 'capability.ddf1301e-866b-4fa3-bc4f-edbd81e532cd.internal_connectionPoint',
         maxOccurrences: 'UNBOUNDED',
         minOccurrences: '1'
     });
@@ -111,12 +94,10 @@ describe('match capability requirements utils service ', () => {
             componentName: 'Compute',
             uniqueId : 'compute0',
             requirements: Mock.of<RequirementsGroup>({
-                'tosca.capabilities.Node' : [ dependencyReq ],
                 'tosca.capabilities.Attachment' : [ storeAttachmentReq ]
             }),
             capabilities: Mock.of<CapabilitiesGroup>({
                 'tosca.capabilities.network.Bindable' : [ bindingCap ],
-                'tosca.capabilities.Node' : [ featureCap ]
             })
         })
     });
@@ -126,12 +107,8 @@ describe('match capability requirements utils service ', () => {
         componentInstance: Mock.of<ComponentInstance>({
             componentName: 'BlockStorage',
             uniqueId : 'blockstorage0',
-            requirements: Mock.of<RequirementsGroup>({
-                'tosca.capabilities.Node' : [ dependencyReq ]
-            }),
             capabilities: Mock.of<CapabilitiesGroup>({
                 'tosca.capabilities.Attachment' : [ blockStoreAttachmentCap ],
-                'tosca.capabilities.Node' : [ featureCap ]
             })
         })
     });
@@ -141,12 +118,8 @@ describe('match capability requirements utils service ', () => {
         componentInstance: Mock.of<ComponentInstance>({
             componentName: 'BlockStorage',
             uniqueId : 'extvl0',
-            requirements: Mock.of<RequirementsGroup>({
-                'tosca.capabilities.Node' : [ dependencyReq ]
-            }),
             capabilities: Mock.of<CapabilitiesGroup>({
                 'tosca.capabilities.network.Linkable' : [ linkableCap ],
-                'tosca.capabilities.Node' : [ featureCap ]
             })
         })
     });
@@ -160,9 +133,6 @@ describe('match capability requirements utils service ', () => {
                 'tosca.capabilities.network.Linkable' : [ virtualLinkReq ],
                 'tosca.capabilities.network.Bindable' : [ bindableReq ]
             }),
-            capabilities: Mock.of<CapabilitiesGroup>({
-                'tosca.capabilities.Node' : [ featureCap ]
-            })
         })
     });
 
@@ -273,6 +243,39 @@ describe('match capability requirements utils service ', () => {
             const capabilities = {aaa: Mock.of<Capability>(), bbb: Mock.of<Capability>()};
             jest.spyOn(service, 'isMatch').mockReturnValue(true);
             expect(service.getMatches({}, capabilities, [], fromId, toId, true)).toHaveLength(4);
+        });
+
+        it('node have 3 unfulfilled requirements: DependsOn tosca.nodes.Root, BindsTo and LinksTo;' +
+            ' and DependsOn and BindsTo matching capabilities, ' +
+            'should return 2 matches', () => {
+            const dependencyList = [dependencyReq, bindableReq, virtualLinkReq];
+            jest.spyOn(service, 'getUnfulfilledRequirements').mockReturnValue(dependencyList);
+            const capabilities = {
+                cap1Match: featureCap, cap2NotMatch: Mock.of<Capability>(), cap3Match: bindingCap
+            };
+            const expectedMatchDependsOn = {
+                requirement: dependencyReq,
+                capability: featureCap,
+                isFromTo: true,
+                fromNode: fromId,
+                toNode: toId
+            };
+            const expectedMatchBindsTo = {
+                requirement: bindableReq,
+                capability: bindingCap,
+                isFromTo: true,
+                fromNode: fromId,
+                toNode: toId
+            };
+            const matches = service.getMatches({}, capabilities, [], fromId, toId, true);
+            expect(matches).toHaveLength(2);
+            expect(matches).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining(expectedMatchDependsOn),
+                    expect.objectContaining(expectedMatchBindsTo)
+                ])
+            );
+
         });
     });
 
