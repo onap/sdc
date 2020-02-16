@@ -132,7 +132,9 @@ Modifications copyright (c) 2018-2019 Nokia
     <sdc-tosca-parser.version>1.6.5</sdc-tosca-parser.version>
 
     <!-- sonar -->
-    <sonar.language>java</sonar.language>
+	<sonar.coverage.jacoco.xmlReportPaths>
+		${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml
+	</sonar.coverage.jacoco.xmlReportPaths>
     <sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
     <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
     <sonar.branch>${project.version}</sonar.branch>
