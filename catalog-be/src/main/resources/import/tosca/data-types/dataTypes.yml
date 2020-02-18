@@ -2365,7 +2365,7 @@ onap.datatypes.monitoring.measurementGroups:
       entry_schema:
         type: onap.datatypes.monitoring.measurementGroup
 
-onap.datatypes.monitoring.MeasurementGroup:
+onap.datatypes.monitoring.measurementGroup:
   derived_from: tosca.datatypes.Root
   properties:
     measurementTypes:
