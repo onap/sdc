@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -51,6 +52,7 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
@@ -308,7 +310,7 @@ public class CapabilityRequirementConverter {
         for (Map.Entry<String, List<RequirementDefinition>> entry : requirements.entrySet()) {
             Optional<RequirementDefinition> failedToAddRequirement = entry.getValue()
                     .stream()
-                    .filter(r->!addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getName(), r.getParentName(), ""), r.getPreviousName(), r.getOwnerId(), r.getPath()))
+                    .filter(r->!addRequirementEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getName(), r.getParentName(), ""), r.getPreviousName(), r.getOwnerId(), r.getPath()))
                     .findAny();
             if(failedToAddRequirement.isPresent()){
                 logger.debug("Failed to convert requirement {} for substitution mappings section of a tosca template of the component {}. ",
@@ -330,7 +332,7 @@ public class CapabilityRequirementConverter {
         for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
             Optional<CapabilityDefinition> failedToAddRequirement = entry.getValue()
                     .stream()
-                    .filter(c->!addEntry(componentsCache, toscaCapabilities, component, new SubstitutionEntry(c.getName(), c.getParentName(), ""), c.getPreviousName(), c.getOwnerId(), c.getPath()))
+                    .filter(c->!addCapabilityEntry(componentsCache, toscaCapabilities, component, new SubstitutionEntry(c.getName(), c.getParentName(), ""), c.getPreviousName(), c.getOwnerId(), c.getPath()))
                     .findAny();
             if(failedToAddRequirement.isPresent()){
                 logger.debug("Failed to convert capability {} for substitution mappings section of a tosca template of the component {}. ",
@@ -345,18 +347,71 @@ public class CapabilityRequirementConverter {
         return result;
     }
 
-    private boolean addEntry(Map<String, Component> componentsCache, Map<String, String[]> capReqMap, Component component, SubstitutionEntry entry, String previousName, String ownerId, List<String> path){
-    
-        if(shouldBuildSubstitutionName(component, path) && !buildSubstitutedNamePerInstance(componentsCache, component, entry.getFullName(), previousName, path, ownerId, entry)){
+    /**
+     * Converts component capabilities to the tosca template substitution mappings
+     */
+    private boolean addCapabilityEntry(final Map<String, Component> componentsCache,
+                                       final Map<String, String[]> capReqMap,
+                                       final Component component,
+                                       final SubstitutionEntry entry,
+                                       final String previousName,
+                                       final String ownerId,
+                                       final List<String> path) {
+
+        if (shouldBuildSubstitutionName(component, path) && !buildSubstitutedNamePerInstance(componentsCache, component,
+            entry.getFullName(), previousName, path, ownerId, entry)) {
             return false;
         }
-        logger.debug("The requirement/capability {} belongs to the component {} ", entry.getFullName(), component.getUniqueId());
+        logger.debug("The capability {} belongs to the component {} ", entry.getFullName(), component.getUniqueId());
         if (StringUtils.isNotEmpty(entry.getSourceName())) {
             addEntry(capReqMap, component, path, entry);
         }
-        logger.debug("Finish convert the requirement/capability {} for the component {}. ", entry.getFullName(), component.getName());
+        logger.debug("Finish convert the capability {} for the component {}. ", entry.getFullName(),
+            component.getName());
+        return true;
+    }
+
+    /**
+     * Converts component requirement to the tosca template substitution mappings
+     */
+    private boolean addRequirementEntry(final Map<String, Component> componentsCache,
+                                        final Map<String, String[]> capReqMap,
+                                        final Component component,
+                                        final SubstitutionEntry entry,
+                                        final String previousName,
+                                        final String ownerId,
+                                        final List<String> path){
+
+        if (shouldBuildSubstitutionName(component, path) && !buildSubstitutedNamePerInstance(componentsCache, component,
+            entry.getFullName(), previousName, path, ownerId, entry)) {
+            return false;
+        }
+        logger.debug("The requirement {} belongs to the component {} ", entry.getFullName(), component.getUniqueId());
+        if (StringUtils.isNotEmpty(entry.getSourceName()) && requirementIsAssignedInNodeTemplate(component, entry, path)) {
+            addEntry(capReqMap, component, path, entry);
+        }
+        logger.debug("Finish convert the requirement {} for the component {}. ", entry.getFullName(),
+            component.getName());
         return true;
 
+    }
+
+    /**
+     * Verifies if a requirement is assigned in the node template​
+     */
+    private boolean requirementIsAssignedInNodeTemplate(final Component component,
+                                                        final SubstitutionEntry entry,
+                                                        final List<String> path) {
+        for (final RequirementCapabilityRelDef requirement : component.getComponentInstancesRelations()) {
+            if (Iterables.getLast(path).equals(requirement.getFromNode())) {
+                for (final CapabilityRequirementRelationship relationship : requirement.getRelationships()) {
+                    if (entry.getSourceName().equals(relationship.getRelation().getRequirement())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private boolean shouldBuildSubstitutionName(Component component, List<String> path) {
