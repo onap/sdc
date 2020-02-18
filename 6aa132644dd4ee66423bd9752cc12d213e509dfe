@@ -22,6 +22,30 @@
       "revId": "6aa132644dd4ee66423bd9752cc12d213e509dfe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bc507b4_44af3ffd",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2366,
+      "author": {
+        "id": 5038
+      },
+      "writtenOn": "2020-02-18T13:07:35Z",
+      "side": 1,
+      "message": "Yes, I will push a fix for this. Thanks.\n\nIt\u0027s odd because I have built an image using these models and they are showing up fine in CLAMP.",
+      "parentUuid": "21692afd_7edaab4b",
+      "range": {
+        "startLine": 2366,
+        "startChar": 14,
+        "endLine": 2366,
+        "endChar": 56
+      },
+      "revId": "6aa132644dd4ee66423bd9752cc12d213e509dfe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
