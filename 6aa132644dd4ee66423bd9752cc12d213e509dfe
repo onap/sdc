@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21692afd_7edaab4b",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2366,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-02-18T12:59:54Z",
+      "side": 1,
+      "message": "The type should be onap.datatypes.monitoring.MeasurementGroup (M uppercase), shouldn\u0027t it?",
+      "range": {
+        "startLine": 2366,
+        "startChar": 14,
+        "endLine": 2366,
+        "endChar": 56
+      },
+      "revId": "6aa132644dd4ee66423bd9752cc12d213e509dfe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
