@@ -1,6 +1,4 @@
 .deployment-artifact-page {
-
-
   .env-artifact-container {
     margin-left: -25px;
     margin-top: -21px;
@@ -15,7 +13,6 @@
       border-bottom: 1px #848586 solid;
       width: 10px;
       float: left;
-
     }
   }
   .add-artifact-btn {
@@ -25,11 +22,24 @@
     margin-bottom: 10px;
   }
   .download-artifact-button {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    justify-content: start;
+    grid-template-columns: 20px 20px 20px 20px;
 
     .action-icon {
       margin-right: 10px;
+    }
+    .action-icon-1 {
+      grid-column-start: 1;
+    }
+    .action-icon-2 {
+      grid-column-start: 2;
+    }
+    .action-icon-3 {
+      grid-column-start: 3;
+    }
+    .action-icon-4 {
+      grid-column-start: 4;
     }
   }
 
@@ -43,7 +53,6 @@
 }
 
 :host ::ng-deep {
-
   .ngx-datatable {
     //border: 1px solid red;
     .datatable-body-cell {
