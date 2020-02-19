@@ -1750,7 +1750,7 @@ public class Configuration extends BasicConfiguration {
     public static class PathsAndNamesDefinition {
         private String friendlyName;
         private String path;
-        private String searchable;
+        private Boolean searchable;
 
         public String getFriendlyName() {
             return friendlyName;
@@ -1760,7 +1760,7 @@ public class Configuration extends BasicConfiguration {
             return path;
         }
 
-        public String getSearchable() {
+        public Boolean getSearchable() {
             return searchable;
         }
 
@@ -1772,7 +1772,7 @@ public class Configuration extends BasicConfiguration {
             this.path = path;
         }
 
-        public void setSearchable(String searchable) {
+        public void setSearchable(Boolean searchable) {
             this.searchable = searchable;
         }
     }
