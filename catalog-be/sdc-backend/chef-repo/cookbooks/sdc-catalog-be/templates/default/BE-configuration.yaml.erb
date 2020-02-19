@@ -755,15 +755,53 @@ gabConfig:
       -
         friendlyName: "Action"
         path: "event.action[2]"
-        searchable: "true"
+        searchable: true
       -
         friendlyName: "Comment"
         path: "event.comment"
-        searchable: "true"
+        searchable: true
       -
         friendlyName: "Alarm Additional Information"
         path: "event.structure.faultFields.structure.alarmAdditionalInformation.comment"
-        searchable: "true"
+        searchable: true
+  - artifactType: 'PM_DICTIONARY'
+    pathsAndNamesDefinitions:
+      -
+        friendlyName: "measType"
+        path: "pmMetaData.pmFields.measType"
+        searchable: true
+      -
+        friendlyName: "measDescription"
+        path: "pmMetaData.pmFields.measDescription"
+        searchable: true
+      -
+        friendlyName: "measCondition"
+        path: "pmMetaData.pmFields.measCondition"
+        searchable: false
+      -
+        friendlyName: "measResultUnits"
+        path: "pmMetaData.pmFields.measResultUnits"
+        searchable: false
+      -
+        friendlyName: "measResultRange"
+        path: "pmMetaData.pmFields.measResultRange"
+        searchable: false
+      -
+        friendlyName: "measObjClass"
+        path: "pmMetaData.pmFields.measObjClass"
+        searchable: true
+      -
+        friendlyName: "measCollectionMethod"
+        path: "pmMetaData.pmFields.measCollectionMethod"
+        searchable: false
+      -
+        friendlyName: "measInfoId"
+        path: "pmMetaData.pmFields.measInfoId"
+        searchable: true
+      -
+        friendlyName: "iMeasInfoId"
+        path: "pmMetaData.pmFields.iMeasInfoId"
+        searchable: false
 
 dmaapConsumerConfiguration:
     active: <%= @dmaap_active %>

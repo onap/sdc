@@ -50,6 +50,12 @@ class GABYamlParserTest {
     private static final String TEST = "test";
     private static final String NONEXISTENT_FILE = "nonexistent.file";
     private static final String FAULT_REGISTRATION_YML = "yaml/faultRegistration.yml";
+    private static final String PM_DICT_YML_IN_JSON = "yaml/pmDictionaryInJson.yml";
+    private static final String PM_DICT_YML = "yaml/pmDictionary.yml";
+    private static final String MEAS_TYPE = "pmMetaData.pmFields.measType";
+    private static final String MEAS_TYPE_VALUE = "VS.NINFC.IntraFrPscelChAttempt";
+    private static final String MEAS_DESCRIPTION = "pmMetaData.pmFields.measDescription";
+    private static final String MEAS_DESCRIPTION_VALUE = "This counter indicates the number of intra gNB intra frequency PSCell change attempts.";
     private static final String INVALID_YML = "yaml/invalid.yml";
 
     @Test
@@ -104,6 +110,34 @@ class GABYamlParserTest {
         assertRowsSize(result, 5);
         assertThatEntryIsEqualTo(result, 0 , 0, DOMAIN_VALUE, FAULT);
         assertThatEntryIsEqualTo(result, 4 , 0, DOMAIN_VALUE, SYSLOG);
+    }
+
+    @Test
+    void shouldParsePMDictionaryInJsonAndGenerateMapOfKeysOnTwoFilters() throws Exception {
+        GABResults result;
+        try (GABYamlParser yamlParser = new GABYamlParser(new YamlParser())){
+            result = yamlParser.parseFile(PM_DICT_YML_IN_JSON)
+                .filter(MEAS_TYPE)
+                .filter(MEAS_DESCRIPTION)
+                .collect();
+        }
+        assertRowsSize(result, 3);
+        assertThatEntryIsEqualTo(result, 0 , 0, MEAS_TYPE, MEAS_TYPE_VALUE);
+        assertThatEntryIsEqualTo(result, 0 , 1, MEAS_DESCRIPTION, MEAS_DESCRIPTION_VALUE);
+    }
+
+    @Test
+    void shouldParsePMDictionaryAndGenerateMapOfKeysOnTwoFilters() throws Exception {
+        GABResults result;
+        try (GABYamlParser yamlParser = new GABYamlParser(new YamlParser())){
+            result = yamlParser.parseFile(PM_DICT_YML)
+                .filter(MEAS_TYPE)
+                .filter(MEAS_DESCRIPTION)
+                .collect();
+        }
+        assertRowsSize(result, 3);
+        assertThatEntryIsEqualTo(result, 0 , 0, MEAS_TYPE, MEAS_TYPE_VALUE);
+        assertThatEntryIsEqualTo(result, 0 , 1, MEAS_DESCRIPTION, MEAS_DESCRIPTION_VALUE);
     }
 
     @Test
