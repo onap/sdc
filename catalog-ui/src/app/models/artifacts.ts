@@ -116,7 +116,7 @@ export class ArtifactModel {
     };
 
     public isGenericBrowseable = ():boolean => {
-        return this.artifactType == ArtifactType.VES_EVENTS;
+        return this.artifactType === ArtifactType.VES_EVENTS || this.artifactType === ArtifactType.PM_DICTIONARY;
     };
 
     public toJSON = ():any => {
