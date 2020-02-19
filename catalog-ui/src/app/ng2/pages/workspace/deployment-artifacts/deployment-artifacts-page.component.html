@@ -39,15 +39,15 @@
         <ngx-datatable-column [resizeable]="false" [flexGrow]="0.6">
             <ng-template ngx-datatable-cell-template let-row="row">
                 <div class="download-artifact-button">
-                    <svg-icon *ngIf="!row.heatParameters?.length && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'edit-o'"
+                    <svg-icon *ngIf="!row.heatParameters?.length && !state.isViewOnly" class="action-icon action-icon-1" [mode]="'primary2'" [name]="'edit-o'"
                               testId="edit_{{row.artifactDisplayName}}" clickable="true" size="medium"
                               (click)="addOrUpdateArtifact(row, state.isViewOnly)"></svg-icon>
-                    <svg-icon *ngIf="row.heatParameters?.length && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'indesign_status'"
+                    <svg-icon *ngIf="row.heatParameters?.length && !state.isViewOnly" class="action-icon action-icon-2" [mode]="'primary2'" [name]="'indesign_status'"
                               testId="update_heat_params_{{row.artifactDisplayName}}" clickable="true" size="medium"
                               (click)="updateEnvParams(row, state.isViewOnly)"></svg-icon>
-                    <svg-icon *ngIf="!row.isFromCsar && !state.isViewOnly" class="action-icon" [mode]="'primary2'" [name]="'trash-o'"
+                    <svg-icon *ngIf="!row.isFromCsar && !state.isViewOnly" class="action-icon action-icon-3" [mode]="'primary2'" [name]="'trash-o'"
                               testId="delete_{{row.artifactDisplayName}}" clickable="true" size="medium" (click)="deleteArtifact(row)"></svg-icon>
-                    <svg-icon *ngIf="row.isGenericBrowseable()" class="action-icon" [mode]="'primary2'" [name]="'search-o'"
+                    <svg-icon *ngIf="row.isGenericBrowseable()" class="action-icon action-icon-4" [mode]="'primary2'" [name]="'search-o'"
                               testId="gab-{{row.artifactDisplayName}}" clickable="true" size="medium" (click)="openGenericArtifactBrowserModal(row)"></svg-icon>
 
                     <!--Download-->
