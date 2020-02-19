@@ -122,24 +122,22 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
         }
     }
 
-    private void convertEntry(String innerType, Map<String, DataTypeDefinition> dataTypes, List<PropertyDefinition> allPropertiesRecursive, Map<String, Object> toscaMap, final boolean isScalarF, final ToscaValueConverter innerConverterFinal,
-            Entry<String, JsonElement> e) {
+    private void convertEntry(String innerType, Map<String, DataTypeDefinition> dataTypes,
+            List<PropertyDefinition> allPropertiesRecursive, Map<String, Object> toscaMap, final boolean isScalarF,
+            final ToscaValueConverter innerConverterFinal, Entry<String, JsonElement> e) {
         log.debug("try convert element ");
-        boolean scalar = false;
-        String propType = null;
+        boolean scalar = isScalarF;
+        String propType = innerType;
         ToscaValueConverter innerConverterProp = innerConverterFinal;
-        if ( isScalarF ){
-            scalar = isScalarF;
-            propType = innerType;
-        }else{
-            for ( PropertyDefinition pd : allPropertiesRecursive ){
-                if ( pd.getName().equals(e.getKey()) ){
+        if (!scalar) {
+            for (PropertyDefinition pd : allPropertiesRecursive) {
+                if (pd.getName().equals(e.getKey())) {
                     propType = pd.getType();
                     DataTypeDefinition pdDataType = dataTypes.get(propType);
                     ToscaPropertyType toscaPropType = isScalarType(pdDataType);
-                    if ( toscaPropType == null ){
+                    if (toscaPropType == null) {
                         scalar = false;
-                    }else{
+                    } else {
                         scalar = true;
                         propType = toscaPropType.getType();
                         innerConverterProp = toscaPropType.getValueConverter();
@@ -148,7 +146,8 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                 }
             }
         }
-        Object convertedValue = convertDataTypeToToscaObject(propType, dataTypes, innerConverterProp, scalar, e.getValue(), false);
+        Object convertedValue =
+                convertDataTypeToToscaObject(propType, dataTypes, innerConverterProp, scalar, e.getValue(), false);
         toscaMap.put(e.getKey(), convertedValue);
     }
 
