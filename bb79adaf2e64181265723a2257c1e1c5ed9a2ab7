@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5cf848e9_e9a71014",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/config/Config.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2020-02-19T11:34:03Z",
+      "side": 1,
+      "message": "Please consider creating separate configuration for ui-ci-new module.",
+      "revId": "bb79adaf2e64181265723a2257c1e1c5ed9a2ab7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d98bc87_cf2a1034",
+        "filename": "ui-ci-new/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2020-02-19T11:34:03Z",
+      "side": 1,
+      "message": "I think that this dependency can be removed",
+      "revId": "bb79adaf2e64181265723a2257c1e1c5ed9a2ab7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03935e1d_8937ac3f",
+        "filename": "ui-ci-new/src/main/resources/ci/conf/attsdc-packages.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2020-02-19T11:34:03Z",
+      "side": 1,
+      "message": "I think that this file can be removed.",
+      "revId": "bb79adaf2e64181265723a2257c1e1c5ed9a2ab7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1622f2dc_0628bb42",
+        "filename": "ui-ci-new/ui-ci-new-chef/chef-repo/cookbooks/sdc-ui-tests/files/default/conf/attsdc-packages.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2020-02-19T11:34:03Z",
+      "side": 1,
+      "message": "I think that this file can be removed",
+      "revId": "bb79adaf2e64181265723a2257c1e1c5ed9a2ab7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
