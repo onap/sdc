@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "93624298_df8f8990",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/converters/ToscaMapValueConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-21T16:45:00Z",
+      "side": 1,
+      "message": "all parameters could be final",
+      "range": {
+        "startLine": 125,
+        "startChar": 30,
+        "endLine": 127,
+        "endChar": 90
+      },
+      "revId": "856aee45e0e3351f1835b841e6777f20a4d4473f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4911599_fa19e207",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/converters/ToscaMapValueConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-21T16:45:00Z",
+      "side": 1,
+      "message": "could be final",
+      "range": {
+        "startLine": 136,
+        "startChar": 39,
+        "endLine": 136,
+        "endChar": 49
+      },
+      "revId": "856aee45e0e3351f1835b841e6777f20a4d4473f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6aede585_1a0df6e5",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/converters/ToscaMapValueConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-21T16:45:00Z",
+      "side": 1,
+      "message": "could be final",
+      "range": {
+        "startLine": 137,
+        "startChar": 38,
+        "endLine": 137,
+        "endChar": 51
+      },
+      "revId": "856aee45e0e3351f1835b841e6777f20a4d4473f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd9b71d2_44fc0b5c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/converters/ToscaMapValueConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-21T16:45:00Z",
+      "side": 1,
+      "message": "could be final",
+      "range": {
+        "startLine": 149,
+        "startChar": 15,
+        "endLine": 149,
+        "endChar": 29
+      },
+      "revId": "856aee45e0e3351f1835b841e6777f20a4d4473f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
