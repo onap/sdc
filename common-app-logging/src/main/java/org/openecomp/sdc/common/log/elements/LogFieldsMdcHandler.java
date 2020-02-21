@@ -27,7 +27,7 @@ public class LogFieldsMdcHandler implements ILogFieldsHandler {
     return instanceMdcWrapper;
   }
 
-  private final static String dateFormatPattern = "yyyy-MM-dd HH:mm:ss.SSSz";
+  private final static String dateFormatPattern = "yyyy-MM-dd'T'HH:mm:ss.SSSz";
   private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
       .ofPattern(dateFormatPattern);
   protected static Logger log = LoggerFactory.getLogger(LogFieldsMdcHandler.class.getName());

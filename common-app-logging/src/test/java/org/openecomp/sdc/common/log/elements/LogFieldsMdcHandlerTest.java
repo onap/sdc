@@ -20,13 +20,19 @@
 
 package org.openecomp.sdc.common.log.elements;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_CLASS_NAME;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_END_TIMESTAMP;
+import static org.openecomp.sdc.common.log.api.ILogConfiguration.MDC_OPT_FIELD1;
+
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.MDC;
-
-import static org.junit.Assert.*;
-import static org.openecomp.sdc.common.log.api.ILogConfiguration.*;
 
 public class LogFieldsMdcHandlerTest {
 
@@ -67,6 +73,15 @@ public class LogFieldsMdcHandlerTest {
 		ecompMdcWrapper.startAuditTimer();
 		ecompMdcWrapper.stopAuditTimer();
 		assertFalse(ecompMdcWrapper.isMDCParamEmpty(MDC_END_TIMESTAMP));
+	}
+
+	@Test
+	public void stopTimer_shouldTimestampsBeIsoFormat() {
+		ecompMdcWrapper.startAuditTimer();
+		ecompMdcWrapper.stopAuditTimer();
+		// Expect no exceptions thrown
+		ZonedDateTime.parse(MDC.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+		ZonedDateTime.parse(MDC.get(MDC_END_TIMESTAMP), DateTimeFormatter.ISO_ZONED_DATE_TIME);
 	}
 
 	@Test
