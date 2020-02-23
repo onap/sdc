@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e63a62e8_e6bfad05",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 6152
+      },
+      "writtenOn": "2020-02-23T16:26:59Z",
+      "side": 1,
+      "message": "On new code please try to avoid using Either as we got Exception handling mechanism.\nin case of an error, please throw an appropriate exception instead.\nfor example in line 151 you should:\nthrow new ByActionStatusComponentException(ActionStatus.POLICY_MISSING_POLICY_TYPE, policyName);",
+      "range": {
+        "startLine": 137,
+        "startChar": 49,
+        "endLine": 137,
+        "endChar": 63
+      },
+      "revId": "9ea494bf4f4dc4b1ac255abde8cba31924defdbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e00a3dbf_53c85ecb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1769,
+      "author": {
+        "id": 6152
+      },
+      "writtenOn": "2020-02-23T16:26:59Z",
+      "side": 1,
+      "message": "avoid using Either on new code, as we got exception handling mechanism (more details on the other comment).",
+      "range": {
+        "startLine": 1769,
+        "startChar": 29,
+        "endLine": 1769,
+        "endChar": 43
+      },
+      "revId": "9ea494bf4f4dc4b1ac255abde8cba31924defdbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e6c34ad_62354d5e",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/api/ActionStatus.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 6152
+      },
+      "writtenOn": "2020-02-23T16:26:59Z",
+      "side": 1,
+      "message": "You should add according error to error-configuration.yaml",
+      "range": {
+        "startLine": 109,
+        "startChar": 53,
+        "endLine": 109,
+        "endChar": 79
+      },
+      "revId": "9ea494bf4f4dc4b1ac255abde8cba31924defdbd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
