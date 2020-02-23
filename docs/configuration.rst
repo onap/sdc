@@ -113,8 +113,8 @@ environment.json
                 "num_tokens": "256",
                 "data_dir": "/var/lib/cassandra/data",
                 "hinted_handoff_enabled": "true",
-                "cassandra_user": "asdc_user",
-                "cassandra_password": "Aa1234%^!",
+                "cassandra_user": "sdc_user",
+                "cassandra_password": "changeme",
                 "concurrent_writes": "32",
                 "cluster_name": "SDC-CS-",
                 "datacenter_name": "SDC-CS-",
@@ -263,7 +263,7 @@ BE-configuration.yaml
         truststorePath : /config/.truststore
 
         # The .truststore file password
-        truststorePassword : Aa123456
+        truststorePassword : changeme
 
         # Keyspaces configuration for Cassandra
         keySpaces:
@@ -857,8 +857,8 @@ BE-configuration.yaml
         feResolveAttempts: 3
         enabled: false
         interval: 60
-        changePriorityUser: ecompasdc
-        changePriorityPassword: ecompasdc123
+        changePriorityUser: onapsdc
+        changePriorityPassword: changeme
         publishNetworkUrl:
         publishNetworkBody: '{"note":"comment"}'
         groups:
@@ -1083,7 +1083,7 @@ BE-distribution-engine-configuration.yaml
     # aai configuration for tenant isolation
     aaiConfig:
        httpRequestConfig:
-          serverRootUrl: https://aai-uint3.test.att.com:8443
+          serverRootUrl: https://aai.onap.org:8443
           resourceNamespaces:
              operationalEnvironments: /aai/v12/cloud-infrastructure/operational-environments
 
@@ -1093,7 +1093,7 @@ BE-distribution-engine-configuration.yaml
              connectTimeoutMs: 1000
           clientCertificate:
              keyStore: /opt/app/jetty/base/be/etc/non-prod.jks
-             keyStorePassword: hmXYcznAljMSisdy8zgcag==
+             keyStorePassword: changeme
           headers:
              X-FromAppId: asdc
           numOfRetries: 3
@@ -1109,8 +1109,8 @@ BE-distribution-engine-configuration.yaml
               readTimeoutMs: 2000
               connectTimeoutMs: 500
            basicAuthorization:
-              userName: asdc
-              password: OTLEp5lfVhYdyw5EAtTUBQ==
+              userName: sdc
+              password: changeme
            numOfRetries: 3
 
     currentArtifactInstallationTimeout: 120
@@ -1148,7 +1148,7 @@ BE-janusgraph.properties
     storage.cassandra.ssl.truststore.location=/var/lib/jetty/config/.truststore
 
     # JanusGraph cassandra ssl truststore file password
-    storage.cassandra.ssl.truststore.password=Aa123456
+    storage.cassandra.ssl.truststore.password=changeme
 
     # Should JanusGraph use cache
     cache.db-cache = false
