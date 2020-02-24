@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cdeee57_86373c8c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2020-02-24T14:02:49Z",
+      "side": 1,
+      "message": "please add type validation",
+      "revId": "71e933f8407341aeef696caf5c3c301fc47c11c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ed2ddf7_55a03d2e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2020-02-24T14:02:49Z",
+      "side": 1,
+      "message": "please add operation validation (validate it exists in normatives)",
+      "revId": "71e933f8407341aeef696caf5c3c301fc47c11c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9148cfa4_ea736b27",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2020-02-24T14:02:49Z",
+      "side": 1,
+      "message": "In case of VSP import flow, please validate implementation artifact exists. In other cases (e.g. import VFC from UI dashboard) no implementation allowed - user should upload yaml file - in this exception should be thrown",
+      "revId": "71e933f8407341aeef696caf5c3c301fc47c11c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
