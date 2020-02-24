@@ -26,7 +26,7 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.ELIGIBLE_FILES;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +71,7 @@ class ONAPCsarValidator implements Validator {
 
     private void validateMetadata(FileContentHandler contentMap){
         if (!validateTOSCAYamlFileInRootExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
-            try (InputStream metaFileContent = contentMap.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME.getName())) {
+            try (InputStream metaFileContent = contentMap.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME)) {
 
                 ToscaMetadata onboardingToscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(metaFileContent);
                 String entryDefinitionsPath = onboardingToscaMetadata.getMetaEntries().get(ENTRY_DEFINITIONS.getName());

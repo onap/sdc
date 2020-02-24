@@ -24,7 +24,7 @@ package org.openecomp.core.impl;
 
 import static org.openecomp.core.converter.datatypes.Constants.globalStName;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -96,7 +96,7 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
     private String getMainServiceDefinitionFileName(FileContentHandler contentHandler) throws IOException {
         try {
             ToscaMetadata toscaMetadata = OnboardingToscaMetadata.parseToscaMetadataFile(
-                    contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME.getName()));
+                    contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
             return toscaMetadata.getMetaEntries().get(ENTRY_DEFINITIONS.getName());
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);

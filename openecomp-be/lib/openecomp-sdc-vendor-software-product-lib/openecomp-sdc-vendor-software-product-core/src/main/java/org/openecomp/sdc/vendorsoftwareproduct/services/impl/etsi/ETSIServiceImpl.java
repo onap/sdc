@@ -27,7 +27,7 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FI
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_CHANGE_LOG;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -203,7 +203,7 @@ public class ETSIServiceImpl implements ETSIService {
     }
 
     private boolean isMetaFilePresent(Map<String, byte[]> handler) {
-        return handler.containsKey(TOSCA_META_PATH_FILE_NAME.getName()) || handler.containsKey(TOSCA_META_ORIG_PATH_FILE_NAME);
+        return handler.containsKey(TOSCA_META_PATH_FILE_NAME) || handler.containsKey(TOSCA_META_ORIG_PATH_FILE_NAME);
     }
 
     public ResourceTypeEnum getResourceType(FileContentHandler handler) throws IOException {
@@ -245,9 +245,9 @@ public class ETSIServiceImpl implements ETSIService {
 
     private ToscaMetadata getMetadata(FileContentHandler handler) throws IOException {
         ToscaMetadata metadata;
-        if (handler.containsFile(TOSCA_META_PATH_FILE_NAME.getName())) {
+        if (handler.containsFile(TOSCA_META_PATH_FILE_NAME)) {
             metadata = OnboardingToscaMetadata
-                .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME.getName()));
+                .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
         } else if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
             metadata = OnboardingToscaMetadata
                 .parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_ORIG_PATH_FILE_NAME));

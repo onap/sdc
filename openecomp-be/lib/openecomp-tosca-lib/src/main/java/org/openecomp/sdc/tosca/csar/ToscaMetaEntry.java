@@ -21,30 +21,26 @@ package org.openecomp.sdc.tosca.csar;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+/**
+ * Represents entry keys in a TOSCA.meta file.
+ */
+@AllArgsConstructor
+@Getter
 public enum ToscaMetaEntry {
-    TOSCA_META_PATH_FILE_NAME("TOSCA-Metadata/TOSCA.meta"),
     TOSCA_META_FILE_VERSION_ENTRY("TOSCA-Meta-File-Version"),
     CSAR_VERSION_ENTRY("CSAR-Version"),
     CREATED_BY_ENTRY("Created-By"),
     ENTRY_DEFINITIONS("Entry-Definitions"),
-    ENTRY_EVENTS("Entry-Events"),
     ETSI_ENTRY_MANIFEST("ETSI-Entry-Manifest"),
     ETSI_ENTRY_CHANGE_LOG("ETSI-Entry-Change-Log"),
     ETSI_ENTRY_TESTS("ETSI-Entry-Tests"),
     ETSI_ENTRY_LICENSES("ETSI-Entry-Licenses"),
-    ETSI_ENTRY_CERTIFICATE("ETSI-Entry-Certificate"),
-    TOSCA_META_FILE_VERSION("1.0");
+    ETSI_ENTRY_CERTIFICATE("ETSI-Entry-Certificate");
 
     private final String name;
-
-    ToscaMetaEntry(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     public static Optional<ToscaMetaEntry> parse(final String name) {
         return Arrays.stream(values()).filter(toscaMetaEntry -> toscaMetaEntry.getName().equals(name)).findFirst();

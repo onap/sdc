@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,9 +90,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-
-//import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_PATH_FILE_NAME;
-
 
 public class VendorSoftwareProductManagerImplTest {
 
@@ -161,7 +158,7 @@ public class VendorSoftwareProductManagerImplTest {
 
             final FileContentHandler handler = new FileContentHandler();
             final byte[] metadataInputBytes = IOUtils.toByteArray(metadataInput);
-            handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metadataInputBytes);
+            handler.addFile(TOSCA_META_PATH_FILE_NAME, metadataInputBytes);
             handler.addFile(TOSCA_META_ORIG_PATH_FILE_NAME, metadataInputBytes);
             handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
             final ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
@@ -185,7 +182,7 @@ public class VendorSoftwareProductManagerImplTest {
     try(InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta"))
     {
       FileContentHandler handler = new FileContentHandler();
-      handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), IOUtils.toByteArray(metadataInput));
+      handler.addFile(TOSCA_META_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
       ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
       when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata );
       VspDetails vsp =
@@ -212,7 +209,7 @@ public class VendorSoftwareProductManagerImplTest {
             final FileContentHandler handler = new FileContentHandler();
             final byte[] metadataInputBytes = IOUtils.toByteArray(metadataInput);
             handler.addFile(TOSCA_META_ORIG_PATH_FILE_NAME, metadataInputBytes);
-            handler.addFile(TOSCA_META_PATH_FILE_NAME.getName(), metadataInputBytes);
+            handler.addFile(TOSCA_META_PATH_FILE_NAME, metadataInputBytes);
             handler.addFile(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, IOUtils.toByteArray(manifestInput));
             final ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
             when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata);

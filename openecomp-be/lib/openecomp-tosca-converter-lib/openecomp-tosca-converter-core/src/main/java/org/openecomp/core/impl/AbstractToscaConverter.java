@@ -32,7 +32,7 @@ import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_S
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_INDEX_IMPORT_FILE;
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.ONAP_INDEX_IMPORT_FILE;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
                                                  ServiceTemplateReaderService readerService);
 
     protected void handleMetadataFile(Map<String, byte[]> csarFiles) {
-        byte[] bytes = csarFiles.remove(TOSCA_META_PATH_FILE_NAME.getName());
+        byte[] bytes = csarFiles.remove(TOSCA_META_PATH_FILE_NAME);
         if (bytes != null) {
             csarFiles.put(TOSCA_META_ORIG_PATH_FILE_NAME, bytes);
         }
@@ -246,7 +246,7 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
     }
 
     protected boolean isMetadataFile(String fileName) {
-        return fileName.equals(TOSCA_META_PATH_FILE_NAME.getName());
+        return fileName.equals(TOSCA_META_PATH_FILE_NAME);
     }
 
     protected boolean isGlobalServiceTemplate(String fileName) {
