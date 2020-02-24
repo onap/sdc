@@ -37,9 +37,9 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.CSAR_VERSION_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_CERTIFICATE;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ETSI_ENTRY_MANIFEST;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_FILE_VERSION_ENTRY;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_FILE_VERSION_1_0;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -127,13 +127,13 @@ class SOL004MetaDirectoryValidator implements Validator {
     }
 
     /**
-     * Parses the {@link ToscaMetaEntry#TOSCA_META_PATH_FILE_NAME;} file
+     * Parses the {@link org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo#TOSCA_META_PATH_FILE_NAME} file
      */
     private void parseToscaMetadata() {
         try {
             toscaMetadata =
                 OnboardingToscaMetadata
-                    .parseToscaMetadataFile(contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME.getName()));
+                    .parseToscaMetadataFile(contentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
         } catch (final IOException e) {
             reportError(ErrorLevel.ERROR, Messages.METADATA_PARSER_INTERNAL.getErrorMessage());
             LOGGER.error(Messages.METADATA_PARSER_INTERNAL.getErrorMessage(), e.getMessage(), e);
@@ -220,9 +220,8 @@ class SOL004MetaDirectoryValidator implements Validator {
     private void handleEntry(final Map.Entry<String, String> entry) {
         final String key = entry.getKey();
         final ToscaMetaEntry toscaMetaEntry = ToscaMetaEntry.parse(entry.getKey()).orElse(null);
+        // allows any other unknown entry
         if (toscaMetaEntry == null) {
-            reportError(ErrorLevel.ERROR, Messages.METADATA_UNSUPPORTED_ENTRY.formatMessage(key));
-            LOGGER.warn(Messages.METADATA_UNSUPPORTED_ENTRY.getErrorMessage(), key);
             return;
         }
         final String value = entry.getValue();
@@ -284,7 +283,7 @@ class SOL004MetaDirectoryValidator implements Validator {
     }
 
     private boolean isValidTOSCAVersion(final String key, final String version) {
-        return TOSCA_META_FILE_VERSION_ENTRY.getName().equals(key) && TOSCA_META_FILE_VERSION.getName().equals(version);
+        return TOSCA_META_FILE_VERSION_ENTRY.getName().equals(key) && TOSCA_META_FILE_VERSION_1_0.equals(version);
     }
 
     private boolean isValidCSARVersion(final String value, final String version) {
