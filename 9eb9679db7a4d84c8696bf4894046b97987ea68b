@@ -46,6 +46,30 @@
       "revId": "9eb9679db7a4d84c8696bf4894046b97987ea68b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6e37f97_2cf304fc",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ParsedToscaYamlInfo.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-02-24T17:16:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1ace88c0_05db0391",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 43
+      },
+      "revId": "9eb9679db7a4d84c8696bf4894046b97987ea68b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
