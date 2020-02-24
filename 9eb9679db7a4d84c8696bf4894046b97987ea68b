@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9e140a9_ec6ca872",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ParsedToscaYamlInfo.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-24T17:08:10Z",
+      "side": 1,
+      "message": "@ToString\n@Getter\n@Setter\npublic class ParsedToscaYamlInfo {\n    private Map\u003cString, InputDefinition\u003e inputs;\n    private Map\u003cString, UploadComponentInstanceInfo\u003e instances;\n    private Map\u003cString, GroupDefinition\u003e groups;\n    private Map\u003cString, PolicyDefinition\u003e policies;",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 43
+      },
+      "revId": "9eb9679db7a4d84c8696bf4894046b97987ea68b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
