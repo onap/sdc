@@ -22,6 +22,30 @@
       "revId": "b23ed6063b4af0a9ed9a34d9d028d0c7f83f75e2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5e5fdcf5_90a6dee0",
+        "filename": "catalog-ui/src/app/models/artifacts.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 3663
+      },
+      "writtenOn": "2020-02-24T09:43:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2190dcf7_10ff5c0c",
+      "range": {
+        "startLine": 119,
+        "startChar": 86,
+        "endLine": 119,
+        "endChar": 101
+      },
+      "revId": "b23ed6063b4af0a9ed9a34d9d028d0c7f83f75e2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
