@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24c926ef_0b9115d1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-24T15:43:34Z",
+      "side": 1,
+      "message": "potential NPE.",
+      "range": {
+        "startLine": 250,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 79
+      },
+      "revId": "05bf0a2d606da7997097b29a1b2b93478443b9c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88820deb_b6afa9c7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-24T15:43:34Z",
+      "side": 1,
+      "message": "convert to EnumMap",
+      "range": {
+        "startLine": 272,
+        "startChar": 58,
+        "endLine": 272,
+        "endChar": 65
+      },
+      "revId": "05bf0a2d606da7997097b29a1b2b93478443b9c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "788419d6_cf3159b3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-24T15:43:34Z",
+      "side": 1,
+      "message": "should be private static final",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 122
+      },
+      "revId": "05bf0a2d606da7997097b29a1b2b93478443b9c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e869a291_41a9fc1f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1767,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-24T15:43:34Z",
+      "side": 1,
+      "message": "needless, already checked by caller",
+      "range": {
+        "startLine": 1765,
+        "startChar": 2,
+        "endLine": 1767,
+        "endChar": 3
+      },
+      "revId": "05bf0a2d606da7997097b29a1b2b93478443b9c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19f40303_d39b1196",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ParsedToscaYamlInfo.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-02-24T15:43:34Z",
+      "side": 1,
+      "message": "replace with LOMBOK",
+      "range": {
+        "startLine": 34,
+        "startChar": 3,
+        "endLine": 69,
+        "endChar": 56
+      },
+      "revId": "05bf0a2d606da7997097b29a1b2b93478443b9c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
