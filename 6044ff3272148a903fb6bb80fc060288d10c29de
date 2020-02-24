@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24e01c50_a49814b8",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 4
+      },
+      "lineNbr": 919,
+      "author": {
+        "id": 2065
+      },
+      "writtenOn": "2020-02-24T14:05:28Z",
+      "side": 1,
+      "message": "1. Please add a comment that describes this configuration section\n2. Please remove second line in that section (tosca.) to preserve previous default behavior",
+      "revId": "6044ff3272148a903fb6bb80fc060288d10c29de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
