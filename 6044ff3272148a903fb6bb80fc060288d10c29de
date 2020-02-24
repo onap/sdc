@@ -16,6 +16,24 @@
       "revId": "6044ff3272148a903fb6bb80fc060288d10c29de",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c7fe5f5_5fffbe11",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 4
+      },
+      "lineNbr": 919,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2020-02-24T14:25:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24e01c50_a49814b8",
+      "revId": "6044ff3272148a903fb6bb80fc060288d10c29de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
