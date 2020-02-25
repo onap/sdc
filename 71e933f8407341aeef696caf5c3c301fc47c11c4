@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2fd3784b_2bc37992",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-02-25T14:03:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1cdeee57_86373c8c",
+      "revId": "71e933f8407341aeef696caf5c3c301fc47c11c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2ed2ddf7_55a03d2e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "22d40334_3467eb45",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-02-25T14:03:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2ed2ddf7_55a03d2e",
+      "revId": "71e933f8407341aeef696caf5c3c301fc47c11c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9148cfa4_ea736b27",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2020-02-24T14:02:49Z",
       "side": 1,
       "message": "In case of VSP import flow, please validate implementation artifact exists. In other cases (e.g. import VFC from UI dashboard) no implementation allowed - user should upload yaml file - in this exception should be thrown",
+      "revId": "71e933f8407341aeef696caf5c3c301fc47c11c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd2e48cf_906370a6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-02-25T14:03:33Z",
+      "side": 1,
+      "message": "It is the import VFC case that we are interested in. We want to be able to import a VFC with an implementation specified, with this VFC then being used in multiple VFs.\nThe aritfact will not exist in the generated csar, it will be preloaded in the orchestrator.\nFor now I have limited the implemetation to the VFC case, we can consider the VSP import case later",
+      "parentUuid": "9148cfa4_ea736b27",
       "revId": "71e933f8407341aeef696caf5c3c301fc47c11c4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
