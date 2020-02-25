@@ -558,8 +558,8 @@ switchoverDetector:
     feResolveAttempts: 3
     enabled: false
     interval: 60
-    changePriorityUser: ecompasdc
-    changePriorityPassword: ecompasdc123
+    changePriorityUser: sdc
+    changePriorityPassword: changeme
     publishNetworkUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/update_network?user=root"
     publishNetworkBody: '{"note":"publish network"}'
     groups:
@@ -635,7 +635,7 @@ environmentContext:
 dmaapConsumerConfiguration:
     active: true
     hosts: olsd004.wnsnet.com:3905
-    consumerGroup: asdc
+    consumerGroup: sdc
     consumerId: invalidMamaUser #mama - in Order To Consume Remove This String And Replace It With -> mama
     timeoutMs: 15000
     limit: 1
@@ -644,7 +644,7 @@ dmaapConsumerConfiguration:
     latitude: 32.109333
     longitude: 34.855499
     version: 1.0
-    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.com/events
+    serviceName: dmaap.onap.org/events
     environment: TEST
     partner: BOT_R
     routeOffer: MR1
@@ -663,7 +663,7 @@ dmaapConsumerConfiguration:
     aftDme2SslEnable: true
     aftDme2ClientIgnoreSslConfig: false
     aftDme2ClientKeystore: /opt/app/jetty/base/be/config/.truststore
-    aftDme2ClientKeystorePassword: hmXYcznAljMSisdy8zgcag==
+    aftDme2ClientKeystorePassword: XyCUPhFx9u70aklYGo6OiA==
     aftDme2ClientSslCertAlias: certman
 
 dmaapProducerConfiguration:
@@ -678,7 +678,7 @@ dmaapProducerConfiguration:
     latitude: 32.109333
     longitude: 34.855499
     version: 1.0
-    serviceName: dmaap-v1.dev.dmaap.dt.saat.acsi.att.com/events
+    serviceName: dmaap-v1.onap.org/events
     environment: TEST
     partner: BOT_R
     routeOffer: MR1
@@ -734,7 +734,7 @@ cadiFilterParams:
     hostname:                 192.168.33.10
     aaf_id:                   aaf@sdc.onap.org
     aaf_env:                  TEST
-    aaf_url:                  https://aaftest.test.att.com/locate/com.att.aaf.service:2.0
+    aaf_url:                  https://aaftest.onap.org/locate/
     csp_domain:               PROD
     cadi_keyfile:             /opt/app/jetty/base/be/etc/keyfile
     aaf_password:             enc:uI_J4jBL4YUcIZZa5uZKj3QMUC63hbS8TmDn5PSp5nO

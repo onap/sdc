@@ -812,12 +812,12 @@ dmaapConsumerConfiguration:
     dme2preferredRouterFilePath: DME2preferredRouter.txt
     timeLimitForNotificationHandleMs: 120000
     credential:
-        username: m09875@sdc.com
-        password: mockhmXYcznAljMSisdy8zgcag==
+        username: sdc@sdc.com
+        password: XyCUPhFx9u70aklYGo6OiA==
     aftDme2SslEnable: true
     aftDme2ClientIgnoreSslConfig: false
     aftDme2ClientKeystore: /opt/app/jetty/base/be/config/.truststore
-    aftDme2ClientKeystorePassword: hmXYcznAljMSisdy8zgcag==
+    aftDme2ClientKeystorePassword: XyCUPhFx9u70aklYGo6OiA==
     aftDme2ClientSslCertAlias: certman
 
 #Performence microservice dmaap producer
@@ -846,12 +846,12 @@ dmaapProducerConfiguration:
     dme2preferredRouterFilePath: DME2preferredRouter.txt
     timeLimitForNotificationHandleMs: 120000
     credential:
-        username: m09875@sdc.com
-        password: mockhmXYcznAljMSisdy8zgcag==
+        username: sdc@sdc.com
+        password: XyCUPhFx9u70aklYGo6OiA==
         aftDme2SslEnable: true
     aftDme2ClientIgnoreSslConfig: false
     aftDme2ClientKeystore: /opt/app/jetty/base/be/config/.truststore
-    aftDme2ClientKeystorePassword: hmXYcznAljMSisdy8zgcag==
+    aftDme2ClientKeystorePassword: XyCUPhFx9u70aklYGo6OiA==
     aftDme2ClientSslCertAlias: certman
 
 
@@ -904,10 +904,10 @@ cadiFilterParams:
     cadi_keyfile: /opt/app/jetty/base/be/config/catalog-be/keyfile
     cadi_loglevel: DEBUG
     cadi_truststore: /opt/app/jetty/base/be/config/.truststore
-    cadi_truststore_password: enc:HdzGwQGAK5Rc29vzn3Kqoy9BCTbJNGgNxd72zpCUtjg
-    #aaf_url: https://DME2RESOLVE/service=com.att.authz.AuthorizationService/version=2.0/envContext=TEST/routeOffer=BAU_SE
-    aaf_id: m09875@sdc.att.com
-    aaf_password: enc:HdzGwQGAK5Rc29vzn3Kqoy9BCTbJNGgNxd72zpCUtjg
+    cadi_truststore_password: enc:XyCUPhFx9u70aklYGo6OiA==
+    #aaf_url: https://aaf.onap.org/service=?
+    aaf_id: aaf@sdc.onap.org
+    aaf_password: enc:XyCUPhFx9u70aklYGo6OiA==
     aaf_env: DEV
     aafLocateUrl: https://aaf.api.simpledemo.onap.org:8095
     aaf_url: https://AAF_LOCATE_URL/AAF_NS.service:2.0
