@@ -12,6 +12,4 @@ export class UnsavedChangesComponent {
     constructor(){
     }
 
-
-
 }
