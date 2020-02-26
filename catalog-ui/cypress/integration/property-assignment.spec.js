@@ -12,6 +12,7 @@ describe('Test add property to self in service at property assignment page', () 
         cy.fixture('properties-assignment/service-include-policies').as('serviceIncludePolicies');
         cy.fixture('properties-assignment/service-properties').as('serviceProperty');
         cy.fixture('properties-assignment/service-update-properties').as('serviceUpdateProperty');
+        cy.fixture('properties-assignment/service-update-inputs').as('serviceUpdateInputs');
         cy.fixture('properties-assignment/service-proxy-properties').as('serviceProxyProperties');
         cy.fixture('properties-assignment/create-policies').as('createPolicy');
         cy.fixture('properties-assignment/undeclare-policy').as('undeclarePolicy');
@@ -72,4 +73,57 @@ describe('Test add property to self in service at property assignment page', () 
         cy.get('.properties-table').contains('vl 0 list');
     });
 
+    it('update input default value and required in runtime check', function () {
+        const new_value = 'new value';
+        const another_value = 'another';
+        cy.route('GET', '**/authorize', '@onapUserData');
+        cy.route('GET', '**/services/*/filteredDataByParams?include=metadata', '@metadata');
+        cy.route('GET', '**/services/*/filteredDataByParams?include=componentInstancesRelations&include=componentInstances&include=nonExcludedPolicies&include=nonExcludedGroups&include=forwardingPaths', '@fullData');
+        cy.route('GET', '**/services/*/filteredDataByParams?include=inputs&include=componentInstances&include=componentInstancesProperties&include=properties','fixture:service-proxy-tabs/full-properties');
+        cy.route('GET','**/services/*/filteredDataByParams?include=componentInstances&include=policies&include=nonExcludedGroups', '@serviceIncludePolicies');
+        cy.route('GET', '**/services/*/properties', '@serviceProperty');
+        cy.route('POST', '**/services/*/properties', '@serviceUpdateProperty');
+        cy.route('GET','**/services/*/componentInstances/*/properties','@serviceProxyProperties');
+        cy.route('POST', '**/services/*/create/policies', '@createPolicy');
+        cy.route('PUT', '**/services/*/policies/*/undeclare','@undeclarePolicy');
+        cy.route('POST', '**/services/*/update/inputs', '@serviceUpdateInputs');
+
+        const compositionPageUrl = '#!/dashboard/workspace/' + this.metadata.metadata.uniqueId + '/service/properties_assignment';
+        cy.visit(compositionPageUrl);
+
+        // Go to Inputs tab
+        cy.get('[data-tests-id="Inputs"]').trigger('click', {force: true});
+        cy.get('.table-row').should('have.length', 2);
+        cy.get('.properties-table').contains('mac_requirements');
+        cy.get('.table-body .col4 .sdc-checkbox').first().should('have.attr', 'ng-reflect-checked', 'false');
+        cy.get('[data-tests-id="properties-reverse-button"]').should('have.attr', 'disabled');
+        // Change default value
+        cy.get('.table-body .valueCol').first().find('input').type(new_value);
+        cy.get('.table-body .valueCol').first().find('input').should('have.value', new_value);
+        cy.get('[data-tests-id="properties-reverse-button"]').should('not.have.attr', 'disabled');
+        // Check a required-in-runtime checkbox
+        cy.get('.table-body .col4 .sdc-checkbox').first().find('input').click({force: true})
+        cy.get('.table-body .col4 .sdc-checkbox').first().should('have.attr', 'ng-reflect-checked', 'true');
+        cy.get('[data-tests-id="properties-reverse-button"]').should('not.have.attr', 'disabled');
+        // Click Discard button
+        cy.get('[data-tests-id="properties-reverse-button"]').click({force: true});
+        cy.get('.table-body .col4 .sdc-checkbox').first().should('have.attr', 'ng-reflect-checked', 'false');
+        cy.get('.table-body .valueCol').first().find('input').should('have.value', '');
+        // Make changes again and click Save button
+        cy.get('.table-body .valueCol').first().find('input').type(new_value);
+        cy.get('.table-body .col4 .sdc-checkbox').first().find('input').click({force: true})
+        cy.get('[data-tests-id="properties-save-button"]').click({force: true});
+        cy.get('.table-body .valueCol').first().find('input').should('have.value', new_value);
+        cy.get('.table-body .col4 .sdc-checkbox').first().should('have.attr', 'ng-reflect-checked', 'true');
+        // Make changes and try to leave the tab without saving
+        cy.get('.table-body .valueCol').first().find('input').type(another_value);
+        cy.get('.table-body .col4 .sdc-checkbox').first().find('input').click({force: true})
+        cy.get('[data-tests-id="Properties"]').trigger('click', {force: true});
+        cy.get('.sdc-modal .title').should('be.visible');
+        cy.get('.sdc-modal .title').contains('Unsaved inputs');
+        cy.get('.sdc-modal [data-tests-id="navigate-modal-button-discard"]').click({force: true});
+        cy.get('[data-tests-id="Inputs"]').trigger('click', {force: true});
+        cy.get('.table-body .valueCol').first().find('input').should('have.value', new_value);
+        cy.get('.table-body .col4 .sdc-checkbox').first().should('have.attr', 'ng-reflect-checked', 'true');
+    });
 });

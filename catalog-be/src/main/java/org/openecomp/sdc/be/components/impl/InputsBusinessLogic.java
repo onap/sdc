@@ -93,6 +93,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private static final String FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR = "Failed to found input {} under component {}, error: {}";
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
     private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
+    private static final String GOING_TO_EXECUTE_ROLLBACK_ON_UPDATE_INPUT = "Going to execute rollback on update input.";
+    private static final String GOING_TO_EXECUTE_COMMIT_ON_UPDATE_INPUT = "Going to execute commit on update input.";
     public LoggerSupportability loggerSupportability=LoggerSupportability.getLogger(InputsBusinessLogic.class.getName());
 
     private final PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
@@ -307,7 +309,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             if (shouldLockComp) {
                 try {
                     lockComponent(component, UPDATE_INPUT);
-                }catch (ComponentException e){
+                } catch (ComponentException e) {
+                    log.error("Failed to lock component", e);
                     result = Either.right(e.getResponseFormat());
                     return result;
                 }
@@ -337,6 +340,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 String updateInputObjectValue = updateInputObjectValue(currInput, newInput, dataTypes);
                 currInput.setDefaultValue(updateInputObjectValue);
                 currInput.setOwnerId(userId);
+                if (newInput.isRequired() != null) {
+                    currInput.setRequired(newInput.isRequired());
+                }
                 Either<InputDefinition, StorageOperationStatus> status = toscaOperationFacade.updateInputOfComponent(component, currInput);
                 if(status.isRight()){
                     ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status.right().value());
@@ -347,13 +353,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 }
             }
             result = Either.left(returnInputs);
-        }catch (ComponentException e) {
-            log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+        } catch (ComponentException e) {
+            log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_UPDATE_INPUT);
             unlockRollbackWithException(component, e);
         } catch (Exception e){
+            log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_UPDATE_INPUT);
             unlockRollbackWithException(component, new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR));
         }
-        log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+        log.debug(GOING_TO_EXECUTE_COMMIT_ON_UPDATE_INPUT);
         unlockWithCommit(component);
         return result;
 
