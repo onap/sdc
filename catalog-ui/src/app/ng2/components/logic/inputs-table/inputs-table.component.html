@@ -29,6 +29,9 @@
             <span *ngIf="sortBy === 'type'" class="table-header-sort-arrow" [ngClass]="{'down': reverse, 'up':!reverse}">
             </span>
         </div>
+        <div class="table-cell col4" (click)="sort('required')" *ngIf="componentType == 'SERVICE'">
+            <span tooltip="Required in Runtime" tooltipDelay="400">Req. in RT</span>
+        </div>
         <div class="table-cell valueCol">Value</div>
     </div>
     <div class="table-body">
@@ -37,7 +40,9 @@
             <div class="table-row" *ngFor="let input of inputs" (click)="selectedInputId = input.path" [ngClass]="{'selected': selectedInputId && selectedInputId === input.path}">
                 <!-- Property Name -->
                 <div class="table-cell col1">
-                    <div class="inner-cell-div" tooltip="{{input.name}}"><span class="property-name">{{input.name}}</span></div>
+                    <div class="inner-cell-div">
+                        <span class="property-name" tooltip="{{input.name}}">{{input.name}}</span>
+                    </div>
                     <span *ngIf="input.description"
                           class="property-description-icon sprite-new show-desc"
                           tooltip="{{input.description}}" tooltipDelay="0"></span>
@@ -53,6 +58,14 @@
                     <div class="inner-cell-div" tooltip="{{input.type | contentAfterLastDot}}">
                         <span>{{input.type | contentAfterLastDot}}</span>
                     </div>
+                </div>
+                <!-- Required in runtime -->
+                <div class="table-cell col4" *ngIf="componentType == 'SERVICE'">
+                    <ui-element-dropdown class="value-input"
+                        [values]="valuesForRequired"
+                        [(value)]="input.required"
+                        (elementChanged)="onRequiredChanged(input, $event)"
+                        [readonly]="readonly"></ui-element-dropdown>
                 </div>
                 <!-- Value -->
                 <div class="table-cell valueCol input-value-col" [class.inner-table-container]="input.childrenProperties || !input.isSimpleType">

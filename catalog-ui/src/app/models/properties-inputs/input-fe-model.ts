@@ -34,6 +34,7 @@ export class InputFEModel extends InputBEModel {
     defaultValueObjOrig:any;
     defaultValueObjIsChanged:boolean;
     derivedDataType: DerivedPropertyType;
+    requiredOrig: boolean;
 
     constructor(input?: InputBEModel) {
         super(input);
@@ -47,6 +48,8 @@ export class InputFEModel extends InputBEModel {
             this.derivedDataType = this.getDerivedPropertyType();
             this.resetDefaultValueObjValidation();
             this.updateDefaultValueObjOrig();
+
+            this.requiredOrig = this.required;
         }
     }
 
@@ -77,4 +80,11 @@ export class InputFEModel extends InputBEModel {
         return !_.isEqual(this.defaultValueObj, this.defaultValueObjOrig);
     }
 
+    hasRequiredChanged(): boolean {
+        return this.required !== this.requiredOrig;
+    }
+
+    hasChanged(): boolean {
+        return this.hasDefaultValueChanged() || this.hasRequiredChanged();
+    }
 }

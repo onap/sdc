@@ -90,13 +90,16 @@ public class InputsBusinessLogicTest {
     private static final String COMPONENT_INSTANCE_ID = "instanceId";
     private static final String COMPONENT_ID = "componentId";
     private static final String USER_ID = "userId";
-    public static final String INSTANCE_INPUT_ID = "inputId";
+    private static final String INPUT_ID = "inputId";
+    private static final String INPUT_TYPE = "string";
     private static final String LISTINPUT_NAME = "listInput";
     private static final String LISTINPUT_SCHEMA_TYPE = "org.onap.datatypes.listinput";
     private static final String LISTINPUT_PROP1_NAME = "prop1";
     private static final String LISTINPUT_PROP1_TYPE = "string";
     private static final String LISTINPUT_PROP2_NAME = "prop2";
     private static final String LISTINPUT_PROP2_TYPE = "integer";
+    private static final String OLD_VALUE = "old value";
+    private static final String NEW_VALUE = "new value";
     static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
@@ -168,8 +171,8 @@ public class InputsBusinessLogicTest {
 
         instanceInputMap = new HashMap<>();
         ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
-        componentInstanceInput.setInputId(INSTANCE_INPUT_ID);
-        componentInstanceInput.setName(INSTANCE_INPUT_ID);
+        componentInstanceInput.setInputId(INPUT_ID);
+        componentInstanceInput.setName(INPUT_ID);
         inputsList = Collections.singletonList(componentInstanceInput);
         instanceInputMap.put(COMPONENT_INSTANCE_ID, inputsList);
         instanceInputMap.put("someInputId", Collections.singletonList(new ComponentInstanceInput()));
@@ -749,6 +752,47 @@ public class InputsBusinessLogicTest {
 
         testInstance.deleteInput(COMPONENT_ID, USER_ID, inputId);
         verify(propertyDeclarationOrchestrator, times(1)).unDeclarePropertiesAsInputs(service, listInput);
+    }
+
+
+    @Test
+    public void test_updateInputsValue() throws Exception {
+        List<InputDefinition> oldInputDefs = new ArrayList<>();
+        InputDefinition oldInputDef = new InputDefinition();
+        oldInputDef.setUniqueId(INPUT_ID);
+        oldInputDef.setType(INPUT_TYPE);
+        oldInputDef.setDefaultValue(OLD_VALUE);
+        oldInputDef.setRequired(Boolean.FALSE);
+        oldInputDefs.add(oldInputDef);
+        service.setInputs(oldInputDefs);
+
+        List<InputDefinition> newInputDefs = new ArrayList<>();
+        InputDefinition inputDef = new InputDefinition();
+        inputDef.setUniqueId(INPUT_ID);
+        inputDef.setType(INPUT_TYPE);
+        inputDef.setDefaultValue(NEW_VALUE); // update value
+        inputDef.setRequired(Boolean.TRUE); // update value
+        newInputDefs.add(inputDef);
+
+        // used in validateComponentExists
+        when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
+        // used in lockComponent
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
+        // used in validateInputValueConstraint
+        Map<String, DataTypeDefinition> dataTypeMap = new HashMap<>();
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypeMap)); // don't use Collections.emptyMap
+        // used in updateInputObjectValue
+        when(propertyOperation.validateAndUpdatePropertyValue(INPUT_TYPE, NEW_VALUE, true, null, dataTypeMap))
+            .thenReturn(Either.left(NEW_VALUE));
+        when(toscaOperationFacadeMock.updateInputOfComponent(service, oldInputDef))
+            .thenReturn(Either.left(inputDef));
+
+        Either<List<InputDefinition>, ResponseFormat> result =
+            testInstance.updateInputsValue(service.getComponentType(), COMPONENT_ID, newInputDefs, USER_ID, true, false);
+        assertTrue(result.isLeft());
+        // check if values are updated
+        assertEquals(service.getInputs().get(0).getDefaultValue(), NEW_VALUE);
+        assertEquals(service.getInputs().get(0).isRequired(), Boolean.TRUE);
     }
 
 }

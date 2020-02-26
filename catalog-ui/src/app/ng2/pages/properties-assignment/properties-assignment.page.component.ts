@@ -348,7 +348,7 @@ export class PropertiesAssignmentComponent {
         if (this.isPropertiesTabSelected && item instanceof PropertyFEModel) {
             itemHasChanged = item.hasValueObjChanged();
         } else if (this.isInputsTabSelected && item instanceof InputFEModel) {
-            itemHasChanged = item.hasDefaultValueChanged();
+            itemHasChanged = item.hasChanged();
         } else if (this.isPoliciesTabSelected && item instanceof InputFEModel) {
             itemHasChanged = item.hasDefaultValueChanged();
         }
@@ -574,16 +574,17 @@ export class PropertiesAssignmentComponent {
                         let typelist: any = PROPERTY_TYPES.LIST;
                         let uniID: any = insId;
                         let boolfalse: any = false;
+                        let required: any = content.propertyModel.required;
                         let schem :any = {
                             "empty": boolfalse,
                             "property": {
                                 "type": content.propertyModel.simpleType,
-                                "required": boolfalse
+                                "required": required
                             }
                         }
                         let schemaProp :any = {
                             "type": content.propertyModel.simpleType,
-                            "required": boolfalse
+                            "required": required
                         }
 
                         reglistInput.description = content.propertyModel.description;
@@ -592,7 +593,7 @@ export class PropertiesAssignmentComponent {
                         reglistInput.schemaType = content.propertyModel.simpleType;
                         reglistInput.instanceUniqueId = uniID;
                         reglistInput.uniqueId = uniID;
-                        reglistInput.required =boolfalse;
+                        reglistInput.required = required;
                         reglistInput.schema = schem;
                         reglistInput.schemaProperty = schemaProp;
 
@@ -789,6 +790,8 @@ export class PropertiesAssignmentComponent {
                     response.forEach((resInput) => {
                         const changedInput = <InputFEModel>this.changedData.shift();
                         this.inputsUtils.resetInputDefaultValue(changedInput, resInput.defaultValue);
+                        changedInput.required = resInput.required;
+                        changedInput.requiredOrig = resInput.required;
                     });
                     console.log("updated the component inputs and got this response: ", response);
                 }
@@ -842,6 +845,7 @@ export class PropertiesAssignmentComponent {
             handleReverseItem = (changedItem) => {
                 changedItem = <InputFEModel>changedItem;
                 this.inputsUtils.resetInputDefaultValue(changedItem, changedItem.defaultValue);
+                changedItem.required = changedItem.requiredOrig;
             };
         }
 

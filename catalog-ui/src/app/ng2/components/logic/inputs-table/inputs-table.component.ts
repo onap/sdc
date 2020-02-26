@@ -28,6 +28,7 @@ import { ModalService } from "../../../services/modal.service";
 import { InstanceFeDetails } from "app/models/instance-fe-details";
 import { InstanceFePropertiesMap } from "../../../../models/properties-inputs/property-fe-map";
 import { DataTypeService } from "../../../services/data-type.service";
+import { DropdownValue } from "../../ui/form-components/dropdown/ui-element-dropdown.component";
 
 @Component({
     selector: 'inputs-table',
@@ -40,6 +41,7 @@ export class InputsTableComponent {
     @Input() instanceNamesMap: Map<string, InstanceFeDetails>;
     @Input() readonly: boolean;
     @Input() isLoading: boolean;
+    @Input() componentType: string;
     @Output() inputChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() deleteInput: EventEmitter<any> = new EventEmitter<any>();
 
@@ -47,7 +49,11 @@ export class InputsTableComponent {
     
     sortBy: String;
     reverse: boolean;
-    selectedInputToDelete: InputFEModel;    
+    selectedInputToDelete: InputFEModel;
+    valuesForRequired = [
+        new DropdownValue(false,'FALSE'),
+        new DropdownValue(true,'TRUE')
+    ];
 
     sort = (sortBy) => {
         this.reverse = (this.sortBy === sortBy) ? !this.reverse : true;
@@ -87,6 +93,10 @@ export class InputsTableComponent {
         input.updateDefaultValueObj(event.value, event.isValid);
         this.inputChanged.emit(input);
     };
+
+    onRequiredChanged = (input: InputFEModel, event) => {
+        this.inputChanged.emit(input);
+    }
 
     onDeleteInput = () => {
         this.deleteInput.emit(this.selectedInputToDelete);
