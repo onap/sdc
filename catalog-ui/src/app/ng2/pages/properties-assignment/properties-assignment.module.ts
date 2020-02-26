@@ -34,6 +34,8 @@ import {HierarchyNavService} from "./services/hierarchy-nav.service";
 import {PropertiesUtils} from "./services/properties.utils";
 import {InputsUtils} from "./services/inputs.utils";
 import {ComponentModeService} from "../../services/component-services/component-mode.service";
+import {SdcUiComponentsModule} from "onap-ui-angular";
+import {ModalFormsModule} from "app/ng2/components/ui/forms/modal-forms.module";
 
 @NgModule({
     declarations: [
@@ -48,7 +50,9 @@ import {ComponentModeService} from "../../services/component-services/component-
         GlobalPipesModule,
         PropertyTableModule,
         PoliciesTableModule,
-        UiElementsModule],
+        UiElementsModule,
+        SdcUiComponentsModule,
+        ModalFormsModule],
 
     entryComponents: [PropertiesAssignmentComponent],
     exports: [

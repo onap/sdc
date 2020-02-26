@@ -25,6 +25,7 @@ import { FormElementsModule } from 'app/ng2/components/ui/form-components/form-e
 import { UiElementsModule } from 'app/ng2/components/ui/ui-elements.module';
 import { TranslateModule } from '../../../shared/translator/translate.module';
 import { DeclareListComponent } from './declare-list.component';
+import { SdcUiComponentsModule } from 'onap-ui-angular';
 
 @NgModule({
     declarations: [
@@ -35,7 +36,8 @@ import { DeclareListComponent } from './declare-list.component';
         FormsModule,
         FormElementsModule,
         UiElementsModule,
-        TranslateModule
+        TranslateModule,
+        SdcUiComponentsModule
     ],
     exports: [],
     entryComponents: [

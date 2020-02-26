@@ -57,6 +57,7 @@ export class DeclareListComponent {
         this.propertyModel = new PropertyBEModel();
         this.propertyModel.type = '';
         this.propertyModel.schema.property.type = '';
+        this.propertyModel.required = false;
         const types: string[] =  PROPERTY_DATA.TYPES; // All types - simple type + map + list
         this.dataTypes = this.dataTypeService.getAllDataTypes(); // Get all data types in service
         const nonPrimitiveTypes: string[] = _.filter(Object.keys(this.dataTypes), (type: string) => {

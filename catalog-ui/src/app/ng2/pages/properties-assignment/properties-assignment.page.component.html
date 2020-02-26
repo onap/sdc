@@ -47,6 +47,7 @@
                             [inputs]="inputs | searchFilter:'name':searchQuery"
                             [instanceNamesMap]="componentInstanceNamesMap"
                             [isLoading]="loadingInputs"
+                            [componentType]="component.componentType"
                             (deleteInput)="deleteInput($event)"
                             (inputChanged)="dataChanged($event)">
                         </inputs-table>
