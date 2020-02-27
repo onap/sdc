@@ -54,6 +54,13 @@ public class UploadArtifactPopup {
         GeneralUIUtils.ultimateWait();
     }
 
+    public void loadUndefinedFile(String path, String filename) {
+        final WebElement browseWebElement = GeneralUIUtils.getInputElement(DataTestIdEnum.ArtifactPopup.FILE_UNDEFINED.getValue());
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Uploading file: %s", path + File.separator + filename));
+        browseWebElement.sendKeys(path + File.separator + filename);
+        GeneralUIUtils.ultimateWait();
+    }
+
 
     public void insertDescription(String artifactDescriptoin) {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Changing artifact description to: %s", artifactDescriptoin));
@@ -76,12 +83,19 @@ public class UploadArtifactPopup {
         return selectList;
     }
 
-    public Select selectArtifactType(String artifactType) {
-        return GeneralUIUtils.getSelectList(artifactType, DataTestIdEnum.ArtifactPopup.ARTIFACT_TYPE.getValue());
+    public void selectArtifactType(String artifactType) {
+        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ArtifactPopup.ARTIFACT_TYPE_ICON.getValue());
+        GeneralUIUtils.clickOnElementByTestId(artifactType);
     }
 
     public void clickDoneButton() throws Exception {
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ArtifactPopup.DONE_BUTTON.getValue());
+        GeneralUIUtils.waitForLoader();
+        GeneralUIUtils.waitForElementInVisibilityBy(By.className("sdc-add-artifact"), WAITING_FOR_ELEMENT_TIME_OUT);
+    }
+
+    public void clickUpgradeArtifactsButton() throws Exception {
+        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ModalItems.UPGRADE_ARTIFACT_BUTTON.getValue());
         GeneralUIUtils.waitForLoader();
         GeneralUIUtils.waitForElementInVisibilityBy(By.className("sdc-add-artifact"), WAITING_FOR_ELEMENT_TIME_OUT);
     }
