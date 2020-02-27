@@ -58,8 +58,8 @@ public final class ArtifactUIUtils {
         artifactPopup.defineArtifactLabel(artifactInfo.getArtifactLabel());
         artifactPopup.selectArtifactType(artifactInfo.getArtifactType());
         artifactPopup.insertDescription(artifactInfo.getDescription());
-        artifactPopup.loadFile(artifactInfo.getFilepath(), artifactInfo.getFilename());
-        artifactPopup.clickDoneButton();
+        artifactPopup.loadUndefinedFile(artifactInfo.getFilepath(), artifactInfo.getFilename());
+        artifactPopup.clickUpgradeArtifactsButton();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("A new artifact of type %s was added", artifactInfo.getArtifactType()));
     }
 

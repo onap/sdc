@@ -510,34 +510,6 @@ public class Vf extends SetupCDTest {
 
     }
 
-    @Test
-    public void addVesEventsDeploymentArtifactToVfAndCheckMagnifierTest() throws Exception {
-        final int expectedHeaderAndRowSize = 3;
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-        ResourceUIUtils.createVF(vfMetaData, getUser());
-
-        ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
-
-        List<ArtifactInfo> deploymentArtifactList = new ArrayList<>();
-        ArtifactInfo art1 = new ArtifactInfo(filePath, "fm_metadata_three_fault_defs.yml", "desc", "artifactfault", "VES_EVENTS");
-        deploymentArtifactList.add(art1);
-        for (ArtifactInfo deploymentArtifact : deploymentArtifactList) {
-            DeploymentArtifactPage.clickAddNewArtifact();
-            ArtifactUIUtils.fillAndAddNewArtifactParameters(deploymentArtifact);
-        }
-        AssertJUnit.assertTrue(DeploymentArtifactPage.checkElementsCountInTable(deploymentArtifactList.size()));
-
-        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on magnifier button %s", art1.getArtifactLabel()));
-        WebElement magnifierButtonElement = GeneralUIUtils.getWebElementByTestID(ArtifactPageEnum.BROWSE_ARTIFACT.getValue() + art1.getArtifactLabel());
-        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Found magnifier button: %s", magnifierButtonElement.getText()));
-        magnifierButtonElement.click();
-        List<WebElement> headers = GeneralUIUtils.getWebElementsListByClassName("datatable-header-cell");
-        AssertJUnit.assertEquals(expectedHeaderAndRowSize, headers.size());
-        headers.get(0).getText();
-        List<WebElement> rows = GeneralUIUtils.getWebElementsListByContainsClassName("datatable-body-row");
-        AssertJUnit.assertEquals(expectedHeaderAndRowSize, rows.size());
-    }
-
     private void takeScreenshot(final String screenshotName, final String errorMsg) {
         try {
             ExtentTestActions.addScreenshot(Status.ERROR, screenshotName, errorMsg);

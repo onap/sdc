@@ -112,6 +112,7 @@ public final class DataTestIdEnum {
         UPGRADE_SERVICES_OK("upgradeVspModal-button-upgrade"),
         UPDATE_SERVICES_OK("upgradeVspModal-button-update"),
         UPGRADE_SERVICES_CLOSE("upgradeVspModal-button-close"),
+        UPGRADE_ARTIFACT_BUTTON("upgradeVspModal-button-done"),
         ACCEPT_TESTING_MESSAGE("checkindialog");
 
         private final String value;
@@ -203,7 +204,7 @@ public final class DataTestIdEnum {
     @AllArgsConstructor
     @Getter
     public enum ArtifactPageEnum {
-        ADD_DEPLOYMENT_ARTIFACT("add-deployment-artifact-button"),
+        ADD_DEPLOYMENT_ARTIFACT("add_artifact_btn"),
         ADD_INFORMATIONAL_ARTIFACT("add-information-artifact-button"),
         DOWNLOAD_ARTIFACT_ENV("download_env_"),
         ADD_ANOTHER_ARTIFACT("add-another-artifact-button"),
@@ -396,11 +397,12 @@ public final class DataTestIdEnum {
     @AllArgsConstructor
     @Getter
     public enum ArtifactPopup {
-
         BROWSE("browseButton"),
+        FILE_UNDEFINED("fileundefined"),
         ARTIFACT_DESCRIPTION("description"),
         ARTIFACT_LABEL("artifactLabel"),
         ARTIFACT_TYPE("artifacttype"),
+        ARTIFACT_TYPE_ICON("artifacttype-icon"),
         OK("OK"),
         SAVE("Save"),
         DONE_BUTTON("Done"),
