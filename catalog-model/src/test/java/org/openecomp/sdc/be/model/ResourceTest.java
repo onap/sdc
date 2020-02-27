@@ -20,15 +20,13 @@
 
 package org.openecomp.sdc.be.model;
 
-import mockit.Deencapsulation;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class ResourceTest extends ModelConfDependentTest{
 
@@ -447,15 +445,4 @@ public class ResourceTest extends ModelConfDependentTest{
 		result = testSubject.groupRelationsFromCsarByInstanceName(resource);
 	}
 
-	@Test
-	public void testGetInstanceNameFromInstanceId() throws Exception {
-		Resource testSubject;
-		Resource resource = new Resource();
-		String instId = "mock";
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "getInstanceNameFromInstanceId", resource, instId);
-	}
 }
