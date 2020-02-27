@@ -321,42 +321,48 @@ public class NodeTypeOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-    private JanusGraphOperationStatus setResourceDerivedFromGraph(GraphVertex componentV, NodeType toscaElement) {
-        List<String> derivedFromList = new ArrayList<>();
+    private JanusGraphOperationStatus setResourceDerivedFromGraph(final GraphVertex componentV,
+                                                                  final NodeType toscaElement) {
+        final List<String> derivedFromList = new ArrayList<>();
+        final Map<String, String> derivedFromMapOfIdToName = new LinkedHashMap<>();
 
-        JanusGraphOperationStatus
-            listFromGraphStatus = findResourcesPathRecursively(componentV, derivedFromList);
+        final JanusGraphOperationStatus listFromGraphStatus = findResourcesPathRecursively(componentV, derivedFromList,
+            derivedFromMapOfIdToName);
         if (JanusGraphOperationStatus.OK != listFromGraphStatus) {
             return listFromGraphStatus;
         }
 
         if (!derivedFromList.isEmpty()) {
             if (derivedFromList.size() > 1) {
-                List<String> lastDerivedFrom = new ArrayList<>();
+                final List<String> lastDerivedFrom = new ArrayList<>();
                 lastDerivedFrom.add(derivedFromList.get(1));
                 toscaElement.setDerivedFrom(lastDerivedFrom);
-                toscaElement.setDerivedList(derivedFromList);
             } else {
                 toscaElement.setDerivedFrom(null);
-                toscaElement.setDerivedList(derivedFromList);
             }
-
+            toscaElement.setDerivedList(derivedFromList);
+            toscaElement.setDerivedFromMapOfIdToName(derivedFromMapOfIdToName);
         }
         return JanusGraphOperationStatus.OK;
     }
 
-    protected JanusGraphOperationStatus findResourcesPathRecursively(GraphVertex nodeTypeV, List<String> resourcesPathList) {
+    private JanusGraphOperationStatus findResourcesPathRecursively(final GraphVertex nodeTypeV,
+                                                                     final List<String> resourcesPathList,
+                                                                     final Map<String, String> derivedFromMapOfIdToName) {
         Either<GraphVertex, JanusGraphOperationStatus> parentResourceRes = janusGraphDao
             .getChildVertex(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
         resourcesPathList.add((String) nodeTypeV.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
+        derivedFromMapOfIdToName.put(nodeTypeV.getUniqueId(),
+            (String) nodeTypeV.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
         while (parentResourceRes.isLeft()) {
-
-            GraphVertex parent = parentResourceRes.left().value();
+            final GraphVertex parent = parentResourceRes.left().value();
             resourcesPathList.add((String) parent.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
+            derivedFromMapOfIdToName
+                .put(parent.getUniqueId(), (String) parent.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME));
             parentResourceRes = janusGraphDao
                 .getChildVertex(parent, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
         }
-        JanusGraphOperationStatus operationStatus = parentResourceRes.right().value();
+        final JanusGraphOperationStatus operationStatus = parentResourceRes.right().value();
 
         if (operationStatus != JanusGraphOperationStatus.NOT_FOUND) {
             return operationStatus;

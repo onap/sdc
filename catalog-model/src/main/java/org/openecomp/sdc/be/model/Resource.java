@@ -20,6 +20,14 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
@@ -27,17 +35,25 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class Resource extends Component {
 
+    /**
+     * Please note that more than one "derivedFrom" resource is not currently supported by the app. The first list
+     * element is always addressed.
+     */
     private List<String> derivedFrom;
 
+    /**
+     * The derivedList is a chain of derivedFrom. e.g. if resource C is derived from resource B that is derived from
+     * resource A - then A, B is the "DerivedList" of resource C
+     */
     private List<String> derivedList;
+
+    private Map<String, String> derivedFromMapOfIdToName;
 
     private List<PropertyDefinition> attributes;
 
@@ -48,7 +64,7 @@ public class Resource extends Component {
     public Resource() {
         super(new ResourceMetadataDefinition());
         this.getComponentMetadataDefinition().getMetadataDataDefinition()
-                .setComponentType(ComponentTypeEnum.RESOURCE);
+            .setComponentType(ComponentTypeEnum.RESOURCE);
     }
 
     public Resource(ComponentMetadataDefinition componentMetadataDefinition) {
@@ -59,82 +75,30 @@ public class Resource extends Component {
         this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
     }
 
-    /**
-     * Please note that more than one "derivedFrom" resource is not currently
-     * supported by the app. The first list element is always addressed.
-     *
-     * @return
-     */
-    public List<String> getDerivedFrom() {
-        return derivedFrom;
-    }
-
-    public void setDerivedFrom(List<String> derivedFrom) {
-        this.derivedFrom = derivedFrom;
-    }
-
-    /**
-     * The derivedList is a chain of derivedFrom. e.g. if resource C is derived
-     * from resource B that is derived from resource A - then A, B is the
-     * "DerivedList" of resource C
-     *
-     * @return
-     */
-    public List<String> getDerivedList() {
-        return derivedList;
-    }
-
-    public void setDerivedList(List<String> derivedList) {
-        this.derivedList = derivedList;
-    }
-
+    @Override
     public List<PropertyDefinition> getProperties() {
         return properties;
     }
 
+    @Override
     public void setProperties(List<PropertyDefinition> properties) {
         this.properties = properties;
     }
 
-    public List<PropertyDefinition> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(List<PropertyDefinition> attributes) {
-        this.attributes = attributes;
-    }
-
-    public Map<String, InterfaceInstanceDataDefinition> getInstInterfaces() {
-        return instInterfaces;
-    }
-
-    public void setInstInterfaces(
-            Map<String, InterfaceInstanceDataDefinition> instInterfaces) {
-        this.instInterfaces = instInterfaces;
-    }
-
     public Boolean isAbstract() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition()
-                .getMetadataDataDefinition())
-                .isAbstract();
+            .getMetadataDataDefinition())
+            .isAbstract();
     }
 
     public void setAbstract(Boolean isAbstract) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .setAbstract(isAbstract);
-    }
-
-    public List<String> getDefaultCapabilities() {
-        return defaultCapabilities;
-    }
-
-    public void setDefaultCapabilities(List<String> defaultCapabilities) {
-        this.defaultCapabilities = defaultCapabilities;
+            .setAbstract(isAbstract);
     }
 
     public String getCost() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .getCost();
+            .getCost();
     }
 
     public void setCost(String cost) {
@@ -143,103 +107,72 @@ public class Resource extends Component {
 
     public String getLicenseType() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .getLicenseType();
+            .getLicenseType();
     }
 
     public void setLicenseType(String licenseType) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .setLicenseType(licenseType);
+            .setLicenseType(licenseType);
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + super.hashCode();
-        result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
-        result = prime * result + ((defaultCapabilities == null) ? 0 : defaultCapabilities.hashCode());
-        result = prime * result + ((derivedFrom == null) ? 0 : derivedFrom.hashCode());
-        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-        result = prime * result + ((derivedList == null) ? 0 : derivedList.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Resource resource = (Resource) o;
-        return Objects.equals(derivedFrom, resource.derivedFrom) &&
-                Objects.equals(derivedList, resource.derivedList) &&
-                Objects.equals(properties, resource.properties) &&
-                Objects.equals(attributes, resource.attributes) &&
-                Objects.equals(defaultCapabilities, resource.defaultCapabilities);
-    }
-
-
-    @Override
-    public String toString() {
-        return "Resource [derivedFrom=" + derivedFrom + ", properties=" + properties + ", attributes=" + attributes
-                + ", defaultCapabilities=" + defaultCapabilities + ", additionalInformation=" + additionalInformation
-                + "Metadata [" + getComponentMetadataDefinition().getMetadataDataDefinition().toString() + "]";
-    }
 
     public String getToscaResourceName() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .getToscaResourceName();
+            .getToscaResourceName();
     }
 
     public void setToscaResourceName(String toscaResourceName) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .setToscaResourceName(toscaResourceName);
+            .setToscaResourceName(toscaResourceName);
     }
 
     public ResourceTypeEnum getResourceType() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .getResourceType();
+            .getResourceType();
     }
 
     public void setResourceType(ResourceTypeEnum resourceType) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .setResourceType(resourceType);
+            .setResourceType(resourceType);
     }
 
     public void setVendorName(String vendorName) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .setVendorName(vendorName);
+            .setVendorName(vendorName);
     }
 
     public void setVendorRelease(String vendorRelease) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .setVendorRelease(vendorRelease);
+            .setVendorRelease(vendorRelease);
     }
 
     public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
-                setResourceVendorModelNumber(resourceVendorModelNumber);
+            setResourceVendorModelNumber(resourceVendorModelNumber);
     }
 
     public String getVendorName() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .getVendorName();
+            .getVendorName();
     }
 
     public String getVendorRelease() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .getVendorRelease();
+            .getVendorRelease();
     }
 
     public String getResourceVendorModelNumber() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-                .getResourceVendorModelNumber();
+            .getResourceVendorModelNumber();
     }
 
     @Override
     public String fetchGenericTypeToscaNameFromConfig() {
         String result = super.fetchGenericTypeToscaNameFromConfig();
-        if (null == result)
-            result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get(ResourceTypeEnum.VFC.getValue());
+        if (null == result) {
+            result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes()
+                .get(ResourceTypeEnum.VFC.getValue());
+        }
         return result;
     }
 
@@ -249,24 +182,23 @@ public class Resource extends Component {
     }
 
     @Override
-    public boolean shouldGenerateInputs(){
+    public boolean shouldGenerateInputs() {
         return !(this.getResourceType().isAtomicType());
     }
 
     @Override
     public boolean deriveFromGeneric() {
-        return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
+        return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom
+            .contains(fetchGenericTypeToscaNameFromConfig()));
     }
 
     public Map<String, List<RequirementCapabilityRelDef>> groupRelationsFromCsarByInstanceName(Resource resource) {
-        List<RequirementCapabilityRelDef> componentInstanceRelationsFromCsar = resource.getComponentInstancesRelations().stream().filter(r->!r.isOriginUI()).collect(Collectors.toList());
-        Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId = MapUtil.groupListBy(componentInstanceRelationsFromCsar, RequirementCapabilityRelDef::getFromNode);
-        return MapUtil.convertMapKeys(relationsByInstanceId, instId -> getInstanceInvariantNameFromInstanceId(resource, instId));
-    }
-
-    private String getInstanceNameFromInstanceId(Resource resource, String instId) {
-        Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
-        return componentInstanceById.isPresent() ? componentInstanceById.get().getName() : null;
+        List<RequirementCapabilityRelDef> componentInstanceRelationsFromCsar = resource.getComponentInstancesRelations()
+            .stream().filter(r -> !r.isOriginUI()).collect(Collectors.toList());
+        Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId = MapUtil
+            .groupListBy(componentInstanceRelationsFromCsar, RequirementCapabilityRelDef::getFromNode);
+        return MapUtil
+            .convertMapKeys(relationsByInstanceId, instId -> getInstanceInvariantNameFromInstanceId(resource, instId));
     }
 
     private String getInstanceInvariantNameFromInstanceId(Resource resource, String instId) {
