@@ -24,6 +24,7 @@
           <include name="onboardPNFSoftwareInformationFlow"/>
         </methods>
       </class>
+      <class name="org.openecomp.sdc.ci.tests.execute.sanity.GAB"/>
     </classes>
   </test>
 </suite>
