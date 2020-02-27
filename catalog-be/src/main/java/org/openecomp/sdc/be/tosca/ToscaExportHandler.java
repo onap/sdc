@@ -163,7 +163,8 @@ public class ToscaExportHandler {
     private static final String FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION = "convertToToscaTemplate - failed to get Default Imports section from configuration";
     private static final String NOT_SUPPORTED_COMPONENT_TYPE = "Not supported component type {}";
     private static final List<Map<String, Map<String, String>>> DEFAULT_IMPORTS = ConfigurationManager
-                                                                                          .getConfigurationManager().getConfiguration().getDefaultImports();
+        .getConfigurationManager().getConfiguration().getDefaultImports();
+    private static final String NATIVE_ROOT = "tosca.nodes.Root";
     private static YamlUtil yamlUtil = new YamlUtil();
 
     public ToscaExportHandler(){}
@@ -505,60 +506,142 @@ public class ToscaExportHandler {
         return Either.left(new ImmutablePair<>(toscaTemplate, componentCache));
     }
 
-    private void createDependency(Map<String, Component> componentCache, List<Map<String, Map<String, String>>> imports,
-            List<Triple<String, String, Component>> dependecies, ComponentInstance ci) {
-        Map<String, String> files = new HashMap<>();
-        Map<String, Map<String, String>> importsListMember = new HashMap<>();
-        StringBuilder keyNameBuilder;
-
-        Component componentRI = componentCache.get(ci.getComponentUid());
+    private void createDependency(final Map<String, Component> componentCache, 
+                                  final List<Map<String, Map<String, String>>> imports,
+                                  final List<Triple<String, String, Component>> dependencies,
+                                  final ComponentInstance componentInstance) {
+        log.debug("createDependency componentCache {}",componentCache);
+        final Component componentRI = componentCache.get(componentInstance.getComponentUid());
         if (componentRI == null) {
             // all resource must be only once!
-            Either<Component, StorageOperationStatus> resource = toscaOperationFacade
-                    .getToscaFullElement(ci.getComponentUid());
+            final Either<Component, StorageOperationStatus> resource = toscaOperationFacade
+                .getToscaFullElement(componentInstance.getComponentUid());
             if ((resource.isRight()) && (log.isDebugEnabled())) {
-                log.debug("Failed to fetch resource with id {} for instance {}",ci.getComponentUid() ,ci.getUniqueId());
+                log.debug("Failed to fetch resource with id {} for instance {}", componentInstance.getComponentUid(),
+                    componentInstance.getUniqueId());
                 return ;
             }
+            final Component fetchedComponent = resource.left().value();
+            setComponentCache(componentCache, componentInstance, fetchedComponent);
+            addDependencies(imports, dependencies, fetchedComponent);
+        }
+    }
 
-            Component fetchedComponent = resource.left().value();
-            componentCache.put(fetchedComponent.getUniqueId(), fetchedComponent);
-
-            if (ci.getOriginType() == OriginTypeEnum.ServiceProxy){
-                Either<Component, StorageOperationStatus> sourceService = toscaOperationFacade
-                        .getToscaFullElement(ci.getSourceModelUid());
-                if (sourceService.isRight() && (log.isDebugEnabled())) {
-                    log.debug("Failed to fetch source service with id {} for proxy {}", ci.getSourceModelUid(), ci.getUniqueId());
-                }
-                Component fetchedSource = sourceService.left().value();
-                componentCache.put(fetchedSource.getUniqueId(), fetchedSource);
+    /**
+     * Sets a componentCache from the given component/resource.
+     */
+    private void setComponentCache(final Map<String, Component> componentCache,
+                                   final ComponentInstance componentInstance,
+                                   final Component fetchedComponent) {
+        componentCache.put(fetchedComponent.getUniqueId(), fetchedComponent);
+        if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy) {
+            final Either<Component, StorageOperationStatus> sourceService = toscaOperationFacade
+                .getToscaFullElement(componentInstance.getSourceModelUid());
+            if (sourceService.isRight() && (log.isDebugEnabled())) {
+                log.debug("Failed to fetch source service with id {} for proxy {}",
+                    componentInstance.getSourceModelUid(), componentInstance.getUniqueId());
             }
+            final Component fetchedSource = sourceService.left().value();
+            componentCache.put(fetchedSource.getUniqueId(), fetchedSource);
+        }
+    }
 
-            componentRI = fetchedComponent;
+    /**
+     * Retrieves all derived_from nodes and stores it in a predictable order.
+     */
+    private void addDependencies(final List<Map<String, Map<String, String>>> imports,
+                                 final List<Triple<String, String, Component>> dependencies,
+                                 final Component fetchedComponent) {
+        final Set<Component> componentsList = new LinkedHashSet<>();
+        if (fetchedComponent instanceof Resource) {
+            log.debug("fetchedComponent is a resource {}",fetchedComponent);
 
-            Map<String, ArtifactDefinition> toscaArtifacts = componentRI.getToscaArtifacts();
-            ArtifactDefinition artifactDefinition = toscaArtifacts.get(ASSET_TOSCA_TEMPLATE);
+            final Optional<Map<String, String>> derivedFromMapOfIdToName = getDerivedFromMapOfIdToName(fetchedComponent, componentsList);
+            if (derivedFromMapOfIdToName.isPresent()) {
+                derivedFromMapOfIdToName.get().entrySet().forEach(entry -> {
+                    log.debug("Started entry.getValue() : {}",entry.getValue());
+                    if (!NATIVE_ROOT.equals(entry.getValue())) {
+                        Either<Resource, StorageOperationStatus> resourcefetched = toscaOperationFacade
+                            .getToscaElement(entry.getKey());
+                        if (resourcefetched != null && resourcefetched.isLeft()) {
+                            componentsList.add(resourcefetched.left().value());
+                        }
+                    }
+                });
+            }
+            setImports(imports, dependencies, componentsList);
+        }
+    }
+
+    /**
+     * Returns all derived_from nodes found.
+     */
+    private Optional<Map<String, String>> getDerivedFromMapOfIdToName(final Component fetchedComponent,
+                                                                      final Set<Component> componentsList) {
+        final Resource parentResource = (Resource) fetchedComponent;
+        Map<String, String> derivedFromMapOfIdToName = new HashMap<>();
+        if(CollectionUtils.isNotEmpty(parentResource.getComponentInstances())) {
+            componentsList.add(fetchedComponent);
+            for (final ComponentInstance componentInstance : parentResource.getComponentInstances()) {
+                final Either<Resource, StorageOperationStatus> resourcefetched = toscaOperationFacade
+                    .getToscaElement(componentInstance.getComponentUid());
+                if (resourcefetched != null && resourcefetched.isLeft()) {
+                    final Map<String, String> derivedWithId = resourcefetched.left().value().getDerivedFromMapOfIdToName();
+                    if (MapUtils.isNotEmpty(derivedWithId)) {
+                        derivedFromMapOfIdToName.putAll(derivedWithId);
+                    }
+                }
+            }
+        } else {
+            derivedFromMapOfIdToName = parentResource.getDerivedFromMapOfIdToName();
+        }
+        log.debug("Started derivedFromMapOfIdToName: {}", derivedFromMapOfIdToName);
+        return Optional.ofNullable(derivedFromMapOfIdToName);
+    }
+
+    /**
+     * Creates a resource map and adds it to the import list.
+     */
+    private void setImports(final List<Map<String, Map<String, String>>> imports,
+                            final List<Triple<String, String, Component>> dependencies,
+                            final Set<Component> componentsList) {
+        componentsList.forEach(component -> {
+            final Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
+            final ArtifactDefinition artifactDefinition = toscaArtifacts.get(ASSET_TOSCA_TEMPLATE);
             if (artifactDefinition != null) {
-                String artifactName = artifactDefinition.getArtifactName();
+                final Map<String, String> files = new HashMap<>();
+                final String artifactName = artifactDefinition.getArtifactName();
                 files.put(IMPORTS_FILE_KEY, artifactName);
-                keyNameBuilder = new StringBuilder();
-                keyNameBuilder.append(fetchedComponent.getComponentType().toString().toLowerCase());
+                final StringBuilder keyNameBuilder = new StringBuilder();
+                keyNameBuilder.append(component.getComponentType().toString().toLowerCase());
                 keyNameBuilder.append("-");
-                keyNameBuilder.append(ci.getComponentName());
-                importsListMember.put(keyNameBuilder.toString(), files);
-                imports.add(importsListMember);
-                dependecies.add(new ImmutableTriple<>(artifactName,
-                        artifactDefinition.getEsId(), fetchedComponent));
+                keyNameBuilder.append(component.getName());
+                addImports(imports, keyNameBuilder, files);
+                dependencies
+                    .add(new ImmutableTriple<String, String, Component>(artifactName, artifactDefinition.getEsId(),
+                        component));
 
-                if (!ModelConverter.isAtomicComponent(componentRI)) {
-                    importsListMember = new HashMap<>();
-                    Map<String, String> interfaceFiles = new HashMap<>();
+                if (!ModelConverter.isAtomicComponent(component)) {
+                    final Map<String, String> interfaceFiles = new HashMap<>();
                     interfaceFiles.put(IMPORTS_FILE_KEY, getInterfaceFilename(artifactName));
                     keyNameBuilder.append("-interface");
-                    importsListMember.put(keyNameBuilder.toString(), interfaceFiles);
-                    imports.add(importsListMember);
+                    addImports(imports, keyNameBuilder, interfaceFiles);
                 }
             }
+        });
+    }
+
+    /**
+     * Adds the found resource to the import definition list.
+     */
+    private void addImports(final List<Map<String, Map<String, String>>> imports,
+                            final StringBuilder keyNameBuilder,
+                            final Map<String, String> files) {
+        final String mapKey = keyNameBuilder.toString();
+        if (imports.stream().allMatch(stringMapMap -> stringMapMap.get(mapKey) == null)) {
+            final Map<String, Map<String, String>> importsListMember = new HashMap<>();
+            importsListMember.put(keyNameBuilder.toString(), files);
+            imports.add(importsListMember);
         }
     }
 
@@ -952,7 +1035,7 @@ public class ToscaExportHandler {
             toscaNodeType.setDescription(component.getDescription());
         } else {
             String derivedFrom = null != component.getDerivedFromGenericType() ? component.getDerivedFromGenericType()
-                    : "tosca.nodes.Root";
+                    : NATIVE_ROOT;
             toscaNodeType.setDerived_from(derivedFrom);
         }
         return toscaNodeType;

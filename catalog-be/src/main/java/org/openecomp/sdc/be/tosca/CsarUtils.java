@@ -22,54 +22,6 @@ package org.openecomp.sdc.be.tosca;
 
 
 import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang.WordUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
-import org.openecomp.sdc.be.components.impl.ImportUtils;
-import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
-import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
-import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
-import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
-import org.openecomp.sdc.be.resources.data.DAOArtifactData;
-import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
-import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
-import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
-import org.openecomp.sdc.be.utils.CommonBeUtils;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.log.elements.LoggerSupportability;
-import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
-import org.openecomp.sdc.common.log.enums.StatusCode;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.util.GeneralUtility;
-import org.openecomp.sdc.common.util.ValidationUtils;
-import org.openecomp.sdc.common.zip.ZipUtils;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -89,6 +41,59 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
+import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
+import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
+import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
+import org.openecomp.sdc.be.utils.CommonBeUtils;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
+import org.openecomp.sdc.common.log.enums.StatusCode;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.GeneralUtility;
+import org.openecomp.sdc.common.util.ValidationUtils;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * @author tg851x
@@ -290,16 +295,16 @@ public class CsarUtils {
         Either<byte[], ResponseFormat> latestSchemaFilesFromCassandra = getLatestSchemaFilesFromCassandra();
 
         if(latestSchemaFilesFromCassandra.isRight()){
-            log.error("Error retrieving SDC Schema files from cassandra" );
+            log.error("Error retrieving SDC Schema files from cassandra");
             return Either.right(latestSchemaFilesFromCassandra.right().value());
         }
 
-        //add files from retrieved SDC.zip to Definitions folder in CSAR
-        Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromCassandra = addSchemaFilesFromCassandra(zip, latestSchemaFilesFromCassandra.left().value());
+        final byte[] schemaFileZip = latestSchemaFilesFromCassandra.left().value();
 
-        if(addSchemaFilesFromCassandra.isRight()){
-            return addSchemaFilesFromCassandra;
-        }
+        final List<String> nodesFromPackage = findNonRootNodesFromPackage(dependencies);
+
+        //add files from retrieved SDC.zip to Definitions folder in CSAR
+        addSchemaFilesFromCassandra(zip, schemaFileZip, nodesFromPackage);
 
         Either<CsarDefinition, ResponseFormat> collectedComponentCsarDefinition = collectComponentCsarDefinition(component);
 
@@ -311,13 +316,91 @@ public class CsarUtils {
 	        for (CsarEntryGenerator generator: generators) {
 	            log.debug("Invoking CsarEntryGenerator: {}", generator.getClass().getName());
 		        for (Entry<String, byte[]> pluginGeneratedFile : generator.generateCsarEntries(component).entrySet()) {
-		        	zip.putNextEntry(new ZipEntry(pluginGeneratedFile.getKey()));
-		            zip.write(pluginGeneratedFile.getValue());
+                    zip.putNextEntry(new ZipEntry(pluginGeneratedFile.getKey()));
+                    zip.write(pluginGeneratedFile.getValue());
 		        }
 	        }
         }
 
         return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
+    }
+
+    /**
+     * Create a list of all derived nodes found on the package
+     *
+     * @param dependencies all node dependencies
+     * @return a list of nodes
+     */
+    private List<String> findNonRootNodesFromPackage(final List<Triple<String, String, Component>> dependencies) {
+        final List<String> nodes = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(dependencies)) {
+            final String NATIVE_ROOT = "tosca.nodes.Root";
+            dependencies.forEach(dependency -> {
+                if (dependency.getRight() instanceof Resource) {
+                    final Resource resource = (Resource) dependency.getRight();
+                    if (CollectionUtils.isNotEmpty(resource.getDerivedList())) {
+                        resource.getDerivedList().stream()
+                            .filter(node -> !nodes.contains(node) && !NATIVE_ROOT.equalsIgnoreCase(node))
+                            .forEach(node -> nodes.add(node));
+                    }
+                }
+            });
+        }
+        return nodes;
+    }
+
+    /**
+     * Writes a new zip entry
+     *
+     * @param zipInputStream the zip entry to be read
+     * @return a map of the given zip entry
+     */
+    private Map<String, Object> readYamlZipEntry(final ZipInputStream zipInputStream) throws IOException {
+        final int initSize = 2048;
+        final StringBuilder zipEntry = new StringBuilder();
+        final byte[] buffer = new byte[initSize];
+        int read = 0;
+        while ((read = zipInputStream.read(buffer, 0, initSize)) >= 0) {
+            zipEntry.append(new String(buffer, 0, read));
+        }
+
+        return (Map<String, Object>) new Yaml().load(zipEntry.toString());
+    }
+
+    /**
+     * Filters and removes all duplicated nodes found
+     *
+     * @param nodesFromPackage a List of all derived nodes found on the given package
+     * @param nodesFromArtifactFile represents the nodes.yml file stored in Cassandra
+     * @return a nodes Map updated
+     */
+    private Map<String, Object> updateNodeYml(final List<String> nodesFromPackage,
+                                              final Map<String, Object> nodesFromArtifactFile) {
+
+        if (MapUtils.isNotEmpty(nodesFromArtifactFile)) {
+            final String nodeTypeBlock = ToscaTagNamesEnum.NODE_TYPES.getElementName();
+            final Map<String, Object> nodeTypes = (Map<String, Object>) nodesFromArtifactFile.get(nodeTypeBlock);
+            nodesFromPackage.stream()
+                .filter(nodeTypes::containsKey)
+                .forEach(nodeTypes::remove);
+
+            nodesFromArtifactFile.replace(nodeTypeBlock, nodeTypes);
+        }
+
+        return nodesFromArtifactFile;
+    }
+
+    /**
+     * Updates the zip entry from the given parameters
+     *
+     * @param byteArrayOutputStream an output stream in which the data is written into a byte array.
+     * @param nodesYaml a Map of nodes to be written
+     */
+    private void updateZipEntry(final ByteArrayOutputStream byteArrayOutputStream,
+                                final Map<String, Object> nodesYaml) throws IOException {
+        if (MapUtils.isNotEmpty(nodesYaml)) {
+            byteArrayOutputStream.write(new YamlUtil().objectToYaml(nodesYaml).getBytes());
+        }
     }
 
     private Either<ZipOutputStream, ResponseFormat> getZipOutputStreamResponseFormatEither(ZipOutputStream zip, List<Triple<String, String, Component>> dependencies, Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache) throws IOException {
@@ -374,43 +457,57 @@ public class CsarUtils {
         return null;
     }
 
-    private Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromCassandra(ZipOutputStream zip, byte[] schemaFileZip) {
+    private void addSchemaFilesFromCassandra(final ZipOutputStream zip,
+                                             final byte[] schemaFileZip,
+                                             final List<String> nodesFromPackage) {
+        final int initSize = 2048;
+        log.debug("Starting copy from Schema file zip to CSAR zip");
+        try (final ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            final BufferedOutputStream bos = new BufferedOutputStream(out, initSize)) {
 
-            final int initSize = 2048;
-
-            log.debug("Starting copy from Schema file zip to CSAR zip");
-            try (final ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
-                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                 final BufferedOutputStream bos = new BufferedOutputStream(out, initSize)) {
-
-                ZipEntry entry;
-                while ((entry = zipStream.getNextEntry()) != null) {
-                    ZipUtils.checkForZipSlipInRead(entry);
-                    final String entryName = entry.getName();
-                    int readSize = initSize;
-                    final byte[] entryData = new byte[initSize];
-
+            ZipEntry entry;
+            while ((entry = zipStream.getNextEntry()) != null) {
+                ZipUtils.checkForZipSlipInRead(entry);
+                final String entryName = entry.getName();
+                int readSize = initSize;
+                final byte[] entryData = new byte[initSize];
+                if (entryName.equalsIgnoreCase("nodes.yml")) {
+                    handleNode(zipStream, out, nodesFromPackage);
+                } else {
                     while ((readSize = zipStream.read(entryData, 0, readSize)) != -1) {
                         bos.write(entryData, 0, readSize);
                     }
-
                     bos.flush();
-                    out.flush();
-                    zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
-                    zip.write(out.toByteArray());
-                    zip.flush();
-                    out.reset();
                 }
-            } catch (final Exception e) {
-                log.error("Error while writing the SDC schema file to the CSAR", e);
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+                out.flush();
+                zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
+                zip.write(out.toByteArray());
+                zip.flush();
+                out.reset();
             }
-
-            log.debug("Finished coppy from Schema file zip to CSAR zip");
-            return Either.left(zip);
+        } catch (final Exception e) {
+            log.error("Error while writing the SDC schema file to the CSAR", e);
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
+        log.debug("Finished copy from Schema file zip to CSAR zip");
+    }
 
+    /**
+     * Handles the nodes.yml zip entry, updating the nodes.yml to avoid duplicated nodes on it.
+     *
+     * @param zipInputStream the zip entry to be read
+     * @param byteArrayOutputStream an output stream in which the data is written into a byte array.
+     * @param nodesFromPackage list of all nodes found on the onboarded package
+     */
+    private void handleNode(final ZipInputStream zipInputStream,
+                            final ByteArrayOutputStream byteArrayOutputStream,
+                            final List<String> nodesFromPackage) throws IOException {
 
+        final Map<String, Object> nodesFromArtifactFile = readYamlZipEntry(zipInputStream);
+        final Map<String, Object> nodesYaml = updateNodeYml(nodesFromPackage, nodesFromArtifactFile);
+        updateZipEntry(byteArrayOutputStream, nodesYaml);
+    }
 
     private void addInnerComponentsToCache(Map<String, ImmutableTriple<String, String, Component>> componentCache,
             Component childComponent) {

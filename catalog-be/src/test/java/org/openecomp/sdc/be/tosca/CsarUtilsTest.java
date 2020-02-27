@@ -20,12 +20,34 @@
 
 package org.openecomp.sdc.be.tosca;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import fj.data.Either;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import mockit.Deencapsulation;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -60,23 +82,6 @@ import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 public class CsarUtilsTest extends BeConfDependentTest {
 
 	@InjectMocks
@@ -106,6 +111,8 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		MockitoAnnotations.initMocks(this);
 		
 	}
+
+	private final List<String> nodesFromPackage = Arrays.asList("tosca.nodes.Root", "tosca.nodes.Container.Application");
 
 	private NonMetaArtifactInfo createNonMetaArtifactInfoTestSubject() {
 		return new CsarUtils.NonMetaArtifactInfo("mock", "mock", ArtifactTypeEnum.AAI_SERVICE_MODEL,
@@ -473,27 +480,6 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-
-	@Test
-	public void testAddSchemaFilesFromCassandra() throws IOException {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-				ZipOutputStream zip = new ZipOutputStream(out);
-				ByteArrayOutputStream outMockStream = new ByteArrayOutputStream();
-				ZipOutputStream outMock = new ZipOutputStream(outMockStream);) {
-
-			outMock.putNextEntry(new ZipEntry("mock1"));
-			outMock.write(new byte[1]);
-			outMock.putNextEntry(new ZipEntry("mock2"));
-			outMock.write(new byte[3]);
-			outMock.close();
-			byte[] byteArray = outMockStream.toByteArray();
-			Deencapsulation.invoke(testSubject, "addSchemaFilesFromCassandra", zip, byteArray);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@Test
@@ -957,4 +943,39 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		assertTrue(eitherNonMetaArtifact.isRight());
 		assertTrue(!collectedWarningMessages.isEmpty());
 	}
+
+	@Test(expected = IOException.class)
+	public void testAddSchemaFilesFromCassandraAddingDuplicatedEntry() throws IOException {
+		final String rootPath = System.getProperty("user.dir");
+		final Path path = Paths.get(rootPath + "/src/test/resources/sdc.zip");
+		try {
+			final byte[] data = Files.readAllBytes(path);
+			try (final ByteArrayOutputStream out = new ByteArrayOutputStream();
+				final ZipOutputStream zip = new ZipOutputStream(out);) {
+				Deencapsulation.invoke(testSubject, "addSchemaFilesFromCassandra",
+					zip, data, nodesFromPackage);
+				zip.putNextEntry(new ZipEntry("Definitions/nodes.yml"));
+				zip.finish();
+			}
+		} catch (final IOException e) {
+			Assert.assertTrue("duplicate entry: Definitions/nodes.yml".equals(e.getMessage()));
+			throw new IOException("Could not add Schema Files From Cassandra", e);
+		}
+	}
+
+	@Test
+	public void testFindNonRootNodesFromPackage() {
+		final Resource resource = new Resource();
+		resource.setDerivedList(nodesFromPackage);
+		final Component component = resource;
+		final List<Triple<String, String, Component>> dependencies = new ArrayList<>();
+		final Triple<String, String, Component> triple = Triple.of("fileName", "cassandraId", component);
+		dependencies.add(triple);
+		final List<String> expectedResult = Arrays.asList("tosca.nodes.Container.Application");
+		final List<String> result = Deencapsulation.invoke(testSubject,
+			"findNonRootNodesFromPackage", dependencies);
+		assertTrue(CollectionUtils.isNotEmpty(result));
+		assertEquals(expectedResult, result);
+	}
+
 }
