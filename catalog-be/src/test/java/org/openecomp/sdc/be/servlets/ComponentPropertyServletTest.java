@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
@@ -67,14 +68,18 @@ public class ComponentPropertyServletTest extends JerseySpringBaseTest {
     private ComponentPropertyServlet componentPropertyServlet;
 
     private static final String SERVICE_ID = "service1";
-    private final static String USER_ID = "jh0003";
+    private static final String USER_ID = "jh0003";
     private static final String VALID_PROPERTY_NAME = "valid_name_123";
     private static final String INVALID_PROPERTY_NAME = "invalid_name_$.&";
     private static final String STRING_TYPE = "string";
 
     @Before
     public void initClass() {
-        initMockitoStubbings();
+        when(request.getSession()).thenReturn(session);
+        when(session.getServletContext()).thenReturn(context);
+        when(context.getAttribute(eq(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))).thenReturn(wrapper);
+        when(wrapper.getWebAppContext(any())).thenReturn(webAppContext);
+        when(webAppContext.getBean(eq(ComponentsUtils.class))).thenReturn(componentsUtils);
     }
 
     @Test
@@ -108,14 +113,6 @@ public class ComponentPropertyServletTest extends JerseySpringBaseTest {
                 componentPropertyServlet.createPropertyInService(SERVICE_ID, getInvalidProperty(), request, USER_ID);
 
         Assert.assertEquals(HttpStatus.BAD_REQUEST_400.getStatusCode(), propertyInService.getStatus());
-    }
-
-    private static void initMockitoStubbings() {
-        when(request.getSession()).thenReturn(session);
-        when(session.getServletContext()).thenReturn(context);
-        when(context.getAttribute(eq(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))).thenReturn(wrapper);
-        when(wrapper.getWebAppContext(any())).thenReturn(webAppContext);
-        when(webAppContext.getBean(eq(ComponentsUtils.class))).thenReturn(componentsUtils);
     }
 
     private String getValidProperty() {

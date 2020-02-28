@@ -22,8 +22,12 @@
 
 package org.openecomp.sdc.be.components.impl.exceptions;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -32,6 +36,11 @@ import static org.junit.Assert.assertEquals;
 public class ComponentExceptionTest {
 
 	private static final String[] PARAMS = {"param1", "param2"};
+
+	@Before
+	public void init(){
+		new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
+	}
 
 	@Test
 	public void hasValidGettersForActionStatus() {

@@ -36,10 +36,12 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.MockGenerator;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
@@ -99,10 +101,7 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -133,26 +132,24 @@ import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
 import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
 
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
 
     private static final User USER = new User("John", "Doh", "jh0003", "jh0003@gmail.com", "ADMIN",
             System.currentTimeMillis());
-    private final static String RESOURCE_INSTANCE_NAME = "Service-111";
-    private final static String INSTANCE_ID = "S-123-444-ghghghg";
+    private static final String RESOURCE_INSTANCE_NAME = "Service-111";
+    private static final String INSTANCE_ID = "S-123-444-ghghghg";
 
-    private final static String ARTIFACT_NAME = "service-Myservice-template.yml";
-    private final static String ARTIFACT_LABEL = "assettoscatemplate";
-    private final static String ES_ARTIFACT_ID = "123123dfgdfgd0";
-    private final static byte[] PAYLOAD = "some payload".getBytes();
+    private static final String ARTIFACT_NAME = "service-Myservice-template.yml";
+    private static final String ARTIFACT_LABEL = "assettoscatemplate";
+    private static final String ES_ARTIFACT_ID = "123123dfgdfgd0";
+    private static final byte[] PAYLOAD = "some payload".getBytes();
     private static final String RESOURCE_NAME = "My-Resource_Name with   space";
     private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     private static final String RESOURCE_SUBCATEGORY = "Router";
     public static final String RESOURCE_CATEGORY = "Network Layer 2-3/Router";
     public static final Resource resource = Mockito.mock(Resource.class);
 
-    static ConfigurationSource configurationSource = new FSConfigurationSource(
-            ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
     @InjectMocks
     private ArtifactsBusinessLogic artifactBL;
     private static User user = null;
@@ -474,7 +471,6 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock{
                 .thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.updateGroupInstancesOnComponent(eq(service),eq(ci.getUniqueId()), any(List.class)))
                 .thenReturn(Either.left(new ArrayList()));
-
         assertThatThrownBy(() -> {
             artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
                     "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);

@@ -21,8 +21,10 @@
 package org.openecomp.sdc.be.components.property;
 
 import com.google.common.collect.Lists;
+import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -34,10 +36,17 @@ import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 
 import java.util.List;
 import java.util.Optional;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class PropertyConstraintsUtilsTest {
+
+    @Before
+    public void init(){
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
+    }
 
     @Test
     public void mergePropertiesConstraintsDeletionNotPermittedTest(){

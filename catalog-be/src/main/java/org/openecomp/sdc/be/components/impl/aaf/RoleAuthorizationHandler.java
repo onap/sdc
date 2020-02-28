@@ -39,7 +39,7 @@ public class RoleAuthorizationHandler {
 
     private static final Logger log = Logger.getLogger(RoleAuthorizationHandler.class);
 
-    private ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
+    private final ConfigurationManager configurationManager = ConfigurationManager.getConfigurationManager();
 
     @Before("@annotation(permissions)")
     public void authorizeRole(JoinPoint joinPoint, PermissionAllowed permissions) {
