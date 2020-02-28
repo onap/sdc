@@ -23,9 +23,11 @@ package org.openecomp.sdc.be.impl.aaf;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -48,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class RoleAuthorizationHandlerTest {
 
     private RoleAuthorizationHandler roleAuthorizationHandler = new RoleAuthorizationHandler();
@@ -61,18 +63,15 @@ public class RoleAuthorizationHandlerTest {
     @Mock
     HttpServletRequest httpServletRequest;
 
-
-    private static ConfigurationSource configurationSource = new FSConfigurationSource(
-            ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be/auth");
-    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         when(joinPoint.getSignature()).thenReturn(signature);
         when(signature.toShortString()).thenReturn("methodName");
         when(joinPoint.getThis()).thenReturn(beGenericServlet);
         when(beGenericServlet.getServletRequest()).thenReturn(httpServletRequest);
         ThreadLocalsHolder.setApiType(FilterDecisionEnum.EXTERNAL);
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be/auth"));
     }
 
     @Test

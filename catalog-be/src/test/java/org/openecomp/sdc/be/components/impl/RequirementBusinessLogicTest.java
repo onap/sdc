@@ -29,7 +29,6 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.validation.RequirementValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -50,9 +49,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.ArrayList;
@@ -94,12 +91,6 @@ public class RequirementBusinessLogicTest extends BaseBusinessLogicMock {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         ExternalConfiguration.setAppName("catalog-be");
-
-        // init Configuration
-        String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration
-                .getChangeListener(), appConfigDir);
-        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
         ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
         // User data and management

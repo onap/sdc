@@ -28,6 +28,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -37,6 +38,8 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -56,6 +59,7 @@ public class UserValidationsTest {
 	public void setUp() {
 		//TestUtilsSdc.setFinalStatic(UserValidations.class, "log", LoggerFactory.getLogger(UserValidations.class));
 		MockitoAnnotations.initMocks(this);
+		new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 	}
 
 	@Test

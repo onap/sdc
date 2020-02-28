@@ -49,7 +49,6 @@ import org.openecomp.sdc.be.components.validation.service.ServiceNamingPolicyVal
 import org.openecomp.sdc.be.components.validation.service.ServiceRoleValidator;
 import org.openecomp.sdc.be.components.validation.service.ServiceTypeValidator;
 import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -77,10 +76,7 @@ import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -96,8 +92,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
-    ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-    ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     protected ServiceBusinessLogic bl;
     protected static final String SERVICE_CATEGORY = "Mobility";
