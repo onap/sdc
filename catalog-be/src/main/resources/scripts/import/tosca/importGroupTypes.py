@@ -1,6 +1,3 @@
-import getopt
-import sys
-
 from importCommon import *
 from importNormativeElements import createNormativeElement
 
@@ -18,8 +15,8 @@ from importNormativeElements import createNormativeElement
 #####################################################################################################################################################################################
 
 def usage():
-    print sys.argv[
-        0], '[optional -s <scheme> | --scheme=<scheme>, default http ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ]'
+    print sys.argv[0], \
+        '[optional -s <scheme> | --scheme=<scheme>, default http ] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ]'
 
 
 def importGroupTypes(scheme, be_host, be_port, admin_user, exit_on_success, file_dir):

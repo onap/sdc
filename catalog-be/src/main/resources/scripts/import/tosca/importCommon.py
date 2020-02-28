@@ -1,8 +1,5 @@
-import pycurl
-import sys, getopt
-from StringIO import StringIO
-import json
-import copy
+import getopt
+import sys
 
 ###############################################################################################################
 #

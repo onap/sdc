@@ -1,6 +1,3 @@
-import getopt
-import sys
-
 from importCommon import *
 from importNormativeElements import createNormativeElement
 
