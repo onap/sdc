@@ -39,14 +39,6 @@ public class ResponseFormatManager {
 
     public static ResponseFormatManager getInstance() {
         if (instance == null) {
-
-            instance = init();
-        }
-        return instance;
-    }
-
-    private static synchronized ResponseFormatManager init() {
-        if (instance == null) {
             instance = new ResponseFormatManager();
             configurationManager = ConfigurationManager.getConfigurationManager();
         }

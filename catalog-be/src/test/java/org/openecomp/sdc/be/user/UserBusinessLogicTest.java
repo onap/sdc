@@ -91,11 +91,10 @@ public class UserBusinessLogicTest {
     private UserBusinessLogic testSubject;
 
     static ResponseFormatManager responseFormatManager = new ResponseFormatManager();
-    private static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @Before
     public void setUp() {
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
         doThrow(new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR)).when(componentsUtils).auditAdminUserActionAndThrowException(any(), any(), any(), any(), any(), any());
     }
 

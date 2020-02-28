@@ -27,12 +27,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.NonManoArtifactType;
 import org.openecomp.sdc.be.config.NonManoConfiguration;
 import org.openecomp.sdc.be.config.NonManoFolderType;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 
@@ -78,6 +81,7 @@ public class CsarInfoTest {
 
         csarInfo = new CsarInfo(user, CSAR_UUID, payload, RESOURCE_NAME,
                 MAIN_TEMPLATE_NAME, mainTemplateContent, true);
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
 
     @Test
