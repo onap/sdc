@@ -27,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -38,6 +39,8 @@ import org.openecomp.sdc.be.model.User;
 
 import java.util.Collections;
 import java.util.List;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -66,6 +69,7 @@ public class ComponentInstanceCapabilitiesPropertiesMergeTest {
         mergeHolder = new DataForMergeHolder();
         mergeHolder.setOrigInstanceNode(origInstanceNode);
         mergeHolder.setOrigInstanceCapabilities(origInstanceCapabilities);
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
 
     @Test

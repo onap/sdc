@@ -139,8 +139,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 public class ResourceBusinessLogicTest {
 
-	ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-	ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+	private final ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+	private final ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 	private static final Logger log = LoggerFactory.getLogger(ResourceBusinessLogicTest.class);
 	private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
 	private static final String RESOURCE_SUBCATEGORY = "Router";

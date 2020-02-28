@@ -62,7 +62,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
@@ -91,7 +90,6 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
     protected User user = null;
     protected Resource resourceResponse;
     protected Service serviceResponse;
-    protected static ConfigurationManager configurationManager = null;
     protected ResponseFormatManager responseManager = null;
     protected JanusGraphDao janusGraphDao = Mockito.mock(JanusGraphDao.class);
     protected ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
@@ -107,24 +105,11 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
     @BeforeClass
     public static void setupClass() {
         ExternalConfiguration.setAppName("catalog-be");
-
-        // init Configuration
-        String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-        configurationManager = new ConfigurationManager(configurationSource);
-
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
         componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
     }
 
     public void setup() {
-
-//        ExternalConfiguration.setAppName("catalog-be");
-//
-//        // init Configuration
-//        String appConfigDir = "src/test/resources/config/catalog-be";
-//        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-//        configurationManager = new ConfigurationManager(configurationSource);
-
 
         // User data and management
         user = new User();

@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -41,6 +42,8 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ConsumerOperation;
 import org.openecomp.sdc.be.resources.data.ConsumerData;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.HashMap;
@@ -84,6 +87,7 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		MockitoAnnotations.initMocks(this);
 		user = new User("Stan", "Lee", "stan.lee",
 				"stan.lee@marvel.com", "ADMIN", 1542024000L);
+		new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 	}
 
 	@Test

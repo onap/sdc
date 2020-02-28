@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -51,7 +52,6 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
@@ -73,7 +73,6 @@ import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -100,16 +99,13 @@ import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_V
 public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
 
     public static final User USER = new User("John", "Doh", "jh0003", "jh0003@gmail.com", "ADMIN", System.currentTimeMillis());
-    private final static String RESOURCE_INSTANCE_NAME = "Service-111";
-    private final static String INSTANCE_ID = "S-123-444-ghghghg";
+    private static final String RESOURCE_INSTANCE_NAME = "Service-111";
+    private static final String INSTANCE_ID = "S-123-444-ghghghg";
 
-    private final static String ARTIFACT_NAME = "service-Myservice-template.yml";
-    private final static String ARTIFACT_LABEL = "assettoscatemplate";
-    private final static String ES_ARTIFACT_ID = "123123dfgdfgd0";
-    private final static byte[] PAYLOAD = "some payload".getBytes();
-
-    static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+    private static final String ARTIFACT_NAME = "service-Myservice-template.yml";
+    private static final String ARTIFACT_LABEL = "assettoscatemplate";
+    private static final String ES_ARTIFACT_ID = "123123dfgdfgd0";
+    private static final byte[] PAYLOAD = "some payload".getBytes();
 
     @InjectMocks
     private ArtifactsBusinessLogic artifactBL;
@@ -149,21 +145,9 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
     public static final Resource resource = Mockito.mock(Resource.class);
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-
-    private static List<ArtifactType> getAllTypes() {
-        List<ArtifactType> artifactTypes = new ArrayList<>();
-        List<String> artifactTypesList = ConfigurationManager.getConfigurationManager().getConfiguration().getArtifactTypes();
-        for (String artifactType : artifactTypesList) {
-            ArtifactType artifactT = new ArtifactType();
-            artifactT.setName(artifactType);
-            artifactTypes.add(artifactT);
-        }
-        return artifactTypes;
-    }
-
     @Before
     public void initMocks() {
-//        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.initMocks(this);
         Either<ArtifactDefinition, StorageOperationStatus> NotFoundResult = Either.right(StorageOperationStatus.NOT_FOUND);
 
         Either<Map<String, ArtifactDefinition>, StorageOperationStatus> NotFoundResult2 = Either.right(StorageOperationStatus.NOT_FOUND);
