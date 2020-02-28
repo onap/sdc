@@ -1,11 +1,9 @@
-import pycurl
-import sys, getopt, os
-from StringIO import StringIO
-import json
-import copy
+import os
+
+import importCommon
 from importCommon import *
 from importNormativeTypes import createNormativeType
-import importCommon
+
 
 #################################################################################################################################################################################################################################
 #																																		       																					#
@@ -20,91 +18,91 @@ import importCommon
 #																																		       																					#
 #################################################################################################################################################################################################################################
 
-def usage():
-	print sys.argv[0], '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-d <true|false> | --debug=<true|false>]'
 
-def handleResults(results, updateversion):
-	print_frame_line()
-	for result in results:
-		print_name_and_return_code(result[0], result[1])
-	print_frame_line()
-	
-	failedResults = filter(lambda x: x[1] == None or x[1] not in [200, 201, 409], results)
-	if (len(failedResults) > 0):
-		error_and_exit(1, None)
+def usage():
+    print sys.argv[0], \
+        '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-u <user userId> | --user=<user userId> ] [-d <true|false> | --debug=<true|false>]'
+
+
+def handleResults(results):
+    print_frame_line()
+    for result in results:
+        print_name_and_return_code(result[0], result[1])
+    print_frame_line()
+
+    failed_results = filter(lambda x: x[1] is None or x[1] not in [200, 201, 409], results)
+    if len(list(failed_results)) > 0:
+        error_and_exit(1, None)
+
 
 def main(argv):
-	print 'Number of arguments:', len(sys.argv), 'arguments.'
+    print 'Number of arguments:', len(sys.argv), 'arguments.'
 
-	beHost = 'localhost' 
-	bePort = '8080'
-	adminUser = 'jh0003'
-	debugf = None
-	updateversion = 'true'
-	importCommon.debugFlag = False
-	scheme = 'http'
+    be_host = 'localhost'
+    be_port = '8080'
+    admin_user = 'jh0003'
+    debug_f = None
+    update_version = 'true'
+    importCommon.debugFlag = False
+    scheme = 'http'
 
-	try:
-		opts, args = getopt.getopt(argv,"i:p:u:d:h:s:",["ip=","port=","user=","debug=","scheme="])
-	except getopt.GetoptError:
-		usage()
-		error_and_exit(2, 'Invalid input')
-	
-	for opt, arg in opts:
-	#print opt, arg
-		if opt == '-h':
-			usage()                        
-			sys.exit(3)
-		elif opt in ("-i", "--ip"):
-			beHost = arg
-		elif opt in ("-p", "--port"):
-			bePort = arg
-		elif opt in ("-u", "--user"):
-			adminUser = arg
-		elif opt in ("-s", "--scheme"):
-			scheme = arg
-		elif opt in ("-d", "--debug"):
-			print arg
-			debugf = bool(arg.lower() == "true" or arg.lower() == "yes")
+    try:
+        opts, args = getopt.getopt(argv, "i:p:u:d:h:s:", ["ip=", "port=", "user=", "debug=", "scheme="])
+    except getopt.GetoptError:
+        usage()
+        error_and_exit(2, 'Invalid input')
 
-	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', user =', adminUser, ', debug =', debugf
+    for opt, arg in opts:
+        # print opt, arg
+        if opt == '-h':
+            usage()
+            sys.exit(3)
+        elif opt in ("-i", "--ip"):
+            be_host = arg
+        elif opt in ("-p", "--port"):
+            be_port = arg
+        elif opt in ("-u", "--user"):
+            admin_user = arg
+        elif opt in ("-s", "--scheme"):
+            scheme = arg
+        elif opt in ("-d", "--debug"):
+            print arg
+            debug_f = bool(arg.lower() == "true" or arg.lower() == "yes")
 
-	if (debugf != None):
-		print 'set debug mode to ' + str(debugf)
-		importCommon.debugFlag = debugf
-	
-	if ( beHost == None ):
-		usage()
-		sys.exit(3)
+    print 'scheme =', scheme, ', be host =', be_host, ', be port =', be_port, ', user =', admin_user, ', debug =', debug_f
 
-	print sys.argv[0]
-	pathdir = os.path.dirname(os.path.realpath(sys.argv[0]))      
-	debug("path dir =" + pathdir)
+    if debug_f is not None:
+        print 'set debug mode to ' + str(debug_f)
+        importCommon.debugFlag = debug_f
 
-	baseFileLocation = pathdir + "/../../../import/tosca/"
-	results = []
+    if be_host is None:
+        usage()
+        sys.exit(3)
 
+    print sys.argv[0]
+    path_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+    debug("path dir =" + path_dir)
 
-	##########################################################################
-    #---------------------------------for release 1702---------------------- #
+    base_file_location = path_dir + "/../../../import/tosca/"
+    results = []
+
+    ##########################################################################
+    # ---------------------------------for release 1702---------------------- #
     ##########################################################################
 
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "contrailV2VirtualMachineInterface", updateversion)
-	results.append(result)
-	
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(scheme, beHost, bePort, adminUser, fileLocation, "neutronPort", updateversion)
-	results.append(result)
+    file_location = base_file_location + "heat-types/"
+    result = createNormativeType(scheme, be_host, be_port, admin_user, file_location,
+                                 "contrailV2VirtualMachineInterface", update_version)
+    results.append(result)
 
+    file_location = base_file_location + "heat-types/"
+    result = createNormativeType(scheme, be_host, be_port, admin_user, file_location, "neutronPort", update_version)
+    results.append(result)
 
+    handleResults(results)
 
+    error_and_exit(0, None)
 
-
-	handleResults(results, 'false')
-
-	error_and_exit(0, None)
 
 if __name__ == "__main__":
-        main(sys.argv[1:])
-
+    main(sys.argv[1:])
