@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import org.mockito.Mockito;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
@@ -27,6 +28,9 @@ import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
 public abstract class BaseBusinessLogicMock {
     protected final IElementOperation elementDao = Mockito.mock(IElementOperation.class);
@@ -37,4 +41,5 @@ public abstract class BaseBusinessLogicMock {
     protected final InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
     protected final InterfaceLifecycleOperation interfaceLifecycleTypeOperation = Mockito.mock(InterfaceLifecycleOperation.class);
     protected final ArtifactsOperations artifactToscaOperation = Mockito.mock(ArtifactsOperations.class);
+    protected final ConfigurationManager configurationManager = new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 }

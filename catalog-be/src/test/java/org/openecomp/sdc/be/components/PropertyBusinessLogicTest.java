@@ -33,7 +33,6 @@ import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -55,10 +54,8 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 import org.springframework.web.context.WebApplicationContext;
@@ -125,11 +122,6 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         ExternalConfiguration.setAppName("catalog-be");
-
-        // init Configuration
-        String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
         // User data and management
         user = new User();
