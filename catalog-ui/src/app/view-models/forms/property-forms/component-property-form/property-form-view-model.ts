@@ -272,12 +272,17 @@ export class PropertyFormViewModel {
             };
 
             //Not clean, but doing this as a temporary fix until we update the property right panel modals
-            if(this.propertyOwnerType == "group"){
+            if (this.propertyOwnerType === "group"){
                 this.ComponentInstanceServiceNg2.updateComponentGroupInstanceProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.propertyOwnerId, [property])
-                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild);
-            } else if(this.propertyOwnerType == "policy"){
+                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild(error));
+            } else if (this.propertyOwnerType === "policy"){
+                if (!this.$scope.editPropertyModel.property.simpleType &&
+                    !this.$scope.isSimpleType(this.$scope.editPropertyModel.property.type) &&
+                    !_.isNil(this.$scope.myValue)) {
+                    property.value = JSON.stringify(this.$scope.myValue);
+                }
                 this.ComponentInstanceServiceNg2.updateComponentPolicyInstanceProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.propertyOwnerId, [property])
-                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild);
+                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild(error));
             } else {
                 //in case we have uniqueId we call update method
                 if (this.$scope.isPropertyValueOwner) {
