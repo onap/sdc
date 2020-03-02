@@ -93,7 +93,7 @@ export class ComponentInstanceServiceNg2 {
             .map((res) => {
                 return res.map((resProperty) => {
                     let newProp = new PropertyModel(resProperty);
-                    newProp.resourceInstanceUniqueId = componentInstanceId
+                    newProp.resourceInstanceUniqueId = componentInstanceId;
                     return newProp;
                 });
             });
