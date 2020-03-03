@@ -1706,6 +1706,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 else {
                     updatedPropertyValue.bimap(updatedValue -> updatePropertyOnContainerComponent(property, updatedValue,
                             containerComponent, foundResourceInstance), Either::right);
+                    if (updatedPropertyValue.isLeft()) {
+                        componentInstanceProperty.setValue(updatedPropertyValue.left().value());
+                    }
                     updatedProperties.add(componentInstanceProperty);
                 }
             }
