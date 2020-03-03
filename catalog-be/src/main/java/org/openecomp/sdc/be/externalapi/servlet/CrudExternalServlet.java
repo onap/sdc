@@ -23,17 +23,16 @@ package org.openecomp.sdc.be.externalapi.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -105,9 +104,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "CRUD External Servlet",
-        description = "This Servlet serves external users for creating assets and changing their lifecycle state"))
-
+@Tags({@Tag(name = "SDC External APIs")})
+@Servers({@Server(url = "/sdc")})
 @Controller
 public class CrudExternalServlet extends AbstractValidationsServlet {
 
@@ -152,8 +150,11 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     @Path("/{assetType}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "creates an asset (resource or service)", method = "POST", summary = "Creates an asset (resource or service)")
-    @ApiResponses(value = {
+    @Operation(parameters = {
+            @Parameter(required = true, schema = @Schema(implementation = org.openecomp.sdc.be.model.Resource.class),
+                    description = "json describe the created resource")},
+            description = "creates an asset (resource or service)", method = "POST",
+            summary = "Creates an asset (resource or service)", responses = {
             @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and Asset created",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
@@ -195,8 +196,8 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "400",
                     description = "Create VFCMT request: VFCMT name exceeds character limit - SVC4073"),
             @ApiResponse(responseCode = "400", description = "Invalid Content. Missing PROJECT_CODE number - SVC4129"),
-            @ApiResponse(responseCode = "409", description = "Error: %1 (Service) with name '%2' already exists. - SVC4050")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.Resource", paramType = "body", value = "json describe the created resource")})
+            @ApiResponse(responseCode = "409",
+                    description = "Error: %1 (Service) with name '%2' already exists. - SVC4050")})
     @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response createComponentExternal(
             @Parameter(description = "Determines the format of the body of the request",
@@ -385,8 +386,10 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/lifecycleState/{lifecycleOperation}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Change Resource lifecycle State", method = "POST")
-    @ApiResponses(value = {
+    @Operation(parameters = {
+            @Parameter(required = true, schema = @Schema(implementation = org.openecomp.sdc.be.model.Resource.class),
+                    description = "json describe the created resource")},
+            description = "Change Resource lifecycle State", method = "POST", responses = {
             @ApiResponse(responseCode = "200", description = "Resource state changed",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
             @ApiResponse(responseCode = "400", description = "Missing X-ECOMP-InstanceID HTTP header - POL5001"),
@@ -402,8 +405,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Asset is already checked-out by another user - SVC4085"),
             @ApiResponse(responseCode = "403",
                     description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080")})
-  //  @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction", paramType = "body", value = "userRemarks - Short description (free text) about the asset version being changed")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction", paramType = "body", value = "userRemarks - Short description (free text) about the asset version being changed")})
     @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response changeResourceStateExternal(
             @Parameter(description = "Determines the format of the body of the request",

@@ -18,15 +18,16 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RequirementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -68,7 +69,8 @@ import java.util.Optional;
 @Path("/v1/catalog")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Requirement Servlet", description = "Requirement Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class RequirementServlet extends AbstractValidationsServlet {
     private static final Logger LOGGER = Logger.getLogger(RequirementServlet.class);
@@ -76,10 +78,10 @@ public class RequirementServlet extends AbstractValidationsServlet {
 
     @Inject
     public RequirementServlet(UserBusinessLogic userBusinessLogic,
-        ComponentInstanceBusinessLogic componentInstanceBL,
-        ComponentsUtils componentsUtils, ServletUtils servletUtils,
-        ResourceImportManager resourceImportManager,
-        RequirementBusinessLogic requirementBusinessLogic) {
+            ComponentInstanceBusinessLogic componentInstanceBL,
+            ComponentsUtils componentsUtils, ServletUtils servletUtils,
+            ResourceImportManager resourceImportManager,
+            RequirementBusinessLogic requirementBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.requirementBusinessLogic = requirementBusinessLogic;
     }
@@ -89,9 +91,9 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/requirements")
     @Operation(description = "Create requirements on resource", method = "POST",
-            summary = "Create requirements on resource",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create requirements"),
+            summary = "Create requirements on resource", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Create requirements"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "requirement already exist")})
@@ -111,9 +113,9 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/requirements")
     @Operation(description = "Update Requirements on resource", method = "PUT",
-            summary = "Update Requirements on resource", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Requirements"),
+            summary = "Update Requirements on resource", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Update Requirements"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -130,12 +132,12 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/requirements/{requirementId}")
-    @Operation(description = "Get Requirement from resource", method = "GET",
-            summary = "GET Requirement from resource", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "GET requirement"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Get Requirement from resource", method = "GET", summary = "GET Requirement from resource",
+            responses = {@ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+                    @ApiResponse(responseCode = "201", description = "GET requirement"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getRequirementsFromResource(
             @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
@@ -151,9 +153,9 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/requirements/{requirementId}")
     @Operation(description = "Delete requirements from resource", method = "DELETE",
-            summary = "Delete requirements from resource", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete requirement"),
+            summary = "Delete requirements from resource", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Delete requirement"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -170,9 +172,9 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/requirements")
     @Operation(description = "Create requirements on service", method = "POST",
-            summary = "Create requirements on service", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Requirements"),
+            summary = "Create requirements on service", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Create Requirements"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Requirement already exist")})
@@ -192,9 +194,9 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/requirements")
     @Operation(description = "Update requirements on service", method = "PUT",
-            summary = "Update requirements on service", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update requirements"),
+            summary = "Update requirements on service", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Update requirements"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -211,12 +213,12 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/requirements/{requirementId}")
-    @Operation(description = "Get requirement from service", method = "GET",
-            summary = "GET requirement from service", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "GET Requirements"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Get requirement from service", method = "GET", summary = "GET requirement from service",
+            responses = {@ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+                    @ApiResponse(responseCode = "201", description = "GET Requirements"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getRequirementsOnService(
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
@@ -233,9 +235,9 @@ public class RequirementServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/requirements/{requirementId}")
     @Operation(description = "Delete requirement from service", method = "DELETE",
-            summary = "Delete requirement from service", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete Requirements"),
+            summary = "Delete requirement from service", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = RequirementDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Delete Requirements"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)

@@ -22,15 +22,16 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
@@ -81,7 +82,8 @@ import static org.openecomp.sdc.common.util.GeneralUtility.getCategorizedCompone
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Component Servlet",description = "Component Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ComponentServlet extends BeGenericServlet {
     private static final String GET_CERTIFIED_NOT_ABSTRACT_COMPONENTS_FAILED_WITH_EXCEPTION = "getCertifiedNotAbstractComponents failed with exception";
@@ -109,9 +111,9 @@ public class ComponentServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Validate Component Conformance Level", method = "GET",
-            summary = "Returns the result according to conformance level in BE config", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            summary = "Returns the result according to conformance level in BE config", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -144,9 +146,9 @@ public class ComponentServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get Component Requirments And Capabilities", method = "GET",
-            summary = "Returns Requirements And Capabilities according to componentId", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            summary = "Returns Requirements And Capabilities according to componentId", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -181,9 +183,9 @@ public class ComponentServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get Component Requirments And Capabilities", method = "GET",
-            summary = "Returns Requirments And Capabilities according to componentId", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            summary = "Returns Requirments And Capabilities according to componentId", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -225,9 +227,9 @@ public class ComponentServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get Component Requirments And Capabilities", method = "GET",
-            summary = "Returns Requirments And Capabilities according to componentId", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+            summary = "Returns Requirments And Capabilities according to componentId", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -273,10 +275,9 @@ public class ComponentServlet extends BeGenericServlet {
     @Path("/{componentType}/latestversion/notabstract/metadata")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Get Component uid only", method = "GET", summary = "Returns componentId",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Get Component uid only", method = "GET", summary = "Returns componentId", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -315,11 +316,11 @@ public class ComponentServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get Component instances", method = "GET", summary = "Returns component instances",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Component not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "200", description = "Component found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentInstancesFilteredByPropertiesAndInputs(
             @PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
@@ -368,12 +369,12 @@ public class ComponentServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Resource", method = "GET", summary = "Returns resource according to resourceId",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "200", description = "Resource found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Resource not found")})
     @ResponseView(mixin = {GroupCompositionMixin.class, PolicyCompositionMixin.class})
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Resource not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentDataFilteredByParams(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId,
@@ -419,11 +420,11 @@ public class ComponentServlet extends BeGenericServlet {
             description = "Retrieve properties belonging to component instances of specific component by name and optionally resource type",
             method = "GET",
             summary = "Returns properties belonging to component instances of specific component by name and optionally resource type",
-                    responses = @ApiResponse(
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Map.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Component not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Map.class)))),
+                    @ApiResponse(responseCode = "200", description = "Component found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getFilteredComponentInstanceProperties(
             @PathParam("componentType") final String componentType,

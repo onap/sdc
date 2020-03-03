@@ -23,10 +23,14 @@ package org.openecomp.sdc.be.servlets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jcabi.aspects.Loggable;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -41,7 +45,8 @@ import javax.ws.rs.core.Response;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "ExceptionHandling Endpoint")
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Produces(MediaType.APPLICATION_JSON)
 @Controller
 public class ExceptionHandlerEndpoint {
@@ -55,8 +60,9 @@ public class ExceptionHandlerEndpoint {
 
     @GET
     @Path("/handleException")
-    @ApiOperation(value = "Handle exception", httpMethod = "GET", response = Response.class)
-    @ApiResponses(value = {@ApiResponse(code = 500, message = "Internal Error")})
+    @Operation(description = "Handle exception", method = "GET", responses = {
+            @ApiResponse(responseCode = "500", description = "Internal Error",
+                    content = @Content(schema = @Schema(implementation = Response.class)))})
     public Response sendError() {
         log.debug("Request is received");
 
@@ -65,5 +71,4 @@ public class ExceptionHandlerEndpoint {
                 .entity(gson.toJson(responseFormat.getRequestError()))
                 .build();
     }
-
 }

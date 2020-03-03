@@ -23,15 +23,16 @@ package org.openecomp.sdc.be.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -71,7 +72,8 @@ import java.io.IOException;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Lifecycle Actions Servlet", description = "Lifecycle Actions Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class LifecycleServlet extends BeGenericServlet {
 
@@ -92,9 +94,9 @@ public class LifecycleServlet extends BeGenericServlet {
     @Path("/{componentCollection}/{componentId}/lifecycleState/{lifecycleOperation}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Change Resource lifecycle State", method = "POST", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource state changed"),
+    @Operation(description = "Change Resource lifecycle State", method = "POST", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Resource state changed"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "409", description = "Resource already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)

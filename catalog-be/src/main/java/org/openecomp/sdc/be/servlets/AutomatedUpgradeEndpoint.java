@@ -21,15 +21,16 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
@@ -59,7 +60,8 @@ import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "policy types resource"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -80,9 +82,9 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
     @Path("/{componentType}/{componentId}/automatedupgrade")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Autometed upgrade", method = "POST", summary = "....", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Autometed upgrade", method = "POST", summary = "....", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -116,9 +118,9 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
     @Path("/{componentType}/{componentId}/dependencies")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Autometed upgrade", method = "POST", summary = "....", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Autometed upgrade", method = "POST", summary = "....", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -136,7 +138,5 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
             log.error("#getServicesForComponent - Exception occurred during autometed Upgrade", e);
             throw e;
         }
-     
-        
     }
 }

@@ -22,15 +22,16 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
@@ -73,7 +74,8 @@ import java.util.Map;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Resource Artifact Servlet", description = "Resource Artifact Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ArtifactServlet extends BeGenericServlet {
 
@@ -99,11 +101,12 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Artifact", method = "POST", summary = "Returns created ArtifactDefinition",
-            responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource created"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "409", description = "Artifact already exist")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+                    @ApiResponse(responseCode = "201", description = "Resource created"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+                    @ApiResponse(responseCode = "409", description = "Artifact already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response loadArtifact(@PathParam("resourceId") final String resourceId,
             @Parameter(description = "json describe the artifact", required = true) String data,
@@ -118,9 +121,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/resources/{resourceId}/artifacts/{artifactId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update Artifact", method = "POST", summary = "Returns updated artifact",
-            responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource created"),
+    @Operation(description = "Update Artifact", method = "POST", summary = "Returns updated artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Resource created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -144,10 +147,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/resources/{resourceId}/artifacts/{artifactId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Delete Artifact", method = "DELETE",
-            summary = "Returns delete artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource created"),
+    @Operation(description = "Delete Artifact", method = "DELETE", summary = "Returns delete artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Resource created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -169,12 +171,13 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/artifacts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Create Artifact", method = "POST",
-            summary = "Returns created ArtifactDefinition", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource created"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "409", description = "Artifact already exist")})
+    @Operation(description = "Create Artifact", method = "POST", summary = "Returns created ArtifactDefinition",
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+                    @ApiResponse(responseCode = "201", description = "Resource created"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+                    @ApiResponse(responseCode = "409", description = "Artifact already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response loadInformationArtifact(@PathParam("serviceId") final String serviceId,
             @Parameter(description = "json describe the artifact", required = true) String data,
@@ -195,10 +198,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/artifacts/{artifactId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update Artifact", method = "POST",
-            summary = "Returns updated artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Service artifact created"),
+    @Operation(description = "Update Artifact", method = "POST", summary = "Returns updated artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Service artifact created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response updateInformationArtifact(@PathParam("serviceId") final String serviceId,
@@ -222,12 +224,12 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/artifacts/api/{artifactId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update Api Artifact", method = "POST",
-            summary = "Returns created ArtifactDefinition", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Api Artifact Updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Update Api Artifact", method = "POST", summary = "Returns created ArtifactDefinition",
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+                    @ApiResponse(responseCode = "200", description = "Api Artifact Updated"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateApiArtifact(@PathParam("serviceId") final String serviceId,
             @PathParam("artifactId") final String artifactId,
@@ -250,11 +252,11 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/artifacts/api/{artifactId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Delete Api Artifact", method = "DELETE",
-            summary = "Returns Deleted ArtifactDefinition", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Api Artifact deleted"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation")})
+    @Operation(description = "Delete Api Artifact", method = "DELETE", summary = "Returns Deleted ArtifactDefinition",
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+                    @ApiResponse(responseCode = "204", description = "Api Artifact deleted"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteApiArtifact(@PathParam("serviceId") final String serviceId,
             @PathParam("artifactId") final String artifactId, @Context final HttpServletRequest request,
@@ -276,10 +278,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/artifacts/{artifactId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Delete Artifact", method = "DELETE",
-            summary = "Returns delete artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Service artifact deleted"),
+    @Operation(description = "Delete Artifact", method = "DELETE", summary = "Returns delete artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Service artifact deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -306,9 +307,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Download service Artifact in Base64", method = "GET",
-            summary = "Returns downloaded artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service artifact downloaded"),
+            summary = "Returns downloaded artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Service artifact downloaded"),
             @ApiResponse(responseCode = "404", description = "Service/Artifact not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response downloadServiceArtifactBase64(@PathParam("serviceId") final String serviceId,
@@ -335,9 +336,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Download resource Artifact in Base64", method = "GET",
-            summary = "Returns downloaded artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource artifact downloaded"),
+            summary = "Returns downloaded artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Resource artifact downloaded"),
             @ApiResponse(responseCode = "404", description = "Resource/Artifact not found")})
     public Response downloadResourceArtifactBase64(@PathParam("resourceId") final String resourceId,
             @PathParam("artifactId") final String artifactId, @Context final HttpServletRequest request) {
@@ -364,9 +365,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Download component Artifact in Base64", method = "GET",
-            summary = "Returns downloaded artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "ResourceInstance artifact downloaded"),
+            summary = "Returns downloaded artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "ResourceInstance artifact downloaded"),
             @ApiResponse(responseCode = "404", description = "ResourceInstance/Artifact not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response downloadResourceInstanceArtifactBase64(@Parameter(
@@ -401,9 +402,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Artifact and Attach to interface", method = "POST",
-            summary = "Returns created resource", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource created"),
+            summary = "Returns created resource", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Resource created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Artifact already exist")})
@@ -432,9 +433,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "delete Artifact from interface", method = "delete",
-            summary = "delete matching artifact from interface", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "delete artifact under interface deleted"),
+            summary = "delete matching artifact from interface", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "delete artifact under interface deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Artifact already exist")})
@@ -459,9 +460,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "update Artifact  Attach to interface", method = "post",
-            summary = "updates artifact by interface", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "delete artifact under interface deleted"),
+            summary = "updates artifact by interface", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "delete artifact under interface deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Artifact already exist")})
@@ -488,10 +489,10 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/artifacts/{artifactId}/heatParams")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update Resource Instance HEAT_ENV parameters",
-            method = "POST", summary = "Returns updated artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Artifact updated"),
+    @Operation(description = "Update Resource Instance HEAT_ENV parameters", method = "POST",
+            summary = "Returns updated artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Artifact updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -526,9 +527,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Resource Instance artifact payload", method = "POST",
-            summary = "Returns updated artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Artifact updated"),
+            summary = "Returns updated artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Artifact updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -558,9 +559,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Load Resource Instance artifact payload", method = "POST",
-            summary = "Returns updated artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Artifact updated"),
+            summary = "Returns updated artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Artifact updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -588,12 +589,12 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/artifacts/{artifactId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Delete Resource Instance artifact", method = "POST",
-            summary = "Returns deleted artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Artifact updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Delete Resource Instance artifact", method = "POST", summary = "Returns deleted artifact",
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+                    @ApiResponse(responseCode = "200", description = "Artifact updated"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteComponentInstanceArtifact(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @HeaderParam(value = Constants.MD5_HEADER) String origMd5,
@@ -628,10 +629,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/{containerComponentType}/{componentId}/artifactsByType/{artifactGroupType}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Get component Artifacts", method = "GET",
-            summary = "Returns artifacts", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component artifacts"),
+    @Operation(description = "Get component Artifacts", method = "GET", summary = "Returns artifacts", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Component artifacts"),
             @ApiResponse(responseCode = "404", description = "Resource/Artifact not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentArtifacts(@Parameter(description = "valid values: resources / services",
@@ -655,10 +655,9 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/{containerComponentType}/{componentId}/resourceInstances/{componentInstanceId}/artifactsByType/{artifactGroupType}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Get component Artifacts", method = "GET",
-            summary = "Returns artifacts", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component artifacts"),
+    @Operation(description = "Get component Artifacts", method = "GET", summary = "Returns artifacts", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Component artifacts"),
             @ApiResponse(responseCode = "404", description = "Resource/Artifact not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentInstanceArtifacts(@Parameter(description = "valid values: resources / services",
@@ -684,17 +683,21 @@ public class ArtifactServlet extends BeGenericServlet {
     @Path("/{assetType}/{uuid}/interfaces/{interfaceUUID}/operations/{operationUUID}/artifacts/{artifactUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "uploads of artifact to component operation workflow", method = "POST", summary = "uploads of artifact to component operation workflow")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact uploaded",content = @Content(array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
+    @Operation(description = "uploads of artifact to component operation workflow", method = "POST",
+            summary = "uploads of artifact to component operation workflow", responses = {
+            @ApiResponse(responseCode = "200", description = "Artifact uploaded", content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
             @ApiResponse(responseCode = "404", description = "Specified resource is not found - SVC4063"),
             @ApiResponse(responseCode = "400", description = "Invalid artifactType was defined as input - SVC4122"),
-            @ApiResponse(responseCode = "400", description = "Artifact type (mandatory field) is missing in request - SVC4124"),
-            @ApiResponse(responseCode = "400", description = "Artifact name given in input already exists in the context of the asset - SVC4125"),
+            @ApiResponse(responseCode = "400",
+                    description = "Artifact type (mandatory field) is missing in request - SVC4124"),
+            @ApiResponse(responseCode = "400",
+                    description = "Artifact name given in input already exists in the context of the asset - SVC4125"),
             @ApiResponse(responseCode = "400", description = "Artifact name is missing in input - SVC4128"),
-            @ApiResponse(responseCode = "400", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
-            @ApiResponse(responseCode = "400", description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    //@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+            @ApiResponse(responseCode = "400",
+                    description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+            @ApiResponse(responseCode = "400",
+                    description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
     public Response uploadInterfaceOperationArtifact(
             @Parameter(description = "Asset type") @PathParam("assetType") String assetType,
             @Parameter(description = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,

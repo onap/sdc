@@ -23,15 +23,16 @@
 package org.openecomp.sdc.be.distribution.servlet;
 
 import com.jcabi.aspects.Loggable;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -73,7 +74,8 @@ import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info =  @Info(title = "Distribution Catalog Servlet",description = "This Servlet serves external users to download artifacts."))
+@Tags({@Tag(name = "SDC Distribution APIs")})
+@Servers({@Server(url = "/sdc")})
 @Singleton
 public class DistributionCatalogServlet extends BeGenericServlet {
 
@@ -112,19 +114,23 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(description = "Download service artifact", method = "GET", summary = "Returns downloaded artifact",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.",
+            responses = {@ApiResponse(
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
-            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "404", description = "Specified Service is not found - SVC4503"),
-            @ApiResponse(responseCode = "404", description = "Specified Service Version is  not  found - SVC4504"),
-            @ApiResponse(responseCode = "404", description = "Specified artifact is  not found - SVC4505"),
-            @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+                    @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+                    @ApiResponse(responseCode = "400",
+                            description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+                    @ApiResponse(responseCode = "401",
+                            description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+                    @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+                    @ApiResponse(responseCode = "404", description = "Specified Service is not found - SVC4503"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Specified Service Version is  not  found - SVC4504"),
+                    @ApiResponse(responseCode = "404", description = "Specified artifact is  not found - SVC4505"),
+                    @ApiResponse(responseCode = "405",
+                            description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+                    @ApiResponse(responseCode = "500",
+                            description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
     @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response downloadServiceArtifact(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -187,20 +193,26 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     @Path("/services/{serviceName}/{serviceVersion}/resources/{resourceName}/{resourceVersion}/artifacts/{artifactName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @Operation(description = "Download resource artifact", method  = "GET", summary = "Returns downloaded artifact", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.",
+    @Operation(description = "Download resource artifact", method = "GET", summary = "Returns downloaded artifact",
+            responses = {@ApiResponse(
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
-            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "404", description = "Specified Service is not found - SVC4503"),
-            @ApiResponse(responseCode = "404", description = "Specified Resource Instance  is not found - SVC4526"),
-            @ApiResponse(responseCode = "404", description = "Specified Service Version is  not  found - SVC4504"),
-            @ApiResponse(responseCode = "404", description = "Specified artifact is  not found - SVC4505"),
-            @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+                    @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+                    @ApiResponse(responseCode = "400",
+                            description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+                    @ApiResponse(responseCode = "401",
+                            description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+                    @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+                    @ApiResponse(responseCode = "404", description = "Specified Service is not found - SVC4503"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Specified Resource Instance  is not found - SVC4526"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Specified Service Version is  not  found - SVC4504"),
+                    @ApiResponse(responseCode = "404", description = "Specified artifact is  not found - SVC4505"),
+                    @ApiResponse(responseCode = "405",
+                            description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+                    @ApiResponse(responseCode = "500",
+                            description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
     @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response downloadResourceArtifact(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -256,20 +268,23 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     @Path("/services/{serviceName}/{serviceVersion}/resourceInstances/{resourceInstanceName}/artifacts/{artifactName}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @Operation(description = "Download resource instance artifact", method = "GET", summary = "Returns downloaded artifact", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
-    @ApiResponses(value = {
+    @Operation(description = "Download resource instance artifact", method = "GET",
+            summary = "Returns downloaded artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
             @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+            @ApiResponse(responseCode = "401",
+                    description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
             @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
             @ApiResponse(responseCode = "404", description = "Specified Service is not found - SVC4503"),
             @ApiResponse(responseCode = "404", description = "Specified Resource Instance  is not found - SVC4526"),
             @ApiResponse(responseCode = "404", description = "Specified Service Version is  not  found - SVC4504"),
             @ApiResponse(responseCode = "404", description = "Specified artifact is  not found - SVC4505"),
-            @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+            @ApiResponse(responseCode = "405",
+                    description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+            @ApiResponse(responseCode = "500",
+                    description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
     @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
     public Response downloadResourceInstanceArtifactByName(
             @Parameter(description = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,

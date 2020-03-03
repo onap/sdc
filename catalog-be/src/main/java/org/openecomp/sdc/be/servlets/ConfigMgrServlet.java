@@ -21,6 +21,10 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.Configuration;
@@ -45,6 +49,8 @@ import javax.ws.rs.core.MediaType;
  * Root resource (exposed at "/" path)
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Path("/configmgr")
 public class ConfigMgrServlet extends BasicServlet {
 

@@ -22,15 +22,16 @@ package org.openecomp.sdc.be.externalapi.servlet;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
@@ -94,9 +95,8 @@ import static org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum.RESOURCE;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-// for retrieving component metadata.")
-@OpenAPIDefinition(info = @Info(title = "Asset Metadata External Servlet",
-        description = "This Servlet serves external users for retrieving component metadata."))
+@Tags({@Tag(name = "SDC External APIs")})
+@Servers({@Server(url = "/sdc")})
 @Controller
 public class AssetsDataServlet extends AbstractValidationsServlet {
 
@@ -127,8 +127,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     @GET
     @Path("/{assetType}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Fetch list of assets", method = "GET", summary = "Returns list of assets")
-    @ApiResponses(value = {
+    @Operation(description = "Fetch list of assets", method = "GET", summary = "Returns list of assets", responses = {
             @ApiResponse(responseCode = "200",
                     description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
@@ -249,11 +248,9 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/metadata")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Detailed metadata of asset by uuid", method = "GET",
-            summary = "Returns detailed metadata of an asset by uuid")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",
-                    description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
+            summary = "Returns detailed metadata of an asset by uuid", responses = {@ApiResponse(responseCode = "200",
+            description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401",
                     description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
@@ -359,10 +356,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     @GET
     @Path("/{assetType}/{uuid}/toscaModel")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @Operation(description = "Fetch assets CSAR", method = "GET", summary = "Returns asset csar",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
-    @ApiResponses(value = {
+    @Operation(description = "Fetch assets CSAR", method = "GET", summary = "Returns asset csar", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
             @ApiResponse(responseCode = "200",
                     description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),

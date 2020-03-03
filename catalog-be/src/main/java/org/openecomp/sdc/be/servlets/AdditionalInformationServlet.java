@@ -22,15 +22,16 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -65,7 +66,8 @@ import javax.ws.rs.core.Response;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Additional Information Servlet", description = "Additional Information Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class AdditionalInformationServlet extends BeGenericServlet {
 
@@ -97,9 +99,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Additional Information Label and Value", method = "POST",
-            summary = "Returns created Additional Inforamtion property", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Additional information created"),
+            summary = "Returns created Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Additional information created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -129,9 +131,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Additional Information Label and Value", method = "POST",
-            summary = "Returns created Additional Inforamtion property",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Additional information created"),
+            summary = "Returns created Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Additional information created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -161,9 +163,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Additional Information Label and Value", method = "PUT",
-            summary = "Returns updated Additional Inforamtion property", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Additional information updated"),
+            summary = "Returns updated Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Additional information updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -194,9 +196,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Additional Information Label and Value", method = "PUT",
-            summary = "Returns updated Additional Inforamtion property",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Additional information updated"),
+            summary = "Returns updated Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Additional information updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -226,9 +228,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Additional Information Label and Value", method = "DELETE",
-            summary = "Returns deleted Additional Inforamtion property", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Additional information deleted"),
+            summary = "Returns deleted Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Additional information deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -257,9 +259,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Additional Information Label and Value", method = "DELETE",
-            summary = "Returns deleted Additional Inforamtion property", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Additional information deleted"),
+            summary = "Returns deleted Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Additional information deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -287,9 +289,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get Additional Information by id", method = "GET",
-            summary = "Returns Additional Inforamtion property", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "fetched additional information"),
+            summary = "Returns Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "fetched additional information"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -317,9 +319,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get Additional Information by id", method = "GET",
-            summary = "Returns Additional Inforamtion property", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "fetched additional information"),
+            summary = "Returns Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "fetched additional information"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -346,9 +348,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get all Additional Information under resource", method = "GET",
-            summary = "Returns Additional Inforamtion property", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "list of additional information"),
+            summary = "Returns Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "list of additional information"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
@@ -374,9 +376,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get all Additional Information under service", method = "GET",
-            summary = "Returns Additional Inforamtion property", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "list of additional information"),
+            summary = "Returns Additional Inforamtion property",  responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "list of additional information"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Additional information key already exist")})

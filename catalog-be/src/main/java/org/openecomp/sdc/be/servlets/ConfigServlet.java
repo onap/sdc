@@ -21,10 +21,14 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.Configuration;
@@ -46,7 +50,8 @@ import javax.ws.rs.core.MediaType;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/config")
-@Api(value = "Get configuration", description = "Get configuration")
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 public class ConfigServlet extends BasicServlet {
 
     private static final Logger log = Logger.getLogger(ConfigServlet.class);
@@ -55,8 +60,9 @@ public class ConfigServlet extends BasicServlet {
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    @ApiOperation(value = "Retrieve configuration", httpMethod = "GET", notes = "Returns configuration", response = String.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
+    @Operation(description = "Retrieve configuration", method = "GET", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = String.class)))
+    })
     public String getConfig(@Context final HttpServletRequest request) {
 
         String result = null;

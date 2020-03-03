@@ -25,14 +25,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
@@ -86,7 +88,8 @@ import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Api(value = "Service Catalog", description = "Service Servlet")
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ServiceServlet extends AbstractValidationsServlet {
 
@@ -113,10 +116,9 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Create Service", method = "POST", summary = "Returns created service",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Service created"),
+    @Operation(description = "Create Service", method = "POST", summary = "Returns created service", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+            @ApiResponse(responseCode = "201", description = "Service created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Service already exist")})
@@ -159,9 +161,9 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "validate service name", method = "GET",
-            summary = "checks if the chosen service name is available ", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            summary = "checks if the chosen service name is available ", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Service found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response validateServiceName(@PathParam("serviceName") final String serviceName,
@@ -196,9 +198,9 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "get component audit records", method = "GET",
-            summary = "get audit records for a service or a resource", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            summary = "get audit records for a service or a resource", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Service found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentAuditRecords(@PathParam("componentType") final String componentType,
@@ -270,12 +272,12 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/services/{serviceId}")
-    @Operation(description = "Delete Service", method = "DELETE", summary = "Return no content", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Service deleted"),
+    @Operation(description = "Delete Service", method = "DELETE", summary = "Return no content", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+            @ApiResponse(responseCode = "204", description = "Service deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Service not found") })
+            @ApiResponse(responseCode = "404", description = "Service not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteService(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
@@ -311,12 +313,13 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/services/{serviceName}/{version}")
-    @Operation(description = "Delete Service By Name And Version", method = "DELETE", summary = "Returns no content", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Service deleted"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Service not found") })
+    @Operation(description = "Delete Service By Name And Version", method = "DELETE", summary = "Returns no content",
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "204", description = "Service deleted"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+                    @ApiResponse(responseCode = "404", description = "Service not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteServiceByNameAndVersion(@PathParam("serviceName") final String serviceName,
                                                   @PathParam("version") final String version,
@@ -355,11 +358,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Service Metadata", method = "PUT", summary = "Returns updated service",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service Updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+                    @ApiResponse(responseCode = "200", description = "Service Updated"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateServiceMetadata(@PathParam("serviceId") final String serviceId,
             @Parameter(description = "Service object to be Updated", required = true) String data,
@@ -418,9 +421,9 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Group Instance Property Values", method = "PUT",
-            summary = "Returns updated group instance", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group Instance Property Values Updated"),
+            summary = "Returns updated group instance", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+            @ApiResponse(responseCode = "200", description = "Group Instance Property Values Updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -474,11 +477,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service", method = "GET", summary = "Returns service according to serviceId",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Service not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+                    @ApiResponse(responseCode = "200", description = "Service found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Service not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getServiceById(@PathParam("serviceId") final String serviceId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
@@ -520,9 +523,9 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service", method = "GET",
-            summary = "Returns service according to name and version", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            summary = "Returns service according to name and version", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+            @ApiResponse(responseCode = "200", description = "Service found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Service not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -560,12 +563,11 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}/distribution/{env}/activate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Activate distribution", method = "POST", summary = "activate distribution")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "409",
+    @Operation(description = "Activate distribution", method = "POST", summary = "activate distribution",
+            responses = {@ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "409",
                     description = "Service cannot be distributed due to missing deployment artifacts"),
-            @ApiResponse(responseCode = "404", description = "Requested service was not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.")})
+                    @ApiResponse(responseCode = "404", description = "Requested service was not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response activateDistribution(@PathParam("serviceId") final String serviceId,
             @PathParam("env") final String env, @Context final HttpServletRequest request,
@@ -603,13 +605,13 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Mark distribution as deployed", method = "POST",
-            summary = "relevant audit record will be created")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service was marked as deployed"),
-            @ApiResponse(responseCode = "409", description = "Restricted operation"),
-            @ApiResponse(responseCode = "403", description = "Service is not available"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Requested service was not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.")})
+            summary = "relevant audit record will be created",
+            responses = {@ApiResponse(responseCode = "200", description = "Service was marked as deployed"),
+                    @ApiResponse(responseCode = "409", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "403", description = "Service is not available"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+                    @ApiResponse(responseCode = "404", description = "Requested service was not found"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response markDistributionAsDeployed(@PathParam("serviceId") final String serviceId,
             @PathParam("did") final String did, @Context final HttpServletRequest request,
@@ -645,7 +647,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceId}/tempUrlToBeDeleted")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"), @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.") })
+    @Operation(responses = {@ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error. Please try again later.")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response tempUrlToBeDeleted(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
@@ -679,9 +682,9 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service component relations map", method = "GET",
-            summary = "Returns service components relations",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ServiceRelations.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Service found"),
+            summary = "Returns service components relations", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ServiceRelations.class)))),
+            @ApiResponse(responseCode = "200", description = "Service found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Service not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -720,5 +723,4 @@ public class ServiceServlet extends AbstractValidationsServlet {
             throw e;
         }
     }
-
 }

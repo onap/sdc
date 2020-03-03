@@ -22,15 +22,16 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,7 +87,8 @@ import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Resources Catalog", description = "Resources Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ResourcesServlet extends AbstractValidationsServlet {
 
@@ -110,10 +112,9 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Create Resource", method = "POST", summary = "Returns created resource",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource created"),
+    @Operation(description = "Create Resource", method = "POST", summary = "Returns created resource", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "201", description = "Resource created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Resource already exist")})
@@ -251,12 +252,13 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/resources/{resourceName}/{version}")
-    @Operation(description = "Delete Resource By Name And Version", method = "DELETE", summary = "Returns no content", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Resource deleted"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "Resource not found") })
+    @Operation(description = "Delete Resource By Name And Version", method = "DELETE", summary = "Returns no content",
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "204", description = "Resource deleted"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+                    @ApiResponse(responseCode = "404", description = "Resource not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResourceByNameAndVersion(@PathParam("resourceName") final String resourceName, @PathParam("version") final String version, @Context final HttpServletRequest request) {
 
@@ -289,11 +291,11 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Resource", method = "GET", summary = "Returns resource according to resourceId",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Resource not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "200", description = "Resource found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Resource not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceById(@PathParam("resourceId") final String resourceId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
@@ -335,9 +337,9 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Resource by name and version", method = "GET",
-            summary = "Returns resource according to resourceId", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
+            summary = "Returns resource according to resourceId", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Resource found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Resource not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -371,9 +373,9 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "validate resource name", method = "GET",
-            summary = "checks if the chosen resource name is available ", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource found"),
+            summary = "checks if the chosen resource name is available ", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Resource found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response validateResourceName(@PathParam("resourceName") final String resourceName,
@@ -453,11 +455,11 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Resource Metadata", method = "PUT", summary = "Returns updated resource metadata",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource metadata updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "200", description = "Resource metadata updated"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceMetadata(@PathParam("resourceId") final String resourceId,
             @Parameter(description = "Resource metadata to be updated", required = true) String data,
@@ -493,10 +495,9 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/{resourceId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update Resource", method = "PUT", summary = "Returns updated resource",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resource updated"),
+    @Operation(description = "Update Resource", method = "PUT", summary = "Returns updated resource", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Resource updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Resource already exist")})
@@ -548,11 +549,11 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Resource", method = "POST", summary = "Returns resource created from csar uuid",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resource retrieced"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "201", description = "Resource retrieced"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceFromCsar(@Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,

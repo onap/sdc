@@ -23,12 +23,13 @@ package org.openecomp.sdc.be.externalapi.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -71,7 +72,8 @@ import java.io.IOException;
 @SuppressWarnings("ALL")
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Service Activation External Servlet", description = "This Servlet serves external users for activating a specific service"))
+@Tags({@Tag(name = "SDC External APIs")})
+@Servers({@Server(url = "/sdc")})
 @Controller
 public class ServiceActivationServlet extends AbstractValidationsServlet {
 
@@ -99,8 +101,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
     @Path("/services/{serviceUUID}/distribution/{opEnvId}/activate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "activate a service", method = "POST", summary = "Activates a service")
-    @ApiResponses(value = {
+    @Operation(description = "activate a service", method = "POST", summary = "Activates a service", responses = {
             @ApiResponse(responseCode = "202",
                     description = "ECOMP component is authenticated and required service may be distributed"),
             @ApiResponse(responseCode = "400", description = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),

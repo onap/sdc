@@ -14,8 +14,10 @@
 
     <properties>
         <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
-        <swagger.version>2.0.8</swagger.version>
-        <swagger.jaxrs.version>1.5.22</swagger.jaxrs.version>
+        <swagger.version>2.1.1</swagger.version>
+        <swagger-ui.version>3.25.0</swagger-ui.version>
+        <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+        <replacer.plugin.version>1.5.3</replacer.plugin.version>
     </properties>
 
     <dependencies>
@@ -44,13 +46,13 @@
         <!-- Swagger Dependencies Start -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
+            <artifactId>swagger-jaxrs2</artifactId>
             <version>${swagger.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-jersey2-jaxrs</artifactId>
-            <version>${swagger.jaxrs.version}</version>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
         <!-- Swagger Dependencies End -->
 
@@ -660,10 +662,54 @@
     </dependencies>
 
     <build>
-
         <finalName>${project.artifactId}-${project.version}</finalName>
-
         <plugins>
+            <plugin>
+                <!-- Download Swagger UI webjar. -->
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.webjars</groupId>
+                                    <artifactId>swagger-ui</artifactId>
+                                    <version>${swagger-ui.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/swagger-ui</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Replace the OpenAPI specification example URL with the local one. -->
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>${replacer.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}/index.html</file>
+                    <replacements>
+                        <replacement>
+                            <token>https://petstore.swagger.io/v2/swagger.json</token>
+                            <value>/sdc/openapi.json</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -681,14 +727,16 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
-
-                    <webResources>
+                    <attachClasses>true</attachClasses>
+                    <webResources combine.children="append">
                         <resource>
-                            <directory>src/main/resources</directory>
-                            <directory>src/main/resources/swagger</directory>
+                            <directory>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}</directory>
+                            <includes>
+                                <include>**/*.*</include>
+                            </includes>
+                            <targetPath>swagger-ui</targetPath>
                         </resource>
                     </webResources>
-                    <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
             <plugin>
@@ -741,7 +789,7 @@
                 <executions>
                     <execution>
                         <id>normatives</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -749,7 +797,7 @@
                             <finalName>normatives</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
-                                <descriptor>${project.basedir}/normatives.xml</descriptor>
+                                <descriptor>src/main/assembly/normatives.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -797,12 +845,9 @@
                                         <include>normatives.tar.gz</include>
                                     </includes>
                                 </fileset>
-
-
                             </filesets>
                         </configuration>
                     </execution>
-
                     <execution>
                         <id>clean-static-files</id>
                         <phase>clean</phase>
@@ -866,44 +911,6 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.kongchen</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <apiSources>
-                        <apiSource>
-                            <springmvc>false</springmvc>
-                            <schemes>http</schemes>
-                            <basePath>/sdc</basePath>
-                            <locations>
-                                io.swagger.jaxrs.json;org.openecomp.sdc.be.externalapi.servlet;org.openecomp.sdc.be.distribution.servlet;org.openecomp.normative.api
-                            </locations>
-                            <info>
-                                <title>External Rest API</title>
-                                <version>v1.0</version>
-                                <description>External Rest API Documentation</description>
-                                <termsOfService>
-                                    http://www.github.com/kongchen/swagger-maven-plugin
-                                </termsOfService>
-                            </info>
-                            <templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
-                            <outputPath>${basedir}/target/generated/swagger-ui/api.html</outputPath>
-                            <swaggerDirectory>${basedir}/target/generated/swagger-ui
-                            </swaggerDirectory>
-                            <swaggerApiReader>io.swagger.jaxrs.config.DefaultJaxrsConfig</swaggerApiReader>
-                        </apiSource>
-                    </apiSources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -1011,27 +1018,6 @@
                         <artifactId>maven-resources-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>copy-resources-apidocs</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/sdc-backend</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>
-                                                ${project.parent.basedir}/openecomp-be/tools/swagger-ui/target/api-docs
-                                            </directory>
-                                            <includes>
-                                                <include>api-docs.war</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-
-                            <execution>
                                 <id>copy-resources-be</id>
                                 <phase>verify</phase>
                                 <goals>
@@ -1046,20 +1032,12 @@
                                                 <include>catalog-be-${project.version}.war</include>
                                             </includes>
                                         </resource>
-                                        <resource>
-                                            <directory>
-                                                ${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target
-                                            </directory>
-                                            <includes>
-                                                <include>onboarding-be-${project.version}.war</include>
-                                            </includes>
-                                        </resource>
                                     </resources>
                                 </configuration>
                             </execution>
                             <execution>
                                 <id>copy-normatives</id>
-                                <phase>verify</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>

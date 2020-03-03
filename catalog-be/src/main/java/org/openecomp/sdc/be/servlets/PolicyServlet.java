@@ -22,15 +22,16 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
@@ -81,7 +82,8 @@ import java.util.stream.Collectors;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Policy Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -106,10 +108,9 @@ public class PolicyServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/{containerComponentType}/{componentId}/policies/{policyTypeName}")
-    @Operation(description = "Create Policy", method = "POST", summary = "Returns created Policy",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Policy created"),
+    @Operation(description = "Create Policy", method = "POST", summary = "Returns created Policy", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Policy created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Policy already exist"),
@@ -133,10 +134,9 @@ public class PolicyServlet extends AbstractValidationsServlet {
 
     @PUT
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}")
-    @Operation(description = "Update Policy metadata", method = "PUT", summary = "Returns updated Policy",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Policy updated"),
+    @Operation(description = "Update Policy metadata", method = "PUT", summary = "Returns updated Policy", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Policy updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "component / policy Not found")})
@@ -163,9 +163,9 @@ public class PolicyServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}")
-    @Operation(description = "Get Policy", method = "GET", summary = "Returns Policy", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Policy was found"),
+    @Operation(description = "Get Policy", method = "GET", summary = "Returns Policy", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Policy was found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "component / policy Not found")})
@@ -187,9 +187,9 @@ public class PolicyServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}")
-    @Operation(description = "Delete Policy", method = "DELETE", summary = "No body", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Policy was deleted"),
+    @Operation(description = "Delete Policy", method = "DELETE", summary = "No body", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "204", description = "Policy was deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "component / policy Not found")})
@@ -211,9 +211,9 @@ public class PolicyServlet extends AbstractValidationsServlet {
 
     @PUT
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}/undeclare")
-    @Operation(description = "undeclare Policy", method = "PUT", summary = "No body",responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Policy was undeclared"),
+    @Operation(description = "undeclare Policy", method = "PUT", summary = "No body", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "204", description = "Policy was undeclared"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "component / policy Not found")})
@@ -246,11 +246,10 @@ public class PolicyServlet extends AbstractValidationsServlet {
     @GET
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}/properties")
     @Operation(description = "Get component policy properties", method = "GET",
-            summary = "Returns component policy properties",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = PropertyDataDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Properties found"),
-            @ApiResponse(responseCode = "400",
-                    description = "invalid content - Error: containerComponentType is invalid"),
+            summary = "Returns component policy properties", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = PropertyDataDefinition.class)))),
+            @ApiResponse(responseCode = "200", description = "Properties found"), @ApiResponse(responseCode = "400",
+            description = "invalid content - Error: containerComponentType is invalid"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Componentorpolicy  not found"),
             @ApiResponse(responseCode = "500", description = "The GET request failed due to internal SDC problem.")})
@@ -274,12 +273,12 @@ public class PolicyServlet extends AbstractValidationsServlet {
     @PUT
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}/properties")
     @Operation(description = "Update Policy properties", method = "PUT", summary = "Returns updated Policy",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Policy properties updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-            @ApiResponse(responseCode = "404", description = "component / policy Not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+                    @ApiResponse(responseCode = "200", description = "Policy properties updated"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+                    @ApiResponse(responseCode = "404", description = "component / policy Not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updatePolicyProperties(@PathParam("componentId") final String containerComponentId, @Parameter(
             description = "valid values: resources / services",
@@ -313,10 +312,9 @@ public class PolicyServlet extends AbstractValidationsServlet {
     @Path("/{containerComponentType}/{componentId}/policies/{policyId}/targets")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "update policy targets", method = "POST", summary = "Returns updated Policy",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Policy target updated"),
+    @Operation(description = "update policy targets", method = "POST", summary = "Returns updated Policy", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Policy target updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -337,11 +335,11 @@ public class PolicyServlet extends AbstractValidationsServlet {
     @POST
     @Path("/{componentType}/{componentId}/create/policies")
     @Operation(description = "Create policies on service", method = "POST", summary = "Return policies list",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Component not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "200", description = "Component found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response declareProperties(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,

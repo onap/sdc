@@ -21,15 +21,16 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.eclipse.jetty.http.HttpStatus;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -61,7 +62,8 @@ import java.util.ArrayList;
 import java.util.List;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/user")
-@OpenAPIDefinition(info = @Info(title = "User Administration", description = "User admininstarator operations"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class UserAdminServlet extends BeGenericServlet {
 
@@ -97,13 +99,15 @@ public class UserAdminServlet extends BeGenericServlet {
     @Path("/{userId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+
     @Operation(description = "retrieve user details", method = "GET",
-            summary = "Returns user details according to userId",responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns user Ok"),
+            summary = "Returns user details according to userId",responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+            @ApiResponse(responseCode = "200", description = "Returns user Ok"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public User get(
         @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
@@ -115,10 +119,9 @@ public class UserAdminServlet extends BeGenericServlet {
     @Path("/{userId}/role")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "retrieve user role", summary = "Returns user role according to userId",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns user role Ok"),
+    @Operation(description = "retrieve user role", summary = "Returns user role according to userId", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+            @ApiResponse(responseCode = "200", description = "Returns user role Ok"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
@@ -136,9 +139,9 @@ public class UserAdminServlet extends BeGenericServlet {
     @Path("/{userId}/role")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "update user role", summary = "Update user role", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Update user OK"),
+    @Operation(description = "update user role", summary = "Update user role", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+            @ApiResponse(responseCode = "200", description = "Update user OK"),
             @ApiResponse(responseCode = "400", description = "Invalid Content."),
             @ApiResponse(responseCode = "403", description = "Missing information/Restricted operation"),
             @ApiResponse(responseCode = "404", description = "User not found"),
@@ -159,9 +162,9 @@ public class UserAdminServlet extends BeGenericServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "add user", method = "POST", summary = "Provision new user", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "New user created"),
+    @Operation(description = "add user", method = "POST", summary = "Provision new user", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+            @ApiResponse(responseCode = "201", description = "New user created"),
             @ApiResponse(responseCode = "400", description = "Invalid Content."),
             @ApiResponse(responseCode = "403", description = "Missing information"),
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
@@ -183,9 +186,11 @@ public class UserAdminServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
 
-    @Operation(description = "authorize", summary = "authorize user", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Returns user Ok"), @ApiResponse(responseCode = "403", description = "Restricted Access"), @ApiResponse(responseCode = "500", description = "Internal Server Error") })
+    @Operation(description = "authorize", summary = "authorize user", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+            @ApiResponse(responseCode = "200", description = "Returns user Ok"),
+            @ApiResponse(responseCode = "403", description = "Restricted Access"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public User authorize(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                           @HeaderParam("HTTP_CSP_FIRSTNAME") String firstName,
@@ -210,11 +215,11 @@ public class UserAdminServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "retrieve all administrators", method = "GET", summary = "Returns all administrators",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns user Ok"),
-            @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+                    @ApiResponse(responseCode = "200", description = "Returns user Ok"),
+                    @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<User> getAdminsUser(@Context final HttpServletRequest request) {
         return userBusinessLogic.getAllAdminUsers();
@@ -227,13 +232,13 @@ public class UserAdminServlet extends BeGenericServlet {
     @Operation(description = "Retrieve the list of all active ASDC users or only group of users having specific roles.",
             method = "GET",
             summary = "Returns list of users with the specified roles, or all of users in the case of empty 'roles' header",
-                    responses = @ApiResponse(
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Returns users Ok"),
-            @ApiResponse(responseCode = "204", description = "No provisioned ASDC users of requested role"),
-            @ApiResponse(responseCode = "403", description = "Restricted Access"),
-            @ApiResponse(responseCode = "400", description = "Missing content"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+                    @ApiResponse(responseCode = "200", description = "Returns users Ok"),
+                    @ApiResponse(responseCode = "204", description = "No provisioned ASDC users of requested role"),
+                    @ApiResponse(responseCode = "403", description = "Restricted Access"),
+                    @ApiResponse(responseCode = "400", description = "Missing content"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     public List<User> getUsersList(@Context final HttpServletRequest request, @Parameter(
             description = "Any active user's USER_ID ") @HeaderParam(Constants.USER_ID_HEADER) final String userId,
             @Parameter(
@@ -256,9 +261,9 @@ public class UserAdminServlet extends BeGenericServlet {
     @Path("/{userId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "delete user", summary = "Delete user", responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Update deleted OK"),
+    @Operation(description = "delete user", summary = "Delete user", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+            @ApiResponse(responseCode = "200", description = "Update deleted OK"),
             @ApiResponse(responseCode = "400", description = "Invalid Content."),
             @ApiResponse(responseCode = "403", description = "Missing information"),
             @ApiResponse(responseCode = "404", description = "User not found"),

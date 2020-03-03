@@ -19,15 +19,16 @@ package org.openecomp.sdc.be.servlets;
 import com.google.common.collect.ImmutableMap;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -74,7 +75,8 @@ import java.util.Map;
 @Path("/v1/catalog")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Interface Operation Servlet", description = "Interface Operation Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class InterfaceOperationServlet extends AbstractValidationsServlet {
 
@@ -96,9 +98,9 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/interfaceOperations")
     @Operation(description = "Create Interface Operations on Resource", method = "POST",
-            summary = "Create Interface Operations on Resource",responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Interface Operations on Resource"),
+            summary = "Create Interface Operations on Resource", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Create Interface Operations on Resource"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Resource not found"),
@@ -165,9 +167,9 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/interfaceOperations")
     @Operation(description = "Update Interface Operations on Resource", method = "PUT",
-            summary = "Update Interface Operations on Resource",responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Interface Operations on Resource"),
+            summary = "Update Interface Operations on Resource", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Update Interface Operations on Resource"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Resource not found")})
@@ -184,9 +186,9 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/interfaces/{interfaceId}/operations/{operationId}")
     @Operation(description = "Delete Interface Operation from Resource", method = "DELETE",
-            summary = "Delete Interface Operation from Resource", responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete Interface Operation from Resource"),
+            summary = "Delete Interface Operation from Resource", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Delete Interface Operation from Resource"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Resource not found")})
@@ -231,9 +233,9 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/interfaces/{interfaceId}/operations/{operationId}")
     @Operation(description = "Get Interface Operation from Resource", method = "GET",
-            summary = "GET Interface Operation from Resource",responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete Interface Operation from Resource"),
+            summary = "GET Interface Operation from Resource", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Delete Interface Operation from Resource"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Resource not found")})
@@ -277,9 +279,9 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/interfaceOperations")
     @Operation(description = "Create Interface Operations on Service", method = "POST",
-            summary = "Create Interface Operations on Service", responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Interface Operations on Service"),
+            summary = "Create Interface Operations on Service", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Create Interface Operations on Service"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Service not found"),
@@ -297,9 +299,9 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/interfaceOperations")
     @Operation(description = "Update Interface Operations on Service", method = "PUT",
-            summary = "Update Interface Operations on Service",responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Interface Operations on Service"),
+            summary = "Update Interface Operations on Service", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Update Interface Operations on Service"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Service not found")})
@@ -316,9 +318,9 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/interfaces/{interfaceId}/operations/{operationId}")
     @Operation(description = "Delete Interface Operation from Service", method = "DELETE",
-            summary = "Delete Interface Operation from Service",responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete Interface Operation from Service"),
+            summary = "Delete Interface Operation from Service", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Delete Interface Operation from Service"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Service not found")})
@@ -336,9 +338,9 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/interfaces/{interfaceId}/operations/{operationId}")
     @Operation(description = "Get Interface Operation from Service", method = "GET",
-            summary = "GET Interface Operation from Service",responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Get Interface Operation from Service"),
+            summary = "GET Interface Operation from Service", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = InterfaceDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Get Interface Operation from Service"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Service not found")})
@@ -350,6 +352,5 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @Context final HttpServletRequest request) {
         return get(interfaceId, operationId, serviceId, request, userId);
     }
-
 }
 

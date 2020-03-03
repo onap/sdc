@@ -23,15 +23,16 @@ package org.openecomp.sdc.be.servlets;
 import com.google.gson.Gson;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -62,7 +63,8 @@ import javax.ws.rs.core.Response;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/consumers")
-@OpenAPIDefinition(info = @Info(title = "Consumer Servlet",description = "Consumer Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Singleton
 public class ConsumerServlet extends BeGenericServlet {
 
@@ -83,9 +85,9 @@ public class ConsumerServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Consumer credentials", method = "POST",
-            summary = "Returns created ECOMP consumer credentials",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Consumer credentials created"),
+            summary = "Returns created ECOMP consumer credentials", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Consumer credentials created"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response createConsumer(@Parameter(description = "Consumer Object to be created", required = true) String data,
@@ -133,11 +135,11 @@ public class ConsumerServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Consumer", method = "GET", summary = "Returns consumer according to ConsumerID",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ConsumerDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Consumer found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Consumer not found")})
+            responses = {@ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ConsumerDefinition.class)))),
+                    @ApiResponse(responseCode = "200", description = "Consumer found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Consumer not found")})
     public Response getConsumer(@PathParam("consumerId") final String consumerId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
@@ -174,9 +176,9 @@ public class ConsumerServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Deletes Consumer", method = "DELETE",
-            summary = "Returns deleted consumer according to ConsumerID",  responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ConsumerDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Consumer deleted"),
+            summary = "Returns deleted consumer according to ConsumerID", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ConsumerDefinition.class)))),
+            @ApiResponse(responseCode = "204", description = "Consumer deleted"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Consumer not found")})
     public Response deleteConsumer(@PathParam("consumerId") final String consumerId,
