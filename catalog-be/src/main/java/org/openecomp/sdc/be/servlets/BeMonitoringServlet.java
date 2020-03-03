@@ -23,14 +23,15 @@ package org.openecomp.sdc.be.servlets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jcabi.aspects.Loggable;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -59,7 +60,8 @@ import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
-@OpenAPIDefinition(info = @Info(title = "BE Monitoring", description = "BE Monitoring"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class BeMonitoringServlet extends BeGenericServlet {
 
@@ -80,10 +82,10 @@ public class BeMonitoringServlet extends BeGenericServlet {
     @Path("/healthCheck")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Return aggregate BE health check of SDC BE components", summary = "return BE health check",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "SDC BE components are all up"),
+    @Operation(description = "Return aggregate BE health check of SDC BE components",
+            summary = "return BE health check", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+            @ApiResponse(responseCode = "200", description = "SDC BE components are all up"),
             @ApiResponse(responseCode = "500", description = "One or more SDC BE components are down")})
     public Response getHealthCheck(@Context final HttpServletRequest request) {
         try {

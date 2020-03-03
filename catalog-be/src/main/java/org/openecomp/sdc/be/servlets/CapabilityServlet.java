@@ -18,15 +18,16 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -69,7 +70,8 @@ import java.util.Optional;
 @Path("/v1/catalog")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Capability Servlet", description = "Capability Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class CapabilityServlet extends AbstractValidationsServlet {
     private static final Logger LOGGER = Logger.getLogger(CapabilityServlet.class);
@@ -91,9 +93,9 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/capabilities")
     @Operation(description = "Create Capabilities on resource", method = "POST",
-            summary = "Create Capabilities on resource",  responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Capabilities"),
+            summary = "Create Capabilities on resource", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Create Capabilities"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Capability already exist")})
@@ -112,9 +114,9 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/capabilities")
     @Operation(description = "Update Capabilities on resource", method = "PUT",
-            summary = "Update Capabilities on resource",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Capabilities"),
+            summary = "Update Capabilities on resource", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Update Capabilities"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -131,12 +133,12 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/capabilities/{capabilityId}")
-    @Operation(description = "Get Capability from resource", method = "GET",
-            summary = "GET Capability from resource", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "GET Capability"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Get Capability from resource", method = "GET", summary = "GET Capability from resource",
+            responses = {@ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))),
+                    @ApiResponse(responseCode = "201", description = "GET Capability"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCapabilityOnResource(
             @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
@@ -152,9 +154,9 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/resources/{resourceId}/capabilities/{capabilityId}")
     @Operation(description = "Delete capability from resource", method = "DELETE",
-            summary = "Delete capability from resource", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete capability"),
+            summary = "Delete capability from resource", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Delete capability"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -171,9 +173,9 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/capabilities")
     @Operation(description = "Create Capabilities on service", method = "POST",
-            summary = "Create Capabilities on service", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Create Capabilities"),
+            summary = "Create Capabilities on service", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "Create Capabilities"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Capability already exist")})
@@ -192,9 +194,9 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/capabilities")
     @Operation(description = "Update Capabilities on service", method = "PUT",
-            summary = "Update Capabilities on service",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Update Capabilities"),
+            summary = "Update Capabilities on service", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Update Capabilities"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -211,12 +213,12 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/capabilities/{capabilityId}")
-    @Operation(description = "Get Capability from service", method = "GET",
-            summary = "GET Capability from service", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "GET Capability"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Get Capability from service", method = "GET", summary = "GET Capability from service",
+            responses = {@ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))),
+                    @ApiResponse(responseCode = "201", description = "GET Capability"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCapabilityOnService(
             @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
@@ -232,9 +234,9 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/services/{serviceId}/capabilities/{capabilityId}")
     @Operation(description = "Delete capability from service", method = "DELETE",
-            summary = "Delete capability from service",responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Delete capability"),
+            summary = "Delete capability from service", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Delete capability"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)

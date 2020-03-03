@@ -22,15 +22,31 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+import java.io.IOException;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -51,22 +67,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-
 /**
  * Root resource (exposed at "/" path)
  */
@@ -74,7 +74,8 @@ import java.io.IOException;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Group Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class GroupServlet extends AbstractValidationsServlet {
 
@@ -93,10 +94,9 @@ public class GroupServlet extends AbstractValidationsServlet {
     @POST
     @Path("/{containerComponentType}/{componentId}/groups/{groupType}")
     @Operation(description = "Create group ", method = "POST",
-            summary = "Creates new group in component and returns it", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Group created"), @ApiResponse(
-            responseCode = "400",
+            summary = "Creates new group in component and returns it", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Group created"), @ApiResponse(responseCode = "400",
             description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found"),
@@ -119,9 +119,9 @@ public class GroupServlet extends AbstractValidationsServlet {
     @GET
     @Path("/{containerComponentType}/{componentId}/groups/{groupId}")
     @Operation(description = "Get group artifacts ", method = "GET",
-            summary = "Returns artifacts metadata according to groupId", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "group found"),
+            summary = "Returns artifacts metadata according to groupId", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "group found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Group not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -155,12 +155,11 @@ public class GroupServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}")
-    @Operation(description = "Delete Group", method = "DELETE", summary = "Returns deleted group id",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "ResourceInstance deleted"), @ApiResponse(
-            responseCode = "400",
-            description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
+    @Operation(description = "Delete Group", method = "DELETE", summary = "Returns deleted group id", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "201", description = "ResourceInstance deleted"),
+            @ApiResponse(responseCode = "400",
+                    description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")})
@@ -179,10 +178,9 @@ public class GroupServlet extends AbstractValidationsServlet {
 
     @PUT
     @Path("/{containerComponentType}/{componentId}/groups/{groupId}")
-    @Operation(description = "Update Group metadata", method = "PUT", summary = "Returns updated Group",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group updated"),
+    @Operation(description = "Update Group metadata", method = "PUT", summary = "Returns updated Group", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Group updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "404", description = "component / group Not found")})
@@ -202,11 +200,11 @@ public class GroupServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Group Metadata", method = "PUT", summary = "Returns updated group definition",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group Updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))),
+                    @ApiResponse(responseCode = "200", description = "Group Updated"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateGroupMetadata(@PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,

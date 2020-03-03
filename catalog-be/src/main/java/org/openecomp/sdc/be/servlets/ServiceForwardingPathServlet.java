@@ -24,15 +24,16 @@ package org.openecomp.sdc.be.servlets;
 import com.google.common.collect.Sets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -79,7 +80,8 @@ import java.util.Set;
 @Path("/v1/catalog/services/{serviceId}/paths")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Service Forwarding Path", description = "Service Forwarding Path Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
 
@@ -102,10 +104,10 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    @Operation(description = "Create Forwarding Path", method = "POST", summary = "Create Forwarding Path",responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value =
-            {@ApiResponse(responseCode = "201", description = "Create Forwarding Path"),
+    @Operation(description = "Create Forwarding Path", method = "POST", summary = "Create Forwarding Path",
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+                    @ApiResponse(responseCode = "201", description = "Create Forwarding Path"),
                     @ApiResponse(responseCode = "403", description = "Restricted operation"),
                     @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
                     @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
@@ -124,13 +126,12 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    @Operation(description = "Update Forwarding Path", method = "PUT", summary = "Update Forwarding Path",responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value =
-            {@ApiResponse(responseCode = "201", description = "Update Forwarding Path"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-                    @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
+    @Operation(description = "Update Forwarding Path", method = "PUT", summary = "Update Forwarding Path", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+            @ApiResponse(responseCode = "201", description = "Update Forwarding Path"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateForwardingPath(
             @Parameter(description = "Update Path to create", required = true) String data,
@@ -182,13 +183,13 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{forwardingPathId}")
-    @Operation(description = "Get Forwarding Path", method = "GET", summary = "GET Forwarding Path",responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ForwardingPathDataDefinition.class)))))
-    @ApiResponses(value =
-            {@ApiResponse(responseCode = "201", description = "Get Forwarding Path"),
-                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
-                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-                    @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
+    @Operation(description = "Get Forwarding Path", method = "GET", summary = "GET Forwarding Path", responses = {
+            @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ForwardingPathDataDefinition.class)))),
+            @ApiResponse(responseCode = "201", description = "Get Forwarding Path"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getForwardingPath(
             @Parameter(description = "Forwarding Path to create", required = true) String datax,
@@ -230,10 +231,10 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{forwardingPathId}")
-    @Operation(description = "Delete Forwarding Path", method = "DELETE", summary = "Delete Forwarding Path",responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))))
-    @ApiResponses(value =
-            {@ApiResponse(responseCode = "201", description = "Delete Forwarding Path"),
+    @Operation(description = "Delete Forwarding Path", method = "DELETE", summary = "Delete Forwarding Path",
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+                    @ApiResponse(responseCode = "201", description = "Delete Forwarding Path"),
                     @ApiResponse(responseCode = "403", description = "Restricted operation"),
                     @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
                     @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})

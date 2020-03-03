@@ -21,15 +21,16 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -52,7 +53,8 @@ import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "group types resource"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -68,11 +70,10 @@ public class GroupTypesEndpoint extends BeGenericServlet{
 
     @GET
     @Path("/groupTypes")
-    @Operation(description = "Get group types ", method = "GET", summary = "Returns group types",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = GroupTypeDefinition.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "group types found"), @ApiResponse(
-            responseCode = "400",
+    @Operation(description = "Get group types ", method = "GET", summary = "Returns group types", responses = {
+            @ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = GroupTypeDefinition.class)))),
+            @ApiResponse(responseCode = "200", description = "group types found"), @ApiResponse(responseCode = "400",
             description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "500", description = "Internal Error")})

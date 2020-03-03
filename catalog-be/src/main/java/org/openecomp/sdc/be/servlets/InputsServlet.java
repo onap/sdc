@@ -24,15 +24,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
@@ -85,7 +86,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@OpenAPIDefinition(info = @Info(title = "Input Catalog", description = "Input Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Path("/v1/catalog")
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
@@ -114,11 +116,11 @@ public class InputsServlet extends AbstractValidationsServlet {
     @POST
     @Path("/{containerComponentType}/{componentId}/update/inputs")
     @Operation(description = "Update resource  inputs", method = "POST", summary = "Returns updated input",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Input updated"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+                    @ApiResponse(responseCode = "200", description = "Input updated"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response updateComponentInputs(@Parameter(description = "valid values: resources / services",
             schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME ,
                     ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
@@ -175,10 +177,9 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{componentType}/{componentId}/componentInstances/{instanceId}/{originComponentUid}/inputs")
-    @Operation(description = "Get Inputs only", method = "GET", summary = "Returns Inputs list",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Get Inputs only", method = "GET", summary = "Returns Inputs list", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getComponentInstanceInputs(@PathParam("componentType") final String componentType,
@@ -209,10 +210,9 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{componentType}/{componentId}/componentInstances/{instanceId}/{inputId}/properties")
-    @Operation(description = "Get properties", method = "GET", summary = "Returns properties list",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Get properties", method = "GET", summary = "Returns properties list", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getInputPropertiesForComponentInstance(@PathParam("componentType") final String componentType,
@@ -244,9 +244,9 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{componentType}/{componentId}/inputs/{inputId}/inputs")
-    @Operation(description = "Get inputs", method = "GET", summary = "Returns inputs list", responses = @ApiResponse(content = @Content(
-            array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Get inputs", method = "GET", summary = "Returns inputs list", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getInputsForComponentInput(@PathParam("componentType") final String componentType,
@@ -277,9 +277,9 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/{componentType}/{componentId}/inputs/{inputId}")
-    @Operation(description = "Get inputs", method = "GET", summary = "Returns inputs list", responses = @ApiResponse(content = @Content(
-            array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Get inputs", method = "GET", summary = "Returns inputs list", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response getInputsAndPropertiesForComponentInput(@PathParam("componentType") final String componentType,
@@ -319,10 +319,9 @@ public class InputsServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/{componentType}/{componentId}/create/inputs")
-    @Operation(description = "Create inputs on service", method = "POST", summary = "Return inputs list",
-            responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Create inputs on service", method = "POST", summary = "Return inputs list", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response createMultipleInputs(@PathParam("componentType") final String componentType,
@@ -351,10 +350,9 @@ public class InputsServlet extends AbstractValidationsServlet {
      */
     @POST
     @Path("/{componentType}/{componentId}/create/listInput")
-    @Operation(description = "Create a list input on service", method = "POST", summary = "Return input",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Component found"),
+    @Operation(description = "Create a list input on service", method = "POST", summary = "Return input", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "200", description = "Component found"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found")})
     public Response createListInput(@PathParam("componentType") final String componentType,
@@ -412,11 +410,11 @@ public class InputsServlet extends AbstractValidationsServlet {
     @DELETE
     @Path("/{componentType}/{componentId}/delete/{inputId}/input")
     @Operation(description = "Delete input from service", method = "DELETE", summary = "Delete service input",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Input deleted"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Input not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "200", description = "Input deleted"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Input not found")})
     public Response deleteInput(@PathParam("componentType") final String componentType,
             @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -449,12 +447,11 @@ public class InputsServlet extends AbstractValidationsServlet {
     @GET
     @Path("/{componentType}/{componentId}/dataType/{dataTypeName}")
     @Operation(description = "Get data type in service", method = "GET", summary = "Get data type in service",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = DataTypeDefinition.class)))))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Data type found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Data type not found")})
+            responses = {@ApiResponse(content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = DataTypeDefinition.class)))),
+                    @ApiResponse(responseCode = "200", description = "Data type found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Data type not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getDataType(
             @PathParam("componentType") final String componentType,
@@ -492,12 +489,11 @@ public class InputsServlet extends AbstractValidationsServlet {
     @GET
     @Path("/{componentType}/{componentId}/dataTypes")
     @Operation(description = "Get data types that service has", method = "GET", summary = "Get data types in service",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))) )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Data type found"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Component not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "200", description = "Data type found"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Component not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getDataTypes(
             @PathParam("componentType") final String componentType,
@@ -537,12 +533,11 @@ public class InputsServlet extends AbstractValidationsServlet {
     @DELETE
     @Path("/{componentType}/{componentId}/dataType/{dataTypeName}")
     @Operation(description = "Delete data type from service", method = "DELETE", summary = "Delete service input",
-            responses = @ApiResponse(content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = Resource.class)))))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Data type deleted"),
-            @ApiResponse(responseCode = "403", description = "Restricted operation"),
-            @ApiResponse(responseCode = "404", description = "Data type not found")})
+            responses = {@ApiResponse(
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+                    @ApiResponse(responseCode = "200", description = "Data type deleted"),
+                    @ApiResponse(responseCode = "403", description = "Restricted operation"),
+                    @ApiResponse(responseCode = "404", description = "Data type not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteDataType(
             @PathParam("componentType") final String componentType,

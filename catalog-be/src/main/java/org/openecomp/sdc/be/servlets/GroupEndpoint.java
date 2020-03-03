@@ -21,15 +21,27 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+import java.util.List;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogicNew;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -44,24 +56,13 @@ import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.springframework.stereotype.Controller;
 
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import java.util.List;
-
 /**
  * Here new APIs for group will be written in an attempt to gradually clean BL code
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@OpenAPIDefinition(info = @Info(title = "Group Servlet"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -80,11 +81,11 @@ public class GroupEndpoint extends BeGenericServlet{
     @POST
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}/members")
     @Operation(description = "Update group members ", method = "POST",
-            summary = "Updates list of members and returns it", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group members updated"), @ApiResponse(
-            responseCode = "400",
-            description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
+            summary = "Updates list of members and returns it", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+            @ApiResponse(responseCode = "200", description = "Group members updated"),
+            @ApiResponse(responseCode = "400",
+                    description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Component not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")})
@@ -102,9 +103,9 @@ public class GroupEndpoint extends BeGenericServlet{
     @GET
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}/properties")
     @Operation(description = "Get List of properties on a group", method = "GET",
-            summary = "Returns list of properties", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group Updated"),
+            summary = "Returns list of properties", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))),
+            @ApiResponse(responseCode = "200", description = "Group Updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -118,9 +119,9 @@ public class GroupEndpoint extends BeGenericServlet{
     @PUT
     @Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}/properties")
     @Operation(description = "Updates List of properties on a group (only values)", method = "PUT",
-            summary = "Returns updated list of properties", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))))
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Group Updated"),
+            summary = "Returns updated list of properties", responses = {@ApiResponse(
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))),
+            @ApiResponse(responseCode = "200", description = "Group Updated"),
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
@@ -132,5 +133,4 @@ public class GroupEndpoint extends BeGenericServlet{
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         return groupBusinessLogic.updateProperties(componentId, componentTypeEnum, userId, groupUniqueId, properties);
     }
-
 }

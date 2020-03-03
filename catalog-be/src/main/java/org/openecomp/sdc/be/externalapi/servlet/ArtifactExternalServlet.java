@@ -22,17 +22,16 @@ package org.openecomp.sdc.be.externalapi.servlet;
 
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -86,9 +85,8 @@ import java.util.Map;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-
-@OpenAPIDefinition(info = @Info(title = "Artifact External Servlet",
-        description = "Servlet serves external users operations on artifacts."))
+@Tags({@Tag(name = "SDC External APIs")})
+@Servers({@Server(url = "/sdc")})
 @Controller
 public class ArtifactExternalServlet extends AbstractValidationsServlet {
 
@@ -116,12 +114,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @POST
     @Path("/{assetType}/{uuid}/interfaces/{interfaceUUID}/operations/{operationUUID}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(parameters = @Parameter(required = true ),description = "uploads of artifact to VF operation workflow", method = "POST",
-            summary = "uploads of artifact to VF operation workflow")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact uploaded",
-                    content = @Content(
-                            array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
+    @Operation(parameters = {@Parameter(required = true,
+            schema = @Schema(implementation = org.openecomp.sdc.be.model.ArtifactDefinition.class))},
+            description = "uploads of artifact to VF operation workflow", method = "POST",
+            summary = "uploads of artifact to VF operation workflow", responses = {
+            @ApiResponse(responseCode = "200", description = "Artifact uploaded", content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401",
                     description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -142,7 +140,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
             @ApiResponse(responseCode = "400",
                     description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     public Response uploadInterfaceOperationArtifact(
             @Parameter(description = "Determines the format of the body of the request",
                     required = true) @HeaderParam(value = HttpHeaders.CONTENT_TYPE) String contentType,
@@ -223,12 +220,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @POST
     @Path("/{assetType}/{uuid}/artifacts")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "uploads of artifact to a resource or service", method = "POST",
-            summary = "uploads of artifact to a resource or service")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact uploaded",
-                    content = @Content(
-                            array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
+    @Operation(parameters = {@Parameter(required = true,
+            schema = @Schema(implementation = org.openecomp.sdc.be.model.ArtifactDefinition.class))},
+            description = "uploads of artifact to a resource or service", method = "POST",
+            summary = "uploads of artifact to a resource or service", responses = {
+            @ApiResponse(responseCode = "200", description = "Artifact uploaded", content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401",
                     description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -249,10 +246,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
             @ApiResponse(responseCode = "400",
                     description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    // @ApiImplicitParams({@ApiImplicitParam(required = true, dataType =
-    // "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the
-    // artifact")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     @PermissionAllowed({AafPermission.PermNames.WRITE_VALUE})
     public Response uploadArtifact(
             @Parameter(description = "Determines the format of the body of the request",
@@ -331,12 +324,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @POST
     @Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "uploads an artifact to a resource instance", method = "POST",
-            summary = "uploads an artifact to a resource instance")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact uploaded",
-                    content = @Content(
-                            array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
+    @Operation(parameters = {@Parameter(required = true,
+            schema = @Schema(implementation = org.openecomp.sdc.be.model.ArtifactDefinition.class),
+            description = "json describe the artifact")}, description = "uploads an artifact to a resource instance",
+            method = "POST", summary = "uploads an artifact to a resource instance", responses = {
+            @ApiResponse(responseCode = "200", description = "Artifact uploaded", content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401",
                     description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -357,7 +350,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
             @ApiResponse(responseCode = "400",
                     description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response uploadArtifactToInstance(
             @Parameter(description = "Determines the format of the body of the request",
@@ -437,12 +429,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @POST
     @Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "updates an artifact on a resource or service", method = "POST",
-            summary = "uploads of artifact to a resource or service")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact updated",
-                    content = @Content(
-                            array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
+    @Operation(parameters = {@Parameter(required = true,
+            schema = @Schema(implementation = org.openecomp.sdc.be.model.ArtifactDefinition.class),
+            description = "json describe the artifact")}, description = "updates an artifact on a resource or service",
+            method = "POST", summary = "uploads of artifact to a resource or service", responses = {
+            @ApiResponse(responseCode = "200", description = "Artifact updated", content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401",
                     description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -461,7 +453,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
             @ApiResponse(responseCode = "409",
                     description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response updateArtifact(
             @Parameter(description = "Determines the format of the body of the request",
@@ -545,12 +536,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @POST
     @Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "updates an artifact on a resource instance", method = "POST",
-            summary = "uploads of artifact to a resource or service")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact updated",
-                    content = @Content(
-                            array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
+    @Operation(parameters = {@Parameter(required = true,
+            schema = @Schema(implementation = org.openecomp.sdc.be.model.ArtifactDefinition.class),
+            description = "json describe the artifact")}, description = "updates an artifact on a resource instance",
+            method = "POST", summary = "uploads of artifact to a resource or service", responses = {
+            @ApiResponse(responseCode = "200", description = "Artifact updated", content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401",
                     description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -569,7 +560,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
             @ApiResponse(responseCode = "409",
                     description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
     @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response updateArtifactOnResourceInstance(
             @Parameter(description = "Determines the format of the body of the request",
@@ -657,12 +647,10 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "deletes an artifact of a resource or service", method = "DELETE",
-            summary = "deletes an artifact of a resource or service", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact deleted",
-                    content = @Content(
-                            array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
+            summary = "deletes an artifact of a resource or service", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Artifact deleted", content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401",
                     description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -762,12 +750,10 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @Path("{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "deletes an artifact of a resource insatnce", method = "DELETE",
-            summary = "deletes an artifact of a resource insatnce", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact deleted",
-                    content = @Content(
-                            array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
+            summary = "deletes an artifact of a resource insatnce", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Artifact deleted", content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
             @ApiResponse(responseCode = "401",
                     description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -866,20 +852,20 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @GET
     @Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @Operation(description = "Download component artifact", method = "GET", summary = "Returns downloaded artifact")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Artifact downloaded",
+    @Operation(description = "Download component artifact", method = "GET", summary = "Returns downloaded artifact",
+            responses = {@ApiResponse(responseCode = "200", description = "Artifact downloaded",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
-            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401",
-                    description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "404", description = "Specified resource is not found - SVC4063"),
-            @ApiResponse(responseCode = "405",
-                    description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500",
-                    description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
-            @ApiResponse(responseCode = "404", description = "Artifact was not found - SVC4505")})
+                    @ApiResponse(responseCode = "400",
+                            description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+                    @ApiResponse(responseCode = "401",
+                            description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+                    @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+                    @ApiResponse(responseCode = "404", description = "Specified resource is not found - SVC4063"),
+                    @ApiResponse(responseCode = "405",
+                            description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+                    @ApiResponse(responseCode = "500",
+                            description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+                    @ApiResponse(responseCode = "404", description = "Artifact was not found - SVC4505")})
     @PermissionAllowed(AafPermission.PermNames.DELETE_VALUE)
     public Response downloadComponentArtifact(
             @Parameter(description = "The user ID of the DCAE Designer. This user must also have Designer role in SDC",
@@ -945,9 +931,8 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(description = "Download resource instance artifact", method = "GET",
-            summary = "Returns downloaded artifact", responses = @ApiResponse(
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {
+            summary = "Returns downloaded artifact", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
             @ApiResponse(responseCode = "200", description = "Artifact downloaded",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
             @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),

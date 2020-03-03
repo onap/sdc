@@ -21,15 +21,16 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.onap.sdc.gab.model.GABQuery;
 import org.onap.sdc.gab.model.GABQuery.GABQueryType;
@@ -60,7 +61,8 @@ import java.util.stream.Collectors;
 @Path("/v1/catalog/gab")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@OpenAPIDefinition(info = @Info(title = "Generic Artifact Browser"))
+@Tags({@Tag(name = "SDC Internal APIs")})
+@Servers({@Server(url = "/sdc2/rest")})
 @Controller
 public class GenericArtifactBrowserServlet extends BeGenericServlet {
 
@@ -80,11 +82,11 @@ public class GenericArtifactBrowserServlet extends BeGenericServlet {
 
     @POST
     @Path("/searchFor")
-    @Operation(description = "Search json paths inside the yaml", method = "POST", summary = "Returns found entries of json paths",responses = @ApiResponse(
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))))
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returned yaml entries"),
-        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @Operation(description = "Search json paths inside the yaml", method = "POST",
+            summary = "Returns found entries of json paths", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+            @ApiResponse(responseCode = "200", description = "Returned yaml entries"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     public Response searchFor(
         @Parameter(description = "Generic Artifact search model", required = true) GenericArtifactQueryInfo query,
         @Context final HttpServletRequest request) {

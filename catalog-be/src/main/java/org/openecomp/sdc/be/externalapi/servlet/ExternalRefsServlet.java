@@ -21,6 +21,10 @@
 package org.openecomp.sdc.be.externalapi.servlet;
 
 import fj.data.Either;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.openecomp.sdc.be.components.impl.ExternalRefsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -51,6 +55,8 @@ import java.util.List;
 import java.util.Map;
 
 @Path("/v1/catalog")
+@Tags({@Tag(name = "SDC External APIs")})
+@Servers({@Server(url = "/sdc")})
 @Controller
 public class ExternalRefsServlet extends BeGenericServlet {
 
