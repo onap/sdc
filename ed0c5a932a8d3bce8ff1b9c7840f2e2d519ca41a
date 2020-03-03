@@ -16,6 +16,24 @@
       "revId": "ed0c5a932a8d3bce8ff1b9c7840f2e2d519ca41a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d4031b0_550fd539",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-03-03T09:11:29Z",
+      "side": 1,
+      "message": "Right, thanks for the comment. Done.",
+      "parentUuid": "962d97cc_bceeb505",
+      "revId": "ed0c5a932a8d3bce8ff1b9c7840f2e2d519ca41a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
