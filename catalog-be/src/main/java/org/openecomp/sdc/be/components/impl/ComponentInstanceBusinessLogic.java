@@ -1697,15 +1697,18 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 }
                 Optional<CapabilityDefinition>
                         capPropDefinition = getPropertyCapabilityOfChildInstance(propertyParentUniqueId, foundResourceInstance.getCapabilities());
-                if(capPropDefinition.isPresent()) {
+                if (capPropDefinition.isPresent()) {
                     updatedPropertyValue
                             .bimap(updatedValue -> updateCapabilityPropFromUpdateInstProp(property, updatedValue,
                                     containerComponent, foundResourceInstance, capPropDefinition.get().getType(),
                                     capPropDefinition.get().getName()), Either::right);
-                }
-                else {
-                    updatedPropertyValue.bimap(updatedValue -> updatePropertyOnContainerComponent(property, updatedValue,
-                            containerComponent, foundResourceInstance), Either::right);
+                } else {
+                    updatedPropertyValue.bimap(
+                            updatedValue -> {
+                                componentInstanceProperty.setValue(updatedValue);
+                                return updatePropertyOnContainerComponent(property, updatedValue,
+                                        containerComponent, foundResourceInstance);
+                            }, Either::right);
                     updatedProperties.add(componentInstanceProperty);
                 }
             }

@@ -285,7 +285,8 @@ export class PropertyFormViewModel {
                         let myValueString:string = JSON.stringify(this.$scope.myValue);
                         property.value = myValueString;
                     }
-                    this.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).subscribe((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]), onPropertyFaild);
+                    this.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).subscribe((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]),
+                            error => onPropertyFaild(error));
                 } else {
                     if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
                         let myValueString:string = JSON.stringify(this.$scope.myValue);
@@ -293,7 +294,7 @@ export class PropertyFormViewModel {
                     } else {
                         this.$scope.editPropertyModel.property.defaultValue = this.$scope.editPropertyModel.property.value;
                     }
-                    this.addOrUpdateProperty(property).subscribe(onPropertySuccess, onPropertyFaild);
+                    this.addOrUpdateProperty(property).subscribe(onPropertySuccess, error => onPropertyFaild(error));
                 }
             }
         };
@@ -382,21 +383,23 @@ export class PropertyFormViewModel {
             const okButton = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true} as SdcUiComponents.ModalButtonComponent;
             this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
         };
-    }
+    };
 
     private updateInstanceProperties = (componentInstanceId:string, properties:PropertyModel[]):Observable<PropertyModel[]> => {
 
         return this.ComponentInstanceServiceNg2.updateInstanceProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, componentInstanceId, properties)
             .map(newProperties => {
                 newProperties.forEach((newProperty) => {
-                    if(newProperty.path[0] === newProperty.resourceInstanceUniqueId) newProperty.path.shift();
-                    // find exist instance property in parent component for update the new value ( find bu uniqueId & path)
-                    let existProperty: PropertyModel = <PropertyModel>_.find(this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
-                        uniqueId: newProperty.uniqueId,
-                        path: newProperty.path
-                    });
-                    let index = this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId].indexOf(existProperty);
-                    this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId][index] = newProperty;
+                    if (!_.isNil(newProperty.path)) {
+                        if (newProperty.path[0] === newProperty.resourceInstanceUniqueId) newProperty.path.shift();
+                        // find exist instance property in parent component for update the new value ( find bu uniqueId & path)
+                        let existProperty: PropertyModel = <PropertyModel>_.find(this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId], {
+                            uniqueId: newProperty.uniqueId,
+                            path: newProperty.path
+                        });
+                        let index = this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId].indexOf(existProperty);
+                        this.compositionService.componentInstancesProperties[newProperty.resourceInstanceUniqueId][index] = newProperty;
+                    }
                 });
                 return newProperties;
             });
