@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "962d97cc_bceeb505",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-03T07:37:40Z",
+      "side": 1,
+      "message": "is we\u0027re already touching the code, let\u0027s fix to \"\u003d\u003d\u003d\" in this file and use lodash \"isNil\" method for null and undefined check",
+      "revId": "ed0c5a932a8d3bce8ff1b9c7840f2e2d519ca41a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
