@@ -159,6 +159,7 @@ public class Configuration extends BasicConfiguration {
     private List<GabConfig> gabConfig;
     private EcompPortalConfig ecompPortal;
     private List<ArtifactConfiguration> artifacts;
+    private Map<String, Map<String, List<String>>> componentAllowedInstanceTypes;
 
     public List<ArtifactConfiguration> getArtifacts() {
         return artifacts;
@@ -166,6 +167,15 @@ public class Configuration extends BasicConfiguration {
 
     public void setArtifacts(List<ArtifactConfiguration> artifacts) {
         this.artifacts = artifacts;
+    }
+
+    public Map<String, Map<String, List<String>>> getComponentAllowedInstanceTypes() {
+        return componentAllowedInstanceTypes;
+    }
+
+    public void setComponentAllowedInstanceTypes(
+            final Map<String, Map<String, List<String>>> componentAllowedInstanceTypes) {
+        this.componentAllowedInstanceTypes = componentAllowedInstanceTypes;
     }
 
     public String getAutoHealingOwner() {
@@ -258,19 +268,19 @@ public class Configuration extends BasicConfiguration {
     public void setGenericAssetNodeTypes(Map<String, String> genericAssetNodeTypes) {
         this.genericAssetNodeTypes = genericAssetNodeTypes;
     }
-    
+
     public Map<String, String> getServiceNodeTypes(){
         return serviceNodeTypes ;
     }
-    
+
     public void setServiceNodeTypes(Map<String, String> serviceNodeTypes){
         this.serviceNodeTypes = serviceNodeTypes;
     }
-    
+
     public Map<String, Map<String, String>> getResourceNodeTypes(){
         return resourceNodeTypes;
     }
-    
+
     public void setResourceNodeTypes(Map<String, Map<String, String>> resourceNodeTypes){
         this.resourceNodeTypes = resourceNodeTypes;
     }

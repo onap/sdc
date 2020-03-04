@@ -12,8 +12,8 @@
     	org.openecomp.sdc.be.model.cache,
 		org.openecomp.sdc.be.dao.janusgraph,
 		org.openecomp.sdc.be.dao.cassandra,
-		org.openecomp.sdc.be.model.jsonjanusgraph.utils
-        ">
+		org.openecomp.sdc.be.model.jsonjanusgraph.utils,
+    org.openecomp.sdc.be.model.jsonjanusgraph.config">
 
    
   </context:component-scan>
