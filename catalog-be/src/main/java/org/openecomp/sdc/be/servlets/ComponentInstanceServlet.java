@@ -170,24 +170,30 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @Context final HttpServletRequest request) {
         
         validateNotEmptyBody(data);
-        ComponentInstance componentInstance = null;
+        final ComponentInstance componentInstance;
         try {
             componentInstance = RepresentationUtils.fromRepresentation(data, ComponentInstance.class);
             componentInstance.setInvariantName(null);
             componentInstance.setCreatedFrom(CreatedFrom.UI);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Component Instance");
             log.debug("create component instance failed with exception", e);
             throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
         }
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INSTANCE, StatusCode.STARTED,"Starting to create component instance by {}",userId);
-            if (componentInstanceBusinessLogic == null) {
-                log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
-            }
-            ComponentInstance actionResponse = componentInstanceBusinessLogic.createComponentInstance(containerComponentType, containerComponentId, userId, componentInstance);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INSTANCE,actionResponse.getComponentMetadataForSupportLog(),StatusCode.COMPLETE,"Ending to create component instance by user {}",userId);
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse);
+
+        loggerSupportability.log(LoggerSupportabilityActions.CREATE_INSTANCE, StatusCode.STARTED,
+            "Starting to create component instance by {}", userId);
+        if (componentInstanceBusinessLogic == null) {
+            log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
+            return buildErrorResponse(
+                getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+        }
+        final ComponentInstance actionResponse = componentInstanceBusinessLogic.
+            createComponentInstance(containerComponentType, containerComponentId, userId, componentInstance);
+        loggerSupportability
+            .log(LoggerSupportabilityActions.CREATE_INSTANCE, actionResponse.getComponentMetadataForSupportLog(),
+                StatusCode.COMPLETE, "Ending to create component instance by user {}", userId);
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse);
 
     }
 

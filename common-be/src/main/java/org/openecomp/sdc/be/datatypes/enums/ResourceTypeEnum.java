@@ -32,7 +32,8 @@ public enum ResourceTypeEnum {
     VFCMT("VFCMT"/* (VFC Monitoring Template)"*/, true),
     Configuration("Configuration", true),
     ServiceProxy("ServiceProxy", true),
-    ABSTRACT("Abstract (Generic VFC/VF/PNF/Service Type)", true);
+    //Generic VFC/VF/PNF/Service Type
+    ABSTRACT("Abstract", true);
 
     private String value;
     private boolean isAtomicType;
@@ -71,13 +72,16 @@ public enum ResourceTypeEnum {
     /**
      * Returns ResourceTypeEnum matching to received String ignore case
      *
-     * @param type
-     * @return
+     * @param type the resource type
+     * @return the resource type as a enum if found, {@code null} otherwise
      */
-    public static ResourceTypeEnum getTypeIgnoreCase(String type) {
-        for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
-            if (e.name().toLowerCase().equals(type.toLowerCase())) {
-                return e;
+    public static ResourceTypeEnum getTypeIgnoreCase(final String type) {
+        if (type == null) {
+            return null;
+        }
+        for (final ResourceTypeEnum resourceType : ResourceTypeEnum.values()) {
+            if (resourceType.name().equalsIgnoreCase(type)) {
+                return resourceType;
             }
         }
         return null;
@@ -102,13 +106,15 @@ public enum ResourceTypeEnum {
     /**
      * Checks if enum exist with given type ignore case
      *
-     * @param type
-     * @return
+     * @param type the resource type
+     * @return {@code true} if the type exists, {@code false} otherwise
      */
-    public static boolean containsIgnoreCase(String type) {
-
-        for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
-            if (e.name().toLowerCase().equals(type.toLowerCase())) {
+    public static boolean containsIgnoreCase(final String type) {
+        if (type == null) {
+            return false;
+        }
+        for (final ResourceTypeEnum e : ResourceTypeEnum.values()) {
+            if (e.name().equalsIgnoreCase(type)) {
                 return true;
             }
         }

@@ -61,7 +61,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.datamodel.utils.ContainerInstanceTypesData;
+import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -184,7 +184,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private ContainerInstanceTypesData containerInstanceTypesData;
 
     public ComponentInstance createComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance) {
-        return createComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, false, true);
+        return createComponentInstance(containerComponentParam, containerComponentId, userId, resourceInstance, true);
     }
 
     public List<ComponentInstanceProperty> getComponentInstancePropertiesByInputId(org.openecomp.sdc.be.model.Component component, String inputId){
@@ -324,55 +324,54 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public ComponentInstance createComponentInstance(String containerComponentParam, String containerComponentId, String userId, ComponentInstance resourceInstance, boolean inTransaction, boolean needLock) {
+    public ComponentInstance createComponentInstance(final String containerComponentParam,
+                                                     final String containerComponentId, final String userId,
+                                                     final ComponentInstance resourceInstance, final boolean needLock) {
+        final User user = validateUserExists(userId);
+        validateUserNotEmpty(user, "Create component instance");
+        validateJsonBody(resourceInstance, ComponentInstance.class);
+        final ComponentTypeEnum containerComponentType = validateComponentType(containerComponentParam);
+        final org.openecomp.sdc.be.model.Component containerComponent =
+            validateComponentExists(containerComponentId, containerComponentType, null);
+
+        if (ModelConverter.isAtomicComponent(containerComponent)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
+            }
+            throw new ByActionStatusComponentException(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType());
+        }
+
+        validateCanWorkOnComponent(containerComponent, userId);
 
         Component origComponent = null;
-        User user;
-        org.openecomp.sdc.be.model.Component containerComponent = null;
-        ComponentTypeEnum containerComponentType;
-        try {
-            user = validateUserExists(userId);
-            validateUserNotEmpty(user, "Create component instance");
-            validateJsonBody(resourceInstance, ComponentInstance.class);
-            containerComponentType = validateComponentType(containerComponentParam);
-            containerComponent = validateComponentExists(containerComponentId, containerComponentType, null);
+        if (resourceInstance != null && containerComponentType != null) {
+            final OriginTypeEnum originType = resourceInstance.getOriginType();
+            validateInstanceName(resourceInstance);
+            if (originType == OriginTypeEnum.ServiceProxy) {
 
-            if (ModelConverter.isAtomicComponent(containerComponent)) {
-                log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
-                throw new ByActionStatusComponentException(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType());
-            }
-
-            validateCanWorkOnComponent(containerComponent, userId);
-
-            if (resourceInstance != null && containerComponentType != null) {
-                OriginTypeEnum originType = resourceInstance.getOriginType();
-                validateInstanceName(resourceInstance);
-                if (originType == OriginTypeEnum.ServiceProxy) {
-
-                    Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
-                    if (isServiceProxyOrigin(serviceProxyOrigin)) {
-                        throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
-                    }
-                    origComponent = serviceProxyOrigin.left().value();
-
-                    StorageOperationStatus fillProxyRes = fillProxyInstanceData(resourceInstance, origComponent);
-                    if (isFillProxyRes(fillProxyRes)) {
-                        throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(fillProxyRes));
-                    }
+                final Either<Component, StorageOperationStatus> serviceProxyOrigin =
+                    toscaOperationFacade.getLatestByName("serviceProxy");
+                if (isServiceProxyOrigin(serviceProxyOrigin)) {
+                    throw new ByActionStatusComponentException(
+                        componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
                 }
-                else {
-                    origComponent = getAndValidateOriginComponentOfComponentInstance(containerComponent, resourceInstance);
-                }
-                validateOriginAndResourceInstanceTypes(containerComponent, origComponent, originType);
-                validateResourceInstanceState(containerComponent, origComponent);
-                overrideFields(origComponent, resourceInstance);
-                compositionBusinessLogic.validateAndSetDefaultCoordinates(resourceInstance);
-            }
-            return createComponent(needLock, containerComponent,origComponent, resourceInstance, user);
+                origComponent = serviceProxyOrigin.left().value();
 
-        }catch (ComponentException e){
-            throw e;
+                final StorageOperationStatus fillProxyRes = fillProxyInstanceData(resourceInstance, origComponent);
+                if (isFillProxyRes(fillProxyRes)) {
+                    throw new ByActionStatusComponentException(
+                        componentsUtils.convertFromStorageResponse(fillProxyRes));
+                }
+            } else {
+                origComponent = getAndValidateOriginComponentOfComponentInstance(containerComponent,
+                    resourceInstance);
+            }
+            validateOriginAndResourceInstanceTypes(containerComponent, origComponent, originType);
+            validateResourceInstanceState(containerComponent, origComponent);
+            overrideFields(origComponent, resourceInstance);
+            compositionBusinessLogic.validateAndSetDefaultCoordinates(resourceInstance);
         }
+        return createComponent(needLock, containerComponent, origComponent, resourceInstance, user);
     }
 
     private ComponentInstance createComponent(boolean needLock, Component containerComponent, Component origComponent, ComponentInstance resourceInstance, User user) {
@@ -426,10 +425,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void validateOriginAndResourceInstanceTypes(Component containerComponent, Component origComponent, OriginTypeEnum originType) {
-        ResourceTypeEnum resourceType = null;
-        ResourceTypeEnum convertedOriginType;
-        resourceType = getResourceTypeEnumFromOriginComponent(origComponent, resourceType);
+    private void validateOriginAndResourceInstanceTypes(final Component containerComponent,
+                                                        final Component origComponent,
+                                                        final OriginTypeEnum originType) {
+        final ResourceTypeEnum resourceType = getResourceTypeEnumFromOriginComponent(origComponent);
         validateOriginType(originType, resourceType);
         validateOriginComponentIsValidForContainer(containerComponent, resourceType);
     }
@@ -437,13 +436,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private void validateOriginComponentIsValidForContainer(Component containerComponent, ResourceTypeEnum resourceType) {
         switch (containerComponent.getComponentType()) {
             case SERVICE:
-                if (!containerInstanceTypesData.getServiceContainerList().contains((resourceType))) {
+                if (!containerInstanceTypesData.isAllowedForServiceComponent(resourceType)) {
                     throw new ByActionStatusComponentException(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE,
                             containerComponent.getComponentType().toString(), resourceType.name());
                 }
                 break;
             case RESOURCE:
-                if (!containerInstanceTypesData.getValidInstanceTypesInResourceContainer().get(((Resource) containerComponent).getResourceType()).contains(resourceType)) {
+                final ResourceTypeEnum componentResourceType = ((Resource) containerComponent).getResourceType();
+                if (!containerInstanceTypesData.isAllowedForResourceComponent(componentResourceType, resourceType)) {
                     throw new ByActionStatusComponentException(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE,
                             containerComponent.getComponentType().toString(), resourceType.name());
                 }
@@ -465,18 +465,15 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (resourceType != convertedOriginType)  throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
     }
 
-    private ResourceTypeEnum getResourceTypeEnumFromOriginComponent(Component origComponent, ResourceTypeEnum resourceType) {
+    private ResourceTypeEnum getResourceTypeEnumFromOriginComponent(final Component origComponent) {
         switch (origComponent.getComponentType()) {
             case SERVICE:
-                resourceType = ResourceTypeEnum.ServiceProxy;
-                break;
+                return ResourceTypeEnum.ServiceProxy;
             case RESOURCE:
-                resourceType = ((Resource) origComponent).getResourceType();
-                break;
+                return ((Resource) origComponent).getResourceType();
             default:
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
         }
-        return resourceType;
     }
 
     private ComponentInstance isNeedLock(boolean needLock, Component containerComponent) {
@@ -2732,7 +2729,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         try {
 
             actionResponse = createComponentInstance(
-                    "services", containerComponentId, userId, inputComponentInstance, true, false);
+                    "services", containerComponentId, userId, inputComponentInstance, false);
 
         } catch (ComponentException e) {
             failed = true;
