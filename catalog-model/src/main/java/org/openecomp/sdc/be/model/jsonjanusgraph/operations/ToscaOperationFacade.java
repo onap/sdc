@@ -27,6 +27,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
@@ -40,8 +43,6 @@ import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.model.CatalogUpdateTimestamp;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
@@ -91,6 +92,8 @@ public class ToscaOperationFacade {
     private GroupsOperation groupsOperation;
     @Autowired
     private HealingJanusGraphDao janusGraphDao;
+    @Autowired
+    private ContainerInstanceTypesData containerInstanceTypesData;
 
     private static final Logger log = Logger.getLogger(ToscaOperationFacade.class.getName());
     // endregion
@@ -1768,24 +1771,30 @@ public class ToscaOperationFacade {
         }
     }
 
-    private void fillNodeTypePropsMap(Map<GraphPropertyEnum, Object> hasProps, Map<GraphPropertyEnum, Object> hasNotProps, String internalComponentType) {
-        switch (internalComponentType.toLowerCase()) {
-            case "vf":
-                hasNotProps.put(GraphPropertyEnum.RESOURCE_TYPE, Arrays.asList(ResourceTypeEnum.VFCMT.name()));
-                break;
-            case "cvfc":
-                hasNotProps.put(GraphPropertyEnum.RESOURCE_TYPE, Arrays.asList(ResourceTypeEnum.VFCMT.name(), ResourceTypeEnum.Configuration.name()));
-                break;
-            case SERVICE:
-            case "pnf":
-            case "cr":
-                hasNotProps.put(GraphPropertyEnum.RESOURCE_TYPE, Arrays.asList(ResourceTypeEnum.VFC.name(), ResourceTypeEnum.VFCMT.name()));
-                break;
-            case "vl":
-                hasProps.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VL.name());
-                break;
-            default:
-                break;
+    private void fillNodeTypePropsMap(final Map<GraphPropertyEnum, Object> hasProps,
+                                      final Map<GraphPropertyEnum, Object> hasNotProps,
+                                      final String internalComponentType) {
+        final Configuration configuration = ConfigurationManager.getConfigurationManager().getConfiguration();
+        final List<String> allowedTypes;
+
+        if (ComponentTypeEnum.SERVICE.getValue().equalsIgnoreCase(internalComponentType)) {
+            allowedTypes = containerInstanceTypesData.getComponentAllowedList(ComponentTypeEnum.SERVICE, null);
+        } else {
+            final ResourceTypeEnum resourceType = ResourceTypeEnum.getTypeIgnoreCase(internalComponentType);
+            allowedTypes = containerInstanceTypesData.getComponentAllowedList(ComponentTypeEnum.RESOURCE, resourceType);
+        }
+        final List<String> allResourceTypes = configuration.getResourceTypes();
+        if (allowedTypes == null) {
+            hasNotProps.put(GraphPropertyEnum.RESOURCE_TYPE, allResourceTypes);
+            return;
+        }
+
+        if (ResourceTypeEnum.VL.getValue().equalsIgnoreCase(internalComponentType)) {
+            hasProps.put(GraphPropertyEnum.RESOURCE_TYPE, allowedTypes);
+        } else {
+            final List<String> notAllowedTypes = allResourceTypes.stream().filter(s -> !allowedTypes.contains(s))
+                .collect(Collectors.toList());
+            hasNotProps.put(GraphPropertyEnum.RESOURCE_TYPE, notAllowedTypes);
         }
     }
 

@@ -15,6 +15,8 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import java.util.Arrays;
+
 /**
  * Resource Type Enum
  *
@@ -32,12 +34,13 @@ public enum ResourceTypeEnum {
     VFCMT("VFCMT"/* (VFC Monitoring Template)"*/, true),
     Configuration("Configuration", true),
     ServiceProxy("ServiceProxy", true),
-    ABSTRACT("Abstract (Generic VFC/VF/PNF/Service Type)", true);
+    //Generic VFC/VF/PNF/Service Type
+    ABSTRACT("Abstract", true);
 
-    private String value;
-    private boolean isAtomicType;
+    private final String value;
+    private final boolean isAtomicType;
 
-    ResourceTypeEnum(String value, boolean isAtomicType) {
+    ResourceTypeEnum(final String value, final boolean isAtomicType) {
         this.value = value;
         this.isAtomicType = isAtomicType;
     }
@@ -50,69 +53,68 @@ public enum ResourceTypeEnum {
         return isAtomicType;
     }
 
-    public static ResourceTypeEnum getType(String type) {
-        for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
-            if (e.name().equals(type)) {
-                return e;
-            }
+    public static ResourceTypeEnum getType(final String type) {
+        if (type == null) {
+            return null;
         }
-        return null;
+        return Arrays.stream(ResourceTypeEnum.values())
+            .filter(resourceTypeEnum -> resourceTypeEnum.name().equals(type))
+            .findFirst()
+            .orElse(null);
     }
 
-    public static ResourceTypeEnum getTypeByName(String type) {
-        for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
-            if (e.name().equalsIgnoreCase(type)) {
-                return e;
-            }
+    public static ResourceTypeEnum getTypeByName(final String type) {
+        if (type == null) {
+            return null;
         }
-        return null;
+        return Arrays.stream(ResourceTypeEnum.values())
+            .filter(resourceTypeEnum -> resourceTypeEnum.name().equalsIgnoreCase(type))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
      * Returns ResourceTypeEnum matching to received String ignore case
      *
-     * @param type
-     * @return
+     * @param type the resource type
+     * @return the resource type as a enum if found, {@code null} otherwise
      */
-    public static ResourceTypeEnum getTypeIgnoreCase(String type) {
-        for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
-            if (e.name().toLowerCase().equals(type.toLowerCase())) {
-                return e;
-            }
+    public static ResourceTypeEnum getTypeIgnoreCase(final String type) {
+        if (type == null) {
+            return null;
         }
-        return null;
+        return Arrays.stream(ResourceTypeEnum.values())
+            .filter(resourceTypeEnum -> resourceTypeEnum.name().equalsIgnoreCase(type))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
      * Checks if enum exist with given type
      *
-     * @param type
-     * @return
+     * @param type the resource type
+     * @return {@code true} if the given resource type exists, {@code false} otherwise
      */
-    public static boolean containsName(String type) {
-
-        for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
-            if (e.name().equals(type)) {
-                return true;
-            }
+    public static boolean containsName(final String type) {
+        if (type == null) {
+            return false;
         }
-        return false;
+        return Arrays.stream(ResourceTypeEnum.values())
+            .anyMatch(resourceTypeEnum -> resourceTypeEnum.name().equals(type));
     }
 
     /**
      * Checks if enum exist with given type ignore case
      *
-     * @param type
-     * @return
+     * @param type the resource type
+     * @return {@code true} if the type exists, {@code false} otherwise
      */
-    public static boolean containsIgnoreCase(String type) {
-
-        for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
-            if (e.name().toLowerCase().equals(type.toLowerCase())) {
-                return true;
-            }
+    public static boolean containsIgnoreCase(final String type) {
+        if (type == null) {
+            return false;
         }
-        return false;
+        return Arrays.stream(ResourceTypeEnum.values())
+            .anyMatch(resourceTypeEnum -> resourceTypeEnum.name().equalsIgnoreCase(type));
     }
 
 }

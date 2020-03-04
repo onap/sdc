@@ -51,6 +51,7 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.model.operations.impl,
 		org.openecomp.sdc.be.model.jsonjanusgraph.operations,
 		org.openecomp.sdc.be.model.jsonjanusgraph.utils,
+		org.openecomp.sdc.be.model.jsonjanusgraph.config,
 		org.openecomp.sdc.be.components.csar,
 		org.openecomp.sdc.be.datamodel.utils,
 		org.openecomp.sdc.be.model.utils,

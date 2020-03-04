@@ -52,6 +52,7 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArchiveOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CategoryOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ExternalReferencesOperation;
@@ -268,6 +269,10 @@ public class ExternalRefServletTest extends JerseyTest {
             return healingPipelineDao;
         }
 
+        @Bean
+        ContainerInstanceTypesData containerInstanceTypesData() {
+            return new ContainerInstanceTypesData();
+        }
 
         private void initGraphForTest() {
             if (!setupDone) {

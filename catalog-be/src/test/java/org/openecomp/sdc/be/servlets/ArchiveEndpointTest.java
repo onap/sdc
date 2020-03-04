@@ -60,6 +60,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
+import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArchiveOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.CategoryOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
@@ -249,6 +250,11 @@ public class ArchiveEndpointTest extends JerseyTest {
         @Bean
         HealingPipelineDao healingPipelineDao(){
             return HEALING_PIPELINE_DAO;
+        }
+
+        @Bean
+        ContainerInstanceTypesData containerInstanceTypesData() {
+            return new ContainerInstanceTypesData();
         }
 
         private void initGraphForTest() {
