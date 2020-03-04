@@ -212,6 +212,20 @@
     <!-- CASSANDRA END -->
 
     <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junitJupiter.version}</version>
@@ -308,10 +322,10 @@
       <artifactId>joda-time</artifactId>
       <version>${joda.time.version}</version>
     </dependency>
-		<dependency>
-			<groupId>org.openecomp.sdc.core</groupId>
-			<artifactId>openecomp-tosca-lib</artifactId>
-			<version>${project.version}</version>
+    <dependency>
+      <groupId>org.openecomp.sdc.core</groupId>
+      <artifactId>openecomp-tosca-lib</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>

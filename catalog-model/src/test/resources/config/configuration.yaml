@@ -97,9 +97,70 @@ resourceTypes: &allResourceTypes
   - CP
   - VL
   - VF
+  - CR
   - VFCMT
   - Abstract
   - CVFC
+  - Configuration
+  - ServiceProxy
+  - PNF
+
+componentAllowedInstanceTypes:
+  Resource:
+    VF:
+      - VFC
+      - VF
+      - CR
+      - CP
+      - PNF
+      - CVFC
+      - VL
+      - Configuration
+      - ServiceProxy
+      - Abstract
+    CVFC:
+      - VFC
+      - VF
+      - CR
+      - CP
+      - PNF
+      - CVFC
+      - VL
+      - ServiceProxy
+      - Abstract
+    PNF:
+      - VF
+      - CR
+      - CP
+      - PNF
+      - CVFC
+      - VL
+      - Configuration
+      - ServiceProxy
+      - Abstract
+    CR:
+      - VF
+      - CR
+      - CP
+      - PNF
+      - CVFC
+      - VL
+      - Configuration
+      - ServiceProxy
+      - Abstract
+    VL:
+      - VL
+  Service:
+    "*":
+      - VF
+      - CR
+      - CP
+      - PNF
+      - CVFC
+      - VL
+      - Configuration
+      - ServiceProxy
+      - Abstract
 
 # validForResourceTypes usage
 #     validForResourceTypes:

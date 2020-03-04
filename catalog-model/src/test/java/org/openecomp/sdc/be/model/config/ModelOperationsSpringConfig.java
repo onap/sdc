@@ -28,6 +28,7 @@ import org.springframework.context.annotation.PropertySource;
 @ComponentScan({"org.openecomp.sdc.be.dao.cassandra", "org.openecomp.sdc.be.model.cache",
     "org.openecomp.sdc.be.model.jsonjanusgraph.operations",
     "org.openecomp.sdc.be.model.jsonjanusgraph.utils",
+    "org.openecomp.sdc.be.model.jsonjanusgraph.config",
         "org.openecomp.sdc.be.model.operations.impl"})
 @PropertySource("classpath:dao.properties")
 public class ModelOperationsSpringConfig { }
