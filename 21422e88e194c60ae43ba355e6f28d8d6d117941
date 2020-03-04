@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf74a7eb_0198d04d",
+        "filename": "catalog-be/sdc-backend/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-03-04T20:45:19Z",
+      "side": 1,
+      "message": "Avoid snapshots, please use 1.6.0 that was released just now",
+      "range": {
+        "startLine": 1,
+        "startChar": 30,
+        "endLine": 1,
+        "endChar": 31
+      },
+      "revId": "21422e88e194c60ae43ba355e6f28d8d6d117941",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
