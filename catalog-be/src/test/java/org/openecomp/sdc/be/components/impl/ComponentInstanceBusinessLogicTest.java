@@ -66,7 +66,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
-import org.openecomp.sdc.be.datamodel.utils.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
@@ -102,6 +101,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -653,11 +653,11 @@ class ComponentInstanceBusinessLogicTest {
         createProperties();
         createInputs();
         createService();
-        createResource();
+        resource = createResource();
     }
 
-    private void createResource() {
-        resource = new Resource();
+    private Resource createResource() {
+        final Resource resource = new Resource();
         resource.setUniqueId(COMPONENT_ID);
         resource.setComponentInstancesRelations(Lists.newArrayList(relation));
         resource.setComponentInstances(Lists.newArrayList(toInstance, fromInstance));
@@ -665,6 +665,7 @@ class ComponentInstanceBusinessLogicTest {
         resource.setRequirements(fromInstance.getRequirements());
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         resource.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        return resource;
     }
 
     private void createService() {
@@ -879,7 +880,7 @@ class ComponentInstanceBusinessLogicTest {
     @Test
     void testValidateParent() {
         ComponentInstanceBusinessLogic testSubject;
-        createResource();
+        resource = createResource();
         String nodeTemplateId = "";
         boolean result;
 
@@ -945,7 +946,7 @@ class ComponentInstanceBusinessLogicTest {
     void testCreateOrUpdatePropertiesValues() {
         ComponentInstanceBusinessLogic testSubject;
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
-        createResource();
+        resource = createResource();
         String componentId = resource.getUniqueId();
         String resourceInstanceId = "";
         List<ComponentInstanceProperty> properties = new ArrayList<>();
@@ -979,7 +980,7 @@ class ComponentInstanceBusinessLogicTest {
         ComponentInstanceBusinessLogic testSubject;
         ComponentInstanceProperty property = new ComponentInstanceProperty();
         String newValue = "";
-        createResource();
+        resource = createResource();
         createInstances();
         String capabilityType = "";
         String capabilityName = "";
@@ -995,7 +996,7 @@ class ComponentInstanceBusinessLogicTest {
     void testCreateOrUpdateInstanceInputValues() {
         ComponentInstanceBusinessLogic testSubject;
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
-        createResource();
+        resource = createResource();
         String componentId = resource.getUniqueId();
         String resourceInstanceId = "";
         List<ComponentInstanceInput> inputs = new ArrayList<>();
@@ -1027,7 +1028,7 @@ class ComponentInstanceBusinessLogicTest {
     void testCreateOrUpdateGroupInstancePropertyValue() {
         ComponentInstanceBusinessLogic testSubject;
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
-        createResource();
+        resource = createResource();
         String componentId = resource.getUniqueId();
         String resourceInstanceId = "";
         String groupInstanceId = "";
@@ -1099,7 +1100,7 @@ class ComponentInstanceBusinessLogicTest {
     @Test
     void testGetResourceInstanceById() {
         ComponentInstanceBusinessLogic testSubject;
-        createResource();
+        resource = createResource();
         String instanceId = "";
         Either<ComponentInstance, StorageOperationStatus> result;
 
@@ -1113,7 +1114,7 @@ class ComponentInstanceBusinessLogicTest {
     void testUpdateInstanceCapabilityProperties_1() {
         ComponentInstanceBusinessLogic testSubject;
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
-        createResource();
+        resource = createResource();
         String containerComponentId = resource.getUniqueId();
         String componentInstanceUniqueId = "";
         String capabilityType = "";
@@ -1664,7 +1665,7 @@ class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
             .thenReturn(Either.left(originComponent));
 
-        ByActionStatusComponentException e = assertThrows(ByActionStatusComponentException.class, () -> {
+        final ByActionStatusComponentException e = assertThrows(ByActionStatusComponentException.class, () -> {
             componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
         });
         assertThat(e.getActionStatus()).isEqualTo(ActionStatus.INVALID_CONTENT);
@@ -1672,9 +1673,9 @@ class ComponentInstanceBusinessLogicTest {
 
     @Test
     void testCreateComponentInstanceFailureCannotContainInstance() {
-        Pair<ComponentInstance, Resource> p = prepareResourcesForCreateComponentInstanceTest();
-        ComponentInstance ci = p.getLeft();
-        Resource originComponent = p.getRight();
+        final Pair<ComponentInstance, Resource> p = prepareResourcesForCreateComponentInstanceTest();
+        final ComponentInstance ci = p.getLeft();
+        final Resource originComponent = p.getRight();
 
         // Stub for getting component
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
@@ -1682,21 +1683,38 @@ class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
             .thenReturn(Either.left(originComponent));
         // Assume services cannot contain VF resource
-        when(containerInstanceTypeData.getServiceContainerList())
-            .thenReturn(Collections.singletonList(ResourceTypeEnum.VL));
+        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF)))
+            .thenReturn(false);
 
-        ByActionStatusComponentException e = assertThrows(ByActionStatusComponentException.class, () -> {
+        ByActionStatusComponentException actualException = assertThrows(ByActionStatusComponentException.class, () -> {
             componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
         });
-        assertThat(e.getActionStatus()).isEqualTo(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE);
-        verify(containerInstanceTypeData, times(1)).getServiceContainerList();
+        assertThat(actualException.getActionStatus()).isEqualTo(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE);
+        verify(containerInstanceTypeData, times(1)).isAllowedForServiceComponent(eq(ResourceTypeEnum.VF));
+
+        //given
+        final Resource resource = createResource();
+        resource.setResourceType(ResourceTypeEnum.VF);
+        resource.setLastUpdaterUserId(USER_ID);
+        //when
+        when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(resource));
+        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+            .thenReturn(Either.left(originComponent));
+        when(containerInstanceTypeData.isAllowedForResourceComponent(eq(ResourceTypeEnum.VF), eq(ResourceTypeEnum.VF)))
+            .thenReturn(false);
+        actualException = assertThrows(ByActionStatusComponentException.class, () -> {
+            componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
+        });
+        //then
+        assertThat(actualException.getActionStatus()).isEqualTo(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE);
     }
 
     @Test
     void testCreateComponentInstanceFailureAddToGraph() {
-        Pair<ComponentInstance, Resource> p = prepareResourcesForCreateComponentInstanceTest();
-        ComponentInstance ci = p.getLeft();
-        Resource originComponent = p.getRight();
+        final Pair<ComponentInstance, Resource> p = prepareResourcesForCreateComponentInstanceTest();
+        final ComponentInstance ci = p.getLeft();
+        final Resource originComponent = p.getRight();
 
         // TODO Refactor createComponentInstance() method and reduce these mocks
         //      not to target the internal details too much
@@ -1704,8 +1722,8 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.left(service));
         when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
             .thenReturn(Either.left(originComponent));
-        when(containerInstanceTypeData.getServiceContainerList())
-            .thenReturn(Collections.singletonList(ResourceTypeEnum.VF));
+        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF)))
+            .thenReturn(true);
         Mockito.doNothing().when(compositionBusinessLogic).validateAndSetDefaultCoordinates(ci);
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
@@ -1722,7 +1740,8 @@ class ComponentInstanceBusinessLogicTest {
         assertThrows(ByResponseFormatComponentException.class, () -> {
             componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
         });
-        verify(containerInstanceTypeData, times(1)).getServiceContainerList();
+        verify(containerInstanceTypeData, times(1))
+            .isAllowedForServiceComponent(eq(ResourceTypeEnum.VF));
         verify(compositionBusinessLogic, times(1)).validateAndSetDefaultCoordinates(ci);
         verify(toscaOperationFacade, times(1))
             .addComponentInstanceToTopologyTemplate(service, originComponent, ci, false, user);
@@ -1731,11 +1750,11 @@ class ComponentInstanceBusinessLogicTest {
 
     @Test
     void testCreateComponentInstanceSuccess() {
-        Pair<ComponentInstance, Resource> p = prepareResourcesForCreateComponentInstanceTest();
-        ComponentInstance instanceToBeCreated = p.getLeft();
-        Resource originComponent = p.getRight();
+        final Pair<ComponentInstance, Resource> p = prepareResourcesForCreateComponentInstanceTest();
+        final ComponentInstance instanceToBeCreated = p.getLeft();
+        final Resource originComponent = p.getRight();
 
-        Service updatedService = new Service();
+        final Service updatedService = new Service();
         updatedService.setComponentInstances(Collections.singletonList(instanceToBeCreated));
         updatedService.setUniqueId(service.getUniqueId());
 
@@ -1745,8 +1764,8 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.left(service));
         when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
             .thenReturn(Either.left(originComponent));
-        when(containerInstanceTypeData.getServiceContainerList())
-            .thenReturn(Collections.singletonList(ResourceTypeEnum.VF));
+        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF)))
+            .thenReturn(true);
         Mockito.doNothing().when(compositionBusinessLogic).validateAndSetDefaultCoordinates(instanceToBeCreated);
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
@@ -1762,12 +1781,13 @@ class ComponentInstanceBusinessLogicTest {
         when(graphLockOperation.unlockComponent(COMPONENT_ID, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
 
-        ComponentInstance result = componentInstanceBusinessLogic.createComponentInstance(
+        final ComponentInstance result = componentInstanceBusinessLogic.createComponentInstance(
             ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, instanceToBeCreated);
         assertThat(result).isEqualTo(instanceToBeCreated);
         assertThat(instanceToBeCreated.getComponentVersion()).isEqualTo(originComponent.getVersion());
         assertThat(instanceToBeCreated.getIcon()).isEqualTo(originComponent.getIcon());
-        verify(containerInstanceTypeData, times(1)).getServiceContainerList();
+        verify(containerInstanceTypeData, times(1))
+            .isAllowedForServiceComponent(eq(ResourceTypeEnum.VF));
         verify(compositionBusinessLogic, times(1)).validateAndSetDefaultCoordinates(instanceToBeCreated);
         verify(toscaOperationFacade, times(1))
             .addComponentInstanceToTopologyTemplate(service, originComponent, instanceToBeCreated, false, user);

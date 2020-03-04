@@ -1182,7 +1182,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         assertThat(artifactConfiguration1.getCategories()).contains(ArtifactGroupTypeEnum.INFORMATIONAL);
         assertThat(artifactConfiguration1.getComponentTypes()).hasSize(1);
         assertThat(artifactConfiguration1.getComponentTypes()).contains(ComponentType.RESOURCE);
-        assertThat(artifactConfiguration1.getResourceTypes()).hasSize(7);
+        assertThat(artifactConfiguration1.getResourceTypes()).hasSize(11);
         assertThat(artifactConfiguration1.getResourceTypes())
             .contains(ResourceTypeEnum.VFC.getValue(), ResourceTypeEnum.CP.getValue(), ResourceTypeEnum.VL.getValue(),
                 ResourceTypeEnum.VF.getValue(), ResourceTypeEnum.VFCMT.getValue(), "Abstract",
@@ -1946,8 +1946,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     @Test(expected = ComponentException.class)
     public void validateDeploymentArtifact_unsupportedResourceType() {
         final ArtifactDefinition artifactDefinition = new ArtifactDefinition();
-        artifactDefinition.setArtifactType(ArtifactTypeEnum.YANG.getType());
-        artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.INFORMATIONAL);
+        artifactDefinition.setArtifactType(ArtifactTypeEnum.ANSIBLE_PLAYBOOK.getType());
+        artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
         final Resource resourceComponent = new Resource();
         resourceComponent.setComponentType(ComponentTypeEnum.RESOURCE);
         resourceComponent.setResourceType(ResourceTypeEnum.ServiceProxy);
