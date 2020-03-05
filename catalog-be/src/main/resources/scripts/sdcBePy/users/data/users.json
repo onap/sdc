@@ -1,0 +1,44 @@
+[
+  {
+    "userId": "demo",
+    "firstName": "demo",
+    "lastName": "demo",
+    "role": "ADMIN",
+    "email": "demo@openecomp.org"
+  },
+  {
+    "userId": "op0001",
+    "firstName": "Oper",
+    "lastName": "P",
+    "role": "OPS",
+    "email": "op0001@openecomp.org"
+  },
+  {
+    "userId": "gv0001",
+    "firstName": "Giuseppe",
+    "lastName": "Verdi",
+    "role": "GOVERNOR",
+    "email": "gv0001@openecomp.org"
+  },
+  {
+    "userId": "jh0003",
+    "firstName": "Jimmy",
+    "lastName": "Hendrix",
+    "role": "Admin",
+    "email": "jh0003@openecomp.org"
+  },
+  {
+    "userId": "jm0007",
+    "firstName": "Joni",
+    "lastName": "Mitchell",
+    "role": "TESTER",
+    "email": "jm0007@openecomp.org"
+  },
+  {
+    "userId": "cs0008",
+    "firstName": "Carlos",
+    "lastName": "Santana",
+    "role": "DESIGNER",
+    "email": "cs0008r@openecomp.org"
+  }
+]
