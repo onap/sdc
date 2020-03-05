@@ -1,11 +1,22 @@
-FROM onap/base_sdc-python:1.6.0-SNAPSHOT-latest
+FROM onap/base_sdc-python:1.7.0-SNAPSHOT-latest
 
-COPY --chown=sdc:sdc chef-solo /home/sdc/chef-solo/
+# user/group args are inherited from base_sdc-python base image
+COPY --chown=$user:$group scripts /home/$user/scripts
 
-COPY --chown=sdc:sdc chef-repo/cookbooks /home/sdc/chef-solo/cookbooks/
+RUN chmod 770 -R /home/$user/scripts && \
+    cd /home/$user/scripts && \
+    python setup.py install --user
 
-COPY --chown=sdc:sdc startup.sh /home/sdc/
+ENV PATH=$PATH:/home/$user/.local/bin
 
-RUN chmod 770 /home/sdc/startup.sh
+COPY --chown=$user:$group chef-solo /home/$user/chef-solo/
 
-ENTRYPOINT [ "/home/sdc/startup.sh" ]
+COPY --chown=$user:$group chef-repo/cookbooks /home/$user/chef-solo/cookbooks/
+
+COPY --chown=$user:$group startup.sh /home/$user/
+
+RUN chmod 770 /home/$user/startup.sh
+
+WORKDIR /home/$user/
+
+ENTRYPOINT /home/${user}/startup.sh
