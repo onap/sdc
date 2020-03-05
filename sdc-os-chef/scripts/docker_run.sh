@@ -364,15 +364,43 @@ function sdc-onboard-BE {
 # Front-End
 function sdc-FE {
     DOCKER_NAME="sdc-FE"
-    echo "docker run sdc-frontend..."
+    IMAGE_NAME="${PREFIX}/sdc-frontend:${RELEASE}"
+    echo "Running container '${DOCKER_NAME}' based on '${IMAGE_NAME}' image..."
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-frontend:${RELEASE}
     else
         ADDITIONAL_ARGUMENTS=${FE_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD}  --volume ${WORKSPACE}/data/logs/FE/:${JETTY_BASE}/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/environments/plugins-configuration.yaml:${JETTY_BASE}/config/catalog-fe/plugins-configuration.yaml --publish 9443:9443 --publish 8181:8181 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-frontend:${RELEASE}
+
+    PLUGIN_CONFIG_FILE="${WORKSPACE}/data/environments/plugins-configuration.yaml"
+    if [[ -f ${WORKSPACE}/data/environments/plugins-configuration.yaml ]]; then
+        PLUGINS_CONF_VOLUME_MOUNT="--volume ${PLUGIN_CONFIG_FILE}:${JETTY_BASE}/config/catalog-fe/plugins-configuration.yaml"
+    else
+        echo "INFO: '${PLUGIN_CONFIG_FILE}' not provided, ignoring..."
+    fi
+
+    docker run \
+    --detach \
+    --name ${DOCKER_NAME} \
+    --env HOST_IP=${IP} \
+    --env ENVNAME="${DEP_ENV}" \
+    --env JAVA_OPTIONS="${FE_JAVA_OPTIONS}" \
+    --log-driver=json-file \
+    --log-opt max-size=100m \
+    --log-opt max-file=10 \
+    --ulimit memlock=-1:-1 \
+    --ulimit nofile=4096:100000 \
+    --volume ${WORKSPACE}/data/logs/FE/:${JETTY_BASE}/logs \
+    --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments \
+    ${LOCAL_TIME_MOUNT_CMD}  \
+    ${PLUGINS_CONF_VOLUME_MOUNT} \
+    --publish 9443:9443 \
+    --publish 8181:8181 \
+    ${ADDITIONAL_ARGUMENTS} \
+    ${IMAGE_NAME}
+
     command_exit_status $? ${DOCKER_NAME}
-    echo "please wait while FE is starting....."
+    echo "Please wait while '${DOCKER_NAME}' container is starting..."
     monitor_docker ${DOCKER_NAME}
 }
 #
