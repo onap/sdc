@@ -10,9 +10,9 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 		<directory>src/main/resources/import</directory>
         <outputDirectory>import</outputDirectory>
 	</fileSet>
-	<fileSet>
-		<directory>src/main/resources/scripts</directory>
-        <outputDirectory>scripts</outputDirectory>
-	</fileSet>
+<!--	<fileSet>-->
+<!--		<directory>src/main/resources/scripts</directory>-->
+<!--        <outputDirectory>scripts</outputDirectory>-->
+<!--	</fileSet>-->
   </fileSets>
 </assembly>

@@ -1165,6 +1165,27 @@
                   </resources>
                 </configuration>
               </execution>
+              <execution>
+                <id>copy-sdc-be-py</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>
+                    sdc-backend-init/
+                  </outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.parent.basedir}/catalog-be/src/main/resources/</directory>
+                      <includes>
+                        <include>scripts/sdcBePy/**</include>
+                        <inculde>scripts/setup.py</inculde>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
           <plugin>

@@ -23,6 +23,8 @@ FE_DEBUG_PORT="--publish 6000:6000"
 ONBOARD_DEBUG_PORT="--publish 4001:4001"
 CS_PORT=${CS_PORT:-9042}
 
+OS_USER="onap"
+
 
 # Java Options:
 BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m -Xms1536m"
@@ -332,7 +334,7 @@ function sdc-BE-init {
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-backend-init:${RELEASE}
     fi
-    docker run --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:/home/sdc/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
+    docker run --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:/home/${OS_USER}/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
     rc=$?
     docker_logs ${DOCKER_NAME}
     if [[ ${rc} != 0 ]]; then exit ${rc}; fi

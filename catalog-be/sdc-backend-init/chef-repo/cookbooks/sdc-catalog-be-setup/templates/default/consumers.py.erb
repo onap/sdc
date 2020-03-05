@@ -28,7 +28,7 @@ def checkBackend():
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE )
     (out, err) = proc.communicate()
     result = out.strip()
-    return result
+    return str(result, "UTF-8")
 
 
 def checkConsumer(consumerName):
@@ -37,18 +37,18 @@ def checkConsumer(consumerName):
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE )
     (out, err) = proc.communicate()
     result = out.strip()
-    return result
+    return str(result, "UTF-8")
 
 
 def createConsumer( consumerName, consumerSalt, consumerPass ):
-    print '[INFO] ' + consumerName
+    print('[INFO] ' + consumerName)
     command="curl -k -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" "+PROTOCOL+"://"  + BE_IP  + ":" + BE_PORT + "/sdc2/rest/v1/consumers/ -d '{\"consumerName\": '" + consumerName + "', \"consumerSalt\": '" + consumerSalt + "',\"consumerPassword\": '" + consumerPass + "'}'"
 
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE)
 
     (out, err) = proc.communicate()
     result = out.strip()
-    return result
+    return str(result, "UTF-8")
 
 
 
@@ -69,25 +69,25 @@ beStat=0
 for i in range(1,10):
     myResult = checkBackend()
     if myResult == '200':
-        print '[INFO]: Backend is up and running'
+        print('[INFO]: Backend is up and running')
         beStat=1
         break
     else:
         currentTime = datetime.now()
-        print '[ERROR]: ' + currentTime.strftime('%Y/%m/%d %H:%M:%S') + bcolors.FAIL + ' Backend not responding, try #' + str(i) + bcolors.ENDC
+        print('[ERROR]: ' + currentTime.strftime('%Y/%m/%d %H:%M:%S') + bcolors.FAIL + ' Backend not responding, try #' + str(i) + bcolors.ENDC)
         time.sleep(10)
 
 if beStat == 0:
-    print '[ERROR]: ' + time.strftime('%Y/%m/%d %H:%M:%S') + bcolors.FAIL + 'Backend is DOWN :-(' + bcolors.ENDC
+    print('[ERROR]: ' + time.strftime('%Y/%m/%d %H:%M:%S') + bcolors.FAIL + 'Backend is DOWN :-(' + bcolors.ENDC)
     exit()
 
 for consumer in consumersList:
     myResult = checkConsumer(consumer)
     if myResult == '200':
-        print '[INFO]: ' + consumer + ' already exists'
+        print('[INFO]: ' + consumer + ' already exists')
     else:
         myResult = createConsumer( consumer, salt, password )
         if myResult == '201':
-            print '[INFO]: ' + consumer + ' created, result: [' + myResult + ']'
+            print('[INFO]: ' + consumer + ' created, result: [' + myResult + ']')
         else:
-            print '[ERROR]: ' + bcolors.FAIL + consumer + bcolors.ENDC + ' error creating , result: [' + myResult + ']'
+            print('[ERROR]: ' + bcolors.FAIL + consumer + bcolors.ENDC + ' error creating , result: [' + myResult + ']')
