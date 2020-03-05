@@ -147,7 +147,8 @@ public class YamlToObjectConverter {
 	}
 
 	public <T> T convert(String fullFileName, Class<T> className) throws YamlConversionException {
-		if (!new File(fullFileName).exists()) {
+		final File file = new File(fullFileName);
+		if (!file.exists() || file.isDirectory()) {
 			log.warn(EcompLoggerErrorCode.UNKNOWN_ERROR,"","",
 				"The file {} cannot be found. Ignore reading configuration.", fullFileName);
 			return null;
