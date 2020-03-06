@@ -132,13 +132,15 @@ Modifications copyright (c) 2018-2019 Nokia
     <sdc-tosca-parser.version>1.6.5</sdc-tosca-parser.version>
 
     <!-- sonar -->
-	<sonar.coverage.jacoco.xmlReportPaths>
-		${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml
-	</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.projectVersion>${project.version}</sonar.projectVersion>
+    <sonar.nodejs.executable>${project.basedir}/node/node</sonar.nodejs.executable>
+    <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
+    <sonar.javascript.lcov.reportPaths>${project.build.directory}/code-coverage/lcov.info</sonar.javascript.lcov.reportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>
+      ${project.reporting.outputDirectory}/jacoco-ut/jacoco.xml
+    </sonar.coverage.jacoco.xmlReportPaths>
     <sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
     <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
-    <sonar.branch>${project.version}</sonar.branch>
-
     <!--cassandra -->
     <cassandra.driver.version>3.6.0</cassandra.driver.version>
     <libthrift.version>0.12.0</libthrift.version>
