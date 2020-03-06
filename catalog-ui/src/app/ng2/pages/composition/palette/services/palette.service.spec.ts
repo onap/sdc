@@ -23,7 +23,7 @@ describe('palette component', () => {
             providers: [CompositionPaletteService,
                 {provide: HttpClient, useValue: httpServiceMock},
                 {provide: SdcConfigToken, useValue: sdcConfigToken},
-				{provide: WorkspaceService, useValue{}}
+                {provide: WorkspaceService, useValue: {}}
             ]
         });
 

@@ -5,7 +5,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowJs": true,
-    "mapRoot": "./",
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "../dist/out-tsc",
@@ -13,11 +12,6 @@
       "es6",
       "dom"
     ],
-    "paths": {
-      "@angular/*": [
-        "../node_modules/@angular/*"
-     ]
-    },
     "sourceMap": true,
     "target": "es5",
     "typeRoots": [
