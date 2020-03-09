@@ -1,0 +1,1585 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+    <key attr.name="SUID" attr.type="long" for="node" id="SUID"/>
+    <key attr.name="shared name" attr.type="string" for="node" id="shared name"/>
+    <key attr.name="__AggregationOverrideSettings" attr.type="string" for="node" id="__AggregationOverrideSettings"/>
+    <key attr.name="__AggregationSettings" attr.type="string" for="node" id="__AggregationSettings"/>
+    <key attr.name="__ViewSettings" attr.type="string" for="node" id="__ViewSettings"/>
+    <key attr.name="abstract" attr.type="boolean" for="node" id="abstract"/>
+    <key attr.name="archiveTime" attr.type="long" for="node" id="archiveTime"/>
+    <key attr.name="componentType" attr.type="string" for="node" id="componentType"/>
+    <key attr.name="constraints" attr.type="string" for="node" id="constraints"/>
+    <key attr.name="consumerDetailsLastupdatedtime" attr.type="long" for="node" id="consumerDetailsLastupdatedtime"/>
+    <key attr.name="consumerLastAuthenticationTime" attr.type="long" for="node" id="consumerLastAuthenticationTime"/>
+    <key attr.name="consumerName" attr.type="string" for="node" id="consumerName"/>
+    <key attr.name="consumerPassword" attr.type="string" for="node" id="consumerPassword"/>
+    <key attr.name="consumerSalt" attr.type="string" for="node" id="consumerSalt"/>
+    <key attr.name="creationDate" attr.type="long" for="node" id="creationDate"/>
+    <key attr.name="defaultValue" attr.type="string" for="node" id="defaultValue"/>
+    <key attr.name="deleted" attr.type="boolean" for="node" id="deleted"/>
+    <key attr.name="derivedFrom" attr.type="string" for="node" id="derivedFrom"/>
+    <key attr.name="description" attr.type="string" for="node" id="description"/>
+    <key attr.name="distributionStatus" attr.type="string" for="node" id="distributionStatus"/>
+    <key attr.name="email" attr.type="string" for="node" id="email"/>
+    <key attr.name="entry_schema" attr.type="string" for="node" id="entry_schema"/>
+    <key attr.name="firstName" attr.type="string" for="node" id="firstName"/>
+    <key attr.name="healthcheck" attr.type="string" for="node" id="healthcheck"/>
+    <key attr.name="healthcheckis" attr.type="string" for="node" id="healthcheckis"/>
+    <key attr.name="healVersion" attr.type="int" for="node" id="healVersion"/>
+    <key attr.name="highestVersion" attr.type="boolean" for="node" id="highestVersion"/>
+    <key attr.name="icon" attr.type="string" for="node" id="icon"/>
+    <key attr.name="icons" attr.type="string" for="node" id="icons"/>
+    <key attr.name="invariantUuid" attr.type="string" for="node" id="invariantUuid"/>
+    <key attr.name="isArchived" attr.type="boolean" for="node" id="isArchived"/>
+    <key attr.name="isVspArchived" attr.type="boolean" for="node" id="isVspArchived"/>
+    <key attr.name="json" attr.type="string" for="node" id="json"/>
+    <key attr.name="labelV" attr.type="string" for="node" id="labelV"/>
+    <key attr.name="lastLoginTime" attr.type="long" for="node" id="lastLoginTime"/>
+    <key attr.name="lastModfierUserId" attr.type="string" for="node" id="lastModfierUserId"/>
+    <key attr.name="lastName" attr.type="string" for="node" id="lastName"/>
+    <key attr.name="maxOccurrences" attr.type="string" for="node" id="maxOccurrences"/>
+    <key attr.name="members" attr.type="string" for="node" id="members"/>
+    <key attr.name="metadata" attr.type="string" for="node" id="metadata"/>
+    <key attr.name="minOccurrences" attr.type="string" for="node" id="minOccurrences"/>
+    <key attr.name="modificationDate" attr.type="long" for="node" id="modificationDate"/>
+    <key attr.name="nodeLabel" attr.type="string" for="node" id="nodeLabel"/>
+    <key attr.name="normalizedName" attr.type="string" for="node" id="normalizedName"/>
+    <key attr.name="NumChildren" attr.type="int" for="node" id="NumChildren"/>
+    <key attr.name="NumDescendents" attr.type="int" for="node" id="NumDescendents"/>
+    <key attr.name="propertyCounter" attr.type="int" for="node" id="propertyCounter"/>
+    <key attr.name="required" attr.type="boolean" for="node" id="required"/>
+    <key attr.name="resourceType" attr.type="string" for="node" id="resourceType"/>
+    <key attr.name="role" attr.type="string" for="node" id="role"/>
+    <key attr.name="state" attr.type="string" for="node" id="state"/>
+    <key attr.name="status" attr.type="string" for="node" id="status"/>
+    <key attr.name="systemName" attr.type="string" for="node" id="systemName"/>
+    <key attr.name="targets " attr.type="string" for="node" id="targets "/>
+    <key attr.name="toscaResourceName" attr.type="string" for="node" id="toscaResourceName"/>
+    <key attr.name="type" attr.type="string" for="node" id="type"/>
+    <key attr.name="uid" attr.type="string" for="node" id="uid"/>
+    <key attr.name="userId" attr.type="string" for="node" id="userId"/>
+    <key attr.name="uuid" attr.type="string" for="node" id="uuid"/>
+    <key attr.name="validTargetTypes" attr.type="string" for="node" id="validTargetTypes"/>
+    <key attr.name="value" attr.type="string" for="node" id="value"/>
+    <key attr.name="version" attr.type="string" for="node" id="version"/>
+    <key attr.name="name" attr.type="string" for="node" id="name"/>
+    <key attr.name="selected" attr.type="boolean" for="node" id="selected"/>
+    <key attr.name="csarUuid" attr.type="string" for="node" id="csarUuid"/>
+    <key attr.name="SUID" attr.type="long" for="edge" id="SUID"/>
+    <key attr.name="shared name" attr.type="string" for="edge" id="shared name"/>
+    <key attr.name="shared interaction" attr.type="string" for="edge" id="shared interaction"/>
+    <key attr.name="instances" attr.type="string" for="edge" id="instances"/>
+    <key attr.name="labelE" attr.type="string" for="edge" id="labelE"/>
+    <key attr.name="state" attr.type="string" for="edge" id="state"/>
+    <key attr.name="name" attr.type="string" for="edge" id="name"/>
+    <key attr.name="selected" attr.type="boolean" for="edge" id="selected"/>
+    <key attr.name="interaction" attr.type="string" for="edge" id="interaction"/>
+    <key attr.name="SUID" attr.type="long" for="graph" id="SUID"/>
+    <key attr.name="shared name" attr.type="string" for="graph" id="shared name"/>
+    <key attr.name="name" attr.type="string" for="graph" id="name"/>
+    <key attr.name="selected" attr.type="boolean" for="graph" id="selected"/>
+    <key attr.name="__Annotations" attr.type="string" for="graph" id="__Annotations"/>
+    <graph edgedefault="directed" id="G_1">
+        <node id="17001">
+            <data key="SUID">17001</data>
+            <data key="shared name">NFV VirtualLinkBitrate ScalingAspectDeltas</data>
+            <data key="creationDate">1583755563448</data>
+            <data key="description">The VirtualLinkBitrateScalingAspectDeltas type is a policy type representing the VnfVirtualLink detail of an aspect deltas used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1].</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-vlbitrate-scalingAspectdeltas</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563448</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.VnfVirtualLink"]</data>
+            <data key="type">tosca.policies.nfv.VirtualLinkBitrateScalingAspectDeltas</data>
+            <data key="uid">tosca.policies.nfv.VirtualLinkBitrateScalingAspectDeltas.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV VirtualLinkBitrate ScalingAspectDeltas</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16988">
+            <data key="SUID">16988</data>
+            <data key="shared name">1478896</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Represents the scaling aspect to which this policy applies</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.VduScalingAspectDeltas.1.0.policytype.aspect</data>
+            <data key="name">1478896</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16985">
+            <data key="SUID">16985</data>
+            <data key="shared name">880712</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">TCA Policy JSON</data>
+            <data key="entry_schema">{"property":{"type":"onap.datatypes.monitoring.tca_policy","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">map</data>
+            <data key="uid">onap.policies.monitoring.cdap.tca.hi.lo.app.1.0.policytype.tca_policy</data>
+            <data key="name">880712</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16951">
+            <data key="SUID">16951</data>
+            <data key="shared name">1462512</data>
+            <data key="constraints">["{\"validValues\":[\"host\",\"rack\"]}"]</data>
+            <data key="defaultValue">host</data>
+            <data key="description">affinity</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.placement.valet.Affinity.1.0.policytype.level</data>
+            <data key="name">1462512</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16881">
+            <data key="SUID">16881</data>
+            <data key="shared name">Placement Colocate</data>
+            <data key="creationDate">1583755563249</data>
+            <data key="description">Keep associated nodes (groups of nodes) based upon affinity value</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-placement-colocate</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563249</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">org.openecomp.policies.placement.Colocate</data>
+            <data key="uid">org.openecomp.policies.placement.Colocate.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Placement Colocate</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16851">
+            <data key="SUID">16851</data>
+            <data key="shared name">PM Mapper</data>
+            <data key="creationDate">1583755563309</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-dcae-pm-mapper</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563309</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">onap.policies.monitoring.dcae-pm-mapper</data>
+            <data key="uid">onap.policies.monitoring.dcae-pm-mapper.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">PM Mapper</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16812">
+            <data key="SUID">16812</data>
+            <data key="shared name">839816</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Describes the various levels of resources that can be used to instantiate the VNF using this flavour.</data>
+            <data key="entry_schema">{"property":{"type":"tosca.datatypes.nfv.InstantiationLevel","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">map</data>
+            <data key="uid">tosca.policies.nfv.InstantiationLevels.1.0.policytype.levels</data>
+            <data key="name">839816</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16802">
+            <data key="SUID">16802</data>
+            <data key="shared name">NFV InstantiationLevels</data>
+            <data key="creationDate">1583755563334</data>
+            <data key="description">The InstantiationLevels type is a policy type representing all the instantiation levels of resources to be instantiated within a deployment flavour and including default instantiation level in term of the number of VNFC instances to be created as defined in ETSI GS NFV-IFA 011 [1].</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-instantiationlevels</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563334</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">tosca.policies.nfv.InstantiationLevels</data>
+            <data key="uid">tosca.policies.nfv.InstantiationLevels.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV InstantiationLevels</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16777">
+            <data key="SUID">16777</data>
+            <data key="shared name">823360</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Describe maximum scale level for total number of scaling steps that can be applied to a particular aspect</data>
+            <data key="entry_schema">{"property":{"type":"tosca.datatypes.nfv.ScalingAspect","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">map</data>
+            <data key="uid">tosca.policies.nfv.ScalingAspects.1.0.policytype.aspects</data>
+            <data key="name">823360</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16774">
+            <data key="SUID">16774</data>
+            <data key="shared name">1667120</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Represents the scaling aspect to which this policy applies.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.VirtualLinkBitrateScalingAspectDeltas.1.0.policytype.aspect</data>
+            <data key="name">1667120</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16758">
+            <data key="SUID">16758</data>
+            <data key="shared name">815280</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Describes the VnfVirtualLink scaling deltas to be applied for every scaling steps of a particular aspect.</data>
+            <data key="entry_schema">{"property":{"type":"tosca.datatypes.nfv.VirtualLinkBitrateLevel","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">map</data>
+            <data key="uid">tosca.policies.nfv.VirtualLinkBitrateScalingAspectDeltas.1.0.policytype.deltas</data>
+            <data key="name">815280</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16719">
+            <data key="SUID">16719</data>
+            <data key="shared name">NFV AntiAffinityRule</data>
+            <data key="creationDate">1583755564880</data>
+            <data key="description">The AntiAffinityRule describes the anti-affinity rules applicable for the defined targets</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-anti-affinityrule</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755564880</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.Vdu.Compute","tosca.nodes.nfv.VnfVirtualLink","tosca.groups.nfv.PlacementGroup"]</data>
+            <data key="type">tosca.policies.nfv.AntiAffinityRule</data>
+            <data key="uid">tosca.policies.nfv.AntiAffinityRule.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV AntiAffinityRule</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16696">
+            <data key="SUID">16696</data>
+            <data key="shared name">Placement</data>
+            <data key="creationDate">1583755563204</data>
+            <data key="description">The TOSCA Policy Type definition that is used to govern placement of TOSCA nodes or groups of nodes.</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-placement</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563204</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">tosca.policies.Placement</data>
+            <data key="uid">tosca.policies.Placement.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Placement</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16684">
+            <data key="SUID">16684</data>
+            <data key="shared name">Update</data>
+            <data key="creationDate">1583755563214</data>
+            <data key="description">The TOSCA Policy Type definition that is used to govern update of TOSCA nodes or groups of nodes.</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-update</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563214</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">tosca.policies.Update</data>
+            <data key="uid">tosca.policies.Update.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Update</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16652">
+            <data key="SUID">16652</data>
+            <data key="shared name">NFV ScalingAspects</data>
+            <data key="creationDate">1583755563413</data>
+            <data key="description">The ScalingAspects type is a policy type representing the scaling aspects used for horizontal scaling as defined in ETSI GS NFV-IFA 011 [1].</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-scalingaspects</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563413</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">tosca.policies.nfv.ScalingAspects</data>
+            <data key="uid">tosca.policies.nfv.ScalingAspects.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV ScalingAspects</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16644">
+            <data key="SUID">16644</data>
+            <data key="shared name">827456</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Human readable description of the security group rule.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.SecurityGroupRule.1.0.policytype.description</data>
+            <data key="name">827456</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16634">
+            <data key="SUID">16634</data>
+            <data key="shared name">811184</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Describes the virtual link levels of resources that can be used to instantiate the VNF using this flavour.</data>
+            <data key="entry_schema">{"property":{"type":"tosca.datatypes.nfv.VirtualLinkBitrateLevel","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">map</data>
+            <data key="uid">tosca.policies.nfv.VirtualLinkInstantiationLevels.1.0.policytype.levels</data>
+            <data key="name">811184</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16611">
+            <data key="SUID">16611</data>
+            <data key="shared name">NFV Supported VnfInterface</data>
+            <data key="creationDate">1583755563566</data>
+            <data key="description">this policy type represents interfaces produced by a VNF, the details to access them and the applicable connection points to use to access these interfaces</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-supported-vnfinterface</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563566</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.VnfExtCp","tosca.nodes.nfv.VduCp"]</data>
+            <data key="type">tosca.policies.nfv.SupportedVnfInterface</data>
+            <data key="uid">tosca.policies.nfv.SupportedVnfInterface.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV Supported VnfInterface</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16598">
+            <data key="SUID">16598</data>
+            <data key="shared name">1638448</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">PM mapper filter on measInfo, measInfoId, measType, instanceId</data>
+            <data key="entry_schema">{"property":{"type":"onap.datatypes.monitoring.pm-mapper-filter","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">map</data>
+            <data key="uid">onap.policies.monitoring.dcae-pm-mapper.1.0.policytype.pm-mapper-filter</data>
+            <data key="name">1638448</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16591">
+            <data key="SUID">16591</data>
+            <data key="shared name">PM Subscription Handler</data>
+            <data key="creationDate">1583755563316</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-dcae-pm-subscription-handler</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563316</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">onap.policies.monitoring.dcae-pm-subscription-handler</data>
+            <data key="uid">onap.policies.monitoring.dcae-pm-subscription-handler.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">PM Subscription Handler</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16533">
+            <data key="SUID">16533</data>
+            <data key="shared name">823472</data>
+            <data key="constraints">["{\"validValues\":[\"ipv4\",\"ipv6\"]}"]</data>
+            <data key="defaultValue">ipv4</data>
+            <data key="description">Indicates the protocol carried over the Ethernet layer.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.SecurityGroupRule.1.0.policytype.ether_type</data>
+            <data key="name">823472</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16529">
+            <data key="SUID">16529</data>
+            <data key="shared name">819336</data>
+            <data key="constraints">["{\"validValues\":[\"host\",\"region\",\"compute\"]}"]</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">container type</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.placement.Antilocate.1.0.policytype.container_type</data>
+            <data key="name">819336</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16473">
+            <data key="SUID">16473</data>
+            <data key="shared name">Placement Antilocate</data>
+            <data key="creationDate">1583755563227</data>
+            <data key="description">My placement policy for separation based upon container type value</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-placement-antilocate</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563227</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">org.openecomp.policies.placement.Antilocate</data>
+            <data key="uid">org.openecomp.policies.placement.Antilocate.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Placement Antilocate</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16467">
+            <data key="SUID">16467</data>
+            <data key="shared name">NFV Vdu InstantiationLevels</data>
+            <data key="creationDate">1583755563370</data>
+            <data key="description">The VduInstantiationLevels type is a policy type representing all the instantiation levels of resources to be instantiated within a deployment flavour in term of the number of VNFC instances to be created from each vdu.Compute. as defined in ETSI GS NFV-IFA 011 [1]</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-vdu-instantiationlevels</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563370</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.Vdu.Compute"]</data>
+            <data key="type">tosca.policies.nfv.VduInstantiationLevels</data>
+            <data key="uid">tosca.policies.nfv.VduInstantiationLevels.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV Vdu InstantiationLevels</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16463">
+            <data key="SUID">16463</data>
+            <data key="shared name">1462432</data>
+            <data key="constraints">["{\"validValues\":[\"hopopt\",\"icmp\",\"igmp\",\"ggp\",\"ipv4\",\"st\",\"tcp\",\"cbt\",\"egp\",\"igp\",\"bbn_rcc_mon\",\"nvp_ii\",\"pup\",\"argus\",\"emcon\",\"xnet\",\"chaos\",\"udp\",\"mux\",\"dcn_meas\",\"hmp\",\"prm\",\"xns_idp\",\"trunk_1\",\"trunk_2\",\"leaf_1\",\"leaf_2\",\"rdp\",\"irtp\",\"iso_tp4\",\"netblt\",\"mfe_nsp\",\"merit_inp\",\"dccp\",\"3pc\",\"idpr\",\"xtp\",\"ddp\",\"idpr_cmtp\",\"tp++\",\"il\",\"ipv6\",\"sdrp\",\"ipv6_route\",\"ipv6_frag\",\"idrp\",\"rsvp\",\"gre\",\"dsr\",\"bna\",\"esp\",\"ah\",\"i_nlsp\",\"swipe\",\"narp\",\"mobile\",\"tlsp\",\"skip\",\"ipv6_icmp\",\"ipv6_no_nxt\",\"ipv6_opts\",\"cftp\",\"sat_expak\",\"kryptolan\",\"rvd\",\"ippc\",\"sat_mon\",\"visa\",\"ipcv\",\"cpnx\",\"cphb\",\"wsn\",\"pvp\",\"br_sat_mon\",\"sun_nd\",\"wb_mon\",\"wb_expak\",\"iso_ip\",\"vmtp\",\"secure_vmtp\",\"vines\",\"ttp\",\"iptm\",\"nsfnet_igp\",\"dgp\",\"tcf\",\"eigrp\",\"ospfigp\",\"sprite_rpc\",\"larp\",\"mtp\",\"ax.25\",\"ipip\",\"micp\",\"scc_sp\",\"etherip\",\"encap\",\"gmtp\",\"ifmp\",\"pnni\",\"pim\",\"aris\",\"scps\",\"qnx\",\"a/n\",\"ip_comp\",\"snp\",\"compaq_peer\",\"ipx_in_ip\",\"vrrp\",\"pgm\",\"l2tp\",\"ddx\",\"iatp\",\"stp\",\"srp\",\"uti\",\"smp\",\"sm\",\"ptp\",\"isis\",\"fire\",\"crtp\",\"crudp\",\"sscopmce\",\"iplt\",\"sps\",\"pipe\",\"sctp\",\"fc\",\"rsvp_e2e_ignore\",\"mobility\",\"udp_lite\",\"mpls_in_ip\",\"manet\",\"hip\",\"shim6\",\"wesp\",\"rohc\"]}"]</data>
+            <data key="defaultValue">tcp</data>
+            <data key="description">Indicates the protocol carried over the IP layer. Permitted values include any protocol defined in the IANA protocol registry, e.g. TCP, UDP, ICMP, etc.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.SecurityGroupRule.1.0.policytype.protocol</data>
+            <data key="name">1462432</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16445">
+            <data key="SUID">16445</data>
+            <data key="shared name">Scaling</data>
+            <data key="creationDate">1583755563211</data>
+            <data key="description">The TOSCA Policy Type definition that is used to govern scaling of TOSCA nodes or groups of nodes.</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-scaling</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563211</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">tosca.policies.Scaling</data>
+            <data key="uid">tosca.policies.Scaling.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Scaling</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16414">
+            <data key="SUID">16414</data>
+            <data key="shared name">1630256</data>
+            <data key="constraints">["{\"validValues\":[\"host\",\"rack\"]}"]</data>
+            <data key="defaultValue">host</data>
+            <data key="description">exclusivity</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.placement.valet.Exclusivity.1.0.policytype.level</data>
+            <data key="name">1630256</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16407">
+            <data key="SUID">16407</data>
+            <data key="shared name">1433760</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">The name of the policy</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.placement.Antilocate.1.0.policytype.name</data>
+            <data key="name">1433760</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16394">
+            <data key="SUID">16394</data>
+            <data key="shared name">External</data>
+            <data key="creationDate">1583755563290</data>
+            <data key="description">externally managed policy (for example, type="network assignment", source="Policy Manager", name="route target")</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-external</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563290</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">org.openecomp.policies.External</data>
+            <data key="uid">org.openecomp.policies.External.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">External</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16379">
+            <data key="SUID">16379</data>
+            <data key="shared name">876616</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">The name of the server that exposes the policy with predefined type and name.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.External.1.0.policytype.source</data>
+            <data key="name">876616</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16273">
+            <data key="SUID">16273</data>
+            <data key="shared name">848008</data>
+            <data key="constraints">["{\"greaterOrEqual\":\"0\"}","{\"lessOrEqual\":\"65535\"}"]</data>
+            <data key="defaultValue">0</data>
+            <data key="description">Indicates minimum port number in the range that is matched by the security group rule. If a value is provided at design-time, this value may be overridden at run-time based on other deployment requirements or constraints.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">integer</data>
+            <data key="uid">tosca.policies.nfv.SecurityGroupRule.1.0.policytype.port_range_min</data>
+            <data key="name">848008</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16123">
+            <data key="SUID">16123</data>
+            <data key="shared name">827528</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">the exact number of instances to keep up</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">integer</data>
+            <data key="uid">org.openecomp.policies.scaling.Fixed.1.0.policytype.quantity</data>
+            <data key="name">827528</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="16033">
+            <data key="SUID">16033</data>
+            <data key="shared name">1470624</data>
+            <data key="constraints">["{\"validValues\":[\"nfvi_node\",\"zone\",\"zone_group\",\"nfvi_pop\"]}"]</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">scope of the rule is an NFVI_node, an NFVI_PoP, etc.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.AffinityRule.1.0.policytype.scope</data>
+            <data key="name">1470624</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15966">
+            <data key="SUID">15966</data>
+            <data key="shared name">Monitoring</data>
+            <data key="creationDate">1583755563298</data>
+            <data key="description">A base policy type for all policies that governs monitoring provisioning</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-monitoring</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563298</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">onap.policies.Monitoring</data>
+            <data key="uid">onap.policies.Monitoring.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Monitoring</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15958">
+            <data key="SUID">15958</data>
+            <data key="shared name">Root</data>
+            <data key="creationDate">1583755563198</data>
+            <data key="description">The TOSCA Policy Type all other TOSCA Policy Types derive from</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-root</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563198</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">tosca.policies.Root</data>
+            <data key="uid">tosca.policies.Root.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Root</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15953">
+            <data key="SUID">15953</data>
+            <data key="shared name">868424</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">The name of the policy</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.placement.Colocate.1.0.policytype.name</data>
+            <data key="name">868424</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15948">
+            <data key="SUID">15948</data>
+            <data key="shared name">1654832</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Describes the Vdu.Compute levels of resources that can be used to instantiate the VNF using this flavour</data>
+            <data key="entry_schema">{"property":{"type":"tosca.datatypes.nfv.VduLevel","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">map</data>
+            <data key="uid">tosca.policies.nfv.VduInstantiationLevels.1.0.policytype.levels</data>
+            <data key="name">1654832</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15937">
+            <data key="SUID">15937</data>
+            <data key="shared name">823432</data>
+            <data key="constraints">["{\"validValues\":[\"host\",\"rack\"]}"]</data>
+            <data key="defaultValue">host</data>
+            <data key="description">diversity</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.placement.valet.Diversity.1.0.policytype.level</data>
+            <data key="name">823432</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15889">
+            <data key="SUID">15889</data>
+            <data key="shared name">NFV VirtualLink InstantiationLevels</data>
+            <data key="creationDate">1583755563406</data>
+            <data key="description">The VirtualLinkInstantiationLevels type is a policy type representing all the instantiation levels of virtual link resources to be instantiated within a deployment flavour as defined in ETSI GS NFV-IFA 011 [1].</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-vl-instantiationlevels</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563406</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.VnfVirtualLink"]</data>
+            <data key="type">tosca.policies.nfv.VirtualLinkInstantiationLevels</data>
+            <data key="uid">tosca.policies.nfv.VirtualLinkInstantiationLevels.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV VirtualLink InstantiationLevels</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15860">
+            <data key="SUID">15860</data>
+            <data key="shared name">Placement Valet Diversity</data>
+            <data key="creationDate">1583755563258</data>
+            <data key="description">Valet Diversity</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-placement-valet-diversity</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563258</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">org.openecomp.policies.placement.valet.Diversity</data>
+            <data key="uid">org.openecomp.policies.placement.valet.Diversity.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Placement Valet Diversity</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15853">
+            <data key="SUID">15853</data>
+            <data key="shared name">NFV Vdu ScalingAspectDeltas</data>
+            <data key="creationDate">1583755563431</data>
+            <data key="description">The VduScalingAspectDeltas type is a policy type representing the Vdu.Compute detail of an aspect deltas used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1].</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-vdu-scalingAspectdeltas</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563431</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.Vdu.Compute"]</data>
+            <data key="type">tosca.policies.nfv.VduScalingAspectDeltas</data>
+            <data key="uid">tosca.policies.nfv.VduScalingAspectDeltas.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV Vdu ScalingAspectDeltas</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15849">
+            <data key="SUID">15849</data>
+            <data key="shared name">1446048</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Describes the Vdu.Compute scaling deltas to be applied for every scaling steps of a particular aspect.</data>
+            <data key="entry_schema">{"property":{"type":"tosca.datatypes.nfv.VduLevel","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">map</data>
+            <data key="uid">tosca.policies.nfv.VduScalingAspectDeltas.1.0.policytype.deltas</data>
+            <data key="name">1446048</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15826">
+            <data key="SUID">15826</data>
+            <data key="shared name">TCA</data>
+            <data key="creationDate">1583755563302</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-tca</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563302</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">onap.policies.monitoring.cdap.tca.hi.lo.app</data>
+            <data key="uid">onap.policies.monitoring.cdap.tca.hi.lo.app.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">TCA</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15818">
+            <data key="SUID">15818</data>
+            <data key="shared name">1650736</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">The default instantiation level for this flavour.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.InstantiationLevels.1.0.policytype.default_level</data>
+            <data key="name">1650736</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15813">
+            <data key="SUID">15813</data>
+            <data key="shared name">1642544</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">PM Subscription Handler Subscription</data>
+            <data key="entry_schema">{"property":{"type":"onap.datatypes.monitoring.subscription","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">map</data>
+            <data key="uid">onap.policies.monitoring.dcae-pm-subscription-handler.1.0.policytype.subscription</data>
+            <data key="name">1642544</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15774">
+            <data key="SUID">15774</data>
+            <data key="shared name">Scaling Fixed</data>
+            <data key="creationDate">1583755563283</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-fixed</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563283</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">org.openecomp.policies.scaling.Fixed</data>
+            <data key="uid">org.openecomp.policies.scaling.Fixed.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Scaling Fixed</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15769">
+            <data key="SUID">15769</data>
+            <data key="shared name">835648</data>
+            <data key="constraints">["{\"validValues\":[\"nfvi_node\",\"zone\",\"zone_group\",\"nfvi_pop\"]}"]</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">scope of the rule is an NFVI_node, an NFVI_PoP, etc.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.AntiAffinityRule.1.0.policytype.scope</data>
+            <data key="name">835648</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15698">
+            <data key="SUID">15698</data>
+            <data key="shared name">1487088</data>
+            <data key="constraints">["{\"validValues\":[\"vnf_indicator\",\"vnf_configuration\"]}"]</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Identifies an interface produced by the VNF.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.SupportedVnfInterface.1.0.policytype.interface_name</data>
+            <data key="name">1487088</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15685">
+            <data key="SUID">15685</data>
+            <data key="shared name">NFV VirtualLinkBitrate InitialDelta</data>
+            <data key="creationDate">1583755563479</data>
+            <data key="description">The VirtualLinkBitrateInitialDelta type is a policy type representing the VnfVirtualLink detail of an initial deltas used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1].</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-vlbitrate-initialdelta</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563479</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.VnfVirtualLink"]</data>
+            <data key="type">tosca.policies.nfv.VirtualLinkBitrateInitialDelta</data>
+            <data key="uid">tosca.policies.nfv.VirtualLinkBitrateInitialDelta.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV VirtualLinkBitrate InitialDelta</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15679">
+            <data key="SUID">15679</data>
+            <data key="shared name">Placement Valet Exclusivity</data>
+            <data key="creationDate">1583755563268</data>
+            <data key="description">Valet Exclusivity</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-placement-valet-exclusivity</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563268</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">org.openecomp.policies.placement.valet.Exclusivity</data>
+            <data key="uid">org.openecomp.policies.placement.valet.Exclusivity.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Placement Valet Exclusivity</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15638">
+            <data key="SUID">15638</data>
+            <data key="shared name">1437856</data>
+            <data key="constraints">["{\"validValues\":[\"host\",\"region\",\"compute\"]}"]</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">affinity</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.placement.Colocate.1.0.policytype.affinity</data>
+            <data key="name">1437856</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15618">
+            <data key="SUID">15618</data>
+            <data key="shared name">819376</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Represents the initial minimum size of the VNF.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">tosca.datatypes.nfv.VirtualLinkBitrateLevel</data>
+            <data key="uid">tosca.policies.nfv.VirtualLinkBitrateInitialDelta.1.0.policytype.initial_delta</data>
+            <data key="name">819376</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15577">
+            <data key="SUID">15577</data>
+            <data key="shared name">Placement Valet Affinity</data>
+            <data key="creationDate">1583755563277</data>
+            <data key="description">Valet Affinity</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">placement-valet-affinity</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563277</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">org.openecomp.policies.placement.valet.Affinity</data>
+            <data key="uid">org.openecomp.policies.placement.valet.Affinity.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Placement Valet Affinity</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15508">
+            <data key="SUID">15508</data>
+            <data key="shared name">811072</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">The name of the policy, that related to specific type, same as it is defined in the source.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.External.1.0.policytype.name</data>
+            <data key="name">811072</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15506">
+            <data key="SUID">15506</data>
+            <data key="shared name">Performance</data>
+            <data key="creationDate">1583755563221</data>
+            <data key="description">The TOSCA Policy Type definition that is used to declare performance requirements for TOSCA nodes or groups of nodes.</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-performance</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563221</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">tosca.policies.Performance</data>
+            <data key="uid">tosca.policies.Performance.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Performance</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15488">
+            <data key="SUID">15488</data>
+            <data key="shared name">1474800</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">RCC Policy JSON</data>
+            <data key="entry_schema">{"property":{"type":"onap.datatypes.monitoring.rcc_policy","required":false,"definition":false,"password":false,"hidden":false,"immutable":false,"isDeclaredListInput":false,"toscaPresentation":{}},"toscaPresentation":{}}</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">list</data>
+            <data key="uid">onap.policies.monitoring.dcae-restconfcollector.1.0.policytype.rcc_policy</data>
+            <data key="name">1474800</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15476">
+            <data key="SUID">15476</data>
+            <data key="shared name">NFV SecurityGroupRule</data>
+            <data key="creationDate">1583755563533</data>
+            <data key="description">The SecurityGroupRule type is a policy type specified the matching criteria for the ingress and/or egress traffic to/from visited connection points as defined in ETSI GS NFV-IFA 011 [1].</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-securitygrouprule</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563533</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.VduCp","tosca.nodes.nfv.VnfExtCp"]</data>
+            <data key="type">tosca.policies.nfv.SecurityGroupRule</data>
+            <data key="uid">tosca.policies.nfv.SecurityGroupRule.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV SecurityGroupRule</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15432">
+            <data key="SUID">15432</data>
+            <data key="shared name">NFV AffinityRule</data>
+            <data key="creationDate">1583755564301</data>
+            <data key="description">The AffinityRule describes the affinity rules applicable for the defined targets</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-nfv-affinityrule</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755564301</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="targets ">["tosca.nodes.nfv.Vdu.Compute","tosca.nodes.nfv.VnfVirtualLink","tosca.groups.nfv.PlacementGroup"]</data>
+            <data key="type">tosca.policies.nfv.AffinityRule</data>
+            <data key="uid">tosca.policies.nfv.AffinityRule.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">NFV AffinityRule</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15418">
+            <data key="SUID">15418</data>
+            <data key="shared name">827568</data>
+            <data key="constraints">["{\"greaterOrEqual\":\"0\"}","{\"lessOrEqual\":\"65535\"}"]</data>
+            <data key="defaultValue">65535</data>
+            <data key="description">Indicates maximum port number in the range that is matched by the security group rule. If a value is provided at design-time, this value may be overridden at run-time based on other deployment requirements or constraints.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">integer</data>
+            <data key="uid">tosca.policies.nfv.SecurityGroupRule.1.0.policytype.port_range_max</data>
+            <data key="name">827568</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15415">
+            <data key="SUID">15415</data>
+            <data key="shared name">Restconf Collector</data>
+            <data key="creationDate">1583755563323</data>
+            <data key="highestVersion">true</data>
+            <data key="icon">policy-dcae-restconfcollector</data>
+            <data key="labelV">vertex</data>
+            <data key="modificationDate">1583755563323</data>
+            <data key="nodeLabel">policyType</data>
+            <data key="type">onap.policies.monitoring.dcae-restconfcollector</data>
+            <data key="uid">onap.policies.monitoring.dcae-restconfcollector.1.0.policytype</data>
+            <data key="version">1.0</data>
+            <data key="name">Restconf Collector</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15400">
+            <data key="SUID">15400</data>
+            <data key="shared name">1454240</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Represents the initial minimum size of the VNF.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">true</data>
+            <data key="type">tosca.datatypes.nfv.VduLevel</data>
+            <data key="uid">tosca.policies.nfv.VduInitialDelta.1.0.policytype.initial_delta</data>
+            <data key="name">1454240</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15334">
+            <data key="SUID">15334</data>
+            <data key="shared name">1470704</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">The type (category) of the policy same as it is defined in the source.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">org.openecomp.policies.External.1.0.policytype.type</data>
+            <data key="name">1470704</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15322">
+            <data key="SUID">15322</data>
+            <data key="shared name">1675312</data>
+            <data key="constraints">["{\"validValues\":[\"ingress\",\"egress\"]}"]</data>
+            <data key="defaultValue">ingress</data>
+            <data key="description">The direction in which the security group rule is applied. The direction of 'ingress' or 'egress' is specified against the associated CP. I.e., 'ingress' means the packets entering a CP, while 'egress' means the packets sent out of a CP.</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">string</data>
+            <data key="uid">tosca.policies.nfv.SecurityGroupRule.1.0.policytype.direction</data>
+            <data key="name">1675312</data>
+            <data key="selected">false</data>
+        </node>
+        <node id="15314">
+            <data key="SUID">15314</data>
+            <data key="shared name">1466528</data>
+            <data key="defaultValue">__NANANA__</data>
+            <data key="description">Provide additional data to access the interface endpoint</data>
+            <data key="labelV">vertex</data>
+            <data key="nodeLabel">property</data>
+            <data key="required">false</data>
+            <data key="type">tosca.datatypes.nfv.InterfaceDetails</data>
+            <data key="uid">tosca.policies.nfv.SupportedVnfInterface.1.0.policytype.details</data>
+            <data key="name">1466528</data>
+            <data key="selected">false</data>
+        </node>
+        <edge source="17001" target="16774">
+            <data key="SUID">19121</data>
+            <data key="shared name">aspect</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">aspect</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="17001" target="16758">
+            <data key="SUID">19120</data>
+            <data key="shared name">deltas</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">deltas</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="17001" target="15958">
+            <data key="SUID">19119</data>
+            <data key="shared name">1482992 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1482992 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16881" target="15638">
+            <data key="SUID">19032</data>
+            <data key="shared name">affinity</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">affinity</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16881" target="15953">
+            <data key="SUID">19031</data>
+            <data key="shared name">name</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">name</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16881" target="16696">
+            <data key="SUID">19030</data>
+            <data key="shared name">802992 (-) 798896</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">802992 (-) 798896</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16851" target="16598">
+            <data key="SUID">18942</data>
+            <data key="shared name">pm-mapper-filter</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">pm-mapper-filter</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16851" target="15966">
+            <data key="SUID">18941</data>
+            <data key="shared name">1634352 (-) 831624</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1634352 (-) 831624</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16802" target="15818">
+            <data key="SUID">18877</data>
+            <data key="shared name">default_level</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">default_level</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16802" target="16812">
+            <data key="SUID">18876</data>
+            <data key="shared name">levels</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">levels</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16802" target="15958">
+            <data key="SUID">18875</data>
+            <data key="shared name">835720 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">835720 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16719" target="15769">
+            <data key="SUID">18768</data>
+            <data key="shared name">scope</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">scope</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16719" target="16696">
+            <data key="SUID">18767</data>
+            <data key="shared name">831552 (-) 798896</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">831552 (-) 798896</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16696" target="15958">
+            <data key="SUID">18749</data>
+            <data key="shared name">798896 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">798896 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16684" target="15958">
+            <data key="SUID">18732</data>
+            <data key="shared name">1425568 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1425568 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16652" target="16777">
+            <data key="SUID">18727</data>
+            <data key="shared name">aspects</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">aspects</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16652" target="15958">
+            <data key="SUID">18726</data>
+            <data key="shared name">884808 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">884808 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16611" target="15698">
+            <data key="SUID">18709</data>
+            <data key="shared name">interface_name</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">interface_name</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16611" target="15314">
+            <data key="SUID">18708</data>
+            <data key="shared name">details</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">details</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16611" target="15958">
+            <data key="SUID">18707</data>
+            <data key="shared name">831664 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">831664 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16591" target="15813">
+            <data key="SUID">18676</data>
+            <data key="shared name">subscription</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">subscription</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16591" target="15966">
+            <data key="SUID">18675</data>
+            <data key="shared name">819264 (-) 831624</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">819264 (-) 831624</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16473" target="16407">
+            <data key="SUID">18549</data>
+            <data key="shared name">name</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">name</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16473" target="16529">
+            <data key="SUID">18548</data>
+            <data key="shared name">container_type</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">container_type</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16473" target="16696">
+            <data key="SUID">18547</data>
+            <data key="shared name">1429664 (-) 798896</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1429664 (-) 798896</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16467" target="15948">
+            <data key="SUID">18525</data>
+            <data key="shared name">levels</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">levels</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16467" target="15958">
+            <data key="SUID">18524</data>
+            <data key="shared name">843912 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">843912 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16445" target="15958">
+            <data key="SUID">18486</data>
+            <data key="shared name">1421472 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1421472 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16394" target="15334">
+            <data key="SUID">18438</data>
+            <data key="shared name">type</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">type</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16394" target="16379">
+            <data key="SUID">18437</data>
+            <data key="shared name">source</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">source</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16394" target="15508">
+            <data key="SUID">18436</data>
+            <data key="shared name">name</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">name</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="16394" target="15958">
+            <data key="SUID">18435</data>
+            <data key="shared name">1466608 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1466608 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15966" target="15958">
+            <data key="SUID">17995</data>
+            <data key="shared name">831624 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">831624 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15889" target="16634">
+            <data key="SUID">17924</data>
+            <data key="shared name">levels</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">levels</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15889" target="15958">
+            <data key="SUID">17923</data>
+            <data key="shared name">1658928 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1658928 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15860" target="15937">
+            <data key="SUID">17884</data>
+            <data key="shared name">level</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">level</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15860" target="16696">
+            <data key="SUID">17883</data>
+            <data key="shared name">1441952 (-) 798896</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1441952 (-) 798896</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15853" target="16988">
+            <data key="SUID">17875</data>
+            <data key="shared name">aspect</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">aspect</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15853" target="15849">
+            <data key="SUID">17874</data>
+            <data key="shared name">deltas</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">deltas</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15853" target="15958">
+            <data key="SUID">17873</data>
+            <data key="shared name">1663024 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1663024 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15826" target="16985">
+            <data key="SUID">17844</data>
+            <data key="shared name">tca_policy</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">tca_policy</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15826" target="15966">
+            <data key="SUID">17843</data>
+            <data key="shared name">815168 (-) 831624</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">815168 (-) 831624</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15774" target="16123">
+            <data key="SUID">17787</data>
+            <data key="shared name">quantity</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">quantity</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15774" target="16445">
+            <data key="SUID">17786</data>
+            <data key="shared name">807088 (-) 1421472</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">807088 (-) 1421472</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15685" target="15618">
+            <data key="SUID">17714</data>
+            <data key="shared name">initial_delta</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">initial_delta</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15685" target="15958">
+            <data key="SUID">17713</data>
+            <data key="shared name">1458336 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1458336 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15679" target="16414">
+            <data key="SUID">17709</data>
+            <data key="shared name">level</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">level</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15679" target="16696">
+            <data key="SUID">17708</data>
+            <data key="shared name">872520 (-) 798896</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">872520 (-) 798896</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15577" target="16951">
+            <data key="SUID">17544</data>
+            <data key="shared name">level</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">level</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15577" target="16696">
+            <data key="SUID">17543</data>
+            <data key="shared name">806976 (-) 798896</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">806976 (-) 798896</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15506" target="15958">
+            <data key="SUID">17457</data>
+            <data key="shared name">1458416 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1458416 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15476" target="15322">
+            <data key="SUID">17432</data>
+            <data key="shared name">direction</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">direction</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15476" target="16463">
+            <data key="SUID">17431</data>
+            <data key="shared name">protocol</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">protocol</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15476" target="16273">
+            <data key="SUID">17430</data>
+            <data key="shared name">port_range_min</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">port_range_min</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15476" target="15418">
+            <data key="SUID">17429</data>
+            <data key="shared name">port_range_max</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">port_range_max</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15476" target="16644">
+            <data key="SUID">17428</data>
+            <data key="shared name">description</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">description</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15476" target="16533">
+            <data key="SUID">17427</data>
+            <data key="shared name">ether_type</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">ether_type</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15476" target="15958">
+            <data key="SUID">17426</data>
+            <data key="shared name">1671216 (-) 802880</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1671216 (-) 802880</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15432" target="16033">
+            <data key="SUID">17409</data>
+            <data key="shared name">scope</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">scope</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15432" target="16696">
+            <data key="SUID">17408</data>
+            <data key="shared name">1679408 (-) 798896</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1679408 (-) 798896</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15415" target="15488">
+            <data key="SUID">17407</data>
+            <data key="shared name">rcc_policy</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">EDGE_PROPERTY</data>
+            <data key="name">rcc_policy</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+        <edge source="15415" target="15966">
+            <data key="SUID">17406</data>
+            <data key="shared name">1646640 (-) 831624</data>
+            <data key="shared interaction">-</data>
+            <data key="labelE">DERIVED_FROM</data>
+            <data key="name">1646640 (-) 831624</data>
+            <data key="selected">false</data>
+            <data key="interaction">-</data>
+        </edge>
+    </graph>
+</graphml>
