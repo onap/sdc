@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.util.IteratorIterable;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -48,34 +50,37 @@ public class GraphMLDataAnalyzer {
     private static final String[] COMPONENT_INSTANCES_SHEET_HEADER =
         {"uniqueId", "name", "originUid", "originType", "containerUid"};
 
+    public static final String GRAPH_ML_EXTENSION = ".graphml";
+    public static final String EXCEL_EXTENSION = ".xls";
+
     public String analyzeGraphMLData(String[] args) {
-        String result = null;
+        String result;
         try {
             String mlFileLocation = args[0];
             result = analyzeGraphMLData(mlFileLocation);
-            log.info("Analyzed ML file=" + mlFileLocation + ", XLS result=" + result);
+            log.info("Analyzed ML file={}, XLS result={}", mlFileLocation, result);
         } catch (Exception e) {
-            log.error("analyze GraphML Data failed - {}", e);
+            log.error("Analyze GraphML Data failed - {}", e.getMessage());
             return null;
         }
         return result;
     }
 
-    private String analyzeGraphMLData(String mlFileLocation) throws Exception {
+    private String analyzeGraphMLData(String mlFileLocation) throws JDOMException, IOException {
         // Parse ML file
         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(mlFileLocation);
         Document document = builder.build(xmlFile);
 
         // XLS data file name
-        String outputFile = mlFileLocation.replace(".graphml", ".xls");
+        String outputFile = mlFileLocation.replace(GRAPH_ML_EXTENSION, EXCEL_EXTENSION);
 
         try (Workbook wb = new HSSFWorkbook(); FileOutputStream fileOut = new FileOutputStream(outputFile)) {
             writeComponents(wb, document);
             writeComponentInstances(wb, document);
             wb.write(fileOut);
         } catch (Exception e) {
-            log.error("analyze GraphML Data failed - {}", e);
+            log.error("Analyze GraphML Data failed - {}", e.getMessage());
         }
         return outputFile;
     }
