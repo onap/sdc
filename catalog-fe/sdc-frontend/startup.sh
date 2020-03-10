@@ -10,7 +10,7 @@ JAVA_OPTIONS=" ${JAVA_OPTIONS} \
                -Djavax.net.ssl.trustStorePassword=].][xgtze]hBhz*wy]}m#lf* \
                -Djetty.console-capture.dir=${JETTY_BASE}/logs "
 
-cd /root/chef-solo
+cd /var/lib/jetty/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 
 cd /var/lib/jetty

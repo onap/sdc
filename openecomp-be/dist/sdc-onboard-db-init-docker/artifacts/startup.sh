@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /root
+cd /home/sdc
 
 CS_PORT=""
 CS_HOST=127.0.0.1
