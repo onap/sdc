@@ -113,6 +113,16 @@ function ready_probe {
 }
 #
 
+function ready_probe_jetty {
+    docker exec $1 /var/lib/jetty/ready-probe.sh > /dev/null 2>&1
+    rc=$?
+    if [[ ${rc} == 0 ]]; then
+        echo DOCKER $1 start finished in $2 seconds
+        return ${SUCCESS}
+    fi
+    return ${FAILURE}
+}
+#
 
 function probe_docker {
     MATCH=`docker logs --tail 30 $1 | grep "DOCKER STARTED"`
@@ -181,15 +191,15 @@ function monitor_docker {
                 status=$? ;
             ;;
             sdc-BE)
-                ready_probe ${DOCKER_NAME} ${TIME} ;
+                ready_probe_jetty ${DOCKER_NAME} ${TIME} ;
                 status=$? ;
             ;;
             sdc-FE)
-                ready_probe ${DOCKER_NAME} ${TIME} ;
+                ready_probe_jetty ${DOCKER_NAME} ${TIME} ;
                 status=$? ;
             ;;
             sdc-onboard-BE)
-                ready_probe ${DOCKER_NAME} ${TIME} ;
+                ready_probe_jetty ${DOCKER_NAME} ${TIME} ;
                 status=$? ;
             ;;
             sdc-api-tests)
@@ -287,7 +297,7 @@ function sdc-cs-init {
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-cassandra-init:${RELEASE}
     fi
-    docker run --name ${DOCKER_NAME} --env RELEASE="${RELEASE}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-cassandra-init:${RELEASE} > /dev/null 2>&1
+    docker run --name ${DOCKER_NAME} --env RELEASE="${RELEASE}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/home/sdc/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-cassandra-init:${RELEASE} > /dev/null 2>&1
     rc=$?
     docker_logs ${DOCKER_NAME}
     if [[ ${rc} != 0 ]]; then exit ${rc}; fi
@@ -302,7 +312,7 @@ function sdc-cs-onboard-init {
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
     fi
-    docker run --name ${DOCKER_NAME} --env RELEASE="${RELEASE}" --env CS_HOST_IP=${IP} --env CS_HOST_PORT=${CS_PORT} --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/root/chef-solo/cache ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
+    docker run --name ${DOCKER_NAME} --env RELEASE="${RELEASE}" --env CS_HOST_IP=${IP} --env CS_HOST_PORT=${CS_PORT} --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env CS_PASSWORD="${CS_PASSWORD}" --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/CS:/var/lib/cassandra --volume ${WORKSPACE}/data/environments:/home/sdc/chef-solo/environments --volume ${WORKSPACE}/data/CS-Init:/home/sdc/chef-solo/cache ${PREFIX}/sdc-onboard-cassandra-init:${RELEASE}
     rc=$?
     docker_logs ${DOCKER_NAME}
     if [[ ${rc} != 0 ]]; then exit ${rc}; fi
@@ -319,7 +329,7 @@ function sdc-BE {
     else
         ADDITIONAL_ARGUMENTS=${BE_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env JAVA_OPTIONS="${BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:${JETTY_BASE}/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-backend:${RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while BE is starting..."
     monitor_docker ${DOCKER_NAME}
@@ -334,7 +344,7 @@ function sdc-BE-init {
     if [ ${LOCAL} = false ]; then
         docker pull ${PREFIX}/sdc-backend-init:${RELEASE}
     fi
-    docker run --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
+    docker run --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/logs/BE/:${JETTY_BASE}/logs  --volume ${WORKSPACE}/data/environments:/home/sdc/chef-solo/environments ${PREFIX}/sdc-backend-init:${RELEASE} > /dev/null 2>&1
     rc=$?
     docker_logs ${DOCKER_NAME}
     if [[ ${rc} != 0 ]]; then exit ${rc}; fi
@@ -353,7 +363,7 @@ function sdc-onboard-BE {
     else
         ADDITIONAL_ARGUMENTS=${ONBOARD_DEBUG_PORT}
     fi
-    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env SDC_CERT_DIR="${SDC_CERT_DIR}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/${SDC_CERT_DIR}:${JETTY_BASE}/onap/cert --volume ${WORKSPACE}/data/logs/ONBOARD:${JETTY_BASE}/logs --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments --publish 8445:8445 --publish 8081:8081 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
+    docker run --detach --name ${DOCKER_NAME} --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env cassandra_ssl_enabled="false" --env SDC_CLUSTER_NAME="SDC-CS-${DEP_ENV}" --env SDC_USER="${SDC_USER}" --env SDC_PASSWORD="${SDC_PASSWORD}" --env SDC_CERT_DIR="${SDC_CERT_DIR}" --env JAVA_OPTIONS="${ONBOARD_BE_JAVA_OPTIONS}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 ${LOCAL_TIME_MOUNT_CMD} --volume ${WORKSPACE}/data/${SDC_CERT_DIR}:${JETTY_BASE}/onap/cert --volume ${WORKSPACE}/data/logs/ONBOARD:${JETTY_BASE}/logs --volume ${WORKSPACE}/data/environments:/${JETTY_BASE}/chef-solo/environments --publish 8445:8445 --publish 8081:8081 ${ADDITIONAL_ARGUMENTS} ${PREFIX}/sdc-onboard-backend:${RELEASE}
     command_exit_status $? ${DOCKER_NAME}
     echo "please wait while sdc-onboard-BE is starting..."
     monitor_docker ${DOCKER_NAME}
@@ -391,7 +401,7 @@ function sdc-FE {
     --ulimit memlock=-1:-1 \
     --ulimit nofile=4096:100000 \
     --volume ${WORKSPACE}/data/logs/FE/:${JETTY_BASE}/logs \
-    --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments \
+    --volume ${WORKSPACE}/data/environments:/${JETTY_BASE}/chef-solo/environments \
     ${LOCAL_TIME_MOUNT_CMD}  \
     ${PLUGINS_CONF_VOLUME_MOUNT} \
     --publish 9443:9443 \

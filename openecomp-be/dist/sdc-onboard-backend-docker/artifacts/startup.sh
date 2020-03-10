@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-cd /root/chef-solo
+cd /var/lib/jetty/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 rc=$?
 if [[ $rc != 0 ]]; then
