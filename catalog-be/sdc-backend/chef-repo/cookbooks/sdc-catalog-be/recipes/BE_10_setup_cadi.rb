@@ -37,8 +37,8 @@ end
 
 
 #Workaround due to hardcode definition in cata,log-be web.xml file
-directory "/opt/app/jetty" do
-  path "/opt/app/jetty"
+directory "#{jetty_base}/opt" do
+  path "#{jetty_base}/opt"
   owner 'jetty'
   group 'jetty'
   mode '0755'
@@ -46,8 +46,8 @@ directory "/opt/app/jetty" do
   action :create
 end
 
-directory "/opt/app/jetty/base/" do
-  path "/opt/app/jetty/base/"
+directory "#{jetty_base}/opt/base/" do
+  path "#{jetty_base}/opt/base/"
   owner 'jetty'
   group 'jetty'
   mode '0755'
@@ -56,8 +56,8 @@ directory "/opt/app/jetty/base/" do
 end
 
 
-directory "/opt/app/jetty/base/be/" do
-  path "/opt/app/jetty/base/be/"
+directory "#{jetty_base}/opt/base/be/" do
+  path "#{jetty_base}/opt/base/be/"
   owner 'jetty'
   group 'jetty'
   mode '0755'
@@ -65,8 +65,8 @@ directory "/opt/app/jetty/base/be/" do
   action :create
 end
 
-directory "/opt/app/jetty/base/be/etc" do
-  path "/opt/app/jetty/base/be/etc"
+directory "#{jetty_base}/opt/base/be/etc" do
+  path "#{jetty_base}/opt/base/be/etc"
   owner 'jetty'
   group 'jetty'
   mode '0755'
@@ -75,8 +75,8 @@ directory "/opt/app/jetty/base/be/etc" do
 end
 
 #Workaround due to hardcode definition in catalog-be web.xml file
-template "/opt/app/jetty/base/be/etc/cadi.properties" do
-  path "/opt/app/jetty/base/be/etc/cadi.properties"
+template "#{jetty_base}/opt/base/be/etc/cadi.properties" do
+  path "#{jetty_base}/opt/base/be/etc/cadi.properties"
   source "cadi.properties.erb"
   owner "jetty"
   group "jetty"

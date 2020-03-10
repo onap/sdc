@@ -11,7 +11,7 @@ export JAVA_OPTIONS=" -Dconfig.home=${JETTY_BASE}/config \
        -Djetty.console-capture.dir=${JETTY_BASE}/logs \
        ${JAVA_OPTIONS} "
 
-cd /root/chef-solo
+cd /var/lib/jetty/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 
 status=$?
