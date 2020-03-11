@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "358ba672_b301053e",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/recipes/BE_10_setup_cadi.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1937
+      },
+      "writtenOn": "2020-03-11T14:07:32Z",
+      "side": 1,
+      "message": "This was a workaround solution for the hardcoded definition in Catalog-Be web.xml\nthat used to define:  \u003cparam-value\u003e/opt/app/jetty/base/be/etc/cadi.properties\u003c/param-value\u003e\nSince that definition was removed, consider remove the entire following lines",
+      "revId": "6a4ee6699e2106cea7a5b397825955de26202bee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf7c374c_07cea956",
+        "filename": "catalog-be/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-distribution-engine-configuration.yaml.erb",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1937
+      },
+      "writtenOn": "2020-03-11T14:07:32Z",
+      "side": 1,
+      "message": "Consider define the directory tree as /var/lib/jetty/base/... instead /var/lib/jetty/OPT/base",
+      "revId": "6a4ee6699e2106cea7a5b397825955de26202bee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
