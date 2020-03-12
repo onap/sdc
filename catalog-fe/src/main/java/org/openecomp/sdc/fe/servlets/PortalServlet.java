@@ -151,7 +151,8 @@ public class PortalServlet extends HttpServlet {
 			firstNameFromCookie  = getValueFromCookie(request, Constants.HTTP_CSP_FIRSTNAME );
 			lastNameFromCookie = getValueFromCookie(request, Constants.HTTP_CSP_LASTNAME);
 
-			addAuthCookie(response, userId, firstNameFromCookie, lastNameFromCookie);
+			//To be fixed
+			//addAuthCookie(response, userId, firstNameFromCookie, lastNameFromCookie);
             RequestDispatcher rd = request.getRequestDispatcher("index.html");
             rd.forward(mutableRequest, response);
         } else {
