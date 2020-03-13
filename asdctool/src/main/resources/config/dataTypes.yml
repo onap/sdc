@@ -663,22 +663,6 @@ org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList:
         status: SUPPORTED
         entry_schema:
           type: string
-org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList:
-    derived_from: tosca.datatypes.Root
-    description: Action List
-    properties:
-      network_policy_entries_policy_rule_action_list_simple_action:
-        type: string
-        description: Simple Action
-        required: false
-        status: SUPPORTED
-      network_policy_entries_policy_rule_action_list_apply_service:
-        type: list
-        description: Apply Service
-        required: false
-        status: SUPPORTED
-        entry_schema:
-          type: string
 org.openecomp.datatypes.heat.contrailV2.network.rule.Rule:
     derived_from: tosca.datatypes.Root
     description: policy rule
