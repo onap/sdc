@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.asdctool;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -38,7 +39,10 @@ public class Utils {
 
 	private static Logger log = Logger.getLogger(Utils.class.getName());
 
-	public static String NEW_LINE = System.getProperty("line.separator");
+	public static final String NEW_LINE = System.getProperty("line.separator");
+
+	private Utils() {
+	}
 
 	public static Response buildOkResponse(
 			/*
@@ -122,10 +126,9 @@ public class Utils {
 
 	public static Map<String, Object> getProperties(Element element) {
 
-		Map<String, Object> result = new HashMap<String, Object>();
-		;
+		Map<String, Object> result = new HashMap<>();
 
-		if (element.keys() != null && element.keys().size() > 0) {
+		if (CollectionUtils.isNotEmpty(element.keys())) {
 			Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
 					element.keys().toArray(new String[element.keys().size()]));
 

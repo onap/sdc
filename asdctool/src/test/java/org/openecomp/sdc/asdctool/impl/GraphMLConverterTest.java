@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,156 +20,125 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tinkerpop.gremlin.structure.Element;
 import org.janusgraph.core.JanusGraph;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
 
 public class GraphMLConverterTest {
-	
-	public GraphMLConverter createTestSubject() {
-		return new GraphMLConverter();
-	}
-	
-	@Test
-	public void testImportGraph() throws Exception {
-		GraphMLConverter testSubject;
-		String[] args = new String[] { "" };
-		boolean result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.importGraph(args);
-	}
+    @Test
+    public void testImportGraph() {
+        String[] args = getInputArgs();
+        GraphMLConverter testSubject = new GraphMLConverter();
+        assertTrue(testSubject.importGraph(args));
+    }
 
-	@Test
-	public void testExportGraph() throws Exception {
-		GraphMLConverter testSubject;
-		String[] args = new String[] { "" };
-		boolean result;
+    @Test
+    public void testExportGraph() {
+        String[] args = getOutputArgs();
+        GraphMLConverter testSubject = new GraphMLConverter();
+        assertTrue(testSubject.exportGraph(args));
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.exportGraph(args);
-	}
+    @Test
+    public void testExportGraphMl() {
+        String[] args = getOutputArgs();
+        GraphMLConverter testSubject = new GraphMLConverter();
 
-	@Test
-	public void testExportGraphMl() throws Exception {
-		GraphMLConverter testSubject;
-		String[] args = new String[] { "" };
-		String result;
+        String result = testSubject.exportGraphMl(args);
+        assertNotNull(result);
+        assertTrue(result.startsWith(args[2]));
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.exportGraphMl(args);
-	}
+    @Test
+    public void testFindErrorInJsonGraph() {
+        String[] args = getOutputArgs();
+        GraphMLConverter testSubject = new GraphMLConverter();
+        assertTrue(testSubject.findErrorInJsonGraph(args));
+    }
 
-	@Test
-	public void testFindErrorInJsonGraph() throws Exception {
-		GraphMLConverter testSubject;
-		String[] args = new String[] { "" };
-		boolean result;
+    @Test(expected = IllegalArgumentException.class)
+    public void testOpenGraphWithBadPath() {
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.findErrorInJsonGraph(args);
-	}
+        GraphMLConverter testSubject = new GraphMLConverter();
+        testSubject.openGraph("badPath");
+    }
 
-	@Test(expected=IllegalArgumentException.class)
-	public void testOpenGraph() throws Exception {
-		GraphMLConverter testSubject;
-		String janusGraphFileLocation = "";
-		JanusGraph result;
+    @Test
+    public void testExportJsonGraphWithBadOutputDir() {
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.openGraph("src/main/resources/config/janusgraph.properties");
-	}
+        GraphMLConverter testSubject = new GraphMLConverter();
+        JanusGraph graph = testSubject.openGraph(getJanusGraphConfig());
+        assertNull(testSubject.exportJsonGraph(graph, "badOutputDir"));
+    }
 
-	@Test(expected=NullPointerException.class)
-	public void testExportJsonGraph() throws Exception {
-		GraphMLConverter testSubject;
-		JanusGraph graph = null;
-		String outputDirectory = "";
-		String result;
+    @Test
+    public void testImportJsonGraph() {
+        GraphMLConverter testSubject = new GraphMLConverter();
+        JanusGraph graph = testSubject.openGraph(getJanusGraphConfig());
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.exportJsonGraph(graph, outputDirectory);
-	}
+        assertTrue(testSubject.importJsonGraph(graph, getGraphSON(), Collections.emptyList()));
+    }
 
-	@Test(expected=NullPointerException.class)
-	public void testExportGraphMl_1() throws Exception {
-		GraphMLConverter testSubject;
-		JanusGraph graph = null;
-		String outputDirectory = "";
-		String result;
+    @Test
+    public void testImportJsonGraphNoGraphSONFile() {
+        GraphMLConverter testSubject = new GraphMLConverter();
+        JanusGraph graph = testSubject.openGraph(getJanusGraphConfig());
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.exportGraphMl(graph, outputDirectory);
-	}
-
-	@Test
-	public void testImportJsonGraph() throws Exception {
-		GraphMLConverter testSubject;
-		JanusGraph graph = null;
-		String graphJsonFile = "";
-		List<ImmutablePair<String, String>> propertiesCriteriaToDelete = null;
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.importJsonGraph(graph, graphJsonFile, propertiesCriteriaToDelete);
-	}
-
-	@Test(expected=NullPointerException.class)
-	public void testFindErrorInJsonGraph_1() throws Exception {
-		GraphMLConverter testSubject;
-		JanusGraph graph = null;
-		String outputDirectory = "";
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.findErrorInJsonGraph(graph, outputDirectory);
-	}
+        assertFalse(testSubject.importJsonGraph(graph, "noFile", Collections.emptyList()));
+    }
 
 
-	@Test(expected=NullPointerException.class)
-	public void testExportUsers() throws Exception {
-		GraphMLConverter testSubject;
-		JanusGraph graph = null;
-		String outputDirectory = "";
-		String result;
+    @Test
+    public void testExportUsers() {
+        GraphMLConverter testSubject = new GraphMLConverter();
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.exportUsers(graph, outputDirectory);
-	}
+        JanusGraph graph = testSubject.openGraph(getJanusGraphConfig());
+        String outputDirectory = getOutputJanusGraph();
 
-	@Test(expected=NullPointerException.class)
-	public void testGetProperties() throws Exception {
-		GraphMLConverter testSubject;
-		Element element = null;
-		Map<String, Object> result;
+        String result = testSubject.exportUsers(graph, outputDirectory);
+        assertNotNull(result);
+        assertTrue(result.startsWith(outputDirectory));
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getProperties(element);
-	}
+    @Test
+    public void testExportUsersWithBadOutputDir() {
+        GraphMLConverter testSubject = new GraphMLConverter();
 
-	@Test
-	public void testExportUsers_1() throws Exception {
-		GraphMLConverter testSubject;
-		String[] args = new String[] { "" };
-		boolean result;
+        JanusGraph graph = testSubject.openGraph(getJanusGraphConfig());
+        assertNull(testSubject.exportUsers(graph, "badOutputDir"));
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.exportUsers(args);
-	}
+    @Test
+    public void testExportUsersFromArgs() {
+        String[] args = getOutputArgs();
+        GraphMLConverter testSubject = new GraphMLConverter();
+        assertTrue(testSubject.exportUsers(args));
+    }
+
+    private String getJanusGraphConfig() {
+        return getClass().getClassLoader().getResource("config/janusgraph.properties").getPath();
+    }
+
+    private String getOutputJanusGraph() {
+        return new File(getClass().getClassLoader().getResource("graphSON.json").getFile())
+                .getAbsolutePath()
+                .replace(File.separator + "graphSON.json", "");
+    }
+
+    private String getGraphSON() {
+        return getClass().getClassLoader().getResource("graphSON.json").getPath();
+    }
+
+    private String[] getOutputArgs() {
+        return new String[]{"", getJanusGraphConfig(), getOutputJanusGraph()};
+    }
+
+    private String[] getInputArgs() {
+        return new String[]{"", getJanusGraphConfig(), getGraphSON()};
+    }
 }
