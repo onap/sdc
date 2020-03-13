@@ -122,10 +122,9 @@ public class Utils {
 
 	public static Map<String, Object> getProperties(Element element) {
 
-		Map<String, Object> result = new HashMap<String, Object>();
-		;
+		Map<String, Object> result = new HashMap<>();
 
-		if (element.keys() != null && element.keys().size() > 0) {
+		if (element.keys() != null && !element.keys().isEmpty()) {
 			Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
 					element.keys().toArray(new String[element.keys().size()]));
 
