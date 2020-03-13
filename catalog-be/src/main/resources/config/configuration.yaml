@@ -113,6 +113,7 @@ cassandraConfig:
     ssl: true
     truststorePath : /var/lib/jetty/opt/base/be/config/.truststore
     truststorePassword : Aa123456
+    maxWaitSeconds: 120
     keySpaces:
         - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}
         - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['DC-sdc-iltlv650', '1']}

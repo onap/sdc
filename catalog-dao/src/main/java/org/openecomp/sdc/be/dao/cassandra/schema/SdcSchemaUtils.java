@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.dao.cassandra.schema;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
@@ -51,7 +50,7 @@ public class SdcSchemaUtils {
             cluster =  createCluster();
             isConnected = true;
         } catch (Exception e) {
-            log.info("** CassandraClient isn't connected. error is {}", e);
+            log.info("** CassandraClient isn't connected. error is", e);
         }
 
         log.info("** cluster created");
@@ -70,25 +69,26 @@ public class SdcSchemaUtils {
         List<String> nodes = config.getCassandraHosts();
         Integer cassandraPort = config.getCassandraPort();
         if (nodes == null || cassandraPort == null) {
-            log.info("no nodes or port were supplied in configuration.");
+            log.info("No nodes or port were supplied in configuration.");
             return null;
         }
-        log.info("connecting to node:{} port{}.", nodes, cassandraPort);
+        log.info("Connecting to node: {} port: {}.", nodes, cassandraPort);
         Cluster.Builder clusterBuilder = Cluster.builder();
         nodes.forEach(node -> clusterBuilder.addContactPoint(node).withPort(cassandraPort));
 
-       clusterBuilder.withMaxSchemaAgreementWaitSeconds(60); 
-             
-       setSocketOptions(clusterBuilder, config);
-        if(!enableAuthentication(clusterBuilder, config)){
+        log.info("Connection timeout in seconds : {}", config.getMaxWaitSeconds());
+        clusterBuilder.withMaxSchemaAgreementWaitSeconds(config.getMaxWaitSeconds());
+
+        setSocketOptions(clusterBuilder, config);
+        if (!enableAuthentication(clusterBuilder, config)) {
             return null;
         }
-        
-        if(!enableSsl(clusterBuilder, config)){
+
+        if (!enableSsl(clusterBuilder, config)) {
             return null;
         }
         setLocalDc(clusterBuilder, config);
-        
+
         return clusterBuilder.build();
     }
     
