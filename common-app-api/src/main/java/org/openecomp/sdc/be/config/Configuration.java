@@ -739,6 +739,7 @@ public class Configuration extends BasicConfiguration {
         boolean ssl;
         String truststorePath;
         String truststorePassword;
+        int maxWaitSeconds = 120;
 
         public Integer getCassandraPort() { return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT; }
 
@@ -830,6 +831,14 @@ public class Configuration extends BasicConfiguration {
 
         public void setKeySpaces(List<KeyspaceConfig> cassandraConfig) {
             this.keySpaces = cassandraConfig;
+        }
+
+        public int getMaxWaitSeconds() {
+            return maxWaitSeconds;
+        }
+
+        public void setMaxWaitSeconds(int maxWaitSeconds) {
+            this.maxWaitSeconds = maxWaitSeconds;
         }
 
         public static class KeyspaceConfig {

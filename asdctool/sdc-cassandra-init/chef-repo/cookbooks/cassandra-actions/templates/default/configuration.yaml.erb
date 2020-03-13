@@ -83,6 +83,7 @@ cassandraConfig:
     ssl: false
     truststorePath : /config/.truststore
     truststorePassword : Aa123456
+    maxWaitSeconds: 120
     keySpaces:
         - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
         - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
