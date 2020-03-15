@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "781e64c0_588c349b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Is this class using the configuration?\nWhy we have to add this line?",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "25a38cc5_17e80581",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Again, what is the need to init a configuration manager?\nIs this class using configuration files?",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ca74361_bcdb981a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyPropertiesBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Again.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8979a112_2927cd3c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Why here we are not using this line - \n\nnew ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), \"src/test/resources/config/catalog-be\"));\n\nAs we use before in all cases.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d1745a8a_438ac466",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/exceptions/ComponentExceptionTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Who is going to use this config init?",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "33c6f935_3d538eac",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceCapabilitiesPropertiesMergeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Again.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52ba1f7c_30a34e8a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceMergeDataBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Again.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5dc56d11_c0ded3fe",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstancePropsAndInputsMergeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Again, this class doesn\u0027t need configuration.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3ae2cfd_98b187ce",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ExternalRefsMergeBLTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Also here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f449036_e767cdff",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/path/ForwardingPathValidatorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Also here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67bfb7a7_e8e1b5ae",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyConstraintsUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Also here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6376dcea_a1e31418",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/ComponentValidationsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Also here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c94320fd_29324f0c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/UserValidationsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Again, here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99979475_ce9a42c2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/impl/aaf/RoleAuthorizationHandlerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Redundant.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9b2a0c7_9f5c663d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/user/UserBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-15T14:28:33Z",
+      "side": 1,
+      "message": "Also here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
