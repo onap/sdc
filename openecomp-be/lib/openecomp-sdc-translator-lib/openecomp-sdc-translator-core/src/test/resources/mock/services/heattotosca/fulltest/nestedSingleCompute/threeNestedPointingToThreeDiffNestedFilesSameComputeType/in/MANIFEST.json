@@ -4,6 +4,7 @@
   "version": "2013-05-23",
   "data": [
     {
+      "isBase": true,
       "file": "hot-nimbus-pcm_v0.4.yaml",
       "type": "HEAT",
       "data": [
