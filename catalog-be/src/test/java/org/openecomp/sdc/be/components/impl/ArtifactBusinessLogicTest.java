@@ -553,8 +553,9 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
                 , any(String.class), eq(true))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
-        artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD), ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME,
+        Either<ArtifactDefinition, ResponseFormat> result = artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD), ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME,
                 USER, INSTANCE_ID, true, true);
+        assertThat(result.isLeft()).isTrue();
     }
 
     private ArtifactsBusinessLogic getArtifactsBusinessLogic() {
@@ -583,9 +584,10 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
                 , any(String.class), eq(true))).thenReturn(Either.left(artifactDefinition));
         when(artifactCassandraDao.saveArtifact(any())).thenReturn(CassandraOperationStatus.OK);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class))).thenReturn(new ResponseFormat());
-        artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD), ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME,
+        Either<ArtifactDefinition, ResponseFormat> result = artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD), ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME,
                 USER, INSTANCE_ID, true, false);
         verify(janusGraphDao, times(1)).commit();
+        assertThat(result.isLeft()).isTrue();
     }
 
     @Test
@@ -613,7 +615,7 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
         result = artifactBL.handleDelete("parentId", "artifactId", USER, AuditingActionEnum.ARTIFACT_DELETE,
                 ComponentTypeEnum.RESOURCE, resource,
                 true, false);
-        assertThat(result.isRight());
+        assertThat(result.isRight()).isTrue();
     }
 
     private void verifyHeatParam(HeatParameterDefinition heatEnvParam, HeatParameterDefinition heatYamlParam) {

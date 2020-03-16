@@ -224,7 +224,7 @@ public class GroupBusinessLogicTest {
         when(groupsOperation.addGroups(any(Resource.class), any())).thenReturn(Either.left(groupDefList));
         when(groupsOperation.addCalculatedCapabilitiesWithProperties(anyString(), anyMap(), anyMap())).thenReturn(StorageOperationStatus.OK);
         result = test.createGroup(componentId, compTypeEnum, grpType, userId);
-        assertThat(result.getClass().isInstance(GroupDefinition.class));
+        assertThat(result.getClass()).isAssignableFrom(GroupDefinition.class);
     }
 
     private PropertyDefinition buildProperty(String name, String defaultValue, String description) {

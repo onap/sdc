@@ -19,7 +19,6 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import java.util.ArrayList;
-import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -85,7 +84,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -180,7 +178,7 @@ public class PolicyBusinessLogicTest {
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(policySuccessEither);
         stubUnlockAndCommit();
         PolicyDefinition response = businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
-        assertTrue(!response.isEmpty());
+        assertFalse(response.isEmpty());
     }
 
     @Test
@@ -277,7 +275,7 @@ public class PolicyBusinessLogicTest {
         when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(policySuccessEither);
         stubUnlockAndCommit();
         PolicyDefinition  response = businessLogic.updatePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, otherPolicy, USER_ID, true);
-        assertTrue(!response.isEmpty());
+        assertFalse(response.isEmpty());
     }
     
     @Test(expected = ComponentException.class)
@@ -292,7 +290,7 @@ public class PolicyBusinessLogicTest {
         stubValidationSuccess(CREATE_POLICY);
         stubCommit();
         PolicyDefinition response = businessLogic.getPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, USER_ID);
-        assertTrue(!response.isEmpty());
+        assertFalse(response.isEmpty());
     }
     
     @Test(expected = ComponentException.class)
@@ -308,7 +306,7 @@ public class PolicyBusinessLogicTest {
         stubCommit();
         when(toscaOperationFacade.removePolicyFromComponent(eq(COMPONENT_ID),eq(POLICY_ID))).thenReturn(StorageOperationStatus.OK);
         PolicyDefinition  response = businessLogic.deletePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, USER_ID, true);
-        assertTrue(!response.isEmpty());
+        assertFalse(response.isEmpty());
     }
     
     @Test(expected = ComponentException.class)

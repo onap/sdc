@@ -44,6 +44,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -87,16 +88,17 @@ public class CommonImportManagerTest {
         ResponseFormat responseFormat = new ResponseFormat();
         responseFormat.setServiceException(new ServiceException());
         when(validator.apply(type1)).thenReturn(Either.right(responseFormat));
-        
-        
-        commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
+
+
+        Either<List<ImmutablePair<Object, Boolean>>, ResponseFormat> result = commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
         
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
         verify(janusGraphGenericDao).rollback();
+        assertTrue(result.isRight());
     }
     
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testCreateElementTypesByDao_RuntTimeExceptionInValidation() {
         Object type1 = new Object();
         List<Object> elementTypesToCreate = Arrays.asList(type1);
@@ -105,11 +107,7 @@ public class CommonImportManagerTest {
         when(elementInfoGetter.apply(type1)).thenReturn(elementInfo);
         when(validator.apply(type1)).thenThrow(new RuntimeException("Test Exception"));
         
-        try {
-            commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
-        }
-        catch(Exception skip) {
-        }
+        commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
         
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
@@ -130,13 +128,14 @@ public class CommonImportManagerTest {
         responseFormat.setServiceException(new ServiceException());
         when(componentsUtils.convertFromStorageResponseForCapabilityType(Mockito.any())).thenCallRealMethod();
         when(componentsUtils.getResponseFormatByCapabilityType(ActionStatus.INVALID_CONTENT, type1)).thenReturn(responseFormat);
-        
-        
-        commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
+
+
+        Either<List<ImmutablePair<Object, Boolean>>, ResponseFormat> result = commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
         
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
         verify(janusGraphGenericDao).rollback();
+        assertTrue(result.isRight());
     }
     
     @Test
@@ -156,12 +155,13 @@ public class CommonImportManagerTest {
         when(componentsUtils.convertFromStorageResponseForCapabilityType(Mockito.any())).thenCallRealMethod();
         when(componentsUtils.getResponseFormatByCapabilityType(ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST, type1)).thenReturn(responseFormat);
 
-        
-        commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
+
+        Either<List<ImmutablePair<Object, Boolean>>, ResponseFormat> result = commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
 
         verify(elementAdder).apply(type1);
         verify(elementUpgrader, never()).apply(Mockito.any(), Mockito.any());
         verify(janusGraphGenericDao).rollback();
+        assertTrue(result.isRight());
     }
 
     
@@ -206,12 +206,13 @@ public class CommonImportManagerTest {
         when(componentsUtils.convertFromStorageResponseForCapabilityType(Mockito.any())).thenCallRealMethod();
         when(componentsUtils.getResponseFormatByCapabilityType(ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST, type1_1)).thenReturn(responseFormat);
 
-        
-        commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
+
+        Either<List<ImmutablePair<Object, Boolean>>, ResponseFormat> result = commonImportManager.createElementTypesByDao(elementTypesToCreate , validator , elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
 
         verify(elementAdder, never()).apply(Mockito.any());
         verify(elementUpgrader).apply(type1_1, type1);
         verify(janusGraphGenericDao).rollback();
+        assertTrue(result.isRight());
     }
     
     @Test
@@ -259,6 +260,4 @@ public class CommonImportManagerTest {
         assertEquals(type1_1, result.left().value().get(0).getLeft());
         assertEquals(false, result.left().value().get(0).getRight());
     }
-
-
 }

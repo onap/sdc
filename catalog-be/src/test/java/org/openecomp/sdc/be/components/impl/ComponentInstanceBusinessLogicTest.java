@@ -1121,7 +1121,7 @@ public class ComponentInstanceBusinessLogicTest {
         Assert.assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
-        assertThat(result.isRight());
+        assertThat(result.isRight()).isTrue();
     }
 
     @Test
@@ -1147,7 +1147,7 @@ public class ComponentInstanceBusinessLogicTest {
             .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId, USER_ID);
         Assert.assertNotNull(result);
         service.setLastUpdaterUserId(oldServiceLastUpdatedUserId);
-        assertThat(result.isRight());
+        assertThat(result.isRight()).isTrue();
     }
 
     @Test
