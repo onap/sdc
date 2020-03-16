@@ -74,8 +74,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -182,7 +183,7 @@ public class InputsBusinessLogicTest {
     public void getComponentInstanceInputs_ComponentInstanceNotExist() {
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         Either<List<ComponentInstanceInput>, ResponseFormat> componentInstanceInputs = testInstance.getComponentInstanceInputs(USER_ID, COMPONENT_ID, "nonExisting");
-        assertTrue(componentInstanceInputs.isRight());
+        assertThat(componentInstanceInputs.isRight()).isTrue();
         verify(componentsUtilsMock).getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
     }
 
@@ -218,7 +219,7 @@ public class InputsBusinessLogicTest {
         Component component = new Resource();
         when(toscaOperationFacadeMock.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(component));
         testInstance.getInputs(userId, componentId);
-        assertEquals(null, component.getInputs());
+        assertNull(component.getInputs());
     }
 
     @Test
@@ -234,7 +235,7 @@ public class InputsBusinessLogicTest {
         component.setInputs(listDef);
         when(toscaOperationFacadeMock.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(component));
         result = testInstance.getComponentInstancePropertiesByInputId(userId, componentId, componentId, componentId);
-        assertTrue(result.isLeft());
+        assertThat(result.isLeft()).isTrue();
     }
 
     @Test
@@ -252,10 +253,10 @@ public class InputsBusinessLogicTest {
         Either<List<InputDefinition>, ResponseFormat> declaredPropertiesEither =
                 testInstance.declareProperties(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, componentInstInputsMap);
 
-        assertTrue(declaredPropertiesEither.isLeft());
+        assertThat(declaredPropertiesEither.isLeft()).isTrue();
 
         List<InputDefinition> declaredProperties = declaredPropertiesEither.left().value();
-        assertTrue(CollectionUtils.isNotEmpty(declaredProperties));
+        assertThat(CollectionUtils.isNotEmpty(declaredProperties)).isTrue();
         assertEquals(1, declaredProperties.size());
         assertEquals(declaredProperties, declaredPropertiesToInputs);
     }
@@ -284,7 +285,7 @@ public class InputsBusinessLogicTest {
         when(componentsUtilsMock.convertFromStorageResponse(StorageOperationStatus.ARTIFACT_NOT_FOUND)).thenReturn(ActionStatus.ARTIFACT_NOT_FOUND);
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
        Either<List<InputDefinition>, ResponseFormat> responseFormatEither = testInstance.getInputs("USR01", COMPONENT_ID);
-        assertEquals(true,responseFormatEither.isRight());
+        assertThat(responseFormatEither.isRight()).isTrue();
 
     }
 
@@ -311,7 +312,7 @@ public class InputsBusinessLogicTest {
         component.setInputs(inputlist);
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
         Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = testInstance.getComponentInstancePropertiesByInputId("USR01", COMPONENT_ID,"INST0.1", "INPO1");
-        assertEquals(true,responseFormatEither.isRight());
+        assertThat(responseFormatEither.isRight()).isTrue();
     }
 
     @Test
@@ -331,7 +332,7 @@ public class InputsBusinessLogicTest {
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(component));
         when(toscaOperationFacadeMock.getToscaElement(eq("RES0.1"), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
         Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = testInstance.getComponentInstancePropertiesByInputId("USR01", COMPONENT_ID,"INST0.1", "INPO1");
-        assertEquals(true,responseFormatEither.isRight());
+        assertThat(responseFormatEither.isRight()).isTrue();
     }
 
     @Test
@@ -362,7 +363,7 @@ public class InputsBusinessLogicTest {
     {
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
         Either<List<ComponentInstanceInput>, ResponseFormat> result = testInstance.getInputsForComponentInput("USR01", COMPONENT_ID,"INPO1");
-        assertEquals(true,result.isRight());
+        assertThat(result.isRight()).isTrue();
     }
 
     @Test
@@ -383,7 +384,7 @@ public class InputsBusinessLogicTest {
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(component));
         when(componentInstanceBusinessLogic.getComponentInstancePropertiesByInputId(any(Component.class),eq("INPO1"))).thenReturn(compinstancelist);
         Either<List<ComponentInstanceInput>, ResponseFormat> result = testInstance.getInputsForComponentInput("USR01", COMPONENT_ID,"INPO1");
-        assertEquals(true,result.isLeft());
+        assertThat(result.isLeft()).isTrue();
     }
 
     private List<ComponentInstancePropInput> getPropertiesListForDeclaration() {
@@ -478,13 +479,13 @@ public class InputsBusinessLogicTest {
         Either<List<InputDefinition>, ResponseFormat> result =
                 testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
         // validate result
-        assertEquals(true, result.isLeft());
+        assertThat(result.isLeft()).isTrue();
         List<InputDefinition> resultInputList = result.left().value();
         assertEquals(1, resultInputList.size());
         //InputDefinition resultInput = resultInputList.get(0);
         Map<String, DataTypeDefinition> captoredDataTypeMap = dataTypesMapCaptor.getValue();
         assertEquals(1, captoredDataTypeMap.size());
-        assertEquals(true, captoredDataTypeMap.containsKey(LISTINPUT_SCHEMA_TYPE));
+        assertThat(captoredDataTypeMap.containsKey(LISTINPUT_SCHEMA_TYPE)).isTrue();
         DataTypeDefinition captoredDataType = captoredDataTypeMap.get(LISTINPUT_SCHEMA_TYPE);
         assertEquals("tosca.datatypes.Root", captoredDataType.getDerivedFromName());
         assertEquals( propInputsList.size(), captoredDataType.getProperties().size());
@@ -492,7 +493,7 @@ public class InputsBusinessLogicTest {
         captoredDataType.getProperties().forEach(dataTypeProp -> {
             Optional<ComponentInstancePropInput> find = propInputsList.stream()
                     .filter(propInput -> propInput.getName().equals(dataTypeProp.getName())).findAny();
-            assertEquals(true, find.isPresent());
+            assertThat(find.isPresent()).isTrue();
         });
     }
 
@@ -565,7 +566,7 @@ public class InputsBusinessLogicTest {
 
         Either<List<InputDefinition>, ResponseFormat> result =
                 testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
-        assertEquals(true, result.isRight());
+        assertThat(result.isRight()).isTrue();
         verify(propertyOperation, times(1)).isPropertyTypeValid(any());
     }
 
@@ -588,7 +589,7 @@ public class InputsBusinessLogicTest {
 
         Either<List<InputDefinition>, ResponseFormat> result =
                 testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
-        assertEquals(true, result.isRight());
+        assertThat(result.isRight()).isTrue();
         verify(toscaOperationFacadeMock, times(1)).addInputsToComponent(anyMap(), eq(COMPONENT_ID));
     }
 
