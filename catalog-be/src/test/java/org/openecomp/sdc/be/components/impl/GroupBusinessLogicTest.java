@@ -134,7 +134,7 @@ public class GroupBusinessLogicTest {
         groupDefinitions.add(groupDefinition);
         when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         result = test.createGroups(component, groupDefinitions, true);
-        Assert.assertTrue(result.isRight());
+        assertThat(result.isRight()).isTrue();
     }
 
     @Test
@@ -154,7 +154,7 @@ public class GroupBusinessLogicTest {
         when(groupsOperation.createGroups(any(Component.class), anyMap())).thenReturn(Either.left(groupDefinitions));
         when(groupsOperation.addCalculatedCapabilitiesWithProperties(anyString(), anyMap(), anyMap())).thenReturn(StorageOperationStatus.OK);
         result = test.createGroups(component, groupDefinitions, true);
-        Assert.assertTrue(result.isLeft());
+        assertThat(result.isLeft()).isTrue();
     }
 
     @Test
@@ -171,7 +171,7 @@ public class GroupBusinessLogicTest {
         groupDefinitions.add(groupDefinition);
 
         result = test.validateUpdateVfGroupNamesOnGraph(groupDefinitions, component);
-        Assert.assertTrue(result.isLeft());
+        assertThat(result.isLeft()).isTrue();
     }
 
     @Test
@@ -224,7 +224,7 @@ public class GroupBusinessLogicTest {
         when(groupsOperation.addGroups(any(Resource.class), any())).thenReturn(Either.left(groupDefList));
         when(groupsOperation.addCalculatedCapabilitiesWithProperties(anyString(), anyMap(), anyMap())).thenReturn(StorageOperationStatus.OK);
         result = test.createGroup(componentId, compTypeEnum, grpType, userId);
-        assertThat(result.getClass().isInstance(GroupDefinition.class));
+        assertThat(result.getClass()).isAssignableFrom(GroupDefinition.class);
     }
 
     private PropertyDefinition buildProperty(String name, String defaultValue, String description) {

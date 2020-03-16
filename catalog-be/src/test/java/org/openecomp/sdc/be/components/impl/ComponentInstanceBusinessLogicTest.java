@@ -22,9 +22,8 @@ package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -216,11 +215,11 @@ public class ComponentInstanceBusinessLogicTest {
 
     @Test
     public void testIsCloudSpecificArtifact() {
-        assertTrue(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_1));
-        assertTrue(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_2));
-        assertTrue(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_3));
-        assertFalse(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_4));
-        assertFalse(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_5));
+        assertThat(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_1)).isTrue();
+        assertThat(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_2)).isTrue();
+        assertThat(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_3)).isTrue();
+        assertThat(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_4)).isFalse();
+        assertThat(componentInstanceBusinessLogic.isCloudSpecificArtifact(ARTIFACT_5)).isFalse();
     }
 
     private void getforwardingPathOnVersionChange() {
@@ -636,7 +635,7 @@ public class ComponentInstanceBusinessLogicTest {
             .getRelationById(COMPONENT_ID,
                 RELATION_ID, USER_ID,
                 component.getComponentType());
-        assertTrue(response.isLeft());
+        assertThat(response.isLeft()).isTrue();
     }
 
     private void getServiceRelationByIdUserValidationFailure(Component component) {
@@ -660,7 +659,7 @@ public class ComponentInstanceBusinessLogicTest {
             .getRelationById(COMPONENT_ID,
                 RELATION_ID, USER_ID,
                 component.getComponentType());
-        assertTrue(response.isRight());
+        assertThat(response.isRight()).isTrue();
     }
 
     private void stubMethods() {
@@ -768,7 +767,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         componentInstanceBusinessLogic = createTestSubject();
         result = componentInstanceBusinessLogic.changeServiceProxyVersion();
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -779,7 +778,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.createServiceProxy();
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -791,7 +790,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.deleteServiceProxy();
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -804,7 +803,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.getComponentInstanceInputsByInputId(component, inputId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -817,7 +816,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.getComponentInstancePropertiesByInputId(component, inputId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -832,7 +831,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.getRelationById(componentId, relationId, userId, componentTypeEnum);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -845,7 +844,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "validateParent", new Object[]{resource, nodeTemplateId});
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -856,7 +855,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "getComponentType", new Object[]{ComponentTypeEnum.class});
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -871,7 +870,7 @@ public class ComponentInstanceBusinessLogicTest {
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "getNewGroupName",
             new Object[]{oldPrefix, newNormailzedPrefix, qualifiedGroupInstanceName});
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -885,7 +884,7 @@ public class ComponentInstanceBusinessLogicTest {
         testSubject = createTestSubject();
         result = Deencapsulation
             .invoke(testSubject, "updateComponentInstanceMetadata", new Object[]{toInstance, toInstance});
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -920,18 +919,18 @@ public class ComponentInstanceBusinessLogicTest {
         result = testSubject
             .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
                 userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         componentTypeEnum = null;
         result = testSubject
             .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
                 userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         result = testSubject
             .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
                 userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -970,17 +969,17 @@ public class ComponentInstanceBusinessLogicTest {
         result = testSubject
             .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
                 userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
         componentTypeEnum = null;
         result = testSubject
             .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
                 userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         result = testSubject
             .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, resourceInstanceId, inputs,
                 userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -1003,17 +1002,17 @@ public class ComponentInstanceBusinessLogicTest {
         result = testSubject
             .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
                 groupInstanceId, property, userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
         componentTypeEnum = null;
         result = testSubject
             .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
                 groupInstanceId, property, userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         result = testSubject
             .createOrUpdateGroupInstancePropertyValue(componentTypeEnum, componentId, resourceInstanceId,
                 groupInstanceId, property, userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -1034,15 +1033,15 @@ public class ComponentInstanceBusinessLogicTest {
         testSubject = createTestSubject();
         result = testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId,
             userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
         componentTypeEnum = null;
         result = testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId,
             userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         result = testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId,
             userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -1053,7 +1052,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "getComponentParametersViewForForwardingPath");
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -1066,7 +1065,7 @@ public class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "getResourceInstanceById", new Object[]{resource, instanceId});
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -1088,11 +1087,11 @@ public class ComponentInstanceBusinessLogicTest {
         testSubject = createTestSubject();
         result = testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId,
             componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
         when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.left(resource));
         result = testSubject.updateInstanceCapabilityProperties(componentTypeEnum, containerComponentId,
             componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -1118,10 +1117,10 @@ public class ComponentInstanceBusinessLogicTest {
         result = componentInstanceBusinessLogic
             .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId,
                 USER_ID);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
-        assertThat(result.isRight());
+        assertThat(result.isRight()).isTrue();
     }
 
     @Test
@@ -1145,9 +1144,9 @@ public class ComponentInstanceBusinessLogicTest {
         Either<Component, StorageOperationStatus> getComponentRes = Either.left(resource);
         result = componentInstanceBusinessLogic
             .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId, USER_ID);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
         service.setLastUpdaterUserId(oldServiceLastUpdatedUserId);
-        assertThat(result.isRight());
+        assertThat(result.isRight()).isTrue();
     }
 
     @Test
@@ -1179,7 +1178,7 @@ public class ComponentInstanceBusinessLogicTest {
         result = componentInstanceBusinessLogic
             .copyComponentInstance(inputComponentInstance, containerComponentId, componentInstanceId,
                 USER_ID);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         service.setLastUpdaterUserId(oldServiceLastUpdatedUserId);
         resource.setLifecycleState(oldResourceLifeCycle);
@@ -1225,12 +1224,12 @@ public class ComponentInstanceBusinessLogicTest {
                     .getUniqueId(),
                 toInstance.getUniqueId(), attribute,
                 USER_ID);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
         service.setLifecycleState(oldLifeCycleState);
 
-        assertTrue(result.isLeft());
+        assertThat(result.isLeft()).isTrue();
         ComponentInstanceProperty resultProp = result.left().value();
         assertEquals(resultProp.getPath().size(), 1);
         assertEquals(resultProp.getPath().get(0), toInstance.getUniqueId());
@@ -1254,8 +1253,8 @@ public class ComponentInstanceBusinessLogicTest {
 
         Either<String, ResponseFormat> result = Deencapsulation.invoke(componentInstanceBusinessLogic,
             "updateComponentInstanceProperty", containerComponentId, componentInstanceId, property);
-        Assert.assertNotNull(result);
-        assertTrue(result.isLeft());
+        assertNotNull(result);
+        assertThat(result.isLeft()).isTrue();
     }
 
     @Test
@@ -1302,7 +1301,7 @@ public class ComponentInstanceBusinessLogicTest {
             result = componentInstanceBusinessLogic
                 .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
                     userId);
-            Assert.assertNotNull(result);
+            assertNotNull(result);
             assertEquals(deleteErrorMap, result);
         } catch (ComponentException e) {
             assertEquals(e.getActionStatus().toString(), StorageOperationStatus.GENERAL_ERROR.toString());
@@ -1331,7 +1330,7 @@ public class ComponentInstanceBusinessLogicTest {
             result = componentInstanceBusinessLogic
                 .batchDeleteComponentInstance(containerComponentParam, containerComponentId, componentInstanceIdList,
                     userId);
-            Assert.assertNotNull(result);
+            assertNotNull(result);
             assertEquals(deleteErrorMap, result);
         } catch (ComponentException e) {
             assertEquals(e.getActionStatus().toString(), StorageOperationStatus.GENERAL_ERROR.toString());
@@ -1371,7 +1370,7 @@ public class ComponentInstanceBusinessLogicTest {
         result = componentInstanceBusinessLogic
             .batchDeleteComponentInstance(containerComponentParam, containerComponentId,
                 componentInstanceIdList, userId);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
         service.setLifecycleState(oldLifeCycleState);
@@ -1418,7 +1417,7 @@ public class ComponentInstanceBusinessLogicTest {
         try {
             result = componentInstanceBusinessLogic
                 .batchDissociateRIFromRI(componentId, userId, requirementDefList, componentTypeEnum);
-            Assert.assertNotNull(result);
+            assertNotNull(result);
             assertEquals(new ArrayList<>(), result);
         } catch (ComponentException e) {
             assertEquals(e.getActionStatus().toString(), StorageOperationStatus.GENERAL_ERROR.toString());
@@ -1457,7 +1456,7 @@ public class ComponentInstanceBusinessLogicTest {
 
         result = componentInstanceBusinessLogic
             .batchDissociateRIFromRI(componentId, userId, requirementDefList, componentTypeEnum);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         service.setLastUpdaterUserId(oldLastUpdatedUserId);
         service.setLifecycleState(oldLifeCycleState);
@@ -1470,8 +1469,8 @@ public class ComponentInstanceBusinessLogicTest {
         Optional<ComponentInstanceProperty> propertyCandidate =
             getComponentInstanceProperty(PROP_NAME);
 
-        Assert.assertTrue(propertyCandidate.isPresent());
-        Assert.assertEquals(propertyCandidate.get().getName(), PROP_NAME);
+        assertThat(propertyCandidate.isPresent()).isTrue();
+        assertEquals(propertyCandidate.get().getName(), PROP_NAME);
     }
 
     @Test
@@ -1479,7 +1478,7 @@ public class ComponentInstanceBusinessLogicTest {
         Optional<ComponentInstanceProperty> propertyCandidate =
             getComponentInstanceProperty(NON_EXIST_NAME);
 
-        Assert.assertEquals(propertyCandidate, Optional.empty());
+        assertEquals(propertyCandidate, Optional.empty());
     }
 
     private Optional<ComponentInstanceProperty> getComponentInstanceProperty(String propertyName) {

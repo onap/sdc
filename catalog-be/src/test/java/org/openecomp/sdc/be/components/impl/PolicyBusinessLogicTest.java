@@ -19,7 +19,6 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import java.util.ArrayList;
-import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -78,14 +77,11 @@ import java.util.Map;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -180,7 +176,7 @@ public class PolicyBusinessLogicTest {
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(policySuccessEither);
         stubUnlockAndCommit();
         PolicyDefinition response = businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
-        assertTrue(!response.isEmpty());
+        assertThat(response.isEmpty()).isFalse();
     }
 
     @Test
@@ -215,7 +211,7 @@ public class PolicyBusinessLogicTest {
 
         Map<String, PolicyDefinition> createdPolicy = businessLogic.createPoliciesFromParsedCsar(newResource, policies);
 
-        assertFalse(createdPolicy.isEmpty());
+        assertThat(createdPolicy.isEmpty()).isFalse();
         PolicyDefinition newPolicy = createdPolicy.get(POLICY_NAME);
         assertNotNull(newPolicy);
         assertNotNull(newPolicy.getTargets());
@@ -237,7 +233,7 @@ public class PolicyBusinessLogicTest {
     }
 
     private void assertNotFound(Either<PolicyDefinition, ResponseFormat> response) {
-        assertTrue(response.isRight() && response.right().value().getStatus().equals(404));
+        assertThat(response.isRight() && response.right().value().getStatus().equals(404)).isTrue();
     }
 
     @Test(expected = ComponentException.class)
@@ -277,7 +273,7 @@ public class PolicyBusinessLogicTest {
         when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(policySuccessEither);
         stubUnlockAndCommit();
         PolicyDefinition  response = businessLogic.updatePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, otherPolicy, USER_ID, true);
-        assertTrue(!response.isEmpty());
+        assertThat(response.isEmpty()).isFalse();
     }
     
     @Test(expected = ComponentException.class)
@@ -292,7 +288,7 @@ public class PolicyBusinessLogicTest {
         stubValidationSuccess(CREATE_POLICY);
         stubCommit();
         PolicyDefinition response = businessLogic.getPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, USER_ID);
-        assertTrue(!response.isEmpty());
+        assertThat(response.isEmpty()).isFalse();
     }
     
     @Test(expected = ComponentException.class)
@@ -308,7 +304,7 @@ public class PolicyBusinessLogicTest {
         stubCommit();
         when(toscaOperationFacade.removePolicyFromComponent(eq(COMPONENT_ID),eq(POLICY_ID))).thenReturn(StorageOperationStatus.OK);
         PolicyDefinition  response = businessLogic.deletePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, USER_ID, true);
-        assertTrue(!response.isEmpty());
+        assertThat(response.isEmpty()).isFalse();
     }
     
     @Test(expected = ComponentException.class)
@@ -398,10 +394,10 @@ public class PolicyBusinessLogicTest {
                                                                                                   ComponentTypeEnum.RESOURCE,
                                                                                                   getInputForPropertyToPolicyDeclaration());
 
-        assertTrue(declaredPoliciesEither.isLeft());
+        assertThat(declaredPoliciesEither.isLeft()).isTrue();
 
         List<PolicyDefinition> declaredPolicies = declaredPoliciesEither.left().value();
-        assertTrue(CollectionUtils.isNotEmpty(declaredPolicies));
+        assertThat(CollectionUtils.isNotEmpty(declaredPolicies)).isTrue();
         assertEquals(1, declaredPolicies.size());
     }
 
