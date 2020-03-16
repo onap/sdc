@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,26 @@
 
 package org.openecomp.sdc.be.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-@EqualsAndHashCode
-public class CatalogUpdateTimestamp {
+import org.junit.Test;
 
-    @JsonProperty("previousUpdateTime")
-    private long previousUpdateTime;
-    @JsonProperty("currentUpdateTime")
-    private long currentUpdateTime;
+public class CatalogUpdateTimestampTest {
 
-    public static CatalogUpdateTimestamp buildDummyCatalogUpdateTimestamp() {
+    private CatalogUpdateTimestamp createTestSubject() {
         return new CatalogUpdateTimestamp(0L, System.currentTimeMillis());
+    }
+
+    @Test
+    public void testBuildDummyCatalogUpdateTimestamp() {
+        CatalogUpdateTimestamp testSubject;
+        CatalogUpdateTimestamp result;
+
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.buildDummyCatalogUpdateTimestamp();
+        assertNotNull(result);
     }
 
 }
