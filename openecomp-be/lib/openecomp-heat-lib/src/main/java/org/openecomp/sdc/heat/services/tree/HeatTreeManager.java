@@ -196,6 +196,7 @@ public class HeatTreeManager {
         if (parent == null) {
             parentHeatStructureTree = new HeatStructureTree();
             fileTreeRef.put(SdcCommon.PARENT, parentHeatStructureTree);
+            fileTreeRef.put(SdcCommon.MANIFEST_NAME, parentHeatStructureTree);
         } else {
             parentHeatStructureTree = fileTreeRef.get(parent);
         }

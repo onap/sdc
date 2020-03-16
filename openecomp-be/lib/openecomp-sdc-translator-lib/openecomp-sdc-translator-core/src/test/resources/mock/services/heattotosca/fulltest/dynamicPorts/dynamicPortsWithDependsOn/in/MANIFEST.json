@@ -4,6 +4,7 @@
   "version": "2013-05-23",
   "data": [
     {
+      "isBase": true,
       "file": "DPA3_New_VNF_TSBGv_base.yaml",
       "type": "HEAT"
     },

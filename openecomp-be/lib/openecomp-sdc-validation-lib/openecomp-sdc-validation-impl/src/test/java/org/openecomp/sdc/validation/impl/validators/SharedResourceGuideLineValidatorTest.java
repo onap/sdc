@@ -180,7 +180,7 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().get(0).getMessage(),
-        "WARNING: [SRG3]: Missing Base HEAT. Pay attention that without Base HEAT, there will be no shared resources");
+        "ERROR: [SRG3]: Missing Base HEAT. Pay attention that without Base HEAT, there will be no shared resources");
   }
 
   @Test
@@ -191,6 +191,6 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().get(0).getMessage(),
-        "WARNING: [SRG4]: Multi Base HEAT. Expected only one. Files [second.yaml,first.yaml].");
+        "ERROR: [SRG4]: Multi Base HEAT. Expected only one. Files [second.yaml,first.yaml].");
   }
 }

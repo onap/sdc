@@ -60,7 +60,7 @@ public class SharedResourceGuideLineValidator implements Validator {
       return;
     }
 
-    Set<String> baseFiles = validateManifest(manifestContent, globalContext);
+     Set<String> baseFiles = validateManifest(manifestContent, globalContext);
 
     Map<String, FileData.Type> fileTypeMap = ManifestUtil.getFileTypeMap(manifestContent);
     globalContext.getFiles().stream()
@@ -78,7 +78,7 @@ public class SharedResourceGuideLineValidator implements Validator {
     if (baseFiles == null || baseFiles.isEmpty()) {
       globalContext.addMessage(
           SdcCommon.MANIFEST_NAME,
-          ErrorLevel.WARNING,
+          ErrorLevel.ERROR,
           ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_SRG_3,Messages
                   .MISSIN_BASE_HEAT_FILE.getErrorMessage()));
@@ -86,7 +86,7 @@ public class SharedResourceGuideLineValidator implements Validator {
       String baseFileList = getElementListAsString(baseFiles);
       globalContext.addMessage(
           SdcCommon.MANIFEST_NAME,
-          ErrorLevel.WARNING,
+          ErrorLevel.ERROR,
           ErrorMessagesFormatBuilder
               .getErrorWithParameters(ERROR_CODE_SRG_4,Messages
                       .MULTI_BASE_HEAT_FILE.getErrorMessage(),
