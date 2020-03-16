@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8a4e7bb7_301d3695",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/CsarInfoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "yes, it is, as you can see from stackstrace\njava.lang.NullPointerException\n\tat org.openecomp.sdc.be.components.impl.ResponseFormatManager.getResponseFormat(ResponseFormatManager.java:49)\n\tat org.openecomp.sdc.be.components.impl.exceptions.ComponentException.\u003cinit\u003e(ComponentException.java:51)\n\tat org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException.\u003cinit\u003e(ByActionStatusComponentException.java:34)\n\tat org.openecomp.sdc.be.components.csar.CsarInfo.addNodeToQueue(CsarInfo.java:115)\n\tat org.openecomp.sdc.be.components.csar.CsarInfoTest.add2TimesTheSameNodeTest(CsarInfoTest.java:93)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)\n\tat org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat org.mockito.internal.runners.DefaultInternalRunner$1.run(DefaultInternalRunner.java:79)\n\tat org.mockito.internal.runners.DefaultInternalRunner.run(DefaultInternalRunner.java:85)\n\tat org.mockito.internal.runners.StrictRunner.run(StrictRunner.java:39)\n\tat org.mockito.junit.MockitoJUnitRunner.run(MockitoJUnitRunner.java:163)\n\tat org.junit.runner.JUnitCore.run(JUnitCore.java:137)\n\tat com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:68)\n\tat com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:33)\n\tat com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:230)\n\tat com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:58)",
+      "parentUuid": "781e64c0_588c349b",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "25a38cc5_17e80581",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogicTest.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2020-03-15T14:28:33Z",
       "side": 1,
       "message": "Again, what is the need to init a configuration manager?\nIs this class using configuration files?",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0eede246_3327910a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "25a38cc5_17e80581",
       "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "3341fe25_5ff83c27",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyPropertiesBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "7ca74361_bcdb981a",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8979a112_2927cd3c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2020-03-15T14:28:33Z",
       "side": 1,
       "message": "Why here we are not using this line - \n\nnew ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), \"src/test/resources/config/catalog-be\"));\n\nAs we use before in all cases.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f8e93ecd_d0cae569",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8979a112_2927cd3c",
       "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a103bc87_2fdaa1ab",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/exceptions/ComponentExceptionTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "d1745a8a_438ac466",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "33c6f935_3d538eac",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceCapabilitiesPropertiesMergeTest.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2020-03-15T14:28:33Z",
       "side": 1,
       "message": "Again.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8aeca86c_1a74ed7c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceCapabilitiesPropertiesMergeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "33c6f935_3d538eac",
       "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "f379d584_8fa0ee5c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceMergeDataBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "52ba1f7c_30a34e8a",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5dc56d11_c0ded3fe",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstancePropsAndInputsMergeTest.java",
         "patchSetId": 3
@@ -132,6 +258,24 @@
       "writtenOn": "2020-03-15T14:28:33Z",
       "side": 1,
       "message": "Again, this class doesn\u0027t need configuration.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05efdc11_85e766b3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstancePropsAndInputsMergeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "looks like stacktrace disagrees with you\n/usr/lib/jvm/java-8-openjdk-amd64/bin/java -ea -Djacoco-agent.destfile\u003d/home/vasyl/workspace/sdc/catalog-be/target/jacoco.exec -Didea.test.cyclic.buffer.size\u003d1048576 -javaagent:/opt/idea-IU-192.6817.14/lib/idea_rt.jar\u003d33711:/opt/idea-IU-192.6817.14/bin -Dfile.encoding\u003dUTF-8 -classpath /opt/idea-IU-192.6817.14/lib/idea_rt.jar:/opt/idea-IU-192.6817.14/plugins/junit/lib/junit5-rt.jar:/opt/idea-IU-192.6817.14/plugins/junit/lib/junit-rt.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/charsets.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/cldrdata.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/dnsns.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/icedtea-sound.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/jaccess.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/java-atk-wrapper.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/localedata.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/nashorn.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunec.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunjce_provider.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/sunpkcs11.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext/zipfs.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jsse.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/management-agent.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/resources.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar:/home/vasyl/workspace/sdc/catalog-be/target/test-classes:/home/vasyl/workspace/sdc/catalog-be/target/classes:/home/vasyl/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.9/jackson-dataformat-yaml-2.9.9.jar:/home/vasyl/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.9.8/jackson-core-2.9.8.jar:/home/vasyl/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.9.9/jackson-databind-2.9.9.jar:/home/vasyl/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.9.0/jackson-annotations-2.9.0.jar:/home/vasyl/workspace/sdc/common/onap-generic-artifact-browser/onap-generic-artifact-browser-service/target/classes:/home/vasyl/.m2/repository/com/github/jsurfer/jsurfer-gson/1.4.3/jsurfer-gson-1.4.3.jar:/home/vasyl/.m2/repository/com/github/jsurfer/jsurfer-core/1.4.3/jsurfer-core-1.4.3.jar:/home/vasyl/.m2/repository/org/antlr/antlr4-runtime/4.7.1/antlr4-runtime-4.7.1.jar:/home/vasyl/.m2/repository/commons-io/commons-io/2.5/commons-io-2.5.jar:/home/vasyl/.m2/repository/io/swagger/core/v3/swagger-annotations/2.0.8/swagger-annotations-2.0.8.jar:/home/vasyl/.m2/repository/io/swagger/swagger-jersey2-jaxrs/1.5.22/swagger-jersey2-jaxrs-1.5.22.jar:/home/vasyl/.m2/repository/io/swagger/swagger-jaxrs/1.5.22/swagger-jaxrs-1.5.22.jar:/home/vasyl/.m2/repository/io/swagger/swagger-core/1.5.22/swagger-core-1.5.22.jar:/home/vasyl/.m2/repository/io/swagger/swagger-models/1.5.22/swagger-models-1.5.22.jar:/home/vasyl/.m2/repository/io/swagger/swagger-annotations/1.5.22/swagger-annotations-1.5.22.jar:/home/vasyl/workspace/sdc/common-app-api/target/classes:/home/vasyl/.m2/repository/org/projectlombok/lombok/1.18.2/lombok-1.18.2.jar:/home/vasyl/.m2/repository/org/jsoup/jsoup/1.8.3/jsoup-1.8.3.jar:/home/vasyl/.m2/repository/commons-validator/commons-validator/1.6/commons-validator-1.6.jar:/home/vasyl/.m2/repository/commons-digester/commons-digester/1.8.1/commons-digester-1.8.1.jar:/home/vasyl/.m2/repository/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar:/home/vasyl/.m2/repository/org/codehaus/jettison/jettison/1.3.3/jettison-1.3.3.jar:/home/vasyl/.m2/repository/stax/stax-api/1.0.1/stax-api-1.0.1.jar:/home/vasyl/.m2/repository/de/ruedigermoeller/fst/2.47/fst-2.47.jar:/home/vasyl/.m2/repository/org/javassist/javassist/3.19.0-GA/javassist-3.19.0-GA.jar:/home/vasyl/workspace/sdc/common-app-logging/target/classes:/home/vasyl/.m2/repository/org/onap/logging-analytics/logging-filter-base/1.6.1/logging-filter-base-1.6.1.jar:/home/vasyl/workspace/sdc/common-be/target/classes:/home/vasyl/.m2/repository/org/onap/sdc/sdc-tosca/sdc-tosca/1.6.5/sdc-tosca-1.6.5.jar:/home/vasyl/.m2/repository/org/onap/sdc/jtosca/jtosca/1.6.0/jtosca-1.6.0.jar:/home/vasyl/.m2/repository/org/togglz/togglz-core/2.4.1.Final/togglz-core-2.4.1.Final.jar:/home/vasyl/.m2/repository/org/togglz/togglz-servlet/2.4.1.Final/togglz-servlet-2.4.1.Final.jar:/home/vasyl/.m2/repository/org/togglz/togglz-console/2.4.1.Final/togglz-console-2.4.1.Final.jar:/home/vasyl/workspace/sdc/common-be/target/test-classes:/home/vasyl/workspace/sdc/catalog-dao/target/classes:/home/vasyl/.m2/repository/org/aspectj/aspectjweaver/1.7.4/aspectjweaver-1.7.4.jar:/home/vasyl/.m2/repository/org/apache/lucene/lucene-regex/3.0.3/lucene-regex-3.0.3.jar:/home/vasyl/.m2/repository/jakarta-regexp/jakarta-regexp/1.4/jakarta-regexp-1.4.jar:/home/vasyl/.m2/repository/org/apache/lucene/lucene-core/3.0.3/lucene-core-3.0.3.jar:/home/vasyl/workspace/sdc/catalog-model/target/classes:/home/vasyl/.m2/repository/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar:/home/vasyl/.m2/repository/org/hibernate/hibernate-validator/5.3.6.Final/hibernate-validator-5.3.6.Final.jar:/home/vasyl/.m2/repository/org/jboss/logging/jboss-logging/3.3.0.Final/jboss-logging-3.3.0.Final.jar:/home/vasyl/.m2/repository/com/fasterxml/classmate/1.3.1/classmate-1.3.1.jar:/home/vasyl/.m2/repository/io/netty/netty-all/4.1.36.Final/netty-all-4.1.36.Final.jar:/home/vasyl/.m2/repository/joda-time/joda-time/2.9.9/joda-time-2.9.9.jar:/home/vasyl/.m2/repository/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar:/home/vasyl/.m2/repository/ch/qos/logback/logback-core/1.2.3/logback-core-1.2.3.jar:/home/vasyl/.m2/repository/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar:/home/vasyl/.m2/repository/org/yaml/snakeyaml/1.14/snakeyaml-1.14.jar:/home/vasyl/.m2/repository/org/apache/commons/commons-jci-core/1.1/commons-jci-core-1.1.jar:/home/vasyl/.m2/repository/org/apache/commons/commons-jci-fam/1.1/commons-jci-fam-1.1.jar:/home/vasyl/.m2/repository/com/google/code/gson/gson/2.3.1/gson-2.3.1.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/media/jersey-media-json-jackson/2.27/jersey-media-json-jackson-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/core/jersey-common/2.27/jersey-common-2.27.jar:/home/vasyl/.m2/repository/javax/annotation/javax.annotation-api/1.2/javax.annotation-api-1.2.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/osgi-resource-locator/1.0.1/osgi-resource-locator-1.0.1.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/ext/jersey-entity-filtering/2.27/jersey-entity-filtering-2.27.jar:/home/vasyl/.m2/repository/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.8.10/jackson-module-jaxb-annotations-2.8.10.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/containers/jersey-container-servlet-core/2.27/jersey-container-servlet-core-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/external/javax.inject/2.5.0-b42/javax.inject-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/core/jersey-server/2.27/jersey-server-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/media/jersey-media-jaxb/2.27/jersey-media-jaxb-2.27.jar:/home/vasyl/.m2/repository/javax/ws/rs/javax.ws.rs-api/2.1/javax.ws.rs-api-2.1.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/media/jersey-media-multipart/2.27/jersey-media-multipart-2.27.jar:/home/vasyl/.m2/repository/org/jvnet/mimepull/mimepull/1.9.6/mimepull-1.9.6.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/ext/jersey-spring4/2.27/jersey-spring4-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/inject/jersey-hk2/2.27/jersey-hk2-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/hk2-locator/2.5.0-b42/hk2-locator-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/external/aopalliance-repackaged/2.5.0-b42/aopalliance-repackaged-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/hk2/2.5.0-b42/hk2-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/hk2-utils/2.5.0-b42/hk2-utils-2.5.0-b42.jar:/home/vasyl/.m2/repository/javax/inject/javax.inject/1/javax.inject-1.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/hk2-api/2.5.0-b42/hk2-api-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/config-types/2.5.0-b42/config-types-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/hk2-core/2.5.0-b42/hk2-core-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/hk2-config/2.5.0-b42/hk2-config-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/jvnet/tiger-types/1.4/tiger-types-1.4.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/hk2-runlevel/2.5.0-b42/hk2-runlevel-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/class-model/2.5.0-b42/class-model-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/spring-bridge/2.5.0-b42/spring-bridge-2.5.0-b42.jar:/home/vasyl/.m2/repository/org/glassfish/hk2/external/asm-all-repackaged/2.4.0/asm-all-repackaged-2.4.0.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/ext/jersey-bean-validation/2.27/jersey-bean-validation-2.27.jar:/home/vasyl/.m2/repository/javax/el/javax.el-api/2.2.4/javax.el-api-2.2.4.jar:/home/vasyl/.m2/repository/org/glassfish/web/javax.el/2.2.4/javax.el-2.2.4.jar:/home/vasyl/.m2/repository/org/apache/httpcomponents/httpclient/4.5.3/httpclient-4.5.3.jar:/home/vasyl/.m2/repository/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1.jar:/home/vasyl/.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar:/home/vasyl/.m2/repository/commons-codec/commons-codec/1.10/commons-codec-1.10.jar:/home/vasyl/.m2/repository/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar:/home/vasyl/.m2/repository/org/eclipse/jgit/org.eclipse.jgit/3.4.1.201406201815-r/org.eclipse.jgit-3.4.1.201406201815-r.jar:/home/vasyl/.m2/repository/com/jcraft/jsch/0.1.50/jsch-0.1.50.jar:/home/vasyl/.m2/repository/com/googlecode/javaewah/JavaEWAH/0.7.9/JavaEWAH-0.7.9.jar:/home/vasyl/.m2/repository/org/springframework/spring-core/4.3.18.RELEASE/spring-core-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/spring-context/4.3.18.RELEASE/spring-context-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/spring-web/4.3.18.RELEASE/spring-web-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/spring-webmvc/4.3.18.RELEASE/spring-webmvc-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/spring-aop/4.3.18.RELEASE/spring-aop-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/spring-beans/4.3.18.RELEASE/spring-beans-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/spring-expression/4.3.18.RELEASE/spring-expression-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/org/togglz/togglz-spring-web/2.4.1.Final/togglz-spring-web-2.4.1.Final.jar:/home/vasyl/.m2/repository/org/togglz/togglz-spring-core/2.4.1.Final/togglz-spring-core-2.4.1.Final.jar:/home/vasyl/.m2/repository/org/codehaus/janino/janino/3.0.6/janino-3.0.6.jar:/home/vasyl/.m2/repository/org/codehaus/janino/commons-compiler/3.0.6/commons-compiler-3.0.6.jar:/home/vasyl/.m2/repository/com/google/guava/guava/18.0/guava-18.0.jar:/home/vasyl/.m2/repository/org/janusgraph/janusgraph-core/0.3.1/janusgraph-core-0.3.1.jar:/home/vasyl/.m2/repository/org/apache/tinkerpop/gremlin-core/3.3.3/gremlin-core-3.3.3.jar:/home/vasyl/.m2/repository/org/apache/tinkerpop/gremlin-shaded/3.3.3/gremlin-shaded-3.3.3.jar:/home/vasyl/.m2/repository/org/javatuples/javatuples/1.2/javatuples-1.2.jar:/home/vasyl/.m2/repository/com/jcabi/jcabi-manifests/1.1/jcabi-manifests-1.1.jar:/home/vasyl/.m2/repository/com/squareup/javapoet/1.8.0/javapoet-1.8.0.jar:/home/vasyl/.m2/repository/net/objecthunter/exp4j/0.4.8/exp4j-0.4.8.jar:/home/vasyl/.m2/repository/org/slf4j/jcl-over-slf4j/1.7.21/jcl-over-slf4j-1.7.21.jar:/home/vasyl/.m2/repository/org/apache/tinkerpop/gremlin-groovy/3.3.3/gremlin-groovy-3.3.3.jar:/home/vasyl/.m2/repository/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy/2.4.15/groovy-2.4.15-indy.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy-groovysh/2.4.15/groovy-groovysh-2.4.15-indy.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy-console/2.4.15/groovy-console-2.4.15.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy-swing/2.4.15/groovy-swing-2.4.15.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy-templates/2.4.15/groovy-templates-2.4.15.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy-xml/2.4.15/groovy-xml-2.4.15.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy-json/2.4.15/groovy-json-2.4.15-indy.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy-jsr223/2.4.15/groovy-jsr223-2.4.15-indy.jar:/home/vasyl/.m2/repository/org/mindrot/jbcrypt/0.4/jbcrypt-0.4.jar:/home/vasyl/.m2/repository/com/github/ben-manes/caffeine/caffeine/2.3.1/caffeine-2.3.1.jar:/home/vasyl/.m2/repository/org/apache/tinkerpop/tinkergraph-gremlin/3.3.3/tinkergraph-gremlin-3.3.3.jar:/home/vasyl/.m2/repository/org/glassfish/javax.json/1.0/javax.json-1.0.jar:/home/vasyl/.m2/repository/com/codahale/metrics/metrics-core/3.0.1/metrics-core-3.0.1.jar:/home/vasyl/.m2/repository/com/codahale/metrics/metrics-ganglia/3.0.1/metrics-ganglia-3.0.1.jar:/home/vasyl/.m2/repository/info/ganglia/gmetric4j/gmetric4j/1.0.3/gmetric4j-1.0.3.jar:/home/vasyl/.m2/repository/com/codahale/metrics/metrics-graphite/3.0.1/metrics-graphite-3.0.1.jar:/home/vasyl/.m2/repository/org/reflections/reflections/0.9.9-RC1/reflections-0.9.9-RC1.jar:/home/vasyl/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:/home/vasyl/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:/home/vasyl/.m2/repository/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar:/home/vasyl/.m2/repository/org/locationtech/jts/jts-core/1.15.0/jts-core-1.15.0.jar:/home/vasyl/.m2/repository/commons-configuration/commons-configuration/1.10/commons-configuration-1.10.jar:/home/vasyl/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar:/home/vasyl/.m2/repository/com/carrotsearch/hppc/0.7.1/hppc-0.7.1.jar:/home/vasyl/.m2/repository/com/github/stephenc/high-scale-lib/high-scale-lib/1.1.4/high-scale-lib-1.1.4.jar:/home/vasyl/.m2/repository/com/google/code/findbugs/jsr305/3.0.0/jsr305-3.0.0.jar:/home/vasyl/.m2/repository/org/noggit/noggit/0.6/noggit-0.6.jar:/home/vasyl/.m2/repository/org/apache/commons/commons-text/1.0/commons-text-1.0.jar:/home/vasyl/.m2/repository/org/janusgraph/janusgraph-cql/0.3.1/janusgraph-cql-0.3.1.jar:/home/vasyl/.m2/repository/io/vavr/vavr/0.9.0/vavr-0.9.0.jar:/home/vasyl/.m2/repository/io/vavr/vavr-match/0.9.0/vavr-match-0.9.0.jar:/home/vasyl/.m2/repository/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar:/home/vasyl/.m2/repository/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1.jar:/home/vasyl/.m2/repository/org/functionaljava/functionaljava/4.7/functionaljava-4.7.jar:/home/vasyl/.m2/repository/com/jcabi/jcabi-aspects/0.20.1/jcabi-aspects-0.20.1.jar:/home/vasyl/.m2/repository/com/jcabi/jcabi-log/0.15/jcabi-log-0.15.jar:/home/vasyl/.m2/repository/org/aspectj/aspectjrt/1.8.4/aspectjrt-1.8.4.jar:/home/vasyl/.m2/repository/com/att/nsa/cambriaClient/1.2.1-oss/cambriaClient-1.2.1-oss.jar:/home/vasyl/.m2/repository/org/json/json/20131018/json-20131018.jar:/home/vasyl/.m2/repository/com/datastax/cassandra/cassandra-driver-core/3.6.0/cassandra-driver-core-3.6.0.jar:/home/vasyl/.m2/repository/io/dropwizard/metrics/metrics-core/3.2.2/metrics-core-3.2.2.jar:/home/vasyl/.m2/repository/com/github/jnr/jnr-ffi/2.1.7/jnr-ffi-2.1.7.jar:/home/vasyl/.m2/repository/com/github/jnr/jffi/1.2.16/jffi-1.2.16.jar:/home/vasyl/.m2/repository/com/github/jnr/jffi/1.2.16/jffi-1.2.16-native.jar:/home/vasyl/.m2/repository/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar:/home/vasyl/.m2/repository/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar:/home/vasyl/.m2/repository/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar:/home/vasyl/.m2/repository/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar:/home/vasyl/.m2/repository/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar:/home/vasyl/.m2/repository/com/github/jnr/jnr-x86asm/1.0.2/jnr-x86asm-1.0.2.jar:/home/vasyl/.m2/repository/com/github/jnr/jnr-posix/3.0.44/jnr-posix-3.0.44.jar:/home/vasyl/.m2/repository/com/github/jnr/jnr-constants/0.9.9/jnr-constants-0.9.9.jar:/home/vasyl/.m2/repository/com/datastax/cassandra/cassandra-driver-mapping/3.6.0/cassandra-driver-mapping-3.6.0.jar:/home/vasyl/.m2/repository/org/apache/thrift/libthrift/0.12.0/libthrift-0.12.0.jar:/home/vasyl/.m2/repository/org/onap/portal/sdk/epsdk-fw/2.6.0/epsdk-fw-2.6.0.jar:/home/vasyl/.m2/repository/org/owasp/esapi/esapi/2.1.0.1/esapi-2.1.0.1.jar:/home/vasyl/.m2/repository/commons-fileupload/commons-fileupload/1.3.1/commons-fileupload-1.3.1.jar:/home/vasyl/.m2/repository/xom/xom/1.2.5/xom-1.2.5.jar:/home/vasyl/.m2/repository/org/owasp/antisamy/antisamy/1.5.3/antisamy-1.5.3.jar:/home/vasyl/.m2/repository/net/sourceforge/nekohtml/nekohtml/1.9.16/nekohtml-1.9.16.jar:/home/vasyl/.m2/repository/org/apache/xmlgraphics/batik-css/1.8/batik-css-1.8.jar:/home/vasyl/.m2/repository/org/apache/xmlgraphics/batik-ext/1.8/batik-ext-1.8.jar:/home/vasyl/.m2/repository/org/apache/xmlgraphics/batik-util/1.8/batik-util-1.8.jar:/home/vasyl/.m2/repository/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-proxy/9.4.18.v20190429/jetty-proxy-9.4.18.v20190429.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-util/9.4.18.v20190429/jetty-util-9.4.18.v20190429.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-client/9.4.18.v20190429/jetty-client-9.4.18.v20190429.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-servlets/9.4.18.v20190429/jetty-servlets-9.4.18.v20190429.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-continuation/9.4.18.v20190429/jetty-continuation-9.4.18.v20190429.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-http/9.4.14.v20181114/jetty-http-9.4.14.v20181114.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-io/9.4.18.v20190429/jetty-io-9.4.18.v20190429.jar:/home/vasyl/.m2/repository/org/fusesource/sigar/1.6.4/sigar-1.6.4.jar:/home/vasyl/.m2/repository/log4j/log4j/1.2.15/log4j-1.2.15.jar:/home/vasyl/.m2/repository/org/onap/dmaap/messagerouter/dmaapclient/dmaapClient/1.1.3/dmaapClient-1.1.3.jar:/home/vasyl/.m2/repository/org/apache/httpcomponents/httpclient-cache/4.5.3/httpclient-cache-4.5.3.jar:/home/vasyl/.m2/repository/com/att/nsa/saClientLibrary/0.0.1/saClientLibrary-0.0.1.jar:/home/vasyl/.m2/repository/com/att/nsa/saToolkit/0.0.1/saToolkit-0.0.1.jar:/home/vasyl/.m2/repository/jline/jline/2.12.1/jline-2.12.1.jar:/home/vasyl/.m2/repository/log4j/apache-log4j-extras/1.2.17/apache-log4j-extras-1.2.17.jar:/home/vasyl/.m2/repository/com/att/aft/dme2/3.1.200-oss/dme2-3.1.200-oss.jar:/home/vasyl/.m2/repository/javax/jms/jms/1.1/jms-1.1.jar:/home/vasyl/.m2/repository/org/onap/aaf/authz/aaf-cadi-aaf/2.1.8/aaf-cadi-aaf-2.1.8.jar:/home/vasyl/.m2/repository/org/onap/aaf/authz/aaf-auth-client/2.1.8/aaf-auth-client-2.1.8.jar:/home/vasyl/.m2/repository/org/onap/aaf/authz/aaf-cadi-client/2.1.8/aaf-cadi-client-2.1.8.jar:/home/vasyl/.m2/repository/org/onap/aaf/authz/aaf-misc-rosetta/2.1.8/aaf-misc-rosetta-2.1.8.jar:/home/vasyl/.m2/repository/org/onap/aaf/authz/aaf-misc-env/2.1.8/aaf-misc-env-2.1.8.jar:/home/vasyl/.m2/repository/org/onap/aaf/authz/aaf-cadi-core/2.1.8/aaf-cadi-core-2.1.8.jar:/home/vasyl/.m2/repository/org/assertj/assertj-core/3.10.0/assertj-core-3.10.0.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/test-framework/providers/jersey-test-framework-provider-grizzly2/2.27/jersey-test-framework-provider-grizzly2-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/test-framework/jersey-test-framework-core/2.27/jersey-test-framework-core-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/containers/jersey-container-grizzly2-http/2.27/jersey-container-grizzly2-http-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/grizzly/grizzly-http-server/2.4.0/grizzly-http-server-2.4.0.jar:/home/vasyl/.m2/repository/org/glassfish/grizzly/grizzly-http/2.4.0/grizzly-http-2.4.0.jar:/home/vasyl/.m2/repository/org/glassfish/grizzly/grizzly-framework/2.4.0/grizzly-framework-2.4.0.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/containers/jersey-container-grizzly2-servlet/2.27/jersey-container-grizzly2-servlet-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/containers/jersey-container-servlet/2.27/jersey-container-servlet-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/grizzly/grizzly-http-servlet/2.4.0/grizzly-http-servlet-2.4.0.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/test-framework/providers/jersey-test-framework-provider-inmemory/2.27/jersey-test-framework-provider-inmemory-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/test-framework/providers/jersey-test-framework-provider-external/2.27/jersey-test-framework-provider-external-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/test-framework/providers/jersey-test-framework-provider-jdk-http/2.27/jersey-test-framework-provider-jdk-http-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/containers/jersey-container-jdk-http/2.27/jersey-container-jdk-http-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/test-framework/providers/jersey-test-framework-provider-simple/2.27/jersey-test-framework-provider-simple-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/containers/jersey-container-simple-http/2.27/jersey-container-simple-http-2.27.jar:/home/vasyl/.m2/repository/org/simpleframework/simple-http/6.0.1/simple-http-6.0.1.jar:/home/vasyl/.m2/repository/org/simpleframework/simple-transport/6.0.1/simple-transport-6.0.1.jar:/home/vasyl/.m2/repository/org/simpleframework/simple-common/6.0.1/simple-common-6.0.1.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/test-framework/providers/jersey-test-framework-provider-jetty/2.27/jersey-test-framework-provider-jetty-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/containers/jersey-container-jetty-http/2.27/jersey-container-jetty-http-2.27.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-server/9.4.14.v20181114/jetty-server-9.4.14.v20181114.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/test-framework/providers/jersey-test-framework-provider-netty/2.27/jersey-test-framework-provider-netty-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/containers/jersey-container-netty-http/2.27/jersey-container-netty-http-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/connectors/jersey-netty-connector/2.27/jersey-netty-connector-2.27.jar:/home/vasyl/.m2/repository/org/glassfish/jersey/core/jersey-client/2.27/jersey-client-2.27.jar:/home/vasyl/.m2/repository/com/github/tomakehurst/wiremock-standalone/2.18.0/wiremock-standalone-2.18.0.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-webapp/9.4.18.v20190429/jetty-webapp-9.4.18.v20190429.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-xml/9.4.18.v20190429/jetty-xml-9.4.18.v20190429.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-servlet/9.4.14.v20181114/jetty-servlet-9.4.14.v20181114.jar:/home/vasyl/.m2/repository/org/eclipse/jetty/jetty-security/9.4.14.v20181114/jetty-security-9.4.14.v20181114.jar:/home/vasyl/.m2/repository/junit/junit/4.12/junit-4.12.jar:/home/vasyl/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/vasyl/.m2/repository/org/mockito/mockito-core/2.18.3/mockito-core-2.18.3.jar:/home/vasyl/.m2/repository/net/bytebuddy/byte-buddy/1.8.5/byte-buddy-1.8.5.jar:/home/vasyl/.m2/repository/net/bytebuddy/byte-buddy-agent/1.8.5/byte-buddy-agent-1.8.5.jar:/home/vasyl/.m2/repository/org/objenesis/objenesis/2.6/objenesis-2.6.jar:/home/vasyl/.m2/repository/org/springframework/spring-test/4.3.18.RELEASE/spring-test-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/spring-tx/4.3.18.RELEASE/spring-tx-4.3.18.RELEASE.jar:/home/vasyl/.m2/repository/io/cucumber/cucumber-java/2.4.0/cucumber-java-2.4.0.jar:/home/vasyl/.m2/repository/io/cucumber/cucumber-core/2.4.0/cucumber-core-2.4.0.jar:/home/vasyl/.m2/repository/info/cukes/cucumber-html/0.2.6/cucumber-html-0.2.6.jar:/home/vasyl/.m2/repository/io/cucumber/cucumber-jvm-deps/1.0.6/cucumber-jvm-deps-1.0.6.jar:/home/vasyl/.m2/repository/io/cucumber/gherkin/5.0.0/gherkin-5.0.0.jar:/home/vasyl/.m2/repository/io/cucumber/tag-expressions/1.1.1/tag-expressions-1.1.1.jar:/home/vasyl/.m2/repository/io/cucumber/cucumber-junit/2.4.0/cucumber-junit-2.4.0.jar:/home/vasyl/.m2/repository/org/jmockit/jmockit/1.33/jmockit-1.33.jar:/home/vasyl/.m2/repository/com/google/code/bean-matchers/bean-matchers/0.11/bean-matchers-0.11.jar:/home/vasyl/.m2/repository/org/hamcrest/java-hamcrest/2.0.0.0/java-hamcrest-2.0.0.0.jar:/home/vasyl/.m2/repository/org/codehaus/groovy/groovy/2.4.8/groovy-2.4.8.jar:/home/vasyl/.m2/repository/io/netty/netty-handler/4.1.36.Final/netty-handler-4.1.36.Final.jar:/home/vasyl/.m2/repository/io/netty/netty-common/4.1.36.Final/netty-common-4.1.36.Final.jar:/home/vasyl/.m2/repository/io/netty/netty-buffer/4.1.36.Final/netty-buffer-4.1.36.Final.jar:/home/vasyl/.m2/repository/io/netty/netty-transport/4.1.36.Final/netty-transport-4.1.36.Final.jar:/home/vasyl/.m2/repository/io/netty/netty-resolver/4.1.36.Final/netty-resolver-4.1.36.Final.jar:/home/vasyl/.m2/repository/io/netty/netty-codec/4.1.36.Final/netty-codec-4.1.36.Final.jar:/home/vasyl/workspace/sdc/common/onap-tosca-datatype/target/classes:/home/vasyl/.m2/repository/commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar:/home/vasyl/.m2/repository/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar:/home/vasyl/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar:/home/vasyl/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar:/home/vasyl/.m2/repository/org/onap/sdc/sdc-be-common/security-util-lib/1.6.0/security-util-lib-1.6.0.jar:/home/vasyl/.m2/repository/org/onap/logging-analytics/logging-slf4j/1.5.0/logging-slf4j-1.5.0.jar:/home/vasyl/.m2/repository/org/powermock/powermock-module-junit4/1.6.4/powermock-module-junit4-1.6.4.jar:/home/vasyl/.m2/repository/org/powermock/powermock-module-junit4-common/1.6.4/powermock-module-junit4-common-1.6.4.jar:/home/vasyl/.m2/repository/org/powermock/powermock-core/1.6.4/powermock-core-1.6.4.jar:/home/vasyl/.m2/repository/org/powermock/powermock-reflect/1.6.4/powermock-reflect-1.6.4.jar:/home/vasyl/.m2/repository/org/springframework/boot/spring-boot-starter/2.1.5.RELEASE/spring-boot-starter-2.1.5.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/boot/spring-boot/2.1.5.RELEASE/spring-boot-2.1.5.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/2.1.5.RELEASE/spring-boot-autoconfigure-2.1.5.RELEASE.jar:/home/vasyl/.m2/repository/org/springframework/boot/spring-boot-starter-logging/2.1.5.RELEASE/spring-boot-starter-logging-2.1.5.RELEASE.jar:/home/vasyl/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.11.2/log4j-to-slf4j-2.11.2.jar:/home/vasyl/.m2/repository/org/apache/logging/log4j/log4j-api/2.11.2/log4j-api-2.11.2.jar:/home/vasyl/.m2/repository/org/slf4j/jul-to-slf4j/1.7.26/jul-to-slf4j-1.7.26.jar:/home/vasyl/.m2/repository/org/jacoco/org.jacoco.agent/0.8.1/org.jacoco.agent-0.8.1-runtime.jar com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit4 org.openecomp.sdc.be.components.merge.instance.ComponentInstancePropsAndInputsMergeTest\n\njava.lang.Exception: Unexpected exception, expected\u003corg.openecomp.sdc.be.components.impl.exceptions.ComponentException\u003e but was\u003cjava.lang.NullPointerException\u003e\n\n\tat org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:28)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)\n\tat org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat org.junit.runner.JUnitCore.run(JUnitCore.java:137)\n\tat com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:68)\n\tat com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:33)\n\tat com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:230)\n\tat com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:58)\nCaused by: java.lang.NullPointerException\n\tat org.openecomp.sdc.be.components.impl.ResponseFormatManager.getResponseFormat(ResponseFormatManager.java:49)\n\tat org.openecomp.sdc.be.components.impl.exceptions.ComponentException.\u003cinit\u003e(ComponentException.java:51)\n\tat org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException.\u003cinit\u003e(ByActionStatusComponentException.java:34)\n\tat org.openecomp.sdc.be.components.merge.instance.ComponentInstancePropsAndInputsMerge.mergeDataAfterCreate(ComponentInstancePropsAndInputsMerge.java:87)\n\tat org.openecomp.sdc.be.components.merge.instance.ComponentInstancePropsAndInputsMergeTest.mergeDataAfterCreate_mergeInputs_FailedToFetchResource(ComponentInstancePropsAndInputsMergeTest.java:163)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)\n\tat org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:19)\n\t... 15 more\n\n\njava.lang.Exception: Unexpected exception, expected\u003corg.openecomp.sdc.be.components.impl.exceptions.ComponentException\u003e but was\u003cjava.lang.NullPointerException\u003e\n\n\tat org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:28)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)\n\tat org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat org.junit.runner.JUnitCore.run(JUnitCore.java:137)\n\tat com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:68)\n\tat com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:33)\n\tat com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:230)\n\tat com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:58)\nCaused by: java.lang.NullPointerException\n\tat org.openecomp.sdc.be.components.impl.ResponseFormatManager.getResponseFormat(ResponseFormatManager.java:49)\n\tat org.openecomp.sdc.be.components.impl.exceptions.ComponentException.\u003cinit\u003e(ComponentException.java:51)\n\tat org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException.\u003cinit\u003e(ByActionStatusComponentException.java:34)\n\tat org.openecomp.sdc.be.components.merge.instance.ComponentInstancePropsAndInputsMerge.mergeDataAfterCreate(ComponentInstancePropsAndInputsMerge.java:77)\n\tat org.openecomp.sdc.be.components.merge.instance.ComponentInstancePropsAndInputsMergeTest.mergeDataAfterCreate_failedToMergeComponentInstanceInputs(ComponentInstancePropsAndInputsMergeTest.java:138)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)\n\tat org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:19)\n\t... 15 more\n\n\njava.lang.Exception: Unexpected exception, expected\u003corg.openecomp.sdc.be.components.impl.exceptions.ComponentException\u003e but was\u003cjava.lang.NullPointerException\u003e\n\n\tat org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:28)\n\tat org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)\n\tat org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)\n\tat org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)\n\tat org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)\n\tat org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)\n\tat org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)\n\tat org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)\n\tat org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)\n\tat org.junit.runners.ParentRunner.run(ParentRunner.java:363)\n\tat org.junit.runner.JUnitCore.run(JUnitCore.java:137)\n\tat com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:68)\n\tat com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:33)\n\tat com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:230)\n\tat com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:58)\nCaused by: java.lang.NullPointerException\n\tat org.openecomp.sdc.be.components.impl.ResponseFormatManager.getResponseFormat(ResponseFormatManager.java:49)\n\tat org.openecomp.sdc.be.components.impl.exceptions.ComponentException.\u003cinit\u003e(ComponentException.java:51)\n\tat org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException.\u003cinit\u003e(ByActionStatusComponentException.java:34)\n\tat org.openecomp.sdc.be.components.merge.instance.ComponentInstancePropsAndInputsMerge.mergeDataAfterCreate(ComponentInstancePropsAndInputsMerge.java:82)\n\tat org.openecomp.sdc.be.components.merge.instance.ComponentInstancePropsAndInputsMergeTest.mergeDataAfterCreate_failedToMergeComponentInstProps(ComponentInstancePropsAndInputsMergeTest.java:148)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)\n\tat org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:19)\n\t... 15 more\n\n\nProcess finished with exit code 255",
+      "parentUuid": "5dc56d11_c0ded3fe",
       "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "06e19d1e_af6b913d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ExternalRefsMergeBLTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "e3ae2cfd_98b187ce",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8f449036_e767cdff",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/path/ForwardingPathValidatorTest.java",
         "patchSetId": 3
@@ -166,6 +328,24 @@
       "writtenOn": "2020-03-15T14:28:33Z",
       "side": 1,
       "message": "Also here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2841270d_5a382e4b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/path/ForwardingPathValidatorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "8f449036_e767cdff",
       "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "534f12c4_24f67261",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/property/PropertyConstraintsUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "67bfb7a7_e8e1b5ae",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6376dcea_a1e31418",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/ComponentValidationsTest.java",
         "patchSetId": 3
@@ -200,6 +398,24 @@
       "writtenOn": "2020-03-15T14:28:33Z",
       "side": 1,
       "message": "Also here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "752a1baf_72b8587a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/ComponentValidationsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "6376dcea_a1e31418",
       "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "e7c4beab_f6173a70",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/UserValidationsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "c94320fd_29324f0c",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "99979475_ce9a42c2",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/impl/aaf/RoleAuthorizationHandlerTest.java",
         "patchSetId": 3
@@ -240,6 +474,24 @@
     },
     {
       "key": {
+        "uuid": "7ed7e075_d05808d4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/impl/aaf/RoleAuthorizationHandlerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "what do you mean? redundant with what?",
+      "parentUuid": "99979475_ce9a42c2",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9b2a0c7_9f5c663d",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/user/UserBusinessLogicTest.java",
         "patchSetId": 3
@@ -251,6 +503,24 @@
       "writtenOn": "2020-03-15T14:28:33Z",
       "side": 1,
       "message": "Also here.",
+      "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27ca506c_3f3ba850",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/user/UserBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-16T10:42:30Z",
+      "side": 1,
+      "message": "same, check SDC-2783",
+      "parentUuid": "c9b2a0c7_9f5c663d",
       "revId": "7aceb83b35c2aef31d2a6a015cd2e4bebab9c38e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
