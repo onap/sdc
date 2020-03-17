@@ -41,6 +41,7 @@ function postEntitlementPool(licenseModelId, entitlementPool, version) {
     return RestAPIUtil.post(baseUrl(licenseModelId, version), {
         name: entitlementPool.name,
         description: entitlementPool.description,
+        type: entitlementPool.type,
         thresholdValue: entitlementPool.thresholdValue,
         thresholdUnits: getValue(entitlementPool.thresholdUnits),
         increments: entitlementPool.increments,
@@ -62,6 +63,7 @@ function putEntitlementPool(
         {
             name: entitlementPool.name,
             description: entitlementPool.description,
+            type: entitlementPool.type,
             thresholdValue: entitlementPool.thresholdValue,
             thresholdUnits: getValue(entitlementPool.thresholdUnits),
             increments: entitlementPool.increments,

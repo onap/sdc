@@ -56,6 +56,11 @@ export default (state = {}, action) => {
                         errorText: '',
                         validations: [{ type: 'maxLength', data: 1000 }]
                     },
+                    type: {
+                        isValid: true,
+                        errorText: '',
+                        validations: [{ type: 'required', data: true }]
+                    },
                     increments: {
                         isValid: true,
                         errorText: '',

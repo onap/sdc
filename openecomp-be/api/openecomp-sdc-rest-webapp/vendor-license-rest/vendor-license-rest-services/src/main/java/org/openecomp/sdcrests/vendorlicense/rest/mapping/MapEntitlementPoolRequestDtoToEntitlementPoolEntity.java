@@ -32,6 +32,7 @@ public class MapEntitlementPoolRequestDtoToEntitlementPoolEntity
     target.setName(source.getName());
     target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
     target.setDescription(source.getDescription());
+    target.setType(source.getType());
     target.setThresholdValue(source.getThresholdValue());
     target.setThresholdUnit(source.getThresholdUnits());
     target.setIncrements(source.getIncrements());

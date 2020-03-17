@@ -25,6 +25,7 @@ import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.Relation;
 import org.openecomp.convertor.ElementConvertor;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
@@ -78,6 +79,7 @@ public class ElementToEntitlementPoolConvertor extends ElementConvertor {
     entitlementPool.setName(info.getName());
     entitlementPool.setDescription(info.getDescription());
     entitlementPool.setVersionUuId(info.getProperty("version_uuid"));
+    entitlementPool.setType(EntitlementPoolType.permissiveValueOf(info.getProperty("EntitlementPoolType")));
     entitlementPool.setThresholdValue(toInteger(info.getProperty("thresholdValue")));
     String thresholdUnit = info.getProperty("threshold_unit");
     entitlementPool

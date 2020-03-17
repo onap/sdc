@@ -386,7 +386,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <plugin>
           <groupId>pl.project13.maven</groupId>
           <artifactId>git-commit-id-plugin</artifactId>
-          <version>2.2.6</version>
+          <version>4.0.0</version>
         </plugin>
       </plugins>
     </pluginManagement>

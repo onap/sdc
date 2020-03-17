@@ -21,6 +21,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.Collections;
 import java.util.HashSet;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolRequestDto;
 import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
@@ -125,6 +126,19 @@ public class MapEntitlementPoolRequestDtoToEntitlementPoolEntityTest {
         mapper.doMapping(source, target);
         assertEquals(target.getManufacturerReferenceNumber(), param);
     }
+
+    @Test
+    public void testType() {
+        EntitlementPoolRequestDto source = new EntitlementPoolRequestDto();
+        EntitlementPoolEntity target = new EntitlementPoolEntity();
+        MapEntitlementPoolRequestDtoToEntitlementPoolEntity mapper = new
+                MapEntitlementPoolRequestDtoToEntitlementPoolEntity();
+        EntitlementPoolType entitlementPoolType = EntitlementPoolType.Universal;
+        source.setType(entitlementPoolType);
+        mapper.doMapping(source, target);
+        assertEquals(target.getType(), entitlementPoolType);
+    }
+
 
     enum TestEnum {
         Yes

@@ -346,9 +346,6 @@ $lkg-ep-color: $light-blue;
                             display: flex;
                             flex-direction: column;
                             justify-content: space-between;
-                            *:last-child {
-                                margin-top: 20px;
-                            }
                             *:only-child {
                                 margin-top: 0;
                             }
