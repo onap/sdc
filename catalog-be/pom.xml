@@ -834,6 +834,7 @@
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
                                         <include>*.war</include>
+                                        <include>context.xml</include>
                                     </includes>
                                 </fileset>
                                 <fileset>
@@ -841,7 +842,7 @@
                                         ${project.basedir}/sdc-backend-init/chef-repo/cookbooks/sdc-normatives/files/default
                                     </directory>
                                     <followSymlinks>false</followSymlinks>
-                                    <includes>
+                                    <includes>1
                                         <include>normatives.tar.gz</include>
                                     </includes>
                                 </fileset>
