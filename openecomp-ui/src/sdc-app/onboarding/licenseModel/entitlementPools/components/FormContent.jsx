@@ -19,7 +19,10 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';
-import { SP_ENTITLEMENT_POOL_FORM } from '../EntitlementPoolsConstants.js';
+import {
+    optionsInputValues,
+    SP_ENTITLEMENT_POOL_FORM
+} from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsConstants.js';
 import { DATE_FORMAT } from 'sdc-app/onboarding/OnboardingConstants.js';
 import { optionsInputValues as LicenseModelOptionsInputValues } from '../../LicenseModelConstants.js';
 import UuId from 'sdc-app/onboarding/licenseModel/components/UuId.jsx';
@@ -34,6 +37,7 @@ export const EntitlementPoolsFormContent = ({
 }) => {
     let {
         name,
+        type,
         description,
         thresholdUnits,
         thresholdValue,
@@ -45,7 +49,7 @@ export const EntitlementPoolsFormContent = ({
         versionUUID
     } = data;
     return (
-        <GridSection hasLastColSet>
+        <GridSection hasLostColSet>
             <GridItem colSpan={2}>
                 <Input
                     onChange={name =>
@@ -62,7 +66,44 @@ export const EntitlementPoolsFormContent = ({
                     type="text"
                 />
             </GridItem>
-            <GridItem colSpan={2} lastColInRow>
+            <GridItem colSpan={2}>
+                <Input
+                    isRequired={true}
+                    onChange={e => {
+                        const selectedIndex = e.target.selectedIndex;
+                        const val = e.target.options[selectedIndex].value;
+                        onDataChanged({ type: val }, SP_ENTITLEMENT_POOL_FORM);
+                    }}
+                    value={type}
+                    label={i18n('Type')}
+                    data-test-id="create-ep-type"
+                    isValid={genericFieldInfo.type.isValid}
+                    errorText={genericFieldInfo.type.errorText}
+                    groupClassName="bootstrap-input-options"
+                    className="input-options-select"
+                    overlayPos="bottom"
+                    type="select">
+                    {optionsInputValues.TYPE.map(type => (
+                        <option key={type.enum} value={type.enum}>
+                            {type.title}
+                        </option>
+                    ))}
+                </Input>
+            </GridItem>
+            <GridItem colSpan={2} stretch>
+                <Input
+                    onChange={description =>
+                        onDataChanged({ description }, SP_ENTITLEMENT_POOL_FORM)
+                    }
+                    isValid={genericFieldInfo.description.isValid}
+                    errorText={genericFieldInfo.description.errorText}
+                    label={i18n('Description')}
+                    value={description}
+                    data-test-id="create-ep-description"
+                    type="textarea"
+                />
+            </GridItem>
+            <GridItem>
                 <Input
                     onChange={e => {
                         // setting the unit to the correct value
@@ -97,21 +138,30 @@ export const EntitlementPoolsFormContent = ({
                         )
                     )}
                 </Input>
-            </GridItem>
-            <GridItem colSpan={2} stretch>
                 <Input
-                    onChange={description =>
-                        onDataChanged({ description }, SP_ENTITLEMENT_POOL_FORM)
+                    type="date"
+                    label={i18n('Start Date')}
+                    value={startDate}
+                    dateFormat={DATE_FORMAT}
+                    startDate={startDate}
+                    endDate={expiryDate}
+                    onChange={startDate =>
+                        onDataChanged(
+                            {
+                                startDate: startDate
+                                    ? startDate.format(DATE_FORMAT)
+                                    : ''
+                            },
+                            SP_ENTITLEMENT_POOL_FORM,
+                            { startDate: validateStartDate }
+                        )
                     }
-                    isValid={genericFieldInfo.description.isValid}
-                    errorText={genericFieldInfo.description.errorText}
-                    label={i18n('Description')}
-                    value={description}
-                    data-test-id="create-ep-description"
-                    type="textarea"
+                    isValid={genericFieldInfo.startDate.isValid}
+                    errorText={genericFieldInfo.startDate.errorText}
+                    selectsStart
                 />
             </GridItem>
-            <GridItem colSpan={2} lastColInRow>
+            <GridItem>
                 <Input
                     className="entitlement-pools-form-row-threshold-value"
                     onChange={thresholdValue =>
@@ -131,16 +181,30 @@ export const EntitlementPoolsFormContent = ({
                     type="text"
                 />
                 <Input
-                    onChange={increments =>
-                        onDataChanged({ increments }, SP_ENTITLEMENT_POOL_FORM)
-                    }
-                    label={i18n('Increments')}
-                    value={increments}
-                    data-test-id="create-ep-increments"
-                    type="text"
+                    type="date"
+                    label={i18n('Expiry Date')}
+                    value={expiryDate}
+                    dateFormat={DATE_FORMAT}
+                    startDate={startDate}
+                    endDate={expiryDate}
+                    onChange={expiryDate => {
+                        onDataChanged(
+                            {
+                                expiryDate: expiryDate
+                                    ? expiryDate.format(DATE_FORMAT)
+                                    : ''
+                            },
+                            SP_ENTITLEMENT_POOL_FORM
+                        );
+                        onDataChanged({ startDate }, SP_ENTITLEMENT_POOL_FORM, {
+                            startDate: validateStartDate
+                        });
+                    }}
+                    isValid={genericFieldInfo.expiryDate.isValid}
+                    errorText={genericFieldInfo.expiryDate.errorText}
+                    selectsEnd
                 />
             </GridItem>
-
             <GridItem colSpan={2}>
                 <Input
                     className="entitlement-pools-form-row-threshold-value"
@@ -161,64 +225,19 @@ export const EntitlementPoolsFormContent = ({
                     data-test-id="create-ep-manufacturerReferenceNumber-value"
                     value={manufacturerReferenceNumber}
                     type="text"
-                    groupClassName="no-bottom-margin"
                 />
             </GridItem>
-            <GridItem colSpan={2} lastColInRow>
-                <div className="date-section">
-                    <Input
-                        groupClassName="no-bottom-margin"
-                        type="date"
-                        label={i18n('Start Date')}
-                        value={startDate}
-                        dateFormat={DATE_FORMAT}
-                        startDate={startDate}
-                        endDate={expiryDate}
-                        onChange={startDate =>
-                            onDataChanged(
-                                {
-                                    startDate: startDate
-                                        ? startDate.format(DATE_FORMAT)
-                                        : ''
-                                },
-                                SP_ENTITLEMENT_POOL_FORM,
-                                { startDate: validateStartDate }
-                            )
-                        }
-                        isValid={genericFieldInfo.startDate.isValid}
-                        errorText={genericFieldInfo.startDate.errorText}
-                        selectsStart
-                    />
-                    <Input
-                        groupClassName="no-bottom-margin"
-                        type="date"
-                        label={i18n('Expiry Date')}
-                        value={expiryDate}
-                        dateFormat={DATE_FORMAT}
-                        startDate={startDate}
-                        endDate={expiryDate}
-                        onChange={expiryDate => {
-                            onDataChanged(
-                                {
-                                    expiryDate: expiryDate
-                                        ? expiryDate.format(DATE_FORMAT)
-                                        : ''
-                                },
-                                SP_ENTITLEMENT_POOL_FORM
-                            );
-                            onDataChanged(
-                                { startDate },
-                                SP_ENTITLEMENT_POOL_FORM,
-                                {
-                                    startDate: validateStartDate
-                                }
-                            );
-                        }}
-                        isValid={genericFieldInfo.expiryDate.isValid}
-                        errorText={genericFieldInfo.expiryDate.errorText}
-                        selectsEnd
-                    />
-                </div>
+            <GridItem colSpan={2}>
+                <Input
+                    onChange={increments =>
+                        onDataChanged({ increments }, SP_ENTITLEMENT_POOL_FORM)
+                    }
+                    label={i18n('Increments')}
+                    value={increments}
+                    data-test-id="create-ep-increments"
+                    groupClassName="no-bottom-margin"
+                    type="text"
+                />
             </GridItem>
             {id && versionUUID && <UuId id={id} versionUUID={versionUUID} />}
         </GridSection>

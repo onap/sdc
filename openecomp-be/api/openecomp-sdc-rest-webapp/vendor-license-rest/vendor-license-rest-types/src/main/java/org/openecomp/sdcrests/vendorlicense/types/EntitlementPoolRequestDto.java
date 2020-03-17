@@ -24,6 +24,7 @@ package org.openecomp.sdcrests.vendorlicense.types;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotBlank;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 
@@ -45,6 +46,9 @@ public class EntitlementPoolRequestDto {
 
   @Size(max = 1000)
   private String description;
+
+  @NotNull
+  private EntitlementPoolType type;
 
   private Integer thresholdValue;
 
@@ -80,6 +84,14 @@ public class EntitlementPoolRequestDto {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public EntitlementPoolType getType() {
+    return type;
+  }
+
+  public void setType(EntitlementPoolType type) {
+    this.type = type;
   }
 
   public Integer getThresholdValue() {
