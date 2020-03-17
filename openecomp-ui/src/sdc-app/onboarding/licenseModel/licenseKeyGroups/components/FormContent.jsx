@@ -214,7 +214,6 @@ const LicenseKeyGroupFormContent = ({
                     groupClassName="no-bottom-margin"
                 />
             </GridItem>
-
             <GridItem colSpan={2}>
                 <Input
                     onChange={increments =>

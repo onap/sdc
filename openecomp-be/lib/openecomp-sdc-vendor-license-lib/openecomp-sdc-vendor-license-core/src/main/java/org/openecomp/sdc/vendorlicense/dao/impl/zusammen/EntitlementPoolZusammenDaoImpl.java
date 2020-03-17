@@ -238,6 +238,7 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
     info.setDescription(entitlementPool.getDescription());
     info.addProperty(ElementPropertyName.elementType.name(), ElementType.EntitlementPool);
     info.addProperty("version_uuid", entitlementPool.getVersionUuId());
+    info.addProperty("EntitlementPoolType", entitlementPool.getType());
     info.addProperty("thresholdValue", entitlementPool.getThresholdValue());
     info.addProperty("threshold_unit", entitlementPool.getThresholdUnit());
     info.addProperty("increments", entitlementPool.getIncrements());

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolEntityDto;
@@ -153,5 +154,17 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
         source.setManufacturerReferenceNumber(param);
         mapper.doMapping(source, target);
         assertEquals(target.getManufacturerReferenceNumber(), param);
+    }
+
+    @Test
+    public void testType() {
+        EntitlementPoolEntity source = new EntitlementPoolEntity();
+        EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
+        MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
+                new MapEntitlementPoolEntityToEntitlementPoolEntityDto();
+        EntitlementPoolType entitlementPoolType = EntitlementPoolType.One_Time;
+        source.setType(entitlementPoolType);
+        mapper.doMapping(source, target);
+        assertEquals(target.getType(), entitlementPoolType);
     }
 }

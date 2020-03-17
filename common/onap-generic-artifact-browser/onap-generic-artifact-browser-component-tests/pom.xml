@@ -12,11 +12,6 @@
 
     <artifactId>onap-generic-artifact-browser-component-tests</artifactId>
 
-    <properties>
-        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
         <!--tested packages-->
         <dependency>
@@ -40,20 +35,4 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <source>8</source>
-                    <target>8</target>
-                    <compilerArgument>-Werror</compilerArgument>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

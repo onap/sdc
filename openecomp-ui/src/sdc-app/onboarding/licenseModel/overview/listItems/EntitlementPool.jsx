@@ -23,6 +23,7 @@ import {
     AdditionalDataCol,
     AdditionalDataElement
 } from './listItemsComponents/AdditionalDataCol.jsx';
+import { extractValue } from '../../entitlementPools/EntitlementPoolsConstants';
 
 class EntitlementPool extends Component {
     render() {
@@ -30,6 +31,7 @@ class EntitlementPool extends Component {
             epData: {
                 name,
                 description,
+                type,
                 thresholdValue,
                 thresholdUnits,
                 manufacturerReferenceNumber
@@ -46,6 +48,13 @@ class EntitlementPool extends Component {
                 <IconCol className="ep-icon" text="EP" />
                 <ItemInfo name={name} description={description} />
                 <AdditionalDataCol>
+                    {type && (
+                        <AdditionalDataElement
+                            className="vlm-list-item-entitlement-metric"
+                            name={i18n('Type')}
+                            value={extractValue(type)}
+                        />
+                    )}
                     {thresholdValue && (
                         <AdditionalDataElement
                             className="vlm-list-item-entitlement-metric"
