@@ -57,6 +57,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
   private String id;
   private String name;
   private String description;
+  private EntitlementPoolType type;
 
   @Column(name = "threshold")
   private Integer thresholdValue;
@@ -177,6 +178,14 @@ public class EntitlementPoolEntity implements VersionableEntity {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public EntitlementPoolType getType() {
+    return type;
+  }
+
+  public void setType(EntitlementPoolType type) {
+    this.type = type;
   }
 
   public Integer getThresholdValue() {
@@ -311,7 +320,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
   @Override
   public int hashCode() {
     return Objects
-        .hash(vendorLicenseModelId, version, id, name, description, thresholdValue, thresholdUnit,
+        .hash(vendorLicenseModelId, version, id, name, description, type, thresholdValue, thresholdUnit,
             increments, operationalScope, referencingFeatureGroups, startDate, expiryDate);
   }
 
@@ -329,6 +338,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
         && Objects.equals(id, that.id)
         && Objects.equals(name, that.name)
         && Objects.equals(description, that.description)
+        && type == that.type
         && Objects.equals(thresholdUnit, that.thresholdUnit)
         && Objects.equals(increments, that.increments)
         && Objects.equals(that.operationalScope, operationalScope)
@@ -346,6 +356,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
         + ", id='" + id + '\''
         + ", name='" + name + '\''
         + ", description='" + description + '\''
+        + ", type=" + type
         + ", thresholdValue=" + thresholdValue
         + ", thresholdUnit='" + thresholdUnit + '\''
         + ", increments='" + increments + '\''

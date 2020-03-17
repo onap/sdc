@@ -15,7 +15,10 @@
  */
 import React, { Component } from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import { extractUnits } from '../../entitlementPools/EntitlementPoolsConstants.js';
+import {
+    extractValue,
+    extractUnits
+} from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsConstants.js';
 import ArrowCol from './listItemsComponents/ArrowCol.jsx';
 import ItemInfo from './listItemsComponents/ItemInfo.jsx';
 import IconCol from './listItemsComponents/IconCol.jsx';
@@ -30,6 +33,7 @@ class EntitlementPool extends Component {
             epData: {
                 name,
                 description,
+                type,
                 thresholdValue,
                 thresholdUnits,
                 manufacturerReferenceNumber
@@ -46,6 +50,13 @@ class EntitlementPool extends Component {
                 <IconCol className="ep-icon" text="EP" />
                 <ItemInfo name={name} description={description} />
                 <AdditionalDataCol>
+                    {type && (
+                        <AdditionalDataElement
+                            className="vlm-list-item-entitlement-metric"
+                            name={i18n('Type')}
+                            value={extractValue(type)}
+                        />
+                    )}
                     {thresholdValue && (
                         <AdditionalDataElement
                             className="vlm-list-item-entitlement-metric"
