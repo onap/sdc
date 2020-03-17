@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "13cc071f_d202027c",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-license-lib/openecomp-sdc-vendor-license-api/src/main/java/org/openecomp/sdc/vendorlicense/dao/types/EntitlementPoolEntity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-17T18:25:38Z",
+      "side": 1,
+      "message": "check if possible to replace with lombok",
+      "range": {
+        "startLine": 51,
+        "startChar": 2,
+        "endLine": 318,
+        "endChar": 0
+      },
+      "revId": "6113557a149965e70808cf3b12ba025f4382615c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
