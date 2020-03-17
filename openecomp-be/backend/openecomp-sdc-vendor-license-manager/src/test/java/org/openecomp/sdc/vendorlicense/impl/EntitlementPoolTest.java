@@ -31,6 +31,7 @@ import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
@@ -78,6 +79,7 @@ public class EntitlementPoolTest {
   public EntitlementPoolEntity createEntitlementPool(String vlmId, Version version, String id,
                                                      String name, String desc, int threshold,
                                                      ThresholdUnit thresholdUnit,
+                                                     EntitlementPoolType type,
                                                      EntitlementMetric entitlementMetricChoice,
                                                      String entitlementMetricOther,
                                                      String increments,
@@ -93,6 +95,7 @@ public class EntitlementPoolTest {
     entitlementPool.setVersion(version);
     entitlementPool.setName(name);
     entitlementPool.setDescription(desc);
+    entitlementPool.setType(type);
     entitlementPool.setThresholdValue(threshold);
     entitlementPool.setThresholdUnit(thresholdUnit);
     entitlementPool.setIncrements(increments);
@@ -102,7 +105,7 @@ public class EntitlementPoolTest {
   }
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
   }
 
@@ -121,7 +124,7 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
         createEntitlementPool("vlm1Id", null, ep1_id, EP1_NAME, "EP2 dec", 70, ThresholdUnit
-                .Absolute,
+                .Absolute, EntitlementPoolType.Unique,
             EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -144,8 +147,8 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
         createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute,
-            EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     ep2.setStartDate(LocalDate.now().format(formatter));
@@ -166,8 +169,8 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
         createEntitlementPool("vlm3Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute,
-            EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     ep2.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
@@ -187,8 +190,8 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
         createEntitlementPool("vlm4Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute,
-            EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     ep2.setStartDate(LocalDate.now().format(formatter));
@@ -208,7 +211,7 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
             createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-                    ThresholdUnit.Absolute,
+                    ThresholdUnit.Absolute, EntitlementPoolType.Unique,
                     EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
                     opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -230,7 +233,7 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
             createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-                    ThresholdUnit.Absolute,
+                    ThresholdUnit.Absolute, EntitlementPoolType.Unique,
                     EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
                     opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     ep2.setStartDate(null);
@@ -250,9 +253,8 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
         createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit
-                .Absolute,
-            EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     ep2.setStartDate(LocalDate.now().minusDays(3L).format(formatter));
@@ -271,8 +273,8 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
         createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute,
-            EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
     ep2.setStartDate(LocalDate.now().format(formatter));
@@ -294,8 +296,8 @@ public class EntitlementPoolTest {
       opScopeChoices.add(OperationalScope.Network_Wide);
       EntitlementPoolEntity ep2 =
           createEntitlementPool("vlm3Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-              ThresholdUnit.Absolute,
-              EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average,
+              ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                  EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average,
               null,
               opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -318,8 +320,8 @@ public class EntitlementPoolTest {
       opScopeChoices.add(OperationalScope.Network_Wide);
       EntitlementPoolEntity ep2 =
           createEntitlementPool("vlm4Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-              ThresholdUnit.Absolute,
-              EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average,
+              ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                  EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average,
               null,
               opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -342,7 +344,7 @@ public class EntitlementPoolTest {
 
     EntitlementPoolEntity entitlementPool =
         createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementMetric.Other, "exception metric2", "inc2",
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2", "inc2",
             AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -371,7 +373,7 @@ public class EntitlementPoolTest {
 
     EntitlementPoolEntity entitlementPool =
         createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementMetric.Other, "exception metric2", "inc2",
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2", "inc2",
             AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
@@ -400,11 +402,11 @@ public class EntitlementPoolTest {
 
     doReturn(Arrays.asList(
         createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP1 dec", 70,
-            ThresholdUnit.Absolute, EntitlementMetric.Other, "exception metric1",
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric1",
             "inc1", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time1", "sku1"),
         createEntitlementPool(vlm1_id, VERSION01, ep2_id, EP2_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementMetric.Other, "exception metric2",
+            ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2",
             "inc2", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2")))
         .when(vendorLicenseFacade).listEntitlementPools(vlm1_id, VERSION01);

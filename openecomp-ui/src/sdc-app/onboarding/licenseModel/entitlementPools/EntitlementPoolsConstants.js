@@ -58,6 +58,12 @@ export const thresholdUnitType = {
 };
 
 export const optionsInputValues = {
+    TYPE: [
+        { enum: '', title: i18n('please select…') },
+        { enum: 'Universal', title: 'Universal' },
+        { enum: 'Unique', title: 'Unique' },
+        { enum: 'One_Time', title: 'One Time' }
+    ],
     TIME: [
         { enum: '', title: i18n('please select…') },
         { enum: 'Hour', title: 'Hour' },
@@ -91,9 +97,9 @@ export const extractValue = item => {
         return '';
     } //TODO fix it later
     return item
-        ? item.choice === optionInputOther.OTHER
-          ? item.other
-          : InputOptions.getTitleByName(optionsInputValues, item.choice)
+        ? item === optionInputOther.OTHER
+          ? item
+          : InputOptions.getTitleByName(optionsInputValues, item)
         : '';
 };
 

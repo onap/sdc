@@ -28,6 +28,7 @@ Factory.define('EntitlementPoolExtendedBaseFactory')
         thresholdValue: 76,
         thresholdUnits: '%',
         increments: 'string',
+        type: 'Universal',
         startDate: new Date().getTime(),
         expiryDate: new Date().getTime()
     });

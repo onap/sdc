@@ -20,7 +20,8 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 
-import { extractUnits } from './EntitlementPoolsConstants';
+import { optionsInputValues, extractUnits } from './EntitlementPoolsConstants';
+import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 
 class EntitlementPoolsListEditorView extends React.Component {
     static propTypes = {
@@ -89,6 +90,7 @@ class EntitlementPoolsListEditorView extends React.Component {
         let {
             id,
             name,
+            type,
             description,
             thresholdValue,
             thresholdUnits,
@@ -111,7 +113,12 @@ class EntitlementPoolsListEditorView extends React.Component {
                         <div className="textEllipses text name">{name}</div>
                     </div>
                 </div>
-
+                <div className="list-editor-item-view-field">
+                    <div className="title">{i18n('Type')}</div>
+                    <div className="text type">
+                        {InputOptions.getTitleByName(optionsInputValues, type)}
+                    </div>
+                </div>
                 <div className="list-editor-item-view-field">
                     <div className="title">{i18n('Entitlement')}</div>
                     <div className="entitlement-pools-count">
