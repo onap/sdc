@@ -834,6 +834,7 @@
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
                                         <include>*.war</include>
+                                        <include>context.xml</include>
                                     </includes>
                                 </fileset>
                                 <fileset>
