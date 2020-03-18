@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b48b1dcc_016d0431",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-03-18T11:59:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c0ed3db_e17528f2",
+      "range": {
+        "startLine": 127,
+        "startChar": 6,
+        "endLine": 127,
+        "endChar": 57
+      },
+      "revId": "af824926416cae393e9a08e26dbf7d37b0157d98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea2dbca0_db749b94",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/GraphMLConverter.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "af824926416cae393e9a08e26dbf7d37b0157d98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7a5f036_854431c8",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/GraphMLConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-03-18T11:59:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea2dbca0_db749b94",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 179,
+        "endChar": 0
+      },
+      "revId": "af824926416cae393e9a08e26dbf7d37b0157d98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "5c6883d8_d86bc747",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/GraphMLConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-03-18T11:59:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c427c30d_0782f30e",
+      "range": {
+        "startLine": 211,
+        "startChar": 0,
+        "endLine": 211,
+        "endChar": 23
+      },
+      "revId": "af824926416cae393e9a08e26dbf7d37b0157d98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d91224fe_6c252d97",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/GraphMLConverter.java",
         "patchSetId": 2
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "d8a33f03_046bceb7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/GraphMLConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-03-18T11:59:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d91224fe_6c252d97",
+      "range": {
+        "startLine": 278,
+        "startChar": 0,
+        "endLine": 278,
+        "endChar": 32
+      },
+      "revId": "af824926416cae393e9a08e26dbf7d37b0157d98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3032c5d_8c429224",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/GraphMLConverter.java",
         "patchSetId": 2
@@ -114,6 +210,30 @@
       "revId": "af824926416cae393e9a08e26dbf7d37b0157d98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8933855a_36a33a85",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/GraphMLConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-03-18T11:59:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3032c5d_8c429224",
+      "range": {
+        "startLine": 309,
+        "startChar": 0,
+        "endLine": 309,
+        "endChar": 23
+      },
+      "revId": "af824926416cae393e9a08e26dbf7d37b0157d98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -151,6 +271,30 @@
       "writtenOn": "2020-03-18T11:02:15Z",
       "side": 1,
       "message": "sorry, my mistake, didn\u0027t notice\n@Test(expected \u003d IllegalArgumentException.class)\nignore my comment",
+      "parentUuid": "a8191a5a_a8a0871e",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 68,
+        "endChar": 41
+      },
+      "revId": "af824926416cae393e9a08e26dbf7d37b0157d98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a762b9f_5905a436",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/GraphMLConverterTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-03-18T11:59:08Z",
+      "side": 1,
+      "message": "This method is used to trigger the exception so this is tested. So the @Test(expected \u003d IllegalArgumentException.class) is our assert. If the exception not will be thrown the assert exception will occur. If we won\u0027t consider it an assert, I can delete this test because we can\u0027t do anything else with it.",
       "parentUuid": "a8191a5a_a8a0871e",
       "range": {
         "startLine": 67,
