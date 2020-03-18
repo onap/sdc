@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1be7abf9_777b85fe",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/GraphMLConverterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-03-18T13:29:23Z",
+      "side": 1,
+      "message": "Please avoid using wildcard imports",
+      "range": {
+        "startLine": 29,
+        "startChar": 31,
+        "endLine": 29,
+        "endChar": 32
+      },
+      "revId": "5b1f58626d6c8d53a7a83b3a3fe1121c8a804960",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
