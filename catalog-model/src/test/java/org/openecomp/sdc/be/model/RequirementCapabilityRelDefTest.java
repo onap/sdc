@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,26 +20,30 @@
 
 package org.openecomp.sdc.be.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import org.junit.Assert;
+import org.junit.Test;
 
-@Getter
-@Setter
-@ToString
-public class RequirementCapabilityRelDef extends TargetCapabilityRelDef {
+public class RequirementCapabilityRelDefTest {
 
-    private String fromNode;
-    private boolean originUI;
-
-    public RequirementCapabilityRelDef() {
+    private RequirementCapabilityRelDef createTestSubject() {
+        return new RequirementCapabilityRelDef();
     }
 
-    public RequirementCapabilityRelDef(RequirementCapabilityRelDef another) {
-        super(another.getToNode(), another.getRelationships());
+    @Test
+    public void testRequirementCapabilityRelDef() {
+        final RequirementCapabilityRelDef testSubject;
 
-        fromNode = another.getFromNode();
-        originUI = another.isOriginUI();
+        // default test
+        testSubject = createTestSubject();
+        Assert.assertNotNull(testSubject);
     }
 
+    @Test
+    public void testClone() {
+        final RequirementCapabilityRelDef testSubject;
+
+        // default test
+        testSubject = new RequirementCapabilityRelDef(createTestSubject());
+        Assert.assertNotNull(testSubject);
+    }
 }
