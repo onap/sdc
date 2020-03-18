@@ -16,25 +16,14 @@
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UploadNodeFilterCapabilitiesInfo {
 
     private String name;
     private List<UploadNodeFilterPropertyInfo> properties;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<UploadNodeFilterPropertyInfo> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<UploadNodeFilterPropertyInfo> properties) {
-        this.properties = properties;
-    }
 }
