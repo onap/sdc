@@ -57,7 +57,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <ecomp.version>2.6.0</ecomp.version>
     <cassandra.unit.version>3.5.0.1</cassandra.unit.version>
     <cadi.version>2.1.8</cadi.version>
-    <lombok.version>1.18.2</lombok.version>
+    <lombok.version>1.18.12</lombok.version>
     <commons-beanutils>1.9.3</commons-beanutils>
     <commons-configuration>2.3</commons-configuration>
     <apache-poi.version>4.1.0</apache-poi.version>
@@ -163,7 +163,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <!--sdc-security-utils-->
     <security.util.lib.version>1.6.0</security.util.lib.version>
     <!--jacoco-->
-    <jacoco.version>0.8.1</jacoco.version>
+    <jacoco.version>0.8.5</jacoco.version>
 
   </properties>
 
@@ -300,7 +300,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.1</version>
+          <version>${jacoco.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -316,7 +316,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.4.1.1168</version>
+          <version>3.7.0.1746</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
