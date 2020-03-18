@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,20 +20,22 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
+import static org.junit.Assert.assertNotNull;
 
-@Getter
-@Setter
-public class UploadArtifactInfo extends UploadInfo {
+import org.junit.Test;
 
-    /**
-     * specify the node type(Optional by tosca)
-     */
-    private List<String> validSourceTypes;
+public class UploadArtifactInfoTest {
 
-    private String file;
-    private String type;
+    private UploadArtifactInfo createTestSubject() {
+        return new UploadArtifactInfo();
+    }
 
+    @Test
+    public void testUploadArtifactInfo() {
+        UploadArtifactInfo testSubject;
+
+        // default test
+        testSubject = createTestSubject();
+        assertNotNull(testSubject);
+    }
 }
