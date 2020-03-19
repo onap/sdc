@@ -42,7 +42,7 @@ import java.util.List;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,7 +78,7 @@ public class ComponentInstanceCapabilitiesPropertiesMergeTest {
         when(capabilitiesPropertiesMergeBL.mergeComponentInstanceCapabilities(currentComponent, origInstanceNode, "instId", origInstanceCapabilities))
             .thenReturn(ActionStatus.OK);
         Component mergeResult = testInstance.mergeDataAfterCreate(new User(), mergeHolder, currentComponent, "instId");
-        assertTrue(mergeResult != null);
+        assertThat(mergeResult).isNotNull();
     }
 
     @Test(expected = ComponentException.class)
@@ -96,5 +96,7 @@ public class ComponentInstanceCapabilitiesPropertiesMergeTest {
 		ComponentInstance currentResourceInstance = new ComponentInstance();
 		Component originComponent = new Resource();
 		testInstance.saveDataBeforeMerge(dataHolder, containerComponent, currentResourceInstance, originComponent);
+		assertThat(dataHolder.getOrigInstanceCapabilities().size()).isEqualTo(originComponent.getCapabilities().size());
+		assertThat(dataHolder.getOrigInstanceNode()).isEqualTo(originComponent);
     }
 }

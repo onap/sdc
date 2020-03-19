@@ -34,6 +34,7 @@ import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -45,6 +46,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
@@ -80,7 +82,8 @@ public class ComponentInstanceHeatEnvMergeTest {
         when(heatEnvArtifactsMergeBusinessLogicMock.mergeInstanceHeatEnvArtifacts(dataHolder.getOrigComponentInstanceHeatEnvArtifacts(), resource.safeGetComponentInstanceHeatArtifacts(instanceId)))
                                                    .thenReturn(mergedArtifacts);
         expectMergedArtifactsToBePersisted(mergedArtifacts, instanceId, resource);
-        testInstance.mergeDataAfterCreate(USER, dataHolder, resource, instanceId);
+        Component result = testInstance.mergeDataAfterCreate(USER, dataHolder, resource, instanceId);
+        assertThat(result.getDeploymentArtifacts()).isEqualTo(resource.getDeploymentArtifacts());
     }
 
     private void expectMergedArtifactsToBePersisted(List<ArtifactDefinition> mergedArtifacts, String instanceId, Resource resource) {

@@ -79,7 +79,7 @@ public class ComponentInstanceArtifactsMergeTest {
 				.getComponentInstanceDeploymentArtifactsTimeOut();
         assertThat(originalComponentDeploymentArtifactsCreatedOnTheInstance.size()).isEqualTo(1);
 		assertThat(componentInstanceDeploymentArtifactsTimeOut.size()).isEqualTo(3);
-		assert (originalComponentDeploymentArtifactsCreatedOnTheInstance.containsKey("artifactTwo"));
+		assertThat(originalComponentDeploymentArtifactsCreatedOnTheInstance.containsKey("artifactTwo")).isTrue();
 	}
 
 	@Test
@@ -141,8 +141,8 @@ public class ComponentInstanceArtifactsMergeTest {
 		when(artifactsBusinessLogicMock.updateResourceInstanceArtifactNoContent(Mockito.anyString(), Mockito.any(Component.class), Mockito.any(User.class),
 				Mockito.any(Map.class), Mockito.any(ArtifactOperationInfo.class), Mockito.any(ArtifactDefinition.class))).thenReturn(left);
 
-		testInstance.mergeDataAfterCreate(user, dataForMergeHolder, originComponent, "mock");
-
+		Component result = testInstance.mergeDataAfterCreate(user, dataForMergeHolder, originComponent, "mock");
+		assertThat(result.getDeploymentArtifacts()).isEqualTo(originComponent.getDeploymentArtifacts());
 	}
 
 	private Map<String, ArtifactDefinition> buildDeploymentArtifacts() {
