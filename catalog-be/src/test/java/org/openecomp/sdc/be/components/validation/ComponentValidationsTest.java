@@ -16,7 +16,13 @@
 
 package org.openecomp.sdc.be.components.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
 import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +37,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
@@ -60,35 +67,52 @@ public class ComponentValidationsTest {
 
 	@Test
 	public void testValidateComponentInstanceExist() throws Exception {
+		String instanceId = "test";
+
+		ComponentInstance instance = new ComponentInstance();
+		instance.setUniqueId(instanceId);
+		List<ComponentInstance> instances = new ArrayList<>();
+		instances.add(instance);
+
 		Component component = new Resource();
-		String instanceId = "";
-		boolean result;
+		component.setComponentInstances(instances);
 
 		// default test
-		result = ComponentValidations.validateComponentInstanceExist(component, instanceId);
+		boolean result = ComponentValidations.validateComponentInstanceExist(component, instanceId);
+		assertTrue(result);
 	}
 
 	@Test
 	public void testGetNormalizedName() throws Exception {
+		String name = "mock";
 		ToscaDataDefinition toscaDataDefinition = new AdditionalInfoParameterDataDefinition();
-		toscaDataDefinition.setToscaPresentationValue(JsonPresentationFields.NAME, "mock");
-		String result;
+		toscaDataDefinition.setToscaPresentationValue(JsonPresentationFields.NAME, name);
 
 		// default test
-		result = ComponentValidations.getNormalizedName(toscaDataDefinition);
+		String result = ComponentValidations.getNormalizedName(toscaDataDefinition);
+		assertEquals(name, result);
 	}
 
 	@Test
 	public void testValidateNameIsUniqueInComponent() throws Exception {
-		String currentName = "";
-		String newName = "";
+		String currentName = "curr_name";
+		String newName = "curr_name";
 		String newName2 = "mock";
+
+		ComponentInstance instance = new ComponentInstance();
+		instance.setName(currentName);
+		instance.setNormalizedName(currentName);
+		List<ComponentInstance> instances = new ArrayList<>();
+		instances.add(instance);
+
 		Component component = new Resource();
-		boolean result;
+		component.setComponentInstances(instances);
 
 		// default test
-		result = ComponentValidations.validateNameIsUniqueInComponent(currentName, newName, component);
+		boolean result = ComponentValidations.validateNameIsUniqueInComponent(currentName, newName, component);
+		assertTrue(result);
 		result = ComponentValidations.validateNameIsUniqueInComponent(currentName, newName2, component);
+		assertTrue(result);
 	}
 
 	@Test(expected=ComponentException.class)
@@ -117,6 +141,7 @@ public class ComponentValidationsTest {
 		
 		// default test
 		result = Deencapsulation.invoke(testSubject, "getComponent", componentId, ComponentTypeEnum.RESOURCE);
+		assertThat(result).isInstanceOf(Component.class);
 	}
 
 	@Test(expected = StorageException.class)
