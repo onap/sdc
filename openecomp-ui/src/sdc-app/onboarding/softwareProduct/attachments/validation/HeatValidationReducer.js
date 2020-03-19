@@ -129,7 +129,7 @@ function createErrorList(node, parent, deep = 0, errorList = []) {
 }
 
 const mapValidationDataToTree = (validationData, packageName) => {
-    let { heat, nested, volume, network, artifacts, other } =
+    let { errors, heat, nested, volume, network, artifacts, other } =
         validationData.importStructure || {};
     return {
         children: [
@@ -138,6 +138,7 @@ const mapValidationDataToTree = (validationData, packageName) => {
                 expanded: true,
                 type: 'heat',
                 header: true,
+                errors: errors,
                 children: heat
                     ? heat.map(mapHeatData)
                     : nested ? nested.map(mapHeatData) : []
