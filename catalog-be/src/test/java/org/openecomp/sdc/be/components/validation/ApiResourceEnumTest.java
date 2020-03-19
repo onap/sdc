@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.components.validation;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 public class ApiResourceEnumTest {
@@ -36,5 +38,6 @@ public class ApiResourceEnumTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getValue();
+		assertEquals("Environment ID", result);
 	}
 }

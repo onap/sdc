@@ -70,17 +70,13 @@ public class UserValidationsTest {
 		usr.setStatus(UserStatusEnum.ACTIVE);
 		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenReturn(usr);
 		// default test
-		testSubject.validateUserExists(userId);
+		User result = testSubject.validateUserExists(userId);
+		assertThat(result).isNotNull().isEqualTo(usr);
 	}
 	
 	@Test
 	public void testValidateNonExistingUser2() {
 		String userId = "mock";
-		String ecompErrorContext = "mock";
-		boolean inTransaction = false;
-		User result;
-
-
 		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
 
 		Throwable thrown = catchThrowable(() -> testSubject.validateUserExists(userId) );
@@ -93,37 +89,36 @@ public class UserValidationsTest {
 		User user = new User();
 		List<Role> roles = new LinkedList<>();
 		roles.add(Role.DESIGNER);
-
 		user.setRole(Role.DESIGNER.name());
 
 		// test 1
-		testSubject.validateUserRole(user, roles);
+		Throwable thrown = catchThrowable(() -> testSubject.validateUserRole(user, roles));
+		assertThat(thrown).isNull();
 	}
 
 	@Test
 	public void testValidateUserExistsActionStatus() {
 		String userId = "mock";
-		String ecompErrorContext = "mock";
 		ActionStatus result;
 		User usr = new User();
+		usr.setUserId(userId);
+		usr.setStatus(UserStatusEnum.ACTIVE);
 		
-		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenReturn(usr);
+		Mockito.when(userAdmin.hasActiveUser(Mockito.anyString())).thenReturn(true);
 		
 		// default test
 		result = testSubject.validateUserExistsActionStatus(userId);
+		assertThat(result).isEqualTo(ActionStatus.OK);
 	}
 
 	@Test
 	public void testValidateUserExistsActionStatus2() {
 		String userId = "mock";
-		String ecompErrorContext = "mock";
-		ActionStatus result;
-		User usr = new User();
-		
-		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException((ActionStatus.USER_NOT_FOUND)));
+		Mockito.when(userAdmin.hasActiveUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException((ActionStatus.USER_NOT_FOUND)));
 		
 		// default test
-		result = testSubject.validateUserExistsActionStatus(userId);
+		Throwable thrown = catchThrowable(() -> testSubject.validateUserExistsActionStatus(userId));
+		assertThat(thrown).isInstanceOf(ComponentException.class).hasFieldOrPropertyWithValue("actionStatus" , ActionStatus.USER_NOT_FOUND);
 	}
 	
 	@Test
@@ -135,12 +130,12 @@ public class UserValidationsTest {
 
 		// default test
 		result = testSubject.validateUserNotEmpty(user, ecompErrorContext);
+		assertThat(result).isEqualTo(user);
 	}
 
 	@Test
 	public void testValidateNonExistingUser() {
 		String userId = "";
-		String ecompErrorContext = "";
 
 		Mockito.when(userAdmin.getUser(Mockito.anyString())).thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
 		
