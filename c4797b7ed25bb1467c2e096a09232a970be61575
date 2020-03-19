@@ -34,6 +34,24 @@
       "revId": "c4797b7ed25bb1467c2e096a09232a970be61575",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "93410d79_087e13e1",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/UploadNodeFilterCapabilitiesInfoTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-19T15:19:18Z",
+      "side": 1,
+      "message": "You are definitely right, I didn\u0027t notice that this is a different file.\nThanks.",
+      "parentUuid": "d562bc07_12668294",
+      "revId": "c4797b7ed25bb1467c2e096a09232a970be61575",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
