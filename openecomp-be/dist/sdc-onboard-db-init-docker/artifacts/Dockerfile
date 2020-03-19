@@ -1,4 +1,4 @@
-FROM onap/base_sdc-cqlsh:1.6.0-SNAPSHOT-latest
+FROM onap/base_sdc-cqlsh:1.6.1
 
 COPY --chown=sdc:sdc init_keyspaces.cql /home/sdc/
 
