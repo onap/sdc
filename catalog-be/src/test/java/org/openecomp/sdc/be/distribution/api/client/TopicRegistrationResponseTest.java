@@ -20,9 +20,13 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 public class TopicRegistrationResponseTest {
+	private static final String NOTIF_TOPIC_NAME = "notif-mock-topic-name";
+	private static final String STATUS_TOPIC_NAME = "status-mock-topic-name";
 
 	private TopicRegistrationResponse createTestSubject() {
 		return new TopicRegistrationResponse();
@@ -31,21 +35,20 @@ public class TopicRegistrationResponseTest {
 	@Test
 	public void testSetDistrNotificationTopicName() throws Exception {
 		TopicRegistrationResponse testSubject;
-		String distrNotificationTopicName = "";
-
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setDistrNotificationTopicName(distrNotificationTopicName);
+		testSubject.setDistrNotificationTopicName(NOTIF_TOPIC_NAME);
+		assertThat(testSubject).hasFieldOrPropertyWithValue("distrNotificationTopicName", NOTIF_TOPIC_NAME);
 	}
 
 	@Test
 	public void testSetDistrStatusTopicName() throws Exception {
 		TopicRegistrationResponse testSubject;
-		String distrStatusTopicName = "";
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setDistrStatusTopicName(distrStatusTopicName);
+		testSubject.setDistrStatusTopicName(STATUS_TOPIC_NAME);
+		assertThat(testSubject).hasFieldOrPropertyWithValue("distrStatusTopicName", STATUS_TOPIC_NAME);
 	}
 
 	@Test
@@ -56,6 +59,7 @@ public class TopicRegistrationResponseTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getDistrNotificationTopicName();
+		assertThat(result).isNull();
 	}
 
 	@Test
@@ -66,5 +70,6 @@ public class TopicRegistrationResponseTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getDistrStatusTopicName();
+		assertThat(result).isNull();
 	}
 }

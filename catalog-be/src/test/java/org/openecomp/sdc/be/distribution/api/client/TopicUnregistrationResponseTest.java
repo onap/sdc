@@ -20,12 +20,16 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 public class TopicUnregistrationResponseTest {
+	private static final String NOTIF_TOPIC_NAME = "notif-mock-topic-name";
+	private static final String STATUS_TOPIC_NAME = "status-mock-topic-name";
 
 	private TopicUnregistrationResponse createTestSubject() {
-		return new TopicUnregistrationResponse("", "", CambriaOperationStatus.AUTHENTICATION_ERROR, CambriaOperationStatus.AUTHENTICATION_ERROR);
+		return new TopicUnregistrationResponse(NOTIF_TOPIC_NAME, STATUS_TOPIC_NAME, CambriaOperationStatus.AUTHENTICATION_ERROR, CambriaOperationStatus.AUTHENTICATION_ERROR);
 	}
 
 	@Test
@@ -36,6 +40,7 @@ public class TopicUnregistrationResponseTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getDistrNotificationTopicName();
+		assertThat(result).isEqualTo(NOTIF_TOPIC_NAME);
 	}
 
 	@Test
@@ -46,6 +51,7 @@ public class TopicUnregistrationResponseTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getDistrStatusTopicName();
+		assertThat(result).isEqualTo(STATUS_TOPIC_NAME);
 	}
 
 	@Test
@@ -56,6 +62,7 @@ public class TopicUnregistrationResponseTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getNotificationUnregisterResult();
+		assertThat(result).isEqualTo(CambriaOperationStatus.AUTHENTICATION_ERROR);
 	}
 
 	@Test
@@ -66,5 +73,6 @@ public class TopicUnregistrationResponseTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getStatusUnregisterResult();
+		assertThat(result).isEqualTo(CambriaOperationStatus.AUTHENTICATION_ERROR);
 	}
 }

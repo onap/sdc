@@ -20,21 +20,30 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class RegistrationRequestTest {
+	private static final String API_KEY = "mock-api-key";
+	private static final String DISTR_ENV_NAME = "mock-distr-env-name";
 
 	private RegistrationRequest createTestSubject() {
-		return new RegistrationRequest("", "", false);
+		return new RegistrationRequest(API_KEY, DISTR_ENV_NAME, false);
 	}
 	
 	@Test
 	public void testConstructor() throws Exception {
 		List<String> distEnvEndPoints = new LinkedList<>();
-		new RegistrationRequest("mock", "mock", distEnvEndPoints , false);
+		RegistrationRequest request = new RegistrationRequest(API_KEY, DISTR_ENV_NAME, distEnvEndPoints , false);
+		assertThat(request)
+				.isInstanceOf(RegistrationRequest.class)
+				.hasFieldOrPropertyWithValue("apiPublicKey", API_KEY)
+				.hasFieldOrPropertyWithValue("distrEnvName", DISTR_ENV_NAME)
+				.hasFieldOrPropertyWithValue("distEnvEndPoints", distEnvEndPoints);
 	}
 	
 	@Test
@@ -45,6 +54,7 @@ public class RegistrationRequestTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getApiPublicKey();
+		assertThat(result).isEqualTo(API_KEY);
 	}
 
 	@Test
@@ -55,6 +65,7 @@ public class RegistrationRequestTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getDistrEnvName();
+		assertThat(result).isEqualTo(DISTR_ENV_NAME);
 	}
 
 	@Test
@@ -65,6 +76,7 @@ public class RegistrationRequestTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getIsConsumerToSdcDistrStatusTopic();
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -75,15 +87,17 @@ public class RegistrationRequestTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getDistEnvEndPoints();
+		assertThat(result).isNull();
 	}
 
 	@Test
 	public void testSetDistEnvEndPoints() throws Exception {
 		RegistrationRequest testSubject;
-		List<String> distEnvEndPoints = null;
+		List<String> distEnvEndPoints = new LinkedList<>();
 
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setDistEnvEndPoints(distEnvEndPoints);
+		assertThat(testSubject).hasFieldOrPropertyWithValue("distEnvEndPoints", distEnvEndPoints);
 	}
 }

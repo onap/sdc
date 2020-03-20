@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
 import org.junit.Test;
 
 import java.util.List;
@@ -38,15 +41,19 @@ public class ServerListResponseTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getUebServerList();
+		assertThat(result).isNull();
 	}
 
 	@Test
 	public void testSetUebServerList() throws Exception {
 		ServerListResponse testSubject;
-		List<String> uebServerList = null;
+		List<String> uebServers = new ArrayList<>();
+		uebServers.add("server1");
+		uebServers.add("server2");
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setUebServerList(uebServerList);
+		testSubject.setUebServerList(uebServers);
+		assertThat(testSubject).hasFieldOrPropertyWithValue("uebServerList", uebServers);
 	}
 }
