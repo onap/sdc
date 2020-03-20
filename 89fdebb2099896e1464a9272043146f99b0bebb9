@@ -22,6 +22,30 @@
       "revId": "89fdebb2099896e1464a9272043146f99b0bebb9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc29aa1c_c04ebb92",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/ApiResourceEnumTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-03-20T13:06:49Z",
+      "side": 1,
+      "message": "Done in https://gerrit.onap.org/r/c/sdc/+/104034",
+      "parentUuid": "4bee0dd3_2b541587",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 34
+      },
+      "revId": "89fdebb2099896e1464a9272043146f99b0bebb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
