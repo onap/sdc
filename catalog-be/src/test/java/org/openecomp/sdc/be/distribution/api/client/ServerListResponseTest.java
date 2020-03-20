@@ -20,33 +20,26 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
 import org.junit.Test;
 
 import java.util.List;
 
 public class ServerListResponseTest {
+	@Test
+	public void testServerResponseCOnstructor() {
+		ServerListResponse testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		assertThat(testSubject)
+				.isInstanceOf(ServerListResponse.class)
+				.hasFieldOrPropertyWithValue("uebServerList", null);
+	}
 
 	private ServerListResponse createTestSubject() {
 		return new ServerListResponse();
-	}
-
-	@Test
-	public void testGetUebServerList() throws Exception {
-		ServerListResponse testSubject;
-		List<String> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUebServerList();
-	}
-
-	@Test
-	public void testSetUebServerList() throws Exception {
-		ServerListResponse testSubject;
-		List<String> uebServerList = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setUebServerList(uebServerList);
 	}
 }

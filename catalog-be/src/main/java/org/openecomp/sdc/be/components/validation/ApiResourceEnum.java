@@ -20,9 +20,12 @@
 
 package org.openecomp.sdc.be.components.validation;
 
+import lombok.Getter;
+
 /**
  * Created by chaya on 11/14/2017.
  */
+@Getter
 public enum ApiResourceEnum {
 
     ENVIRONMENT_ID("Environment ID"),
@@ -34,9 +37,4 @@ public enum ApiResourceEnum {
     ApiResourceEnum(String value) {
         this.value = value;
     }
-
-    public String getValue() {
-        return this.value;
-    }
-
 }

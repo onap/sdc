@@ -20,70 +20,41 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class RegistrationRequestTest {
+	private static final String API_KEY = "mock-api-key";
+	private static final String DISTR_ENV_NAME = "mock-distr-env-name";
 
 	private RegistrationRequest createTestSubject() {
-		return new RegistrationRequest("", "", false);
+		return new RegistrationRequest(API_KEY, DISTR_ENV_NAME, false);
 	}
-	
+
 	@Test
-	public void testConstructor() throws Exception {
+	public void testConstructorThreeArgs() throws Exception {
 		List<String> distEnvEndPoints = new LinkedList<>();
-		new RegistrationRequest("mock", "mock", distEnvEndPoints , false);
-	}
-	
-	@Test
-	public void testGetApiPublicKey() throws Exception {
-		RegistrationRequest testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getApiPublicKey();
+		RegistrationRequest request = new RegistrationRequest(API_KEY, DISTR_ENV_NAME, true );
+		assertThat(request)
+				.isInstanceOf(RegistrationRequest.class)
+				.hasFieldOrPropertyWithValue("apiPublicKey", API_KEY)
+				.hasFieldOrPropertyWithValue("distrEnvName", DISTR_ENV_NAME)
+				.hasFieldOrPropertyWithValue("isConsumerToSdcDistrStatusTopic", true);
 	}
 
 	@Test
-	public void testGetDistrEnvName() throws Exception {
-		RegistrationRequest testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDistrEnvName();
-	}
-
-	@Test
-	public void testGetIsConsumerToSdcDistrStatusTopic() throws Exception {
-		RegistrationRequest testSubject;
-		Boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getIsConsumerToSdcDistrStatusTopic();
-	}
-
-	@Test
-	public void testGetDistEnvEndPoints() throws Exception {
-		RegistrationRequest testSubject;
-		List<String> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDistEnvEndPoints();
-	}
-
-	@Test
-	public void testSetDistEnvEndPoints() throws Exception {
-		RegistrationRequest testSubject;
-		List<String> distEnvEndPoints = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDistEnvEndPoints(distEnvEndPoints);
+	public void testConstructorFourArgs() throws Exception {
+		List<String> distEnvEndPoints = new LinkedList<>();
+		RegistrationRequest request = new RegistrationRequest(API_KEY, DISTR_ENV_NAME, distEnvEndPoints , false);
+		assertThat(request)
+				.isInstanceOf(RegistrationRequest.class)
+				.hasFieldOrPropertyWithValue("apiPublicKey", API_KEY)
+				.hasFieldOrPropertyWithValue("distrEnvName", DISTR_ENV_NAME)
+				.hasFieldOrPropertyWithValue("distEnvEndPoints", distEnvEndPoints)
+				.hasFieldOrPropertyWithValue("isConsumerToSdcDistrStatusTopic", false);
 	}
 }

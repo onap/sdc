@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import lombok.Getter;
+
+@Getter
 public class TopicUnregistrationResponse {
     String distrNotificationTopicName;
     String distrStatusTopicName;
@@ -32,21 +35,5 @@ public class TopicUnregistrationResponse {
         this.distrStatusTopicName = distrStatusTopicName;
         this.notificationUnregisterResult = notificationUnregisterResult;
         this.statusUnregisterResult = statusUnregisterResult;
-    }
-
-    public String getDistrNotificationTopicName() {
-        return distrNotificationTopicName;
-    }
-
-    public String getDistrStatusTopicName() {
-        return distrStatusTopicName;
-    }
-
-    public CambriaOperationStatus getNotificationUnregisterResult() {
-        return notificationUnregisterResult;
-    }
-
-    public CambriaOperationStatus getStatusUnregisterResult() {
-        return statusUnregisterResult;
     }
 }

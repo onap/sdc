@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.components.validation;
 
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 public class ApiResourceEnumTest {
@@ -28,13 +31,14 @@ public class ApiResourceEnumTest {
 		return ApiResourceEnum.ENVIRONMENT_ID;
 	}
 
-	@Test
-	public void testGetValue() throws Exception {
+ 	@Test
+	public void testApiResourceEnumConstructor() {
 		ApiResourceEnum testSubject;
-		String result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getValue();
+		assertThat(testSubject)
+				.isInstanceOf(ApiResourceEnum.class)
+				.hasFieldOrPropertyWithValue("value", "Environment ID");
 	}
 }
