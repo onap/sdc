@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4bee0dd3_2b541587",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/validation/ApiResourceEnumTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-20T11:33:31Z",
+      "side": 1,
+      "message": "similar comment from\nhttps://gerrit.onap.org/r/c/sdc/+/104034/1/catalog-be/src/test/java/org/openecomp/sdc/be/distribution/api/client/RegistrationRequestTest.java",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 34
+      },
+      "revId": "89fdebb2099896e1464a9272043146f99b0bebb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
