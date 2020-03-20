@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a0bc9dd_27d566c2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/api/client/RegistrationRequestTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-20T11:28:07Z",
+      "side": 1,
+      "message": "I\u0027d suggest to replace testing of Getter and Setter with LOMBOK in testing subject class (RegistrationRequest) and test only constructors. By doing this we create more readable code and test something meaningful without losing (and in some situation even increasing) coverage.",
+      "range": {
+        "startLine": 49,
+        "startChar": 1,
+        "endLine": 102,
+        "endChar": 2
+      },
+      "revId": "37cd53427c0df56b8e0dbad08e5e9b3d7db93e7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7158bac_ed1172b8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/api/client/ServerListResponseTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-20T11:28:07Z",
+      "side": 1,
+      "message": "same comment here.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 37
+      },
+      "revId": "37cd53427c0df56b8e0dbad08e5e9b3d7db93e7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a900622c_d0e78063",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/api/client/TopicRegistrationResponseTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-20T11:28:07Z",
+      "side": 1,
+      "message": "same here.",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 44
+      },
+      "revId": "37cd53427c0df56b8e0dbad08e5e9b3d7db93e7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0efaee2e_3bcebca7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/distribution/api/client/TopicUnregistrationResponseTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-20T11:28:07Z",
+      "side": 1,
+      "message": "same here.",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 46
+      },
+      "revId": "37cd53427c0df56b8e0dbad08e5e9b3d7db93e7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
