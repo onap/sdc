@@ -148,14 +148,21 @@ public class SdcSchemaUtils {
         }
         return true;
     }
-    
-    
+
     private void setSocketOptions(Cluster.Builder clusterBuilder, Configuration.CassandrConfig config) {
-        SocketOptions socketOptions =new SocketOptions();
+        SocketOptions socketOptions = new SocketOptions();
         Integer socketConnectTimeout = config.getSocketConnectTimeout();
-        if( socketConnectTimeout!=null ){
-            log.info("SocketConnectTimeout was provided, setting Cassandra client to use SocketConnectTimeout: {} .",socketConnectTimeout);
+        if (socketConnectTimeout != null) {
+            log.info("SocketConnectTimeout was provided, setting Cassandra client to use SocketConnectTimeout: {} .",
+                    socketConnectTimeout);
             socketOptions.setConnectTimeoutMillis(socketConnectTimeout);
+        }
+
+        Integer socketReadTimeout = config.getSocketReadTimeout();
+        if (socketReadTimeout != null) {
+            log.info("SocketReadTimeout was provided, setting Cassandra client to use SocketReadTimeout: {} .",
+                    socketReadTimeout);
+            socketOptions.setReadTimeoutMillis(socketReadTimeout);
         }
         clusterBuilder.withSocketOptions(socketOptions);
     }
