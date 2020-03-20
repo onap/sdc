@@ -21,7 +21,11 @@
 package org.openecomp.sdc.be.distribution.api.client;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class RegistrationRequest {
     private String apiPublicKey;
     private String distrEnvName;
@@ -40,40 +44,5 @@ public class RegistrationRequest {
         this.distrEnvName = distrEnvName;
         this.distEnvEndPoints = distEnvEndPoints;
         this.isConsumerToSdcDistrStatusTopic = isConsumerToSdcDistrStatusTopic;
-    }
-
-    public String getApiPublicKey() {
-        return apiPublicKey;
-    }
-
-    public String getDistrEnvName() {
-        return distrEnvName;
-    }
-
-    public Boolean getIsConsumerToSdcDistrStatusTopic() {
-        return isConsumerToSdcDistrStatusTopic;
-    }
-    public List<String> getDistEnvEndPoints() {
-        return distEnvEndPoints;
-    }
-
-    public void setDistEnvEndPoints(List<String> distEnvEndPoints) {
-        this.distEnvEndPoints = distEnvEndPoints;
-    }
-
-    public String getManagerApiPublicKey() {
-        return managerApiPublicKey;
-    }
-
-    public void setManagerApiPublicKey(String managerApiPublicKey) {
-        this.managerApiPublicKey = managerApiPublicKey;
-    }
-
-    public String getManagerApiSecretKey() {
-        return managerApiSecretKey;
-    }
-
-    public void setManagerApiSecretKey(String managerApiSecretKey) {
-        this.managerApiSecretKey = managerApiSecretKey;
     }
 }

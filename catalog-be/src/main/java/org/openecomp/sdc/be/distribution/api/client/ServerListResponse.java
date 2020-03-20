@@ -21,16 +21,13 @@
 package org.openecomp.sdc.be.distribution.api.client;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor(force = true)
 public class ServerListResponse {
-
     private List<String> uebServerList;
-
-    public List<String> getUebServerList() {
-        return uebServerList;
-    }
-
-    public void setUebServerList(List<String> uebServerList) {
-        this.uebServerList = uebServerList;
-    }
 }

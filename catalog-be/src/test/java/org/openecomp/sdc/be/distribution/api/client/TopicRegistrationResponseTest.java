@@ -20,51 +20,23 @@
 
 package org.openecomp.sdc.be.distribution.api.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 public class TopicRegistrationResponseTest {
+	@Test
+	public void testTopicRegistrationResponseConstructor() throws Exception {
+		TopicRegistrationResponse testSubject;
+		// default test
+		testSubject = createTestSubject();
+		assertThat(testSubject)
+				.isInstanceOf(TopicRegistrationResponse.class)
+				.hasFieldOrPropertyWithValue("distrNotificationTopicName", null)
+				.hasFieldOrPropertyWithValue("distrStatusTopicName", null);
+	}
 
 	private TopicRegistrationResponse createTestSubject() {
 		return new TopicRegistrationResponse();
-	}
-
-	@Test
-	public void testSetDistrNotificationTopicName() throws Exception {
-		TopicRegistrationResponse testSubject;
-		String distrNotificationTopicName = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDistrNotificationTopicName(distrNotificationTopicName);
-	}
-
-	@Test
-	public void testSetDistrStatusTopicName() throws Exception {
-		TopicRegistrationResponse testSubject;
-		String distrStatusTopicName = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDistrStatusTopicName(distrStatusTopicName);
-	}
-
-	@Test
-	public void testGetDistrNotificationTopicName() throws Exception {
-		TopicRegistrationResponse testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDistrNotificationTopicName();
-	}
-
-	@Test
-	public void testGetDistrStatusTopicName() throws Exception {
-		TopicRegistrationResponse testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDistrStatusTopicName();
 	}
 }
