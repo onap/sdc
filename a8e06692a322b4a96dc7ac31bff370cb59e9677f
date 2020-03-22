@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "32d8afb6_72dd4e34",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/entitlementPools/components/FormContent.jsx",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2020-03-22T15:53:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a9cd0af_f03bbc59",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84e3784a_a8c04ecc",
         "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/overview/listItems/EntitlementPool.jsx",
         "patchSetId": 3
@@ -33,6 +51,24 @@
       "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f02331f_e717f77d",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/overview/listItems/EntitlementPool.jsx",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2941
+      },
+      "writtenOn": "2020-03-22T15:53:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84e3784a_a8c04ecc",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
