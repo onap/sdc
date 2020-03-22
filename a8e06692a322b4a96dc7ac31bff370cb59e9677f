@@ -86,6 +86,24 @@
       "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc603821_2e0e1269",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 6152
+      },
+      "writtenOn": "2020-03-22T15:54:16Z",
+      "side": 1,
+      "message": "In our environment the old version had made us some compilation problems.\nas it\u0027s a small change i decided to include this in the same commit.",
+      "parentUuid": "3cedd82b_a76db9a5",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }

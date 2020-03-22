@@ -16,6 +16,24 @@
       "revId": "46b51c61f42bb4661ec389a3f3544f494b3ef014",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "093e24f2_c0ab065c",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 6152
+      },
+      "writtenOn": "2020-03-22T15:54:16Z",
+      "side": 0,
+      "message": "The maven compiler plugin should be defined just once, in the main pom.xml\nto avoid any inconsistency as we have now.\nit is not part of the task, but as it\u0027s a small change i decided to combine it in the same user story.",
+      "parentUuid": "c90ad347_fab8ae0d",
+      "revId": "46b51c61f42bb4661ec389a3f3544f494b3ef014",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
