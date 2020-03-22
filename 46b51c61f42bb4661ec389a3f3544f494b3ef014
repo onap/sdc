@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c90ad347_fab8ae0d",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-22T12:04:23Z",
+      "side": 0,
+      "message": "is there a reason to change the poms as part of this task?",
+      "revId": "46b51c61f42bb4661ec389a3f3544f494b3ef014",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

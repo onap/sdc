@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a9cd0af_f03bbc59",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/entitlementPools/components/FormContent.jsx",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-22T12:04:23Z",
+      "side": 1,
+      "message": "please combine with the previous import from the constants and please fix the path to file to be absolute",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84e3784a_a8c04ecc",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/overview/listItems/EntitlementPool.jsx",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-22T12:04:23Z",
+      "side": 1,
+      "message": "combine with the previous import and please fix the path to be absolute",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cedd82b_a76db9a5",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-22T12:04:23Z",
+      "side": 1,
+      "message": "is that part of this tasks?",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
