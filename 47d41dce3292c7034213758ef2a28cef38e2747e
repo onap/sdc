@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f634536_7876f64a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1711,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-03-22T11:47:57Z",
+      "side": 1,
+      "message": "Is this if really needed? Can you include the additional operation in the upper “bimap” following the call to updatePropertyOnContainerComponent(…)?",
+      "range": {
+        "startLine": 1709,
+        "startChar": 20,
+        "endLine": 1711,
+        "endChar": 21
+      },
+      "revId": "47d41dce3292c7034213758ef2a28cef38e2747e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
