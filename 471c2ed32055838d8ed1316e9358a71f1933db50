@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de7286b4_5cbd267e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/representation/ProductCategoryGroupMetadataTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-23T17:26:58Z",
+      "side": 1,
+      "message": "private static final",
+      "range": {
+        "startLine": 30,
+        "startChar": 1,
+        "endLine": 32,
+        "endChar": 29
+      },
+      "revId": "471c2ed32055838d8ed1316e9358a71f1933db50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
