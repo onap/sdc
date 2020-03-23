@@ -22,6 +22,30 @@
       "revId": "47d41dce3292c7034213758ef2a28cef38e2747e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "678490e9_782473f9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1711,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-03-23T09:09:29Z",
+      "side": 1,
+      "message": "The original problem was in this cause that sdc-FE doesn\u0027t show the updated value in the UI. To reproduce that issue we can:\n1. Update the properties of the VFC.\n2. Check the value in the properties menu have older value (before updated).\nNext, to see updated properties value, we must refresh the page, to force new get request the backend (to get the proper \u0027new\u0027 value).\n\nThe problem was caused because of the componentInstanceProperty that is returned to the UI (in the response) and should contain the new value of the property, but in fact, alwes contain the older value (before the update). For this reason, I think, this \u0027if\u0027 statement is necessary because we update the componentInstanceProperty with the \u0027new\u0027 value, and this is returned to the UI. \n\nIn the bitmap and updatePropertyOnContainerComponent method, we don\u0027t do anything with updatePropertyOnContainerComponent variable. It only updates the value in the backend storage.",
+      "parentUuid": "1f634536_7876f64a",
+      "range": {
+        "startLine": 1709,
+        "startChar": 20,
+        "endLine": 1711,
+        "endChar": 21
+      },
+      "revId": "47d41dce3292c7034213758ef2a28cef38e2747e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
