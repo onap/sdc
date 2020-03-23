@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import fj.data.Either;
 import mockit.Deencapsulation;
 import org.junit.Assert;
@@ -66,6 +68,7 @@ public class AssetMetadataConverterTest {
 		testSubject = createTestSubject();
 		componentList = null;
 		result = testSubject.convertToAssetMetadata(componentList, serverBaseURL, detailed);
+		assertThat(result.isLeft()).isTrue();
 	}
 
 	@Test
@@ -80,6 +83,7 @@ public class AssetMetadataConverterTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.convertToSingleAssetMetadata(component, serverBaseURL, detailed);
+		assertThat(result.isLeft()).isTrue();
 	}
 
 	@Test
@@ -95,6 +99,7 @@ public class AssetMetadataConverterTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToMetadata", ComponentTypeEnum.RESOURCE, serverBaseURL,
 				detailed, curr);
+		assertThat(result.isLeft()).isTrue();
 	}
 
 	@Test
@@ -108,6 +113,7 @@ public class AssetMetadataConverterTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "generateResourceMeatdata", serverBaseURL, true, curr);
+		assertThat(result.isLeft()).isTrue();
 	}
 
 	@Test
@@ -118,6 +124,7 @@ public class AssetMetadataConverterTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "createMetadaObject", true, ComponentTypeEnum.RESOURCE);
+		assertThat(result).isInstanceOf(AssetMetadata.class);
 	}
 
 	@Test
@@ -134,6 +141,7 @@ public class AssetMetadataConverterTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "generateServiceMetadata", serverBaseURL, detailed, curr);
+		assertThat(result.isLeft()).isTrue();
 	}
 
 	@Test
@@ -147,6 +155,7 @@ public class AssetMetadataConverterTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToAsset", asset, component, serverBaseURL, true);
+		assertThat(result).isInstanceOf(ResourceAssetMetadata.class);
 	}
 
 	@Test
@@ -163,6 +172,7 @@ public class AssetMetadataConverterTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToResourceMetadata", assetToPopulate, resource,
 				serverBaseURL, true);
+		assertThat(result).isInstanceOf(ResourceAssetMetadata.class);
 	}
 
 	@Test
@@ -180,6 +190,7 @@ public class AssetMetadataConverterTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToServiceAssetMetadata", assetToPopulate, service,
 				serverBaseURL, true);
+		assertThat(result).isInstanceOf(ServiceAssetMetadata.class);
 	}
 
 	@Test
@@ -194,6 +205,7 @@ public class AssetMetadataConverterTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToResourceDetailedMetadata", assetToPopulate, resource,
 				serverBaseURL);
+		assertThat(result.isLeft()).isTrue();
 	}
 
 	@Test
@@ -206,6 +218,7 @@ public class AssetMetadataConverterTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToServiceDetailedMetadata", assetToPopulate, service);
+		assertThat(result.isLeft()).isTrue();
 	}
 
 	@Test
@@ -218,7 +231,8 @@ public class AssetMetadataConverterTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "populateResourceWithArtifacts", asset, resource, artifacts); 
+		result = Deencapsulation.invoke(testSubject, "populateResourceWithArtifacts", asset, resource, artifacts);
+		assertThat(result).isInstanceOf(ResourceAssetDetailedMetadata.class);
 	}
 
 	@Test
@@ -234,6 +248,7 @@ public class AssetMetadataConverterTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "populateServiceWithArtifacts",
 				asset, Service.class, artifacts);
+		assertThat(result).isInstanceOf(ServiceAssetDetailedMetadata.class);
 	}
 
 	@Test
@@ -246,7 +261,7 @@ public class AssetMetadataConverterTest {
 		// test 1
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "populateAssetWithArtifacts", component, artifacts);
-		Assert.assertEquals(null, result);
+		assertThat(result).isNull();
 	}
 
 	@Test
@@ -263,6 +278,7 @@ public class AssetMetadataConverterTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToArtifactMetadata", artifact, componentType,
 				componentUUID, resourceInstanceName);
+		assertThat(result).isInstanceOf(ArtifactMetadata.class);
 	}
 
 	@Test
@@ -277,5 +293,6 @@ public class AssetMetadataConverterTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "convertToResourceInstanceMetadata",
 				new Object[] { componentInstances, componentType, componentUUID });
+		assertThat(result.isLeft()).isTrue();
 	}
 }

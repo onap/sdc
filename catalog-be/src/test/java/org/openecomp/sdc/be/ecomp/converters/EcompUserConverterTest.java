@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import fj.data.Either;
 import org.junit.Test;
 import org.onap.portalsdk.core.restful.domain.EcompUser;
@@ -34,6 +36,7 @@ public class EcompUserConverterTest {
 
 		// test 1
 		result = EcompUserConverter.convertUserToEcompUser(asdcUser);
+		assertThat(result.isLeft()).isTrue();
 	}
 
 	@Test
@@ -43,5 +46,6 @@ public class EcompUserConverterTest {
 
 		// test 1
 		result = EcompUserConverter.convertEcompUserToUser(ecompUser);
+		assertThat(result).isInstanceOf(User.class);
 	}
 }

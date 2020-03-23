@@ -20,7 +20,10 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
+import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
 import org.onap.portalsdk.core.restful.domain.EcompRole;
 import org.openecomp.sdc.be.user.Role;
 
@@ -34,12 +37,15 @@ public class EcompRoleConverterTest {
 		// test 1
 		for (Role iterable_element : Role.values()) {
 			ecompRole.setName(iterable_element.name());
-			EcompRoleConverter.convertEcompRoleToRole(ecompRole);
+			result = EcompRoleConverter.convertEcompRoleToRole(ecompRole);
+			assertThat(result).isEqualTo(iterable_element.name());
 		}
-		
-		EcompRoleConverter.convertEcompRoleToRole(null);
-		
-		ecompRole.setId(new Long(4523535));
+	}
+
+	@Test(expected = PortalAPIException.class)
+	public void testConvertEcompRoleToRoleFailure() throws PortalAPIException {
+		EcompRole ecompRole = new EcompRole();
+		ecompRole.setName("mock-name");
 		EcompRoleConverter.convertEcompRoleToRole(ecompRole);
 	}
 }

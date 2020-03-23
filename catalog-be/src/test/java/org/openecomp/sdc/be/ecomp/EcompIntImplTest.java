@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.ecomp;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
@@ -28,6 +31,8 @@ import org.onap.portalsdk.core.restful.domain.EcompUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.api.Constants;
 
 public class EcompIntImplTest {
 
@@ -84,7 +89,8 @@ public class EcompIntImplTest {
 
 		// default test
 		testSubject = createTestSubject();
-        result = testSubject.getAvailableRoles("Mock");
+        result = testSubject.getAvailableRoles("mock-id");
+        assertThat(result).hasSameSizeAs(Role.values());
 	}
 
 
@@ -104,19 +110,27 @@ public class EcompIntImplTest {
 		EcompIntImpl testSubject;
 		boolean result;
         HttpServletRequest httpServletRequestImpl = Mockito.mock(HttpServletRequest.class);
+        when(httpServletRequestImpl.getHeader("username")).thenReturn("mock-user");
+        when(httpServletRequestImpl.getHeader("password")).thenReturn("mock-password");
+
 		// default test
-		testSubject = createTestSubject();
+		testSubject  = createTestSubject();
         result = testSubject.isAppAuthenticated(httpServletRequestImpl, null);
+        assertThat(result).isFalse();
 	}
 
 	@Test
 	public void testGetUserId() throws Exception {
 		EcompIntImpl testSubject;
-        HttpServletRequest httpServletRequestImpl = Mockito.mock(HttpServletRequest.class);
+		String userId = "mock-user-id";
+		HttpServletRequest httpServletRequestImpl = Mockito.mock(HttpServletRequest.class);
+		when(httpServletRequestImpl.getHeader(Constants.USER_ID_HEADER)).thenReturn(userId);
+
 		String result;
 
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getUserId(httpServletRequestImpl);
+		assertThat(result).isEqualTo(userId);
 	}
 }
