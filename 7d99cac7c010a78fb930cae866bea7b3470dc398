@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5f39416_de90b06d",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-23T15:53:40Z",
+      "side": 1,
+      "message": "I\u0027d suggest to move ${version} to parent pom",
+      "range": {
+        "startLine": 583,
+        "startChar": 21,
+        "endLine": 583,
+        "endChar": 26
+      },
+      "revId": "7d99cac7c010a78fb930cae866bea7b3470dc398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a79fe19c_1f5f3c4c",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-23T15:53:40Z",
+      "side": 1,
+      "message": "I\u0027d suggest to move ${version} to parent pom",
+      "range": {
+        "startLine": 590,
+        "startChar": 0,
+        "endLine": 590,
+        "endChar": 36
+      },
+      "revId": "7d99cac7c010a78fb930cae866bea7b3470dc398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f03039a_a33dd28e",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-23T15:53:40Z",
+      "side": 1,
+      "message": "same comment",
+      "range": {
+        "startLine": 597,
+        "startChar": 0,
+        "endLine": 597,
+        "endChar": 36
+      },
+      "revId": "7d99cac7c010a78fb930cae866bea7b3470dc398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
