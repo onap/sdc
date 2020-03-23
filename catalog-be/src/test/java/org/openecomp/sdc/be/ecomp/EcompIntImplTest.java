@@ -23,7 +23,8 @@ package org.openecomp.sdc.be.ecomp;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
 import org.onap.portalsdk.core.restful.domain.EcompRole;
@@ -40,69 +41,75 @@ public class EcompIntImplTest {
 		return new EcompIntImpl();
 	}
 
-	@Test(expected=PortalAPIException.class)
-	public void testPushUser() throws Exception {
+	@Test
+	public void testPushUser()  {
 		EcompIntImpl testSubject;
 		EcompUser user = null;
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.pushUser(user);
-	}
-
-	@Test(expected=PortalAPIException.class)
-	public void testEditUser() throws Exception {
-		EcompIntImpl testSubject;
-		String loginId = "";
-		EcompUser user = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.editUser(loginId, user);
-	}
-
-	@Test(expected=PortalAPIException.class)
-	public void testGetUser() throws Exception {
-		EcompIntImpl testSubject;
-		String loginId = "";
-		EcompUser result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUser(loginId);
-	}
-
-	@Test(expected=PortalAPIException.class)
-	public void testGetUsers() throws Exception {
-		EcompIntImpl testSubject;
-		List<EcompUser> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUsers();
+		Assertions.assertThrows(PortalAPIException.class, () -> {
+			testSubject.pushUser(user);
+		});
 	}
 
 	@Test
-	public void testGetAvailableRoles() throws Exception {
-		EcompIntImpl testSubject;
-		List<EcompRole> result;
-
-		// default test
-		testSubject = createTestSubject();
-        result = testSubject.getAvailableRoles("mock-id");
-        assertThat(result).hasSameSizeAs(Role.values());
-	}
-
-
-    @Test(expected= PortalAPIException.class)
-	public void testGetUserRoles() throws Exception {
+	public void testEditUser() {
 		EcompIntImpl testSubject;
 		String loginId = "";
-		List<EcompRole> result;
+		EcompUser user = null;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getUserRoles(loginId);
+		Assertions.assertThrows(PortalAPIException.class, () -> {
+			testSubject.editUser(loginId, user);
+		});
+	}
+
+	@Test
+	public void testGetUser() {
+		EcompIntImpl testSubject;
+		String loginId = "";
+
+		// default test
+		testSubject = createTestSubject();
+		Assertions.assertThrows(PortalAPIException.class, () -> {
+			EcompUser result = testSubject.getUser(loginId);
+		});
+	}
+
+	@Test
+	public void testGetUsers() {
+		EcompIntImpl testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		Assertions.assertThrows(PortalAPIException.class, () -> {
+			List<EcompUser> result = testSubject.getUsers();
+		});
+
+	}
+
+	@Test
+	public void testGetAvailableRoles() throws PortalAPIException{
+		EcompIntImpl testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		List<EcompRole> result = testSubject.getAvailableRoles("mock-id");
+		assertThat(result).hasSameSizeAs(Role.values());
+	}
+
+	@Test
+	public void testGetUserRoles()  {
+		EcompIntImpl testSubject;
+		String loginId = "";
+
+		// default test
+		testSubject = createTestSubject();
+		Assertions.assertThrows(PortalAPIException.class, () -> {
+			List<EcompRole> result = testSubject.getUserRoles(loginId);
+		});
 	}
 
 	@Test
