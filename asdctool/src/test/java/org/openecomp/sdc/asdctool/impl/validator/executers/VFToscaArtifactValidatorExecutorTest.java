@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
@@ -35,14 +36,14 @@ public class VFToscaArtifactValidatorExecutorTest {
 		return new VFToscaArtifactValidatorExecutor(janusGraphDaoMock, toscaOperationFacade);
 	}
 
-	@Test(expected=NullPointerException.class)
-	public void testExecuteValidations() throws Exception {
+	@Test
+	public void testExecuteValidations() {
 		VFToscaArtifactValidatorExecutor testSubject;
 		boolean result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.executeValidations();
+		Assertions.assertThrows(NullPointerException.class, () -> testSubject.executeValidations());
 	}
 
 	@Test
