@@ -21,7 +21,11 @@
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ResourceInstanceMetadata {
     private String resourceInstanceName;
     private String resourceName;
@@ -30,60 +34,4 @@ public class ResourceInstanceMetadata {
     private String resoucreType;
     private String resourceUUID;
     private List<ArtifactMetadata> artifacts;
-
-    public String getResourceInstanceName() {
-        return resourceInstanceName;
-    }
-
-    public void setResourceInstanceName(String resourceInstanceName) {
-        this.resourceInstanceName = resourceInstanceName;
-    }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
-    public void setResourceName(String resourceName) {
-        this.resourceName = resourceName;
-    }
-
-    public String getResourceInvariantUUID() {
-        return resourceInvariantUUID;
-    }
-
-    public void setResourceInvariantUUID(String resourceInvariantUUID) {
-        this.resourceInvariantUUID = resourceInvariantUUID;
-    }
-
-    public String getResourceVersion() {
-        return resourceVersion;
-    }
-
-    public void setResourceVersion(String resourceVersion) {
-        this.resourceVersion = resourceVersion;
-    }
-
-    public String getResoucreType() {
-        return resoucreType;
-    }
-
-    public void setResoucreType(String resoucreType) {
-        this.resoucreType = resoucreType;
-    }
-
-    public String getResourceUUID() {
-        return resourceUUID;
-    }
-
-    public void setResourceUUID(String resourceUUID) {
-        this.resourceUUID = resourceUUID;
-    }
-
-    public List<ArtifactMetadata> getArtifacts() {
-        return artifacts;
-    }
-
-    public void setArtifacts(List<ArtifactMetadata> artifacts) {
-        this.artifacts = artifacts;
-    }
 }
