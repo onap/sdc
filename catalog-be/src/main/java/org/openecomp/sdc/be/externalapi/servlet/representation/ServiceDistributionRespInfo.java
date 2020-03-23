@@ -20,25 +20,18 @@
 
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * Created by chaya on 10/26/2017.
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServiceDistributionRespInfo {
-
     private String distributionId;
-
-    public ServiceDistributionRespInfo() {
-    }
-
-    public ServiceDistributionRespInfo(String distributionId) {
-        this.distributionId = distributionId;
-    }
-
-    public String getDistributionId() {
-        return distributionId;
-    }
-
-    public void setDistributionId(String distributionId) {
-        this.distributionId = distributionId;
-    }
 }

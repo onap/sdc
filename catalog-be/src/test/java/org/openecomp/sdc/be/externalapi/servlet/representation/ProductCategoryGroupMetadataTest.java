@@ -20,78 +20,31 @@
 
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 
 public class ProductCategoryGroupMetadataTest {
 
+	String category = "mock-category";
+	String subCategory = "mock-sub-category";
+	String group = "mock-group";
 	private ProductCategoryGroupMetadata createTestSubject() {
-		return new ProductCategoryGroupMetadata("", "", "");
+		return new ProductCategoryGroupMetadata(category, subCategory, group);
 	}
 
 	
 	@Test
-	public void testGetCategory() throws Exception {
+	public void testProductCategoryGroupMetadataConstructor() {
 		ProductCategoryGroupMetadata testSubject;
-		String result;
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getCategory();
-	}
-
-	
-	@Test
-	public void testSetCategory() throws Exception {
-		ProductCategoryGroupMetadata testSubject;
-		String category = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCategory(category);
-	}
-
-	
-	@Test
-	public void testGetSubCategory() throws Exception {
-		ProductCategoryGroupMetadata testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getSubCategory();
-	}
-
-	
-	@Test
-	public void testSetSubCategory() throws Exception {
-		ProductCategoryGroupMetadata testSubject;
-		String subCategory = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setSubCategory(subCategory);
-	}
-
-	
-	@Test
-	public void testGetGroup() throws Exception {
-		ProductCategoryGroupMetadata testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getGroup();
-	}
-
-	
-	@Test
-	public void testSetGroup() throws Exception {
-		ProductCategoryGroupMetadata testSubject;
-		String group = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setGroup(group);
+		assertThat(testSubject)
+				.isInstanceOf(ProductCategoryGroupMetadata.class)
+				.hasFieldOrPropertyWithValue("category", category)
+				.hasFieldOrPropertyWithValue("subCategory", subCategory)
+				.hasFieldOrPropertyWithValue("group", group);
 	}
 }

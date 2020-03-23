@@ -20,36 +20,25 @@
 
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 public class ServiceDistributionRespInfoTest {
-
-	private ServiceDistributionRespInfo createTestSubject() {
-		return new ServiceDistributionRespInfo();
+	@Test
+	public void testCtrNoArgs(){
+		ServiceDistributionRespInfo serviceDistributionRespInfo = new ServiceDistributionRespInfo();
+		assertThat(serviceDistributionRespInfo)
+				.isInstanceOf(ServiceDistributionRespInfo.class)
+				.hasFieldOrPropertyWithValue("distributionId", null);
 	}
 
 	@Test
-	public void testCtr() throws Exception {
-		new ServiceDistributionRespInfo("mock");
-	}
-	
-	@Test
-	public void testGetDistributionId() throws Exception {
-		ServiceDistributionRespInfo testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDistributionId();
-	}
-
-	@Test
-	public void testSetDistributionId() throws Exception {
-		ServiceDistributionRespInfo testSubject;
-		String distributionId = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDistributionId(distributionId);
+	public void testCtrAllArgs(){
+		String distributionId = "mock-id";
+		ServiceDistributionRespInfo serviceDistributionRespInfo = new ServiceDistributionRespInfo(distributionId);
+		assertThat(serviceDistributionRespInfo)
+				.isInstanceOf(ServiceDistributionRespInfo.class)
+				.hasFieldOrPropertyWithValue("distributionId", distributionId);
 	}
 }
