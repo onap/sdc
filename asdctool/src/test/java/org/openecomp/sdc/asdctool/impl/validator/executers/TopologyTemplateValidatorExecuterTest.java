@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
@@ -53,12 +54,13 @@ public class TopologyTemplateValidatorExecuterTest {
 		result = testSubject.getName();
 	}
 
-	@Test(expected=NullPointerException.class)
-	public void testGetVerticesToValidate() throws Exception {
+	//@Test(expected=NullPointerException.class)
+	@Test
+	public void testGetVerticesToValidate() {
 		TopologyTemplateValidatorExecuter testSubject;
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.getVerticesToValidate(ComponentTypeEnum.PRODUCT);
+		Assertions.assertThrows(NullPointerException.class, () -> testSubject.getVerticesToValidate(ComponentTypeEnum.PRODUCT));
 	}
 }
