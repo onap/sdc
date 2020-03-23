@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "7eff131e_1b236d96",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/entitlementPools/components/FormContent.jsx",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-23T07:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32d8afb6_72dd4e34",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84e3784a_a8c04ecc",
         "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/overview/listItems/EntitlementPool.jsx",
         "patchSetId": 3
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "84e3784a_a8c04ecc",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3819534e_c6480528",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/licenseModel/overview/listItems/EntitlementPool.jsx",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-23T07:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f02331f_e717f77d",
       "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -104,6 +140,24 @@
       "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "089d5d56_e34ebd9b",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-23T07:18:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc603821_2e0e1269",
+      "revId": "a8e06692a322b4a96dc7ac31bff370cb59e9677f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

@@ -34,6 +34,24 @@
       "revId": "46b51c61f42bb4661ec389a3f3544f494b3ef014",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4d6bbf2_c1f3adc9",
+        "filename": "common/onap-generic-artifact-browser/onap-generic-artifact-browser-component-tests/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-03-23T07:18:40Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "093e24f2_c0ab065c",
+      "revId": "46b51c61f42bb4661ec389a3f3544f494b3ef014",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
