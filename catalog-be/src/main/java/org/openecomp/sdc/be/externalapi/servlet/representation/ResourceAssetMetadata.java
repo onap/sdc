@@ -20,50 +20,15 @@
 
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ResourceAssetMetadata extends AssetMetadata {
     private String category;
     private String subCategory;
     private String resourceType;
     private String lifecycleState;
     private String lastUpdaterUserId;
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getSubCategory() {
-        return subCategory;
-    }
-
-    public void setSubCategory(String subCategory) {
-        this.subCategory = subCategory;
-    }
-
-    public String getResourceType() {
-        return resourceType;
-    }
-
-    public void setResourceType(String resourceType) {
-        this.resourceType = resourceType;
-    }
-
-    public String getLifecycleState() {
-        return lifecycleState;
-    }
-
-    public void setLifecycleState(String lifecycleState) {
-        this.lifecycleState = lifecycleState;
-    }
-
-    public String getLastUpdaterUserId() {
-        return lastUpdaterUserId;
-    }
-
-    public void setLastUpdaterUserId(String lastUpdaterUserId) {
-        this.lastUpdaterUserId = lastUpdaterUserId;
-    }
 }

@@ -20,38 +20,15 @@
 
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public class ProductCategoryGroupMetadata {
     private String category;
     private String subCategory;
     private String group;
-
-    public ProductCategoryGroupMetadata(String category, String subCategory, String group) {
-        this.category = category;
-        this.subCategory = subCategory;
-        this.group = group;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getSubCategory() {
-        return subCategory;
-    }
-
-    public void setSubCategory(String subCategory) {
-        this.subCategory = subCategory;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
 }
