@@ -96,6 +96,19 @@
             <artifactId>logging-filter-base</artifactId>
             <version>${onap.logging.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junitJupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockitoJupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
