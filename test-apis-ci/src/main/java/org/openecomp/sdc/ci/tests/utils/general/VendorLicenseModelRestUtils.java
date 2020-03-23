@@ -254,6 +254,7 @@ public class VendorLicenseModelRestUtils {
         JSONObject jObjectBody = new JSONObject();
         jObjectBody.put("name", "def"+ OnboardingUtils.getShortUUID());
         jObjectBody.put("description", "new vendor license entitlement pool");
+        jObjectBody.put("type", "Universal");
         jObjectBody.put("thresholdValue", "23");
         jObjectBody.put("thresholdUnits", "Absolute");
         jObjectBody.put("entitlementMetric", jEntitlementMetricObject);
