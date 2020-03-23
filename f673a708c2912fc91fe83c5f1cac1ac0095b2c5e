@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e3ae0617_5845376d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-03-23T16:43:04Z",
+      "side": 1,
+      "message": "Yes this was intended. For now we only need this for VFCs",
+      "parentUuid": "17b94dae_5ba9963d",
+      "range": {
+        "startLine": 340,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 111
+      },
+      "revId": "f673a708c2912fc91fe83c5f1cac1ac0095b2c5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1953ed17_3f0b85b4",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2020-03-22T11:52:02Z",
       "side": 1,
       "message": "Use constants instead of hard coded values (\"implementation\", \"/\")",
+      "range": {
+        "startLine": 357,
+        "startChar": 21,
+        "endLine": 357,
+        "endChar": 35
+      },
+      "revId": "f673a708c2912fc91fe83c5f1cac1ac0095b2c5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10b45a48_adf0c26a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-03-23T16:43:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1953ed17_3f0b85b4",
       "range": {
         "startLine": 357,
         "startChar": 21,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "7dcfaab5_f4b2bdaf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-03-23T16:43:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a76ef830_278a8a5a",
+      "range": {
+        "startLine": 407,
+        "startChar": 9,
+        "endLine": 410,
+        "endChar": 69
+      },
+      "revId": "f673a708c2912fc91fe83c5f1cac1ac0095b2c5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84431512_ab6fc68f",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
         "patchSetId": 2
@@ -82,6 +154,30 @@
       "writtenOn": "2020-03-22T11:52:02Z",
       "side": 1,
       "message": "Consider using a constant for the \"/\" delimiter (some for all other usages in this commit)",
+      "range": {
+        "startLine": 910,
+        "startChar": 72,
+        "endLine": 910,
+        "endChar": 73
+      },
+      "revId": "f673a708c2912fc91fe83c5f1cac1ac0095b2c5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f549fbb2_f938e943",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 910,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-03-23T16:43:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84431512_ab6fc68f",
       "range": {
         "startLine": 910,
         "startChar": 72,
