@@ -1,5 +1,3 @@
-import yaml
-
 from importNormativeTypes import *
 
 
@@ -35,7 +33,7 @@ def upgradeNfvTypesPerConfigFile(scheme, be_host, be_port, admin_user, base_dir,
                 results.append(result)
                 if result[1] is None or result[1] not in response_codes:
                     print "Failed creating nfv type " + nfvType + ". " + str(result[1])
-        except yaml.YAMLError as exc:
+        except Exception as exc:
             print(exc)
 
     return results
