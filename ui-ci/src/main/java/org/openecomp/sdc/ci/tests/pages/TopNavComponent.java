@@ -49,7 +49,7 @@ public class TopNavComponent extends AbstractPageObject {
 
     public TopNavComponent(final WebDriver webDriver) {
         super(webDriver);
-        timeoutInSeconds = 5;
+        timeoutInSeconds = 15;
     }
 
     @Override
