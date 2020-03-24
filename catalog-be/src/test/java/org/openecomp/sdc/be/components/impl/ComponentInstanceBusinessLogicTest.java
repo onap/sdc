@@ -43,7 +43,6 @@ import java.util.Set;
 import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -1183,7 +1182,7 @@ public class ComponentInstanceBusinessLogicTest {
         service.setLastUpdaterUserId(oldServiceLastUpdatedUserId);
         resource.setLifecycleState(oldResourceLifeCycle);
 
-        assertThat(result.isLeft());
+        assertThat(result.isLeft()).isTrue();
     }
 
     @Test
