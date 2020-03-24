@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import mockit.Deencapsulation;
 import org.javatuples.Pair;
 import org.junit.Test;
@@ -49,7 +51,7 @@ public class ForwardingPathUtilsTest {
 	}
 
 	@Test
-	public void testConvertServiceToServiceRelations() throws Exception {
+	public void testConvertServiceToServiceRelations() {
 		ForwardingPathUtils testSubject;
 		Service service = new Service();
 		ServiceRelations result;
@@ -57,6 +59,8 @@ public class ForwardingPathUtilsTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.convertServiceToServiceRelations(service);
+		assertThat(result).isInstanceOf(ServiceRelations.class);
+
 		List<ComponentInstance> resourceInstances = new LinkedList<>();
 		ComponentInstance e = new ComponentInstance();
 		e.setCapabilities(new HashMap<>());
@@ -64,10 +68,11 @@ public class ForwardingPathUtilsTest {
 		service.setComponentInstances(resourceInstances);
 
 		result = testSubject.convertServiceToServiceRelations(service);
+		assertThat(result).isInstanceOf(ServiceRelations.class);
 	}
 
 	@Test
-	public void testCreateWrapper() throws Exception {
+	public void testCreateWrapper() {
 		ForwardingPathUtils testSubject;
 		NameIdPair cpOption = new NameIdPair("mock", "mock");
 		NameIdPairWrapper result;
@@ -75,16 +80,19 @@ public class ForwardingPathUtilsTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "createWrapper", cpOption);
+		assertThat(result).isInstanceOf(NameIdPairWrapper.class);
+		assertThat(result.getId()).isEqualTo(cpOption.getId());
 	}
 
 	@Test
-	public void testGetResponseFormatManager() throws Exception {
+	public void testGetResponseFormatManager() {
 		ForwardingPathUtils testSubject;
 		ResponseFormatManager result;
 
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "getResponseFormatManager");
+		assertThat(result).isInstanceOf(ResponseFormatManager.class);
 	}
 
 	@Test
@@ -99,10 +107,11 @@ public class ForwardingPathUtilsTest {
 		testSubject = createTestSubject();
 		result = testSubject.findForwardingPathNamesToDeleteOnComponentInstanceDeletion(containerService,
 				componentInstanceId);
+		assertThat(result).isInstanceOf(Set.class);
 	}
 
 	@Test
-	public void testFindForwardingPathToDeleteOnCIDeletion() throws Exception {
+	public void testFindForwardingPathToDeleteOnCIDeletion() {
 		ForwardingPathUtils testSubject;
 		Service containerService = new Service();
 		containerService.setForwardingPaths(new HashMap<>());
@@ -113,10 +122,11 @@ public class ForwardingPathUtilsTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "findForwardingPathToDeleteOnCIDeletion", containerService,
 				componentInstanceId);
+		assertThat(result).isInstanceOf(Map.class);
 	}
 
 	@Test
-	public void testElementContainsCI_1() throws Exception {
+	public void testElementContainsCI_1() {
 		ForwardingPathUtils testSubject;
 		ForwardingPathElementDataDefinition elementDataDefinitions = new ForwardingPathElementDataDefinition();
 		elementDataDefinitions.setFromNode("mock");
@@ -126,10 +136,11 @@ public class ForwardingPathUtilsTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "elementContainsCI", elementDataDefinitions, componentInstanceId);
+		assertThat(result).isTrue();
 	}
 
 	@Test
-	public void testUpdateForwardingPathOnVersionChange() throws Exception {
+	public void testUpdateForwardingPathOnVersionChange() {
 		ForwardingPathUtils testSubject;
 		Service containerService = new Service();
 		containerService.setForwardingPaths(new HashMap<>());
@@ -142,10 +153,11 @@ public class ForwardingPathUtilsTest {
 		testSubject = createTestSubject();
 		result = testSubject.updateForwardingPathOnVersionChange(containerService, dataHolder,
 				updatedContainerComponent, newInstanceId);
+		assertThat((Iterable<?>) result).isInstanceOf(Pair.class);
 	}
 
 	@Test
-	public void testGetForwardingPathsToBeDeletedOnVersionChange() throws Exception {
+	public void testGetForwardingPathsToBeDeletedOnVersionChange() {
 		ForwardingPathUtils testSubject;
 		Service containerService = new Service();
 		containerService.setForwardingPaths(new HashMap<>());
@@ -157,10 +169,11 @@ public class ForwardingPathUtilsTest {
 		testSubject = createTestSubject();
 		result = testSubject.getForwardingPathsToBeDeletedOnVersionChange(containerService, dataHolder,
 				updatedContainerComponent);
+		assertThat(result).isInstanceOf(Set.class);
 	}
 
 	@Test
-	public void testUpdateCI() throws Exception {
+	public void testUpdateCI() {
 		ForwardingPathUtils testSubject;
 		ForwardingPathDataDefinition inFP = new ForwardingPathDataDefinition();
 		inFP.setPathElements(new ListDataDefinition<>());
@@ -171,10 +184,13 @@ public class ForwardingPathUtilsTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "updateCI", inFP, oldCI, newCI);
+		assertThat(result)
+				.isInstanceOf(ForwardingPathDataDefinition.class)
+				.isNotSameAs(inFP);
 	}
 
 	@Test
-	public void testUpdateElement() throws Exception {
+	public void testUpdateElement() {
 		ForwardingPathUtils testSubject;
 		ForwardingPathElementDataDefinition element = new ForwardingPathElementDataDefinition();
 		element.setFromNode("mock");
@@ -187,10 +203,13 @@ public class ForwardingPathUtilsTest {
 		// default test
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "updateElement", element, oldCI, newCI);
+		assertThat(result)
+				.isInstanceOf(ForwardingPathElementDataDefinition.class)
+				.isNotSameAs(element);
 	}
 
 	@Test
-	public void testElementContainsCIAndForwarder_1() throws Exception {
+	public void testElementContainsCIAndForwarder_1() {
 		ForwardingPathUtils testSubject;
 		ForwardingPathElementDataDefinition elementDataDefinitions = new ForwardingPathElementDataDefinition();
 		elementDataDefinitions.setFromNode("mock");
@@ -204,10 +223,11 @@ public class ForwardingPathUtilsTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndForwarder", elementDataDefinitions, oldCIId,
 				newCI);
+		assertThat(result).isFalse();
 	}
 
 	@Test
-	public void testCiContainsForwarder() throws Exception {
+	public void testCiContainsForwarder() {
 		ForwardingPathUtils testSubject;
 		Component newCI = new Resource();
 		String capabilityID = "mock";
@@ -218,6 +238,7 @@ public class ForwardingPathUtilsTest {
 		result = Deencapsulation.invoke(testSubject, "ciContainsForwarder", newCI, capabilityID);
 		newCI.setCapabilities(new HashMap<>());
 		result = Deencapsulation.invoke(testSubject, "ciContainsForwarder", newCI, capabilityID);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -234,6 +255,7 @@ public class ForwardingPathUtilsTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndDoesNotContainForwarder",
 				forwardingPathDataDefinition, oldCIId, newCI);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -251,5 +273,6 @@ public class ForwardingPathUtilsTest {
 		testSubject = createTestSubject();
 		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndDoesNotContainForwarder",
 				elementDataDefinitions, oldCIId, newCI);
+		assertThat(result).isFalse();
 	}
 }

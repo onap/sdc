@@ -7,20 +7,26 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
   <context:annotation-config />
-  <aop:aspectj-autoproxy proxy-target-class="true" />
-    <bean id="fileChangeListener" class=" org.openecomp.sdc.common.impl.ConfigFileChangeListener" />
-    <bean id="fsConfig" class="org.openecomp.sdc.common.impl.FSConfigurationSource">
-      <constructor-arg ref="fileChangeListener" />
-      <constructor-arg value="src/test/resources/config/catalog-be"/>
-    </bean>
-    <bean class="org.openecomp.sdc.be.config.ConfigurationManager">
-      <constructor-arg ref="fsConfig"/>
-    </bean>
-    <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapConsumer"/>
-    <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory" />
-    <bean class="org.openecomp.sdc.be.components.distribution.engine.ExecutorFactory" />
-    <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapHealth" />
-    <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth" />
-    <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducer" />
-
+  <aop:aspectj-autoproxy proxy-target-class="true"/>
+  <bean id="fileChangeListener" class=" org.openecomp.sdc.common.impl.ConfigFileChangeListener"/>
+  <bean id="fsConfig" class="org.openecomp.sdc.common.impl.FSConfigurationSource">
+    <constructor-arg ref="fileChangeListener"/>
+    <constructor-arg value="src/test/resources/config/catalog-be"/>
+  </bean>
+  <bean class="org.openecomp.sdc.be.config.ConfigurationManager">
+    <constructor-arg ref="fsConfig"/>
+  </bean>
+  <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapConsumer"/>
+  <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapClientFactory"/>
+  <bean class="org.openecomp.sdc.be.components.distribution.engine.ExecutorFactory"/>
+  <bean class="org.openecomp.sdc.be.components.distribution.engine.DmaapHealth"/>
+  <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth"/>
+  <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducer"/>
+  <bean class="org.openecomp.sdc.be.impl.ServletUtils"/>
+  <bean id="componentUtils" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.impl.ComponentsUtils" />
+  </bean>
+  <bean id="userAdmin" class="org.mockito.Mockito" factory-method="mock">
+    <constructor-arg value="org.openecomp.sdc.be.user.UserBusinessLogic" />
+  </bean>
 </beans>

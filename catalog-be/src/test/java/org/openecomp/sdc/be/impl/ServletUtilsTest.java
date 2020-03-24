@@ -20,43 +20,46 @@
 
 package org.openecomp.sdc.be.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.gson.Gson;
+
+import mockit.Deencapsulation;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:application-context-test.xml"})
 public class ServletUtilsTest {
-
-	private ServletUtils createTestSubject() {
-		return new ServletUtils();
-	}
+	@Autowired
+	ServletUtils servletUtils;
 
 	@Test
-	public void testGetComponentsUtils() throws Exception {
-		ServletUtils testSubject;
-		ComponentsUtils result;
-
+	public void testCtrServletUtils() {
 		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getComponentsUtils();
-	}
+		assertThat(servletUtils)
+				.isNotNull()
+				.isInstanceOf(ServletUtils.class);
 
-	@Test
-	public void testGetGson() throws Exception {
-		ServletUtils testSubject;
-		Gson result;
+		ComponentsUtils componentsUtils = Deencapsulation.getField(servletUtils, "componentsUtils");
+		UserBusinessLogic userBusinessLogic = Deencapsulation.getField(servletUtils, "userAdmin");
+		Gson gson = Deencapsulation.getField(servletUtils, "gson");
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getGson();
-	}
-
-	@Test
-	public void testGetUserAdmin() throws Exception {
-		ServletUtils testSubject;
-		UserBusinessLogic result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUserAdmin();
+		assertThat(gson)
+				.isNotNull()
+				.isInstanceOf(Gson.class)
+				.isEqualTo(servletUtils.getGson());
+		assertThat(componentsUtils)
+				.isNotNull()
+				.isInstanceOf(ComponentsUtils.class)
+				.isEqualTo(servletUtils.getComponentsUtils());
+		assertThat(userBusinessLogic)
+				.isNotNull()
+				.isInstanceOf(UserBusinessLogic.class)
+				.isEqualTo(servletUtils.getUserAdmin());
 	}
 }
