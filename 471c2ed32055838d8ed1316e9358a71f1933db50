@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "86caca4f_6f830c9a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/representation/ProductAssetMetadata.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-03-24T07:59:02Z",
+      "side": 1,
+      "message": "Why changing this var name?",
+      "range": {
+        "startLine": 32,
+        "startChar": 20,
+        "endLine": 32,
+        "endChar": 26
+      },
+      "revId": "471c2ed32055838d8ed1316e9358a71f1933db50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "de7286b4_5cbd267e",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/representation/ProductCategoryGroupMetadataTest.java",
         "patchSetId": 1
