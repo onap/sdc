@@ -16,19 +16,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
+ * Modifications Copyright (C) 2020, Nordix Foundation.
  */
+
 package org.openecomp.sdc.be.model;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 
 public class ConsumerDefinitionTest {
+
     @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(ConsumerDataDefinition.class,
-            hasValidGettersAndSettersExcluding("empty", "ownerIdIfEmpty", "type", "version"));
+    public void testCtor() {
+        final ConsumerDefinition testSubject = new ConsumerDefinition();
+        assertThat(testSubject).isNotNull().isInstanceOf(ConsumerDefinition.class);
+    }
+
+    @Test
+    public void testConsumerDataDefinition_clone() {
+        final ConsumerDefinition testSubject = new ConsumerDefinition(new ConsumerDataDefinition());
+        assertThat(testSubject).isNotNull().isInstanceOf(ConsumerDefinition.class);
     }
 }
