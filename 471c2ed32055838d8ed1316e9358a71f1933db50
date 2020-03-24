@@ -22,6 +22,30 @@
       "revId": "471c2ed32055838d8ed1316e9358a71f1933db50",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6bf1609f_60c3b86b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/representation/ProductCategoryGroupMetadataTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-03-24T07:41:40Z",
+      "side": 1,
+      "message": "What a shame! I\u0027ve overlooked it - intended to use as local variables and missed with scope. Thank you for spotting it!",
+      "parentUuid": "de7286b4_5cbd267e",
+      "range": {
+        "startLine": 30,
+        "startChar": 1,
+        "endLine": 32,
+        "endChar": 29
+      },
+      "revId": "471c2ed32055838d8ed1316e9358a71f1933db50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
