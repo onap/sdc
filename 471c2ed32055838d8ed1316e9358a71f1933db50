@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "246114c4_2b16828e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/representation/ProductAssetMetadata.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-03-24T08:12:16Z",
+      "side": 1,
+      "message": "Need to change name because of otherwise Lombok will generate setter for boolean with the name setIsActive() instead of setActive(). Getter name remains the same.",
+      "parentUuid": "86caca4f_6f830c9a",
+      "range": {
+        "startLine": 32,
+        "startChar": 20,
+        "endLine": 32,
+        "endChar": 26
+      },
+      "revId": "471c2ed32055838d8ed1316e9358a71f1933db50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "de7286b4_5cbd267e",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/externalapi/servlet/representation/ProductCategoryGroupMetadataTest.java",
         "patchSetId": 1
