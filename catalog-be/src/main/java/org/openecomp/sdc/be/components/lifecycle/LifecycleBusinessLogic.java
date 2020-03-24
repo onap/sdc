@@ -469,7 +469,7 @@ public class LifecycleBusinessLogic {
                 throw new ByResponseFormatComponentException(componentUtils.getResponseFormatByResource(componentUtils.convertFromStorageResponse(status), resource));
             }
             result = ModelConverter.convertFromToscaElement(certifyResourceRes.left().value());
-            resource.setMetadataDefinition(result.getComponentMetadataDefinition());
+            resource.setComponentMetadataDefinition(result.getComponentMetadataDefinition());
         } finally {
             log.info("unlock component {}", resource.getUniqueId());
             if (!inTransaction) {
