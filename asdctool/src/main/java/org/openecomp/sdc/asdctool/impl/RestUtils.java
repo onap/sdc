@@ -48,7 +48,7 @@ public class RestUtils {
 		    HttpResponse<String> httpResponse = HttpRequest.delete(url, headers);
             int status = httpResponse.getStatusCode();
             if (status == HttpStatus.SC_OK) {
-                log.debug("Product uid:{} succsesfully deleted", productUid);
+                log.debug("Product uid:{} successfully deleted", productUid);
             }
             else {
                 log.error("Product uid:{} delete failed status {}", productUid, status);
