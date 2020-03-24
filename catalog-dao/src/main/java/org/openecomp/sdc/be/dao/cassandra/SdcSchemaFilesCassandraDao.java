@@ -119,7 +119,7 @@ public class SdcSchemaFilesCassandraDao extends CassandraDao {
 			logger.debug("Failed to clean artifacts", e);
 			return CassandraOperationStatus.GENERAL_ERROR;
 		}
-		logger.info("cleaning all artifacts finished succsesfully.");
+		logger.info("cleaning all artifacts finished successfully.");
 		return CassandraOperationStatus.OK;
 	}
 

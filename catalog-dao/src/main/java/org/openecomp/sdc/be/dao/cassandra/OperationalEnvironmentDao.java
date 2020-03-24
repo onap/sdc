@@ -85,10 +85,10 @@ public class OperationalEnvironmentDao extends CassandraDao {
         try {
             session.execute(query);
         } catch (Exception e) {
-            logger.debug("Failed to clean operational environment", e);
+            logger.debug("Failed to clean operational environments", e);
             return CassandraOperationStatus.GENERAL_ERROR;
         }
-        logger.info("cleaning all operational environment finished succsesfully.");
+        logger.info("cleaning all operational environments finished successfully.");
         return CassandraOperationStatus.OK;
     }
 

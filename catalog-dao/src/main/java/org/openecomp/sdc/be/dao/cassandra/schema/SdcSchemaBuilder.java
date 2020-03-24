@@ -213,12 +213,12 @@ public class SdcSchemaBuilder {
 
 				log.trace("exacuting :{}", create);
 				session.execute(create);
-				log.info("table:{} created succsesfully.", tableName);
+				log.info("table:{} created successfully.", tableName);
 			} else {
-				log.info("table:{} already exists skiping.", tableName);
+				log.info("table:{} already exists, skipping.", tableName);
 				alterTable(session, existingTablesMetadata, tableDescription, tableName, columnDescription);
 			}
-			log.info("keyspacemetdata{}",keyspaceMetadate);
+			log.info("keyspacemetadata:{}",keyspaceMetadate);
 			List<String> indexNames = (keyspaceMetadate != null && keyspaceMetadate.get(tableName) != null ? keyspaceMetadate.get(tableName) : new ArrayList<>());
 			log.info("table:{} creating indexes.", tableName);
 			for (Map.Entry<String, ImmutablePair<DataType, Boolean>> description : columnDescription.entrySet()) {
@@ -229,9 +229,9 @@ public class SdcSchemaBuilder {
 								.onTable(tableDescription.getKeyspace(), tableName).andColumn(description.getKey());
 						log.info("executing :{}", creatIndex);
 						session.execute(creatIndex);
-						log.info("index:{} created succsesfully.", indexName);
+						log.info("index:{} created successfully.", indexName);
 					} else {
-						log.info("index:{} already exists skiping.", indexName);
+						log.info("index:{} already exists, skipping.", indexName);
 					}
 				}
 			}
@@ -259,7 +259,7 @@ public class SdcSchemaBuilder {
 				log.info("Adding new column {} to the table {}", columnName,tableName);
 				Alter alter = SchemaBuilder.alterTable(tableDescription.getKeyspace(),tableDescription.getTableName());
 				SchemaStatement addColumn = alter.addColumn(columnName).type(column.getValue().getLeft());
-				log.trace("exacuting :{}", addColumn);
+				log.trace("executing :{}", addColumn);
 				session.execute(addColumn);
 			}
 		}
@@ -280,7 +280,7 @@ public class SdcSchemaBuilder {
 		if (!cassndraMetadata.keySet().contains(keyspace)) {
 			return createKeyspaceIfNotExists(keyspace, session, keyspaceConfigList);
 		}
-		log.info("keyspace:{} already exists skipping.", keyspace);
+		log.info("keyspace:{} already exists, skipping.", keyspace);
 		return true;
 	}
 
@@ -289,14 +289,14 @@ public class SdcSchemaBuilder {
 		if (keyspaceConfig.isPresent()) {
 			return createKeyspaceWhenConfigExists(keyspace, session, keyspaceConfig.get());
 		}
-		log.info("keyspace:{} not present in configuration, no info on replications is available. operation failed.", keyspace);
+		log.info("keyspace:{} not present in configuration, no info on replications is available. Operation failed.", keyspace);
 		return false;
 	}
 
 	private static boolean createKeyspaceWhenConfigExists(String keyspace, Session session, Configuration.CassandrConfig.KeyspaceConfig keyspaceConfig) {
 		String createKeyspaceQuery = createKeyspaceQuereyString(keyspace, keyspaceConfig);
 		if (createKeyspaceQuery != null) {
-			log.trace("exacuting: {}", createKeyspaceQuery);
+			log.trace("executing: {}", createKeyspaceQuery);
 			session.execute(createKeyspaceQuery);
 			log.info("keyspace:{} created.", keyspace);
 			return true;
@@ -346,7 +346,7 @@ public class SdcSchemaBuilder {
 		} else if (ReplicationStrategy.SIMPLE_STRATEGY.getStrategyName().equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
 			query = createSimpleStrategyQuery(keyspaceInfo, keyspace);
 		} else {
-			log.error("the suplied replication Strategy  is in valide expacted {}/{} etc recived:{}",
+			log.error("the supplied replication Strategy is invalid; expected {}/{}, received:{}",
 					ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getStrategyName(),
 					ReplicationStrategy.SIMPLE_STRATEGY.getStrategyName(), keyspaceInfo.getReplicationStrategy());
 		}
@@ -357,7 +357,7 @@ public class SdcSchemaBuilder {
 		String query = null;
 		List<String> dcList = keyspaceInfo.getReplicationInfo();
 		if (dcList.size() % 2 != 0) {
-			log.error("the supplied replication info is in valid expected dc1,2,dc2,2 etc received:{}", dcList);
+			log.error("the supplied replication info is invalid; expected dc1,2,dc2,2 etc, received:{}", dcList);
 
 		} else {
 			StringBuilder sb = new StringBuilder();
@@ -376,7 +376,7 @@ public class SdcSchemaBuilder {
 		String query = null;
 		List<String> dcList = keyspaceInfo.getReplicationInfo();
 		if (dcList.size() != 1) {
-			log.error("the supplied replication info is in valid expected <number> etc received:{}", dcList);
+			log.error("the supplied replication info is invalid; expected <number>, received:{}", dcList);
 
 		} else {
 			query = String.format(CREATE_KEYSPACE_SIMPLE_STRATEGY, keyspace, "'replication_factor'" + " : " + dcList.get(0));

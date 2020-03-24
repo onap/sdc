@@ -382,14 +382,14 @@ public class AuditCassandraDao extends CassandraDao {
 				if (table.getTableDescription().getKeyspace().equals(AuditingTypesConstants.AUDIT_KEYSPACE)) {
 					logger.debug("clean Audit table:{}", table.getTableDescription().getTableName());
 					session.execute(query + table.getTableDescription().getTableName() + ";");
-					logger.debug("clean Audit table:{} was succsesfull", table.getTableDescription().getTableName());
+					logger.debug("clean Audit table:{} was successful", table.getTableDescription().getTableName());
 				}
 			}
 		} catch (Exception e) {
 			logger.error("Failed to clean Audit", e);
 			return CassandraOperationStatus.GENERAL_ERROR;
 		}
-		logger.info("clean all audit finished succsesfully.");
+		logger.info("cleaning all audit tables finished successfully.");
 		return CassandraOperationStatus.OK;
 	}
 }
