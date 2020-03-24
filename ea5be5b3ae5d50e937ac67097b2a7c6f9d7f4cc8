@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7de7b869_d69afde0",
+        "filename": "ui-ci/src/main/java/org/openecomp/sdc/ci/tests/pages/TopNavComponent.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-24T14:37:12Z",
+      "side": 1,
+      "message": "is it enough? or is it too much? any justification (theoretical or practical) of this value?",
+      "range": {
+        "startLine": 52,
+        "startChar": 27,
+        "endLine": 52,
+        "endChar": 29
+      },
+      "revId": "ea5be5b3ae5d50e937ac67097b2a7c6f9d7f4cc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
