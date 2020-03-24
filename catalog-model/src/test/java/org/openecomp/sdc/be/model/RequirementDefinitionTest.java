@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,28 @@
 
 package org.openecomp.sdc.be.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 
-/**
- * Specifies the requirements that the Node Type exposes.
- */
-public class RequirementDefinition extends RequirementDataDefinition {
+public class RequirementDefinitionTest {
 
-    public RequirementDefinition() {
-        super();
+    @Test
+    public void testRequirementDefinition() {
+        final RequirementDefinition testSubject = new RequirementDefinition();
+        assertThat(testSubject).isNotNull().isInstanceOf(RequirementDefinition.class);
     }
 
-    public RequirementDefinition(RequirementDefinition other) {
-        super(other);
+    @Test
+    public void testRequirementDefinition_clone() {
+        final RequirementDefinition testSubject = new RequirementDefinition(new RequirementDefinition());
+        assertThat(testSubject).isNotNull().isInstanceOf(RequirementDefinition.class);
     }
 
-    public RequirementDefinition(RequirementDataDefinition requirementDataDefinition) {
-        super(requirementDataDefinition);
+    @Test
+    public void testRequirementDefinition_fromRequirementDataDefinition() {
+        final RequirementDefinition testSubject = new RequirementDefinition(new RequirementDataDefinition());
+        assertThat(testSubject).isNotNull().isInstanceOf(RequirementDefinition.class);
     }
 }

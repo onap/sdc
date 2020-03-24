@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,18 +20,26 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.apache.commons.lang.StringUtils;
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import java.util.HashMap;
 import java.util.Map;
-
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class Service extends Component {
+
+    private Map<String, ArtifactDefinition> serviceApiArtifacts;
+    private Map<String, ForwardingPathDataDefinition> forwardingPaths;
 
     public Service() {
         super(new ServiceMetadataDefinition());
@@ -39,140 +47,126 @@ public class Service extends Component {
         this.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
     }
 
-	public Service(ComponentMetadataDefinition serviceMetadataDefinition) {
-		super(serviceMetadataDefinition);
-		ComponentMetadataDataDefinition metadataDataDefinition = this.getComponentMetadataDefinition().getMetadataDataDefinition();
-		if(metadataDataDefinition != null) {
-			metadataDataDefinition.setComponentType(ComponentTypeEnum.SERVICE);
-		}
-		this.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
-	}
+    public Service(ComponentMetadataDefinition serviceMetadataDefinition) {
+        super(serviceMetadataDefinition);
+        ComponentMetadataDataDefinition metadataDataDefinition = this.getComponentMetadataDefinition()
+            .getMetadataDataDefinition();
+        if (metadataDataDefinition != null) {
+            metadataDataDefinition.setComponentType(ComponentTypeEnum.SERVICE);
+        }
+        this.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+    }
 
-	private Map<String, ArtifactDefinition> serviceApiArtifacts;
-	private Map<String, ForwardingPathDataDefinition> forwardingPaths;
+    @Override
+    public String getProjectCode() {
+        return getServiceMetadataDefinition().getProjectCode();
+    }
 
-	public Map<String, ArtifactDefinition> getServiceApiArtifacts() {
-		return serviceApiArtifacts;
-	}
+    @Override
+    public void setProjectCode(String projectName) {
+        getServiceMetadataDefinition().setProjectCode(projectName);
+    }
 
-	public void setServiceApiArtifacts(Map<String, ArtifactDefinition> serviceApiArtifacts) {
-		this.serviceApiArtifacts = serviceApiArtifacts;
-	}
+    public ForwardingPathDataDefinition addForwardingPath(ForwardingPathDataDefinition forwardingPathDataDefinition) {
+        if (forwardingPaths == null) {
+            forwardingPaths = new HashMap<>();
+        }
+        return forwardingPaths.put(forwardingPathDataDefinition.getUniqueId(), forwardingPathDataDefinition);
+    }
 
-	public String getProjectCode() {
-		return getServiceMetadataDefinition().getProjectCode();
-	}
+    public DistributionStatusEnum getDistributionStatus() {
+        String distributionStatus = getServiceMetadataDefinition().getDistributionStatus();
+        if (distributionStatus != null) {
+            return DistributionStatusEnum.valueOf(distributionStatus);
+        } else {
+            return null;
+        }
+    }
 
-	public Map<String, ForwardingPathDataDefinition> getForwardingPaths() {
-		return forwardingPaths;
-	}
+    public void setDistributionStatus(DistributionStatusEnum distributionStatus) {
+        if (distributionStatus != null) {
+            getServiceMetadataDefinition().setDistributionStatus(distributionStatus.name());
+        }
+    }
 
-	public void setForwardingPaths(Map<String, ForwardingPathDataDefinition> forwardingPaths) {
-		this.forwardingPaths = forwardingPaths;
-	}
+    public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
+        getServiceMetadataDefinition().setEcompGeneratedNaming(ecompGeneratedNaming);
+    }
 
-	public ForwardingPathDataDefinition addForwardingPath(ForwardingPathDataDefinition forwardingPathDataDefinition){
-		if(forwardingPaths == null){
-			forwardingPaths = new HashMap<>();
-		}
-		return forwardingPaths.put(forwardingPathDataDefinition.getUniqueId(),forwardingPathDataDefinition);
-	}
+    public Boolean isEcompGeneratedNaming() {
+        return getServiceMetadataDefinition().isEcompGeneratedNaming();
+    }
 
-	public void setProjectCode(String projectName) {
-		getServiceMetadataDefinition().setProjectCode(projectName);
-	}
+    public String getNamingPolicy() {
+        return getServiceMetadataDefinition().getNamingPolicy();
+    }
 
-	public DistributionStatusEnum getDistributionStatus() {
-		String distributionStatus = getServiceMetadataDefinition().getDistributionStatus();
-		if (distributionStatus != null) {
-			return DistributionStatusEnum.valueOf(distributionStatus);
-		} else {
-			return null;
-		}
-	}
+    public void setNamingPolicy(String namingPolicy) {
+        getServiceMetadataDefinition().setNamingPolicy(namingPolicy);
+    }
 
-	public void setDistributionStatus(DistributionStatusEnum distributionStatus) {
-		if (distributionStatus != null)
-			getServiceMetadataDefinition().setDistributionStatus(distributionStatus.name());
-	}
+    public String getEnvironmentContext() {
+        return getServiceMetadataDefinition().getEnvironmentContext();
+    }
 
-	public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
-		getServiceMetadataDefinition().setEcompGeneratedNaming(ecompGeneratedNaming);
-	}
+    public void setEnvironmentContext(String environmentContext) {
+        getServiceMetadataDefinition().setEnvironmentContext(environmentContext);
+    }
 
-	public Boolean isEcompGeneratedNaming() {
-		return getServiceMetadataDefinition().isEcompGeneratedNaming();
-	}
+    public String getServiceType() {
+        return getServiceMetadataDefinition().getServiceType();
+    }
 
-	public void setNamingPolicy(String namingPolicy) {
-		getServiceMetadataDefinition().setNamingPolicy(namingPolicy);
-	}
-	
-	public String getNamingPolicy() {
-		return getServiceMetadataDefinition().getNamingPolicy();
-	}
+    public void setServiceType(String serviceType) {
+        getServiceMetadataDefinition().setServiceType(serviceType);
+    }
 
-    public String getEnvironmentContext() { return getServiceMetadataDefinition().getEnvironmentContext();  }
+    public String getServiceRole() {
+        return getServiceMetadataDefinition().getServiceRole();
+    }
 
-	public void setEnvironmentContext(String environmentContext) {
-		getServiceMetadataDefinition().setEnvironmentContext(environmentContext);
-	}
+    public void setServiceRole(String serviceRole) {
+        getServiceMetadataDefinition().setServiceRole(serviceRole);
+    }
 
-	public void setServiceType(String serviceType){
-		getServiceMetadataDefinition().setServiceType(serviceType);
-	}
-	
-	public String getServiceType(){
-		return getServiceMetadataDefinition().getServiceType();
-	}
-	
-	public void setServiceRole(String serviceRole){
-		getServiceMetadataDefinition().setServiceRole(serviceRole);
-	}
-	
-	public String getServiceRole(){
-		return getServiceMetadataDefinition().getServiceRole();
-	}
+    public String getInstantiationType() {
+        return getServiceMetadataDefinition().getInstantiationType();
+    }
 
-	public void setInstantiationType(String instantiationType){
-		getServiceMetadataDefinition().setInstantiationType(instantiationType);
-	}
+    public void setInstantiationType(String instantiationType) {
+        getServiceMetadataDefinition().setInstantiationType(instantiationType);
+    }
 
-	public String getInstantiationType(){
-		return getServiceMetadataDefinition().getInstantiationType();
-	}
+    private ServiceMetadataDataDefinition getServiceMetadataDefinition() {
+        return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
+    }
 
-	private ServiceMetadataDataDefinition getServiceMetadataDefinition() {
-		return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
-	}
+    public String getServiceFunction() {
+        return getServiceMetadataDefinition().getServiceFunction();
+    }
 
-	public void setServiceFunction(String serviceFunction){
-		getServiceMetadataDefinition().setServiceFunction(serviceFunction);
-	}
+    public void setServiceFunction(String serviceFunction) {
+        getServiceMetadataDefinition().setServiceFunction(serviceFunction);
+    }
 
-	public String getServiceFunction(){
-		return getServiceMetadataDefinition().getServiceFunction();
-	}
+    public void validateAndSetInstantiationType() {
+        if (this.getInstantiationType().equals(StringUtils.EMPTY)) {
+            this.setInstantiationType(InstantiationTypes.A_LA_CARTE.getValue());
+        }
+    }
 
-	public void validateAndSetInstantiationType() {
-		if (this.getInstantiationType().equals(StringUtils.EMPTY)) {
-			this.setInstantiationType(InstantiationTypes.A_LA_CARTE.getValue());
-		}
-	}
+    @Override
+    public String toString() {
+        return "Service [componentMetadataDefinition=" + getComponentMetadataDefinition()
+            // + ", resourceInstances=" + resourceInstances + ",
+            // resourceInstancesRelations=" + resourceInstancesRelations + ",
+            // resourceInstancesRelations="
+            // + resourceInstancesRelations
+            + " ]";
+    }
 
-
-	@Override
-	public String toString() {
-		return "Service [componentMetadataDefinition=" + getComponentMetadataDefinition()
-		// + ", resourceInstances=" + resourceInstances + ",
-		// resourceInstancesRelations=" + resourceInstancesRelations + ",
-		// resourceInstancesRelations="
-		// + resourceInstancesRelations
-				+ " ]";
-	}
-
-	@Override
-	public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
-		setServiceApiArtifacts(specificComponentTypeArtifacts);
-	}
+    @Override
+    public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
+        setServiceApiArtifacts(specificComponentTypeArtifacts);
+    }
 }
