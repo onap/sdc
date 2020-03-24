@@ -18,26 +18,21 @@ package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Map;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 
-import java.util.Map;
-
 public class MapInterfaceInstanceDataDefinition extends
-        MapDataDefinition<InterfaceInstanceDataDefinition> {
+    MapDataDefinition<InterfaceInstanceDataDefinition> {
 
-  public MapInterfaceInstanceDataDefinition() {
+    @JsonCreator
+    public MapInterfaceInstanceDataDefinition(Map<String, InterfaceInstanceDataDefinition> mapToscaDataDefinition) {
+        super(mapToscaDataDefinition);
+    }
 
-  }
-
-  @JsonCreator
-  public MapInterfaceInstanceDataDefinition(Map<String, InterfaceInstanceDataDefinition> mapToscaDataDefinition) {
-    super(mapToscaDataDefinition);
-  }
-
-  @JsonValue
-  @Override
-  public Map<String, InterfaceInstanceDataDefinition> getMapToscaDataDefinition() {
-    return mapToscaDataDefinition;
-  }
+    @JsonValue
+    @Override
+    public Map<String, InterfaceInstanceDataDefinition> getMapToscaDataDefinition() {
+        return mapToscaDataDefinition;
+    }
 }
