@@ -63,7 +63,7 @@
     }
 
     &:not(.has-last-col-set) {
-        @include gridCol(1, 25%);
+        @include gridCol(1, 33%);
         @include gridCol(2, 50%);
         @include gridCol(3, 75%);
         @include gridCol(4, 100%);
