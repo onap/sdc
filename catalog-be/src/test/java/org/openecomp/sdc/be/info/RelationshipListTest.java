@@ -19,10 +19,13 @@
  */
 package org.openecomp.sdc.be.info;
 
+import java.util.List;
 import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RelationshipListTest {
@@ -37,4 +40,10 @@ public class RelationshipListTest {
         assertThat(RelationshipList.class, hasValidGettersAndSetters());
     }
 
+    @Test
+    public void testNonDefaultGetter() {
+        RelationshipList relationshipList = new RelationshipList();
+        assertThat(relationshipList.getRelationship(), notNullValue());
+        assertThat(relationshipList.getRelationship(), instanceOf(List.class));
+    }
 }

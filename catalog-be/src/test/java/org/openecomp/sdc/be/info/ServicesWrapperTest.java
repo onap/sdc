@@ -36,7 +36,7 @@ public class ServicesWrapperTest {
 
     @Test
     public void shouldHaveValidDefaultConstructor() {
-        assertThat(ServiceInfo.class, hasValidBeanConstructor());
+        assertThat(ServicesWrapper.class, hasValidBeanConstructor());
     }
 
 }

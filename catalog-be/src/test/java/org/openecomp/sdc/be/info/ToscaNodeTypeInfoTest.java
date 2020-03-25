@@ -31,7 +31,7 @@ public class ToscaNodeTypeInfoTest {
 
     @Test
     public void shouldHaveValidDefaultConstructor() {
-        assertThat(ServiceInfo.class, hasValidBeanConstructor());
+        assertThat(ToscaNodeTypeInfo.class, hasValidBeanConstructor());
     }
 
     @Test
@@ -43,5 +43,4 @@ public class ToscaNodeTypeInfoTest {
     public void allPropertiesShouldBeRepresentedInToStringOutput() {
         assertThat(ToscaNodeTypeInfo.class, BeanMatchers.hasValidBeanToString());
     }
-
 }

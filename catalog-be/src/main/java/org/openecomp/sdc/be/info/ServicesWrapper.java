@@ -21,15 +21,11 @@
 package org.openecomp.sdc.be.info;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ServicesWrapper {
     private List<ServiceInfo> services;
-
-    public List<ServiceInfo> getServices() {
-        return services;
-    }
-
-    public void setServices(List<ServiceInfo> services) {
-        this.services = services;
-    }
 }

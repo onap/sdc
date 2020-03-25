@@ -22,52 +22,18 @@
 
 package org.openecomp.sdc.be.info;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DistributionStatusOfServiceInfo {
     private String distributionID;
     private String timestamp;
     private String userId;
     private String deployementStatus;
-
-    public DistributionStatusOfServiceInfo() {}
-
-    public DistributionStatusOfServiceInfo(String distributionID, String timestamp, String userId, String deploymentStatus) {
-        super();
-        this.distributionID = distributionID;
-        this.timestamp = timestamp;
-        this.userId = userId;
-        this.deployementStatus = deploymentStatus;
-    }
-
-    public String getDistributionID() {
-        return distributionID;
-    }
-
-    public void setDistributionID(String distributionID) {
-        this.distributionID = distributionID;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getDeployementStatus() {
-        return deployementStatus;
-    }
-
-    public void setDeployementStatus(String deployementStatus) {
-        this.deployementStatus = deployementStatus;
-    }
-
 }

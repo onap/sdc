@@ -28,7 +28,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -45,11 +44,6 @@ public class ArtifactDefinitionInfoTest {
 	private static final String NAME = "Name";
 
 	@Test
-	public void shouldHaveValidGettersAndSetters() {
-		assertThat(ArtifactDefinitionInfo.class, hasValidGettersAndSetters());
-	}
-
-	@Test
 	public void testCtor() {
 		Mockito.when(artifactDefinition.getPayloadData()).thenReturn(PAYLOAD_DATA);
 		Mockito.when(artifactDefinition.getArtifactName()).thenReturn(NAME);
@@ -64,6 +58,4 @@ public class ArtifactDefinitionInfoTest {
 		assertThat(artifactDefinitionInfo.getArtifactUUID(), is(UUID));
 
 	}
-
-
 }

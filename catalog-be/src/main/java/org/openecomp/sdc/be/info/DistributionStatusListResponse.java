@@ -21,17 +21,11 @@
 package org.openecomp.sdc.be.info;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class DistributionStatusListResponse {
-
-    private List<DistributionStatusInfo> distribStatusInfoList;
-
-    public List<DistributionStatusInfo> getDistributionStatusList() {
-        return distribStatusInfoList;
-    }
-
-    public void setDistributionStatusList(List<DistributionStatusInfo> distribStatusInfoList) {
-        this.distribStatusInfoList = distribStatusInfoList;
-    }
-
+    private List<DistributionStatusInfo> distributionStatusList;
 }

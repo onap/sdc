@@ -26,17 +26,9 @@ import org.junit.Test;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class CreateAndAssotiateInfoTest {
-
-	@Test
-	public void shouldHaveValidGettersAndSetters() {
-		assertThat(CreateAndAssotiateInfo.class, hasValidGettersAndSetters());
-	}
-
 	@Test
 	public void shouldTestWhetherTheDefaultConstructorCorrectlySetAllFields() {
 		ComponentInstance componentInstance = new ComponentInstance();
@@ -45,6 +37,4 @@ public class CreateAndAssotiateInfoTest {
 		Assert.assertThat(createAndAssociateInfo.getAssociate(), is(requirementCapabilityRelDef));
 		Assert.assertThat(createAndAssociateInfo.getNode(), is(componentInstance));
 	}
-
-
 }

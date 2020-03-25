@@ -30,7 +30,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -39,11 +38,6 @@ public class NodeTypeInfoToUpdateArtifactsTest {
 	private static final String NAME = "NAME";
 	private static final Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> NODE_TYPES_ARTIFACTS_TO_HANDLE = Collections
 		.emptyMap();
-
-	@Test
-	public void shouldHaveValidGettersAndSetters() {
-		assertThat(NodeTypeInfoToUpdateArtifacts.class, hasValidGettersAndSetters());
-	}
 
 	@Test
 	public void shouldConstructCorrectObject() {

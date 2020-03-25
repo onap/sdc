@@ -31,7 +31,7 @@ public class GroupTemplateInfoTest {
 
     @Test
     public void shouldHaveValidDefaultConstructor() {
-        assertThat(DistributionStatusOfServiceListResponce.class, hasValidBeanConstructor());
+        assertThat(GroupTemplateInfo.class, hasValidBeanConstructor());
     }
 
     @Test
