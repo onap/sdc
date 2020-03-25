@@ -56,5 +56,4 @@ public class ArtifactTemplateInfoTest {
 		assertThat(artifactTemplateInfo.getEnv(), is(ENV));
 		assertThat(artifactTemplateInfo.getRelatedArtifactsInfo(), is(artifactsInfo));
 	}
-
 }

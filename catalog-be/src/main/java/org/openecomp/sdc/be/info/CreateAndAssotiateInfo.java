@@ -22,34 +22,16 @@
 
 package org.openecomp.sdc.be.info;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class CreateAndAssotiateInfo {
     private ComponentInstance node;
     private RequirementCapabilityRelDef associate;
-
-    CreateAndAssotiateInfo() {}
-
-    public CreateAndAssotiateInfo(ComponentInstance node, RequirementCapabilityRelDef associate) {
-        this.node = node;
-        this.associate = associate;
-    }
-
-    public ComponentInstance getNode() {
-        return node;
-    }
-
-    public void setNode(ComponentInstance node) {
-        this.node = node;
-    }
-
-    public RequirementCapabilityRelDef getAssociate() {
-        return associate;
-    }
-
-    public void setAssociate(RequirementCapabilityRelDef associate) {
-        this.associate = associate;
-    }
-
 }

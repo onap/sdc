@@ -21,18 +21,21 @@
  */
 package org.openecomp.sdc.be.info;
 
-import com.google.code.beanmatchers.BeanMatchers;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openecomp.sdc.be.model.GroupProperty;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
 
@@ -47,11 +50,6 @@ public class GroupDefinitionInfoTest {
     private static final String UNIQUE_ID = "UNIQUE_ID";
     private static final String DESC = "DESC";
     private static final String NAME = "NAME";
-
-    @Test
-    public void shouldHaveValidDefaultConstructor() {
-        assertThat(GroupDefinitionInfo.class, hasValidBeanConstructor());
-    }
 
     @Test
     public void testShouldConstructObjectFromGroupDefinition() {
@@ -79,15 +77,36 @@ public class GroupDefinitionInfoTest {
     }
 
     @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(GroupDefinitionInfo.class, BeanMatchers.hasValidGettersAndSettersExcluding("artifacts", "properties"));
+    public void testValidGetterSetterArtifacts() {
+        GroupDefinition groupDefinition = new GroupDefinition();
+        GroupDefinitionInfo groupDefinitionInfo = new GroupDefinitionInfo(groupDefinition);
+        groupDefinitionInfo.setArtifacts(null);
+        assertThat(groupDefinitionInfo.getArtifacts(), nullValue());
+
+        List<ArtifactDefinitionInfo> artifacts = new ArrayList<>();
+        groupDefinitionInfo.setArtifacts(artifacts);
+        assertThat(groupDefinitionInfo.getArtifacts(), not(sameInstance(artifacts)));
+    }
+
+    @Test
+    public void testValidGetterSetterProperties() {
+        GroupDefinition groupDefinition = new GroupDefinition();
+        GroupDefinitionInfo groupDefinitionInfo = new GroupDefinitionInfo(groupDefinition);
+        groupDefinitionInfo.setProperties(null);
+        assertThat(groupDefinitionInfo.getProperties(), nullValue());
+
+        List<GroupProperty> properties = new ArrayList<>();
+        groupDefinitionInfo.setProperties(properties);
+        assertThat(groupDefinitionInfo.getProperties(), not(sameInstance(properties)));
     }
 
     @Test
     public void testToString() {
-        GroupDefinitionInfo groupDefinitionInfo = new GroupDefinitionInfo();
+        GroupDefinition groupDefinition = new GroupDefinition();
+        ArtifactDefinition artifactDefinition = new ArtifactDefinition();
+        GroupDefinitionInfo groupDefinitionInfo = new GroupDefinitionInfo(groupDefinition);
         List<ArtifactDefinitionInfo> artifacts = new ArrayList<>();
-        ArtifactDefinitionInfo artifactDefinitionInfo = new ArtifactDefinitionInfo();
+        ArtifactDefinitionInfo artifactDefinitionInfo = new ArtifactDefinitionInfo(artifactDefinition);
         artifactDefinitionInfo.setArtifactName(ARTIFACT_NAME);
         artifacts.add(artifactDefinitionInfo);
         groupDefinitionInfo.setArtifacts(artifacts);
@@ -116,5 +135,4 @@ public class GroupDefinitionInfoTest {
         groupInstanceDataDefinition.setGroupUUID(GROUP_UUID);
         return groupInstanceDataDefinition;
     }
-
 }

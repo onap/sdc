@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.info;
 
 import org.junit.Test;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -33,11 +32,6 @@ public class ServiceVersionInfoTest {
 	private static final String VERSION = "VERSION";
 	private static final String CONTEXT = "http://localhost:1000/";
 	private static final String URL = "http://localhost:1000/services/NAME/VERSION";
-
-	@Test
-	public void shouldHaveValidGettersAndSetters() {
-		assertThat(ServiceVersionInfo.class, hasValidGettersAndSetters());
-	}
 
 	@Test
 	public void shouldConstructCorrectObject() {

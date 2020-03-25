@@ -26,7 +26,6 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.List;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -34,11 +33,6 @@ public class ServiceInfoTest {
 
 	private static final String NAME = "NAME";
 	private static final List<ServiceVersionInfo> SERVICE_VERSION_INFOS = Collections.emptyList();
-
-	@Test
-	public void shouldHaveValidGettersAndSetters() {
-		assertThat(ServiceInfo.class, hasValidGettersAndSetters());
-	}
 
 	@Test
 	public void shouldConstructCorrectObject() {

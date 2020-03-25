@@ -24,8 +24,6 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -34,16 +32,6 @@ public class GenericArtifactQueryInfoTest {
     private static final String ARTIFACT_UNIQUE_ID = "artifactId";
     private static final String PARENT_ID = "parentId";
     private static final Set<String> FIELDS = Collections.emptySet();
-
-    @Test
-    public void shouldHaveValidDefaultConstructor() {
-        assertThat(GenericArtifactQueryInfo.class, hasValidBeanConstructor());
-    }
-
-    @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(GenericArtifactQueryInfo.class, hasValidGettersAndSetters());
-    }
 
     @Test
     public void shouldTestConstructorCorrectlySetFields(){

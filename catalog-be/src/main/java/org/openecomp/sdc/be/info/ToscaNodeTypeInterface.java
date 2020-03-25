@@ -21,17 +21,11 @@
 package org.openecomp.sdc.be.info;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ToscaNodeTypeInterface {
-
-    List<String> scripts;
-
-    public List<String> getScripts() {
-        return scripts;
-    }
-
-    public void setScripts(List<String> scripts) {
-        this.scripts = scripts;
-    }
-
+    private List<String> scripts;
 }

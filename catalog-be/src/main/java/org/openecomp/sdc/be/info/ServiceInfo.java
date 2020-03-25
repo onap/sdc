@@ -20,38 +20,16 @@
 
 package org.openecomp.sdc.be.info;
 
-import com.google.common.annotations.VisibleForTesting;
-
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class ServiceInfo {
-
     private String name;
     private List<ServiceVersionInfo> versions;
-
-    @VisibleForTesting
-    ServiceInfo() {
-    }
-
-    public ServiceInfo(String serviceName, List<ServiceVersionInfo> list) {
-        this.name = serviceName;
-        this.versions = list;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<ServiceVersionInfo> getVersions() {
-        return versions;
-    }
-
-    public void setVersions(List<ServiceVersionInfo> versions) {
-        this.versions = versions;
-    }
-
 }
