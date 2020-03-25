@@ -21,6 +21,10 @@
  */
 package org.openecomp.sdc.be.info;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupProperty;
@@ -29,6 +33,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+@Getter
+@Setter
+@NoArgsConstructor
 public class GroupDefinitionInfo {
     private String name;
 
@@ -57,13 +64,15 @@ public class GroupDefinitionInfo {
 
     // artifacts - list of artifact uid. All artifacts in the group must already
     // be uploaded to the VF
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private List<ArtifactDefinitionInfo> artifacts;
 
     private Map<String, String> members;
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private List<? extends GroupProperty> properties;
-
-    public GroupDefinitionInfo() {}
 
     public GroupDefinitionInfo(GroupDefinition other) {
         this.setName(other.getName());
@@ -90,105 +99,24 @@ public class GroupDefinitionInfo {
         this.setProperties(other.convertToGroupInstancesProperties());
     }
 
-    public String getInvariantUUID() {
-        return invariantUUID;
-    }
-
-    public void setInvariantUUID(String invariantUUID) {
-        this.invariantUUID = invariantUUID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public String getGroupUUID() {
-        return groupUUID;
-    }
-
-    public void setGroupUUID(String groupUUID) {
-        this.groupUUID = groupUUID;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getCustomizationUUID() {
-        return customizationUUID;
-    }
-
-    public void setCustomizationUUID(String customizationUUID) {
-        this.customizationUUID = customizationUUID;
-    }
-
-    public Boolean getIsBase() {
-        return isBase;
-    }
-
-    public void setIsBase(Boolean isBase) {
-        this.isBase = isBase;
-    }
-
     public List<ArtifactDefinitionInfo> getArtifacts() {
         return (artifacts==null) ? null : new ArrayList<>(artifacts);
-    }
-
-    public void setArtifacts(List<ArtifactDefinitionInfo> artifacts) {
-        this.artifacts = (artifacts==null) ? null : new ArrayList<>(artifacts);
     }
 
     public List<GroupProperty> getProperties() {
         return (properties==null) ? null : new ArrayList<>(properties);
     }
 
+    public void setArtifacts(List<ArtifactDefinitionInfo> artifacts) {
+        this.artifacts = (artifacts==null) ? null : new ArrayList<>(artifacts);
+    }
+
     public void setProperties(List<? extends GroupProperty> properties) {
         this.properties = (properties==null) ? null : new ArrayList<>(properties);
-    }
-
-    public String getGroupInstanceUniqueId() {
-        return groupInstanceUniqueId;
-    }
-
-    public void setGroupInstanceUniqueId(String groupInstanceUniqueId) {
-        this.groupInstanceUniqueId = groupInstanceUniqueId;
-    }
-
-    public Map<String, String> getMembers() {
-        return members;
-    }
-
-    public void setMembers(Map<String, String> members) {
-        this.members = members;
     }
 
     @Override
     public String toString() {
         return "GroupDefinitionInfo [" + super.toString() + ", isBase=" + isBase + ", artifacts=" + artifacts + "]";
     }
-
 }

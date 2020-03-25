@@ -22,7 +22,9 @@ package org.openecomp.sdc.be.info;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Setter;
 
+@Setter
 public class RelationshipList {
     private List<Relationship> relationship;
 
@@ -32,9 +34,4 @@ public class RelationshipList {
         }
         return relationship;
     }
-
-    public void setRelationship(List<Relationship> relationship) {
-        this.relationship = relationship;
-    }
-
 }

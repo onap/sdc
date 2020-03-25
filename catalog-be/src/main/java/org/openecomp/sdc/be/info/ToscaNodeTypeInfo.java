@@ -21,7 +21,11 @@
 package org.openecomp.sdc.be.info;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ToscaNodeTypeInfo {
 
     private String nodeName;
@@ -29,41 +33,8 @@ public class ToscaNodeTypeInfo {
     private List<ToscaNodeTypeInterface> interfaces;
     private String iconPath;
 
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-    }
-
-    public String getTemplateVersion() {
-        return templateVersion;
-    }
-
-    public void setTemplateVersion(String templateVersion) {
-        this.templateVersion = templateVersion;
-    }
-
-    public List<ToscaNodeTypeInterface> getInterfaces() {
-        return interfaces;
-    }
-
-    public void setInterfaces(List<ToscaNodeTypeInterface> interfaces) {
-        this.interfaces = interfaces;
-    }
-
-    public String getIconPath() {
-        return iconPath;
-    }
-
-    public void setIconPath(String iconPath) {
-        this.iconPath = iconPath;
-    }
-
     @Override
     public String toString() {
         return "ToscaNodeTypeInfo [nodeName=" + nodeName + ", templateVersion=" + templateVersion + ", interfaces=" + interfaces + ", iconPath=" + iconPath + "]";
     }
-
 }

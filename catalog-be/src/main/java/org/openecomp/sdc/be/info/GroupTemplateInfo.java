@@ -20,35 +20,13 @@
 
 package org.openecomp.sdc.be.info;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class GroupTemplateInfo {
-    String groupName;
-    boolean isBase;
-    ArtifactTemplateInfo artifactTemplateInfo;
-
-    public GroupTemplateInfo() {}
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public boolean isBase() {
-        return isBase;
-    }
-
-    public void setBase(boolean isBase) {
-        this.isBase = isBase;
-    }
-
-    public ArtifactTemplateInfo getArtifactTemplateInfo() {
-        return artifactTemplateInfo;
-    }
-
-    public void setArtifactTemplateInfo(ArtifactTemplateInfo artifactTemplateInfo) {
-        this.artifactTemplateInfo = artifactTemplateInfo;
-    }
-
+    private String groupName;
+    private boolean base;
+    private ArtifactTemplateInfo artifactTemplateInfo;
 }

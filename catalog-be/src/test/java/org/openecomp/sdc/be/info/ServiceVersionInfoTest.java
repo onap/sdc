@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.info;
 
 import org.junit.Test;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,6 +38,11 @@ public class ServiceVersionInfoTest {
 	@Test
 	public void shouldHaveValidGettersAndSetters() {
 		assertThat(ServiceVersionInfo.class, hasValidGettersAndSetters());
+	}
+
+	@Test
+	public void shouldHaveValidDefaultConstructor() {
+		assertThat(Relationship.class, hasValidBeanConstructor());
 	}
 
 	@Test

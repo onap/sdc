@@ -21,10 +21,13 @@
  */
 package org.openecomp.sdc.be.info;
 
+import java.util.List;
 import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RelationshipTest {
@@ -39,4 +42,17 @@ public class RelationshipTest {
 		assertThat(Relationship.class, hasValidBeanConstructor());
 	}
 
+	@Test
+	public void testNonDefaultPropertyGetter() {
+		Relationship relationship = new Relationship();
+		assertThat(relationship.getRelatedToProperty(), notNullValue());
+		assertThat(relationship.getRelatedToProperty(), instanceOf(List.class));
+	}
+
+	@Test
+	public void testNonDefaultRelationshipDataGetter() {
+		Relationship relationship = new Relationship();
+		assertThat(relationship.getRelationshipData(), notNullValue());
+		assertThat(relationship.getRelationshipData(), instanceOf(List.class));
+	}
 }
