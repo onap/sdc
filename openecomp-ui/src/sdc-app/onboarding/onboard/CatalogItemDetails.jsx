@@ -88,7 +88,7 @@ const CatalogItemDetails = ({
                 <TileInfoLine type="title">
                     <TooltipWrapper
                         className="with-overlay"
-                        tooltipClassName="tile-title-info"
+                        tooltipClassName="catalog-tile-tooltip"
                         dataTestId="catalog-item-name">
                         {name}
                     </TooltipWrapper>
