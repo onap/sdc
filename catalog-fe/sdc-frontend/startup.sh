@@ -7,7 +7,7 @@ JAVA_OPTIONS=" ${JAVA_OPTIONS} \
                -Dconfiguration.yaml=${JETTY_BASE}/config/catalog-fe/configuration.yaml \
                -Donboarding_configuration.yaml=${JETTY_BASE}/config/onboarding-fe/onboarding_configuration.yaml \
                -Djavax.net.ssl.trustStore=${JETTY_BASE}/etc/org.onap.sdc.trust.jks \
-               -Djavax.net.ssl.trustStorePassword=].][xgtze]hBhz*wy]}m#lf* \
+               -Djavax.net.ssl.trustStorePassword=z+KEj;t+,KN^iimSiS89e#p0 \
                -Djetty.console-capture.dir=${JETTY_BASE}/logs "
 
 cd /var/lib/jetty/chef-solo
