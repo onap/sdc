@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.be.info;
 
-import com.google.common.annotations.VisibleForTesting;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ServiceVersionInfo {
-
     private String version;
     private String url;
-
-    @VisibleForTesting
-    ServiceVersionInfo() {}
 
     public ServiceVersionInfo(String serviceName, String serviceVersion, String context) {
         super();
@@ -36,21 +35,5 @@ public class ServiceVersionInfo {
         StringBuilder sb = new StringBuilder(context);
         sb.append("services/").append(serviceName).append("/").append(serviceVersion);
         url = sb.toString();
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String serviceVersion) {
-        this.version = serviceVersion;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 }

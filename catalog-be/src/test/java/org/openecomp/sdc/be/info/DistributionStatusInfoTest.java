@@ -29,9 +29,7 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class DistributionStatusInfoTest {
@@ -41,11 +39,6 @@ public class DistributionStatusInfoTest {
 	private static final String AUDIT_DISTRIBUTION_RESOURCE_URL = "AUDIT_DISTRIBUTION_RESOURCE_URL";
 	private static final String AUDIT_STATUS = "AUDIT_STATUS";
 	private static final String AUDIT_DESC = "AUDIT_DESC";
-
-	@Test
-	public void shouldHaveValidGettersAndSetters() {
-		assertThat(DistributionStatusInfo.class, hasValidGettersAndSetters());
-	}
 
 	@Test
 	public void testCtorWithAuditingGenericEvent() {
@@ -78,5 +71,4 @@ public class DistributionStatusInfoTest {
 		distributionStatusEvent.setFields(fields);
 		return distributionStatusEvent;
 	}
-
 }

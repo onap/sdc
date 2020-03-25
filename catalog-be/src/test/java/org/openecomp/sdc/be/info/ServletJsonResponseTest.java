@@ -36,7 +36,7 @@ public class ServletJsonResponseTest {
 
     @Test
     public void shouldHaveValidDefaultConstructor() {
-        assertThat(ServiceInfo.class, hasValidBeanConstructor());
+        assertThat(ServletJsonResponse.class, hasValidBeanConstructor());
     }
 
 }

@@ -21,43 +21,15 @@
 package org.openecomp.sdc.be.info;
 
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class GenericArtifactQueryInfo {
-
     private Set<String> fields;
     private String parentId;
     private String artifactUniqueId;
-
-    public GenericArtifactQueryInfo() {
-    }
-
-    public GenericArtifactQueryInfo(Set<String> fields, String parentId, String artifactUniqueId) {
-        this.fields = fields;
-        this.parentId = parentId;
-        this.artifactUniqueId = artifactUniqueId;
-    }
-
-    public void setFields(Set<String> fields) {
-        this.fields = fields;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public void setArtifactUniqueId(String artifactUniqueId) {
-        this.artifactUniqueId = artifactUniqueId;
-    }
-
-    public Set<String> getFields() {
-        return fields;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public String getArtifactUniqueId() {
-        return artifactUniqueId;
-    }
 }
