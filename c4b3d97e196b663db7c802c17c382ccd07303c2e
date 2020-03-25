@@ -1,0 +1,199 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a0f6aee4_de7e8f97",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/CreateAndAssotiateInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "remove unused",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 18
+      },
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94e47104_a8f35ba0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/DistributionStatusInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "remove unused",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 18
+      },
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8a211d7_f82e8dda",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/GenericArtifactQueryInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "remove unused",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 18
+      },
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f7dc2b0_25ad50e7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/GroupTemplateInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "should be private?",
+      "range": {
+        "startLine": 29,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 46
+      },
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a803c3f4_474e292c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/NodeTypeInfoToUpdateArtifacts.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "remove unused",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 18
+      },
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a70c6d6e_c45164ed",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/ServiceInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "remove unused",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 18
+      },
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b422d36_6ae20ccb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/ServiceVersionInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "remove unused",
+      "range": {
+        "startLine": 29,
+        "startChar": 1,
+        "endLine": 29,
+        "endChar": 18
+      },
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "290387a3_5f5c8708",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/ServletJsonResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "private?",
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6addb855_e1eda173",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/ToscaNodeTypeInterface.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-25T18:48:36Z",
+      "side": 1,
+      "message": "private",
+      "revId": "c4b3d97e196b663db7c802c17c382ccd07303c2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
