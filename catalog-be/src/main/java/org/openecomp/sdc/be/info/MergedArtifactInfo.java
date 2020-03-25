@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.info;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
@@ -31,30 +34,20 @@ import java.util.Set;
 
 public class MergedArtifactInfo {
 
+    @Getter @Setter(AccessLevel.NONE)
     private List<ArtifactDefinition> createdArtifact;
+    @Getter @Setter
     private ArtifactTemplateInfo jsonArtifactTemplate;
-    private Set<String> parsetArtifactsNames;
-
-    public List<ArtifactDefinition> getCreatedArtifact() {
-        return createdArtifact;
-    }
+    private Set<String> parsedArtifactsNames;
 
     public void setCreatedArtifact(List<ArtifactDefinition> createdArtifact) {
         this.createdArtifact = createdArtifact;
-        parsetArtifactsNames = new HashSet<>();
-        parsetArtifactsNames.add(jsonArtifactTemplate.getFileName());
+        parsedArtifactsNames = new HashSet<>();
+        parsedArtifactsNames.add(jsonArtifactTemplate.getFileName());
         List<ArtifactTemplateInfo> relatedGroupTemplateList = jsonArtifactTemplate.getRelatedArtifactsInfo();
         if (relatedGroupTemplateList != null && !relatedGroupTemplateList.isEmpty()) {
-            this.createArtifactsGroupSet(relatedGroupTemplateList, parsetArtifactsNames);
+            this.createArtifactsGroupSet(relatedGroupTemplateList, parsedArtifactsNames);
         }
-    }
-
-    public ArtifactTemplateInfo getJsonArtifactTemplate() {
-        return jsonArtifactTemplate;
-    }
-
-    public void setJsonArtifactTemplate(ArtifactTemplateInfo jsonArtifactTemplate) {
-        this.jsonArtifactTemplate = jsonArtifactTemplate;
     }
 
     public List<ArtifactTemplateInfo> getListToAssociateArtifactToGroup() {
@@ -70,14 +63,14 @@ public class MergedArtifactInfo {
         List<ArtifactDefinition> resList = new ArrayList<>();
         for (ArtifactDefinition artifactDefinition : createdArtifact) {
             boolean isDissotiate = true;
-            if(parsetArtifactsNames.contains(artifactDefinition.getArtifactName())){
+            if(parsedArtifactsNames.contains(artifactDefinition.getArtifactName())){
                 isDissotiate = false;
             }else{
                 if (artifactDefinition.getGeneratedFromId() != null && !artifactDefinition.getGeneratedFromId().isEmpty()){
                     Optional<ArtifactDefinition> op = createdArtifact.stream().filter(p -> p.getUniqueId().equals(artifactDefinition.getGeneratedFromId())).findAny();
                     if(op.isPresent()){
                         ArtifactDefinition generatedFromArt = op.get();
-                        if(parsetArtifactsNames.contains(generatedFromArt.getArtifactName())){
+                        if(parsedArtifactsNames.contains(generatedFromArt.getArtifactName())){
                             isDissotiate = false;
                         }
                     }
@@ -164,5 +157,4 @@ public class MergedArtifactInfo {
             }
         }
     }
-
 }

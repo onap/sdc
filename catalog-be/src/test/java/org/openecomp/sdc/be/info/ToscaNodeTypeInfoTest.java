@@ -25,6 +25,7 @@ import com.google.code.beanmatchers.BeanMatchers;
 import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ToscaNodeTypeInfoTest {
@@ -43,5 +44,4 @@ public class ToscaNodeTypeInfoTest {
     public void allPropertiesShouldBeRepresentedInToStringOutput() {
         assertThat(ToscaNodeTypeInfo.class, BeanMatchers.hasValidBeanToString());
     }
-
 }

@@ -22,11 +22,15 @@
 
 package org.openecomp.sdc.be.info;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 import java.util.Arrays;
 import java.util.Optional;
 
+@Getter
+@AllArgsConstructor
 public enum DistributionStatus {
     DEPLOYED("Deployed", "DEPLOYED");
 
@@ -34,19 +38,6 @@ public enum DistributionStatus {
     private String auditingStatus;
 
     private static final Logger log = Logger.getLogger(DistributionStatus.class);
-
-    DistributionStatus(String name, String auditingStatus) {
-        this.name = name;
-        this.auditingStatus = auditingStatus;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAuditingStatus() {
-        return auditingStatus;
-    }
 
     public static DistributionStatus getStatusByAuditingStatusName(String auditingStatus) {
         Optional<DistributionStatus> distributionStatus = Arrays.stream(values())
@@ -57,5 +48,4 @@ public enum DistributionStatus {
         // it should be replaced by some exception handling. Keeping it only for the purpose of backward compatibility
         return distributionStatus.orElse(null);
     }
-
 }

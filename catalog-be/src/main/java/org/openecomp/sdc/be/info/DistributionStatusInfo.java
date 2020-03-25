@@ -22,9 +22,15 @@
 
 package org.openecomp.sdc.be.info;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class DistributionStatusInfo {
 
     private String omfComponentID;
@@ -32,9 +38,6 @@ public class DistributionStatusInfo {
     private String url;
     private String status;
     private String errorReason;
-
-    DistributionStatusInfo() {
-    }
 
     public DistributionStatusInfo(AuditingGenericEvent distributionStatusEvent) {
         super();
@@ -51,45 +54,4 @@ public class DistributionStatusInfo {
         this.url = url;
         this.status = status;
     }
-
-    public String getOmfComponentID() {
-        return omfComponentID;
-    }
-
-    public void setOmfComponentID(String omfComponentID) {
-        this.omfComponentID = omfComponentID;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getErrorReason() {
-        return errorReason;
-    }
-
-    public void setErrorReason(String errorReason) {
-        this.errorReason = errorReason;
-    }
-
 }

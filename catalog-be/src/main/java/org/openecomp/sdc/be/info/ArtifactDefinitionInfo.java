@@ -22,8 +22,14 @@
 
 package org.openecomp.sdc.be.info;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class ArtifactDefinitionInfo {
 
     private String uniqueId;
@@ -33,9 +39,6 @@ public class ArtifactDefinitionInfo {
     private String artifactVersion;
     private String artifactUUID;
 
-    ArtifactDefinitionInfo() {
-    }
-
     public ArtifactDefinitionInfo(ArtifactDefinition artifactDefinition) {
         uniqueId = artifactDefinition.getUniqueId();
         artifactName = artifactDefinition.getArtifactName();
@@ -43,45 +46,4 @@ public class ArtifactDefinitionInfo {
         artifactVersion = artifactDefinition.getArtifactVersion();
         artifactUUID = artifactDefinition.getArtifactUUID();
     }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public String getArtifactName() {
-        return artifactName;
-    }
-
-    public void setArtifactName(String artifactName) {
-        this.artifactName = artifactName;
-    }
-
-    public String getArtifactDisplayName() {
-        return artifactDisplayName;
-    }
-
-    public void setArtifactDisplayName(String artifactDisplayName) {
-        this.artifactDisplayName = artifactDisplayName;
-    }
-
-    public String getArtifactVersion() {
-        return artifactVersion;
-    }
-
-    public void setArtifactVersion(String artifactVersion) {
-        this.artifactVersion = artifactVersion;
-    }
-
-    public String getArtifactUUID() {
-        return artifactUUID;
-    }
-
-    public void setArtifactUUID(String artifactUUID) {
-        this.artifactUUID = artifactUUID;
-    }
-
 }

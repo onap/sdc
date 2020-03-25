@@ -20,25 +20,12 @@
 
 package org.openecomp.sdc.be.info;
 
-public class ServletJsonResponse {
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+public class ServletJsonResponse {
     String source;
     String description;
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
 }

@@ -23,6 +23,11 @@ package org.openecomp.sdc.be.info;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fj.data.Either;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -40,6 +45,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class ArtifactTemplateInfo {
     private static final Logger log = Logger.getLogger(ArtifactTemplateInfo.class);
     private static final Gson gson = new Gson();
@@ -58,80 +66,17 @@ public class ArtifactTemplateInfo {
     private String type;
     private String fileName;
     private String env;
-    private boolean isBase;
+    private boolean base;
     private String groupName;
     private String description;
 
     private List<ArtifactTemplateInfo> relatedArtifactsInfo;
-
-    public ArtifactTemplateInfo() {}
 
     public ArtifactTemplateInfo(String type, String fileName, String env, List<ArtifactTemplateInfo> relatedArtifactsInfo) {
         this.type = type;
         this.fileName = fileName;
         this.env = env;
         this.relatedArtifactsInfo = relatedArtifactsInfo;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getEnv() {
-        return env;
-    }
-
-    public void setEnv(String env) {
-        this.env = env;
-    }
-
-    public List<ArtifactTemplateInfo> getRelatedArtifactsInfo() {
-        return relatedArtifactsInfo;
-    }
-
-    public void setRelatedArtifactsInfo(List<ArtifactTemplateInfo> relatedArtifactsInfo) {
-        this.relatedArtifactsInfo = relatedArtifactsInfo;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public boolean isBase() {
-        return isBase;
-    }
-
-    public void setBase(boolean isBase) {
-        this.isBase = isBase;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String toString() {
-        return "ArtifactTemplateInfo [type=" + type + ", fileName=" + fileName + ", env=" + env + ", isBase=" + isBase + ", groupName=" + groupName + ", description=" + description + ", relatedArtifactsInfo=" + relatedArtifactsInfo + "]";
     }
 
     public static Either<ArtifactTemplateInfo, ResponseFormat> createArtifactTemplateInfoFromJson(ComponentsUtils componentsUtils, String type, Map<String, Object> o, List<ArtifactTemplateInfo> createdArtifactTemplateInfoList,
@@ -361,7 +306,6 @@ public class ArtifactTemplateInfo {
     }
 
     public static int compareByGroupName(ArtifactTemplateInfo art1, ArtifactTemplateInfo art2) {
-        return art1.isBase ? (art2.isBase ? 0 : -1) : (art2.isBase ? 1 : 0);
+        return art1.isBase() ? (art2.isBase() ? 0 : -1) : (art2.isBase() ? 1 : 0);
     }
-
 }

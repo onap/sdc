@@ -30,11 +30,17 @@ import org.openecomp.sdc.be.model.GroupInstance;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openecomp.sdc.be.model.GroupProperty;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.core.Is.isA;
 
 public class GroupDefinitionInfoTest {
 
@@ -82,6 +88,27 @@ public class GroupDefinitionInfoTest {
     public void shouldHaveValidGettersAndSetters() {
         assertThat(GroupDefinitionInfo.class, BeanMatchers.hasValidGettersAndSettersExcluding("artifacts", "properties"));
     }
+    @Test
+    public void testValidGetterSetterArtifacts() {
+        GroupDefinitionInfo groupDefinitionInfo = new GroupDefinitionInfo();
+        groupDefinitionInfo.setArtifacts(null);
+        assertThat(groupDefinitionInfo.getArtifacts(), nullValue());
+
+        List<ArtifactDefinitionInfo> artifacts = new ArrayList<>();
+        groupDefinitionInfo.setArtifacts(artifacts);
+        assertThat(groupDefinitionInfo.getArtifacts(), not(sameInstance(artifacts)));
+    }
+
+    @Test
+    public void testValidGetterSetterProperties() {
+        GroupDefinitionInfo groupDefinitionInfo = new GroupDefinitionInfo();
+        groupDefinitionInfo.setProperties(null);
+        assertThat(groupDefinitionInfo.getProperties(), nullValue());
+
+        List<GroupProperty> properties = new ArrayList<>();
+        groupDefinitionInfo.setProperties(properties);
+        assertThat(groupDefinitionInfo.getProperties(), not(sameInstance(properties)));
+    }
 
     @Test
     public void testToString() {
@@ -116,5 +143,4 @@ public class GroupDefinitionInfoTest {
         groupInstanceDataDefinition.setGroupUUID(GROUP_UUID);
         return groupInstanceDataDefinition;
     }
-
 }

@@ -20,29 +20,15 @@
 
 package org.openecomp.sdc.be.info;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.model.ArtifactType;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class ArtifactTypesInfo {
-
-    Integer heatDefaultTimeout = 60;
-    List<ArtifactType> artifactTypes;
-
-    public List<ArtifactType> getArtifactTypes() {
-        return artifactTypes;
-    }
-
-    public void setArtifactTypes(List<ArtifactType> artifactTypes) {
-        this.artifactTypes = artifactTypes;
-    }
-
-    public Integer getHeatDefaultTimeout() {
-        return heatDefaultTimeout;
-    }
-
-    public void setHeatDefaultTimeout(Integer heatDefaultTimeout) {
-        this.heatDefaultTimeout = heatDefaultTimeout;
-    }
-
+    private Integer heatDefaultTimeout = 60;
+    private List<ArtifactType> artifactTypes;
 }

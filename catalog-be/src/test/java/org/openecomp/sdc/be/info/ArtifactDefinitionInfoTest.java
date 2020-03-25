@@ -28,6 +28,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -47,6 +48,11 @@ public class ArtifactDefinitionInfoTest {
 	@Test
 	public void shouldHaveValidGettersAndSetters() {
 		assertThat(ArtifactDefinitionInfo.class, hasValidGettersAndSetters());
+	}
+
+	@Test
+	public void shouldHaveValidDefaultConstructor() {
+		assertThat(Relationship.class, hasValidBeanConstructor());
 	}
 
 	@Test

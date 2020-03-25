@@ -24,7 +24,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public final class Relationship {
     
     @JsonProperty("related-to")
@@ -37,26 +42,12 @@ public final class Relationship {
     private String relatedLink;
 
     @JsonProperty("relationship-data")
+    @Getter(AccessLevel.NONE)
     private List<RelationshipData> relationshipData;
 
     @JsonProperty("related-to-property")
+    @Getter(AccessLevel.NONE)
     private List<RelatedToProperty> relatedToProperty;
-
-    public String getRelatedTo() {
-        return relatedTo;
-    }
-
-    public void setRelatedTo(String relatedTo) {
-        this.relatedTo = relatedTo;
-    }
-
-    public String getRelatedLink() {
-        return relatedLink;
-    }
-
-    public void setRelatedLink(String relatedLink) {
-        this.relatedLink = relatedLink;
-    }
 
     public List<RelationshipData> getRelationshipData() {
         if(relationshipData == null) {
@@ -65,26 +56,10 @@ public final class Relationship {
         return relationshipData;
     }
 
-    public void setRelationshipData(List<RelationshipData> relationshipData) {
-        this.relationshipData = relationshipData;
-    }
-
-    public String getRelationshipLabel() {
-        return relationshipLabel;
-    }
-
-    public void setRelationshipLabel(String relationshipLabel) {
-        this.relationshipLabel = relationshipLabel;
-    }
-
     public List<RelatedToProperty> getRelatedToProperty() {
         if(relatedToProperty == null) {
             relatedToProperty = new ArrayList<>();
         }
         return relatedToProperty;
-    }
-
-    public void setRelatedToProperty(List<RelatedToProperty> relatedToProperty) {
-        this.relatedToProperty = relatedToProperty;
     }
 }
