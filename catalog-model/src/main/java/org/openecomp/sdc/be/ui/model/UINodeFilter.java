@@ -16,16 +16,13 @@
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UINodeFilter {
 
     private List<UIConstraint> properties;
 
-    public List<UIConstraint> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<UIConstraint> properties) {
-        this.properties = properties;
-    }
 }

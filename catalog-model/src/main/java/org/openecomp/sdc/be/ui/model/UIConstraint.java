@@ -19,7 +19,11 @@ package org.openecomp.sdc.be.ui.model;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UIConstraint implements Serializable {
 
     private String servicePropertyName;
@@ -39,52 +43,12 @@ public class UIConstraint implements Serializable {
     }
 
     public UIConstraint(String servicePropertyName, String constraintOperator, String sourceType, String sourceName,
-            Object value) {
+                        Object value) {
         this.servicePropertyName = servicePropertyName;
         this.constraintOperator = constraintOperator;
         this.sourceType = sourceType;
         this.sourceName = sourceName;
         this.value = value;
-    }
-
-    public String getServicePropertyName() {
-        return servicePropertyName;
-    }
-
-    public void setServicePropertyName(String servicePropertyName) {
-        this.servicePropertyName = servicePropertyName;
-    }
-
-    public String getConstraintOperator() {
-        return constraintOperator;
-    }
-
-    public void setConstraintOperator(String constraintOperator) {
-        this.constraintOperator = constraintOperator;
-    }
-
-    public String getSourceType() {
-        return sourceType;
-    }
-
-    public void setSourceType(String sourceType) {
-        this.sourceType = sourceType;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
     }
 
     @Override
@@ -97,21 +61,20 @@ public class UIConstraint implements Serializable {
         }
         UIConstraint that = (UIConstraint) o;
         return Objects.equal(getServicePropertyName(), that.getServicePropertyName()) && Objects.equal(
-                getConstraintOperator(), that.getConstraintOperator()) && Objects.equal(getSourceType(),
-                that.getSourceType()) && Objects.equal(getSourceName(), that.getSourceName()) && Objects.equal(
-                getValue(), that.getValue());
+            getConstraintOperator(), that.getConstraintOperator()) && Objects.equal(getSourceType(),
+            that.getSourceType()) && Objects.equal(getSourceName(), that.getSourceName()) && Objects.equal(
+            getValue(), that.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getServicePropertyName(), getConstraintOperator(), getSourceType(), getSourceName(),
-                getValue());
+        return Objects.hashCode(servicePropertyName, constraintOperator, sourceType, sourceName, value);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("servicePropertyName", servicePropertyName)
-                          .add("constraintOperator", constraintOperator).add("sourceType", sourceType)
-                          .add("sourceName", sourceName).add("value", value).toString();
+            .add("constraintOperator", constraintOperator).add("sourceType", sourceType)
+            .add("sourceName", sourceName).add("value", value).toString();
     }
 }

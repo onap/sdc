@@ -405,10 +405,10 @@ public class UiComponentDataConverter {
                     break;
                 case NODE_FILTER:
                     if(service.getNodeFilterComponents() == null) {
-                        dataTransfer.setNodeFilterData(null);
+                        dataTransfer.setNodeFilterforNode(null);
                     } else {
                         NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
-                        dataTransfer.setNodeFilterData(nodeFilterConverter.convertDataMapToUI(service.getNodeFilterComponents()));
+                        dataTransfer.setNodeFilterforNode(nodeFilterConverter.convertDataMapToUI(service.getNodeFilterComponents()));
                     }
 
                     break;
