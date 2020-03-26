@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4c3d0087_40498d0d",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/impl/PluginStatusBL.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-03-26T16:15:48Z",
+      "side": 1,
+      "message": "replace for anyMatch:\nreturn pluginsConfiguration.getPluginsList().stream()\n\t\t\t\t\t.anyMatch(plugin -\u003e plugin.getPluginDiscoveryUrl().toLowerCase().startsWith(\"https\"));",
+      "range": {
+        "startLine": 82,
+        "startChar": 3,
+        "endLine": 86,
+        "endChar": 33
+      },
+      "revId": "b599acb8bd9c6f0f76062840a5a4137b008ea292",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fb8b353_bc8fd1d1",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/impl/PluginStatusBL.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-03-26T16:15:48Z",
+      "side": 1,
+      "message": "Remove unnecessary null value setting, define as final, change the type to PoolingHttpClientConnectionManager and remove redundant casting to setMaxTotal and setDefaultMaxPerRoute.",
+      "range": {
+        "startLine": 93,
+        "startChar": 2,
+        "endLine": 93,
+        "endChar": 56
+      },
+      "revId": "b599acb8bd9c6f0f76062840a5a4137b008ea292",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a38ddb51_543e54e0",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/impl/PluginStatusBL.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-03-26T16:15:48Z",
+      "side": 1,
+      "message": "use parseInt to avoid unnecessary Integer boxing of a int",
+      "range": {
+        "startLine": 109,
+        "startChar": 83,
+        "endLine": 109,
+        "endChar": 90
+      },
+      "revId": "b599acb8bd9c6f0f76062840a5a4137b008ea292",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92249b26_8c09a55b",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/impl/PluginStatusBL.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-03-26T16:15:48Z",
+      "side": 1,
+      "message": "use parseInt to avoid unnecessary Integer boxing of a int",
+      "range": {
+        "startLine": 110,
+        "startChar": 78,
+        "endLine": 110,
+        "endChar": 85
+      },
+      "revId": "b599acb8bd9c6f0f76062840a5a4137b008ea292",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
