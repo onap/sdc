@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,35 +20,21 @@
 
 package org.openecomp.sdc.be.model.category;
 
-import java.util.ArrayList;
-import java.util.List;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.category.GroupingDataDefinition;
 
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class CategoryDefinition extends CategoryDataDefinition {
+public class GroupingDefinitionTest {
 
-    private List<SubCategoryDefinition> subcategories;
-
-    public CategoryDefinition() {
-        super();
+    @Test
+    public void testCtor() {
+        final GroupingDefinition testSubject = new GroupingDefinition();
+        Assertions.assertThat(testSubject).isNotNull().isInstanceOf(GroupingDefinition.class);
     }
 
-    public CategoryDefinition(CategoryDataDefinition c) {
-        super(c);
+    @Test
+    public void testClone() {
+        final GroupingDefinition testSubject = new GroupingDefinition(new GroupingDataDefinition());
+        Assertions.assertThat(testSubject).isNotNull().isInstanceOf(GroupingDefinition.class);
     }
-
-    public void addSubCategory(SubCategoryDefinition subcategory) {
-        if (subcategories == null) {
-            subcategories = new ArrayList<>();
-        }
-        subcategories.add(subcategory);
-    }
-
 }
