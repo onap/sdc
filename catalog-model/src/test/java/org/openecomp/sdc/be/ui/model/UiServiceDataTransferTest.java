@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,59 +20,20 @@
 
 package org.openecomp.sdc.be.ui.model;
 
-import java.util.Map;
-
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
 
 
 public class UiServiceDataTransferTest {
 
-	private UiServiceDataTransfer createTestSubject() {
-		return new UiServiceDataTransfer();
-	}
+    private UiServiceDataTransfer createTestSubject() {
+        return new UiServiceDataTransfer();
+    }
 
-	
-	@Test
-	public void testGetMetadata() throws Exception {
-		UiServiceDataTransfer testSubject;
-		UiServiceMetadata result;
+    @Test
+    public void testCtor() throws Exception {
+        final UiServiceDataTransfer testSubject = createTestSubject();
+        Assertions.assertThat(testSubject).isNotNull().isInstanceOf(UiServiceDataTransfer.class);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getMetadata();
-	}
-
-	
-	@Test
-	public void testSetMetadata() throws Exception {
-		UiServiceDataTransfer testSubject;
-		UiServiceMetadata metadata = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setMetadata(metadata);
-	}
-
-	
-	@Test
-	public void testGetServiceApiArtifacts() throws Exception {
-		UiServiceDataTransfer testSubject;
-		Map<String, ArtifactDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getServiceApiArtifacts();
-	}
-
-	
-	@Test
-	public void testSetServiceApiArtifacts() throws Exception {
-		UiServiceDataTransfer testSubject;
-		Map<String, ArtifactDefinition> serviceApiArtifacts = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setServiceApiArtifacts(serviceApiArtifacts);
-	}
 }
