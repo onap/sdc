@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,11 +20,18 @@
 
 package org.openecomp.sdc.be.model.category;
 
-import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class CategoryDefinition extends CategoryDataDefinition {
 
     private List<SubCategoryDefinition> subcategories;
@@ -37,24 +44,11 @@ public class CategoryDefinition extends CategoryDataDefinition {
         super(c);
     }
 
-    public List<SubCategoryDefinition> getSubcategories() {
-        return subcategories;
-    }
-
-    public void setSubcategories(List<SubCategoryDefinition> subcategories) {
-        this.subcategories = subcategories;
-    }
-
     public void addSubCategory(SubCategoryDefinition subcategory) {
         if (subcategories == null) {
             subcategories = new ArrayList<>();
         }
         subcategories.add(subcategory);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " CategoryDefinition [subcategories=" + subcategories + "]";
     }
 
 }
