@@ -19,14 +19,19 @@
  */
 package org.openecomp.sdc.be.ui.model;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.hamcrest.MatcherAssert.assertThat;
-
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 public class UINodeFilterTest {
-    @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(UINodeFilter.class, hasValidGettersAndSetters());
+
+    private UINodeFilter createTestSubject() {
+        return new UINodeFilter();
     }
+
+    @Test
+    public void testCtor() throws Exception {
+        final UINodeFilter testSubject = createTestSubject();
+        Assertions.assertThat(testSubject).isNotNull().isInstanceOf(UINodeFilter.class);
+    }
+
 }

@@ -19,14 +19,33 @@
  */
 package org.openecomp.sdc.be.ui.model;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.hamcrest.MatcherAssert.assertThat;
-
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 public class UIConstraintTest {
-    @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(UIConstraint.class, hasValidGettersAndSetters());
+
+    private UIConstraint createTestSubject() {
+        return new UIConstraint();
     }
+
+    @Test
+    public void testCtor() throws Exception {
+        final UIConstraint testSubject = createTestSubject();
+        Assertions.assertThat(testSubject).isNotNull().isInstanceOf(UIConstraint.class);
+    }
+
+    @Test
+    public void testCtorX4() throws Exception {
+        final UIConstraint testSubject =
+            new UIConstraint("servicePropertyName", "constraintOperator", "sourceType", "value");
+        Assertions.assertThat(testSubject).isNotNull().isInstanceOf(UIConstraint.class);
+    }
+
+    @Test
+    public void testCtorX5() throws Exception {
+        final UIConstraint testSubject =
+            new UIConstraint("servicePropertyName", "constraintOperator", "sourceType", "sourceName", "value");
+        Assertions.assertThat(testSubject).isNotNull().isInstanceOf(UIConstraint.class);
+    }
+
 }
