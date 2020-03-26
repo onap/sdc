@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,16 @@
 
 package org.openecomp.sdc.be.ui.model;
 
+import java.util.List;
+import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 
-import java.util.List;
-import java.util.Map;
-
+@Getter
+@Setter
 public abstract class UiComponentMetadata {
 
     private String uniqueId;
@@ -87,9 +90,10 @@ public abstract class UiComponentMetadata {
     private Long archiveTime;
     private Boolean isVspArchived;
 
-    public UiComponentMetadata(){}
+    public UiComponentMetadata() {
+    }
 
-    public UiComponentMetadata (List<CategoryDefinition> categories, ComponentMetadataDataDefinition metadata) {
+    public UiComponentMetadata(List<CategoryDefinition> categories, ComponentMetadataDataDefinition metadata) {
 
         this.uniqueId = metadata.getUniqueId();
         this.name = metadata.getName(); // archiveName
@@ -124,246 +128,4 @@ public abstract class UiComponentMetadata {
         this.isVspArchived = metadata.isVspArchived();
     }
 
-
-
-    public List<CategoryDefinition> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<CategoryDefinition> categories) {
-        this.categories = categories;
-    }
-
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public Boolean getIsHighestVersion() {
-        return isHighestVersion;
-    }
-
-    public void setIsHighestVersion(Boolean isHighestVersion) {
-        this.isHighestVersion = isHighestVersion;
-    }
-
-    public Long getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Long creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Long getLastUpdateDate() {
-        return lastUpdateDate;
-    }
-
-    public void setLastUpdateDate(Long lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLifecycleState() {
-        return lifecycleState;
-    }
-
-    public void setLifecycleState(String state) {
-        this.lifecycleState = state;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getUUID() {
-        return UUID;
-    }
-
-    public void setUUID(String uUID) {
-        UUID = uUID;
-    }
-
-    public String getNormalizedName() {
-        return normalizedName;
-    }
-
-    public void setNormalizedName(String normalizedName) {
-        this.normalizedName = normalizedName;
-    }
-
-    public String getSystemName() {
-        return systemName;
-    }
-
-    public void setSystemName(String systemName) {
-        this.systemName = systemName;
-    }
-
-    public String getContactId() {
-        return contactId;
-    }
-
-    public void setContactId(String contactId) {
-        this.contactId = contactId;
-    }
-
-    public Map<String, String> getAllVersions() {
-        return allVersions;
-    }
-
-    public void setAllVersions(Map<String, String> allVersions) {
-        this.allVersions = allVersions;
-    }
-
-    public Boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
-    }
-
-    public String getCsarUUID() {
-        return csarUUID;
-    }
-
-    public void setCsarUUID(String csarUUID) {
-        this.csarUUID = csarUUID;
-    }
-
-    public String getCsarVersion() {
-        return csarVersion;
-    }
-
-    public void setCsarVersion(String csarVersion) {
-        this.csarVersion = csarVersion;
-    }
-
-    public String getImportedToscaChecksum() {
-        return importedToscaChecksum;
-    }
-
-    public void setImportedToscaChecksum(String importedToscaChecksum) {
-        this.importedToscaChecksum = importedToscaChecksum;
-    }
-
-    public String getInvariantUUID() {
-        return invariantUUID;
-    }
-
-    public void setInvariantUUID(String invariantUUID) {
-        this.invariantUUID = invariantUUID;
-    }
-
-    public ComponentTypeEnum getComponentType() {
-        return componentType;
-    }
-
-    public void setComponentType(ComponentTypeEnum componentType) {
-        this.componentType = componentType;
-    }
-
-    public String getCreatorUserId() {
-        return creatorUserId;
-    }
-
-    public void setCreatorUserId(String creatorUserId) {
-        this.creatorUserId = creatorUserId;
-    }
-
-    public String getCreatorFullName() {
-        return creatorFullName;
-    }
-
-    public void setCreatorFullName(String creatorFullName) {
-        this.creatorFullName = creatorFullName;
-    }
-
-    public String getLastUpdaterUserId() {
-        return lastUpdaterUserId;
-    }
-
-    public void setLastUpdaterUserId(String lastUpdaterUserId) {
-        this.lastUpdaterUserId = lastUpdaterUserId;
-    }
-
-    public String getLastUpdaterFullName() {
-        return lastUpdaterFullName;
-    }
-
-    public void setLastUpdaterFullName(String lastUpdaterFullName) {
-        this.lastUpdaterFullName = lastUpdaterFullName;
-    }
-
-    public Boolean isArchived() {
-        return isArchived;
-    }
-
-    public void setArchived(Boolean archived) {
-        isArchived = archived;
-    }
-
-    public Long getArchiveTime() {
-        return archiveTime;
-    }
-
-    public void setArchiveTime(Long archiveTime) {
-        this.archiveTime = archiveTime;
-    }
-
-    public Boolean isVspArchived() {
-        return isVspArchived;
-    }
-
-    public void setVspArchived(Boolean vspArchived) {
-        isVspArchived = vspArchived;
-    }
 }
