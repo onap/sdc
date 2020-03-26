@@ -35,12 +35,9 @@ import java.util.UUID;
 
 public final class FactoryUtils {
     private static final String STRING = "string";
+    private static final String DEFAULT_CAPABILITY_TYPE = "tosca.capabilities.Node";
 
 	private FactoryUtils() {
-    }
-
-    public static final class Constants {
-        public static final String DEFAULT_CAPABILITY_TYPE = "tosca.capabilities.Node";
     }
 
     public static Resource createVFWithRI(String riVersion) {
@@ -96,7 +93,7 @@ public final class FactoryUtils {
         String uniqueId = UUID.randomUUID().toString();
         capData.setUniqueId(uniqueId);
 
-        capData.setType(Constants.DEFAULT_CAPABILITY_TYPE);
+        capData.setType(DEFAULT_CAPABILITY_TYPE);
         return capData;
     }
 
@@ -171,7 +168,7 @@ public final class FactoryUtils {
     public static RequirementDefinition convertRequirementDataIDToRequirementDefinition(String reqDataId) {
         RequirementDefinition reqDef = new RequirementDefinition();
         reqDef.setUniqueId(reqDataId);
-        reqDef.setCapability(Constants.DEFAULT_CAPABILITY_TYPE);
+        reqDef.setCapability(DEFAULT_CAPABILITY_TYPE);
         return reqDef;
     }
 
