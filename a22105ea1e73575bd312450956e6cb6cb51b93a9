@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4e56db79_552e781e",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/ui/model/UIConstraintTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-30T10:15:53Z",
+      "side": 0,
+      "message": "getter and setter are implemented by LOMBOK, and not need to be tested, does not count to coverage too.",
+      "parentUuid": "1b81b5c3_fc14d783",
+      "revId": "a22105ea1e73575bd312450956e6cb6cb51b93a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d100138e_ec57c892",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/ui/model/UINodeFilterTest.java",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "df4c351d_cc30a1fc",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/ui/model/UINodeFilterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-30T10:15:53Z",
+      "side": 0,
+      "message": "getter and setter are implemented by LOMBOK, and not need to be tested, does not count to coverage too.",
+      "parentUuid": "d100138e_ec57c892",
+      "revId": "a22105ea1e73575bd312450956e6cb6cb51b93a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "11e49faf_da4efbe1",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/ui/model/UiCombinationTest.java",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2020-03-30T10:09:18Z",
       "side": 0,
       "message": "Why we have to remove this?\nTest UiCombinationTest class getters and setters.",
+      "revId": "a22105ea1e73575bd312450956e6cb6cb51b93a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b99850cd_ce2cc2ff",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/ui/model/UiCombinationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-03-30T10:15:53Z",
+      "side": 0,
+      "message": "getter and setter are implemented by LOMBOK, and not need to be tested, does not count to coverage too.",
+      "parentUuid": "11e49faf_da4efbe1",
       "revId": "a22105ea1e73575bd312450956e6cb6cb51b93a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
