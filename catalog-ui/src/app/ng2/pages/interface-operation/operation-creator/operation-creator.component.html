@@ -25,7 +25,7 @@
                     label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
                     [required]="true"
                     testId="interface-name"
-                    selectedOption="{{operation.interfaceType}}"
+                    [selectedOption]="getSelectedDropdown(interfaceNames, operation.interfaceType)"
                     placeHolder="Select..."
                     [disabled]="readonly"
                     (changed)="onSelectInterface($event)"
@@ -35,10 +35,11 @@
 
             <div class="form-item" *ngIf="!isInterfaceOther()">
                 <sdc-dropdown
+                    #operationNamesDropdown
                     label="{{ 'OPERATION_NAME' | translate }}"
                     [required]="true"
                     testId="operation-name"
-                    selectedOption="{{operation.name}}"
+                    [selectedOption]="getSelectedDropdown(operationNames, operation.name)"
                     placeHolder="Select..."
                     [disabled]="readonly"
                     (changed)="onSelectOperationName($event)"
@@ -71,10 +72,11 @@
         <div class="side-by-side" *ngIf="enableWorkflowAssociation">
             <div class="form-item">
                 <sdc-dropdown
+                    #workflowAssignmentDropdown
                     label="{{ 'OPERATION_WORKFLOW_ASSIGNMENT' | translate }}"
                     placeHolder="Select..."
                     testId="association-type"
-                    selectedOption="{{workflowAssociationType}}"
+                    [selectedOption]="toDropDownOption(workflowAssociationType)"
                     [options]="associationOptions"
                     (changed)="toggleAssociateWorkflow($event)"
                     [disabled]="readonly">
@@ -123,7 +125,7 @@
                 <sdc-dropdown
                     placeHolder="Select..."
                     testId="associated-workflow"
-                    selectedOption="{{operation.workflowId}}"
+                    [selectedOption]="getSelectedDropdown(workflows, operation.workflowId)"
                     [options]="workflows"
                     (changed)="onSelectWorkflow($event)"
                     [disabled]="readonly || !workflows.length || !workflowIsOnline">
@@ -135,7 +137,7 @@
                     *ngIf="workflowIsOnline && workflows.length"
                     label="{{ 'OPERATION_WORKFLOW_VERSION' | translate }}"
                     testId="associated-workflow-version"
-                    selectedOption="{{operation.workflowVersionId}}"
+                    [selectedOption]="getSelectedDropdown(workflowVersions, operation.workflowVersionId)"
                     [options]="workflowVersions"
                     (changed)="changeWorkflowVersion($event)"
                     [disabled]="!operation.workflowId || archivedWorkflowId === operation.workflowId || readonly">

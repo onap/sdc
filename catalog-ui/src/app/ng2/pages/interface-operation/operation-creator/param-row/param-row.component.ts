@@ -98,6 +98,7 @@ export class ParamRowComponent {
             ),
             prop => new DropdownValue(prop.uniqueId, prop.name)
         );
+        this.filteredInputProps.unshift(new DropdownValue("",""));
 
         this.operationOutputCats = _.filter(
             _.map(

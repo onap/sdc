@@ -10,14 +10,15 @@ import {
     OperationModel,
     OperationParameter,
     InputBEModel,
-    RadioButtonModel,
     WORKFLOW_ASSOCIATION_OPTIONS,
     Capability
 } from 'app/models';
 
-import {Tabs, Tab} from "app/ng2/components/ui/tabs/tabs.component";
-import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
+import { Tabs } from "app/ng2/components/ui/tabs/tabs.component";
+import { DropdownValue } from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
 import { IDropDownOption } from 'onap-ui-angular';
+import { DropDownComponent } from "onap-ui-angular/dist/components";
+import { DROPDOWN_OPTION_TYPE } from "app/utils/constants";
 
 export class DropDownOption implements IDropDownOption {
     value: string;
@@ -30,9 +31,9 @@ export class DropDownOption implements IDropDownOption {
 }
 
 class TypedDropDownOption extends DropDownOption {
-    type: number;
+    type: string;
 
-    constructor(value: string, label?: string, type?: number) {
+    constructor(value: string, label?: string, type?: string) {
         super(value, label);
         this.type = type;
     }
@@ -106,6 +107,8 @@ export class OperationCreatorComponent implements OperationCreatorInput {
     INTERFACE_OTHER = 'Local';
 
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
+    @ViewChild('operationNamesDropdown') operationNamesDropdown: DropDownComponent;
+    @ViewChild('workflowAssignmentDropdown') workflowAssignmentDropdown: DropDownComponent;
     currentTab: String;
 
     constructor(private workflowServiceNg2: WorkflowServiceNg2, private translateService: TranslateService) {
@@ -117,7 +120,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
                 new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXISTING, this.translateService.translate("EXISTING_WORKFLOW_ASSOCIATION")),
             ];
 
-            this.workflowAssociationType = this.operation.workflowAssociationType || WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL;
+            this.workflowAssociationType = this.operation.workflowAssociationType;
         });
 
         this.currentTab = this.TYPE_INPUT;
@@ -137,13 +140,12 @@ export class OperationCreatorComponent implements OperationCreatorInput {
             _.keys(this.interfaceTypes),
             type => this.createInterfaceDropdown(type)
         );
-        this.interfaceNames.unshift(new TypedDropDownOption('Existing Interfaces', 'Existing Interfaces', 1));
+        this.interfaceNames.unshift(new TypedDropDownOption('Existing Interfaces', 'Existing Interfaces', DROPDOWN_OPTION_TYPE.HEADER));
         this.interfaceNames = this.interfaceNames.concat([
-            new TypedDropDownOption(' ', ' ', 3),
-            new TypedDropDownOption(this.INTERFACE_OTHER_HEADER, this.INTERFACE_OTHER_HEADER, 1),
+            new TypedDropDownOption(' ', ' ', DROPDOWN_OPTION_TYPE.HORIZONTAL_LINE),
+            new TypedDropDownOption(this.INTERFACE_OTHER_HEADER, this.INTERFACE_OTHER_HEADER, DROPDOWN_OPTION_TYPE.HEADER),
             new TypedDropDownOption(this.INTERFACE_OTHER)
         ]);
-
         const inputOperation = this.inputOperation;
         this.operation = new OperationModel(inputOperation || {});
 
@@ -185,6 +187,17 @@ export class OperationCreatorComponent implements OperationCreatorInput {
         this.filterCapabilities();
         this.validityChanged();
         this.updateTable();
+    }
+
+    ngAfterViewInit() {
+        if(this.workflowAssignmentDropdown){
+            this.workflowAssignmentDropdown.allOptions = this.associationOptions && this.associationOptions.length ?
+                this.associationOptions :
+                [
+                    new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL, this.translateService.translate("EXTERNAL_WORKFLOW_ASSOCIATION")),
+                    new DropDownOption(WORKFLOW_ASSOCIATION_OPTIONS.EXISTING, this.translateService.translate("EXISTING_WORKFLOW_ASSOCIATION")),
+                ];
+        }
     }
 
     reconstructOperation = () => {
@@ -280,11 +293,14 @@ export class OperationCreatorComponent implements OperationCreatorInput {
                         curInterf && curInterf.operations || [],
                         op => op.name === name
                     );
-                    const ddType = (existingOp && existingOp.uniqueId !== this.operation.uniqueId) ? 2 : 0;
+                    const ddType = (existingOp && existingOp.uniqueId !== this.operation.uniqueId) ? DROPDOWN_OPTION_TYPE.HORIZONTAL_LINE : DROPDOWN_OPTION_TYPE.SIMPLE;
                     return new TypedDropDownOption(name, name, ddType);
                 }
             )
         );
+        if(this.operationNamesDropdown) {
+            this.operationNamesDropdown.allOptions = <IDropDownOption[]>this.operationNames;
+        }
         this.validityChanged();
     }
 
@@ -522,4 +538,12 @@ export class OperationCreatorComponent implements OperationCreatorInput {
         this.validityChangedCallback(validState);
     }
 
+    getSelectedDropdown(options: DropdownValue[], selectedValue: string): DropdownValue {
+        const selectedDropdown = _.find(options, (option) => option.value === selectedValue);
+        return selectedDropdown || this.toDropDownOption(null);
+    }
+
+    toDropDownOption(val: string) {
+        return { value : val, label: val };
+    }
 }
