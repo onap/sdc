@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b81b5c3_fc14d783",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/ui/model/UIConstraintTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-30T10:09:18Z",
+      "side": 0,
+      "message": "Also here.\nWhy we have to remove the test?",
+      "revId": "a22105ea1e73575bd312450956e6cb6cb51b93a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d100138e_ec57c892",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/ui/model/UINodeFilterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-30T10:09:18Z",
+      "side": 0,
+      "message": "Also here.",
+      "revId": "a22105ea1e73575bd312450956e6cb6cb51b93a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11e49faf_da4efbe1",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/ui/model/UiCombinationTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-03-30T10:09:18Z",
+      "side": 0,
+      "message": "Why we have to remove this?\nTest UiCombinationTest class getters and setters.",
+      "revId": "a22105ea1e73575bd312450956e6cb6cb51b93a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
