@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "cbb29d97_4bd2a49d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/CapabilityFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-04-01T19:10:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0bf51e42_105bffb4",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 46,
+        "endChar": 5
+      },
+      "revId": "b3dfc6ebf93a93684f7a2be892205b7a1294a824",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f908b333_1d02a5ed",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/NodeFilter.java",
         "patchSetId": 1
@@ -95,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "0512d267_9dbcb6d5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/user/UserMessage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-04-01T19:10:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bc32b0fd_6d0a2742",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 5
+      },
+      "revId": "b3dfc6ebf93a93684f7a2be892205b7a1294a824",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "602dcd9e_b08ac560",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/CapabilityFilterTest.java",
         "patchSetId": 1
@@ -118,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "9ef8e109_9baa80b0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/CapabilityFilterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-04-01T19:10:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "602dcd9e_b08ac560",
+      "range": {
+        "startLine": 68,
+        "startChar": 4,
+        "endLine": 72,
+        "endChar": 5
+      },
+      "revId": "b3dfc6ebf93a93684f7a2be892205b7a1294a824",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "59f15790_00d3b213",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/user/UserMessageTest.java",
         "patchSetId": 1
@@ -138,6 +210,30 @@
       "revId": "b3dfc6ebf93a93684f7a2be892205b7a1294a824",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f01cecf7_04f8c60f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/user/UserMessageTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-04-01T19:10:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59f15790_00d3b213",
+      "range": {
+        "startLine": 55,
+        "startChar": 3,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "b3dfc6ebf93a93684f7a2be892205b7a1294a824",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
