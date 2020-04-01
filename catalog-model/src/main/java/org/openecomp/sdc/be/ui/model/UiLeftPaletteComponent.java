@@ -22,11 +22,15 @@ package org.openecomp.sdc.be.ui.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.common.util.ICategorizedElement;
 
+@Getter
+@Setter
 public class UiLeftPaletteComponent implements ICategorizedElement {
 
     private final String uniqueId;
@@ -65,7 +69,9 @@ public class UiLeftPaletteComponent implements ICategorizedElement {
 
     private String convertListResultToString(final List<String> tags) {
         final StringBuilder sb = new StringBuilder();
-        tags.forEach(t -> sb.append(t + " "));
+        if (tags != null) {
+            tags.forEach(t -> sb.append(t + " "));
+        }
         return sb.toString().toLowerCase();
     }
 
