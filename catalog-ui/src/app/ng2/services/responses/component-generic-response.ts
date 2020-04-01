@@ -78,7 +78,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
         if(response.deploymentArtifacts) {
             this.deploymentArtifacts = new ArtifactGroupModel(response.deploymentArtifacts);
         }
-        if(response.inputs) { 
+        if(response.inputs) {
             this.inputs = CommonUtils.initInputs(response.inputs);
         }
         if(response.attributes) {
@@ -100,6 +100,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
             this.toscaArtifacts = new ArtifactGroupModel(response.toscaArtifacts);
         }
         if(response.interfaces) {
+            this.interfaces = CommonUtils.initInterfaces(response.interfaces);
             this.interfaceOperations = CommonUtils.initInterfaceOperations(response.interfaces);
         }
         if (response.componentInstancesInterfaces) {

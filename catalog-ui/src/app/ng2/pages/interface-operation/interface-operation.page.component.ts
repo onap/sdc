@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import { Component, Input, Output, ComponentRef, Inject } from '@angular/core';
+import { Component, Input, Inject } from '@angular/core';
 import {Component as IComponent } from 'app/models/components/component';
 
 import { SdcConfigToken, ISdcConfig } from "app/ng2/config/sdc-config.config";
@@ -7,7 +7,7 @@ import {TranslateService } from "app/ng2/shared/translator/translate.service";
 
 import {Observable } from "rxjs/Observable";
 
-import {ModalComponent } from 'app/ng2/components/ui/modal/modal.component';
+import { ModalComponent } from 'onap-ui-angular/dist/modals/modal.component';
 import {ModalService } from 'app/ng2/services/modal.service';
 import {
     InputBEModel,
@@ -118,7 +118,7 @@ export class UIInterfaceModel extends InterfaceModel {
 export class InterfaceOperationComponent {
 
     interfaces: UIInterfaceModel[];
-    modalInstance: ComponentRef<ModalComponent>;
+    modalInstance: ModalComponent;
     openOperation: OperationModel;
     enableWorkflowAssociation: boolean;
     inputs: InputBEModel[];
@@ -152,7 +152,6 @@ export class InterfaceOperationComponent {
     ngOnInit(): void {
         this.isLoading = true;
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
-
         Observable.forkJoin(
             this.ComponentServiceNg2.getInterfaceOperations(this.component),
             this.ComponentServiceNg2.getComponentInputs(this.component),
@@ -165,7 +164,7 @@ export class InterfaceOperationComponent {
                 this.sortInterfaces();
                 this.inputs = response[1].inputs;
                 this.interfaceTypes = response[2];
-                this.workflows = workflows;
+                this.workflows = (workflows.items) ? workflows.items: workflows;
                 this.capabilities = response[3].capabilities;
             };
             if (this.enableWorkflowAssociation && this.workflowIsOnline) {
@@ -216,7 +215,7 @@ export class InterfaceOperationComponent {
     }
 
     getDisabled = (): boolean => {
-        return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
+        return !this.modalInstance.innerModalContent.instance.checkFormValidForSubmit();
     }
 
     onEditOperation = (operation?: OperationModel): void => {
@@ -260,7 +259,7 @@ export class InterfaceOperationComponent {
             size: 'small',
             closeModal: true,
             callback: () => {
-                const modalInstance = this.ModalServiceSdcUI.getCurrentInstance().innerModalContent.instance;
+                const modalInstance = this.modalInstance.innerModalContent.instance;
 
                 const {operation, isUsingExistingWF, createParamLists} = modalInstance;
                 createParamLists();
@@ -295,38 +294,54 @@ export class InterfaceOperationComponent {
             buttons: [saveButton, cancelButton] as IModalButtonComponent[]
         };
 
-        this.ModalServiceSdcUI.openCustomModal(modalConfig, OperationCreatorComponent, input);
-
+        this.modalInstance = this.ModalServiceSdcUI.openCustomModal(modalConfig, OperationCreatorComponent, input);
     }
 
     onRemoveOperation = (event: Event, operation: OperationModel): void => {
         event.stopPropagation();
 
-        const confirmCallback = () => {
-            this.ComponentServiceNg2
-                .deleteInterfaceOperation(this.component, operation)
-                .subscribe(() => {
-                    const curInterf = _.find(this.interfaces, (interf) => interf.type === operation.interfaceType);
-                    const index = _.findIndex(curInterf.operations, (el) => el.uniqueId === operation.uniqueId);
-                    curInterf.operations.splice(index, 1);
-                    if (!curInterf.operations.length) {
-                        const interfIndex = _.findIndex(this.interfaces, (interf) => interf.type === operation.interfaceType);
-                        this.interfaces.splice(interfIndex, 1);
-                    }
-                });
-        }
+        const deleteButton: IModalButtonComponent = {
+            id: 'deleteButton',
+            text: this.modalTranslation.DELETE_BUTTON,
+            type: 'primary',
+            size: 'small',
+            closeModal: true,
+            callback: () => {
+                this.ComponentServiceNg2
+                    .deleteInterfaceOperation(this.component, operation)
+                    .subscribe(() => {
+                        const curInterf = _.find(this.interfaces, (interf) => interf.type === operation.interfaceType);
+                        const index = _.findIndex(curInterf.operations, (el) => el.uniqueId === operation.uniqueId);
+                        curInterf.operations.splice(index, 1);
+                        if (!curInterf.operations.length) {
+                            const interfIndex = _.findIndex(this.interfaces, (interf) => interf.type === operation.interfaceType);
+                            this.interfaces.splice(interfIndex, 1);
+                        }
+                    });
+            }
+        };
 
-        this.ModalServiceSdcUI.openAlertModal(
+        const cancelButton: IModalButtonComponent = {
+            id: 'cancelButton',
+            text: this.modalTranslation.CANCEL_BUTTON,
+            type: 'secondary',
+            size: 'small',
+            closeModal: true,
+            callback: () => {
+                this.openOperation = null;
+            },
+        };
+
+        this.ModalServiceSdcUI.openWarningModal(
             this.modalTranslation.DELETE_TITLE,
             this.modalTranslation.deleteText(operation.name),
-            this.modalTranslation.DELETE_BUTTON,
-            confirmCallback,
-            'deleteOperationModal'
+            'deleteOperationModal',
+            [deleteButton, cancelButton],
         );
     }
 
     private enableOrDisableSaveButton = (shouldEnable: boolean): void => {
-        const saveButton: ModalButtonComponent = this.ModalServiceSdcUI.getCurrentInstance().getButtonById('saveButton');
+        const saveButton = this.modalInstance.getButtonById('saveButton');
         saveButton.disabled = !shouldEnable;
     }
 
