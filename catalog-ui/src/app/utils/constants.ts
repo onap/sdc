@@ -412,3 +412,10 @@ export class CANVAS_TAG_MODE {
     static GROUP_TAGGING = "group-tagging";
     static GROUP_TAGGING_HOVER= "group-tagging-hover";
 }
+
+export class DROPDOWN_OPTION_TYPE {
+    static SIMPLE = "Simple";
+    static HEADER = "Header";
+    static DISABLE = "Disable";
+    static HORIZONTAL_LINE = "HorizontalLine";
+}
