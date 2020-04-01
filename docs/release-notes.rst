@@ -5,6 +5,132 @@ Release Notes
 =============
 
 
+Version: 1.6.4
+==============
+
+:Release Date: 2020-05-14
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.0
+
+-  sdc-tosca
+
+   :Version: 1.6.2
+
+Release Purpose
+----------------
+
+
+**Epics**
+
+*  `SDC-1607 <https://jira.onap.org/browse/SDC-1607>`_ - Logging alignemnet to 1.2 logging spec
+*  `SDC-1970 <https://jira.onap.org/browse/SDC-1970>`_ - Supporting PNF package onboarding
+*  `SDC-2011 <https://jira.onap.org/browse/SDC-2011>`_ - Design Studio (DCAE-DS) support for 3GPP PM Mapper
+*  `SDC-2378 <https://jira.onap.org/browse/SDC-2378>`_ - ONAP as Third Party Domain Manager - Import Third Party Catalog in SDC
+*  `SDC-2415 <https://jira.onap.org/browse/SDC-2415>`_ - AAF integration of HTTPS certificates
+*  `SDC-2482 <https://jira.onap.org/browse/SDC-2482>`_ - Add VSP Compliance and Verification Check feature Phase 2
+*  `SDC-2555 <https://jira.onap.org/browse/SDC-2555>`_ - SDC support of Network Slicing Demo in Frankfurt
+*  `SDC-2598 <https://jira.onap.org/browse/SDC-2598>`_ - Frankfurt release planning milestone
+*  `SDC-2643 <https://jira.onap.org/browse/SDC-2643>`_ - Collapsing Roles / Role consolidation
+*  `SDC-2683 <https://jira.onap.org/browse/SDC-2683>`_ - Functionality and API Freeze
+*  `SDC-2742 <https://jira.onap.org/browse/SDC-2742>`_ - Code Freeze
+*  `SDC-2787 <https://jira.onap.org/browse/SDC-2787>`_ - Release Candidate 0 Integration and Test
+
+**Stories**
+
+*  `SDC-1952 <https://jira.onap.org/browse/SDC-1952>`_ - 9 artifacts 9 definition is missing in the exported csar 9 s VDU node
+*  `SDC-2095 <https://jira.onap.org/browse/SDC-2095>`_ - R6 5G U/C SDC: PM Dictionary GUI Display from PNF Onboarded Package
+*  `SDC-2138 <https://jira.onap.org/browse/SDC-2138>`_ - SDC docker runs as non root
+*  `SDC-2216 <https://jira.onap.org/browse/SDC-2216>`_ - Security improvements
+*  `SDC-2382 <https://jira.onap.org/browse/SDC-2382>`_ - Introduce a new category for the 3rd party Service
+*  `SDC-2383 <https://jira.onap.org/browse/SDC-2383>`_ - Expose the API for service creation as an External API
+*  `SDC-2385 <https://jira.onap.org/browse/SDC-2385>`_ - Introduce property mapping rules to define parent-child mapping for properties added in service definition
+*  `SDC-2393 <https://jira.onap.org/browse/SDC-2393>`_ - CBA association enhancement in PNFD to support API decision
+*  `SDC-2394 <https://jira.onap.org/browse/SDC-2394>`_ - Support custom PNF workflow design
+*  `SDC-2405 <https://jira.onap.org/browse/SDC-2405>`_ - Add workflow-designer secure frontend-backend communication
+*  `SDC-2417 <https://jira.onap.org/browse/SDC-2417>`_ - SDC must work in HTTPS mode in all interfaces
+*  `SDC-2456 <https://jira.onap.org/browse/SDC-2456>`_ - Optimize usage of repositories
+*  `SDC-2559 <https://jira.onap.org/browse/SDC-2559>`_ - Need a getter method to return Input list from getEntity API
+*  `SDC-2561 <https://jira.onap.org/browse/SDC-2561>`_ - Transformation of customized Node Types for PNFD
+*  `SDC-2562 <https://jira.onap.org/browse/SDC-2562>`_ - Package Security - support signing of individual artifacts
+*  `SDC-2582 <https://jira.onap.org/browse/SDC-2582>`_ - CBA association enhancement in VNFD to support API decision
+*  `SDC-2584 <https://jira.onap.org/browse/SDC-2584>`_ - SDC-BE - create unique identifier for each execution of test cases.
+*  `SDC-2585 <https://jira.onap.org/browse/SDC-2585>`_ - Refresh option in the onboarding validation page
+*  `SDC-2589 <https://jira.onap.org/browse/SDC-2589>`_ - Onboard PNF software version
+*  `SDC-2590 <https://jira.onap.org/browse/SDC-2590>`_ - Upgrade To Cassandra 3
+*  `SDC-2629 <https://jira.onap.org/browse/SDC-2629>`_ - SDC UI button for user to request VTP to create \& upload a OVP tar.gz file to OVP Portal
+*  `SDC-2631 <https://jira.onap.org/browse/SDC-2631>`_ - SDC Meta Data for CDS Integration
+*  `SDC-2638 <https://jira.onap.org/browse/SDC-2638>`_ - Upgrade Portal SDK to latest (2.6.0)
+*  `SDC-2639 <https://jira.onap.org/browse/SDC-2639>`_ - Align logging to Onap-ELS 2019.11
+*  `SDC-2640 <https://jira.onap.org/browse/SDC-2640>`_ - Handle onboard ALTER tables to support upgrade
+*  `SDC-2644 <https://jira.onap.org/browse/SDC-2644>`_ - Collapsing Roles – UI changes
+*  `SDC-2645 <https://jira.onap.org/browse/SDC-2645>`_ - From Certified to Distributed - BE
+*  `SDC-2650 <https://jira.onap.org/browse/SDC-2650>`_ - Perform Software Composition Analysis - Vulnerability tables
+*  `SDC-2651 <https://jira.onap.org/browse/SDC-2651>`_ - Tosca Parser - getVFModule - new API
+*  `SDC-2652 <https://jira.onap.org/browse/SDC-2652>`_ - Document current upgrade component Strategy
+*  `SDC-2656 <https://jira.onap.org/browse/SDC-2656>`_ - add securityUtil code to Onap
+*  `SDC-2685 <https://jira.onap.org/browse/SDC-2685>`_ - Upgrade Node \& npm version
+*  `SDC-2686 <https://jira.onap.org/browse/SDC-2686>`_ - add common-app-logging module
+*  `SDC-2687 <https://jira.onap.org/browse/SDC-2687>`_ - Upgrade sdc-tosca version in main SDC pom
+*  `SDC-2691 <https://jira.onap.org/browse/SDC-2691>`_ - Enhance catalog FE proxy to be able to proxy to any defined plugin
+*  `SDC-2692 <https://jira.onap.org/browse/SDC-2692>`_ - Fix sonar issues
+*  `SDC-2696 <https://jira.onap.org/browse/SDC-2696>`_ - Release sdc-be-common 1.6.0
+*  `SDC-2699 <https://jira.onap.org/browse/SDC-2699>`_ - Increase SDC Code Coverage
+*  `SDC-2703 <https://jira.onap.org/browse/SDC-2703>`_ - Upgrade Node/npm/yarn version for WF-D
+*  `SDC-2724 <https://jira.onap.org/browse/SDC-2724>`_ - Catalog alignment
+*  `SDC-2732 <https://jira.onap.org/browse/SDC-2732>`_ - fix CSIT
+*  `SDC-2733 <https://jira.onap.org/browse/SDC-2733>`_ - remove unnecessary dependencies from pom
+*  `SDC-2758 <https://jira.onap.org/browse/SDC-2758>`_ - Backend configuration file runtime reload
+*  `SDC-2760 <https://jira.onap.org/browse/SDC-2760>`_ - Support import of custom node type name
+*  `SDC-2761 <https://jira.onap.org/browse/SDC-2761>`_ - Backend extensibility
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+-  [`OJSI-102 <https://jira.onap.org/browse/OJSI-102>`__\ ] - sdc-fe exposes plain text HTTP endpoint using port 30206
+-  [`OJSI-126 <https://jira.onap.org/browse/OJSI-126>`__\ ] - sdc-wfd-fe exposes plain text HTTP endpoint using port 30256
+-  [`OJSI-127 <https://jira.onap.org/browse/OJSI-127>`__\ ] - sdc-wfd-be exposes plain text HTTP endpoint using port 30257
+
+
+*Known Security Issues*
+
+-  [`OJSI-90 <https://jira.onap.org/browse/OJSI-90>`__\ ] - SDC exposes unprotected API for user creation
+-  [`OJSI-94 <https://jira.onap.org/browse/OJSI-94>`__\ ] - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+	N/A
+
+**Upgrade Notes**
+
+	N/A
+
+**Deprecation Notes**
+
+	N/A
+
+**Other**
+
+	N/A
+
+
+
+
 Version: 1.5.2
 ==============
 

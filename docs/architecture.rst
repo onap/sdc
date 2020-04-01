@@ -27,11 +27,5 @@ The SDC architecture uses the Jetty server as an application server.
 
 - The **Jetty back end** contains all the logic for the SDC.
 
-SDC uses two storage components: Elastic Search(ES) and Cassandra
-
-- **Elastic Search** is used to index the auditing data received from different operations in the SDC.
-
-  This information can then be analyzed with Kibana. The **Kibana server** enables statistical analysis of the operations done, according to the business logic.
-  
 - **Cassandra** is used to store audit data, artifacts and data model objects.
 
