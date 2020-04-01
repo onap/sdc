@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f908b333_1d02a5ed",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/NodeFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-04-01T17:26:24Z",
+      "side": 1,
+      "message": "Should it be private?",
+      "range": {
+        "startLine": 26,
+        "startChar": 4,
+        "endLine": 28,
+        "endChar": 8
+      },
+      "revId": "b3dfc6ebf93a93684f7a2be892205b7a1294a824",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
