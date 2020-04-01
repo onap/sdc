@@ -16,40 +16,26 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
-
+@Getter
+@Setter
+@ToString
 public class CapabilityFilter {
 
-    List<Map<String, List<Object>>> properties;
-
-    public List<Map<String, List<Object>>> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<Map<String, List<Object>>> properties) {
-        this.properties = properties;
-    }
+    private List<Map<String, List<Object>>> properties;
 
     public void addProperty(Map<String, List<Object>> property) {
         if(CollectionUtils.isEmpty(properties)) {
             this.properties = new ArrayList<>();
         }
-
         this.properties.add(property);
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("CapabilityFilter{");
-        sb.append("properties=").append(properties);
-        sb.append('}');
-        return sb.toString();
     }
 }

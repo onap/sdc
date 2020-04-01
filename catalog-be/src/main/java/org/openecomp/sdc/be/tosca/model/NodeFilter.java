@@ -17,34 +17,13 @@ package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class NodeFilter {
-
-    Object tosca_id;
-    List<Map<String, List<Object>>> properties;
-    List<Map<String, CapabilityFilter>> capabilities;
-
-    public Object getTosca_id() {
-        return tosca_id;
-    }
-
-    public void setTosca_id(Object tosca_id) {
-        this.tosca_id = tosca_id;
-    }
-
-    public List<Map<String, CapabilityFilter>> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
-        this.capabilities = capabilities;
-    }
-
-    public List<Map<String, List<Object>>> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<Map<String, List<Object>>> properties) {
-        this.properties = properties;
-    }
+    private Object tosca_id;
+    private List<Map<String, List<Object>>> properties;
+    private List<Map<String, CapabilityFilter>> capabilities;
 }

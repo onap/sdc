@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 Samsung Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,22 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.user;
+package org.openecomp.sdc.be.tosca.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.openecomp.sdc.be.catalog.api.ITypeMessage;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@ToString
-public class UserMessage implements ITypeMessage {
-    private UserOperationEnum operation;
-    private String userId;
-    private String role;
+import org.junit.Test;
 
-    @Override
-    public String getMessageType() {
-        return getClass().getSimpleName();
+public class NodeFilterTest {
+    @Test
+    public void testDefaultCtor() {
+        assertThat(NodeFilter.class, hasValidBeanConstructor());
+    }
+
+    @Test
+    public void testGettersSetters() {
+        assertThat(NodeFilter.class, hasValidGettersAndSetters());
     }
 }
