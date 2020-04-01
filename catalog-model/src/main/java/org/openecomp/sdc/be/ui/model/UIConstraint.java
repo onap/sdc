@@ -19,11 +19,15 @@ package org.openecomp.sdc.be.ui.model;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 public class UIConstraint implements Serializable {
 
     private String servicePropertyName;
@@ -51,30 +55,4 @@ public class UIConstraint implements Serializable {
         this.value = value;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof UIConstraint)) {
-            return false;
-        }
-        UIConstraint that = (UIConstraint) o;
-        return Objects.equal(getServicePropertyName(), that.getServicePropertyName()) && Objects.equal(
-            getConstraintOperator(), that.getConstraintOperator()) && Objects.equal(getSourceType(),
-            that.getSourceType()) && Objects.equal(getSourceName(), that.getSourceName()) && Objects.equal(
-            getValue(), that.getValue());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(servicePropertyName, constraintOperator, sourceType, sourceName, value);
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("servicePropertyName", servicePropertyName)
-            .add("constraintOperator", constraintOperator).add("sourceType", sourceType)
-            .add("sourceName", sourceName).add("value", value).toString();
-    }
 }
