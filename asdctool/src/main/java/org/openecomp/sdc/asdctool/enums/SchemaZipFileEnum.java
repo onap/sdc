@@ -24,6 +24,11 @@ import static org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum.SchemaZipConsta
 import static org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum.SchemaZipConstants.EMPTY_IMPORT_LIST;
 import static org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum.SchemaZipConstants.RELATIONSHIPS_TYPES_IMPORT_LIST;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum SchemaZipFileEnum {
 
     DATA("data", "data-types", "dataTypes", "data_types", EMPTY_IMPORT_LIST),
@@ -35,40 +40,11 @@ public enum SchemaZipFileEnum {
     CAPABILITIES("capabilities", "capability-types", "capabilityTypes", "capability_types", DATA_IMPORT_LIST),
     INTERFACES("interfaces", "interface-lifecycle-types", "interfaceLifecycleTypes", "interface_types", DATA_IMPORT_LIST);
 
-    private String fileName;
-    private String sourceFolderName;
-    private String sourceFileName;
-    private String collectionTitle;
-    private String[] importFileList;
-
-    SchemaZipFileEnum(String fileName, String sourceFolderName, String sourceFileName, String collectionTitle,
-                      String[] importFileList) {
-        this.fileName = fileName;
-        this.sourceFolderName = sourceFolderName;
-        this.sourceFileName = sourceFileName;
-        this.collectionTitle = collectionTitle;
-        this.importFileList = importFileList;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public String getSourceFolderName() {
-        return sourceFolderName;
-    }
-
-    public String getSourceFileName() {
-        return sourceFileName;
-    }
-
-    public String getCollectionTitle() {
-        return collectionTitle;
-    }
-
-    public String[] getImportFileList() {
-        return importFileList;
-    }
+    private final String fileName;
+    private final String sourceFolderName;
+    private final String sourceFileName;
+    private final String collectionTitle;
+    private final String[] importFileList;
 
     static class SchemaZipConstants {
         static final String [] EMPTY_IMPORT_LIST =  new String[]{};
