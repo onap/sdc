@@ -98,15 +98,6 @@ environment.json
                "https_port": "8445"
             },
 
-            # Elasticsearch configuration
-            "elasticsearch": {
-                "cluster_name": "SDC-ES-",
-                "ES_path_home": "/usr/share/elasticsearch",
-                "ES_path_data": "/usr/share/elasticsearch/data",
-                "num_of_replicas": "0",
-                "num_of_shards": "1"
-            },
-
             # Cassandra configuration
             "cassandra": {
                 "concurrent_reads": "32",
@@ -195,9 +186,6 @@ BE-configuration.yaml
     # The read timeout towards JanusGraph DB when health check is invoked
     janusGraphHealthCheckReadTimeout: 1
 
-    # The interval to try and reconnect to Elasticsearch when it is down during SDC startup
-    esReconnectIntervalInSeconds: 3
-
     # The interval to try and reconnect to UEB health check when it is down during SDC startup
     uebHealthCheckReconnectIntervalInSeconds: 15
 
@@ -273,28 +261,6 @@ BE-configuration.yaml
             - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
             - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
 
-    # Application-specific settings of ES
-    elasticSearch:
-
-        # Mapping of index prefix to time-based frame. For example, if below is configured:
-        #
-        # - indexPrefix: auditing events
-        #    creationPeriod: minute
-        #
-        # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
-        # Another object created on 2015-12-23 13:25:54, will enter "auditingevents-2015-12-23-13-25" index.
-        # If creationPeriod: month, both of the above will enter "auditingevents-2015-12" index.
-        #
-        # PLEASE NOTE: the timestamps are created in UTC/GMT timezone! This is needed so that timestamps will be correctly presented in Kibana.
-        #
-        # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
-        #
-        # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
-        indicesTimeFrequency:
-            - indexPrefix: auditingevents
-              creationPeriod: month
-            - indexPrefix: monitoring_events
-              creationPeriod: month
 
     # Artifact types placeholder
     artifactTypes:
@@ -1366,14 +1332,6 @@ FE-configuration.yaml
         # What is the interval of the statistics collection
         probeIntervalInSeconds: 15
 
-    # Kibana hostname
-    kibanaHost: localhost
-
-    # Kibana http port
-    kibanaPort: 5601
-
-    # Kibana usage protocol
-    kibanaProtocol: http
 
 FE-plugins-configuration.yaml
 *****************************
