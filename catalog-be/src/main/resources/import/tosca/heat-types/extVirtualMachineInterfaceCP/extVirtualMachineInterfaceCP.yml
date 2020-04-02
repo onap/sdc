@@ -15,14 +15,14 @@ node_types:
         status: supported
         entry_schema:
           type: string
-          required: false
+        required: false
       virtual_network_refs:
         description: List of virtual networks.
         type: list
         status: supported
         entry_schema:
           type: string
-          required: false
+        required: false
       virtual_machine_interface_properties:
         description: virtual machine interface properties.
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
@@ -34,14 +34,14 @@ node_types:
         status: supported
         entry_schema:
           type: string
-          required: false
+        required: false
       virtual_machine_interface_mac_addresses:
         description: List of mac addresses.
         type: list
         status: supported
         entry_schema:
           type: string
-          required: false
+        required: false
       virtual_machine_interface_allowed_address_pairs:
         description: Virtual Machine Interface allowed address pairs.
         type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
