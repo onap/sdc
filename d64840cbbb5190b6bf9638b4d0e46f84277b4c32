@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5128a99_f26057a7",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-02T11:30:59Z",
+      "side": 1,
+      "message": "avoid using hardcoded version, replace with ${mockito.version}",
+      "range": {
+        "startLine": 597,
+        "startChar": 12,
+        "endLine": 597,
+        "endChar": 36
+      },
+      "revId": "d64840cbbb5190b6bf9638b4d0e46f84277b4c32",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54e64368_6ad0e3eb",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-02T11:30:59Z",
+      "side": 1,
+      "message": "avoid using hardcoded version",
+      "range": {
+        "startLine": 264,
+        "startChar": 6,
+        "endLine": 264,
+        "endChar": 30
+      },
+      "revId": "d64840cbbb5190b6bf9638b4d0e46f84277b4c32",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fce1311_8945603b",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-02T11:30:59Z",
+      "side": 1,
+      "message": "avoid using hardcoded version",
+      "range": {
+        "startLine": 270,
+        "startChar": 6,
+        "endLine": 270,
+        "endChar": 30
+      },
+      "revId": "d64840cbbb5190b6bf9638b4d0e46f84277b4c32",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
