@@ -35,7 +35,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class Service extends Component {
 
     private Map<String, ArtifactDefinition> serviceApiArtifacts;
