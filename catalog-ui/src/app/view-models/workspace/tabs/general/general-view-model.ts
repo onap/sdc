@@ -219,7 +219,7 @@ export class GeneralViewModel {
 
         this.$scope.importCsarProgressKey = "importCsarProgressKey";
 
-        this.$scope.browseFileLabel = this.$scope.component.isResource() && (<Resource>this.$scope.component).resourceType === ResourceType.VF ? 'VSP' : 'Upload VFC';
+        this.$scope.browseFileLabel = this.$scope.component.isResource() && (<Resource>this.$scope.component).resourceType === ResourceType.VF ? 'Upload File:' : 'Upload VFC:';
         this.$scope.progressService = this.progressService;
         this.$scope.componentCategories = new componentCategories();
         this.$scope.componentCategories.selectedCategory = this.$scope.component.selectedCategory;
