@@ -581,7 +581,7 @@ data_types:
         type: string
         description: Count
         required: false
-        default: 1
+        default: "1"
         status: supported
       scaling_enabled:
         type: boolean

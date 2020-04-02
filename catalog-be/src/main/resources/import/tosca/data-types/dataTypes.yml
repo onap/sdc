@@ -262,8 +262,8 @@ org.openecomp.datatypes.heat.network.neutron.Subnet:
       status: supported
       constraints:
       - valid_values:
-        - '4'
-        - '6'
+        - 4
+        - 6
     name:
       type: string
       description: The name of the subnet
@@ -568,7 +568,7 @@ org.openecomp.datatypes.heat.substitution.SubstitutionFiltering:
         type: string
         description: Count
         required: false
-        default: 1
+        default: "1"
         status: supported
       scaling_enabled:
         type: boolean
@@ -2381,7 +2381,7 @@ onap.datatypes.monitoring.measurementGroup:
       required: true
       default: []
       entry_schema:
-        type: onap.datatypes.monitoring.managedObjectDNSBasics
+        type: onap.datatypes.monitoring.managedObjectDNsBasics
 
 onap.datatypes.monitoring.measurementTypes:
   derived_from: tosca.datatypes.Root
@@ -2391,7 +2391,7 @@ onap.datatypes.monitoring.measurementTypes:
       description: Measurement type object
       required: true
       entry_schema:
-        type: onap.dataypes.monitoring.measurementType
+        type: onap.datatypes.monitoring.measurementType
 
 onap.datatypes.monitoring.measurementType:
   derived_from: tosca.datatypes.Root
@@ -2409,7 +2409,7 @@ onap.datatypes.monitoring.managedObjectDNsBasics:
       description: Managed object distinguished name object
       required: true
       entry_schema:
-        type: onap.dataypes.monitoring.managedObjectDNsBasic
+        type: onap.datatypes.monitoring.managedObjectDNsBasic
 
 onap.datatypes.monitoring.managedObjectDNsBasic:
   derived_from: tosca.datatypes.Root
@@ -2736,42 +2736,42 @@ onap.datatypes.partner.bandwidth:
       required: true
       constraints:
         - valid_values:
-            - 128
-            - 512
-            - 1
-            - 2
-            - 5
-            - 10
-            - 20
-            - 25
-            - 30
-            - 40
-            - 50
-            - 100
-            - 250
-            - 500
-            - 1000
+            - "128"
+            - "512"
+            - "1"
+            - "2"
+            - "5"
+            - "10"
+            - "20"
+            - "25"
+            - "30"
+            - "40"
+            - "50"
+            - "100"
+            - "250"
+            - "500"
+            - "1000"
     upstream:
       type: string
       description: up speed
       required: false
       constraints:
         - valid_values:
-            - 128
-            - 512
-            - 1
-            - 2
-            - 5
-            - 10
-            - 20
-            - 25
-            - 30
-            - 40
-            - 50
-            - 100
-            - 250
-            - 500
-            - 1000
+            - "128"
+            - "512"
+            - "1"
+            - "2"
+            - "5"
+            - "10"
+            - "20"
+            - "25"
+            - "30"
+            - "40"
+            - "50"
+            - "100"
+            - "250"
+            - "500"
+            - "1000"
     units:
       type: string
       description: unit of speed

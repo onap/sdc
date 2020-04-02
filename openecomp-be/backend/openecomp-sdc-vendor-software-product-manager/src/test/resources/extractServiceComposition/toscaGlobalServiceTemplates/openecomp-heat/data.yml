@@ -629,7 +629,7 @@ data_types:
         description: Count
         type: string
         status: supported
-        default: 1
+        default: "1"
         required: false
       scaling_enabled:
         description: Indicates whether service scaling is enabled

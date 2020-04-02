@@ -230,8 +230,8 @@ org.openecomp.datatypes.heat.network.neutron.Subnet:
       status: SUPPORTED
       constraints:
       - valid_values:
-        - '4'
-        - '6'
+        - 4
+        - 6
     name:
       type: string
       description: The name of the subnet
@@ -525,7 +525,7 @@ org.openecomp.datatypes.heat.substitution.SubstitutionFiltering:
         type: string
         description: Count
         required: false
-        default: 1
+        default: "1"
         status: SUPPORTED
       scaling_enabled:
         type: boolean
