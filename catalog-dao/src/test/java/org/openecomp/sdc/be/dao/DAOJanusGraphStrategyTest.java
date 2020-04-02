@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,34 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
-package org.openecomp.sdc.be.dao.jsongraph.types;
+package org.openecomp.sdc.be.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
-public class EdgePropertyEnumTest {
+public class DAOJanusGraphStrategyTest {
 
-    @Test
-    public void testEnumValues() {
-        for (final Object value : EdgePropertyEnum.values()) {
-            assertThat(value).isNotNull().isInstanceOf(EdgePropertyEnum.class);
-        }
+    @Before
+    public void setUp() throws Exception {
+        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            "src/test/resources/config/catalog-dao"));
+    }
+
+    private DAOJanusGraphStrategy createTestSubject() {
+        return new DAOJanusGraphStrategy();
     }
 
     @Test
-    public void testGetByProperty() throws Exception {
-        String property = "";
-        EdgePropertyEnum result;
+    public void getConfigFile() {
+        DAOJanusGraphStrategy testSubject;
 
         // default test
-        result = EdgePropertyEnum.getByProperty(property);
-		assertThat(result).isNull();
+        testSubject = createTestSubject();
+        assertThat(testSubject.getConfigFile()).isNotNull();
     }
 }
