@@ -57,7 +57,7 @@ org.openecomp.groups.VfModule:
     vf_module_type:
       type: string
       required: true
-      constraint:
+      constraints:
         - valid_values: ["Base", "Expansion"]
     volume_group:
       type: boolean
