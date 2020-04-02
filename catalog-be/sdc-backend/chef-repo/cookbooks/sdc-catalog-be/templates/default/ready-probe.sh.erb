@@ -1,11 +1,9 @@
 #!/bin/bash
-health_Check_http_code=$(curl -k --max-time 5 -o /dev/null -w '%{http_code}' <%= @protocol %>://127.0.0.1:<%= @port %>/sdc2/rest/healthCheck)
+health_check_http_code=$(curl -k --max-time 5 -o /dev/null -w '%{http_code}' <%= @protocol %>://127.0.0.1:<%= @port %>/sdc2/rest/healthCheck)
 
-if [[ "$health_Check_http_code" -eq 200 ]]; then
-   exit 0
+if [[ "$health_check_http_code" -eq 200 ]]; then
+  exit 0
 else
-   exit $health_Check_http_code
+  echo "Health check http status: $health_check_http_code"
+  exit 1
 fi
-
-
-
