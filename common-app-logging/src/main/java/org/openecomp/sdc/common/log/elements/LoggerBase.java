@@ -1,6 +1,29 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 package org.openecomp.sdc.common.log.elements;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.common.log.api.ILogFieldsHandler;
@@ -13,22 +36,17 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 
 /**
- * Created by mm288v on 12/27/2017.
- * This class holds the common behavior of all Loger-Typed classes.
- * The Concrete loggers shoudl derive from this one.
+ * Created by mm288v on 12/27/2017. This class holds the common behavior of all Loger-Typed classes. The Concrete
+ * loggers shoudl derive from this one.
  */
 public abstract class LoggerBase implements ILogger {
+
+    private static final String missingLogFieldsMsg = "mandatory parameters for ECOMP logging, missing fields: %s, original message: %s";
+    protected final ILogFieldsHandler ecompLogFieldsHandler;
     private final Logger myLogger;
     private final Marker myMarker;
-    protected final ILogFieldsHandler ecompLogFieldsHandler;
-    private final static String missingLogFieldsMsg = "mandatory parameters for ECOMP logging, missing fields: %s, original message: %s";
 
     LoggerBase(ILogFieldsHandler ecompLogFieldsHandler, Marker marker, Logger logger) {
         this.ecompLogFieldsHandler = ecompLogFieldsHandler;
@@ -47,7 +65,7 @@ public abstract class LoggerBase implements ILogger {
         String transactionReId = httpRequest.getHeader(ConstantsLogging.X_TRANSACTION_ID_HEADER);
         String ecompRequestId = httpRequest.getHeader(ConstantsLogging.X_ECOMP_REQUEST_ID_HEADER);
         return Arrays.asList(onapRequestId, requestId, transactionReId, ecompRequestId).stream()
-                .filter(id -> !StringUtils.isEmpty(id)).findFirst().orElse(generateKeyRequestId());
+            .filter(id -> !StringUtils.isEmpty(id)).findFirst().orElse(generateKeyRequestId());
     }
 
     public static String getPartnerName(HttpServletRequest httpRequest) {
@@ -55,7 +73,7 @@ public abstract class LoggerBase implements ILogger {
         String onapPartnerName = httpRequest.getHeader(ONAPLogConstants.Headers.PARTNER_NAME);
         String reqUri = httpRequest.getHeader(ConstantsLogging.USER_AGENT_HEADER);
         return Arrays.asList(userId, onapPartnerName, reqUri).stream()
-                .filter(pn-> !StringUtils.isEmpty(pn)).findFirst().orElse(ConstantsLogging.PartnerName_Unknown);
+            .filter(pn -> !StringUtils.isEmpty(pn)).findFirst().orElse(ConstantsLogging.PartnerName_Unknown);
     }
 
     protected void setKeyRequestIdIfNotSetYet() {
@@ -69,8 +87,8 @@ public abstract class LoggerBase implements ILogger {
         String filedNameThatHasNotBeenInitialized = checkMandatoryFieldsExistInMDC();
 
         if (myLogger.isDebugEnabled() && !"".equalsIgnoreCase(filedNameThatHasNotBeenInitialized)) {
-            myLogger.debug(MarkerFactory.getMarker(LogMarkers.DEBUG_MARKER.text()),
-                    String.format(missingLogFieldsMsg, filedNameThatHasNotBeenInitialized, originMsg));
+            myLogger.debug(MarkerFactory.getMarker(LogMarkers.DEBUG_MARKER.getText()),
+                String.format(missingLogFieldsMsg, filedNameThatHasNotBeenInitialized, originMsg));
         }
     }
 
@@ -105,10 +123,10 @@ public abstract class LoggerBase implements ILogger {
     }
 
     @Override
-    public void log(LogLevel logLevel, String message, Object...params) {
+    public void log(LogLevel logLevel, String message, Object... params) {
         validateMandatoryFields(message);
 
-        switch(logLevel) {
+        switch (logLevel) {
             case ERROR:
             case FATAL:  //TODO check how to log "FATAL" word
                 myLogger.error(myMarker, message, params);
@@ -134,7 +152,7 @@ public abstract class LoggerBase implements ILogger {
     public void log(LogLevel logLevel, String message, Throwable throwable) {
         validateMandatoryFields(message);
 
-        switch(logLevel) {
+        switch (logLevel) {
             case ERROR:
             case FATAL:  //TODO check how to log "FATAL" word
                 myLogger.error(myMarker, createErrorMessage(message, throwable));
@@ -157,10 +175,10 @@ public abstract class LoggerBase implements ILogger {
     }
 
     @Override
-    public void log(Marker marker, LogLevel logLevel, String message, Object...params) {
+    public void log(Marker marker, LogLevel logLevel, String message, Object... params) {
         validateMandatoryFields(message);
 
-        switch(logLevel) {
+        switch (logLevel) {
             case ERROR:
             case FATAL:  //TODO check how to log "FATAL" word
                 myLogger.error(marker, message, params);

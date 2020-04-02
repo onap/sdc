@@ -19,17 +19,17 @@
  */
 package org.openecomp.sdc.common.log.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@Getter
-@AllArgsConstructor
-public enum StatusCode {
-    ERROR("ERROR"),
-    STARTED("STARTED"),
-    COMPLETE("COMPLETE"),
-    INPROGRESS("INPROGRESS");
+import org.junit.Test;
 
-    private final String statusCode;
+public class LogMarkersTest {
+
+    @Test
+    public void testEnumValues() {
+        for (final Object value : LogMarkers.values()) {
+            assertThat(value).isNotNull().isInstanceOf(LogMarkers.class);
+        }
+    }
 
 }

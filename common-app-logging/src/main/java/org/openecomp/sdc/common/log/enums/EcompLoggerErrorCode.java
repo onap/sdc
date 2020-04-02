@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,10 +22,14 @@ package org.openecomp.sdc.common.log.enums;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Created by dd4296 on 12/26/2017.
  */
+@Getter
+@AllArgsConstructor
 public enum EcompLoggerErrorCode {
     SUCCESS(0),
     PERMISSION_ERROR(100),
@@ -35,19 +39,12 @@ public enum EcompLoggerErrorCode {
     BUSINESS_PROCESS_ERROR(500),
     UNKNOWN_ERROR(900);
 
-    private int errorCode;
-
-    EcompLoggerErrorCode(int errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public int getErrorCode() {
-        return errorCode;
-    }
+    private final int errorCode;
 
     public static EcompLoggerErrorCode getByValue(String ecompErrorCode) {
         String errorPrefix = parseCode(ecompErrorCode);
-        Optional<EcompLoggerErrorCode> optionalCode = Arrays.stream(values()).filter(v->isCode(v, errorPrefix)).findFirst();
+        Optional<EcompLoggerErrorCode> optionalCode = Arrays.stream(values()).filter(v -> isCode(v, errorPrefix))
+            .findFirst();
         return optionalCode.orElse(UNKNOWN_ERROR);
     }
 
@@ -62,6 +59,5 @@ public enum EcompLoggerErrorCode {
             return UNKNOWN_ERROR.name();
         }
     }
-
 
 }

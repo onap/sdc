@@ -19,17 +19,25 @@
  */
 package org.openecomp.sdc.common.log.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@Getter
-@AllArgsConstructor
-public enum StatusCode {
-    ERROR("ERROR"),
-    STARTED("STARTED"),
-    COMPLETE("COMPLETE"),
-    INPROGRESS("INPROGRESS");
+import org.junit.Test;
+import org.openecomp.sdc.common.log.utils.EcompLogErrorCode;
 
-    private final String statusCode;
+public class EcompLoggerErrorCodeTest {
 
+    @Test
+    public void testEnumValues() {
+        for (final Object value : EcompLoggerErrorCode.values()) {
+            assertThat(value).isNotNull().isInstanceOf(EcompLoggerErrorCode.class);
+        }
+    }
+
+    @Test
+    public void testGetByValue() {
+        for (final EcompLogErrorCode value : EcompLogErrorCode.values()) {
+            assertThat(EcompLoggerErrorCode.getByValue(value.name())).isNotNull()
+                .isInstanceOf(EcompLoggerErrorCode.class);
+        }
+    }
 }
