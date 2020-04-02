@@ -18,6 +18,7 @@
 
     "=========== GENERAL ===========": "",
     "GENERAL_LABEL_TYPE": "Type:",
+    "GENERAL_LABEL_NAME": "Name:",
     "GENERAL_LABEL_VERSION": "Version:",
     "GENERAL_LABEL_CATEGORY": "Category:",
     "GENERAL_LABEL_SUB_CATEGORY": "Sub Category:",

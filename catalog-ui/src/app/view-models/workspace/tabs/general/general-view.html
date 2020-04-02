@@ -49,7 +49,7 @@
                         <div class="name-and-category-fields">
                             <!--------------------- NAME -------------------->
                             <div class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.componentName)}">
-                                <label class="i-sdc-form-label required">Name</label>
+                                <label class="i-sdc-form-label required" translate="GENERAL_LABEL_NAME"></label>
                                 <input class="i-sdc-form-input"
                                        data-ng-class="{'view-mode': isViewMode()}"
                                        name="componentName"
@@ -82,7 +82,7 @@
                             <div class="i-sdc-form-item"
                                  data-ng-class="{'error': validateField(editForm.category)}">
                                 <loader data-display="!categories && !initCategoreis()" relative="true"></loader>
-                                <label class="i-sdc-form-label required">Category</label>
+                                <label class="i-sdc-form-label required" translate="GENERAL_LABEL_CATEGORY"></label>
                                 <select class="i-sdc-form-select"
                                         data-required
                                         name="category"
@@ -116,7 +116,7 @@
                     </div>
                 <!--------------------- RESOURCE TAGS -------------------->
                 <div class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.tags)}">
-                    <label class="i-sdc-form-label">Tags</label>
+                    <label class="i-sdc-form-label" translate="GENERAL_LABEL_TAGS"></label>
 
                     <sdc-tags form-element="editForm" element-name="tags" max-tags="20" class="i-sdc-form-item-tags"
                               sdc-disabled="isViewMode()"
@@ -134,7 +134,7 @@
                 <!--------------------- DESCRIPTION -------------------->
                 <div class="i-sdc-form-item description-field"
                      data-ng-class="{'error': validateField(editForm.description)}">
-                    <label class="i-sdc-form-label required">Description</label>
+                    <label class="i-sdc-form-label required" translate="GENERAL_LABEL_DESCRIPTION"></label>
                 <textarea class="description"
                           name="description"
                           data-ng-class="{'view-mode': isViewMode()}"
@@ -162,10 +162,11 @@
 
                         <!-- //                                     element-disabled="{{!isCreateMode()&&!(isEditMode()&&component.resourceType=='VF')&&component.vspArchived}} || {{isViewMode()}}" -->
 
-                        <label class="i-sdc-form-label" data-ng-class="{'required':isCreateMode()}">{{browseFileLabel}}</label>
+                        <label class="i-sdc-form-label" data-ng-class="{'required':isCreateMode() && component.resourceType !=='VF'}">{{browseFileLabel}}</label>
                         <file-upload id="fileUploadElement"
                                      class="i-sdc-form-input"
                                      element-name="fileElement"
+                                     data-ng-required="false"
                                      element-disabled="{{(!isCreateMode()&&!(isEditMode()&&component.resourceType=='VF'))|| isViewMode() || component.vspArchived}}"
                                      form-element="editForm"
                                      file-model="component.importedFile"
@@ -176,7 +177,7 @@
                     </div>
 
                     <!--------------------- IMPORT TOSCA FILE USING ONBOARDING -------------------->
-                    <div class="i-sdc-form-item" ng-if="isShowOnboardingSelectionBrowse">
+                    <div class="i-sdc-form-item" ng-if="isShowOnboardingSelectionBrowse && !isShowFileBrowse">
                             <label class="i-sdc-form-label required">VSP</label>
                             <div class="i-sdc-form-file-upload i-sdc-form-input">
                                 <span class="i-sdc-form-file-name"  data-ng-disabled="component.vspArchived"  data-tests-id="filename">{{(fileModel && fileModel.filename) || importedToscaBrowseFileText }}</span>
@@ -219,7 +220,7 @@
 
                 <!--------------------- VENDOR NAME -------------------->
                 <div ng-if="component.isResource()" class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.vendorName)}">
-                    <label class="i-sdc-form-label required">Vendor</label>
+                    <label class="i-sdc-form-label required" translate="GENERAL_LABEL_VENDOR_NAME"></label>
                     <input class="i-sdc-form-input" type="text"
                            data-ng-class="{'view-mode': isViewMode()}"
                            data-ng-model="component.vendorName"
@@ -248,7 +249,7 @@
                 <div ng-if="component.isResource()"
                      class="i-sdc-form-item"
                      data-ng-class="{'error': validateField(editForm.vendorRelease)}">
-                    <label class="i-sdc-form-label required">Vendor Release</label>
+                    <label class="i-sdc-form-label required" translate="GENERAL_LABEL_VENDOR_RELEASE"></label>
                     <input class="i-sdc-form-input" type="text"
                            data-ng-class="{'view-mode': isViewMode()}"
                            data-ng-model="component.vendorRelease"
@@ -273,7 +274,7 @@
                 <div ng-if="component.isResource()"
                      class="i-sdc-form-item"
                      data-ng-class="{'error': validateField(editForm.resourceVendorModelNumber)}">
-                    <label class="i-sdc-form-label" translate="GENERAL_TAB_LABEL_RESOURCE_MODEL_NUMBER"></label>
+                    <label class="i-sdc-form-label" translate="GENERAL_LABEL_RESOURCE_MODEL_NUMBER"></label>
                     <input class="i-sdc-form-input" type="text"
                            data-ng-class="{'view-mode': isViewMode()}"
                            data-ng-model="component.resourceVendorModelNumber"
