@@ -96,6 +96,11 @@
             <artifactId>logging-filter-base</artifactId>
             <version>${onap.logging.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
