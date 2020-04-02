@@ -1,5 +1,30 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2020 Nordix Foundation
+ * ================================================================================
+ */
 package org.openecomp.sdc.common.log.elements;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.common.log.api.ILogConfiguration;
@@ -11,22 +36,17 @@ import org.openecomp.sdc.common.log.enums.LogMarkers;
 import org.slf4j.Logger;
 import org.slf4j.MarkerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 public class LoggerError extends LoggerBase {
-    private static ArrayList<String> mandatoryFields = new ArrayList<>(Arrays.asList(
-            ONAPLogConstants.MDCs.REQUEST_ID,
-            ONAPLogConstants.MDCs.SERVICE_NAME,
-            ILogConfiguration.MDC_ERROR_CATEGORY,
-            ILogConfiguration.MDC_ERROR_CODE));
 
     public static final String defaultServiceName = "SDC catalog";
+    private static ArrayList<String> mandatoryFields = new ArrayList<>(Arrays.asList(
+        ONAPLogConstants.MDCs.REQUEST_ID,
+        ONAPLogConstants.MDCs.SERVICE_NAME,
+        ILogConfiguration.MDC_ERROR_CATEGORY,
+        ILogConfiguration.MDC_ERROR_CODE));
 
     LoggerError(ILogFieldsHandler ecompMdcWrapper, Logger logger) {
-        super(ecompMdcWrapper, MarkerFactory.getMarker(LogMarkers.ERROR_MARKER.text()), logger);
+        super(ecompMdcWrapper, MarkerFactory.getMarker(LogMarkers.ERROR_MARKER.getText()), logger);
     }
 
     @Override
@@ -56,7 +76,7 @@ public class LoggerError extends LoggerBase {
                     EcompLoggerErrorCode errorCodeEnum,
                     String serviceName,
                     String targetEntity,
-                    String message, Object...params) {
+                    String message, Object... params) {
         fillFieldsBeforeLogging(logLevel, errorCodeEnum, serviceName, targetEntity, null);
         super.log(logLevel, message, params);
     }
@@ -66,13 +86,14 @@ public class LoggerError extends LoggerBase {
                     String serviceName,
                     ErrorLogOptionalData errorLogOptionalData,
                     String description,
-                    Object...params) {
+                    Object... params) {
         fillFieldsBeforeLogging(logLevel, errorCodeEnum, serviceName,
-                errorLogOptionalData.getTargetEntity(), errorLogOptionalData.getTargetServiceName());
+            errorLogOptionalData.getTargetEntity(), errorLogOptionalData.getTargetServiceName());
         super.log(logLevel, description, params);
     }
 
-    private void fillFieldsBeforeLogging(LogLevel logLevel, EcompLoggerErrorCode errorCodeEnum, String serviceName, String targetEntity, String targetServiceName) {
+    private void fillFieldsBeforeLogging(LogLevel logLevel, EcompLoggerErrorCode errorCodeEnum, String serviceName,
+                                         String targetEntity, String targetServiceName) {
         clear();
         ecompLogFieldsHandler.setErrorCode(errorCodeEnum.getErrorCode());
         ecompLogFieldsHandler.setErrorCategory(logLevel.name());
@@ -98,8 +119,8 @@ public class LoggerError extends LoggerBase {
     public void log(LogLevel logLevel,
                     EcompLoggerErrorCode errorCodeEnum,
                     String serviceName,
-                    String message, Object...params) {
-        log(logLevel, errorCodeEnum, serviceName, (String)null, message, params);
+                    String message, Object... params) {
+        log(logLevel, errorCodeEnum, serviceName, (String) null, message, params);
     }
 
     public void log(LogLevel logLevel,
@@ -110,8 +131,8 @@ public class LoggerError extends LoggerBase {
     }
 
     @Override
-    public void log(LogLevel logLevel, String message, Object...params) {
-        log(logLevel, EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, defaultServiceName, (String)null, message, params);
+    public void log(LogLevel logLevel, String message, Object... params) {
+        log(logLevel, EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, defaultServiceName, (String) null, message, params);
     }
 
     public void log(LogLevel logLevel, String message, Throwable throwable) {
@@ -119,15 +140,15 @@ public class LoggerError extends LoggerBase {
     }
 
     public void log(LogLevel logLevel, String message) {
-        log(logLevel, EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, defaultServiceName, (String)null, message);
+        log(logLevel, EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, defaultServiceName, (String) null, message);
     }
 
     public void logInfo(LogLevel logLevel, String message, Object... params) {
-        log(logLevel, EcompLoggerErrorCode.SUCCESS, defaultServiceName, (String)null, message, params);
+        log(logLevel, EcompLoggerErrorCode.SUCCESS, defaultServiceName, (String) null, message, params);
     }
 
     private LogLevel convertFromSeverityErrorLevel(EcompErrorSeverity severityLevel) {
-        switch(severityLevel) {
+        switch (severityLevel) {
             case INFO:
                 return LogLevel.INFO;
             case FATAL:

@@ -19,18 +19,19 @@
  * Modifications copyright (c) 2020 Nordix Foundation
  * ================================================================================
  */
-package org.openecomp.sdc.common.log.utils;
+package org.openecomp.sdc.common.log.enums;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.junit.Test;
 
-@Getter
-@AllArgsConstructor
-public enum EcompLogErrorCode {
-    E_399("Internal Invalid Object. Description: %s"),
-    E_210("Connection problem towards U-EB server. Reason: %s");
+public class StatusCodeTest {
 
-    private final String description;
+    @Test
+    public void testEnumValues() {
+        for (final Object value : StatusCode.values()) {
+            assertThat(value).isNotNull().isInstanceOf(StatusCode.class);
+        }
+    }
 
 }

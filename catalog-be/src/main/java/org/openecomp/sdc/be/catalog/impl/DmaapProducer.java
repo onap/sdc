@@ -80,7 +80,7 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
 
 				int pendingMsg = publisher.send(jsonInString);
 				LOG.info("sent message . response {}", pendingMsg);
-				LOG.invokeReturn(producerConfiguration.getConsumerId(), "Dmaap Producer", StatusCode.COMPLETE.getStatusCodeEnum(), "DmaapProducer-pushMessage",message.toString(), pendingMsg );
+				LOG.invokeReturn(producerConfiguration.getConsumerId(), "Dmaap Producer", StatusCode.COMPLETE.getStatusCode(), "DmaapProducer-pushMessage",message.toString(), pendingMsg );
 
 			}
 
