@@ -20,6 +20,8 @@
 package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.versioning.VersionCalculator;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
@@ -29,20 +31,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class VersionCalculatorImpl implements VersionCalculator {
+  private static final Logger LOGGER = LoggerFactory.getLogger(VersionCalculatorImpl.class);
 
   private static final String INITIAL_VERSION = "1.0";
   private static final String VERSION_STRING_VIOLATION_MSG =
       "Version string must be in the format of: {integer}.{integer}";
-  private static final String PARENT_LEVEL_VERSION_CANNOT_BE_CREATED_FROM_TOP_LEVEL =
-      "Creation of parent level version on top level version is invalid.";
-  private static final String SUB_LEVEL_VERSION_CANNOT_BE_CREATED_FROM_LOWEST_LEVEL =
-      "Creation of parent level version on top level version is invalid.";
-
-  private static final String VERSION_CALCULATION_ERROR_MSG =
-      "Version calculation error.";
-
-  private static final String INVALID_CREATION_METHOD_MSG = "Invalid creation method-";
-
+  private static final String INVALID_CREATION_METHOD_MSG = "Invalid creation method";
 
   @Override
   public String calculate(String baseVersion, VersionCreationMethod creationMethod) {
@@ -85,12 +79,10 @@ public class VersionCalculatorImpl implements VersionCalculator {
             optionalCreationMethods.add(versionCreationMethod);
           }
         } catch (IllegalArgumentException iae) {
-          //not a valid creation method.
+          LOGGER.error("{}:{}", INVALID_CREATION_METHOD_MSG, versionCreationMethod.name(), iae);
         }
       }
     }
     version.getAdditionalInfo().put("OptionalCreationMethods", optionalCreationMethods);
-
   }
-
 }
