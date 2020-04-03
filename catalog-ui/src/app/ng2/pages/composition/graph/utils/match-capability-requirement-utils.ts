@@ -174,8 +174,12 @@ export class MatchCapabilitiesRequirementsUtils {
         return false;
     }
 
-    private isRequirementFulfilled(fromNodeId: string, requirement: any, links: CompositionCiLinkBase[]): boolean {
-        return _.some(links, {
+    private isRequirementFulfilled(fromNodeId: string, requirement: Requirement, links: CompositionCiLinkBase[]): boolean {
+        if (!requirement.maxOccurrences || requirement.maxOccurrences === 'UNBOUNDED') {
+            return false;
+        }
+
+        let list =_.filter(links, {
             relation: {
                 fromNode: fromNodeId,
                 relationships: [{
@@ -190,6 +194,8 @@ export class MatchCapabilitiesRequirementsUtils {
                 }]
             }
         });
+
+        return list.length >= parseInt(requirement.maxOccurrences);
     }
 
 }
