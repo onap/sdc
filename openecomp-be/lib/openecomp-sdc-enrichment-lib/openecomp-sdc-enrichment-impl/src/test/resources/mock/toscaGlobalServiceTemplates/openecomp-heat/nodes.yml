@@ -1225,7 +1225,7 @@ node_types:
         description: Description of the volume
         status: supported
       attachments:
-        type: string
+        type: list
         description: The list of attachments of the volume
         status: supported
         entry_schema:

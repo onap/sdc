@@ -13,8 +13,7 @@ node_types:
         type: string 
       nf_naming:
         type: org.openecomp.datatypes.Naming
-        Default: true
-      availability_zone_max_count: 
+      availability_zone_max_count:
         type: integer     
         default: 1 
         constraints:
@@ -26,7 +25,6 @@ node_types:
       multi_stage_design:
         type: boolean
         default: false
-        type: string
       sdnc_model_name:
         type: string
       sdnc_model_version:
