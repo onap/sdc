@@ -113,7 +113,7 @@ node_types:
         status: supported
       attachments:
         description: The list of attachments of the volume
-        type: string
+        type: list
         status: supported
         entry_schema:
           type: string

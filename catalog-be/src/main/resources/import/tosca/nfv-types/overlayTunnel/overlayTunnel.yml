@@ -90,7 +90,7 @@ node_types:
         type: boolean
         description: Identifies whether all the local networks associate with the tunnel or not.
         required: false
-        default: 'false'
+        default: false
       site2_id:
         type: string
         description: Identifier of second DCI overlay tunnel endpoint. This could be IP address of domain controller.
@@ -132,7 +132,7 @@ node_types:
         type: boolean
         description: Identifies whether all the local networks associate with the tunnel or not.
         required: false
-        default: 'false'
+        default: false
     requirements:
     - virtualLink:
         capability: tosca.capabilities.network.Linkable
