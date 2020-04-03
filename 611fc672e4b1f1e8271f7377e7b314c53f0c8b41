@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ca21aae_5e5d95a3",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/test/java/org/openecomp/sdc/common/utils/CommonUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-03T17:23:10Z",
+      "side": 1,
+      "message": "shouldn\u0027t be CSAR?",
+      "range": {
+        "startLine": 40,
+        "startChar": 81,
+        "endLine": 40,
+        "endChar": 84
+      },
+      "revId": "611fc672e4b1f1e8271f7377e7b314c53f0c8b41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
