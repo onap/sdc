@@ -21,7 +21,9 @@ describe('match capability requirements utils service ', () => {
         relationship: 'tosca.relationships.network.BindsTo',
         uniqueId: 'eef99154-8039-4227-ba68-62a32e6b0d98.virtualBinding',
         ownerId : 'extcp0',
-        ownerName : 's'
+        ownerName : 's',
+        minOccurrences: 0,
+        maxOccurrences: 'UNBOUNDED'
     });
 
     const virtualLinkReq = Mock.of<Requirement>({
@@ -29,8 +31,10 @@ describe('match capability requirements utils service ', () => {
         name: 'virtualLink',
         relationship: 'tosca.relationships.network.LinksTo',
         uniqueId: 'eef99154-8039-4227-ba68-62a32e6b0d98.virtualLink',
-        ownerId : '',
-        ownerName : 's'
+        ownerId : 'extcp0',
+        ownerName : 's',
+        minOccurrences: 0,
+        maxOccurrences: '1'
     });
 
     const storeAttachmentReq = Mock.of<Requirement>({
@@ -315,31 +319,56 @@ describe('match capability requirements utils service ', () => {
             expect(matchingNodes).toHaveLength(0);
         });
 
-       it('should detect fulfilled connection with compute node', () => {
-            const nodes = [ nodeBlockStorage, nodeCompute, nodeVl ];
+        it('should detect fulfilled connection with compute node', () => {
+            const nodes = [nodeBlockStorage, nodeCompute, nodeVl];
             let matchingNodes: any;
-            const link = {
+
+            // add one fulfilled relationship from nodeCp.bindableReq (0,N) to nodeCompute.bindingCap
+            let link = {
                 relation: {
-                    fromNode: 'extcp0',
-                    toNode: 'compute0',
+                    fromNode: nodeCp.componentInstance.uniqueId,
+                    toNode: nodeCompute.componentInstance.uniqueId,
                     relationships: [{
                         relation: {
-                            requirementOwnerId: 'extcp0',
-                            requirement: 'virtualBinding',
+                            requirementOwnerId: nodeCp.componentInstance.uniqueId,
+                            requirement: bindableReq.name,
                             relationship: {
-                                type: 'tosca.relationships.network.BindsTo'
+                                type: bindableReq.relationship
                             }
-
                         }
                     }]
                 }
             };
 
-            const links = [link];
-            // CP should be able to connect to VL only since it already has a link with compute
-            matchingNodes = service.findMatchingNodesToComponentInstance(nodeCp.componentInstance, nodes, links as CompositionCiLinkBase[]);
-            expect(matchingNodes).toHaveLength(1);
+            matchingNodes = service.findMatchingNodesToComponentInstance(nodeCp.componentInstance, nodes, [link] as CompositionCiLinkBase[]);
+            expect(matchingNodes).toHaveLength(2);
+            // nodeCp.virtualLinkReq (0,1) should be able to connect to nodeVl.linkableCap
             expect(matchingNodes).toContain(nodeVl);
+            // nodeCp.bindableReq (0,N) should be able to connect to nodeCompute.bindingCap
+            expect(matchingNodes).toContain(nodeCompute);
+
+            // add one relationship from nodeCp.virtualLinkReq (0,1) to nodeVl.linkableCap
+            // so it is fulfilled, you cannot have another one from nodeCp.virtualLinkReq
+            link = {
+                relation: {
+                    fromNode: nodeCp.componentInstance.uniqueId,
+                    toNode: nodeVl.componentInstance.uniqueId,
+                    relationships: [{
+                        relation: {
+                            requirementOwnerId: nodeCp.componentInstance.uniqueId,
+                            requirement: virtualLinkReq.name,
+                            relationship: {
+                                type: virtualLinkReq.relationship
+                            }
+                        }
+                    }]
+                }
+            };
+
+            matchingNodes = service.findMatchingNodesToComponentInstance(nodeCp.componentInstance, nodes, [link] as CompositionCiLinkBase[]);
+            expect(matchingNodes).toHaveLength(1);
+            // nodeCp.bindableReq (0,N) should be able to connect to nodeCompute.bindingCap
+            expect(matchingNodes).toContain(nodeCompute);
         });
     });
 });
