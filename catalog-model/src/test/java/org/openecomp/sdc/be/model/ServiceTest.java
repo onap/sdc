@@ -25,275 +25,292 @@ import org.junit.Test;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceTest {
 
-	protected static ConfigurationManager configurationManager;
-	static Configuration.EnvironmentContext environmentContext = new Configuration.EnvironmentContext();
+    protected static ConfigurationManager configurationManager;
+    static Configuration.EnvironmentContext environmentContext = new Configuration.EnvironmentContext();
 
-	@BeforeClass
-	public static void init() {
-		String appConfigDir = "src/test/resources/config";
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-				appConfigDir);
-		configurationManager = new ConfigurationManager(configurationSource);
+    @BeforeClass
+    public static void init() {
+        String appConfigDir = "src/test/resources/config";
+        ConfigurationSource configurationSource =
+                new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        configurationManager = new ConfigurationManager(configurationSource);
+    }
 
-		Configuration configuration = new Configuration();
+    private Service createTestSubject() {
+        return new Service();
+    }
 
-		configuration.setJanusGraphInMemoryGraph(true);
-		environmentContext.setDefaultValue("General_Revenue-Bearing");
-		configuration.setEnvironmentContext(environmentContext);
+    @Test
+    public void testCtor() throws Exception {
+        new Service(new ComponentMetadataDefinition());
+    }
 
-		configurationManager.setConfiguration(configuration);
-	}
+    @Test
+    public void testGetServiceApiArtifacts() throws Exception {
+        Service testSubject;
+        Map<String, ArtifactDefinition> result;
 
-	private Service createTestSubject() {
-		return new Service();
-	}
-	
-	@Test
-	public void testCtor() throws Exception {
-		new Service(new ComponentMetadataDefinition());
-	}
-	
-	@Test
-	public void testGetServiceApiArtifacts() throws Exception {
-		Service testSubject;
-		Map<String, ArtifactDefinition> result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getServiceApiArtifacts();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getServiceApiArtifacts();
-	}
+    @Test
+    public void testSetServiceApiArtifacts() throws Exception {
+        Service testSubject;
+        Map<String, ArtifactDefinition> serviceApiArtifacts = null;
 
-	
-	@Test
-	public void testSetServiceApiArtifacts() throws Exception {
-		Service testSubject;
-		Map<String, ArtifactDefinition> serviceApiArtifacts = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setServiceApiArtifacts(serviceApiArtifacts);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setServiceApiArtifacts(serviceApiArtifacts);
-	}
+    @Test
+    public void testGetProjectCode() throws Exception {
+        Service testSubject;
+        String result;
 
-	
-	@Test
-	public void testGetProjectCode() throws Exception {
-		Service testSubject;
-		String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getProjectCode();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getProjectCode();
-	}
+    @Test
+    public void testGetForwardingPaths() throws Exception {
+        Service testSubject;
+        Map<String, ForwardingPathDataDefinition> result;
 
-	
-	@Test
-	public void testGetForwardingPaths() throws Exception {
-		Service testSubject;
-		Map<String, ForwardingPathDataDefinition> result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getForwardingPaths();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getForwardingPaths();
-	}
+    @Test
+    public void testSetForwardingPaths() throws Exception {
+        Service testSubject;
+        Map<String, ForwardingPathDataDefinition> forwardingPaths = null;
 
-	
-	@Test
-	public void testSetForwardingPaths() throws Exception {
-		Service testSubject;
-		Map<String, ForwardingPathDataDefinition> forwardingPaths = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setForwardingPaths(forwardingPaths);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setForwardingPaths(forwardingPaths);
-	}
+    @Test
+    public void testAddForwardingPath() throws Exception {
+        Service testSubject;
+        ForwardingPathDataDefinition forwardingPathDataDefinition = new ForwardingPathDataDefinition();
+        ForwardingPathDataDefinition result;
 
-	
-	@Test
-	public void testAddForwardingPath() throws Exception {
-		Service testSubject;
-		ForwardingPathDataDefinition forwardingPathDataDefinition = new ForwardingPathDataDefinition();
-		ForwardingPathDataDefinition result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.addForwardingPath(forwardingPathDataDefinition);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.addForwardingPath(forwardingPathDataDefinition);
-	}
+    @Test
+    public void testSetProjectCode() throws Exception {
+        Service testSubject;
+        String projectName = "";
 
-	
-	@Test
-	public void testSetProjectCode() throws Exception {
-		Service testSubject;
-		String projectName = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setProjectCode(projectName);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setProjectCode(projectName);
-	}
+    @Test
+    public void testGetDistributionStatus() throws Exception {
+        Service testSubject;
+        DistributionStatusEnum result;
 
-	
-	@Test
-	public void testGetDistributionStatus() throws Exception {
-		Service testSubject;
-		DistributionStatusEnum result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getDistributionStatus();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDistributionStatus();
-	}
+    @Test
+    public void testSetDistributionStatus() throws Exception {
+        Service testSubject;
+        DistributionStatusEnum distributionStatus = null;
 
-	
-	@Test
-	public void testSetDistributionStatus() throws Exception {
-		Service testSubject;
-		DistributionStatusEnum distributionStatus = null;
+        // test 1
+        testSubject = createTestSubject();
+        distributionStatus = null;
+        testSubject.setDistributionStatus(distributionStatus);
+        testSubject.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
+    }
 
-		// test 1
-		testSubject = createTestSubject();
-		distributionStatus = null;
-		testSubject.setDistributionStatus(distributionStatus);
-		testSubject.setDistributionStatus(DistributionStatusEnum.DISTRIBUTED);
-	}
+    @Test
+    public void testSetEcompGeneratedNaming() throws Exception {
+        Service testSubject;
+        Boolean ecompGeneratedNaming = null;
 
-	
-	@Test
-	public void testSetEcompGeneratedNaming() throws Exception {
-		Service testSubject;
-		Boolean ecompGeneratedNaming = null;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setEcompGeneratedNaming(ecompGeneratedNaming);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setEcompGeneratedNaming(ecompGeneratedNaming);
-	}
+    @Test
+    public void testIsEcompGeneratedNaming() throws Exception {
+        Service testSubject;
+        Boolean result;
 
-	
-	@Test
-	public void testIsEcompGeneratedNaming() throws Exception {
-		Service testSubject;
-		Boolean result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.isEcompGeneratedNaming();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.isEcompGeneratedNaming();
-	}
+    @Test
+    public void testSetNamingPolicy() throws Exception {
+        Service testSubject;
+        String namingPolicy = "";
 
-	
-	@Test
-	public void testSetNamingPolicy() throws Exception {
-		Service testSubject;
-		String namingPolicy = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setNamingPolicy(namingPolicy);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setNamingPolicy(namingPolicy);
-	}
+    @Test
+    public void testGetNamingPolicy() throws Exception {
+        Service testSubject;
+        String result;
 
-	
-	@Test
-	public void testGetNamingPolicy() throws Exception {
-		Service testSubject;
-		String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getNamingPolicy();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getNamingPolicy();
-	}
+    @Test
+    public void testGetEnvironmentContext() throws Exception {
+        Service testSubject;
+        String result;
 
-	
-	@Test
-	public void testGetEnvironmentContext() throws Exception {
-		Service testSubject;
-		String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getEnvironmentContext();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getEnvironmentContext();
-	}
+    @Test
+    public void testSetEnvironmentContext() throws Exception {
+        Service testSubject;
+        String environmentContext = "";
 
-	
-	@Test
-	public void testSetEnvironmentContext() throws Exception {
-		Service testSubject;
-		String environmentContext = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setEnvironmentContext(environmentContext);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setEnvironmentContext(environmentContext);
-	}
+    @Test
+    public void testSetServiceType() throws Exception {
+        Service testSubject;
+        String serviceType = "";
 
-	
-	@Test
-	public void testSetServiceType() throws Exception {
-		Service testSubject;
-		String serviceType = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setServiceType(serviceType);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setServiceType(serviceType);
-	}
+    @Test
+    public void testGetServiceType() throws Exception {
+        Service testSubject;
+        String result;
 
-	
-	@Test
-	public void testGetServiceType() throws Exception {
-		Service testSubject;
-		String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getServiceType();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getServiceType();
-	}
+    @Test
+    public void testSetServiceRole() throws Exception {
+        Service testSubject;
+        String serviceRole = "";
 
-	
-	@Test
-	public void testSetServiceRole() throws Exception {
-		Service testSubject;
-		String serviceRole = "";
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setServiceRole(serviceRole);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setServiceRole(serviceRole);
-	}
+    @Test
+    public void testGetServiceRole() throws Exception {
+        Service testSubject;
+        String result;
 
-	
-	@Test
-	public void testGetServiceRole() throws Exception {
-		Service testSubject;
-		String result;
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getServiceRole();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getServiceRole();
-	}
+    @Test
+    public void testToString() throws Exception {
+        Service testSubject;
+        String result;
 
-	
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.toString();
+    }
 
+    @Test
+    public void testSetSpecificComponetTypeArtifacts() throws Exception {
+        Service testSubject;
+        Map<String, ArtifactDefinition> specificComponentTypeArtifacts = null;
 
-	
-	@Test
-	public void testToString() throws Exception {
-		Service testSubject;
-		String result;
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setSpecificComponetTypeArtifacts(specificComponentTypeArtifacts);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
-	}
+    @Test
+    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypesForCategories() throws Exception {
+        Configuration existingConfiguration = configurationManager.getConfiguration();
+        Configuration newConfiguration = new Configuration();
+        newConfiguration.setServiceNodeTypes(null);
+        Map<String, String> genericAssetNodeTypes = new HashMap<>();
+        genericAssetNodeTypes.put("Service", "org.openecomp.resource.abstract.nodes.service");
+        newConfiguration.setGenericAssetNodeTypes(genericAssetNodeTypes);
+        configurationManager.setConfiguration(newConfiguration);
 
-	
-	@Test
-	public void testSetSpecificComponetTypeArtifacts() throws Exception {
-		Service testSubject;
-		Map<String, ArtifactDefinition> specificComponentTypeArtifacts = null;
+        Service testSubject = createTestSubject();
+        CategoryDefinition category = new CategoryDefinition();
+        category.setName("CategoryB");
+        testSubject.addCategory(category);
+        String result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.service", result);
+        configurationManager.setConfiguration(existingConfiguration);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setSpecificComponetTypeArtifacts(specificComponentTypeArtifacts);
-	}
+    @Test
+    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypeForRelevantCategory() throws Exception {
+        Service testSubject = createTestSubject();
+        CategoryDefinition category = new CategoryDefinition();
+        category.setName("CategoryD");
+        testSubject.addCategory(category);
+        String result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.service", result);
+    }
+
+    @Test
+    public void testFetchGenericTypeToscaNameFromConfigToscaTypeDefinedForCategory() throws Exception {
+        Service testSubject = createTestSubject();
+        CategoryDefinition category = new CategoryDefinition();
+        category.setName("CategoryB");
+        testSubject.addCategory(category);
+        String result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.B", result);
+
+        Configuration configuration = new Configuration();
+
+        configuration.setServiceNodeTypes(null);
+        configurationManager.setConfiguration(configuration);
+    }
 }

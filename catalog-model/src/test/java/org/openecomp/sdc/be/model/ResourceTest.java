@@ -20,11 +20,15 @@
 
 package org.openecomp.sdc.be.model;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
 
@@ -302,13 +306,38 @@ public class ResourceTest extends ModelConfDependentTest {
     }
 
     @Test
-    public void testFetchGenericTypeToscaNameFromConfig() throws Exception {
-        Resource testSubject;
-        String result;
+    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypesDefinedForCategories() throws Exception {
+        Resource testSubject = createTestSubject();
+        testSubject.addCategory("CategoryA", "SubCategoryB");
 
+        Configuration existingConfiguration = configurationManager.getConfiguration();
+        Configuration newConfiguration = new Configuration();
+        newConfiguration.setServiceNodeTypes(null);
+        Map<String, String> genericAssetNodeTypes = new HashMap<>();
+        genericAssetNodeTypes.put("VFC", "org.openecomp.resource.abstract.nodes.VFC");
+        newConfiguration.setGenericAssetNodeTypes(genericAssetNodeTypes);
+        configurationManager.setConfiguration(newConfiguration);
+
+        String result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.VFC", result);
+        configurationManager.setConfiguration(existingConfiguration);
+    }
+
+    @Test
+    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypeDefinedForRelevantCategory() throws Exception {
         // default test
-        testSubject = createTestSubject();
-        result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        Resource testSubject = createTestSubject();
+        testSubject.addCategory("CategoryA", "SubCategoryC");
+        String result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.VFC", result);
+    }
+
+    @Test
+    public void testFetchGenericTypeToscaNameFromConfigToscaTypeDefinedForCategory() throws Exception {
+        Resource testSubject = createTestSubject();
+        testSubject.addCategory("CategoryA", "SubCategoryB");
+        String result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.B", result);
     }
 
     @Test
