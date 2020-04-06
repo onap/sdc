@@ -22,6 +22,30 @@
       "revId": "611fc672e4b1f1e8271f7377e7b314c53f0c8b41",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "085588f2_12639435",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/test/java/org/openecomp/sdc/common/utils/CommonUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2020-04-06T08:31:57Z",
+      "side": 1,
+      "message": "Sure it is! Thank you!",
+      "parentUuid": "4ca21aae_5e5d95a3",
+      "range": {
+        "startLine": 40,
+        "startChar": 81,
+        "endLine": 40,
+        "endChar": 84
+      },
+      "revId": "611fc672e4b1f1e8271f7377e7b314c53f0c8b41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
