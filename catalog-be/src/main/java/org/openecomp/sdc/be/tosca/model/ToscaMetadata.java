@@ -36,8 +36,8 @@ public class ToscaMetadata implements IToscaMetadata {
     private String serviceType;
     private String serviceRole;
     private String instantiationType;
-    private Boolean serviceEcompNaming;
-    private Boolean ecompGeneratedNaming;
+    private String serviceEcompNaming;
+    private String ecompGeneratedNaming;
     private String namingPolicy;
     private String sourceModelInvariant;
     private String environmentContext;
@@ -162,11 +162,11 @@ public class ToscaMetadata implements IToscaMetadata {
     }
 
     public Boolean isEcompGeneratedNaming() {
-        return ecompGeneratedNaming;
+        return new Boolean(ecompGeneratedNaming);
     }
 
     public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
-        this.ecompGeneratedNaming = ecompGeneratedNaming;
+        this.ecompGeneratedNaming = ecompGeneratedNaming.toString();
     }
 
     public String isNamingPolicy() {
@@ -178,11 +178,11 @@ public class ToscaMetadata implements IToscaMetadata {
     }
 
     public Boolean getServiceEcompNaming() {
-        return serviceEcompNaming;
+        return new Boolean(serviceEcompNaming);
     }
 
     public void setServiceEcompNaming(Boolean serviceEcompNaming) {
-        this.serviceEcompNaming = serviceEcompNaming;
+        this.serviceEcompNaming = serviceEcompNaming.toString();
     }
 
     public String getVersion() {
