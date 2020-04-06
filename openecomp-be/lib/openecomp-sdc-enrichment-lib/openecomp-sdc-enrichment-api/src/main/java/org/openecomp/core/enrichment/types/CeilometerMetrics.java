@@ -17,13 +17,9 @@
 package org.openecomp.core.enrichment.types;
 
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-
-@Getter
-@Setter
+@Data
 public class CeilometerMetrics {
     private List<CeilometerMetric> ceilometerMetricList;
-
 }
