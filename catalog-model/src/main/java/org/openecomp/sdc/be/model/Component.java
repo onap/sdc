@@ -613,14 +613,17 @@ public abstract class Component implements PropertiesOwner {
 
     public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
         // Implement where needed
-    }
-
+    }  
+    
     public String fetchGenericTypeToscaNameFromConfig() {
-        // Implement where needed
-        return ConfigurationManager.getConfigurationManager()
-            .getConfiguration()
-            .getGenericAssetNodeTypes()
-            .get(this.assetType());
+    	return ConfigurationManager.getConfigurationManager()
+	        .getConfiguration()
+	        .getGenericAssetNodeTypes()
+	        .get(this.assetType());
+    }
+    
+    protected <A> Optional<A> getFirstEntryAsOptional(List<A> list) {
+        return list == null || list.isEmpty() ? Optional.empty() : Optional.ofNullable(list.get(0));
     }
 
     public String assetType() {

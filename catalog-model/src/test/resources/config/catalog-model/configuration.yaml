@@ -612,6 +612,11 @@ genericAssetNodeTypes:
   VF : org.openecomp.resource.abstract.nodes.VF
   PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
+  
+resourceNodeTypes:
+  CategoryA: 
+    SubCategoryA: org.openecomp.resource.abstract.nodes.A
+    SubCategoryB: org.openecomp.resource.abstract.nodes.B
 
 workloadContext: Production
 environmentContext:

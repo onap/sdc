@@ -22,15 +22,19 @@ package org.openecomp.sdc.be.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.InstantiationTypes;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 
 @Getter
@@ -153,6 +157,17 @@ public class Service extends Component {
         if (this.getInstantiationType().equals(StringUtils.EMPTY)) {
             this.setInstantiationType(InstantiationTypes.A_LA_CARTE.getValue());
         }
+    }
+    
+    @Override
+    public String fetchGenericTypeToscaNameFromConfig() {
+    		return getFirstEntryAsOptional(this.getCategories()).map(category -> fetchToscaNameFromConfigBasedOnService(category.getName())).orElse(super.fetchGenericTypeToscaNameFromConfig());
+    }
+    
+    private String fetchToscaNameFromConfigBasedOnService(final String serviceCategory) {
+    	 return Optional.ofNullable(ConfigurationManager.getConfigurationManager()
+    	        .getConfiguration()
+    	        .getServiceNodeTypes()).map(serviceNames -> serviceNames.get(serviceCategory)).orElse(null);
     }
 
     @Override

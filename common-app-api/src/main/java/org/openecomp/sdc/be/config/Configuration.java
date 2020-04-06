@@ -137,6 +137,8 @@ public class Configuration extends BasicConfiguration {
     private Map<String, VfModuleProperty> vfModuleProperties;
 
     private Map<String, String> genericAssetNodeTypes;
+    private Map<String, String> serviceNodeTypes;
+    private Map<String, Map<String, String>> resourceNodeTypes;
 
     private String appVersion;
     private String artifactGeneratorConfig;
@@ -251,6 +253,22 @@ public class Configuration extends BasicConfiguration {
 
     public void setGenericAssetNodeTypes(Map<String, String> genericAssetNodeTypes) {
         this.genericAssetNodeTypes = genericAssetNodeTypes;
+    }
+    
+    public Map<String, String> getServiceNodeTypes(){
+        return serviceNodeTypes ;
+    }
+    
+    public void setServiceNodeTypes(Map<String, String> serviceNodeTypes){
+        this.serviceNodeTypes = serviceNodeTypes;
+    }
+    
+    public Map<String, Map<String, String>> getResourceNodeTypes(){
+        return resourceNodeTypes;
+    }
+    
+    public void setResourceNodeTypes(Map<String, Map<String, String>> resourceNodeTypes){
+        this.resourceNodeTypes = resourceNodeTypes;
     }
 
     public SwitchoverDetectorConfig getSwitchoverDetector() {

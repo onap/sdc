@@ -28,13 +28,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -155,12 +157,30 @@ public class Resource extends Component {
 
     @Override
     public String fetchGenericTypeToscaNameFromConfig() {
-        String result = super.fetchGenericTypeToscaNameFromConfig();
+    	return fetchToscaNameFromConfigBasedOnCategory().orElse(fetchToscaNameFromConfigBasedOnAssetType());
+    }
+    
+    public String fetchToscaNameFromConfigBasedOnAssetType() {
+    	String result = super.fetchGenericTypeToscaNameFromConfig();
         if (null == result) {
-            result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes()
+        	result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes()
                 .get(ResourceTypeEnum.VFC.getValue());
         }
         return result;
+    }
+    
+    private Optional<String> fetchToscaNameFromConfigBasedOnCategory() {    	
+    	Optional<CategoryDefinition> category = getFirstEntryAsOptional(this.getCategories());
+    	if (category.isPresent()) {
+    		return getFirstEntryAsOptional(category.get().getSubcategories()).map(subCategory -> fetchToscaNameFromConfigBasedOnCategory(category.get().getName(), subCategory.getName()));
+    	}
+    	return Optional.empty();
+    }
+    
+    private String fetchToscaNameFromConfigBasedOnCategory(final String resourceCategory, final String resourceSubCategory) {
+    	return Optional.ofNullable(ConfigurationManager.getConfigurationManager()
+	        .getConfiguration()
+	        .getResourceNodeTypes()).map(categoryNames -> categoryNames.get(resourceCategory)).map(subCategoryNames -> subCategoryNames.get(resourceSubCategory)).orElse(null);
     }
 
     @Override
@@ -192,4 +212,5 @@ public class Resource extends Component {
         Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
         return componentInstanceById.isPresent() ? componentInstanceById.get().getInvariantName() : null;
     }
+    
 }

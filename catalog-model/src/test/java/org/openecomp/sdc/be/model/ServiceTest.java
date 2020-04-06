@@ -25,10 +25,14 @@ import org.junit.Test;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceTest {
@@ -42,14 +46,6 @@ public class ServiceTest {
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
 				appConfigDir);
 		configurationManager = new ConfigurationManager(configurationSource);
-
-		Configuration configuration = new Configuration();
-
-		configuration.setJanusGraphInMemoryGraph(true);
-		environmentContext.setDefaultValue("General_Revenue-Bearing");
-		configuration.setEnvironmentContext(environmentContext);
-
-		configurationManager.setConfiguration(configuration);
 	}
 
 	private Service createTestSubject() {
@@ -296,4 +292,57 @@ public class ServiceTest {
 		testSubject = createTestSubject();
 		testSubject.setSpecificComponetTypeArtifacts(specificComponentTypeArtifacts);
 	}
+    
+    @Test
+    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypesForCategories() throws Exception {
+    	Service testSubject;
+        String result;
+        
+		Configuration existingConfiguration = configurationManager.getConfiguration();
+        Configuration newConfiguration = new Configuration();
+		newConfiguration.setServiceNodeTypes(null);
+		Map<String, String> genericAssetNodeTypes = new HashMap<>();
+		genericAssetNodeTypes.put("Service", "org.openecomp.resource.abstract.nodes.service");
+		newConfiguration.setGenericAssetNodeTypes(genericAssetNodeTypes);
+		configurationManager.setConfiguration(newConfiguration);
+		
+        testSubject = createTestSubject();
+        CategoryDefinition category = new CategoryDefinition();
+        category.setName("CategoryB");
+        testSubject.addCategory(category);
+        result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.service", result);
+		configurationManager.setConfiguration(existingConfiguration);
+    }
+    
+	@Test
+    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypeForRelevantCategory() throws Exception {
+    	Service testSubject;
+        String result;
+
+        testSubject = createTestSubject();
+        CategoryDefinition category = new CategoryDefinition();
+        category.setName("CategoryD");
+        testSubject.addCategory(category);
+        result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.service", result);
+    }
+	
+    @Test
+    public void testFetchGenericTypeToscaNameFromConfigToscaTypeDefinedForCategory() throws Exception {
+    	Service testSubject;
+        String result;
+
+        testSubject = createTestSubject();
+        CategoryDefinition category = new CategoryDefinition();
+        category.setName("CategoryB");
+        testSubject.addCategory(category);
+        result = testSubject.fetchGenericTypeToscaNameFromConfig();
+        assertEquals("org.openecomp.resource.abstract.nodes.B", result);
+        
+        Configuration configuration = new Configuration();
+        
+		configuration.setServiceNodeTypes(null);
+		configurationManager.setConfiguration(configuration);
+    }
 }
