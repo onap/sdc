@@ -40,6 +40,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
@@ -616,11 +617,33 @@ public abstract class Component implements PropertiesOwner {
     }
 
     public String fetchGenericTypeToscaNameFromConfig() {
-        // Implement where needed
-        return ConfigurationManager.getConfigurationManager()
-            .getConfiguration()
-            .getGenericAssetNodeTypes()
-            .get(this.assetType());
+    	String genericTypeToscaName = fetchGenericTypeToscaNameFromConfigForCategory();
+
+    	if (StringUtils.isEmpty(genericTypeToscaName)) {
+    		genericTypeToscaName =  fetchGenericTypeToscaNameFromConfig(this.assetType());
+    	}
+        return genericTypeToscaName;
+    }
+    
+    private String fetchGenericTypeToscaNameFromConfigForCategory() {
+    	String genericTypeToscaName =  null;
+    	if (this.getCategories() != null && this.categories.size() == 1) {
+    		final CategoryDefinition category = this.categories.get(0);
+    		if (category.getSubcategories() != null && category.getSubcategories().size() == 1) {
+    			genericTypeToscaName = fetchGenericTypeToscaNameFromConfig(category.getName() + "." + category.getSubcategories().get(0).getName());
+    		}
+    		if (StringUtils.isEmpty(genericTypeToscaName)) {
+    			genericTypeToscaName = fetchGenericTypeToscaNameFromConfig(category.getName());
+    		}
+    	}
+    	return genericTypeToscaName;
+    }
+    
+    private String fetchGenericTypeToscaNameFromConfig(final String key) {
+    	return ConfigurationManager.getConfigurationManager()
+	        .getConfiguration()
+	        .getGenericAssetNodeTypes()
+	        .get(key);
     }
 
     public String assetType() {
