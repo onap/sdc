@@ -15,7 +15,6 @@
  */
 package org.openecomp.core.enrichment.types;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

@@ -23,8 +23,11 @@ package org.openecomp.core.enrichment.types;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 
+@AllArgsConstructor
 public enum ArtifactCategory {
 
   INFORMATIONAL("Informational"),
@@ -32,11 +35,9 @@ public enum ArtifactCategory {
 
   private static final Map<String, ArtifactCategory> mMap =
       Collections.unmodifiableMap(initializeMapping());
-  private String displayName;
 
-  ArtifactCategory(String displayName) {
-    this.displayName = displayName;
-  }
+  @Getter
+  private String displayName;
 
   /**
    * Initialize mapping map.
@@ -63,15 +64,4 @@ public enum ArtifactCategory {
     }
     return null;
   }
-
-  /**
-   * Gets display name.
-   *
-   * @return the display name
-   */
-  public String getDisplayName() {
-    return displayName;
-  }
-
-
 }
