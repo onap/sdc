@@ -28,11 +28,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 
 @Getter
 @Setter
@@ -60,32 +63,31 @@ public class Resource extends Component {
 
     public Resource() {
         super(new ResourceMetadataDefinition());
-        this.getComponentMetadataDefinition().getMetadataDataDefinition()
-            .setComponentType(ComponentTypeEnum.RESOURCE);
+        this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
     }
 
     public Resource(ComponentMetadataDefinition componentMetadataDefinition) {
         super(componentMetadataDefinition);
         if (this.getComponentMetadataDefinition().getMetadataDataDefinition() == null) {
-            this.getComponentMetadataDefinition().componentMetadataDataDefinition = new ResourceMetadataDataDefinition();
+            this.getComponentMetadataDefinition().componentMetadataDataDefinition =
+                    new ResourceMetadataDataDefinition();
         }
         this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
     }
 
     public Boolean isAbstract() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition()
-            .getMetadataDataDefinition())
-            .isAbstract();
+        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .isAbstract();
     }
 
     public void setAbstract(Boolean isAbstract) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setAbstract(isAbstract);
+                .setAbstract(isAbstract);
     }
 
     public String getCost() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .getCost();
+                .getCost();
     }
 
     public void setCost(String cost) {
@@ -94,72 +96,94 @@ public class Resource extends Component {
 
     public String getLicenseType() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .getLicenseType();
+                .getLicenseType();
     }
 
     public void setLicenseType(String licenseType) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setLicenseType(licenseType);
+                .setLicenseType(licenseType);
     }
 
     public String getToscaResourceName() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .getToscaResourceName();
+                .getToscaResourceName();
     }
 
     public void setToscaResourceName(String toscaResourceName) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setToscaResourceName(toscaResourceName);
+                .setToscaResourceName(toscaResourceName);
     }
 
     public ResourceTypeEnum getResourceType() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .getResourceType();
+                .getResourceType();
     }
 
     public void setResourceType(ResourceTypeEnum resourceType) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setResourceType(resourceType);
+                .setResourceType(resourceType);
     }
 
     public String getVendorName() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .getVendorName();
+                .getVendorName();
     }
 
     public void setVendorName(String vendorName) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setVendorName(vendorName);
+                .setVendorName(vendorName);
     }
 
     public String getVendorRelease() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .getVendorRelease();
+                .getVendorRelease();
     }
 
     public void setVendorRelease(String vendorRelease) {
         ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .setVendorRelease(vendorRelease);
+                .setVendorRelease(vendorRelease);
     }
 
     public String getResourceVendorModelNumber() {
         return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
-            .getResourceVendorModelNumber();
+                .getResourceVendorModelNumber();
     }
 
     public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
-            setResourceVendorModelNumber(resourceVendorModelNumber);
+        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+                .setResourceVendorModelNumber(resourceVendorModelNumber);
     }
 
     @Override
     public String fetchGenericTypeToscaNameFromConfig() {
+        return fetchToscaNameFromConfigBasedOnCategory().orElse(fetchToscaNameFromConfigBasedOnAssetType());
+    }
+
+    public String fetchToscaNameFromConfigBasedOnAssetType() {
         String result = super.fetchGenericTypeToscaNameFromConfig();
         if (null == result) {
             result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes()
-                .get(ResourceTypeEnum.VFC.getValue());
+                    .get(ResourceTypeEnum.VFC.getValue());
         }
         return result;
+    }
+
+    private Optional<String> fetchToscaNameFromConfigBasedOnCategory() {
+        Optional<CategoryDefinition> category = getHeadOption(this.getCategories());
+        if (category.isPresent()) {
+            return getHeadOption(category.get().getSubcategories())
+                    .map(subCategory -> fetchToscaNameFromConfigBasedOnCategory(category.get().getName(),
+                            subCategory.getName()));
+        }
+        return Optional.empty();
+    }
+
+    private String fetchToscaNameFromConfigBasedOnCategory(final String resourceCategory,
+            final String resourceSubCategory) {
+        return Optional
+                .ofNullable(ConfigurationManager.getConfigurationManager().getConfiguration().getResourceNodeTypes())
+                .map(categoryNames -> categoryNames.get(resourceCategory))
+                .map(subCategoryNames -> subCategoryNames.get(resourceSubCategory)).orElse(null);
     }
 
     @Override
@@ -174,21 +198,22 @@ public class Resource extends Component {
 
     @Override
     public boolean deriveFromGeneric() {
-        return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom
-            .contains(fetchGenericTypeToscaNameFromConfig()));
+        return this.shouldGenerateInputs()
+                || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
     }
 
     public Map<String, List<RequirementCapabilityRelDef>> groupRelationsFromCsarByInstanceName(Resource resource) {
         List<RequirementCapabilityRelDef> componentInstanceRelationsFromCsar = resource.getComponentInstancesRelations()
-            .stream().filter(r -> !r.isOriginUI()).collect(Collectors.toList());
-        Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId = MapUtil
-            .groupListBy(componentInstanceRelationsFromCsar, RequirementCapabilityRelDef::getFromNode);
-        return MapUtil
-            .convertMapKeys(relationsByInstanceId, instId -> getInstanceInvariantNameFromInstanceId(resource, instId));
+                .stream().filter(r -> !r.isOriginUI()).collect(Collectors.toList());
+        Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId =
+                MapUtil.groupListBy(componentInstanceRelationsFromCsar, RequirementCapabilityRelDef::getFromNode);
+        return MapUtil.convertMapKeys(relationsByInstanceId,
+                instId -> getInstanceInvariantNameFromInstanceId(resource, instId));
     }
 
     private String getInstanceInvariantNameFromInstanceId(Resource resource, String instId) {
         Optional<ComponentInstance> componentInstanceById = resource.getComponentInstanceById(instId);
         return componentInstanceById.isPresent() ? componentInstanceById.get().getInvariantName() : null;
     }
+
 }
