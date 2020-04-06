@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a15ba07a_8d17bc19",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-06T17:27:53Z",
+      "side": 1,
+      "message": "should be private",
+      "range": {
+        "startLine": 62,
+        "startChar": 4,
+        "endLine": 79,
+        "endChar": 44
+      },
+      "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18064679_45429b70",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-06T17:27:53Z",
+      "side": 1,
+      "message": "should be private",
+      "range": {
+        "startLine": 249,
+        "startChar": 4,
+        "endLine": 249,
+        "endChar": 10
+      },
+      "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d458bc0_9537b3ab",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-06T17:27:53Z",
+      "side": 1,
+      "message": "should be private",
+      "range": {
+        "startLine": 259,
+        "startChar": 4,
+        "endLine": 259,
+        "endChar": 10
+      },
+      "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94e4af95_ff4474ce",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-06T17:27:53Z",
+      "side": 1,
+      "message": "??",
+      "range": {
+        "startLine": 283,
+        "startChar": 0,
+        "endLine": 291,
+        "endChar": 21
+      },
+      "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
