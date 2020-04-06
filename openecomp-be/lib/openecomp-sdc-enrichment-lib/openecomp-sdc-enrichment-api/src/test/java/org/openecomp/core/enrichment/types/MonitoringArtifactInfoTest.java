@@ -15,6 +15,9 @@
  */
 package org.openecomp.core.enrichment.types;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersFor;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -32,5 +35,10 @@ public class MonitoringArtifactInfoTest {
         InputStream getterContent = monitoringArtifactInfo.getContent();
         Assert.assertEquals(contentData, IOUtils.toString(getterContent, StandardCharsets.UTF_8.name()));
 
+    }
+
+    @Test
+    public void testGettersSetters() {
+        assertThat(MonitoringArtifactInfo.class, hasValidGettersAndSettersFor("name"));
     }
 }
