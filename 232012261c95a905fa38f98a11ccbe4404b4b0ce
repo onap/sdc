@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c06028f_2a198671",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-api/src/test/java/org/openecomp/core/enrichment/types/CeilometerMetricTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-07T09:47:27Z",
+      "side": 1,
+      "message": "needless, already covered by LOMBOK\nhttps://sonarcloud.io/code?id\u003donap_sdc\u0026selected\u003donap_sdc%3Aopenecomp-be%2Flib%2Fopenecomp-sdc-enrichment-lib%2Fopenecomp-sdc-enrichment-api%2Fsrc%2Fmain%2Fjava%2Forg%2Fopenecomp%2Fcore%2Fenrichment%2Ftypes%2FCeilometerMetric.java",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 36,
+        "endChar": 1
+      },
+      "revId": "232012261c95a905fa38f98a11ccbe4404b4b0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82759fa7_96436c5e",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-api/src/test/java/org/openecomp/core/enrichment/types/CeilometerMetricsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-07T09:47:27Z",
+      "side": 1,
+      "message": "add @AllArgsConstructor to class CeilometerMetrics instead, and remove this TEST.",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 36,
+        "endChar": 1
+      },
+      "revId": "232012261c95a905fa38f98a11ccbe4404b4b0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a8a9eda_0e5c5f05",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-api/src/test/java/org/openecomp/core/enrichment/types/ComponentProcessInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-07T09:47:27Z",
+      "side": 1,
+      "message": "needless bcz of the LOMBOK\n\nCoverage is 100% already",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 0
+      },
+      "revId": "232012261c95a905fa38f98a11ccbe4404b4b0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a16a1d7_9ef76409",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-api/src/test/java/org/openecomp/core/enrichment/types/MonitoringArtifactInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-07T09:47:27Z",
+      "side": 1,
+      "message": "needless bcz of the LOMBOK\n\nCoverage is 100% already\nhttps://sonarcloud.io/code?id\u003donap_sdc\u0026selected\u003donap_sdc%3Aopenecomp-be%2Flib%2Fopenecomp-sdc-enrichment-lib%2Fopenecomp-sdc-enrichment-api%2Fsrc%2Fmain%2Fjava%2Forg%2Fopenecomp%2Fcore%2Fenrichment%2Ftypes%2FMonitoringArtifactInfo.java",
+      "range": {
+        "startLine": 40,
+        "startChar": 3,
+        "endLine": 43,
+        "endChar": 5
+      },
+      "revId": "232012261c95a905fa38f98a11ccbe4404b4b0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
