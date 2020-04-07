@@ -1,4 +1,5 @@
 .. This work is licensed under a Creative Commons Attribution 4.0 International License.
+.. _release_notes:
 
 =============
 Release Notes
@@ -58,7 +59,7 @@ Release Purpose
 *  `SDC-2561 <https://jira.onap.org/browse/SDC-2561>`_ - Transformation of customized Node Types for PNFD
 *  `SDC-2562 <https://jira.onap.org/browse/SDC-2562>`_ - Package Security - support signing of individual artifacts
 *  `SDC-2582 <https://jira.onap.org/browse/SDC-2582>`_ - CBA association enhancement in VNFD to support API decision
-*  `SDC-2584 <https://jira.onap.org/browse/SDC-2584>`_ - SDC-BE - create unique identifier for each execution of test cases.
+*  `SDC-2584 <https://jira.onap.org/browse/SDC-2584>`_ - SDC-BE - create unique identifier for each execution of test cases.
 *  `SDC-2585 <https://jira.onap.org/browse/SDC-2585>`_ - Refresh option in the onboarding validation page
 *  `SDC-2589 <https://jira.onap.org/browse/SDC-2589>`_ - Onboard PNF software version
 *  `SDC-2590 <https://jira.onap.org/browse/SDC-2590>`_ - Upgrade To Cassandra 3
@@ -67,7 +68,7 @@ Release Purpose
 *  `SDC-2638 <https://jira.onap.org/browse/SDC-2638>`_ - Upgrade Portal SDK to latest (2.6.0)
 *  `SDC-2639 <https://jira.onap.org/browse/SDC-2639>`_ - Align logging to Onap-ELS 2019.11
 *  `SDC-2640 <https://jira.onap.org/browse/SDC-2640>`_ - Handle onboard ALTER tables to support upgrade
-*  `SDC-2644 <https://jira.onap.org/browse/SDC-2644>`_ - Collapsing Roles – UI changes
+*  `SDC-2644 <https://jira.onap.org/browse/SDC-2644>`_ - Collapsing Roles - UI changes
 *  `SDC-2645 <https://jira.onap.org/browse/SDC-2645>`_ - From Certified to Distributed - BE
 *  `SDC-2650 <https://jira.onap.org/browse/SDC-2650>`_ - Perform Software Composition Analysis - Vulnerability tables
 *  `SDC-2651 <https://jira.onap.org/browse/SDC-2651>`_ - Tosca Parser - getVFModule - new API
@@ -775,7 +776,7 @@ Workflow information is available in readthedocs
 -  [`SDC-653 <https://jira.onap.org/browse/SDC-653>`__\ ] - implement forwarder capability
 -  [`SDC-657 <https://jira.onap.org/browse/SDC-657>`__\ ] - Error message is not reported to calling functions
 -  [`SDC-661 <https://jira.onap.org/browse/SDC-661>`__\ ] - need to throw an exception in case that substitution mappings is not correct
--  [`SDC-664 <https://jira.onap.org/browse/SDC-664>`__\ ] - JTOSCA Library is missing case insensitive check for status attribute value : “supported” vs “SUPPORTED”
+-  [`SDC-664 <https://jira.onap.org/browse/SDC-664>`__\ ] - JTOSCA Library is missing case insensitive check for status attribute value : "supported" vs "SUPPORTED"
 -  [`SDC-666 <https://jira.onap.org/browse/SDC-666>`__\ ] - Library Import feature is ignoring multiple imports in a file and loading only the last one in sequence
 -  [`SDC-667 <https://jira.onap.org/browse/SDC-667>`__\ ] - Validate and Create capabilities APIs are throwing class cast exception
 -  [`SDC-668 <https://jira.onap.org/browse/SDC-668>`__\ ] - Imports loading is running in to Stack overflow error for CSARs generated via SDC on-boarding process
@@ -871,7 +872,7 @@ Workflow information is available in readthedocs
 -  [`SDC-1188 <https://jira.onap.org/browse/SDC-1188>`__\ ] - User Permission items
 -  [`SDC-1190 <https://jira.onap.org/browse/SDC-1190>`__\ ] - Java proxy classname in audit logs instead of resource name
 -  [`SDC-1192 <https://jira.onap.org/browse/SDC-1192>`__\ ] - ValidationVsp Cannot support multiple sessions
--  [`SDC-1200 <https://jira.onap.org/browse/SDC-1200>`__\ ] - SDC tab shows “HTTP Error 305” after login and accessing from the portal
+-  [`SDC-1200 <https://jira.onap.org/browse/SDC-1200>`__\ ] - SDC tab shows "HTTP Error 305" after login and accessing from the portal
 -  [`SDC-1204 <https://jira.onap.org/browse/SDC-1204>`__\ ] - maven clean leaves files in target
 -  [`SDC-1206 <https://jira.onap.org/browse/SDC-1206>`__\ ] - Create VF fails with 404 error message for subinterface_indicator property
 -  [`SDC-1207 <https://jira.onap.org/browse/SDC-1207>`__\ ] - Distribution cannot create "UEB keys"
@@ -909,7 +910,7 @@ Workflow information is available in readthedocs
 -  [`SDC-1274 <https://jira.onap.org/browse/SDC-1274>`__\ ] - NFOD - Error when adding nic to component
 -  [`SDC-1275 <https://jira.onap.org/browse/SDC-1275>`__\ ] - Logging core tests fail on Linux without hostname
 -  [`SDC-1279 <https://jira.onap.org/browse/SDC-1279>`__\ ] - fix marge job
--  [`SDC-1280 <https://jira.onap.org/browse/SDC-1280>`__\ ] - ‘Model Schema’ is not available for any API in onboarding Swagger
+-  [`SDC-1280 <https://jira.onap.org/browse/SDC-1280>`__\ ] - 'Model Schema' is not available for any API in onboarding Swagger
 -  [`SDC-1281 <https://jira.onap.org/browse/SDC-1281>`__\ ] - TOSCA Analyzer - null point exception
 -  [`SDC-1283 <https://jira.onap.org/browse/SDC-1283>`__\ ] - Onboarding filter archive to active changes when pressing on workspace button
 -  [`SDC-1284 <https://jira.onap.org/browse/SDC-1284>`__\ ] - fix catalog-be start
@@ -1007,27 +1008,27 @@ New Features
 -  [`SDC-53 <https://jira.onap.org/browse/SDC-53>`__\ ] - F28350/302244
    [MVP] SDC 1710 - Increment Conformance Level
 -  [`SDC-54 <https://jira.onap.org/browse/SDC-54>`__\ ] - F36419/299760
-   [EPIC] - [MVP] SDC 1710 – Introduce a new Asset Type: PNF
+   [EPIC] - [MVP] SDC 1710 - Introduce a new Asset Type: PNF
 -  [`SDC-55 <https://jira.onap.org/browse/SDC-55>`__\ ] - F34117/305092
-   [EPIC] - [MVP] SDC 1710 – Enhance the CP
+   [EPIC] - [MVP] SDC 1710 - Enhance the CP
 -  [`SDC-56 <https://jira.onap.org/browse/SDC-56>`__\ ] - F36795/298830
-   [EPIC] – Provide a new Capability to Onboard non-HEAT VNFs based on a
+   [EPIC] - Provide a new Capability to Onboard non-HEAT VNFs based on a
    Questionnaire.
 -  [`SDC-57 <https://jira.onap.org/browse/SDC-57>`__\ ] - F36795/150093
-   [EPIC] – Enhance the VNF Model to include VNFC (VFC)
+   [EPIC] - Enhance the VNF Model to include VNFC (VFC)
 -  [`SDC-58 <https://jira.onap.org/browse/SDC-58>`__\ ] - F36795/291353
    EPIC] - [MVP] ASDC 1710 -TOSCA Parser - Stand alone
 -  [`SDC-59 <https://jira.onap.org/browse/SDC-59>`__\ ] - F36795/296771
-   [EPIC] - [MVP] SDC 1710 - TOSCA Parser – Support Complex Inputs
+   [EPIC] - [MVP] SDC 1710 - TOSCA Parser - Support Complex Inputs
 -  [`SDC-60 <https://jira.onap.org/browse/SDC-60>`__\ ] - F36795/309319
-   EPIC] – Provide Additional Artifact type relevant for VNF Onboarding.
+   EPIC] - Provide Additional Artifact type relevant for VNF Onboarding.
 -  [`SDC-61 <https://jira.onap.org/browse/SDC-61>`__\ ] - F36797/291413
    [EPIC] - Enhance the VFC Model with additional Properties for VFC
    characterization
 -  [`SDC-62 <https://jira.onap.org/browse/SDC-62>`__\ ] - F36801/152151
    [EPIC] - [MVP] ASDC 1707 - Tosca Schema files
 -  [`SDC-63 <https://jira.onap.org/browse/SDC-63>`__\ ] - F36257/292814
-   EPIC] - [MVP] SDC 1710 NFR – Enhance the System Health Check API
+   EPIC] - [MVP] SDC 1710 NFR - Enhance the System Health Check API
 -  [`SDC-64 <https://jira.onap.org/browse/SDC-64>`__\ ] - 306915 EPIC:
    [DevOps] - SSL Certificates separation of certificates for the
    deployment code
@@ -1150,8 +1151,8 @@ New Features
 -  [`SDC-318 <https://jira.onap.org/browse/SDC-318>`__\ ] - Provide
    preset definitions for the enitity types standardized by the
    tosca-nfv specification.
--  [`SDC-325 <https://jira.onap.org/browse/SDC-325>`__\ ] - Add “Network
-   Service” and “E2E Service” to the predefined list of SDC categories.
+-  [`SDC-325 <https://jira.onap.org/browse/SDC-325>`__\ ] - Add "Network
+   Service" and "E2E Service" to the predefined list of SDC categories.
 -  [`SDC-327 <https://jira.onap.org/browse/SDC-327>`__\ ] - add new
    artifact type to SDC
 -  [`SDC-329 <https://jira.onap.org/browse/SDC-329>`__\ ] - add
@@ -1213,7 +1214,7 @@ Bug Fixes
 -  [`SDC-289 <https://jira.onap.org/browse/SDC-289>`__\ ] - UI shows
    {length} and {maxLength} instead of actual limit values
 -  [`SDC-290 <https://jira.onap.org/browse/SDC-290>`__\ ] - discrepancy
-   between the BE and FE on the “Create New License Agreement” Wizard
+   between the BE and FE on the "Create New License Agreement" Wizard
 -  [`SDC-296 <https://jira.onap.org/browse/SDC-296>`__\ ] - The default
    value of the VF input parameter is incorrect.
 -  [`SDC-297 <https://jira.onap.org/browse/SDC-297>`__\ ] - adjust
