@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "97a9e5ed_392cb37a",
+        "filename": "openecomp-be/lib/openecomp-sdc-versioning-lib/openecomp-sdc-versioning-core/src/test/java/org/openecomp/sdc/versioning/impl/VersionCalculatorImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-04-07T10:53:49Z",
+      "side": 1,
+      "message": "Hey, can you please remove the unused constant in VersionCalculatorImpl class?",
+      "revId": "e0460db05f3806b2f4d697b47197bb05b3af8978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
