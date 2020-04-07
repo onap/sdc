@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ed39e664_572733bf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-04-07T11:37:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a15ba07a_8d17bc19",
+      "range": {
+        "startLine": 62,
+        "startChar": 4,
+        "endLine": 79,
+        "endChar": 44
+      },
+      "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "18064679_45429b70",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9408295_f446ce78",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-04-07T11:37:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18064679_45429b70",
+      "range": {
+        "startLine": 249,
+        "startChar": 4,
+        "endLine": 249,
+        "endChar": 10
+      },
+      "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "d987f9a6_131717f7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-04-07T11:37:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d458bc0_9537b3ab",
+      "range": {
+        "startLine": 259,
+        "startChar": 4,
+        "endLine": 259,
+        "endChar": 10
+      },
+      "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "94e4af95_ff4474ce",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2020-04-06T17:27:53Z",
       "side": 1,
       "message": "??",
+      "range": {
+        "startLine": 283,
+        "startChar": 0,
+        "endLine": 291,
+        "endChar": 21
+      },
+      "revId": "b9d38dc5937d9d9c22ae5d9c6eeecd8bf1757791",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb3a05dd_29af3d24",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/CapabilityRequirementConverterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-04-07T11:37:30Z",
+      "side": 1,
+      "message": "This part of the code wasn\u0027t used in the previous version, so I commented on this part. But yes, better I will delete this code.",
+      "parentUuid": "94e4af95_ff4474ce",
       "range": {
         "startLine": 283,
         "startChar": 0,
