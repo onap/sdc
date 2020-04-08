@@ -62,6 +62,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
@@ -806,7 +807,48 @@ public class ComponentInstanceBusinessLogicTest {
     }
 
     @Test
-    public void testGetComponentInstancePropertiesByInputId() {
+    public void testGetComponentInstancePropertiesByInputId_present() {
+        ComponentInstanceBusinessLogic testSubject;
+        Component component = new Service();
+
+        String inputId = "inputId";
+        String componentInstanceId = "componentInstance1_id";
+        String componentInstanceName = "componentInstance1_name";
+
+        ComponentInstance ci = new ComponentInstance();
+        ci.setUniqueId(componentInstanceId);
+        ci.setName(componentInstanceName);
+
+        ComponentInstanceProperty ciProperty = new ComponentInstanceProperty();
+        GetInputValueDataDefinition inputValueDef = new GetInputValueDataDefinition();
+        inputValueDef.setInputId(inputId);
+        List<GetInputValueDataDefinition> inputValueDefList = new ArrayList<>();
+        inputValueDefList.add(inputValueDef);
+        ciProperty.setGetInputValues(inputValueDefList);
+
+        List<ComponentInstanceProperty> ciPropertyList = new ArrayList<>();
+        ciPropertyList.add(ciProperty);
+
+        Map<String, List<ComponentInstanceProperty>> ciPropertyMap = new HashMap<>();
+        ciPropertyMap.put(componentInstanceId, ciPropertyList);
+        component.setComponentInstancesProperties(ciPropertyMap);
+
+        List<ComponentInstance> ciList = new ArrayList<>();
+        ciList.add(ci);
+        component.setComponentInstances(ciList);
+
+        testSubject = createTestSubject();
+        List<ComponentInstanceProperty> result = testSubject.getComponentInstancePropertiesByInputId(component, inputId);
+        assertNotNull(result);
+        assertThat(result.isEmpty()).isFalse();
+        assertThat(result.size()).isOne();
+        ComponentInstanceProperty resultProperty = result.get(0);
+        assertThat(resultProperty.getComponentInstanceId()).isEqualTo(componentInstanceId);
+        assertThat(resultProperty.getComponentInstanceName()).isEqualTo(componentInstanceName);
+    }
+
+    @Test
+    public void testGetComponentInstancePropertiesByInputId_empty() {
         ComponentInstanceBusinessLogic testSubject;
         Component component = new Service();
         String inputId = "";
@@ -816,6 +858,7 @@ public class ComponentInstanceBusinessLogicTest {
         testSubject = createTestSubject();
         result = testSubject.getComponentInstancePropertiesByInputId(component, inputId);
         assertNotNull(result);
+        assertThat(result.isEmpty()).isTrue();
     }
 
     @Test
