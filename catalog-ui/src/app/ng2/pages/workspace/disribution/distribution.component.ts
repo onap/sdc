@@ -87,6 +87,16 @@ export class DistributionComponent implements OnInit {
 
   private async refreshDistributions() {
     await this.initDistributions(this.componentUuid);
+    this.openExpanded();
+  }
+
+  private openExpanded() {
+    const self = this;
+    this.distributions.forEach((row) => {
+        if (self.expanded[row.distributionID]) {
+            self.expandRow(row, false);
+        }
+    })
   }
 
   private updateFilter(event) {
@@ -113,5 +123,6 @@ export class DistributionComponent implements OnInit {
       await this.distributionService.initDistributionsStatusForDistributionID(row.distributionID);
     }
     this.table.rowDetail.toggleExpandRow(row);
+    this.expanded[row.distributionID] = !expanded;
   }
 }
