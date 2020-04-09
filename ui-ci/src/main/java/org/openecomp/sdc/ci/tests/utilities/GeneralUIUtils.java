@@ -413,6 +413,11 @@ public final class GeneralUIUtils {
         return new Select(getDriver().findElement(By.xpath(String.format(TEST_ID_XPATH, dataTestId)))).getFirstSelectedOption();
     }
 
+    public static Select getElementFromDropDown(String dataTestId) {
+        GeneralUIUtils.ultimateWait();
+        return new Select(getDriver().findElement(By.xpath(String.format(TEST_ID_XPATH, dataTestId))));
+    }
+
     public static boolean checkElementsCountInTable(int expectedElementsCount, Supplier<List<WebElement>> func) {
         int maxWaitingPeriodMS = MAX_WAITING_PERIOD;
         int napPeriodMS = NAP_PERIOD;

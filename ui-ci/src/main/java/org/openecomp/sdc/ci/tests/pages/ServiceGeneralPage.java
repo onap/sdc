@@ -40,6 +40,7 @@ import org.openqa.selenium.WebElement;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ServiceGeneralPage extends ResourceGeneralPage {
@@ -117,6 +118,10 @@ public class ServiceGeneralPage extends ResourceGeneralPage {
 
     public static String getCategoryText() {
         return GeneralUIUtils.getSelectedElementFromDropDown(getCategoryDataTestsIdAttribute()).getText();
+    }
+
+    public static List<WebElement> getCategories() {
+        return GeneralUIUtils.getElementFromDropDown(getCategoryDataTestsIdAttribute()).getOptions();
     }
 
     public static String getInstantiationTypeChosenValue() {

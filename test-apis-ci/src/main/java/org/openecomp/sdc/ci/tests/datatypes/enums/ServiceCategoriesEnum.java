@@ -24,7 +24,8 @@ import java.util.Random;
 
 public enum ServiceCategoriesEnum {
 
-	VOIP("VoIP Call Control"), MOBILITY("Mobility"), NETWORK_L4("Network L4+"), NETWORK_L3("Network L1-3");
+	VOIP("VoIP Call Control"), MOBILITY("Mobility"), NETWORK_L4("Network L4+"), NETWORK_L3("Network L1-3"),
+		PARTNERSERVICE("Partner Domain Service");
 	String value;
 
 	private ServiceCategoriesEnum(String value) {
