@@ -79,6 +79,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class Service extends SetupCDTest {
@@ -117,6 +118,21 @@ public class Service extends SetupCDTest {
 
         List<String> actualTags = Arrays.asList(ServiceGeneralPage.getTags());
         assertTrue("wrong tags", (actualTags.size() == 1) && actualTags.get(0).equals(serviceMetadata.getName()));
+    }
+
+    @Test
+    public void validateHiddenCategories() throws Exception {
+        // Create Service
+        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceUIUtils.createService(serviceMetadata);
+
+        // Get categories list
+        List<WebElement> ddOptions = ServiceGeneralPage.getCategories();
+
+        for (WebElement opt: ddOptions) {
+            assertFalse("Hidden Category visible", ServiceCategoriesEnum.PARTNERSERVICE.equals(opt.getText()));
+        }
+
     }
 
     @Test
