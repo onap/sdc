@@ -45,7 +45,7 @@ public class GAB extends SetupCDTest {
 
     private static final int THREAD_SLEEP_TIME = 1000;
     private static final int MAIN_PAGE_ROWS_SIZE = 2;
-    private static final int MAIN_PAGE_COLUMN_SIZE = 5;
+    private static final int MAIN_PAGE_COLUMN_SIZE = 6;
 
     private String pnfFilePath;
     private String vnfFilePath;
