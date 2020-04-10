@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e3c50d1_efbc9726",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentLockerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-04-10T02:14:49Z",
+      "side": 1,
+      "message": "Please add a copyright/license header",
+      "revId": "c370a191441001706bce0f89bed839e8af02eb15",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a12a9820_c74c7a52",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentLockerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-04-10T02:14:49Z",
+      "side": 1,
+      "message": "According to the coding style guide,\nwildcard import \u0027*\u0027 should not be used.",
+      "revId": "c370a191441001706bce0f89bed839e8af02eb15",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
