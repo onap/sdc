@@ -35,15 +35,14 @@ public class ArtifactToolBL {
 	    private boolean allValid = true;
 
 	@Autowired
-	public ArtifactToolBL(
-		List<IArtifactValidatorExecuter> validators) {
+	public ArtifactToolBL(List<IArtifactValidatorExecuter> validators) {
 		this.validators = validators;
 	}
 
-	public boolean validateAll() {
+	public boolean validateAll(String outputFullFilePath) {
 	        for (IArtifactValidatorExecuter validatorExec: validators) {
 	            log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
-	            if (!validatorExec.executeValidations()) {
+	            if (!validatorExec.executeValidations(outputFullFilePath)) {
 	                allValid = false;
 	                log.debug("ValidatorExecuter "+validatorExec.getName()+" finished with warnings");
 	            }

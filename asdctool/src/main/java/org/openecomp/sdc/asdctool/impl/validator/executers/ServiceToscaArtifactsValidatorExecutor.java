@@ -44,13 +44,13 @@ public class ServiceToscaArtifactsValidatorExecutor extends ArtifactValidatorExe
 		}
 
 	@Override
-	public boolean executeValidations() {
+	public boolean executeValidations(String outputFullFilePath) {
 		Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
 		hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 		
 		Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps);
-        return validate(vertices);
+        return validate(vertices, outputFullFilePath);
 	}
 
 	@Override
