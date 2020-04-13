@@ -41,14 +41,14 @@ public class NodeToscaArtifactsValidatorExecuter extends ArtifactValidatorExecut
 	        setName("RESOURCE_TOSCA_ARTIFACTS");
 	    }
 	@Override
-	public boolean executeValidations() {
+	public boolean executeValidations(String outputFullFilePath) {
 		
 		Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());		
 		hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());		
 		
 		Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.NODE_TYPE, hasProps);
-        return validate(vertices);
+        return validate(vertices, outputFullFilePath);
 		
 	}
 

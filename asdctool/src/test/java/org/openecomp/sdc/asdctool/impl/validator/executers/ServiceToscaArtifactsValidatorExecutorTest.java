@@ -42,7 +42,7 @@ public class ServiceToscaArtifactsValidatorExecutorTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.executeValidations();
+		result = testSubject.executeValidations(null);
 	}
 
 	@Test

@@ -41,7 +41,7 @@ public class VFToscaArtifactValidatorExecutor extends ArtifactValidatorExecuter 
 	        setName("VF_TOSCA_ARTIFACTS");
 	    }
 	@Override
-	public boolean executeValidations() {
+	public boolean executeValidations(String outputFullFilePath) {
 		
 		Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
 		hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());	
@@ -49,7 +49,7 @@ public class VFToscaArtifactValidatorExecutor extends ArtifactValidatorExecuter 
 		hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());		
 		
 		Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps);
-		return validate( vertices);
+		return validate(vertices, outputFullFilePath);
 		
 	}
 
