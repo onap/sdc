@@ -21,6 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by chaya on 7/4/2017.
@@ -45,9 +48,9 @@ public class ServiceValidatorExecuter extends TopologyTemplateValidatorExecuter 
     }
 
     @Override
-    public boolean executeValidations() {
+    public boolean executeValidations(Map<String, Set<String>> failedVerticesPerTask, Map<String, Map<String, VertexResult>> resultsPerVertex, String txtReportFilePath) {
         List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.SERVICE);
-        return validate(tasks, vertices);
+        return validate(failedVerticesPerTask, resultsPerVertex, tasks, vertices, txtReportFilePath);
     }
 
     @Override

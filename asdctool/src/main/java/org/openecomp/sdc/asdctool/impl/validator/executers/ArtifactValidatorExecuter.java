@@ -107,10 +107,10 @@ public class ArtifactValidatorExecuter{
 			return result;
 	    }
 	    
-	   public boolean validate( Map<String, List<Component>> vertices) {
+	   public boolean validate(Map<String, List<Component>> vertices, String outputFilePath) {
 		   boolean result = true;
 		   long time = System.currentTimeMillis();
-		   String fileName = ValidationConfigManager.getOutputFilePath() + this.getName() + "_"+ time + ".csv";
+		   String fileName = outputFilePath + this.getName() + "_"+ time + ".csv";
 		   try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
 			writer.write("name, UUID, invariantUUID, state, version\n");
 			Collection<List<Component>> collection = vertices.values();

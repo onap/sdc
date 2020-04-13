@@ -41,6 +41,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
 
 /**
  * Created by chaya on 7/6/2017.
@@ -60,15 +62,18 @@ public class ArtifactValidationUtils {
         this.topologyTemplateOperation = topologyTemplateOperation;
     }
 
-    public ArtifactsVertexResult validateArtifactsAreInCassandra(GraphVertex vertex, String taskName, List<ArtifactDataDefinition> artifacts) {
+    public ArtifactsVertexResult validateArtifactsAreInCassandra(
+            Map<String, Set<String>> failedVerticesPerTask,
+            GraphVertex vertex, String taskName, List<ArtifactDataDefinition> artifacts, String txtReportFilePath
+    ) {
         ArtifactsVertexResult result = new ArtifactsVertexResult(true);
         for(ArtifactDataDefinition artifact:artifacts) {
             boolean isArtifactExist = isArtifactInCassandra(artifact.getEsId());
             String status = isArtifactExist ? "Artifact " + artifact.getEsId() + " is in Cassandra" :
                     "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
-            ReportManager.writeReportLineToFile(status);
+            ReportManager.writeReportLineToFile(status, txtReportFilePath);
             if (!isArtifactExist) {
-                ReportManager.addFailedVertex(taskName, vertex.getUniqueId());
+                ReportManager.addFailedVertex(failedVerticesPerTask, taskName, vertex.getUniqueId());
                 result.setStatus(false);
                 result.addNotFoundArtifact(artifact.getUniqueId());
             }
@@ -97,7 +102,7 @@ public class ArtifactValidationUtils {
         return artifacts;
     }
 
-    public ArtifactsVertexResult validateTopologyTemplateArtifacts(GraphVertex vertex, String taskName) {
+    public ArtifactsVertexResult validateTopologyTemplateArtifacts(Map<String, Set<String>> failedVerticesPerTask, GraphVertex vertex, String taskName, String txtReportFilePath) {
         ArtifactsVertexResult result = new ArtifactsVertexResult();
         ComponentParametersView paramView = new ComponentParametersView();
         paramView.disableAll();
@@ -131,6 +136,6 @@ public class ArtifactValidationUtils {
                     allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
         }
 
-        return validateArtifactsAreInCassandra(vertex, taskName, allArtifacts);
+        return validateArtifactsAreInCassandra(failedVerticesPerTask, vertex, taskName, allArtifacts, txtReportFilePath);
     }
 }

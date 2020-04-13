@@ -43,7 +43,7 @@ public class VFToscaArtifactValidatorExecutorTest {
 
 		// default test
 		testSubject = createTestSubject();
-		Assertions.assertThrows(NullPointerException.class, () -> testSubject.executeValidations());
+		Assertions.assertThrows(NullPointerException.class, () -> testSubject.executeValidations(null	));
 	}
 
 	@Test
