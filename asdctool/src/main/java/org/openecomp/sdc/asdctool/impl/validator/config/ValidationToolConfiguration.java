@@ -35,7 +35,6 @@ import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidat
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.migration.config.mocks.DistributionEngineMock;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
@@ -130,9 +129,6 @@ public class ValidationToolConfiguration {
     public VfValidatorExecuter basicVfValidator(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
         return new VfValidatorExecuter(tasks, janusGraphDao);
     }
-
-    @Bean
-    public ReportManager reportManager() { return new ReportManager();}
 
     @Bean(name = "artifact-cassandra-dao")
     public ArtifactCassandraDao artifactCassandraDao(CassandraClient cassandraClient) {

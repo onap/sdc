@@ -33,6 +33,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -50,7 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
@@ -64,7 +65,7 @@ import static org.mockito.Mockito.when;
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)
 @PrepareForTest({ReportManager.class})
 public class ArtifactValidationUtilsTest {
-    
+
     @Mock
     private ArtifactCassandraDao artifactCassandraDao;
     @Mock
@@ -91,12 +92,12 @@ public class ArtifactValidationUtilsTest {
     private static final String UNIQUE_ID = "4321";
     private static final String UNIQUE_ID_VERTEX = "321";
 
+    private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
+    private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
+    private final static String csvReportFilePath = ValidationConfigManager.DEFAULT_CSV_REPORT_FILE_PATH;
+
     public void initReportManager() {
-        String resourcePath = new File(Objects
-            .requireNonNull(ArtifactValidationUtilsTest.class.getClassLoader().getResource(""))
-            .getFile()).getAbsolutePath();
-        ValidationConfigManager.setOutputFullFilePath(resourcePath);
-        new ReportManager();
+        ReportManager.make(ValidationConfigManager.DEFAULT_CSV_REPORT_FILE_PATH, txtReportFilePath);
     }
 
     @Before
@@ -115,20 +116,21 @@ public class ArtifactValidationUtilsTest {
 
     @After
     public void clean() {
-        ReportManagerHelper.cleanReports();
+        ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
     }
 
     @Test
     public void testValidateArtifactsAreInCassandra() {
+        Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
         // given
         List<ArtifactDataDefinition> artifacts = new ArrayList<>();
         artifacts.add(artifactDataDefinition);
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts);
+            testSubject.validateArtifactsAreInCassandra(failedVerticesPerTask, vertex, TASK_NAME, artifacts, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
         // then
         assertTrue(result.getStatus());
@@ -143,12 +145,15 @@ public class ArtifactValidationUtilsTest {
         artifacts.add(artifactDataDefinition);
         artifacts.add(artifactDataDefinitionNotInCassandra);
 
+        Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
+        Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
+
         // when
         ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts);
-        ReportManager.reportEndOfToolRun();
+            testSubject.validateArtifactsAreInCassandra(failedVerticesPerTask, vertex, TASK_NAME, artifacts, txtReportFilePath);
+        ReportManager.reportEndOfToolRun(failedVerticesPerTask, resultsPerVertex, txtReportFilePath, csvReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
         // then
         assertFalse(result.getStatus());
@@ -204,6 +209,8 @@ public class ArtifactValidationUtilsTest {
     public void testValidateTopologyTemplateArtifacts() {
         // given
 		Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
+		Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
+
 		artifacts.put(ES_ID, artifactDataDefinition);
 
 		when(topologyTemplate.getDeploymentArtifacts()).thenReturn(artifacts);
@@ -222,9 +229,9 @@ public class ArtifactValidationUtilsTest {
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME);
+            testSubject.validateTopologyTemplateArtifacts(failedVerticesPerTask, vertex, TASK_NAME, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
         // then
         assertTrue(result.getStatus());
@@ -236,13 +243,14 @@ public class ArtifactValidationUtilsTest {
 
     @Test
     public void testValidateTopologyTemplateArtifactsNotFoundToscaElement() {
+        Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
         // given
         when(topologyTemplateOperation.getToscaElement(eq(vertex.getUniqueId()), any()))
             .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME);
+            testSubject.validateTopologyTemplateArtifacts(failedVerticesPerTask, vertex, TASK_NAME, txtReportFilePath);
 
         // then
         assertFalse(result.getStatus());

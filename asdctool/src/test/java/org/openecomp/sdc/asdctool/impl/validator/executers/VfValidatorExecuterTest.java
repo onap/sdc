@@ -25,6 +25,7 @@ import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -50,11 +51,6 @@ public class VfValidatorExecuterTest {
 
 	@Test(expected=NullPointerException.class)
 	public void testExecuteValidations() throws Exception {
-		VfValidatorExecuter testSubject;
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.executeValidations();
+		createTestSubject().executeValidations(new HashMap<>(), new HashMap<>(), null);
 	}
 }

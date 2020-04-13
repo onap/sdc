@@ -23,6 +23,8 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
+import java.util.HashMap;
+
 import static org.mockito.Mockito.mock;
 
 public class ServiceValidatorExecuterTest {
@@ -34,21 +36,11 @@ public class ServiceValidatorExecuterTest {
 
 	@Test
 	public void testGetName() {
-		ServiceValidatorExecuter testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getName();
+		createTestSubject().getName();
 	}
 
 	@Test(expected=NullPointerException.class)
-	public void testExecuteValidations() throws Exception {
-		ServiceValidatorExecuter testSubject;
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.executeValidations();
+	public void testExecuteValidations() {
+		createTestSubject().executeValidations(new HashMap<>(), new HashMap<>(), null);
 	}
 }

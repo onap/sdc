@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -59,7 +60,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     @Override
-    public VertexResult validate(GraphVertex vertex) {
+    public VertexResult validate(Map<String, Set<String>> failedVerticesPerTask, GraphVertex vertex, String txtReportFilePath) {
         if (!isAfterSubmitForTesting(vertex)) {
             return new VertexResult(true);
         }
@@ -80,14 +81,20 @@ public class ModuleJsonTask extends ServiceValidationTask {
         for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups).orElse(Collections.emptyMap()).entrySet()) {
             MapGroupsDataDefinition groups = pair.getValue();
             if (groups != null && !groups.getMapToscaDataDefinition().isEmpty()) {
-                return new VertexResult(findCoordinateModuleJson(pair, instDeploymentArtifacts, vertex));
+                return new VertexResult(findCoordinateModuleJson(failedVerticesPerTask, pair, instDeploymentArtifacts, vertex, txtReportFilePath));
             }
             return new VertexResult(true);
         }
         return new VertexResult(true);
     }
 
-    private boolean findCoordinateModuleJson(Map.Entry<String, MapGroupsDataDefinition> pair, Map<String, MapArtifactDataDefinition> instDeploymentArtifacts, GraphVertex vertex) {
+    private boolean findCoordinateModuleJson(
+            Map<String, Set<String>> failedVerticesPerTask,
+            Map.Entry<String, MapGroupsDataDefinition> pair,
+            Map<String, MapArtifactDataDefinition> instDeploymentArtifacts,
+            GraphVertex vertex,
+            String txtReportFilePath
+    ) {
         String groupKey = pair.getKey();
         String[] split = groupKey.split("\\.");
         String instanceName = split[split.length-1];
@@ -102,13 +109,13 @@ public class ModuleJsonTask extends ServiceValidationTask {
             }).collect(Collectors.toList());
             if (moduleJsonArtifacts.size() > 0) {
                 String status = "Instance "+instanceName+" has a corresponding modules.json file: "+moduleJsonArtifacts.get(0).getArtifactName();
-                ReportManager.writeReportLineToFile(status);
+                ReportManager.writeReportLineToFile(status, txtReportFilePath);
                 return true;
             }
         }
         String status = "Instance "+instanceName+" doesn't have a corresponding modules.json file";
-        ReportManager.writeReportLineToFile(status);
-        ReportManager.addFailedVertex(getTaskName(), vertex.getUniqueId());
+        ReportManager.writeReportLineToFile(status, txtReportFilePath);
+        ReportManager.addFailedVertex(failedVerticesPerTask, getTaskName(), vertex.getUniqueId());
         return false;
     }
 

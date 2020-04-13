@@ -21,12 +21,15 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson;
 
 import fj.data.Either;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
@@ -40,7 +43,9 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -81,10 +86,9 @@ public class ModuleJsonTaskTest {
         topologyTemplate.setInstGroups(instGroups);
         topologyTemplate.setInstDeploymentArtifacts(instDeploymentArtifacts);
         when(topologyTemplateOperation.getToscaElement(ArgumentMatchers.eq(vertex.getUniqueId()), ArgumentMatchers.any(ComponentParametersView.class))).thenReturn(Either.left(topologyTemplate));
-        try {
-            test.validate(vertex);
-        } catch (Exception e) {
 
-        }
+        Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
+        VertexResult actual = test.validate(failedVerticesPerTask, vertex, ValidationConfigManager.csvReportFilePath("."));
+        assertThat(actual.getStatus()).isEqualTo(true);
     }
 }
