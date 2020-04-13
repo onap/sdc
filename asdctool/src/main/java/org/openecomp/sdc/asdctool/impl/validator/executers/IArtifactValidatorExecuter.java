@@ -21,7 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 public interface IArtifactValidatorExecuter {
-    boolean executeValidations();
+    boolean executeValidations(String outputFullFilePath);
     String getName();
     
   
