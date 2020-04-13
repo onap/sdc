@@ -21,11 +21,14 @@
 package org.openecomp.sdc.asdctool.impl.validator;
 
 import org.openecomp.sdc.asdctool.impl.validator.executers.ValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by chaya on 7/3/2017.
@@ -45,10 +48,10 @@ public class ValidationToolBL {
         this.validators = validators;
     }
 
-    public boolean validateAll() {
+    public boolean validateAll(Map<String, Set<String>> failedVerticesPerTask, Map<String, Map<String, VertexResult>> resultsPerVertex, String txtReportFilePath) {
         for (ValidatorExecuter validatorExec: validators) {
             log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
-            if (!validatorExec.executeValidations()) {
+            if (!validatorExec.executeValidations(failedVerticesPerTask, resultsPerVertex, txtReportFilePath)) {
                 allValid = false;
                 log.debug("ValidatorExecuter "+validatorExec.getName()+" finished with warnings");
             }

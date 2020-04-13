@@ -23,19 +23,12 @@ package org.openecomp.sdc.asdctool.impl.validator.config;
 import org.openecomp.sdc.asdctool.impl.VrfObjectFixHandler;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
-import org.openecomp.sdc.asdctool.impl.validator.executers.IArtifactValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceToscaArtifactsValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.executers.VFToscaArtifactValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executers.ValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.*;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.migration.config.mocks.DistributionEngineMock;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
@@ -51,13 +44,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArchiveOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ByToscaNameDerivedNodeTypeResolver;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.GroupsOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.*;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.config.CatalogBESpringConfig;
@@ -130,9 +117,6 @@ public class ValidationToolConfiguration {
     public VfValidatorExecuter basicVfValidator(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
         return new VfValidatorExecuter(tasks, janusGraphDao);
     }
-
-    @Bean
-    public ReportManager reportManager() { return new ReportManager();}
 
     @Bean(name = "artifact-cassandra-dao")
     public ArtifactCassandraDao artifactCassandraDao(CassandraClient cassandraClient) {
