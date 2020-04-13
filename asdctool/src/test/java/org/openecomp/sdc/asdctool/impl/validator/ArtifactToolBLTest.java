@@ -49,6 +49,6 @@ public class ArtifactToolBLTest {
 		testSubject = createTestSubject();
 		testSubject.validators = new LinkedList();
 		testSubject.validators.add(new NodeToscaArtifactsValidatorExecuter(janusGraphDaoMock,toscaOperationFacade));
-		result = testSubject.validateAll();
+		result = testSubject.validateAll(null);
 	}
 }

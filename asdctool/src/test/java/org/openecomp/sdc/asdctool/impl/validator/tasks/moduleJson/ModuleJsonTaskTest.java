@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
@@ -40,6 +41,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static org.mockito.Mockito.when;
 
@@ -81,10 +83,8 @@ public class ModuleJsonTaskTest {
         topologyTemplate.setInstGroups(instGroups);
         topologyTemplate.setInstDeploymentArtifacts(instDeploymentArtifacts);
         when(topologyTemplateOperation.getToscaElement(ArgumentMatchers.eq(vertex.getUniqueId()), ArgumentMatchers.any(ComponentParametersView.class))).thenReturn(Either.left(topologyTemplate));
-        try {
-            test.validate(vertex);
-        } catch (Exception e) {
 
-        }
+        Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
+        test.validate(failedVerticesPerTask, vertex, ValidationConfigManager.csvReportFilePath("."));
     }
 }
