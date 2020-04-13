@@ -20,8 +20,11 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+
+import java.util.HashMap;
 
 import static org.mockito.Mockito.mock;
 
@@ -33,14 +36,13 @@ public class ServiceArtifactValidationTaskTest {
 	}
 
 	@Test
-	public void testValidate() throws Exception {
-		ServiceArtifactValidationTask testSubject;
+	public void testValidate() {
 		GraphVertex vertex = null;
-		ArtifactsVertexResult result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.validate(vertex);
+		ArtifactsVertexResult actual = createTestSubject().validate(new HashMap<>(), vertex, null);
+		// TODO: Formerly, there was no assertion in this test
+		// One has been added but the expected result is unknown
+		// This requires a complete refactoring.
+		Assertions.assertThat(actual).isEqualTo(null);
 	}
 
 }

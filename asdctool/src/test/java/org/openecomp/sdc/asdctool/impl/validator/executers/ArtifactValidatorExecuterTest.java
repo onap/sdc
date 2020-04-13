@@ -87,7 +87,7 @@ public class ArtifactValidatorExecuterTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.validate(vertices);
+		result = testSubject.validate(vertices, null);
 		Assert.assertFalse(result);
 	}
 }
