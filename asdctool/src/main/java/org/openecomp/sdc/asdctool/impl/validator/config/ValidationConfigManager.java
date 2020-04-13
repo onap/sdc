@@ -37,38 +37,21 @@ import java.util.Properties;
  */
 public class ValidationConfigManager {
 
-    private static Logger log = LoggerFactory.getLogger(ValidationConfigManager.class);
+    private final static Logger log = LoggerFactory.getLogger(ValidationConfigManager.class);
+    private final static Properties prop = new Properties();
 
-    private static Properties prop = new Properties();
-    private static String outputFullFilePath;
-    private static String outputFilePath;
+    public final static String DEFAULT_CSV_REPORT_FILE_PATH = "summary.csv";
 
     private ValidationConfigManager() {
     }
 
-    public static String getOutputFullFilePath() {
-        return outputFullFilePath;
+    public static String txtReportFilePath(String outputPath) {
+        return outputPath + "/reportOutput.txt";
     }
 
-    public static String getOutputFilePath() {
-        return outputFilePath;
+    public static String csvReportFilePath(String outputPath) {
+        return outputPath + "/csvSummary_" + System.currentTimeMillis() + ".csv";
     }
-
-    public static void setOutputFullFilePath(String outputPath) {
-        ValidationConfigManager.outputFilePath = outputPath;
-        ValidationConfigManager.outputFullFilePath = outputPath + "/reportOutput.txt";
-    }
-
-    public static String getCsvReportFilePath() {
-        return csvReportFilePath;
-    }
-
-    public static void setCsvReportFilePath(String outputPath) {
-        ValidationConfigManager.csvReportFilePath =
-            outputPath + "/csvSummary_" + System.currentTimeMillis() + ".csv";
-    }
-
-    private static String csvReportFilePath = "summary.csv";
 
     public static Properties setValidationConfiguration(String path) {
         InputStream input;

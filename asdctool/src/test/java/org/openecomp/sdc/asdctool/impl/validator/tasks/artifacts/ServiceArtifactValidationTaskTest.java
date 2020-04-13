@@ -23,6 +23,8 @@ package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
+import java.util.HashMap;
+
 import static org.mockito.Mockito.mock;
 
 public class ServiceArtifactValidationTaskTest {
@@ -33,14 +35,9 @@ public class ServiceArtifactValidationTaskTest {
 	}
 
 	@Test
-	public void testValidate() throws Exception {
-		ServiceArtifactValidationTask testSubject;
+	public void testValidate() {
 		GraphVertex vertex = null;
-		ArtifactsVertexResult result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.validate(vertex);
+		createTestSubject().validate(new HashMap<>(), vertex, null);
 	}
 
 }
