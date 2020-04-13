@@ -20,11 +20,16 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
+
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Created by chaya on 7/3/2017.
  */
 public interface ValidatorExecuter {
 
-    boolean executeValidations();
+    boolean executeValidations(Map<String, Set<String>> failedVerticesPerTask, Map<String, Map<String, VertexResult>> resultsPerVertex, String txtReportFilePath);
     String getName();
 }

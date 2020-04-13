@@ -31,15 +31,14 @@ public class ArtifactValidatorTool {
 	public static void main(String[] args) {
 
         String outputPath = args[0];
-        ValidationConfigManager.setOutputFullFilePath(outputPath);
-        ValidationConfigManager.setCsvReportFilePath(outputPath);
-        
+        final String outputFullFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
+
         String appConfigDir = args[1];
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         ArtifactToolBL validationToolBL = context.getBean(ArtifactToolBL.class);
 
         System.out.println("Start ArtifactValidation Tool");
-        Boolean result = validationToolBL.validateAll();
+        boolean result = validationToolBL.validateAll(outputFullFilePath);
         if (result) {
             System.out.println("ArtifactValidation finished successfully");
             System.exit(0);
@@ -50,9 +49,8 @@ public class ArtifactValidatorTool {
 	}
 	
 	private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
-      ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ValidationToolConfiguration.class);
-		return context;
+        ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
+	    return new AnnotationConfigApplicationContext(ValidationToolConfiguration.class);
 	}
 
 }

@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
+import java.util.HashMap;
+
 import static org.mockito.Mockito.mock;
 
 public class VfArtifactValidationTaskTest {
@@ -34,14 +36,9 @@ public class VfArtifactValidationTaskTest {
 	}
 
 	@Test
-	public void testValidate() throws Exception {
-		VfArtifactValidationTask testSubject;
+	public void testValidate() {
 		GraphVertex vertex = null;
-		VertexResult result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.validate(vertex);
+		createTestSubject().validate(new HashMap<>(), vertex, null);
 	}
 
 }

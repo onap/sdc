@@ -132,7 +132,10 @@ public class ValidationToolConfiguration {
     }
 
     @Bean
-    public ReportManager reportManager() { return new ReportManager();}
+    public ReportManager reportManager() { return ReportManager.make(
+            ValidationConfigManager.getCsvReportFilePath(),
+            ValidationConfigManager.getOutputFullFilePath()
+    ); }
 
     @Bean(name = "artifact-cassandra-dao")
     public ArtifactCassandraDao artifactCassandraDao(CassandraClient cassandraClient) {
