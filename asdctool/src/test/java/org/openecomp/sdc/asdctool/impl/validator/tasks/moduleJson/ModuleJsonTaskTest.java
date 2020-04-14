@@ -27,7 +27,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.asdctool.impl.validator.ReportFileWriterTestFactory;
 import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
@@ -42,9 +42,9 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile.makeTxtFile;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModuleJsonTaskTest {
@@ -85,14 +85,7 @@ public class ModuleJsonTaskTest {
         topologyTemplate.setInstDeploymentArtifacts(instDeploymentArtifacts);
         when(topologyTemplateOperation.getToscaElement(ArgumentMatchers.eq(vertex.getUniqueId()), ArgumentMatchers.any(ComponentParametersView.class))).thenReturn(Either.left(topologyTemplate));
 
-        // TODO: Fix these nulls
-        Report report = Report.make(null, ValidationConfigManager.csvReportFilePath("."));
-        // This throws a NullPointerException because there is no file to write to provided.
-        // This has been fixed in another change related to SDC-2499
-        try {
-            test.validate(report, vertex);
-        } catch (Exception e) {
-
-        }
+        Report report = Report.make();
+        test.validate(report, vertex, makeTxtFile(ReportFileWriterTestFactory.makeConsoleWriter()));
     }
 }
