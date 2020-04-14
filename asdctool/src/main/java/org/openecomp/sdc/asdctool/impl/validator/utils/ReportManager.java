@@ -65,14 +65,21 @@ public class ReportManager {
         Files.write(Paths.get(csvReportFilePath), sb.toString().getBytes());
     }
 
-    public static void reportTaskEnd(Map<String, Map<String, VertexResult>> resultsPerVertex, String vertexId, String taskName, VertexResult result) {
+    public static void reportTaskEnd(Report report, String vertexId, String taskName, VertexResult result) {
+        reportTaskEnd(report.getResultsPerVertex(), vertexId, taskName, result);
+    }
+
+    private static void reportTaskEnd(Map<String, Map<String, VertexResult>> resultsPerVertex, String vertexId, String taskName, VertexResult result) {
         Map<String, VertexResult> vertexTasksResults =
                 Optional.ofNullable(resultsPerVertex.get(vertexId)).orElse(new HashMap<>());
         vertexTasksResults.put(taskName, result);
         resultsPerVertex.put(vertexId, vertexTasksResults);
     }
 
-    public static void addFailedVertex (Map<String, Set<String>> failedVerticesPerTask, String taskName, String vertexId) {
+    public static void addFailedVertex(Report report, String taskName, String vertexId) {
+        addFailedVertex(report.getFailedVerticesPerTask(), taskName, vertexId);
+    }
+    private static void addFailedVertex(Map<String, Set<String>> failedVerticesPerTask, String taskName, String vertexId) {
         Set<String> failedVertices = failedVerticesPerTask.get(taskName);
         if (failedVertices == null) {
             failedVertices = new HashSet<>();
@@ -124,7 +131,14 @@ public class ReportManager {
         writeReportLineToFile(sb.toString(), txtReportFilePath);
     }
 
-    public static void reportEndOfToolRun(Map<String, Set<String>> failedVerticesPerTask, Map<String, Map<String, VertexResult>> resultsPerVertex, String txtReportFilePath, String csvReportFilePath) {
+    public static void reportEndOfToolRun(Report report) {
+        reportEndOfToolRun(report.getFailedVerticesPerTask(),
+                report.getResultsPerVertex(),
+                report.getTxtReportFilePath(),
+                report.getCsvReportFilePath());
+    }
+
+    private static void reportEndOfToolRun(Map<String, Set<String>> failedVerticesPerTask, Map<String, Map<String, VertexResult>> resultsPerVertex, String txtReportFilePath, String csvReportFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
         failedVerticesPerTask.forEach((taskName, failedVertices) -> {
@@ -137,7 +151,10 @@ public class ReportManager {
         printAllResults(resultsPerVertex, csvReportFilePath);
     }
 
-    public static void printAllResults(Map<String, Map<String, VertexResult>> resultsPerVertex, String csvReportFilePath) {
+    public static void printAllResults(Report report) {
+        printAllResults(report.getResultsPerVertex(), report.getCsvReportFilePath());
+    }
+    private static void printAllResults(Map<String, Map<String, VertexResult>> resultsPerVertex, String csvReportFilePath) {
         resultsPerVertex.forEach((vertex, tasksResults) -> tasksResults.forEach((task, result) -> {
             try {
                 String resultLine = vertex + "," + task + "," + result.getStatus() + "," + result.getResult();

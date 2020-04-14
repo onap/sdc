@@ -21,10 +21,8 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import org.junit.Test;
-import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
+import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-
-import java.util.HashMap;
 
 import static org.mockito.Mockito.mock;
 
@@ -38,7 +36,8 @@ public class VfArtifactValidationTaskTest {
 	@Test
 	public void testValidate() {
 		GraphVertex vertex = null;
-		createTestSubject().validate(new HashMap<>(), vertex, null);
+		// TODO: Fix these nulls
+		createTestSubject().validate(Report.make(null, null), vertex);
 	}
 
 }
