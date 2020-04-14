@@ -22,7 +22,9 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public final class Report {
@@ -41,19 +43,47 @@ public final class Report {
         this.csvReportFilePath = csvReportFilePath;
     }
 
-    public Map<String, Set<String>> getFailedVerticesPerTask() {
-        return failedVerticesPerTask;
-    }
-
-    public Map<String, Map<String, VertexResult>> getResultsPerVertex() {
-        return resultsPerVertex;
-    }
-
     public String getTxtReportFilePath() {
         return txtReportFilePath;
     }
 
     public String getCsvReportFilePath() {
         return csvReportFilePath;
+    }
+
+    public void addFailedVertex(String taskName, String vertexId) {
+        Set<String> failedVertices = failedVerticesPerTask.get(taskName);
+        if (failedVertices == null) {
+            failedVertices = new HashSet<>();
+        }
+        failedVertices.add(vertexId);
+        failedVerticesPerTask.put(taskName, failedVertices);
+    }
+
+    public void reportTaskEnd(String vertexId, String taskName, VertexResult result) {
+        Map<String, VertexResult> vertexTasksResults =
+                Optional.ofNullable(resultsPerVertex.get(vertexId)).orElse(new HashMap<>());
+        vertexTasksResults.put(taskName, result);
+        resultsPerVertex.put(vertexId, vertexTasksResults);
+    }
+
+    public void forEachFailedVertices(FailureConsumer c) {
+        failedVerticesPerTask.forEach(c::traverse);
+    }
+
+    @FunctionalInterface
+    public interface FailureConsumer {
+        void traverse(String taskName, Set<String> failedVertice);
+    }
+
+    public void forEachResult(ResultsConsumer p) {
+        resultsPerVertex.forEach((vertex, tasksResults) ->
+                tasksResults.forEach((task, result) ->
+                        p.traverse(vertex, task, result)));
+    }
+
+    @FunctionalInterface
+    public interface ResultsConsumer {
+        void traverse(String vertex, String task, VertexResult result);
     }
 }
