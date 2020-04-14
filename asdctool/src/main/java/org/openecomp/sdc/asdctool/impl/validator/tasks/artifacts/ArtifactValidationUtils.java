@@ -65,9 +65,9 @@ public class ArtifactValidationUtils {
             boolean isArtifactExist = isArtifactInCassandra(artifact.getEsId());
             String status = isArtifactExist ? "Artifact " + artifact.getEsId() + " is in Cassandra" :
                     "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
-            ReportManager.writeReportLineToFile(status, report.getTxtReportFilePath());
+            ReportManager.writeReportLineToFile(report, status);
             if (!isArtifactExist) {
-                ReportManager.addFailedVertex(report, taskName, vertex.getUniqueId());
+                report.addFailedVertex(taskName, vertex.getUniqueId());
                 result.setStatus(false);
                 result.addNotFoundArtifact(artifact.getUniqueId());
             }
