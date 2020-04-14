@@ -24,25 +24,18 @@ package org.openecomp.sdc.asdctool.impl.validator.utils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(MockitoJUnitRunner.class)
-@PrepareForTest({ReportManager.class})
 public class ReportManagerTest {
 
     private static final String VERTEX_1_ID = "testID1";
@@ -68,14 +61,11 @@ public class ReportManagerTest {
     private final SortedSet<String> successTasksNames =
         new TreeSet<>(Arrays.asList(TASK_1_NAME, TASK_2_NAME));
 
-    private VertexResult successResult = new VertexResult();
+    private final VertexResult successResult = new VertexResult();
 
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
     private final static String csvReportFilePath = ValidationConfigManager.csvReportFilePath(resourcePath);
-
-    @Mock
-    GraphVertex vertexScanned;
 
 	@Before
     public void setup() {
@@ -128,7 +118,8 @@ public class ReportManagerTest {
     public void testPrintValidationTaskStatus() {
         // given
         Report report = Report.make(txtReportFilePath, csvReportFilePath);
-        when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
+        GraphVertex vertexScanned = new GraphVertex();
+        vertexScanned.setUniqueId(UNIQUE_ID);
 
         // when
         ReportManager.printValidationTaskStatus(report, vertexScanned, TASK_1_NAME, false);
@@ -197,7 +188,8 @@ public class ReportManagerTest {
     public void testReportStartTaskRun() {
         // given
         Report report = Report.make(txtReportFilePath, csvReportFilePath);
-        when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
+        GraphVertex vertexScanned = new GraphVertex();
+        vertexScanned.setUniqueId(UNIQUE_ID);
 
         // when
         ReportManager.reportStartTaskRun(report, vertexScanned, TASK_1_NAME);
