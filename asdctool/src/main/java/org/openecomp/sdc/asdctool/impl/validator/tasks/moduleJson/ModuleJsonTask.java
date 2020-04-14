@@ -22,6 +22,7 @@ package org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson;
 
 import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
+import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -54,7 +55,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     @Override
-    public VertexResult validate(Map<String, Set<String>> failedVerticesPerTask, GraphVertex vertex, String txtReportFilePath) {
+    public VertexResult validate(Report report, GraphVertex vertex) {
         if (!isAfterSubmitForTesting(vertex)) {
             return new VertexResult(true);
         }
@@ -75,7 +76,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
         for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups).orElse(Collections.emptyMap()).entrySet()) {
             MapGroupsDataDefinition groups = pair.getValue();
             if (groups != null && !groups.getMapToscaDataDefinition().isEmpty()) {
-                return new VertexResult(findCoordinateModuleJson(failedVerticesPerTask, pair, instDeploymentArtifacts, vertex, txtReportFilePath));
+                return new VertexResult(findCoordinateModuleJson(report, pair, instDeploymentArtifacts, vertex));
             }
             return new VertexResult(true);
         }
@@ -83,11 +84,10 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     private boolean findCoordinateModuleJson(
-            Map<String, Set<String>> failedVerticesPerTask,
+            Report report,
             Map.Entry<String, MapGroupsDataDefinition> pair,
             Map<String, MapArtifactDataDefinition> instDeploymentArtifacts,
-            GraphVertex vertex,
-            String txtReportFilePath
+            GraphVertex vertex
     ) {
         String groupKey = pair.getKey();
         String[] split = groupKey.split("\\.");
@@ -96,20 +96,17 @@ public class ModuleJsonTask extends ServiceValidationTask {
         if (deploymentsArtifacts != null && !deploymentsArtifacts.getMapToscaDataDefinition().isEmpty()) {
             List<ArtifactDataDefinition> moduleJsonArtifacts = deploymentsArtifacts.getMapToscaDataDefinition().values().stream().filter(artifact -> {
                 String artifactName = artifact.getArtifactName();
-                if (artifactName.startsWith(instanceName) && artifactName.endsWith("modules.json")) {
-                    return true;
-                }
-                return false;
+                return artifactName.startsWith(instanceName) && artifactName.endsWith("modules.json");
             }).collect(Collectors.toList());
             if (moduleJsonArtifacts.size() > 0) {
                 String status = "Instance "+instanceName+" has a corresponding modules.json file: "+moduleJsonArtifacts.get(0).getArtifactName();
-                ReportManager.writeReportLineToFile(status, txtReportFilePath);
+                ReportManager.writeReportLineToFile(status, report.getTxtReportFilePath());
                 return true;
             }
         }
         String status = "Instance "+instanceName+" doesn't have a corresponding modules.json file";
-        ReportManager.writeReportLineToFile(status, txtReportFilePath);
-        ReportManager.addFailedVertex(failedVerticesPerTask, getTaskName(), vertex.getUniqueId());
+        ReportManager.writeReportLineToFile(status, report.getTxtReportFilePath());
+        ReportManager.addFailedVertex(report, getTaskName(), vertex.getUniqueId());
         return false;
     }
 
