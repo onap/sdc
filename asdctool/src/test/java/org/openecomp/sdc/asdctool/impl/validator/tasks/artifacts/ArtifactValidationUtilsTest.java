@@ -22,7 +22,6 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import fj.data.Either;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -42,22 +40,24 @@ import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper.withTxtFile;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)
-@PrepareForTest({ReportManager.class})
 public class ArtifactValidationUtilsTest {
 
     @Mock
@@ -88,18 +88,12 @@ public class ArtifactValidationUtilsTest {
 
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
-    private final static String csvReportFilePath = ValidationConfigManager.DEFAULT_CSV_REPORT_FILE_PATH;
-
-    public void initReportManager() {
-        ReportManager.make(ValidationConfigManager.DEFAULT_CSV_REPORT_FILE_PATH, txtReportFilePath);
-    }
 
     @Before
     public void setup() {
-        initReportManager();
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID)).thenReturn(Either.left(1L));
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID_NOT_IN_CASS))
-            .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
+                .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
 
         when(artifactDataDefinition.getEsId()).thenReturn(ES_ID);
         when(artifactDataDefinitionNotInCassandra.getEsId()).thenReturn(ES_ID_NOT_IN_CASS);
@@ -108,28 +102,25 @@ public class ArtifactValidationUtilsTest {
         when(vertex.getUniqueId()).thenReturn(UNIQUE_ID_VERTEX);
     }
 
-    @After
-    public void clean() {
-        ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
-    }
-
     @Test
     public void testValidateArtifactsAreInCassandra() {
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
         // given
+        Report report = Report.make();
         List<ArtifactDataDefinition> artifacts = new ArrayList<>();
         artifacts.add(artifactDataDefinition);
 
-        // when
-        ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts);
+        withTxtFile(txtReportFilePath, file -> {
+            // when
+            ArtifactsVertexResult result = testSubject.validateArtifactsAreInCassandra(
+                    report, vertex, TASK_NAME, artifacts, file
+            );
+            List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
-        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
-
-        // then
-        assertTrue(result.getStatus());
-        assertEquals(0, result.notFoundArtifacts.size());
-        assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
+            // then
+            assertTrue(result.getStatus());
+            assertEquals(0, result.notFoundArtifacts.size());
+            assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
+        });
     }
 
     @Test
@@ -139,26 +130,26 @@ public class ArtifactValidationUtilsTest {
         artifacts.add(artifactDataDefinition);
         artifacts.add(artifactDataDefinitionNotInCassandra);
 
-        Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
+        Report report = Report.make();
 
         // when
-        ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts);
-        ReportManager.reportEndOfToolRun(report);
+        withTxtFile(txtReportFilePath, file -> {
+            ArtifactsVertexResult avr = testSubject.validateArtifactsAreInCassandra(
+                    report, vertex, TASK_NAME, artifacts, file
+            );
+            file.reportEndOfToolRun(report);
+            List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+            // then
+            assertFalse(avr.getStatus());
+            assertEquals(1, avr.notFoundArtifacts.size());
+            assertEquals(UNIQUE_ID, avr.notFoundArtifacts.iterator().next());
 
-        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
-
-        // then
-        assertFalse(result.getStatus());
-        assertEquals(1, result.notFoundArtifacts.size());
-        assertEquals(UNIQUE_ID, result.notFoundArtifacts.iterator().next());
-
-        assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
-        assertEquals("Artifact " + ES_ID_NOT_IN_CASS + " doesn't exist in Cassandra",
-            reportOutputFile.get(3));
-        assertEquals("Task: " + TASK_NAME, reportOutputFile.get(5));
-        assertEquals("FailedVertices: [" + UNIQUE_ID_VERTEX + "]", reportOutputFile.get(6));
+            assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
+            assertEquals("Artifact " + ES_ID_NOT_IN_CASS + " doesn't exist in Cassandra",
+                    reportOutputFile.get(3));
+            assertEquals("Task: " + TASK_NAME, reportOutputFile.get(5));
+            assertEquals("FailedVertices: [" + UNIQUE_ID_VERTEX + "]", reportOutputFile.get(6));
+        });
     }
 
     @Test
@@ -202,50 +193,52 @@ public class ArtifactValidationUtilsTest {
     @Test
     public void testValidateTopologyTemplateArtifacts() {
         // given
-		Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
-
+        Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
+        Report report = Report.make();
         artifacts.put(ES_ID, artifactDataDefinition);
 
-		when(topologyTemplate.getDeploymentArtifacts()).thenReturn(artifacts);
-		when(topologyTemplate.getArtifacts()).thenReturn(artifacts);
-		when(topologyTemplate.getServiceApiArtifacts()).thenReturn(artifacts);
+        when(topologyTemplate.getDeploymentArtifacts()).thenReturn(artifacts);
+        when(topologyTemplate.getArtifacts()).thenReturn(artifacts);
+        when(topologyTemplate.getServiceApiArtifacts()).thenReturn(artifacts);
 
-		when(mapToscaDataDefinition.getMapToscaDataDefinition()).thenReturn(artifacts);
-		Map<String, MapArtifactDataDefinition> artifactsMap = new HashMap<>();
-		artifactsMap.put(ES_ID, mapToscaDataDefinition);
+        when(mapToscaDataDefinition.getMapToscaDataDefinition()).thenReturn(artifacts);
+        Map<String, MapArtifactDataDefinition> artifactsMap = new HashMap<>();
+        artifactsMap.put(ES_ID, mapToscaDataDefinition);
 
-		when(topologyTemplate.getInstanceArtifacts()).thenReturn(artifactsMap);
-		when(topologyTemplate.getInstDeploymentArtifacts()).thenReturn(artifactsMap);
+        when(topologyTemplate.getInstanceArtifacts()).thenReturn(artifactsMap);
+        when(topologyTemplate.getInstDeploymentArtifacts()).thenReturn(artifactsMap);
 
         when(topologyTemplateOperation.getToscaElement(eq(vertex.getUniqueId()), any()))
-            .thenReturn(Either.left(topologyTemplate));
+                .thenReturn(Either.left(topologyTemplate));
 
-        // when
-        ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME);
+        withTxtFile(txtReportFilePath, file -> {
+            // when
+            ArtifactsVertexResult result = testSubject.validateTopologyTemplateArtifacts(
+                    report, vertex, TASK_NAME, file
+            );
+            List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
-        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+            // then
+            assertTrue(result.getStatus());
+            assertEquals(0, result.notFoundArtifacts.size());
 
-        // then
-        assertTrue(result.getStatus());
-        assertEquals(0, result.notFoundArtifacts.size());
+            IntStream.range(2, reportOutputFile.size()).forEach(
+                    i -> assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(i)));
+        });
 
-        IntStream.range(2, reportOutputFile.size()).forEach(
-            i -> assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(i)));
     }
 
     @Test
     public void testValidateTopologyTemplateArtifactsNotFoundToscaElement() {
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
-
         // given
+        Report report = Report.make();
         when(topologyTemplateOperation.getToscaElement(eq(vertex.getUniqueId()), any()))
-            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         // when
-        ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME);
+        ArtifactsVertexResult result = withTxtFile(txtReportFilePath, file -> {
+            return testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME, file);
+        });
 
         // then
         assertFalse(result.getStatus());
