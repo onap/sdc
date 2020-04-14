@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.openecomp.sdc.be.catalog.enums.ResultStatusEnum.FAIL;
 import static org.openecomp.sdc.be.catalog.enums.ResultStatusEnum.SERVICE_DISABLED;
 import static org.openecomp.sdc.be.config.ConfigurationManager.getConfigurationManager;
@@ -62,8 +63,8 @@ public class DmaapProducerTest {
    
 
     //actually sends the message
-    
-    
+
+
     @Test
     public void pushComponentMessageTest() {
         boolean oldVal = isActive();
@@ -115,26 +116,24 @@ public class DmaapProducerTest {
             assertThat(status.getResultStatus()).isEqualTo(FAIL);
 
         } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail("'JsonProcessingException' detected!", e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail("Unknown exception detected", e);
         }finally {
-            getConfigurationManager().getConfiguration().getDmaapProducerConfiguration().setActive(oldVal);
+            configurationManager.getConfiguration().getDmaapProducerConfiguration().setActive(oldVal);
         }
     }
 
     private boolean isActive(){
-        return getConfigurationManager().getConfiguration().getDmaapProducerConfiguration().getActive();
+        return configurationManager.getConfiguration().getDmaapProducerConfiguration().getActive();
     }
 
     private void toggleInactive(){
-        getConfigurationManager().getConfiguration().getDmaapProducerConfiguration().setActive(false);
+        configurationManager.getConfiguration().getDmaapProducerConfiguration().setActive(false);
     }
 
     private void toggleActive(){
-        getConfigurationManager().getConfiguration().getDmaapProducerConfiguration().setActive(true);
+        configurationManager.getConfiguration().getDmaapProducerConfiguration().setActive(true);
     }
 
 }
