@@ -22,9 +22,7 @@ package org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson;
 
 import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
-import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
+import org.openecomp.sdc.asdctool.impl.validator.utils.*;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
@@ -61,7 +59,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     @Override
-    public VertexResult validate(Report report, GraphVertex vertex) {
+    public VertexResult validate(Report report, GraphVertex vertex, ReportFile.TXTFile file) {
         if (!isAfterSubmitForTesting(vertex)) {
             return new VertexResult(true);
         }
@@ -82,7 +80,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
         for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups).orElse(Collections.emptyMap()).entrySet()) {
             MapGroupsDataDefinition groups = pair.getValue();
             if (groups != null && !groups.getMapToscaDataDefinition().isEmpty()) {
-                return new VertexResult(findCoordinateModuleJson(report, pair, instDeploymentArtifacts, vertex));
+                return new VertexResult(findCoordinateModuleJson(report, pair, instDeploymentArtifacts, vertex, file));
             }
             return new VertexResult(true);
         }
@@ -93,7 +91,8 @@ public class ModuleJsonTask extends ServiceValidationTask {
             Report report,
             Map.Entry<String, MapGroupsDataDefinition> pair,
             Map<String, MapArtifactDataDefinition> instDeploymentArtifacts,
-            GraphVertex vertex
+            GraphVertex vertex,
+            ReportFile.TXTFile file
     ) {
         String groupKey = pair.getKey();
         String[] split = groupKey.split("\\.");
@@ -106,12 +105,12 @@ public class ModuleJsonTask extends ServiceValidationTask {
             }).collect(Collectors.toList());
             if (moduleJsonArtifacts.size() > 0) {
                 String status = "Instance "+instanceName+" has a corresponding modules.json file: "+moduleJsonArtifacts.get(0).getArtifactName();
-                ReportManager.writeReportLineToFile(report, status);
+                file.writeReportLineToFile(status);
                 return true;
             }
         }
         String status = "Instance "+instanceName+" doesn't have a corresponding modules.json file";
-        ReportManager.writeReportLineToFile(report, status);
+        file.writeReportLineToFile(status);
         report.addFailedVertex(getTaskName(), vertex.getUniqueId());
         return false;
     }
