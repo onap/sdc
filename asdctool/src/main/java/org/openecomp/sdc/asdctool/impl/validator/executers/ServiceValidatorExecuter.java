@@ -22,6 +22,7 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -46,9 +47,9 @@ public class ServiceValidatorExecuter extends TopologyTemplateValidatorExecuter 
     }
 
     @Override
-    public boolean executeValidations(Report report) {
+    public boolean executeValidations(Report report, ReportFile.TXTFile file) {
         List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.SERVICE);
-        return validate(report, tasks, vertices);
+        return validate(report, tasks, vertices, file);
     }
 
     @Override
