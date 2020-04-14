@@ -106,13 +106,13 @@ public class ModuleJsonTask extends ServiceValidationTask {
             }).collect(Collectors.toList());
             if (moduleJsonArtifacts.size() > 0) {
                 String status = "Instance "+instanceName+" has a corresponding modules.json file: "+moduleJsonArtifacts.get(0).getArtifactName();
-                ReportManager.writeReportLineToFile(status, report.getTxtReportFilePath());
+                ReportManager.writeReportLineToFile(report, status);
                 return true;
             }
         }
         String status = "Instance "+instanceName+" doesn't have a corresponding modules.json file";
-        ReportManager.writeReportLineToFile(status, report.getTxtReportFilePath());
-        ReportManager.addFailedVertex(report, getTaskName(), vertex.getUniqueId());
+        ReportManager.writeReportLineToFile(report, status);
+        report.addFailedVertex(getTaskName(), vertex.getUniqueId());
         return false;
     }
 
