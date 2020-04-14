@@ -21,7 +21,10 @@
 package org.openecomp.sdc.asdctool.impl.validator;
 
 import org.openecomp.sdc.asdctool.impl.validator.executers.ValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.utils.FileType;
 import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportFileWriter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,10 +49,10 @@ public class ValidationToolBL {
         this.validators = validators;
     }
 
-    public boolean validateAll(Report report) {
+    public boolean validateAll(Report report, ReportFile.TXTFile file) {
         for (ValidatorExecuter validatorExec: validators) {
             log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
-            if (!validatorExec.executeValidations(report)) {
+            if (!validatorExec.executeValidations(report, file)) {
                 allValid = false;
                 log.debug("ValidatorExecuter "+validatorExec.getName()+" finished with warnings");
             }
