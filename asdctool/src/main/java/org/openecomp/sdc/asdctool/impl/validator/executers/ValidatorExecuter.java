@@ -21,12 +21,13 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile;
 
 /**
  * Created by chaya on 7/3/2017.
  */
 public interface ValidatorExecuter {
 
-    boolean executeValidations(Report report);
+    boolean executeValidations(Report report, ReportFile.TXTFile file);
     String getName();
 }
