@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc2e035e_8064740a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentLockerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-14T09:10:07Z",
+      "side": 1,
+      "message": "typo?",
+      "range": {
+        "startLine": 5,
+        "startChar": 22,
+        "endLine": 5,
+        "endChar": 29
+      },
+      "revId": "aa39f1c2127fa05860fd42196d776343f0e44f21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
