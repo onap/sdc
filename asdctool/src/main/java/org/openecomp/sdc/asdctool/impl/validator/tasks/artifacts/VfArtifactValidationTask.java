@@ -21,8 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
-import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
-import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
+import org.openecomp.sdc.asdctool.impl.validator.utils.*;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,7 +40,7 @@ public class VfArtifactValidationTask extends VfValidationTask {
     }
 
     @Override
-    public VertexResult validate(Report report, GraphVertex vertex) {
-        return artifactValidationUtils.validateTopologyTemplateArtifacts(report, vertex, getTaskName());
+    public VertexResult validate(Report report, GraphVertex vertex, ReportFile.TXTFile file) {
+        return artifactValidationUtils.validateTopologyTemplateArtifacts(report, vertex, getTaskName(), file);
     }
 }

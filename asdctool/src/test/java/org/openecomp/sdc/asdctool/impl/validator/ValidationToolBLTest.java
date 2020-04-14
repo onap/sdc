@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static org.mockito.Mockito.mock;
+import static org.openecomp.sdc.asdctool.impl.validator.ReportFileWriterTestFactory.makeConsoleWriter;
+import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile.makeTxtFile;
 
 public class ValidationToolBLTest {
 
@@ -42,7 +44,6 @@ public class ValidationToolBLTest {
 		ValidationToolBL testSubject = createTestSubject();
 		testSubject.validators = new LinkedList<>();
 		testSubject.validators.add(new ServiceValidatorExecuter(janusGraphDaoMock));
-		// TODO: Fix these nulls
-		testSubject.validateAll(Report.make(null, null));
+		testSubject.validateAll(Report.make(), makeTxtFile(makeConsoleWriter()));
 	}
 }
