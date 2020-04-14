@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f9a2cbe_c0f14bbd",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-14T09:41:43Z",
+      "side": 1,
+      "message": "lines duplicated with 82-87",
+      "range": {
+        "startLine": 27,
+        "startChar": 1,
+        "endLine": 31,
+        "endChar": 14
+      },
+      "revId": "e914a7b17c108a1a26cb0d35e56752042fdab091",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
