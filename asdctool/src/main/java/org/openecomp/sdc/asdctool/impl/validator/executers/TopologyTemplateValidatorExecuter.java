@@ -22,9 +22,7 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
-import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
+import org.openecomp.sdc.asdctool.impl.validator.utils.*;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -83,8 +81,11 @@ public class TopologyTemplateValidatorExecuter {
         return results.left().value();
     }
 
-    protected boolean validate(Report report, List<? extends TopologyTemplateValidationTask> tasks, List<GraphVertex> vertices) {
-        ReportManager.reportStartValidatorRun(report, getName(), vertices.size());
+    protected boolean validate(Report report,
+                               List<? extends TopologyTemplateValidationTask> tasks,
+                               List<GraphVertex> vertices,
+                               ReportFile.TXTFile writer) {
+        writer.reportStartValidatorRun(getName(), vertices.size());
         Set<String> failedTasks = new HashSet<>();
         Set<String> successTasks = new HashSet<>();
         boolean successAllVertices = true;
@@ -95,8 +96,8 @@ public class TopologyTemplateValidatorExecuter {
             vertexNum++;
             boolean successAllTasks = true;
             for (TopologyTemplateValidationTask task: tasks) {
-                ReportManager.reportStartTaskRun(report, vertex, task.getTaskName());
-                VertexResult result = task.validate(report, vertex);
+                writer.reportStartTaskRun(vertex, task.getTaskName());
+                VertexResult result = task.validate(report, vertex, writer);
                 if (!result.getStatus()) {
                     failedTasks.add(task.getTaskName());
                     successAllVertices = false;
@@ -104,13 +105,13 @@ public class TopologyTemplateValidatorExecuter {
                 } else if (successAllTasks && vertexNum == verticesSize) {
                     successTasks.add(task.getTaskName());
                 }
-                ReportManager.printValidationTaskStatus(report, vertex, task.getTaskName(), result.getStatus());
+                writer.printValidationTaskStatus(vertex, task.getTaskName(), result.getStatus());
                 report.reportTaskEnd(vertex.getUniqueId(), task.getTaskName(), result);
             }
             String componentScanStatus = successAllTasks? "success" : "failed";
             log.info("Topology Template "+vertex.getUniqueId()+" Validation finished with "+componentScanStatus);
         }
-        ReportManager.reportValidatorTypeSummary(report, getName(), failedTasks, successTasks);
+        writer.reportValidatorTypeSummary(getName(), failedTasks, successTasks);
         return successAllVertices;
     }
 }

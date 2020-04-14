@@ -22,11 +22,9 @@ package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -43,7 +41,7 @@ public class ServiceArtifactValidationTask extends ServiceValidationTask {
     }
 
     @Override
-    public ArtifactsVertexResult validate(Report report, GraphVertex vertex) {
-        return artifactValidationUtils.validateTopologyTemplateArtifacts(report, vertex, getTaskName());
+    public ArtifactsVertexResult validate(Report report, GraphVertex vertex, ReportFile.TXTFile file) {
+        return artifactValidationUtils.validateTopologyTemplateArtifacts(report, vertex, getTaskName(), file);
     }
 }
