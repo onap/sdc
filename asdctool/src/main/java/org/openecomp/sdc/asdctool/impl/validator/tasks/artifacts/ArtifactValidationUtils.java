@@ -22,6 +22,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import fj.data.Either;
+import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -63,17 +64,16 @@ public class ArtifactValidationUtils {
     }
 
     public ArtifactsVertexResult validateArtifactsAreInCassandra(
-            Map<String, Set<String>> failedVerticesPerTask,
-            GraphVertex vertex, String taskName, List<ArtifactDataDefinition> artifacts, String txtReportFilePath
+            Report report, GraphVertex vertex, String taskName, List<ArtifactDataDefinition> artifacts
     ) {
         ArtifactsVertexResult result = new ArtifactsVertexResult(true);
         for(ArtifactDataDefinition artifact:artifacts) {
             boolean isArtifactExist = isArtifactInCassandra(artifact.getEsId());
             String status = isArtifactExist ? "Artifact " + artifact.getEsId() + " is in Cassandra" :
                     "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
-            ReportManager.writeReportLineToFile(status, txtReportFilePath);
+            ReportManager.writeReportLineToFile(status, report.getTxtReportFilePath());
             if (!isArtifactExist) {
-                ReportManager.addFailedVertex(failedVerticesPerTask, taskName, vertex.getUniqueId());
+                ReportManager.addFailedVertex(report, taskName, vertex.getUniqueId());
                 result.setStatus(false);
                 result.addNotFoundArtifact(artifact.getUniqueId());
             }
@@ -102,7 +102,7 @@ public class ArtifactValidationUtils {
         return artifacts;
     }
 
-    public ArtifactsVertexResult validateTopologyTemplateArtifacts(Map<String, Set<String>> failedVerticesPerTask, GraphVertex vertex, String taskName, String txtReportFilePath) {
+    public ArtifactsVertexResult validateTopologyTemplateArtifacts(Report report, GraphVertex vertex, String taskName) {
         ArtifactsVertexResult result = new ArtifactsVertexResult();
         ComponentParametersView paramView = new ComponentParametersView();
         paramView.disableAll();
@@ -136,6 +136,6 @@ public class ArtifactValidationUtils {
                     allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
         }
 
-        return validateArtifactsAreInCassandra(failedVerticesPerTask, vertex, taskName, allArtifacts, txtReportFilePath);
+        return validateArtifactsAreInCassandra(report, vertex, taskName, allArtifacts);
     }
 }

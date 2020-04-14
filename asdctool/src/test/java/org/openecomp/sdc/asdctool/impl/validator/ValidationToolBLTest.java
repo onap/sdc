@@ -22,10 +22,10 @@ package org.openecomp.sdc.asdctool.impl.validator;
 
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import static org.mockito.Mockito.mock;
@@ -37,14 +37,12 @@ public class ValidationToolBLTest {
 	}
 
 	@Test(expected=NullPointerException.class)
-	public void testValidateAll() throws Exception {
-		ValidationToolBL testSubject;
-
-		// default test
+	public void testValidateAll() {
 		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-		testSubject = createTestSubject();
+		ValidationToolBL testSubject = createTestSubject();
 		testSubject.validators = new LinkedList<>();
 		testSubject.validators.add(new ServiceValidatorExecuter(janusGraphDaoMock));
-		testSubject.validateAll(new HashMap<>(), new HashMap<>(), null);
+		// TODO: Fix these nulls
+		testSubject.validateAll(Report.make(null, null));
 	}
 }
