@@ -30,10 +30,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+=======
+>>>>>>> c39a149bb... Enforce state encapsulation in Report
 import java.util.Set;
 
 /**
@@ -68,106 +71,77 @@ public class ReportManager {
         Files.write(Paths.get(csvReportFilePath), sb.toString().getBytes());
     }
 
-    public static void reportTaskEnd(Report report, String vertexId, String taskName, VertexResult result) {
-        reportTaskEnd(report.getResultsPerVertex(), vertexId, taskName, result);
-    }
-
-    private static void reportTaskEnd(Map<String, Map<String, VertexResult>> resultsPerVertex, String vertexId, String taskName, VertexResult result) {
-        Map<String, VertexResult> vertexTasksResults =
-                Optional.ofNullable(resultsPerVertex.get(vertexId)).orElse(new HashMap<>());
-        vertexTasksResults.put(taskName, result);
-        resultsPerVertex.put(vertexId, vertexTasksResults);
-    }
-
-    public static void addFailedVertex(Report report, String taskName, String vertexId) {
-        addFailedVertex(report.getFailedVerticesPerTask(), taskName, vertexId);
-    }
-    private static void addFailedVertex(Map<String, Set<String>> failedVerticesPerTask, String taskName, String vertexId) {
-        Set<String> failedVertices = failedVerticesPerTask.get(taskName);
-        if (failedVertices == null) {
-            failedVertices = new HashSet<>();
-        }
-        failedVertices.add(vertexId);
-        failedVerticesPerTask.put(taskName, failedVertices);
-    }
-
-    public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success, String txtReportFilePath) {
+    public static void printValidationTaskStatus(Report report, GraphVertex vertexScanned, String taskName, boolean success) {
         String successStatus = success ? "success" : "failed";
         String line = "-----------------------Vertex: "+vertexScanned.getUniqueId()+", Task " + taskName + " " +successStatus+"-----------------------";
         StrBuilder sb = new StrBuilder();
         sb.appendln(line);
-        writeReportLineToFile(line, txtReportFilePath);
+        writeReportLineToFile(report, line);
     }
 
-    public static void writeReportLineToFile(String message, String txtReportFilePath) {
+    public static void writeReportLineToFile(Report report, String message) {
         try {
-            Files.write(Paths.get(txtReportFilePath), new StrBuilder().appendNewLine().toString().getBytes(), StandardOpenOption.APPEND);
-            Files.write(Paths.get(txtReportFilePath), message.getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(report.getTxtReportFilePath()), new StrBuilder().appendNewLine().toString().getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(report.getTxtReportFilePath()), message.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
             log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
         }
     }
 
     public static void reportValidatorTypeSummary(
+            Report report,
             String validatorName,
             Set<String> failedTasksNames,
-            Set<String> successTasksNames,
-            String txtReportFilePath
+            Set<String> successTasksNames
     ){
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------ValidatorExecuter " + validatorName + " Validation Summary-----------------------");
         sb.appendln("Failed tasks: "+ failedTasksNames);
         sb.appendln("Success tasks: "+ successTasksNames);
-        writeReportLineToFile(sb.toString(), txtReportFilePath);
+        writeReportLineToFile(report, sb.toString());
     }
 
-    public static void reportStartValidatorRun(String validatorName, int componenentsNum, String txtReportFilePath) {
+    public static void reportStartValidatorRun(Report report, String validatorName, int componenentsNum) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("------ValidatorExecuter " + validatorName + " Validation Started, on "+componenentsNum+" components---------");
-        writeReportLineToFile(sb.toString(), txtReportFilePath);
+        writeReportLineToFile(report, sb.toString());
     }
 
-    public static void reportStartTaskRun(GraphVertex vertex, String taskName, String txtReportFilePath){
+    public static void reportStartTaskRun(Report report, GraphVertex vertex, String taskName){
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------Vertex: "+vertex.getUniqueId()+", Task " + taskName + " Started-----------------------");
-        writeReportLineToFile(sb.toString(), txtReportFilePath);
+        writeReportLineToFile(report, sb.toString());
     }
 
     public static void reportEndOfToolRun(Report report) {
-        reportEndOfToolRun(report.getFailedVerticesPerTask(),
-                report.getResultsPerVertex(),
-                report.getTxtReportFilePath(),
-                report.getCsvReportFilePath());
-    }
-
-    private static void reportEndOfToolRun(Map<String, Set<String>> failedVerticesPerTask, Map<String, Map<String, VertexResult>> resultsPerVertex, String txtReportFilePath, String csvReportFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
-        failedVerticesPerTask.forEach((taskName, failedVertices) -> {
+        report.forEachFailedVertices((taskName, failedVertices) -> {
             sb.append("Task: " + taskName);
             sb.appendNewLine();
             sb.append("FailedVertices: " + failedVertices);
             sb.appendNewLine();
         });
-        writeReportLineToFile(sb.toString(), txtReportFilePath);
-        printAllResults(resultsPerVertex, csvReportFilePath);
+        writeReportLineToFile(report, sb.toString());
+        printAllResults(report);
     }
 
     public static void printAllResults(Report report) {
-        printAllResults(report.getResultsPerVertex(), report.getCsvReportFilePath());
-    }
-    private static void printAllResults(Map<String, Map<String, VertexResult>> resultsPerVertex, String csvReportFilePath) {
-        resultsPerVertex.forEach((vertex, tasksResults) -> tasksResults.forEach((task, result) -> {
+        report.forEachResult((vertex, task, result) -> {
             try {
                 String resultLine = vertex + "," + task + "," + result.getStatus() + "," + result.getResult();
-                Files.write(Paths.get(csvReportFilePath), resultLine.getBytes(),
-                    StandardOpenOption.APPEND);
-                Files.write(Paths.get(csvReportFilePath),
-                    new StrBuilder().appendNewLine().toString().getBytes(),
-                    StandardOpenOption.APPEND);
+                Files.write(Paths.get(report.getCsvReportFilePath()), resultLine.getBytes(),
+                        StandardOpenOption.APPEND);
+                Files.write(Paths.get(report.getCsvReportFilePath()),
+                        new StrBuilder().appendNewLine().toString().getBytes(),
+                        StandardOpenOption.APPEND);
             } catch (IOException e) {
+<<<<<<< HEAD
+=======
+                e.printStackTrace();
+>>>>>>> c39a149bb... Enforce state encapsulation in Report
                 log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
             }
-        }));
+        });
     }
 }
