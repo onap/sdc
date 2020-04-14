@@ -3,13 +3,14 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,31 +19,16 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.config;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
+package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import java.util.Properties;
+// A is a phantom type which is only used for type-safety
+@SuppressWarnings("unused")
+public abstract class ReportFileWriter<A extends FileType> {
+    abstract public void write(String s);
 
-@RunWith(PowerMockRunner.class)
-public class ValidationConfigManagerTest {
-
-    @Test
-    public void testSetValidationConfiguration() {
-        String path = "";
-        Properties result;
-
-        // default test
-        result = ValidationConfigManager.setValidationConfiguration(path);
-    }
-
-    @Test
-    public void testGetValidationConfiguration() {
-        Properties result;
-
-        // default test
-        result = ValidationConfigManager.getValidationConfiguration();
+    public void writeln(String s) {
+        write(s + "\n");
     }
 }
+
