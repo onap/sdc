@@ -93,8 +93,8 @@ public class ReportManagerTest {
         Report report = Report.make(txtReportFilePath, csvReportFilePath);
 
         // when
-        ReportManager.reportTaskEnd(report, VERTEX_1_ID, TASK_1_NAME, successResult);
-        ReportManager.reportTaskEnd(report, VERTEX_2_ID, TASK_2_NAME, successResult);
+        report.reportTaskEnd(VERTEX_1_ID, TASK_1_NAME, successResult);
+        report.reportTaskEnd(VERTEX_2_ID, TASK_2_NAME, successResult);
         ReportManager.printAllResults(report);
 
         List<String> reportCsvFile = ReportManagerHelper.readFileAsList(csvReportFilePath);
@@ -110,7 +110,7 @@ public class ReportManagerTest {
     public void testAddFailedVertex() {
         Report report = Report.make(txtReportFilePath, csvReportFilePath);
         // when
-        ReportManager.addFailedVertex(report, TASK_1_NAME, VERTEX_1_ID);
+        report.addFailedVertex(TASK_1_NAME, VERTEX_1_ID);
         ReportManager.reportEndOfToolRun(report);
 
         List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
@@ -127,10 +127,11 @@ public class ReportManagerTest {
     @Test
     public void testPrintValidationTaskStatus() {
         // given
+        Report report = Report.make(txtReportFilePath, csvReportFilePath);
         when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
 
         // when
-        ReportManager.printValidationTaskStatus(vertexScanned, TASK_1_NAME, false, txtReportFilePath);
+        ReportManager.printValidationTaskStatus(report, vertexScanned, TASK_1_NAME, false);
 
         List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
@@ -145,7 +146,8 @@ public class ReportManagerTest {
     @Test
     public void testWriteReportLineToFile() {
         // when
-        ReportManager.writeReportLineToFile(DUMMY_MESSAGE, txtReportFilePath);
+        Report report = Report.make(txtReportFilePath, csvReportFilePath);
+        ReportManager.writeReportLineToFile(report, DUMMY_MESSAGE);
 
         List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
@@ -159,7 +161,8 @@ public class ReportManagerTest {
     @Test
     public void testReportValidatorTypeSummary() {
         // when
-        ReportManager.reportValidatorTypeSummary(VALIDATOR_NAME, failedTasksNames, successTasksNames, txtReportFilePath);
+        Report report = Report.make(txtReportFilePath, csvReportFilePath);
+        ReportManager.reportValidatorTypeSummary(report, VALIDATOR_NAME, failedTasksNames, successTasksNames);
 
         List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
@@ -178,7 +181,8 @@ public class ReportManagerTest {
 	@Test
 	public void testReportStartValidatorRun() {
 		// when
-		ReportManager.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM, txtReportFilePath);
+        Report report = Report.make(txtReportFilePath, csvReportFilePath);
+		ReportManager.reportStartValidatorRun(report, VALIDATOR_NAME, COMPONENT_SUM);
 
 		List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
@@ -192,10 +196,11 @@ public class ReportManagerTest {
     @Test
     public void testReportStartTaskRun() {
         // given
+        Report report = Report.make(txtReportFilePath, csvReportFilePath);
         when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
 
         // when
-        ReportManager.reportStartTaskRun(vertexScanned, TASK_1_NAME, txtReportFilePath);
+        ReportManager.reportStartTaskRun(report, vertexScanned, TASK_1_NAME);
 
         List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 
