@@ -90,12 +90,12 @@ public class ReportManagerTest {
 
     @Test
     public void testReportTaskEnd() {
-	    Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
+        Report report = Report.make(txtReportFilePath, csvReportFilePath);
 
         // when
-        ReportManager.reportTaskEnd(resultsPerVertex, VERTEX_1_ID, TASK_1_NAME, successResult);
-        ReportManager.reportTaskEnd(resultsPerVertex, VERTEX_2_ID, TASK_2_NAME, successResult);
-        ReportManager.printAllResults(resultsPerVertex, csvReportFilePath);
+        ReportManager.reportTaskEnd(report, VERTEX_1_ID, TASK_1_NAME, successResult);
+        ReportManager.reportTaskEnd(report, VERTEX_2_ID, TASK_2_NAME, successResult);
+        ReportManager.printAllResults(report);
 
         List<String> reportCsvFile = ReportManagerHelper.readFileAsList(csvReportFilePath);
 
@@ -108,13 +108,10 @@ public class ReportManagerTest {
 
     @Test
     public void testAddFailedVertex() {
-
-	    Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
-	    Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
-
+        Report report = Report.make(txtReportFilePath, csvReportFilePath);
         // when
-        ReportManager.addFailedVertex(failedVerticesPerTask, TASK_1_NAME, VERTEX_1_ID);
-        ReportManager.reportEndOfToolRun(failedVerticesPerTask, resultsPerVertex, txtReportFilePath, csvReportFilePath);
+        ReportManager.addFailedVertex(report, TASK_1_NAME, VERTEX_1_ID);
+        ReportManager.reportEndOfToolRun(report);
 
         List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
 

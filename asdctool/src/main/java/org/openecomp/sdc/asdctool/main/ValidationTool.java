@@ -23,18 +23,14 @@ package org.openecomp.sdc.asdctool.main;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationToolConfiguration;
+import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by chaya on 7/3/2017.
@@ -53,12 +49,11 @@ public class ValidationTool {
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         ValidationToolBL validationToolBL = context.getBean(ValidationToolBL.class);
 
-        Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
-        Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
+        Report report = Report.make(txtReportFilePath, csvReportFilePath);
 
         log.info("Start Validation Tool");
-        boolean result = validationToolBL.validateAll(failedVerticesPerTask, resultsPerVertex, txtReportFilePath);
-        ReportManager.reportEndOfToolRun(failedVerticesPerTask, resultsPerVertex, txtReportFilePath, csvReportFilePath);
+        boolean result = validationToolBL.validateAll(report);
+        ReportManager.reportEndOfToolRun(report);
         if (result) {
             log.info("Validation finished successfully");
             System.exit(0);

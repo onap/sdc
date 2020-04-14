@@ -21,9 +21,8 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import org.junit.Test;
+import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-
-import java.util.HashMap;
 
 import static org.mockito.Mockito.mock;
 
@@ -41,6 +40,7 @@ public class ServiceValidatorExecuterTest {
 
 	@Test(expected=NullPointerException.class)
 	public void testExecuteValidations() {
-		createTestSubject().executeValidations(new HashMap<>(), new HashMap<>(), null);
+		// TODO: Fix these nulls
+		createTestSubject().executeValidations(Report.make(null, null));
 	}
 }
