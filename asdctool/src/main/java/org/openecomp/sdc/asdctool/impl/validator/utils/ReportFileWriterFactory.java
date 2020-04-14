@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,33 +19,32 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.junit.Test;
-import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.function.Consumer;
 
-import static org.mockito.Mockito.mock;
-import static org.openecomp.sdc.asdctool.impl.validator.ReportFileWriterTestFactory.makeConsoleWriter;
-import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile.makeTxtFile;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
 
-public class ServiceValidatorExecuterTest {
-
-    private ServiceValidatorExecuter createTestSubject() {
-        JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-        return new ServiceValidatorExecuter(janusGraphDaoMock);
+public final class ReportFileWriterFactory {
+    private ReportFileWriterFactory() {
     }
 
-    @Test
-    public void testGetName() {
-        createTestSubject().getName();
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testExecuteValidations() {
-        createTestSubject().executeValidations(
-                Report.make(),
-                makeTxtFile(makeConsoleWriter())
-        );
+    public static <A extends FileType> ReportFileWriter<A> nioWriter(Path filePath, Consumer<IOException> onError) {
+        return new ReportFileWriter<A>() {
+            @Override
+            public void write(String line) {
+                try {
+                    StandardOpenOption soo = Files.exists(filePath) ? APPEND : CREATE;
+                    Files.write(filePath, line.getBytes(), soo);
+                } catch (IOException ex) {
+                    onError.accept(ex);
+                }
+            }
+        };
     }
 }

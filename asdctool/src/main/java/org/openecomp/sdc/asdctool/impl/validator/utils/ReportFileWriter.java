@@ -3,13 +3,14 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,17 +19,16 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.tasks;
 
-import org.openecomp.sdc.asdctool.impl.validator.utils.*;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-/**
- * Created by chaya on 7/5/2017.
- */
-public interface TopologyTemplateValidationTask {
-    VertexResult validate(Report report, GraphVertex vertex, ReportFile.TXTFile file);
-    String getTaskName();
-    String getTaskResultStatus();
-    void setTaskResultStatus(String status);
+// A is a phantom type which is only used for type-safety
+@SuppressWarnings("unused")
+public abstract class ReportFileWriter<A extends FileType> {
+    abstract public void write(String s);
+
+    public void writeln(String s) {
+        write(s + "\n");
+    }
 }
+
