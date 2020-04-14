@@ -84,7 +84,7 @@ public class TopologyTemplateValidatorExecuter {
     }
 
     protected boolean validate(Report report, List<? extends TopologyTemplateValidationTask> tasks, List<GraphVertex> vertices) {
-        ReportManager.reportStartValidatorRun(getName(), vertices.size(), report.getTxtReportFilePath());
+        ReportManager.reportStartValidatorRun(report, getName(), vertices.size());
         Set<String> failedTasks = new HashSet<>();
         Set<String> successTasks = new HashSet<>();
         boolean successAllVertices = true;
@@ -95,7 +95,7 @@ public class TopologyTemplateValidatorExecuter {
             vertexNum++;
             boolean successAllTasks = true;
             for (TopologyTemplateValidationTask task: tasks) {
-                ReportManager.reportStartTaskRun(vertex, task.getTaskName(), report.getTxtReportFilePath());
+                ReportManager.reportStartTaskRun(report, vertex, task.getTaskName());
                 VertexResult result = task.validate(report, vertex);
                 if (!result.getStatus()) {
                     failedTasks.add(task.getTaskName());
@@ -104,13 +104,13 @@ public class TopologyTemplateValidatorExecuter {
                 } else if (successAllTasks && vertexNum == verticesSize) {
                     successTasks.add(task.getTaskName());
                 }
-                ReportManager.printValidationTaskStatus(vertex, task.getTaskName(), result.getStatus(), report.getTxtReportFilePath());
-                ReportManager.reportTaskEnd(report, vertex.getUniqueId(), task.getTaskName(), result);
+                ReportManager.printValidationTaskStatus(report, vertex, task.getTaskName(), result.getStatus());
+                report.reportTaskEnd(vertex.getUniqueId(), task.getTaskName(), result);
             }
             String componentScanStatus = successAllTasks? "success" : "failed";
             log.info("Topology Template "+vertex.getUniqueId()+" Validation finished with "+componentScanStatus);
         }
-        ReportManager.reportValidatorTypeSummary(getName(), failedTasks, successTasks, report.getTxtReportFilePath());
+        ReportManager.reportValidatorTypeSummary(report, getName(), failedTasks, successTasks);
         return successAllVertices;
     }
 }
