@@ -28,6 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
@@ -84,7 +85,8 @@ public class ModuleJsonTaskTest {
         topologyTemplate.setInstDeploymentArtifacts(instDeploymentArtifacts);
         when(topologyTemplateOperation.getToscaElement(ArgumentMatchers.eq(vertex.getUniqueId()), ArgumentMatchers.any(ComponentParametersView.class))).thenReturn(Either.left(topologyTemplate));
 
-        Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
-        test.validate(failedVerticesPerTask, vertex, ValidationConfigManager.csvReportFilePath("."));
+        // TODO: Fix these nulls
+        Report report = Report.make(null, ValidationConfigManager.csvReportFilePath("."));
+        test.validate(report, vertex);
     }
 }
