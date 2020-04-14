@@ -21,34 +21,22 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper.withCsvFile;
+import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper.withTxtFile;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(MockitoJUnitRunner.class)
-@PrepareForTest({ReportManager.class})
 public class ReportManagerTest {
 
     private static final String VERTEX_1_ID = "testID1";
@@ -74,36 +62,28 @@ public class ReportManagerTest {
     private final SortedSet<String> successTasksNames =
         new TreeSet<>(Arrays.asList(TASK_1_NAME, TASK_2_NAME));
 
-    private VertexResult successResult = new VertexResult();
+    private final VertexResult successResult = new VertexResult();
 
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
     private final static String csvReportFilePath = ValidationConfigManager.csvReportFilePath(resourcePath);
 
-    @Mock
-    GraphVertex vertexScanned;
-
 	@Before
     public void setup() {
-        ReportManager.make(csvReportFilePath, txtReportFilePath);
         successResult.setStatus(true);
-    }
-
-    @After
-    public void clean() {
-        ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
     }
 
     @Test
     public void testReportTaskEnd() {
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
+        Report report = Report.make();
 
         // when
         report.reportTaskEnd(VERTEX_1_ID, TASK_1_NAME, successResult);
         report.reportTaskEnd(VERTEX_2_ID, TASK_2_NAME, successResult);
-        ReportManager.printAllResults(report);
-
-        List<String> reportCsvFile = ReportManagerHelper.readFileAsList(csvReportFilePath);
+        List<String> reportCsvFile = withCsvFile(csvReportFilePath, file -> {
+            file.printAllResults(report);
+            return ReportManagerHelper.readFileAsList(csvReportFilePath);
+        });
 
         // then
         assertNotNull(reportCsvFile);
@@ -114,12 +94,14 @@ public class ReportManagerTest {
 
     @Test
     public void testAddFailedVertex() {
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
+        Report report = Report.make();
+
         // when
         report.addFailedVertex(TASK_1_NAME, VERTEX_1_ID);
-        ReportManager.reportEndOfToolRun(report);
-
-        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+        List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
+            file.reportEndOfToolRun(report);
+            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
         assertNotNull(reportOutputFile);
@@ -133,13 +115,14 @@ public class ReportManagerTest {
     @Test
     public void testPrintValidationTaskStatus() {
         // given
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
-        when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
+        GraphVertex vertexScanned = new GraphVertex();
+        vertexScanned.setUniqueId(UNIQUE_ID);
 
         // when
-        ReportManager.printValidationTaskStatus(report, vertexScanned, TASK_1_NAME, false);
-
-        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+        List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
+            file.printValidationTaskStatus(vertexScanned, TASK_1_NAME, false);
+            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
         assertNotNull(reportOutputFile);
@@ -152,10 +135,10 @@ public class ReportManagerTest {
     @Test
     public void testWriteReportLineToFile() {
         // when
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
-        ReportManager.writeReportLineToFile(report, DUMMY_MESSAGE);
-
-        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+        List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
+            file.writeReportLineToFile(DUMMY_MESSAGE);
+            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
         assertNotNull(reportOutputFile);
@@ -167,10 +150,10 @@ public class ReportManagerTest {
     @Test
     public void testReportValidatorTypeSummary() {
         // when
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
-        ReportManager.reportValidatorTypeSummary(report, VALIDATOR_NAME, failedTasksNames, successTasksNames);
-
-        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+        List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
+            file.reportValidatorTypeSummary(VALIDATOR_NAME, failedTasksNames, successTasksNames);
+            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
         assertNotNull(reportOutputFile);
@@ -187,10 +170,10 @@ public class ReportManagerTest {
 	@Test
 	public void testReportStartValidatorRun() {
 		// when
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
-		ReportManager.reportStartValidatorRun(report, VALIDATOR_NAME, COMPONENT_SUM);
-
-		List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+        List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
+            file.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM);
+            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+        });
 
 		// then
         assertNotNull(reportOutputFile);
@@ -202,13 +185,14 @@ public class ReportManagerTest {
     @Test
     public void testReportStartTaskRun() {
         // given
-        Report report = Report.make(txtReportFilePath, csvReportFilePath);
-        when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
+        GraphVertex vertexScanned = new GraphVertex();
+        vertexScanned.setUniqueId(UNIQUE_ID);
 
         // when
-        ReportManager.reportStartTaskRun(report, vertexScanned, TASK_1_NAME);
-
-        List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+        List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
+            file.reportStartTaskRun(vertexScanned, TASK_1_NAME);
+            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
         assertNotNull(reportOutputFile);

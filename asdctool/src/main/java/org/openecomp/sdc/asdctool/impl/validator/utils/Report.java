@@ -31,25 +31,11 @@ public final class Report {
     private final Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
     private final Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
 
-    private final String txtReportFilePath;
-    private final String csvReportFilePath;
-
-    public static Report make(String txtReportFilePath, String csvReportFilePath) {
-        return new Report(txtReportFilePath, csvReportFilePath);
+    public static Report make() {
+        return new Report();
     }
 
-    private Report(String txtReportFilePath, String csvReportFilePath) {
-        this.txtReportFilePath = txtReportFilePath;
-        this.csvReportFilePath = csvReportFilePath;
-    }
-
-    public String getTxtReportFilePath() {
-        return txtReportFilePath;
-    }
-
-    public String getCsvReportFilePath() {
-        return csvReportFilePath;
-    }
+    private Report() { }
 
     public void addFailedVertex(String taskName, String vertexId) {
         Set<String> failedVertices = failedVerticesPerTask.get(taskName);
@@ -86,4 +72,5 @@ public final class Report {
     public interface ResultsConsumer {
         void traverse(String vertex, String task, VertexResult result);
     }
+
 }
