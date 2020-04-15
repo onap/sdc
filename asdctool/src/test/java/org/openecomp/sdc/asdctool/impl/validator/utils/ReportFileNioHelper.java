@@ -32,9 +32,9 @@ import java.util.stream.Collectors;
 import static org.openecomp.sdc.asdctool.impl.validator.ReportFileWriterTestFactory.makeNioWriter;
 import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile.makeCsvFile;
 
-public class ReportManagerHelper {
+public class ReportFileNioHelper {
 
-    private ReportManagerHelper() {
+    private ReportFileNioHelper() {
     }
 
     public static void withTxtFile(String txtReportFilePath, Consumer<ReportFile.TXTFile> f) {
