@@ -137,7 +137,7 @@ public class MonitoringMetricsFetcher {
 			cpuTime = (long) platformMBeanServer.getAttribute(
 					new ObjectName(ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME), PROCESS_CPU_TIME_ATTR);
 		} catch (Exception e) {
-			monitoringLogger.error("Couldn't measure JVM CPU time, error: {}", e);
+			monitoringLogger.error("Couldn't measure JVM CPU time", e);
 		}
 		return cpuTime;
 	}
@@ -152,7 +152,7 @@ public class MonitoringMetricsFetcher {
 		try {
 			cpuTime = sigarSession.getCpu().getTotal();
 		} catch (Exception e) {
-			monitoringLogger.error("Couldn't measure host CPU time, error: {}", e);
+			monitoringLogger.error("Couldn't measure host CPU time", e);
 		}
 		return cpuTime;
 	}
@@ -167,7 +167,7 @@ public class MonitoringMetricsFetcher {
 		try {
 			memory = sigarSession.getMem().getUsedPercent();
 		} catch (Exception e) {
-			monitoringLogger.error("Couldn't measure host used memory, error: {}", e);
+			monitoringLogger.error("Couldn't measure host used memory", e);
 		}
 		return memory;
 	}
@@ -188,7 +188,7 @@ public class MonitoringMetricsFetcher {
 				res.put(dirName, usePercent);
 			}
 		} catch (Exception e) {
-			monitoringLogger.error("Couldn't measure host used disk, error: {}", e);
+			monitoringLogger.error("Couldn't measure host used disk", e);
 		}
 		return res;
 	}
@@ -203,7 +203,7 @@ public class MonitoringMetricsFetcher {
 		try {
 			fqdn = sigarSession.getFQDN();
 		} catch (Exception e) {
-			monitoringLogger.error("Couldn't get FQDN, error: {}", e);
+			monitoringLogger.error("Couldn't get FQDN", e);
 		}
 		return fqdn;
 	}

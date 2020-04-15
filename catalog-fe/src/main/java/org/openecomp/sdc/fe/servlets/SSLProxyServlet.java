@@ -65,7 +65,7 @@ public abstract class SSLProxyServlet extends ProxyServlet {
         try {
             httpClient.start();
         } catch (Exception x) {
-            log.error("Exception thrown while starting httpClient {}", x);
+            log.error("Exception thrown while starting httpClient", x);
             throw new ServletException(x);
         }
 

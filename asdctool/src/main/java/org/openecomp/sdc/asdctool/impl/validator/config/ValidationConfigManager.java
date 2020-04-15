@@ -77,7 +77,7 @@ public class ValidationConfigManager {
             prop.load(input);
         } catch (IOException ex) {
             ex.printStackTrace();
-            log.info("FileInputStream failed - {}", ex);
+            log.info("FileInputStream failed", ex);
         }
         return prop;
     }
