@@ -12,6 +12,8 @@
 **/.idea/
 /out/
 *.iml
+*.ipr
+*.iws
 
 # Logs
 #------------------------------------------------------------
@@ -23,12 +25,6 @@
 
 #Excluded Script Folder
 xFolder
-
-# IntelliJ IDE
-#------------------------------------------------------------
-**/.idea/
-/out/
-*.iml
 
 
 # Maven
@@ -42,16 +38,14 @@ version.properties
 
 ## sdc-os-chef
 *.class
-# Package Files
+
 
 # Package Files
 #------------------------------------------------------------
 *.ear
-*.iml
 *.jar
 *.war
-#Gradle
-.gradle/*
+
 
 #Gradle
 .gradle/*
@@ -63,7 +57,6 @@ gradlew.bat
 gradlew
 settings.gradle
 
-/log
 /log
 *.kpf
 *.orig
@@ -79,8 +72,6 @@ catalog-ui/*.tmp.txt
 catalog-ui/tests/Coverage/*
 catalog-ui/Chrome*
 catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
-
-catalog-ui/app/dist/*
 .metadata/
 .metadata/*
 .project
@@ -101,15 +92,10 @@ catalog-builders/bin/
 catalog-dao/bin/
 catalog-fe/bin
 catalog-fe/src/main/webapp/*
-catalog-ui/*.tmp.txt
-catalog-ui/app/dist/*
 catalog-ui/.editorconfig
 catalog-ui/.jshintrc
 catalog-ui/.yo-rc.json
-catalog-ui/Chrome*
-catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
 catalog-ui/app/**/*.css
-catalog-ui/app/dist/*
 catalog-ui/app/robots.txt
 catalog-ui/app/scripts/**/*.js
 catalog-ui/app/scripts/**/*.js.map
@@ -117,21 +103,9 @@ catalog-ui/app/scripts/references.ts
 catalog-ui/app/scripts/tsconfig.json
 catalog-ui/app/tsconfig.json
 catalog-ui/package-lock.json
-catalog-ui/dist
-catalog-ui/*.tmp.txt
-catalog-ui/tests/Coverage/*
-catalog-ui/Chrome*
-catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
-catalog-ui/*.tmp.txt
-catalog-ui/tests/Coverage/*
-catalog-ui/Chrome*
-catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
-catalog-ui/tests/Coverage/*
-catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
 catalog-ui/node/*
 catalog-ui/node_modules/
 catalog-ui/npm-debug.log
-catalog-ui/tests/Coverage/*
 common-app-api/bin/
 data/compute.png
 data/loadbalancer.png
@@ -241,15 +215,6 @@ automationDownloadDir*/
 
 
 utils/DmaapPublisher/logs/*
-
-
-
-
-
-utils/DmaapPublisher/logs/*
-
-*.xls
-
 
 
 
