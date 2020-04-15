@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportFileNioHelper;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -56,7 +56,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper.withTxtFile;
+import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFileNioHelper.withTxtFile;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)
@@ -116,7 +116,7 @@ public class ArtifactValidationUtilsTest {
             ArtifactsVertexResult result = testSubject.validateArtifactsAreInCassandra(
                     report, vertex, TASK_NAME, artifacts, file
             );
-            List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+            List<String> reportOutputFile = ReportFileNioHelper.readFileAsList(txtReportFilePath);
 
             // then
             assertTrue(result.getStatus());
@@ -140,7 +140,7 @@ public class ArtifactValidationUtilsTest {
                     report, vertex, TASK_NAME, artifacts, file
             );
             file.reportEndOfToolRun(report);
-            List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+            List<String> reportOutputFile = ReportFileNioHelper.readFileAsList(txtReportFilePath);
             // then
             assertFalse(avr.getStatus());
             assertEquals(1, avr.notFoundArtifacts.size());
@@ -218,7 +218,7 @@ public class ArtifactValidationUtilsTest {
             ArtifactsVertexResult result = testSubject.validateTopologyTemplateArtifacts(
                     report, vertex, TASK_NAME, file
             );
-            List<String> reportOutputFile = ReportManagerHelper.readFileAsList(txtReportFilePath);
+            List<String> reportOutputFile = ReportFileNioHelper.readFileAsList(txtReportFilePath);
 
             // then
             assertTrue(result.getStatus());
