@@ -45,7 +45,7 @@ public class ValidationTool {
 
         String outputPath = args[0];
         String txtReportFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
-        String csvReportFilePath = ValidationConfigManager.csvReportFilePath(outputPath);
+        String csvReportFilePath = ValidationConfigManager.csvReportFilePath(outputPath, System::currentTimeMillis);
 
         ReportFile.CSVFile csvFile = ReportFile.makeCsvFile(makeNioWriter(Paths.get(csvReportFilePath)));
         ReportFile.TXTFile textFile = ReportFile.makeTxtFile(makeNioWriter(Paths.get(txtReportFilePath)));
