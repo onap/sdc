@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,28 +21,27 @@
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Properties;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager.csvReportFilePath;
+import static org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager.txtReportFilePath;
 
-@RunWith(PowerMockRunner.class)
 public class ValidationConfigManagerTest {
 
     @Test
-    public void testSetValidationConfiguration() {
-        String path = "";
-        Properties result;
-
-        // default test
-        result = ValidationConfigManager.setValidationConfiguration(path);
+    public void testTxtReportFilePath() {
+        String randomOutput = System.currentTimeMillis() + "";
+        assertThat(txtReportFilePath(randomOutput), equalTo(randomOutput + "/reportOutput.txt"));
     }
 
     @Test
-    public void testGetValidationConfiguration() {
-        Properties result;
-
-        // default test
-        result = ValidationConfigManager.getValidationConfiguration();
+    public void testCsvReportFilePath() {
+        String randomOutput = System.currentTimeMillis() + "";
+        long millis = System.currentTimeMillis();
+        assertThat(
+                csvReportFilePath(randomOutput, () -> millis),
+                equalTo(randomOutput + "/csvSummary_" + millis + ".csv")
+        );
     }
 }
