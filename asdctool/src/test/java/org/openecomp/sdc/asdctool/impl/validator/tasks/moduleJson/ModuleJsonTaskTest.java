@@ -44,7 +44,9 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile.makeTxtFile;
 
@@ -91,6 +93,6 @@ public class ModuleJsonTaskTest {
     Report report = Report.make();
     VertexResult actual =
         test.validate(report, vertex, makeTxtFile(ReportFileWriterTestFactory.makeConsoleWriter()));
-    assertThat(actual.getStatus()).isEqualTo(true);
+    assertThat(actual.getStatus(), is(true));
   }
 }
