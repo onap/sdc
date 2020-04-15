@@ -66,7 +66,7 @@ public class ReporFileTest {
 
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
-    private final static String csvReportFilePath = ValidationConfigManager.csvReportFilePath(resourcePath);
+    private final static String csvReportFilePath = ValidationConfigManager.csvReportFilePath(resourcePath, System::currentTimeMillis);
 
 	@Before
     public void setup() {

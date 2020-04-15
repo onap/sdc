@@ -8,7 +8,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  *
@@ -24,48 +24,22 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.function.Supplier;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
-/**
- * Created by chaya on 7/4/2017.
- */
 public class ValidationConfigManager {
 
-    private static final Logger log = LoggerFactory.getLogger(ValidationConfigManager.class);
-    private static final Properties prop = new Properties();
-
-    public static final String DEFAULT_CSV_REPORT_FILE_PATH = "summary.csv";
+    private static final String REPORT_OUTPUT_FILE_NAME = "/reportOutput.txt";
+    private static final String CSV_FILE_PREFIX = "/csvSummary_";
+    private static final String CSV_EXT = ".csv";
 
     private ValidationConfigManager() {
     }
 
     public static String txtReportFilePath(String outputPath) {
-        return outputPath + "/reportOutput.txt";
+        return outputPath + REPORT_OUTPUT_FILE_NAME;
     }
 
-    public static String csvReportFilePath(String outputPath) {
-        return outputPath + "/csvSummary_" + System.currentTimeMillis() + ".csv";
-    }
-
-    public static Properties setValidationConfiguration(String path) {
-        InputStream input;
-        try {
-            input = new FileInputStream(path);
-            prop.load(input);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            log.info("FileInputStream failed - {}", ex);
-        }
-        return prop;
-    }
-
-    public static Properties getValidationConfiguration() {
-        return prop;
+    public static String csvReportFilePath(String outputPath, Supplier<Long> getTime) {
+        return outputPath + CSV_FILE_PREFIX + getTime.get() + CSV_EXT;
     }
 }
