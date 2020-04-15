@@ -34,10 +34,10 @@ import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper.withCsvFile;
-import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper.withTxtFile;
+import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFileNioHelper.withCsvFile;
+import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFileNioHelper.withTxtFile;
 
-public class ReportManagerTest {
+public class ReporFileTest {
 
     private static final String VERTEX_1_ID = "testID1";
     private static final String TASK_1_FAILED_NAME = "testFailedTask1";
@@ -82,7 +82,7 @@ public class ReportManagerTest {
         report.reportTaskEnd(VERTEX_2_ID, TASK_2_NAME, successResult);
         List<String> reportCsvFile = withCsvFile(csvReportFilePath, file -> {
             file.printAllResults(report);
-            return ReportManagerHelper.readFileAsList(csvReportFilePath);
+            return ReportFileNioHelper.readFileAsList(csvReportFilePath);
         });
 
         // then
@@ -100,7 +100,7 @@ public class ReportManagerTest {
         report.addFailedVertex(TASK_1_NAME, VERTEX_1_ID);
         List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
             file.reportEndOfToolRun(report);
-            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
         });
 
         // then
@@ -121,7 +121,7 @@ public class ReportManagerTest {
         // when
         List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
             file.printValidationTaskStatus(vertexScanned, TASK_1_NAME, false);
-            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
         });
 
         // then
@@ -137,7 +137,7 @@ public class ReportManagerTest {
         // when
         List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
             file.writeReportLineToFile(DUMMY_MESSAGE);
-            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
         });
 
         // then
@@ -152,7 +152,7 @@ public class ReportManagerTest {
         // when
         List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
             file.reportValidatorTypeSummary(VALIDATOR_NAME, failedTasksNames, successTasksNames);
-            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
         });
 
         // then
@@ -172,7 +172,7 @@ public class ReportManagerTest {
 		// when
         List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
             file.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM);
-            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
         });
 
 		// then
@@ -191,7 +191,7 @@ public class ReportManagerTest {
         // when
         List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
             file.reportStartTaskRun(vertexScanned, TASK_1_NAME);
-            return ReportManagerHelper.readFileAsList(txtReportFilePath);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
         });
 
         // then
