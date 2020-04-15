@@ -66,9 +66,10 @@ public class ReporFileTest {
 
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
-    private final static String csvReportFilePath = ValidationConfigManager.csvReportFilePath(resourcePath);
+    private final static String csvReportFilePath = ValidationConfigManager
+        .csvReportFilePath(resourcePath, System::currentTimeMillis);
 
-	@Before
+    @Before
     public void setup() {
         successResult.setStatus(true);
     }
@@ -167,20 +168,20 @@ public class ReporFileTest {
             reportOutputFile.get(4));
     }
 
-	@Test
-	public void testReportStartValidatorRun() {
-		// when
+    @Test
+    public void testReportStartValidatorRun() {
+        // when
         List<String> reportOutputFile = withTxtFile(txtReportFilePath, file -> {
             file.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM);
             return ReportFileNioHelper.readFileAsList(txtReportFilePath);
         });
 
-		// then
+        // then
         assertNotNull(reportOutputFile);
         assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
         assertEquals("------ValidatorExecuter " + VALIDATOR_NAME + " Validation Started, on "
             + COMPONENT_SUM + " components---------", reportOutputFile.get(2));
-	}
+    }
 
     @Test
     public void testReportStartTaskRun() {
@@ -198,11 +199,11 @@ public class ReporFileTest {
         assertNotNull(reportOutputFile);
         assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
         assertEquals("-----------------------Vertex: " + UNIQUE_ID + ", Task " + TASK_1_NAME
-                + " Started-----------------------", reportOutputFile.get(2));
+            + " Started-----------------------", reportOutputFile.get(2));
     }
 
     private String getCsvExpectedResult(String vertexID, String taskID) {
-        return String.join(",", new String[] {vertexID, taskID,
+        return String.join(",", new String[]{vertexID, taskID,
             String.valueOf(successResult.getStatus()), successResult.getResult()});
     }
 }

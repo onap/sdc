@@ -20,37 +20,32 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.openecomp.sdc.asdctool.impl.validator.ReportFileWriterTestFactory;
 import org.openecomp.sdc.asdctool.impl.validator.utils.Report;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.openecomp.sdc.asdctool.impl.validator.ReportFileWriterTestFactory.makeConsoleWriter;
 import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile.makeTxtFile;
 
 public class ServiceArtifactValidationTaskTest {
 
-  private ServiceArtifactValidationTask createTestSubject() {
-    ArtifactValidationUtils artifactValidationUtilsMock = mock(ArtifactValidationUtils.class);
-    return new ServiceArtifactValidationTask(artifactValidationUtilsMock);
-  }
+    private ServiceArtifactValidationTask createTestSubject() {
+        ArtifactValidationUtils artifactValidationUtilsMock = mock(ArtifactValidationUtils.class);
+        return new ServiceArtifactValidationTask(artifactValidationUtilsMock);
+    }
 
-  @Test
-  public void testValidate() {
-    GraphVertex vertex = null;
-    // TODO: Fix these nulls
-    ArtifactsVertexResult actual =
-        createTestSubject()
-            .validate(
-                Report.make(),
-                vertex,
-                makeTxtFile(makeConsoleWriter()));
-    // TODO: Formerly, there was no assertion in this test
-    // One has been added but the expected result is unknown
-    // This requires a complete refactoring.
-    assertThat(actual).isEqualTo(null);
-  }
+    @Test
+    public void testValidate() {
+        GraphVertex vertex = null;
+        ArtifactsVertexResult actual =
+            createTestSubject().validate(Report.make(), vertex, makeTxtFile(makeConsoleWriter()));
+        // TODO: Formerly, there was no assertion in this test
+        // One has been added but the expected result is unknown
+        // This requires a complete refactoring.
+        assertThat(actual, is(nullValue()));
+    }
 }

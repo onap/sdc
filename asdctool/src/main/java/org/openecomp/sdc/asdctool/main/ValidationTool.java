@@ -34,9 +34,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Created by chaya on 7/3/2017.
- */
 public class ValidationTool {
 
     private static Logger log = Logger.getLogger(ValidationTool.class.getName());
@@ -45,7 +42,7 @@ public class ValidationTool {
 
         String outputPath = args[0];
         String txtReportFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
-        String csvReportFilePath = ValidationConfigManager.csvReportFilePath(outputPath);
+        String csvReportFilePath = ValidationConfigManager.csvReportFilePath(outputPath, System::currentTimeMillis);
 
         ReportFile.CSVFile csvFile = ReportFile.makeCsvFile(makeNioWriter(Paths.get(csvReportFilePath)));
         ReportFile.TXTFile textFile = ReportFile.makeTxtFile(makeNioWriter(Paths.get(txtReportFilePath)));
@@ -79,7 +76,8 @@ public class ValidationTool {
     }
 
     private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+            appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
         return new AnnotationConfigApplicationContext(ValidationToolConfiguration.class);
     }

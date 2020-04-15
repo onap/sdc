@@ -44,53 +44,57 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.asdctool.impl.validator.utils.ReportFile.makeTxtFile;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModuleJsonTaskTest {
 
-  @InjectMocks private ModuleJsonTask test;
-  @Mock private TopologyTemplateOperation topologyTemplateOperation;
+    @InjectMocks
+    private ModuleJsonTask test;
+    @Mock
+    private TopologyTemplateOperation topologyTemplateOperation;
 
-  @Test
-  public void testValidate() {
-    GraphVertex vertex = new GraphVertex();
-    vertex.setUniqueId("uniqueId");
-    Map<GraphPropertyEnum, Object> hasProps1 = new HashMap<>();
-    hasProps1.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-    vertex.setMetadataProperties(hasProps1);
+    @Test
+    public void testValidate() {
+        GraphVertex vertex = new GraphVertex();
+        vertex.setUniqueId("uniqueId");
+        Map<GraphPropertyEnum, Object> hasProps1 = new HashMap<>();
+        hasProps1.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+        vertex.setMetadataProperties(hasProps1);
 
-    Map<String, ArtifactDataDefinition> mapDataDefinition = new HashMap<>();
-    ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
-    artifactDataDefinition.setArtifactName("one_modules.json");
-    mapDataDefinition.put("one", artifactDataDefinition);
-    MapGroupsDataDefinition mapGroupsDataDefinition = new MapGroupsDataDefinition();
-    Map<String, GroupInstanceDataDefinition> mapToscaDataDefinition = new HashMap<>();
-    mapToscaDataDefinition.put("one", new GroupInstanceDataDefinition());
-    mapGroupsDataDefinition.setMapToscaDataDefinition(mapToscaDataDefinition);
+        Map<String, ArtifactDataDefinition> mapDataDefinition = new HashMap<>();
+        ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        artifactDataDefinition.setArtifactName("one_modules.json");
+        mapDataDefinition.put("one", artifactDataDefinition);
+        MapGroupsDataDefinition mapGroupsDataDefinition = new MapGroupsDataDefinition();
+        Map<String, GroupInstanceDataDefinition> mapToscaDataDefinition = new HashMap<>();
+        mapToscaDataDefinition.put("one", new GroupInstanceDataDefinition());
+        mapGroupsDataDefinition.setMapToscaDataDefinition(mapToscaDataDefinition);
 
-    Map<String, MapGroupsDataDefinition> instGroups = new HashMap<>();
-    instGroups.put("one", mapGroupsDataDefinition);
+        Map<String, MapGroupsDataDefinition> instGroups = new HashMap<>();
+        instGroups.put("one", mapGroupsDataDefinition);
 
-    Map<String, MapArtifactDataDefinition> instDeploymentArtifacts = new HashMap<>();
-    MapArtifactDataDefinition mapArtifactDataDefinition = new MapArtifactDataDefinition();
+        Map<String, MapArtifactDataDefinition> instDeploymentArtifacts = new HashMap<>();
+        MapArtifactDataDefinition mapArtifactDataDefinition = new MapArtifactDataDefinition();
 
-    mapArtifactDataDefinition.setMapToscaDataDefinition(mapDataDefinition);
-    instDeploymentArtifacts.put("one", mapArtifactDataDefinition);
+        mapArtifactDataDefinition.setMapToscaDataDefinition(mapDataDefinition);
+        instDeploymentArtifacts.put("one", mapArtifactDataDefinition);
 
-    TopologyTemplate topologyTemplate = new TopologyTemplate();
-    topologyTemplate.setInstGroups(instGroups);
-    topologyTemplate.setInstDeploymentArtifacts(instDeploymentArtifacts);
-    when(topologyTemplateOperation.getToscaElement(
+        TopologyTemplate topologyTemplate = new TopologyTemplate();
+        topologyTemplate.setInstGroups(instGroups);
+        topologyTemplate.setInstDeploymentArtifacts(instDeploymentArtifacts);
+        when(topologyTemplateOperation.getToscaElement(
             ArgumentMatchers.eq(vertex.getUniqueId()),
             ArgumentMatchers.any(ComponentParametersView.class)))
-        .thenReturn(Either.left(topologyTemplate));
+            .thenReturn(Either.left(topologyTemplate));
 
-    Report report = Report.make();
-    VertexResult actual =
-        test.validate(report, vertex, makeTxtFile(ReportFileWriterTestFactory.makeConsoleWriter()));
-    assertThat(actual.getStatus()).isEqualTo(true);
-  }
+        Report report = Report.make();
+        VertexResult actual =
+            test.validate(report, vertex, makeTxtFile(ReportFileWriterTestFactory.makeConsoleWriter()));
+        assertThat(actual.getStatus(), is(true));
+    }
 }
