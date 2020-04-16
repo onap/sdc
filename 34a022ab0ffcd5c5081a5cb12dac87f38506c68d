@@ -698,6 +698,42 @@
     },
     {
       "key": {
+        "uuid": "0a42d3a5_693450b3",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:52:25Z",
+      "side": 1,
+      "message": "I have deleted these tests and added better ones in https://gerrit.onap.org/r/c/sdc/+/106056/8. Is that ok?",
+      "parentUuid": "ded19b5d_a0b6c384",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52a92e09_de52d8a9",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:52:25Z",
+      "side": 1,
+      "message": "This value here has always been null. I will solve this in a later change.",
+      "parentUuid": "8ebfb01c_bf050a75",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9bb0652f_c303ac9b",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTaskTest.java",
         "patchSetId": 3
