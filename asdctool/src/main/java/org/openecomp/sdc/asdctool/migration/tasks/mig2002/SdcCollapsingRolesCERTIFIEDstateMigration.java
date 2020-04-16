@@ -89,59 +89,64 @@ public class SdcCollapsingRolesCERTIFIEDstateMigration extends InstanceMigration
     protected StorageOperationStatus handleOneContainer(GraphVertex containerVorig) {
         StorageOperationStatus status = StorageOperationStatus.NOT_FOUND;
         GraphVertex containerV = getVertexById(containerVorig.getUniqueId());
-        try {
 
-            //update edges to meet above change
-            // update LS eges from RFC to  NOT_CERTIFIED_CHECKIN
-
-            updateEdgeProperty(EdgePropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.name(),
-                getVertexEdge(containerV, Direction.IN, EdgeLabelEnum.LAST_STATE));
-
-            if (containerV.getMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS)
-                .equals(DistributionStatusEnum.DISTRIBUTION_APPROVED.name()) || containerV
-                .getMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS)
-                .equals(DistributionStatusEnum.DISTRIBUTION_REJECTED.name())) {
-
-                // update vertex state property from DISTRIBUTION_APPROVED/REJECTED to DISTRIBUTION_NOT_APPROVED state
-
-                Map<GraphPropertyEnum, Object> metadataProperties = containerV.getMetadataProperties();
-                metadataProperties.put(GraphPropertyEnum.DISTRIBUTION_STATUS,
-                    DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED.name());
-                containerV.setMetadataProperties(metadataProperties);
+        if (containerV == null) {
+            log.error("Unexpected null value for `containerV`");
+        } else {
+            try {
 
                 //update edges to meet above change
-                //delete LAST_DISTRIBUTION_STATE_MODIFIER edge
+                // update LS eges from RFC to  NOT_CERTIFIED_CHECKIN
 
-                removeEdges(getVertexEdge(containerV, Direction.IN, EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER));
+                updateEdgeProperty(EdgePropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN.name(),
+                    getVertexEdge(containerV, Direction.IN, EdgeLabelEnum.LAST_STATE));
 
-            }
+                if (containerV.getMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS)
+                    .equals(DistributionStatusEnum.DISTRIBUTION_APPROVED.name()) || containerV
+                    .getMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS)
+                    .equals(DistributionStatusEnum.DISTRIBUTION_REJECTED.name())) {
 
-            status = updateVertexAndCommit(containerV);
+                    // update vertex state property from DISTRIBUTION_APPROVED/REJECTED to DISTRIBUTION_NOT_APPROVED state
 
-        } catch (NullPointerException e) {
-            log.error(
-                "Null Pointer Exception occurred - this mean we have zombie vertex, migration task will continue anyway",
-                e);
-            status = StorageOperationStatus.EXEUCTION_FAILED;
-        } catch (Exception e) {
-            //it is happy flow as well
-            log.error("Exception occurred:", e);
-            log.error("Migration task will continue anyway, please find below vertex details related to this exception",
-                e);
-            if (containerV != null) {
+                    Map<GraphPropertyEnum, Object> metadataProperties = containerV.getMetadataProperties();
+                    metadataProperties.put(GraphPropertyEnum.DISTRIBUTION_STATUS,
+                        DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED.name());
+                    containerV.setMetadataProperties(metadataProperties);
+
+                    //update edges to meet above change
+                    //delete LAST_DISTRIBUTION_STATE_MODIFIER edge
+
+                    removeEdges(
+                        getVertexEdge(containerV, Direction.IN, EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER));
+
+                }
+
+                status = updateVertexAndCommit(containerV);
+
+            } catch (NullPointerException e) {
+                log.error(
+                    "Null Pointer Exception occurred - this mean we have zombie vertex, migration task will continue anyway",
+                    e);
+                status = StorageOperationStatus.EXEUCTION_FAILED;
+            } catch (Exception e) {
+                //it is happy flow as well
+                log.error("Exception occurred:", e);
+                log.error(
+                    "Migration task will continue anyway, please find below vertex details related to this exception",
+                    e);
                 log.error("containerV.getUniqueId() ---> {}  ", containerV.getUniqueId());
-            }
 
-        } finally {
-            if (status != StorageOperationStatus.OK) {
-                janusGraphDao.rollback();
-                log.info("failed to update vertex ID {} ", containerV.getUniqueId());
-                log.info("Storage Operation Status {}", status.toString());
-            } else {
-                log.info("vertex ID {} successfully updated", containerV.getUniqueId());
+            } finally {
+                if (status != StorageOperationStatus.OK) {
+                    janusGraphDao.rollback();
+                    log.info("failed to update vertex ID {} ", containerV.getUniqueId());
+                    log.info("Storage Operation Status {}", status.toString());
+                } else {
+                    log.info("vertex ID {} successfully updated", containerV.getUniqueId());
+                }
             }
-
         }
+
         return status;
     }
 
