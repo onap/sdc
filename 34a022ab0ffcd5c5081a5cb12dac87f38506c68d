@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d6b16121_6ff441a8",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:39:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b1511728_edd921a1",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a01fbb7e_ce83a578",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
         "patchSetId": 3
