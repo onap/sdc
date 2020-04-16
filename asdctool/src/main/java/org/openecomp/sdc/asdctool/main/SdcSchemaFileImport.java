@@ -112,14 +112,14 @@ public class SdcSchemaFileImport {
 				//get the source yaml file
 				String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
 				System.out.println("Processing file "+pathname+"....");
-				InputStream input = new FileInputStream(new File(pathname));
-				//Convert the content of file to yaml 
-				Yaml yamlFileSource = new Yaml();
-			    Object content = yamlFileSource.load(input);
-			    
-			    createAndSaveSchemaFileYaml(schemaZipFileEnum, content);
-			}
-			catch(Exception e)  {
+				try (InputStream input = new FileInputStream(new File(pathname))) {
+					//Convert the content of file to yaml
+					Yaml yamlFileSource = new Yaml();
+					Object content = yamlFileSource.load(input);
+
+					createAndSaveSchemaFileYaml(schemaZipFileEnum, content);
+				}
+			} catch(Exception e)  {
 				System.err.println("Error in file creation : " + schemaZipFileEnum.getFileName() + ", " + e.getMessage());
 				System.exit(1);
 			}
