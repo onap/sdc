@@ -512,6 +512,24 @@
     },
     {
       "key": {
+        "uuid": "2e012935_c5c63e9e",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VFToscaArtifactValidatorExecutorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:48:21Z",
+      "side": 1,
+      "message": "This value here has always been null. I will solve this in a later change.",
+      "parentUuid": "ad3f9170_4900ccf4",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a0b82b36_d8cef7d8",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VfValidatorExecuterTest.java",
         "patchSetId": 3
