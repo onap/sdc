@@ -70,6 +70,30 @@
       "revId": "dd06033cd86bf2a2b7ef385bbd9c4bf00376ae9e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "692681cc_2a3bfcb0",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/SdcSchemaFileImport.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T18:03:14Z",
+      "side": 1,
+      "message": "Should be better now! Please confirm the changes are what you were expecting!",
+      "parentUuid": "3f1bd3be_ee62df99",
+      "range": {
+        "startLine": 111,
+        "startChar": 3,
+        "endLine": 122,
+        "endChar": 26
+      },
+      "revId": "dd06033cd86bf2a2b7ef385bbd9c4bf00376ae9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
