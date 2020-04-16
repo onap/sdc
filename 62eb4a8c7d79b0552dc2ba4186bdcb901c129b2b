@@ -22,6 +22,30 @@
       "revId": "62eb4a8c7d79b0552dc2ba4186bdcb901c129b2b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97f09926_254e64b4",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T18:03:24Z",
+      "side": 1,
+      "message": "Really sorry about that, I thought I did this one. It should be good now.",
+      "parentUuid": "07a379d4_c5055b62",
+      "range": {
+        "startLine": 61,
+        "startChar": 10,
+        "endLine": 64,
+        "endChar": 9
+      },
+      "revId": "62eb4a8c7d79b0552dc2ba4186bdcb901c129b2b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
