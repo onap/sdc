@@ -92,46 +92,51 @@ public class SdcDeploymentArtTimeOutMigration extends InstanceMigrationBase impl
     protected StorageOperationStatus handleOneContainer(GraphVertex containerVorig) {
         StorageOperationStatus status = StorageOperationStatus.NOT_FOUND;
         GraphVertex containerV = getVertexById(containerVorig.getUniqueId());
-        try {
-            Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao
-                .getChildVertex(containerV, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, JsonParseFlagEnum.ParseAll);
-            GraphVertex instDeployArt = childVertex.left().value();
-            Collection<MapArtifactDataDefinition> values = (Collection<MapArtifactDataDefinition>) instDeployArt
-                .getJson().values();
-            List<ArtifactDataDefinition> artifactDataDefinitionsList = values.stream()
-                .map(f -> f.getMapToscaDataDefinition().values()).flatMap(f -> f.stream().filter(isRelevantArtifact()))
-                .collect(Collectors.toList());
-            artifactDataDefinitionsList.forEach(t -> t.setTimeout(defaultTimeOut));
-            status = updateVertexAndCommit(instDeployArt);
 
-        } catch (NullPointerException e) {
-            log.error(
-                "Null Pointer Exception occurred - this mean we have zombie vertex, migration task will continue anyway",
-                e);
-            status = StorageOperationStatus.OK;
-        } catch (Exception e) {
-            //it is happy flow as well
-            log.error("Exception occurred:", e);
-            log.error("Migration task will continue anyway, please find below vertex details related to this exception",
-                e);
-            if (containerV != null) {
+        if (containerV == null) {
+            log.error("Unexpected null value for `containerV`");
+        } else {
+            try {
+                Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao
+                    .getChildVertex(containerV, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, JsonParseFlagEnum.ParseAll);
+                GraphVertex instDeployArt = childVertex.left().value();
+                Collection<MapArtifactDataDefinition> values = (Collection<MapArtifactDataDefinition>) instDeployArt
+                    .getJson().values();
+                List<ArtifactDataDefinition> artifactDataDefinitionsList = values.stream()
+                    .map(f -> f.getMapToscaDataDefinition().values())
+                    .flatMap(f -> f.stream().filter(isRelevantArtifact()))
+                    .collect(Collectors.toList());
+                artifactDataDefinitionsList.forEach(t -> t.setTimeout(defaultTimeOut));
+                status = updateVertexAndCommit(instDeployArt);
+
+            } catch (NullPointerException e) {
+                log.error(
+                    "Null Pointer Exception occurred - this mean we have zombie vertex, migration task will continue anyway",
+                    e);
+                status = StorageOperationStatus.OK;
+            } catch (Exception e) {
+                //it is happy flow as well
+                log.error("Exception occurred:", e);
+                log.error(
+                    "Migration task will continue anyway, please find below vertex details related to this exception",
+                    e);
                 log.error("containerV.getUniqueId() {} ---> ", containerV.getUniqueId());
-            }
 
-            status = StorageOperationStatus.OK;
-        } finally {
-            if (status != StorageOperationStatus.OK) {
-                janusGraphDao.rollback();
-                log.info("failed to update vertex ID {} ", containerV.getUniqueId());
-                if (status == StorageOperationStatus.NOT_FOUND) {
-                    //it is happy flow as well
-                    status = StorageOperationStatus.OK;
+                status = StorageOperationStatus.OK;
+            } finally {
+                if (status != StorageOperationStatus.OK) {
+                    janusGraphDao.rollback();
+                    log.info("failed to update vertex ID {} ", containerV.getUniqueId());
+                    if (status == StorageOperationStatus.NOT_FOUND) {
+                        //it is happy flow as well
+                        status = StorageOperationStatus.OK;
+                    }
+                } else {
+                    log.info("vertex ID {} successfully updated", containerV.getUniqueId());
                 }
-            } else {
-                log.info("vertex ID {} successfully updated", containerV.getUniqueId());
             }
-
         }
+
         return status;
     }
 
