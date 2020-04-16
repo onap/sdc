@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "680fae22_85c6a7f0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/catalog/impl/DmaapProducerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T18:08:56Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5ca7c184_40a44350",
+      "range": {
+        "startLine": 120,
+        "startChar": 12,
+        "endLine": 120,
+        "endChar": 32
+      },
+      "revId": "ea6f2b1ee1b72c3644a4ed9ca6716b3e29920edd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ab996c4c_decea0e5",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/catalog/impl/DmaapProducerTest.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "ea6f2b1ee1b72c3644a4ed9ca6716b3e29920edd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bafb6a4_2c4213f4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/catalog/impl/DmaapProducerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T18:08:56Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ab996c4c_decea0e5",
+      "range": {
+        "startLine": 124,
+        "startChar": 12,
+        "endLine": 124,
+        "endChar": 32
+      },
+      "revId": "ea6f2b1ee1b72c3644a4ed9ca6716b3e29920edd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
