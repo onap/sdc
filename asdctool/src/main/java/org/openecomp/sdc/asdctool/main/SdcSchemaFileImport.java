@@ -104,24 +104,27 @@ public class SdcSchemaFileImport {
 			System.err.println("Couldn't read license.txt in location :" + appConfigDir+", error: "+e);
 			System.exit(1);
 		}
-		
+
 		//Loop over schema file list and create each yaml file from /import/tosca folder 
 		SchemaZipFileEnum[] schemaFileList = SchemaZipFileEnum.values();
 		for (SchemaZipFileEnum schemaZipFileEnum : schemaFileList) {
-			try {
-				//get the source yaml file
-				String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
-				System.out.println("Processing file "+pathname+"....");
-				InputStream input = new FileInputStream(new File(pathname));
-				//Convert the content of file to yaml 
-				Yaml yamlFileSource = new Yaml();
-			    Object content = yamlFileSource.load(input);
-			    
-			    createAndSaveSchemaFileYaml(schemaZipFileEnum, content);
-			}
-			catch(Exception e)  {
-				System.err.println("Error in file creation : " + schemaZipFileEnum.getFileName() + ", " + e.getMessage());
-				System.exit(1);
+			String folderName = schemaZipFileEnum.getSourceFolderName();
+			String fileName = schemaZipFileEnum.getFileName();
+
+			if ((folderName != null) && (fileName != null)) {
+				File folder = new File(importToscaPath, folderName);
+				File path = new File(folder, fileName + YAML_EXTENSION);
+
+				try (InputStream input = new FileInputStream(path)) {
+					//Convert the content of file to yaml
+					Yaml yamlFileSource = new Yaml();
+					Object content = yamlFileSource.load(input);
+
+					createAndSaveSchemaFileYaml(schemaZipFileEnum, content);
+				} catch (Exception e) {
+					System.err.println("Error in file creation : " + schemaZipFileEnum.getFileName() + ", " + e.getMessage());
+					System.exit(1);
+				}
 			}
 		}
 		
@@ -159,7 +162,7 @@ public class SdcSchemaFileImport {
 		
 		System.exit(0);
 	}
-	
+
 	public static void createAndSaveSchemaFileYaml(SchemaZipFileEnum schemaZipFileEnum, Object content) {	
 		createAndSaveSchemaFileYaml(schemaZipFileEnum.getFileName(), schemaZipFileEnum.getImportFileList(), schemaZipFileEnum.getCollectionTitle(), content);
 	}
