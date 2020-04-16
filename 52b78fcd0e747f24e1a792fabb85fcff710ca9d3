@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "12f0d49d_43ea1932",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T08:43:37Z",
+      "side": 1,
+      "message": "remove it, stacktrace shown in next line.",
+      "range": {
+        "startLine": 79,
+        "startChar": 12,
+        "endLine": 79,
+        "endChar": 33
+      },
+      "revId": "52b78fcd0e747f24e1a792fabb85fcff710ca9d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
