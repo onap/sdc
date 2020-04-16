@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19af9ae0_b24dd428",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/SdcSchemaFileImport.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T12:33:40Z",
+      "side": 1,
+      "message": "avoid nested TRYs",
+      "range": {
+        "startLine": 111,
+        "startChar": 3,
+        "endLine": 122,
+        "endChar": 26
+      },
+      "revId": "dd06033cd86bf2a2b7ef385bbd9c4bf00376ae9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
