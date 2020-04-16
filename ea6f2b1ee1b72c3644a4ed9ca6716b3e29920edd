@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ca7c184_40a44350",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/catalog/impl/DmaapProducerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T13:00:29Z",
+      "side": 1,
+      "message": "remove it, or LOG properly.",
+      "range": {
+        "startLine": 120,
+        "startChar": 12,
+        "endLine": 120,
+        "endChar": 32
+      },
+      "revId": "ea6f2b1ee1b72c3644a4ed9ca6716b3e29920edd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab996c4c_decea0e5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/catalog/impl/DmaapProducerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T13:00:29Z",
+      "side": 1,
+      "message": "remove it, or LOG properly.",
+      "range": {
+        "startLine": 124,
+        "startChar": 12,
+        "endLine": 124,
+        "endChar": 32
+      },
+      "revId": "ea6f2b1ee1b72c3644a4ed9ca6716b3e29920edd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
