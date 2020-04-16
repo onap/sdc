@@ -1,0 +1,199 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a01fbb7e_ce83a578",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "Modifiers should be declared in the correct order",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4bfede8_81e8cc25",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "remove printStackTrace, and fix https://sonarcloud.io/project/issues?id\u003donap_sdc\u0026issues\u003dAXDLrvEkWNznPKOfbEYq\u0026open\u003dAXDLrvEkWNznPKOfbEYq",
+      "range": {
+        "startLine": 62,
+        "startChar": 12,
+        "endLine": 63,
+        "endChar": 56
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7ee6fb3_624cc687",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "remove it, already shown in LOG (next line)",
+      "range": {
+        "startLine": 50,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 32
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9de760a_bfbb7bc6",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "remove it, already shown in LOG (next line)",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 32
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc62a38f_0608e6b0",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "remove it, already shown in LOG (next line)",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 40
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8b653d4_d6a55d4b",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "missing any assert",
+      "range": {
+        "startLine": 36,
+        "startChar": 3,
+        "endLine": 50,
+        "endChar": 5
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f8303bc_1c33b863",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ServiceArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "missing any assert",
+      "range": {
+        "startLine": 40,
+        "startChar": 2,
+        "endLine": 40,
+        "endChar": 62
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ded19b5d_a0b6c384",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "missing any assert",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b900e15e_9788f828",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-16T14:18:00Z",
+      "side": 1,
+      "message": "missing any assert",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
