@@ -514,6 +514,24 @@
     },
     {
       "key": {
+        "uuid": "e5671e6c_ed411c26",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ServiceArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:39:27Z",
+      "side": 1,
+      "message": "This refactoring has been done in multiple steps. This null has been removed in a later change: https://gerrit.onap.org/r/c/sdc/+/106053/11\n\nDoes this solve this issue?",
+      "parentUuid": "53e97aa5_98a2e737",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ded19b5d_a0b6c384",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
         "patchSetId": 3
