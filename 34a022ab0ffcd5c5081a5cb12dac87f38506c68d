@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "b1511728_edd921a1",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Yay for `final`!",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a01fbb7e_ce83a578",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
         "patchSetId": 3
@@ -13,6 +30,30 @@
       "writtenOn": "2020-04-16T14:18:00Z",
       "side": 1,
       "message": "Modifiers should be declared in the correct order",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3185cc1a_8a08c25f",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Is the \"correct order\" documented somewhere?",
+      "parentUuid": "a01fbb7e_ce83a578",
       "range": {
         "startLine": 40,
         "startChar": 4,
@@ -42,6 +83,74 @@
         "endLine": 63,
         "endChar": 56
       },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58d88efa_e5a39cef",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ValidatorExecuter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Don\u0027t we have type erasure here?",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6bb1ec1c_cdc3114d",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ArtifactValidationUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "I think block imports are flagged by the code style review tool",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c65aeb2_27d69be7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTask.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Block import are discouraged",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f45ecb5_6318a317",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Block imports are discouraged",
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -117,6 +226,40 @@
     },
     {
       "key": {
+        "uuid": "075a6f28_28f62b79",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBLTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "The fact we have to use `null` here makes me wonder if we use the proper type for the method\u0027s signature...",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da29e37e_2a2fbabf",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBLTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "explicit null usage :-/",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d8b653d4_d6a55d4b",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManagerTest.java",
         "patchSetId": 3
@@ -134,6 +277,125 @@
         "endLine": 50,
         "endChar": 5
       },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4c1f452_5c2014fa",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "explicit `null` usage :-/",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9af7fd4_ee5042f1",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/NodeToscaArtifactsValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Explicit null usage",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c77c61b6_cbaf79cf",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceToscaArtifactsValidatorExecutorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Explicit null usage",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c02554a2_83cb3966",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Explicit null usage",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad3f9170_4900ccf4",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VFToscaArtifactValidatorExecutorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Explicit null usage",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0b82b36_d8cef7d8",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VfValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Explicit null usage",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c5611cb_4c94b59e",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ArtifactValidationUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Block import are discouraged",
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -163,6 +425,23 @@
     },
     {
       "key": {
+        "uuid": "53e97aa5_98a2e737",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ServiceArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Explicit null usage",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ded19b5d_a0b6c384",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
         "patchSetId": 3
@@ -180,6 +459,40 @@
     },
     {
       "key": {
+        "uuid": "8ebfb01c_bf050a75",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "explicit null usage :-/",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bb0652f_c303ac9b",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Thanks for getting rid of this \u0027try-catch\u0027",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b900e15e_9788f828",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTaskTest.java",
         "patchSetId": 3
@@ -191,6 +504,23 @@
       "writtenOn": "2020-04-16T14:18:00Z",
       "side": 1,
       "message": "missing any assert",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f64a322c_cf3b6817",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T14:28:37Z",
+      "side": 1,
+      "message": "Block imports are discouraged",
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
