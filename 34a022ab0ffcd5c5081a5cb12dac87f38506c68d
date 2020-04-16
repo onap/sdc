@@ -547,6 +547,24 @@
     },
     {
       "key": {
+        "uuid": "67a2f7f2_522a7efe",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VfValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:49:21Z",
+      "side": 1,
+      "message": "This value here has always been null. I will solve this in a later change.",
+      "parentUuid": "a0b82b36_d8cef7d8",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1c5611cb_4c94b59e",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ArtifactValidationUtilsTest.java",
         "patchSetId": 3
