@@ -84,6 +84,30 @@
     },
     {
       "key": {
+        "uuid": "b7dc3435_0e3e2188",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Yes, it\u0027s the order defined by the google formater.",
+      "parentUuid": "3185cc1a_8a08c25f",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a4bfede8_81e8cc25",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
         "patchSetId": 3
@@ -148,6 +172,24 @@
     },
     {
       "key": {
+        "uuid": "d9188046_0af00a78",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ValidatorExecuter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Yes but it does not cause any issue here. Can you please elaborate?",
+      "parentUuid": "58d88efa_e5a39cef",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6bb1ec1c_cdc3114d",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ArtifactValidationUtils.java",
         "patchSetId": 3
@@ -162,6 +204,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "610ffe6e_b4cb9c75",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ArtifactValidationUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6bb1ec1c_cdc3114d",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -182,6 +242,24 @@
     },
     {
       "key": {
+        "uuid": "bb122b33_941429eb",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTask.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c65aeb2_27d69be7",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f45ecb5_6318a317",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
         "patchSetId": 3
@@ -196,6 +274,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37287868_a71291fb",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7f45ecb5_6318a317",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -246,6 +342,30 @@
     },
     {
       "key": {
+        "uuid": "4e78b7c7_f95dcf71",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42bed49c_02312011",
+      "range": {
+        "startLine": 50,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 32
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a9de760a_bfbb7bc6",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
         "patchSetId": 3
@@ -266,6 +386,30 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f64a924d_b977ac46",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9de760a_bfbb7bc6",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 32
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -292,6 +436,30 @@
     },
     {
       "key": {
+        "uuid": "19ed6255_4299db4f",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc62a38f_0608e6b0",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 40
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "075a6f28_28f62b79",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBLTest.java",
         "patchSetId": 3
@@ -303,6 +471,24 @@
       "writtenOn": "2020-04-16T14:28:37Z",
       "side": 1,
       "message": "The fact we have to use `null` here makes me wonder if we use the proper type for the method\u0027s signature...",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc27804d_d7bec01a",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBLTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "This value here has always been null. I will solve this in a later change. The problem is not that much the type. It\u0027s a separation of concern issue. I will fix that in a later change.",
+      "parentUuid": "075a6f28_28f62b79",
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -437,6 +623,24 @@
       "writtenOn": "2020-04-16T14:28:37Z",
       "side": 1,
       "message": "Explicit null usage",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1938969b_598ff91e",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/NodeToscaArtifactsValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "This value here has always been null. I will solve this in a later change.",
+      "parentUuid": "e9af7fd4_ee5042f1",
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -597,6 +801,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "afad2541_89569c9e",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ArtifactValidationUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c5611cb_4c94b59e",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -836,6 +1058,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ecaedf2_a48c596f",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T15:22:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f64a322c_cf3b6817",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
