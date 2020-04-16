@@ -22,6 +22,30 @@
       "revId": "aebc6c214121e44761635f85a2963f7414a242eb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d7e0a81_a7397c17",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/Report.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T13:54:09Z",
+      "side": 1,
+      "message": "Sounds good, I will update my IDEA with the correct formatter. Thanks",
+      "parentUuid": "e2023b79_e9e211ee",
+      "range": {
+        "startLine": 24,
+        "startChar": 17,
+        "endLine": 24,
+        "endChar": 18
+      },
+      "revId": "aebc6c214121e44761635f85a2963f7414a242eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
