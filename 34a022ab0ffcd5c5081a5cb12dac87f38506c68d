@@ -751,6 +751,24 @@
     },
     {
       "key": {
+        "uuid": "baecb0c3_2b6d7d35",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:54:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9bb0652f_c303ac9b",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b900e15e_9788f828",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTaskTest.java",
         "patchSetId": 3
@@ -762,6 +780,24 @@
       "writtenOn": "2020-04-16T14:18:00Z",
       "side": 1,
       "message": "missing any assert",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93f90db5_4c23edd7",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/moduleJson/ModuleJsonTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:54:43Z",
+      "side": 1,
+      "message": "There were no assert before I clone the master and I don\u0027t really know what this function is supposed to do. Would there be any place where I can figure that out?",
+      "parentUuid": "b900e15e_9788f828",
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
