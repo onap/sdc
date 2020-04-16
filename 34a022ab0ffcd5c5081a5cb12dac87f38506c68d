@@ -204,6 +204,30 @@
     },
     {
       "key": {
+        "uuid": "42bed49c_02312011",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:33:20Z",
+      "side": 1,
+      "message": "I deleted `ReportManager` in https://gerrit.onap.org/r/c/sdc/+/106053/11. There is no more `printStackTrace`. Is that ok?",
+      "parentUuid": "f7ee6fb3_624cc687",
+      "range": {
+        "startLine": 50,
+        "startChar": 12,
+        "endLine": 50,
+        "endChar": 32
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a9de760a_bfbb7bc6",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
         "patchSetId": 3
