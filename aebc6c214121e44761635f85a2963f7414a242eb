@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2023b79_e9e211ee",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/Report.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-04-16T13:33:44Z",
+      "side": 1,
+      "message": "Wildcard import",
+      "range": {
+        "startLine": 24,
+        "startChar": 17,
+        "endLine": 24,
+        "endChar": 18
+      },
+      "revId": "aebc6c214121e44761635f85a2963f7414a242eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
