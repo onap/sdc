@@ -442,6 +442,24 @@
     },
     {
       "key": {
+        "uuid": "38f779aa_d50a5cdc",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceToscaArtifactsValidatorExecutorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:46:00Z",
+      "side": 1,
+      "message": "This value here has always been null. I will solve this in a later change.",
+      "parentUuid": "c77c61b6_cbaf79cf",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c02554a2_83cb3966",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceValidatorExecuterTest.java",
         "patchSetId": 3
