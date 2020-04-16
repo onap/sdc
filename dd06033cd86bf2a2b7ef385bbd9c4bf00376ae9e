@@ -46,6 +46,30 @@
       "revId": "dd06033cd86bf2a2b7ef385bbd9c4bf00376ae9e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f1bd3be_ee62df99",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/SdcSchemaFileImport.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T13:17:50Z",
+      "side": 1,
+      "message": "Wanted to go for the \"quick and dirty\" way but you both are right. I\u0027ll do a more meaningful change soon.",
+      "parentUuid": "2b39d9f6_f444a9d6",
+      "range": {
+        "startLine": 111,
+        "startChar": 3,
+        "endLine": 122,
+        "endChar": 26
+      },
+      "revId": "dd06033cd86bf2a2b7ef385bbd9c4bf00376ae9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
