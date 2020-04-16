@@ -331,6 +331,30 @@
     },
     {
       "key": {
+        "uuid": "fcbd27ef_4799a5b0",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:37:21Z",
+      "side": 1,
+      "message": "I have deleted these tests and added better ones in https://gerrit.onap.org/r/c/sdc/+/106056/8. Is that ok?",
+      "parentUuid": "d8b653d4_d6a55d4b",
+      "range": {
+        "startLine": 36,
+        "startChar": 3,
+        "endLine": 50,
+        "endChar": 5
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b4c1f452_5c2014fa",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuterTest.java",
         "patchSetId": 3
