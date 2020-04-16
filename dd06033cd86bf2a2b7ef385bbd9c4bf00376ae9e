@@ -22,6 +22,30 @@
       "revId": "dd06033cd86bf2a2b7ef385bbd9c4bf00376ae9e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b39d9f6_f444a9d6",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/main/SdcSchemaFileImport.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T13:16:03Z",
+      "side": 1,
+      "message": "So there are two options here:\n- You can either create a function providing you with the `pathname` which in case of error, would return a meaningful value telling you about it.\n- Or refactor the whole function so that it takes an interface exposing a function returning you the YAML file source content. In case of error, this function could take a callback responsible for it.",
+      "parentUuid": "19af9ae0_b24dd428",
+      "range": {
+        "startLine": 111,
+        "startChar": 3,
+        "endLine": 122,
+        "endChar": 26
+      },
+      "revId": "dd06033cd86bf2a2b7ef385bbd9c4bf00376ae9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
