@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "8eca1a26_a4fb5cf2",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6b16121_6ff441a8",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a01fbb7e_ce83a578",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
         "patchSetId": 3
@@ -132,6 +150,30 @@
     },
     {
       "key": {
+        "uuid": "e0e965f6_e7a79c01",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7dc3435_0e3e2188",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4bfede8_81e8cc25",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManager.java",
         "patchSetId": 3
@@ -211,6 +253,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8dacf986_dc4ce3d5",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ValidatorExecuter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d9188046_0af00a78",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -519,6 +579,24 @@
     },
     {
       "key": {
+        "uuid": "04a0a9a4_b39a9ddf",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBLTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc27804d_d7bec01a",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da29e37e_2a2fbabf",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBLTest.java",
         "patchSetId": 3
@@ -551,6 +629,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0309d693_8c775465",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBLTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "840abdc2_fb4097cc",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -636,6 +732,24 @@
     },
     {
       "key": {
+        "uuid": "fd46ae8b_d5dae537",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "532529c3_40a2a64c",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e9af7fd4_ee5042f1",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/NodeToscaArtifactsValidatorExecuterTest.java",
         "patchSetId": 3
@@ -668,6 +782,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abde1280_58be8bcd",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/NodeToscaArtifactsValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1938969b_598ff91e",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -706,6 +838,24 @@
     },
     {
       "key": {
+        "uuid": "fb25a07d_975a674d",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceToscaArtifactsValidatorExecutorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "38f779aa_d50a5cdc",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c02554a2_83cb3966",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceValidatorExecuterTest.java",
         "patchSetId": 3
@@ -738,6 +888,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9107413_8b92980b",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eef958ab_6fa1816c",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -776,6 +944,24 @@
     },
     {
       "key": {
+        "uuid": "38034920_aacf4d23",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VFToscaArtifactValidatorExecutorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e012935_c5c63e9e",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a0b82b36_d8cef7d8",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VfValidatorExecuterTest.java",
         "patchSetId": 3
@@ -808,6 +994,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c835157_1ec2d024",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VfValidatorExecuterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67a2f7f2_522a7efe",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -928,6 +1132,24 @@
     },
     {
       "key": {
+        "uuid": "b606b53d_7af70d66",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ServiceArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e5671e6c_ed411c26",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ded19b5d_a0b6c384",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
         "patchSetId": 3
@@ -995,6 +1217,24 @@
       "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38cb2ad1_cbc045d7",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-16T15:25:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52a92e09_de52d8a9",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
