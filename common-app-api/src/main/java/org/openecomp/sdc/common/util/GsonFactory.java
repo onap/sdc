@@ -26,13 +26,9 @@ import com.google.gson.GsonBuilder;
 public class GsonFactory {
 	private static Gson gson = null;
 
-	public static Gson getGson() {
+	public static synchronized Gson getGson() {
 		if (gson == null) {
-			synchronized (GsonFactory.class) {
-				if (gson == null) {
 					gson = new GsonBuilder().disableHtmlEscaping().serializeNulls().create();
-				}
-			}
 		}
 
 		return gson;
