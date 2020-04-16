@@ -640,6 +640,30 @@
     },
     {
       "key": {
+        "uuid": "f7846dc9_445bc444",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ServiceArtifactValidationTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:50:56Z",
+      "side": 1,
+      "message": "I was planning on addressing this in a future change. I was afraid tackling this part of the asdctool would require me another refactoring and decided to stop. I can add a TODO though. Is that ok?",
+      "parentUuid": "7f8303bc_1c33b863",
+      "range": {
+        "startLine": 40,
+        "startChar": 2,
+        "endLine": 40,
+        "endChar": 62
+      },
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ded19b5d_a0b6c384",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/VfArtifactValidationTaskTest.java",
         "patchSetId": 3
