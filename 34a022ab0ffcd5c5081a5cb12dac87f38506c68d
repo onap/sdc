@@ -326,6 +326,24 @@
     },
     {
       "key": {
+        "uuid": "840abdc2_fb4097cc",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBLTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-16T14:55:37Z",
+      "side": 1,
+      "message": "This has been solved in https://gerrit.onap.org/r/c/sdc/+/106053/11. Is that ok?",
+      "parentUuid": "da29e37e_2a2fbabf",
+      "revId": "34a022ab0ffcd5c5081a5cb12dac87f38506c68d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d8b653d4_d6a55d4b",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManagerTest.java",
         "patchSetId": 3
