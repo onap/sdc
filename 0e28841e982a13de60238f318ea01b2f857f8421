@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1ae6e0a6_1e194ad8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaMetadata.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-17T12:34:28Z",
+      "side": 1,
+      "message": "Sorry to ask, but why changing serviceEcompNaming and ecompGeneratedNaming to Strings? I thought the goal was to remove them.",
+      "revId": "0e28841e982a13de60238f318ea01b2f857f8421",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
