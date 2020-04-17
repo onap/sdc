@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a267ff17_2c4e3c76",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/migration/tasks/mig1911/SdcDeploymentArtTimeOutMigration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-17T08:51:22Z",
+      "side": 1,
+      "message": "looks good,\n\njust one suggestion, instead of surrounding big chunk of the code with \"!\u003dnull\", check for null, log the error and return immediately.",
+      "range": {
+        "startLine": 96,
+        "startChar": 8,
+        "endLine": 96,
+        "endChar": 33
+      },
+      "revId": "7a5524ce964f7a57ca71a416dfe79750f9d9d9f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
