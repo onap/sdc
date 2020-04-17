@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.config;
 
 import com.google.common.annotations.VisibleForTesting;
+import org.openecomp.sdc.be.config.validation.ArtifactConfigValidator;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -48,16 +50,25 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 		super();
 		this.configurationSource = configurationSource;
 		loadConfigurationFiles();
+		validateConfiguration();
 		instance = this;
 	}
 
 	private void loadConfigurationFiles() {
-
 		loadConfigurationClass(Configuration.class);
 		loadConfigurationClass(ErrorConfiguration.class);
 		loadConfigurationClass(Neo4jErrorsConfiguration.class);
 		loadConfigurationClass(EcompErrorConfiguration.class);
 		loadConfigurationClass(DistributionEngineConfiguration.class);
+	}
+
+	private void validateConfiguration() {
+		final Object configurationObj = configurations.get(getKey(Configuration.class));
+		if (configurationObj instanceof Configuration) {
+			final ArtifactConfigValidator artifactConfigValidator =
+				new ArtifactConfigValidator((Configuration) configurationObj, ArtifactTypeEnum.getBaseArtifacts());
+			artifactConfigValidator.validate();
+		}
 	}
 
 	private <T extends BasicConfiguration> void loadConfigurationClass(Class<T> clazz) {

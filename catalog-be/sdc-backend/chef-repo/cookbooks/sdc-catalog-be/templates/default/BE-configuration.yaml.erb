@@ -650,6 +650,49 @@ artifacts:
     acceptedTypes:
       - yaml
       - yml
+  - type: FLOW
+    categories:
+      - DEPLOYMENT
+    componentTypes:
+      - SERVICE
+    resourceTypes: *allResourceTypes
+    acceptedTypes:
+  - type: SHELL_SCRIPT
+    categories:
+      - DEPLOYMENT
+    componentTypes:
+      - SERVICE
+      - SERVICE_INSTANCE
+      - RESOURCE
+      - RESOURCE_INSTANCE
+    resourceTypes: *allResourceTypes
+    acceptedTypes:
+      - sh
+  - type: TOSCA_CSAR
+    categories:
+      - TOSCA
+    componentTypes:
+    resourceTypes:
+    acceptedTypes:
+      - csar
+  - type: TOSCA_TEMPLATE
+    categories:
+      - TOSCA
+    componentTypes:
+    resourceTypes:
+    acceptedTypes:
+      - yml
+      - yaml
+  - type: NETWORK_CALL_FLOW
+    categories:
+    componentTypes:
+    resourceTypes:
+    acceptedTypes:
+  - type: ICON
+    categories:
+    componentTypes:
+    resourceTypes:
+    acceptedTypes:
 
 deploymentResourceArtifacts:
 
