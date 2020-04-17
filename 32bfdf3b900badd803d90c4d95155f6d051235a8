@@ -118,6 +118,30 @@
       "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c94d34f_b3b6a83a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/GenericArtifactQueryInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-04-17T14:44:06Z",
+      "side": 1,
+      "message": "This is the error I\u0027m talking about:\nhttps://logs.onap.org/production/vex-yul-ecomp-jenkins-1/sdc-master-csit-uiSanity-testng/1195/screenshots/addPmDictionaryDeploymentArtifactToPnfAndCheckMagnifierTest-36b3b0448a8a.png\n\nI\u0027m sorry, but I\u0027m not the author of the original code, so I don\u0027t know how this class is being used. But I\u0027m fixing an introduced bug, that was caused because the default constructor was removed.\nI reproduced the error again and it fails during a call to the endpoint \"org.openecomp.sdc.be.servlets.GenericArtifactBrowserServlet.searchFor\" which receives a payload of type GenericArtifactQueryInfo:\n\npublic Response searchFor(\n        @Parameter(description \u003d \"Generic Artifact search model\", required \u003d true) GenericArtifactQueryInfo query,\n        @Context final HttpServletRequest request)\n\nSo I believe the binding in that endpoint fails, giving a 400 Bad Request with message:\n\"Cannot construct instance of `org.openecomp.sdc.be.info.GenericArtifactQueryInfo` (no Creators, like default construct, exist): cannot deserialize from Object value (no delegate- or property-based Creator)\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 2]\".",
+      "parentUuid": "d94a16d9_bc041994",
+      "range": {
+        "startLine": 33,
+        "startChar": 13,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
