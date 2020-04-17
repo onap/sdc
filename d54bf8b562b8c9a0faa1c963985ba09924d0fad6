@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec97cb60_4112c878",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Component.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-17T15:01:24Z",
+      "side": 1,
+      "message": "This function could be refactored to:\n```\nprivate String fetchGenericTypeToscaNameFromConfigForCategory() {\n    option1(this.getCategories()).map(c -\u003e\n        option1(c.getSubcategories())\n            .map(sb -\u003e c.getName() + \".\" + sb.getName())\n            .orElse(c.getName()));\n}\n\nprivate \u003cA\u003e Optional\u003cA\u003e option1(List\u003cA\u003e as) {\n  return as \u003d\u003d null || as.size() \u003c 1 ? Optional.empty() : Optional.of(as.get(0));\n}\n```\nIn which case it would return an Optional instead of a potential null. `fetchGenericTypeToscaNameFromConfig` could then be refactored to:\n```\npublic String fetchGenericTypeToscaNameFromConfig() {\n    fetchGenericTypeToscaNameFromConfigForCategory()\n        .map(Component::fetchGenericTypeToscaNameFromConfig)\n        .orElse(null); // Bad practice but required here to prevent any API change\n}\n```\nNote that `.orElse(null)` is a bad practice. We should not return nulls as it implies increasing the cyclomatic complexity of the caller. In other words, it is better to return an Optional.\n\nWhat do you think?",
+      "range": {
+        "startLine": 628,
+        "startChar": 4,
+        "endLine": 628,
+        "endChar": 11
+      },
+      "revId": "d54bf8b562b8c9a0faa1c963985ba09924d0fad6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
