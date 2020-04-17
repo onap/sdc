@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1c92aa09_802fded1",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/migration/tasks/mig2002/SdcCollapsingRolesCERTIFIEDstateMigration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-17T16:03:42Z",
+      "side": 1,
+      "message": "In order to minimize the exposure of `GraphVertex`\u0027s internal state, we could rely on an api designed to interact with it: \n```\nif(containerV.hasPropertyEqualTo(GraphPropertyEnum.DISTRIBUTION_STATUS, \n                DistributionStatusEnum.DISTRIBUTION_APPROVED.name(),\n                DistributionStatusEnum.DISTRIBUTION_REJECTED.name())) {\n  // ...\n}\n```\nThis would also prevent a NullPointerException if there is no GraphPropertyEnum.DISTRIBUTION_STATUS is not in the `metadataProperties`\n```\npublic class GraphVertex {\n    // ... \n    // if you need this to be more performant at the cost of\n    // more cyclomatic complexity, you could desugarized the options with ifs.\n    public boolean hasPropertyEqualTo(GraphPropertyEnum metadataProperty, String...values) {\n        List\u003cString\u003e vs \u003d Arrays.asList(values);\n        return Optional.of(metadataProperties)\n            .flatMap(ps -\u003e Optional.of(ps.get(metadataProperty)))\n            .map(vs::contains)\n            .orElse(false); // We compare an object with a string. This may be a bug\n \t}\n    // ...\n```",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 18
+      },
+      "revId": "992e347da52b1fb00e8fa77eec07d0afe22cdca5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea09d166_47c68f16",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/migration/tasks/mig2002/SdcCollapsingRolesCERTIFIEDstateMigration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-17T16:03:42Z",
+      "side": 1,
+      "message": "n order to minimize the exposure of `GraphVertex`\u0027s internal state, we could rely on an api designed to interact with it:\n```\n  containerV.replaceMetadataProperty(\n     GraphPropertyEnum.DISTRIBUTION_STATUS.name(),\n     DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED.name()\n  );\n  //...\n```\n```\npublic class GraphVertex {\n    // ...\n    // if you need this to be more performant at the cost of\n    // more cyclomatic complexity, you could desugarized the options with ifs.\n    public GraphVertex replaceMetadataProperty(GraphPropertyEnum propName, Object propValue) {\n        this.metadataProperties \u003d Optional\n            .of(metadataProperties)\n            .orElse(new HashMap\u003c\u003e())\n            .put(propName, propValue);\n        return this;\n    }\n    // ...\n```",
+      "revId": "992e347da52b1fb00e8fa77eec07d0afe22cdca5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
