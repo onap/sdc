@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7dfff6b9_f8bf157a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/GenericArtifactQueryInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-17T12:38:34Z",
+      "side": 1,
+      "message": "This class is also annotated with @AllArgsConstructor. Please correct me if I am wrong, but as it seems, with a NoArgsConstructor the class will be instantiated with all of its fields set to null, resulting in getters returning nulls. Is that correct?",
+      "range": {
+        "startLine": 33,
+        "startChar": 13,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
