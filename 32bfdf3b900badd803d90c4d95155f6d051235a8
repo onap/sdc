@@ -70,6 +70,30 @@
       "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e79e891c_0d0a1a28",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/GenericArtifactQueryInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2020-04-17T13:02:53Z",
+      "side": 1,
+      "message": "There\u0027s been a week that I worked on this and I did not register the exactly point of failure.\nBut you could take a look on the Jira and in the logs of recent ui sanity test runs: \n- https://logs.onap.org/production/vex-yul-ecomp-jenkins-1/sdc-master-csit-uiSanity-testng/1195/\n- https://logs.onap.org/production/vex-yul-ecomp-jenkins-1/sdc-master-csit-uiSanity-testng/1195/SDC_UI_Extent_Report.html.gz\nI could not find the precise place right now without retesting it, but by the message in the test addPmDictionaryDeploymentArtifactToPnfAndCheckMagnifierTest or addVesEventsDeploymentArtifactToVfAndCheckMagnifierTest you can see that something requires the default constructor to deserialize some information in that Object.\nI\u0027m not sure if the AllArgsConstructor is also required though.",
+      "parentUuid": "2ea61dd7_d9c07fd9",
+      "range": {
+        "startLine": 33,
+        "startChar": 13,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
