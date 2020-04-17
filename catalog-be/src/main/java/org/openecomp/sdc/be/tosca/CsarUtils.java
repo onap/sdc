@@ -52,6 +52,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.be.Try;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -66,6 +67,7 @@ import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.exceptions.CassandraClientException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -81,6 +83,7 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
+import org.openecomp.sdc.be.tosca.exception.FetchingArtifactFromCassandraException;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
@@ -247,19 +250,17 @@ public class CsarUtils {
         ZipOutputStream zip, boolean isInCertificationRequest) throws IOException {
 
         LifecycleStateEnum lifecycleState = component.getLifecycleState();
-        String componentYaml;
-        Either<ToscaRepresentation, ToscaError> exportComponent;
         byte[] mainYaml;
         // <file name, cassandraId, component>
         List<Triple<String, String, Component>> dependencies = null;
 
         Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
         ArtifactDefinition artifactDefinition = toscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
-        String fileName = artifactDefinition.getArtifactName();
 
         if (getFromCS || !(lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN
             || lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
             String cassandraId = artifactDefinition.getEsId();
+
             Either<byte[], ActionStatus> fromCassandra = getFromCassandra(cassandraId);
             if (fromCassandra.isRight()) {
                 log.debug(ARTIFACT_NAME_UNIQUE_ID, artifactDefinition.getArtifactName(),
@@ -270,7 +271,7 @@ public class CsarUtils {
             mainYaml = fromCassandra.left().value();
 
         } else {
-            exportComponent = toscaExportUtils.exportComponent(component);
+            Either<ToscaRepresentation, ToscaError> exportComponent = toscaExportUtils.exportComponent(component);
             if (exportComponent.isRight()) {
                 log.debug("exportComponent failed", exportComponent.right().value());
                 ActionStatus convertedFromToscaError = componentsUtils
@@ -279,11 +280,12 @@ public class CsarUtils {
                 return Either.right(responseFormat);
             }
             ToscaRepresentation exportResult = exportComponent.left().value();
-            componentYaml = exportResult.getMainYaml();
+            String componentYaml = exportResult.getMainYaml();
             mainYaml = componentYaml.getBytes();
             dependencies = exportResult.getDependencies();
         }
 
+        String fileName = artifactDefinition.getArtifactName();
         zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + fileName));
         zip.write(mainYaml);
         //US798487 - Abstraction of complex types
@@ -647,9 +649,8 @@ public class CsarUtils {
             log.debug(
                 "Failed to get the schema files SDC-Version: {} Conformance-Level {}. Please fix DB table accordingly.",
                 getVersionFirstThreeOctets(), CONFORMANCE_LEVEL);
-            StorageOperationStatus storageStatus = DaoStatusConverter
-                .convertCassandraStatusToStorageStatus(specificSchemaFiles.right().value());
-            ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
+            ActionStatus convertedFromStorageResponse = convertCassandraOperationStatusToActionStatus(
+                specificSchemaFiles.right().value(), componentsUtils);
             return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse));
         }
 
@@ -669,20 +670,34 @@ public class CsarUtils {
     }
 
     private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {
-        Either<DAOArtifactData, CassandraOperationStatus> artifactResponse = artifactCassandraDao
-            .getArtifact(cassandraId);
+        return getFromCassandraTry(cassandraId).unsafeToLeftBiasedEither(
+            (FetchingArtifactFromCassandraException e) -> Either.right(e.actionStatus)
+        );
+    }
 
-        if (artifactResponse.isRight()) {
-            log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId,
-                artifactResponse.right().value());
+    // TODO: Remove this comment if the approach is validated
+    // This is an attempt to get rid of Either and simplify the code
+    // Here we convert a left biased either returned by `artifactCassandraDao.getArtifact` into a `Try`
+    // which is then converted back to an `Either` in `getFromCassandra`
+    private Try<byte[]> getFromCassandraTry(String cassandraId) {
+        // The either is passed along with a function converting the right side (that is the error in this case) into
+        // an exception. This exception can be then thrown whenever we need it to.
+        // Ideally, `leftBiased` should be deleted bu this is not possible yet. This would require more refactoring.
+        return artifactCassandraDao
+            .getArtifactTry(cassandraId)
+            .mapErrorWith((CassandraClientException ex) -> {
+                log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId, ex.getStatus());
+                ActionStatus as = convertCassandraOperationStatusToActionStatus(ex.getStatus(), componentsUtils);
+                return Try.raise(new FetchingArtifactFromCassandraException(ex.getStatus(), as));
+            })
+            .map(DAOArtifactData::getDataAsArray);
+    }
 
-            StorageOperationStatus storageStatus = DaoStatusConverter
-                .convertCassandraStatusToStorageStatus(artifactResponse.right().value());
-            ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
-            return Either.right(convertedFromStorageResponse);
-        }
-        DAOArtifactData artifactData = artifactResponse.left().value();
-        return Either.left(artifactData.getDataAsArray());
+    private static ActionStatus convertCassandraOperationStatusToActionStatus(CassandraOperationStatus cos,
+        ComponentsUtils componentsUtils) {
+        StorageOperationStatus storageStatus = DaoStatusConverter
+            .convertCassandraStatusToStorageStatus(cos);
+        return componentsUtils.convertFromStorageResponse(storageStatus);
     }
 
     private String createCsarBlock0(String metaFileVersion, String toscaConformanceLevel) {
