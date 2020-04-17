@@ -68,7 +68,6 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
@@ -78,6 +77,7 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
+import org.openecomp.sdc.be.tosca.exception.FetchingArtifactFromCassandraException;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
@@ -641,9 +641,8 @@ public class CsarUtils {
             log.debug(
                 "Failed to get the schema files SDC-Version: {} Conformance-Level {}. Please fix DB table accordingly.",
                 getVersionFirstThreeOctets(), CONFORMANCE_LEVEL);
-            StorageOperationStatus storageStatus = DaoStatusConverter
-                .convertCassandraStatusToStorageStatus(specificSchemaFiles.right().value());
-            ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
+            ActionStatus convertedFromStorageResponse = convertCassandraOperationStatusToActionStatus(
+                specificSchemaFiles.right().value(), componentsUtils);
             return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse));
         }
 
@@ -663,20 +662,36 @@ public class CsarUtils {
     }
 
     private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {
-        Either<DAOArtifactData, CassandraOperationStatus> artifactResponse = artifactCassandraDao
-            .getArtifact(cassandraId);
+        return getFromCassandraTry(cassandraId).unsafeToLeftBiasedEither(
+            (FetchingArtifactFromCassandraException e) -> {
+                log.debug("Failed to fetch artifact from Cassandra by id {} error {} ",
+                    cassandraId,
+                    e.cassandraOperationStatus);
+                return Either.right(e.actionStatus);
+            }
+        );
+    }
 
-        if (artifactResponse.isRight()) {
-            log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId,
-                artifactResponse.right().value());
+    // TODO: Remove this comment if the approach is validated
+    // This is an attempt to get rid of Either and simplify the code
+    // Here we convert a left biased either returned by `artifactCassandraDao.getArtifact` into a `Try`
+    // which is then converted back to an `Either` in `getFromCassandra`
+    private Try<byte[]> getFromCassandraTry(String cassandraId) {
+        // The either is passed along with a function converting the right side (that is the error in this case) into
+        // an exception. This exception can be then thrown whenever we need it to.
+        // Ideally, `leftBiased` should be deleted bu this is not possible yet. This would require more refactoring.
+        return Try.leftBiased(artifactCassandraDao.getArtifact(cassandraId), cos -> {
+            log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId, cos);
+            ActionStatus as = convertCassandraOperationStatusToActionStatus(cos, componentsUtils);
+            return new FetchingArtifactFromCassandraException(cos, as);
+        }).map(DAOArtifactData::getDataAsArray);
+    }
 
-            StorageOperationStatus storageStatus = DaoStatusConverter
-                .convertCassandraStatusToStorageStatus(artifactResponse.right().value());
-            ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
-            return Either.right(convertedFromStorageResponse);
-        }
-        DAOArtifactData artifactData = artifactResponse.left().value();
-        return Either.left(artifactData.getDataAsArray());
+    private static ActionStatus convertCassandraOperationStatusToActionStatus(CassandraOperationStatus cos,
+        ComponentsUtils componentsUtils) {
+        StorageOperationStatus storageStatus = DaoStatusConverter
+            .convertCassandraStatusToStorageStatus(cos);
+        return componentsUtils.convertFromStorageResponse(storageStatus);
     }
 
     private String createCsarBlock0(String metaFileVersion, String toscaConformanceLevel) {
