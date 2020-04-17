@@ -22,6 +22,30 @@
       "revId": "7a5524ce964f7a57ca71a416dfe79750f9d9d9f3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19720b5b_b1da292b",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/migration/tasks/mig1911/SdcDeploymentArtTimeOutMigration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-17T13:39:09Z",
+      "side": 1,
+      "message": "You\u0027re right: it\u0027d make it easier to read. I\u0027ll do that!",
+      "parentUuid": "a267ff17_2c4e3c76",
+      "range": {
+        "startLine": 96,
+        "startChar": 8,
+        "endLine": 96,
+        "endChar": 33
+      },
+      "revId": "7a5524ce964f7a57ca71a416dfe79750f9d9d9f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
