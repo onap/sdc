@@ -113,8 +113,8 @@ public class ZipUtilsTest {
 
     @Test
     public void testUnzipAndZip() throws IOException, ZipException {
-        final Path unzipTempPath = Files.createTempDirectory("testUnzip");
-        final Path zipTempPath = Files.createTempDirectory("testZip");
+        final Path unzipTempPath = Files.createTempDirectory("testUnzip").toRealPath();
+        final Path zipTempPath = Files.createTempDirectory("testZip").toRealPath();
         final Path testZipPath;
         try {
             try {
