@@ -46,6 +46,30 @@
       "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ea61dd7_d9c07fd9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/GenericArtifactQueryInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-17T12:48:49Z",
+      "side": 1,
+      "message": "I see, thank you for your answer. Could you please indicate me which part of the code breaks if we remove this annotation? Ideally, we should avoid instantiating classes with what looks like an invalid state (At least that\u0027s how I see it but I might be wrong). I guess, if the change is too big, this could be addressed later.",
+      "parentUuid": "88a9ab6a_a8758071",
+      "range": {
+        "startLine": 33,
+        "startChar": 13,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
