@@ -142,6 +142,30 @@
       "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fadfe2d_4f52a131",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/GenericArtifactQueryInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-17T15:05:02Z",
+      "side": 1,
+      "message": "Ok I see, thank you for this information. This makes all sense now. Sorry to bother about this but I guess we are all here to learn :)",
+      "parentUuid": "4c94d34f_b3b6a83a",
+      "range": {
+        "startLine": 33,
+        "startChar": 13,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
