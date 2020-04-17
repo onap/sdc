@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b619363d_41d20262",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/migration/tasks/mig2002/SdcCollapsingRolesCERTIFIEDstateMigration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-17T08:51:50Z",
+      "side": 1,
+      "message": "looks good,\n\njust one suggestion, instead of surrounding big chunk of the code with \"!\u003dnull\", check for null, log the error and return immediately.",
+      "range": {
+        "startLine": 93,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 33
+      },
+      "revId": "e232fff16411336bcebd32706c3c78ccac88831e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
