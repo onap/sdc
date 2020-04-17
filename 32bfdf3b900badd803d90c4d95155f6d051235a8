@@ -94,6 +94,30 @@
       "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d94a16d9_bc041994",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/info/GenericArtifactQueryInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-17T14:18:10Z",
+      "side": 1,
+      "message": "I\u0027m sorry to bother you with this again but I cannot find any stack trace mentioning that something requires a default contructor to deserialize information in this object. I looked at different places, including the console.log.gz of the build, the links you provided, the issue, and at the failing tests mentioned in https://jenkins.onap.org/job/sdc-master-csit-uiSanity-testng/1195/. So far I only found an assertion error (https://logs.onap.org/production/vex-yul-ecomp-jenkins-1/sdc-master-csit-uiSanity-testng/1195/logs/sdc-ui-tests/target/).\n\nI see that this has been reviewed several times and I am very new to the codebase. I am just trying to learn a bit about it. If this is too much of a hassle for you, then no problem we can consider this comment as closed. I hope this is ok.",
+      "parentUuid": "e79e891c_0d0a1a28",
+      "range": {
+        "startLine": 33,
+        "startChar": 13,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "32bfdf3b900badd803d90c4d95155f6d051235a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
