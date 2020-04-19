@@ -57,23 +57,6 @@ public class ValidationConfigManagerTest {
     }
 
     @Test
-    public void testSetValidationConfiguration() {
-        String path = "";
-        Properties result;
-
-        // default test
-        result = ValidationConfigManager.setValidationConfiguration(path);
-    }
-
-    @Test
-    public void testGetValidationConfiguration() {
-        Properties result;
-
-        // default test
-        result = ValidationConfigManager.getValidationConfiguration();
-    }
-
-    @Test
     public void testGetOutputFullFilePath() throws Exception {
         String result;
 
