@@ -8,7 +8,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  *
@@ -24,22 +24,8 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
-/**
- * Created by chaya on 7/4/2017.
- */
 public class ValidationConfigManager {
 
-    private static Logger log = LoggerFactory.getLogger(ValidationConfigManager.class);
-
-    private static Properties prop = new Properties();
     private static String outputFullFilePath;
     private static String outputFilePath;
 
@@ -69,19 +55,4 @@ public class ValidationConfigManager {
     }
 
     private static String csvReportFilePath = "summary.csv";
-
-    public static Properties setValidationConfiguration(String path) {
-        InputStream input;
-        try {
-            input = new FileInputStream(path);
-            prop.load(input);
-        } catch (IOException ex) {
-            log.info("FileInputStream failed", ex);
-        }
-        return prop;
-    }
-
-    public static Properties getValidationConfiguration() {
-        return prop;
-    }
 }
