@@ -21,6 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import fj.data.Either;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
@@ -41,9 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by chaya on 7/3/2017.
- */
 public class TopologyTemplateValidatorExecuter {
 
     private static Logger log = Logger.getLogger(VfValidatorExecuter.class.getName());
@@ -82,7 +80,7 @@ public class TopologyTemplateValidatorExecuter {
         return results.left().value();
     }
 
-    protected boolean validate(List<? extends TopologyTemplateValidationTask> tasks, List<GraphVertex> vertices,
+    protected boolean validate(Report report, List<? extends TopologyTemplateValidationTask> tasks, List<GraphVertex> vertices,
         String outputFilePath) {
         ReportManager.reportStartValidatorRun(getName(), vertices.size(), outputFilePath);
         Set<String> failedTasks = new HashSet<>();
@@ -96,7 +94,7 @@ public class TopologyTemplateValidatorExecuter {
             boolean successAllTasks = true;
             for (TopologyTemplateValidationTask task : tasks) {
                 ReportManager.reportStartTaskRun(vertex, task.getTaskName(), outputFilePath);
-                VertexResult result = task.validate(vertex, outputFilePath);
+                VertexResult result = task.validate(report, vertex, outputFilePath);
                 if (!result.getStatus()) {
                     failedTasks.add(task.getTaskName());
                     successAllVertices = false;
@@ -105,7 +103,7 @@ public class TopologyTemplateValidatorExecuter {
                     successTasks.add(task.getTaskName());
                 }
                 ReportManager.printValidationTaskStatus(vertex, task.getTaskName(), result.getStatus(), outputFilePath);
-                ReportManager.reportTaskEnd(vertex.getUniqueId(), task.getTaskName(), result);
+                report.addSuccess(vertex.getUniqueId(), task.getTaskName(), result);
             }
             String componentScanStatus = successAllTasks ? "success" : "failed";
             log.info("Topology Template " + vertex.getUniqueId() + " Validation finished with " + componentScanStatus);

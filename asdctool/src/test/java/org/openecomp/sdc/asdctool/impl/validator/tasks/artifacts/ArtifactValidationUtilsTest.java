@@ -31,6 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
@@ -120,12 +121,13 @@ public class ArtifactValidationUtilsTest {
     @Test
     public void testValidateArtifactsAreInCassandra() {
         // given
+        Report report = Report.make();
         List<ArtifactDataDefinition> artifacts = new ArrayList<>();
         artifacts.add(artifactDataDefinition);
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts, txtReportFilePath);
+            testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, txtReportFilePath);
 
         List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
@@ -138,14 +140,15 @@ public class ArtifactValidationUtilsTest {
     @Test
     public void testValidateArtifactsNotInCassandra() {
         // given
+        Report report = Report.make();
         List<ArtifactDataDefinition> artifacts = new ArrayList<>();
         artifacts.add(artifactDataDefinition);
         artifacts.add(artifactDataDefinitionNotInCassandra);
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts, txtReportFilePath);
-        ReportManager.reportEndOfToolRun(csvReportFilePath, txtReportFilePath);
+            testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, txtReportFilePath);
+        ReportManager.reportEndOfToolRun(report, csvReportFilePath, txtReportFilePath);
 
         List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
@@ -202,6 +205,7 @@ public class ArtifactValidationUtilsTest {
     @Test
     public void testValidateTopologyTemplateArtifacts() {
         // given
+        Report report = Report.make();
         Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
         artifacts.put(ES_ID, artifactDataDefinition);
 
@@ -221,7 +225,7 @@ public class ArtifactValidationUtilsTest {
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME, txtReportFilePath);
+            testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME, txtReportFilePath);
 
         List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
@@ -236,12 +240,13 @@ public class ArtifactValidationUtilsTest {
     @Test
     public void testValidateTopologyTemplateArtifactsNotFoundToscaElement() {
         // given
+        Report report = Report.make();
         when(topologyTemplateOperation.getToscaElement(eq(vertex.getUniqueId()), any()))
             .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME, txtReportFilePath);
+            testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME, txtReportFilePath);
 
         // then
         assertFalse(result.getStatus());

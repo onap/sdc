@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
@@ -89,7 +90,8 @@ public class ModuleJsonTaskTest {
         // Initially no outputFilePath was passed to this function (hence it is set to null)
         // TODO: Fix this null and see if the argument is used by this function
         try {
-            VertexResult actual = test.validate(vertex, null);
+            Report report = Report.make();
+            VertexResult actual = test.validate(report, vertex, null);
             assertThat(actual.getStatus(), is(true));
         } catch (Exception e) {
             // TODO: Fix this test, as currently, any exception is ignored

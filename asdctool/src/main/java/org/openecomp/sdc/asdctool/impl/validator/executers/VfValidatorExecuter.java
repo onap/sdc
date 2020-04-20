@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -28,9 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-/**
- * Created by chaya on 7/3/2017.
- */
 public class VfValidatorExecuter extends TopologyTemplateValidatorExecuter implements ValidatorExecuter {
 
     private List<VfValidationTask> tasks;
@@ -43,9 +41,9 @@ public class VfValidatorExecuter extends TopologyTemplateValidatorExecuter imple
     }
 
     @Override
-    public boolean executeValidations(String outputFilePath) {
+    public boolean executeValidations(Report report, String outputFilePath) {
         List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.RESOURCE);
-        return validate(tasks, vertices, outputFilePath);
+        return validate(report, tasks, vertices, outputFilePath);
     }
 
     @Override

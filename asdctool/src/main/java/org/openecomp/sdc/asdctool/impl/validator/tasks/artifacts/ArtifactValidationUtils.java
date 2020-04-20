@@ -22,6 +22,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import fj.data.Either;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -60,7 +61,7 @@ public class ArtifactValidationUtils {
         this.topologyTemplateOperation = topologyTemplateOperation;
     }
 
-    public ArtifactsVertexResult validateArtifactsAreInCassandra(GraphVertex vertex, String taskName,
+    public ArtifactsVertexResult validateArtifactsAreInCassandra(Report report, GraphVertex vertex, String taskName,
         List<ArtifactDataDefinition> artifacts, String outputFilePath) {
         ArtifactsVertexResult result = new ArtifactsVertexResult(true);
         for (ArtifactDataDefinition artifact : artifacts) {
@@ -69,7 +70,7 @@ public class ArtifactValidationUtils {
                 "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
             ReportManager.writeReportLineToFile(status, outputFilePath);
             if (!isArtifactExist) {
-                ReportManager.addFailedVertex(taskName, vertex.getUniqueId());
+                report.addFailure(taskName, vertex.getUniqueId());
                 result.setStatus(false);
                 result.addNotFoundArtifact(artifact.getUniqueId());
             }
@@ -98,7 +99,7 @@ public class ArtifactValidationUtils {
         return artifacts;
     }
 
-    public ArtifactsVertexResult validateTopologyTemplateArtifacts(GraphVertex vertex, String taskName,
+    public ArtifactsVertexResult validateTopologyTemplateArtifacts(Report report, GraphVertex vertex, String taskName,
         String outputFilePath) {
         ArtifactsVertexResult result = new ArtifactsVertexResult();
         ComponentParametersView paramView = new ComponentParametersView();
@@ -134,6 +135,6 @@ public class ArtifactValidationUtils {
                 allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
         }
 
-        return validateArtifactsAreInCassandra(vertex, taskName, allArtifacts, outputFilePath);
+        return validateArtifactsAreInCassandra(report, vertex, taskName, allArtifacts, outputFilePath);
     }
 }
