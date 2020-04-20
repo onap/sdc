@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "857389eb_68c239f1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Component.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-20T17:13:03Z",
+      "side": 1,
+      "message": "Sorry about that, but I have just realized that `Optional.of` could throw a NullPointerException if the passed argument is null. We can fix that with `Optional.ofNullable(list.get(0))`.\n\nSorry again for the inconvenience.",
+      "revId": "a296601e18a2a79e102518158f64d2ef940082aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
