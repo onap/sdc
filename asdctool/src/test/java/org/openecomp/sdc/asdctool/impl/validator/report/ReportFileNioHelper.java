@@ -18,41 +18,33 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.utils;
+package org.openecomp.sdc.asdctool.impl.validator.report;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class ReportManagerHelper {
-
-    private ReportManagerHelper() {
+public class ReportFileNioHelper {
+    private ReportFileNioHelper() {
     }
 
-    public static List<String> getReportOutputFileAsList(String txtReportFilePath) {
-        return readFileAsList(txtReportFilePath);
-    }
-
-    public static void cleanReports(String txtReportFilePath) {
-        cleanFile(txtReportFilePath);
-    }
-
-    public static List<String> readFileAsList(String filePath) {
-        try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
-            return br.lines().collect(Collectors.toList());
-        } catch (IOException e) {
+    public static void withCsvFile(String csvReportFilePath, Consumer<ReportFile.CSVFile> f) {
+        withCsvFile(csvReportFilePath, file -> {
+            f.accept(file);
             return null;
-        }
+        });
     }
 
-    private static void cleanFile(String filePath) {
+    public static <A> A withCsvFile(String csvReportFilePath, Function<ReportFile.CSVFile, A> f) {
+        ReportFile.CSVFile file = ReportFile.makeCsvFile(ReportFileWriterTestFactory.makeNioWriter(csvReportFilePath));
+        A result = f.apply(file);
         try {
-            Files.delete(Paths.get(filePath));
-        } catch (IOException ignored) {
-
+            Files.delete(Paths.get(csvReportFilePath));
+            return result;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }
