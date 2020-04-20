@@ -22,6 +22,30 @@
       "revId": "d54bf8b562b8c9a0faa1c963985ba09924d0fad6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "833f57ef_51ddef7e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Component.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-04-20T16:23:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec97cb60_4112c878",
+      "range": {
+        "startLine": 628,
+        "startChar": 4,
+        "endLine": 628,
+        "endChar": 11
+      },
+      "revId": "d54bf8b562b8c9a0faa1c963985ba09924d0fad6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
