@@ -21,11 +21,24 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -41,20 +54,6 @@ import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 public class ArtifactValidationUtilsTest {
 
@@ -85,7 +84,6 @@ public class ArtifactValidationUtilsTest {
     private static final String UNIQUE_ID_VERTEX = "321";
 
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
-    private final static String csvReportFilePath = ValidationConfigManager.DEFAULT_CSV_PATH;
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
 
     ArtifactValidationUtilsTest () {
@@ -103,12 +101,12 @@ public class ArtifactValidationUtilsTest {
 
     @BeforeEach
     public void setup() {
-        ReportManager.make(csvReportFilePath, txtReportFilePath);
+        ReportManager.make(txtReportFilePath);
     }
 
     @AfterEach
     public void clean() {
-        ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
+        ReportManagerHelper.cleanReports(txtReportFilePath);
     }
 
     @Test
@@ -141,7 +139,7 @@ public class ArtifactValidationUtilsTest {
         // when
         ArtifactsVertexResult result =
             testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, txtReportFilePath);
-        ReportManager.reportEndOfToolRun(report, csvReportFilePath, txtReportFilePath);
+        ReportManager.reportEndOfToolRun(report, txtReportFilePath);
 
         List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
