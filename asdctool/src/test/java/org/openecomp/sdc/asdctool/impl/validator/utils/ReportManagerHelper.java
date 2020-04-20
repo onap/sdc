@@ -38,12 +38,12 @@ public class ReportManagerHelper {
         return readFileAsList(ValidationConfigManager.getOutputFullFilePath());
     }
 
-    public static List<String> getReportCsvFileAsList() {
-        return readFileAsList(ValidationConfigManager.getCsvReportFilePath());
+    public static List<String> getReportCsvFileAsList(String csvReportFilePath) {
+        return readFileAsList(csvReportFilePath);
     }
 
-    public static void cleanReports() {
-        cleanFile(ValidationConfigManager.getCsvReportFilePath());
+    public static void cleanReports(String csvReportFilePath) {
+        cleanFile(csvReportFilePath);
         cleanFile(ValidationConfigManager.getOutputFullFilePath());
     }
 
