@@ -36,13 +36,12 @@ public class ReportManager {
 
     private static final Logger log = LoggerFactory.getLogger(ReportManager.class);
 
-    public static ReportManager make(String csvReportFilePath, String txtReportFilePath) {
-        return new ReportManager(csvReportFilePath, txtReportFilePath);
+    public static ReportManager make(String txtReportFilePath) {
+        return new ReportManager(txtReportFilePath);
     }
 
-    private ReportManager(String csvReportFilePath, String txtReportFilePath) {
+    private ReportManager(String txtReportFilePath) {
         try {
-            initCsvFile(csvReportFilePath);
             initReportFile(txtReportFilePath);
         } catch (IOException e) {
             log.info("Init file failed - {}", e.getClass().getSimpleName(), e);
@@ -53,13 +52,6 @@ public class ReportManager {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------Validation Tool Results:-------------------------");
         Files.write(Paths.get(txtReportFilePath), sb.toString().getBytes());
-    }
-
-    private void initCsvFile(String csvReportFilePath) throws IOException {
-        StrBuilder sb = new StrBuilder();
-        sb.append("Vertex ID,Task Name,Success,Result Details,Result Description");
-        sb.appendNewLine();
-        Files.write(Paths.get(csvReportFilePath), sb.toString().getBytes());
     }
 
     public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success,
@@ -107,7 +99,7 @@ public class ReportManager {
         writeReportLineToFile(sb.toString(), outputFilePath);
     }
 
-    public static void reportEndOfToolRun(Report report, String csvReportFilePath, String outputFilePath) {
+    public static void reportEndOfToolRun(Report report, String outputFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
         report.forEachFailure((taskName, failedVertices) -> {
@@ -117,21 +109,5 @@ public class ReportManager {
             sb.appendNewLine();
         });
         writeReportLineToFile(sb.toString(), outputFilePath);
-        printAllResults(report, csvReportFilePath);
-    }
-
-    public static void printAllResults(Report report, String csvReportFilePath) {
-        report.forEachSuccess((vertex, task, result) -> {
-            try {
-                String resultLine = vertex + "," + task + "," + result.getStatus() + "," + result.getResult();
-                Files.write(Paths.get(csvReportFilePath), resultLine.getBytes(),
-                    StandardOpenOption.APPEND);
-                Files.write(Paths.get(csvReportFilePath),
-                    new StrBuilder().appendNewLine().toString().getBytes(),
-                    StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
-            }
-        });
     }
 }

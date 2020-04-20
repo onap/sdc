@@ -20,10 +20,16 @@
 
 package org.openecomp.sdc.asdctool.main;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationToolConfiguration;
+import org.openecomp.sdc.asdctool.impl.validator.report.FileType;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.CSVFile;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriter;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -42,6 +48,8 @@ public class ValidationTool {
         String txtReportFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
         String csvReportFilePath = ValidationConfigManager.csvReportFilePath(outputPath, System::currentTimeMillis);
 
+        CSVFile csvFile = ReportFile.makeCsvFile(makeNioWriter(Paths.get(csvReportFilePath)));
+
         String appConfigDir = args[1];
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         ValidationToolBL validationToolBL = context.getBean(ValidationToolBL.class);
@@ -49,7 +57,8 @@ public class ValidationTool {
         log.info("Start Validation Tool");
         Report report = Report.make();
         boolean result = validationToolBL.validateAll(report, txtReportFilePath);
-        ReportManager.reportEndOfToolRun(report, csvReportFilePath, txtReportFilePath);
+        ReportManager.reportEndOfToolRun(report, txtReportFilePath);
+        csvFile.printAllResults(report);
         if (result) {
             log.info("Validation finished successfully");
             System.exit(0);
@@ -57,6 +66,12 @@ public class ValidationTool {
             log.info("Validation finished with warnings");
             System.exit(2);
         }
+    }
+
+    private static <A extends FileType> ReportFileWriter<A> makeNioWriter(Path path) {
+        return ReportFileWriter.makeNioWriter(path, ex ->
+            log.info("write to file failed - {}", ex.getClass().getSimpleName(), ex)
+        );
     }
 
     private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
