@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ecd4a1eb_963db956",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/switchover/detector/SwitchoverDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-20T08:15:09Z",
+      "side": 1,
+      "message": "potential NPE in case of beMatch is NULL",
+      "range": {
+        "startLine": 130,
+        "startChar": 12,
+        "endLine": 130,
+        "endChar": 61
+      },
+      "revId": "d36e39947e055f465e9b8157f2c2f9d50e716006",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
