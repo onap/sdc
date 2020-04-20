@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -40,7 +41,7 @@ public class VfArtifactValidationTask extends VfValidationTask {
     }
 
     @Override
-    public VertexResult validate(GraphVertex vertex, String outputFilePath) {
-        return artifactValidationUtils.validateTopologyTemplateArtifacts(vertex, getTaskName(), outputFilePath);
+    public VertexResult validate(Report report, GraphVertex vertex, String outputFilePath) {
+        return artifactValidationUtils.validateTopologyTemplateArtifacts(report, vertex, getTaskName(), outputFilePath);
     }
 }

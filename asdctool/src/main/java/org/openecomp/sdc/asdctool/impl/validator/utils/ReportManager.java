@@ -21,27 +21,20 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.apache.commons.lang.text.StrBuilder;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import org.apache.commons.lang.text.StrBuilder;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReportManager {
 
-    private static Logger log = LoggerFactory.getLogger(ReportManager.class);
-
-    private static final Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
-    private static final Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(ReportManager.class);
 
     public static ReportManager make(String csvReportFilePath, String txtReportFilePath) {
         return new ReportManager(csvReportFilePath, txtReportFilePath);
@@ -67,22 +60,6 @@ public class ReportManager {
         sb.append("Vertex ID,Task Name,Success,Result Details,Result Description");
         sb.appendNewLine();
         Files.write(Paths.get(csvReportFilePath), sb.toString().getBytes());
-    }
-
-    public static void reportTaskEnd(String vertexId, String taskName, VertexResult result) {
-        Map<String, VertexResult> vertexTasksResults =
-            Optional.ofNullable(resultsPerVertex.get(vertexId)).orElse(new HashMap<>());
-        vertexTasksResults.put(taskName, result);
-        resultsPerVertex.put(vertexId, vertexTasksResults);
-    }
-
-    public static void addFailedVertex(String taskName, String vertexId) {
-        Set<String> failedVertices = failedVerticesPerTask.get(taskName);
-        if (failedVertices == null) {
-            failedVertices = new HashSet<>();
-        }
-        failedVertices.add(vertexId);
-        failedVerticesPerTask.put(taskName, failedVertices);
     }
 
     public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success,
@@ -130,21 +107,21 @@ public class ReportManager {
         writeReportLineToFile(sb.toString(), outputFilePath);
     }
 
-    public static void reportEndOfToolRun(String csvReportFilePath, String outputFilePath) {
+    public static void reportEndOfToolRun(Report report, String csvReportFilePath, String outputFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
-        failedVerticesPerTask.forEach((taskName, failedVertices) -> {
+        report.forEachFailure((taskName, failedVertices) -> {
             sb.append("Task: " + taskName);
             sb.appendNewLine();
             sb.append("FailedVertices: " + failedVertices);
             sb.appendNewLine();
         });
         writeReportLineToFile(sb.toString(), outputFilePath);
-        printAllResults(csvReportFilePath);
+        printAllResults(report, csvReportFilePath);
     }
 
-    public static void printAllResults(String csvReportFilePath) {
-        resultsPerVertex.forEach((vertex, tasksResults) -> tasksResults.forEach((task, result) -> {
+    public static void printAllResults(Report report, String csvReportFilePath) {
+        report.forEachSuccess((vertex, task, result) -> {
             try {
                 String resultLine = vertex + "," + task + "," + result.getStatus() + "," + result.getResult();
                 Files.write(Paths.get(csvReportFilePath), resultLine.getBytes(),
@@ -155,6 +132,6 @@ public class ReportManager {
             } catch (IOException e) {
                 log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
             }
-        }));
+        });
     }
 }

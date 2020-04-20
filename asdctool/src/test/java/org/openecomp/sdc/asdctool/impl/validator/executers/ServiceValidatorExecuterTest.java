@@ -21,6 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import org.junit.Test;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
 import static org.mockito.Mockito.mock;
@@ -39,8 +40,9 @@ public class ServiceValidatorExecuterTest {
 
     @Test(expected = NullPointerException.class)
     public void testExecuteValidations() {
+        Report report = Report.make();
         // Initially no outputFilePath was passed to this function (hence it is set to null)
         // TODO: Fix this null and see if the argument is used by this function
-        createTestSubject().executeValidations(null);
+        createTestSubject().executeValidations(report, null);
     }
 }
