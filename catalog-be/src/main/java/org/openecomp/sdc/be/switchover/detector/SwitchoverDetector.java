@@ -127,7 +127,7 @@ public class SwitchoverDetector {
             beMatch = queryBe();
             feMatch = queryFe();
 
-            if (beMatch == feMatch && beMatch != null) {
+            if (beMatch != null && beMatch.equals(feMatch)) {
                 if (beMatch) {
                     setSiteMode(SwitchoverDetectorState.ACTIVE.getState());
                 } else {
