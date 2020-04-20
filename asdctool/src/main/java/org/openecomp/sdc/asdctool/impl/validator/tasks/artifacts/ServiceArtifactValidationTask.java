@@ -39,7 +39,7 @@ public class ServiceArtifactValidationTask extends ServiceValidationTask {
     }
 
     @Override
-    public ArtifactsVertexResult validate(GraphVertex vertex) {
-        return artifactValidationUtils.validateTopologyTemplateArtifacts(vertex, getTaskName());
+    public ArtifactsVertexResult validate(GraphVertex vertex, String outputFilePath) {
+        return artifactValidationUtils.validateTopologyTemplateArtifacts(vertex, getTaskName(), outputFilePath);
     }
 }

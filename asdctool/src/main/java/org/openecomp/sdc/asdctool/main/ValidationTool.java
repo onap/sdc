@@ -41,7 +41,7 @@ public class ValidationTool {
     public static void main(String[] args) {
 
         String outputPath = args[0];
-        ValidationConfigManager.setOutputFullFilePath(outputPath);
+        String txtReportFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
         String csvReportFilePath = ValidationConfigManager.csvReportFilePath(outputPath, System::currentTimeMillis);
 
         String appConfigDir = args[1];
@@ -49,8 +49,8 @@ public class ValidationTool {
         ValidationToolBL validationToolBL = context.getBean(ValidationToolBL.class);
 
         log.info("Start Validation Tool");
-        boolean result = validationToolBL.validateAll();
-        ReportManager.reportEndOfToolRun(csvReportFilePath);
+        boolean result = validationToolBL.validateAll(txtReportFilePath);
+        ReportManager.reportEndOfToolRun(csvReportFilePath, txtReportFilePath);
         if (result) {
             log.info("Validation finished successfully");
             System.exit(0);

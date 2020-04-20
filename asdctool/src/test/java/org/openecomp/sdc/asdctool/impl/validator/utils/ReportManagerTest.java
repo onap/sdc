@@ -77,25 +77,20 @@ public class ReportManagerTest {
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
     private final static String csvReportFilePath = ValidationConfigManager
         .csvReportFilePath(resourcePath, System::currentTimeMillis);
-
+    private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
 
     @Mock
     GraphVertex vertexScanned;
 
     @Before
     public void setup() {
-        String resourcePath = new File(Objects
-            .requireNonNull(ReportManagerTest.class.getClassLoader().getResource("")).getFile())
-            .getAbsolutePath();
-        ValidationConfigManager.setOutputFullFilePath(resourcePath);
-        ReportManager.make(csvReportFilePath);
-
+        ReportManager.make(csvReportFilePath, txtReportFilePath);
         successResult.setStatus(true);
     }
 
     @After
     public void clean() {
-        ReportManagerHelper.cleanReports(csvReportFilePath);
+        ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
     }
 
     @Test
@@ -118,9 +113,9 @@ public class ReportManagerTest {
     public void testAddFailedVertex() {
         // when
         ReportManager.addFailedVertex(TASK_1_NAME, VERTEX_1_ID);
-        ReportManager.reportEndOfToolRun(csvReportFilePath);
+        ReportManager.reportEndOfToolRun(csvReportFilePath, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertNotNull(reportOutputFile);
@@ -137,9 +132,9 @@ public class ReportManagerTest {
         when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
 
         // when
-        ReportManager.printValidationTaskStatus(vertexScanned, TASK_1_NAME, false);
+        ReportManager.printValidationTaskStatus(vertexScanned, TASK_1_NAME, false, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertNotNull(reportOutputFile);
@@ -152,9 +147,9 @@ public class ReportManagerTest {
     @Test
     public void testWriteReportLineToFile() {
         // when
-        ReportManager.writeReportLineToFile(DUMMY_MESSAGE);
+        ReportManager.writeReportLineToFile(DUMMY_MESSAGE, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertNotNull(reportOutputFile);
@@ -166,9 +161,10 @@ public class ReportManagerTest {
     @Test
     public void testReportValidatorTypeSummary() {
         // when
-        ReportManager.reportValidatorTypeSummary(VALIDATOR_NAME, failedTasksNames, successTasksNames);
+        ReportManager
+            .reportValidatorTypeSummary(VALIDATOR_NAME, failedTasksNames, successTasksNames, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertNotNull(reportOutputFile);
@@ -185,9 +181,9 @@ public class ReportManagerTest {
     @Test
     public void testReportStartValidatorRun() {
         // when
-        ReportManager.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM);
+        ReportManager.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertNotNull(reportOutputFile);
@@ -202,9 +198,9 @@ public class ReportManagerTest {
         when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
 
         // when
-        ReportManager.reportStartTaskRun(vertexScanned, TASK_1_NAME);
+        ReportManager.reportStartTaskRun(vertexScanned, TASK_1_NAME, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertNotNull(reportOutputFile);

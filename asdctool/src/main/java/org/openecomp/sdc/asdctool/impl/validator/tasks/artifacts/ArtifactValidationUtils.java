@@ -60,13 +60,14 @@ public class ArtifactValidationUtils {
         this.topologyTemplateOperation = topologyTemplateOperation;
     }
 
-    public ArtifactsVertexResult validateArtifactsAreInCassandra(GraphVertex vertex, String taskName, List<ArtifactDataDefinition> artifacts) {
+    public ArtifactsVertexResult validateArtifactsAreInCassandra(GraphVertex vertex, String taskName,
+        List<ArtifactDataDefinition> artifacts, String outputFilePath) {
         ArtifactsVertexResult result = new ArtifactsVertexResult(true);
-        for(ArtifactDataDefinition artifact:artifacts) {
+        for (ArtifactDataDefinition artifact : artifacts) {
             boolean isArtifactExist = isArtifactInCassandra(artifact.getEsId());
             String status = isArtifactExist ? "Artifact " + artifact.getEsId() + " is in Cassandra" :
-                    "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
-            ReportManager.writeReportLineToFile(status);
+                "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
+            ReportManager.writeReportLineToFile(status, outputFilePath);
             if (!isArtifactExist) {
                 ReportManager.addFailedVertex(taskName, vertex.getUniqueId());
                 result.setStatus(false);
@@ -97,13 +98,15 @@ public class ArtifactValidationUtils {
         return artifacts;
     }
 
-    public ArtifactsVertexResult validateTopologyTemplateArtifacts(GraphVertex vertex, String taskName) {
+    public ArtifactsVertexResult validateTopologyTemplateArtifacts(GraphVertex vertex, String taskName,
+        String outputFilePath) {
         ArtifactsVertexResult result = new ArtifactsVertexResult();
         ComponentParametersView paramView = new ComponentParametersView();
         paramView.disableAll();
         paramView.setIgnoreArtifacts(false);
         paramView.setIgnoreComponentInstances(false);
-        Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation.getToscaElement(vertex.getUniqueId(), paramView);
+        Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation
+            .getToscaElement(vertex.getUniqueId(), paramView);
         if (toscaElementEither.isRight()) {
             result.setStatus(false);
             return result;
@@ -123,14 +126,14 @@ public class ArtifactValidationUtils {
 
         if (instanceArtifacts != null) {
             instanceArtifacts.forEach((key, artifactMap) ->
-                    allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
+                allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
         }
 
         if (instanceDeploymentArtifacts != null) {
             instanceDeploymentArtifacts.forEach((key, artifactMap) ->
-                    allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
+                allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
         }
 
-        return validateArtifactsAreInCassandra(vertex, taskName, allArtifacts);
+        return validateArtifactsAreInCassandra(vertex, taskName, allArtifacts, outputFilePath);
     }
 }
