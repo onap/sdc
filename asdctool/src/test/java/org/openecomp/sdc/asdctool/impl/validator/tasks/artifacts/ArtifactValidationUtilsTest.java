@@ -64,7 +64,7 @@ import static org.mockito.Mockito.when;
 @PowerMockRunnerDelegate(MockitoJUnitRunner.class)
 @PrepareForTest({ReportManager.class})
 public class ArtifactValidationUtilsTest {
-    
+
     @Mock
     private ArtifactCassandraDao artifactCassandraDao;
     @Mock
@@ -91,12 +91,15 @@ public class ArtifactValidationUtilsTest {
     private static final String UNIQUE_ID = "4321";
     private static final String UNIQUE_ID_VERTEX = "321";
 
+    private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
+    private final static String csvReportFilePath = ValidationConfigManager.DEFAULT_CSV_PATH;
+
     public void initReportManager() {
         String resourcePath = new File(Objects
             .requireNonNull(ArtifactValidationUtilsTest.class.getClassLoader().getResource(""))
             .getFile()).getAbsolutePath();
         ValidationConfigManager.setOutputFullFilePath(resourcePath);
-        new ReportManager();
+        ReportManager.make(csvReportFilePath);
     }
 
     @Before
@@ -115,7 +118,7 @@ public class ArtifactValidationUtilsTest {
 
     @After
     public void clean() {
-        ReportManagerHelper.cleanReports();
+        ReportManagerHelper.cleanReports(csvReportFilePath);
     }
 
     @Test
@@ -146,7 +149,7 @@ public class ArtifactValidationUtilsTest {
         // when
         ArtifactsVertexResult result =
             testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts);
-        ReportManager.reportEndOfToolRun();
+        ReportManager.reportEndOfToolRun(csvReportFilePath);
 
         List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
 
@@ -203,19 +206,19 @@ public class ArtifactValidationUtilsTest {
     @Test
     public void testValidateTopologyTemplateArtifacts() {
         // given
-		Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
-		artifacts.put(ES_ID, artifactDataDefinition);
+        Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
+        artifacts.put(ES_ID, artifactDataDefinition);
 
-		when(topologyTemplate.getDeploymentArtifacts()).thenReturn(artifacts);
-		when(topologyTemplate.getArtifacts()).thenReturn(artifacts);
-		when(topologyTemplate.getServiceApiArtifacts()).thenReturn(artifacts);
+        when(topologyTemplate.getDeploymentArtifacts()).thenReturn(artifacts);
+        when(topologyTemplate.getArtifacts()).thenReturn(artifacts);
+        when(topologyTemplate.getServiceApiArtifacts()).thenReturn(artifacts);
 
-		when(mapToscaDataDefinition.getMapToscaDataDefinition()).thenReturn(artifacts);
-		Map<String, MapArtifactDataDefinition> artifactsMap = new HashMap<>();
-		artifactsMap.put(ES_ID, mapToscaDataDefinition);
+        when(mapToscaDataDefinition.getMapToscaDataDefinition()).thenReturn(artifacts);
+        Map<String, MapArtifactDataDefinition> artifactsMap = new HashMap<>();
+        artifactsMap.put(ES_ID, mapToscaDataDefinition);
 
-		when(topologyTemplate.getInstanceArtifacts()).thenReturn(artifactsMap);
-		when(topologyTemplate.getInstDeploymentArtifacts()).thenReturn(artifactsMap);
+        when(topologyTemplate.getInstanceArtifacts()).thenReturn(artifactsMap);
+        when(topologyTemplate.getInstDeploymentArtifacts()).thenReturn(artifactsMap);
 
         when(topologyTemplateOperation.getToscaElement(eq(vertex.getUniqueId()), any()))
             .thenReturn(Either.left(topologyTemplate));

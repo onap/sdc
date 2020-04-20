@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager.csvReportFilePath;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
@@ -33,27 +37,20 @@ import java.util.Properties;
 public class ValidationConfigManagerTest {
 
     @Test
+    public void testCsvReportFilePath() {
+        String randomOutput = System.currentTimeMillis() + "";
+        long millis = System.currentTimeMillis();
+        assertThat(
+            csvReportFilePath(randomOutput, () -> millis),
+            is(randomOutput + "/csvSummary_" + millis + ".csv"));
+    }
+
+    @Test
     public void testGetOutputFilePath() {
         String result;
 
         // default test
         result = ValidationConfigManager.getOutputFilePath();
-    }
-
-    @Test
-    public void testGetCsvReportFilePath() {
-        String result;
-
-        // default test
-        result = ValidationConfigManager.getCsvReportFilePath();
-    }
-
-    @Test
-    public void testSetCsvReportFilePath() {
-        String outputPath = "";
-
-        // default test
-        ValidationConfigManager.setCsvReportFilePath(outputPath);
     }
 
     @Test
