@@ -438,7 +438,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				overrideImmutableMetadata(oldResource, resource);
 			}
 			validateResourceBeforeCreate(resource, user, false);
-			String oldCsarVersion = oldResource.getCsarVersion();
+			String oldCsarVersion = oldResource != null ? oldResource.getCsarVersion() : null;
 			log.debug("CsarUUID is {} - going to update resource with UniqueId {} from CSAR", csarUUID,
 					resourceUniqueId);
 			// (on boarding flow): If the update includes same csarUUID and
@@ -674,7 +674,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		updateGroupsName(oldResource, preparedResource, isTopologyChanged.left().value());
 		updateResourceInstancesNames(oldResource, csarInfo, preparedResource, isTopologyChanged.left().value());
 
-		preparedResource = getResourceWithGroups(preparedResource.getUniqueId());
+		final String preparedResourceId = preparedResource != null ? preparedResource.getUniqueId() : "";
+		preparedResource = getResourceWithGroups(preparedResourceId);
 
 		updateVolumeGroup(preparedResource);
 
@@ -710,23 +711,25 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 	}
 
-	private void updateGroupsName(Resource oldResource, Resource preparedResource,  boolean isTopologyChanged) {
-		if (CollectionUtils.isNotEmpty(oldResource.getGroups())
-				&& CollectionUtils.isNotEmpty(preparedResource.getGroups())) {
+	private void updateGroupsName(Resource oldResource, Resource preparedResource, boolean isTopologyChanged) {
+		if (oldResource == null || preparedResource == null) {
+			log.debug("Failed to update groups name : oldResource or preparedResource is null");
+		} else if (CollectionUtils.isNotEmpty(oldResource.getGroups())
+			&& CollectionUtils.isNotEmpty(preparedResource.getGroups())) {
 			Map<String, String> oldGroups = oldResource.getGroups()
-					.stream()
-					.collect(toMap(GroupDataDefinition::getInvariantName, GroupDataDefinition::getName));
+				.stream()
+				.collect(toMap(GroupDataDefinition::getInvariantName, GroupDataDefinition::getName));
 
 			List<GroupDefinition> updatedGroups = preparedResource.getGroups()
-					.stream()
-					.filter(group -> oldGroups.containsKey(group.getInvariantName()) && !group.getName()
-							.equals(oldGroups.get(group.getInvariantName())))
-					.collect(toList());
+				.stream()
+				.filter(group -> oldGroups.containsKey(group.getInvariantName()) && !group.getName()
+					.equals(oldGroups.get(group.getInvariantName())))
+				.collect(toList());
 
 			if (CollectionUtils.isNotEmpty(updatedGroups)) {
 				if (isTopologyChanged) {
 					updatedGroups.stream().filter(group -> !group.isVspOriginated())
-							.forEach(group -> group.setName(oldGroups.get(group.getInvariantName())));
+						.forEach(group -> group.setName(oldGroups.get(group.getInvariantName())));
 				} else {
 					updatedGroups.forEach(group -> group.setName(oldGroups.get(group.getInvariantName())));
 				}
@@ -735,31 +738,33 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 	}
 
-	private void updateResourceInstancesNames(Resource oldResource, CsarInfo csarInfo, Resource preparedResource, boolean isTopologyChanged) {
-		if(CollectionUtils.isNotEmpty(oldResource.getComponentInstances())){
+	private void updateResourceInstancesNames(Resource oldResource, CsarInfo csarInfo, Resource preparedResource,
+		boolean isTopologyChanged) {
+		if (oldResource == null || preparedResource == null) {
+			log.debug("Failed to update resource instances names : oldResource or preparedResource is null");
+		} else if (CollectionUtils.isNotEmpty(oldResource.getComponentInstances())) {
 			Map<String, String> oldInstances = oldResource.getComponentInstances()
-					.stream()
-					.collect(toMap(ComponentInstance::getInvariantName, ComponentInstance::getName));
+				.stream()
+				.collect(toMap(ComponentInstance::getInvariantName, ComponentInstance::getName));
 			List<ComponentInstance> updatedInstances = preparedResource.getComponentInstances()
-					.stream()
-					.filter(i -> oldInstances.containsKey(i.getInvariantName()) && !i.getName()
-							.equals(oldInstances.get(i.getInvariantName())))
-					.collect(toList());
+				.stream()
+				.filter(i -> oldInstances.containsKey(i.getInvariantName()) && !i.getName()
+					.equals(oldInstances.get(i.getInvariantName())))
+				.collect(toList());
 			if (CollectionUtils.isNotEmpty(updatedInstances)) {
-				if(isTopologyChanged) {
+				if (isTopologyChanged) {
 					updatedInstances.stream().filter(i -> !i.isCreatedFromCsar())
-							.forEach(i -> i.setName(oldInstances.get(i.getInvariantName())));
-				}
-				else{
+						.forEach(i -> i.setName(oldInstances.get(i.getInvariantName())));
+				} else {
 					updatedInstances.forEach(i -> i.setName(oldInstances.get(i.getInvariantName())));
 				}
 			}
 
 		}
 		componentInstanceBusinessLogic.updateComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME,
-				null, preparedResource.getUniqueId(), csarInfo.getModifier()
-						.getUserId(),
-				preparedResource.getComponentInstances(), false);
+			null, preparedResource.getUniqueId(), csarInfo.getModifier()
+				.getUserId(),
+			preparedResource.getComponentInstances(), false);
 	}
 
 	private Either<Resource, ResponseFormat> createOrUpdateArtifacts(ArtifactOperationEnum operation,
@@ -1830,13 +1835,21 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private InputDefinition findInputByName(List<InputDefinition> inputs, GetInputValueDataDefinition getInput) {
+
+		final String inputName = getInput != null ? getInput.getInputName() : "";
+
+		if(inputs == null || inputs.isEmpty()) {
+			log.debug("#findInputByName - Inputs list is empty");
+			rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, inputName);
+		}
+
 		Optional<InputDefinition> inputOpt = inputs.stream()
 				.filter(p -> p.getName()
-						.equals(getInput.getInputName()))
+						.equals(inputName))
 				.findFirst();
 		if (!inputOpt.isPresent()) {
-			log.debug("#findInputByName - Failed to find the input {} ", getInput.getInputName());
-			rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, getInput.getInputName());
+			log.debug("#findInputByName - Failed to find the input {} ", inputName);
+			rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, inputName);
 		}
 		return inputOpt.get();
 	}
@@ -3184,9 +3197,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					log.debug("try to find aviable Capability  req name is {} ", validReq.getName());
 					CapabilityDefinition aviableCapForRel = findAvailableCapabilityByTypeOrName(validReq,
 							currentCapCompInstance, uploadRegInfo);
-					reqAndRelationshipPair.setCapability(aviableCapForRel.getName());
-					reqAndRelationshipPair.setCapabilityUid(aviableCapForRel.getUniqueId());
-					reqAndRelationshipPair.setCapabilityOwnerId(aviableCapForRel.getOwnerId());
+
 					if (aviableCapForRel == null) {
 						log.debug("aviable capability was not found. req name is {} component instance is {}",
 								validReq.getName(), currentCapCompInstance.getUniqueId());
@@ -3198,6 +3209,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 										resource.getUniqueId(), ErrorSeverity.ERROR);
 						return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
 					}
+					reqAndRelationshipPair.setCapability(aviableCapForRel.getName());
+					reqAndRelationshipPair.setCapabilityUid(aviableCapForRel.getUniqueId());
+					reqAndRelationshipPair.setCapabilityOwnerId(aviableCapForRel.getOwnerId());
+
 					CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
 					capReqRel.setRelation(reqAndRelationshipPair);
 					reqAndRelationshipPairList.add(capReqRel);
