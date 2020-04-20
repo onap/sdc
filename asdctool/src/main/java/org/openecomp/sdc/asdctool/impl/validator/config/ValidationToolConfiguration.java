@@ -131,9 +131,6 @@ public class ValidationToolConfiguration {
         return new VfValidatorExecuter(tasks, janusGraphDao);
     }
 
-    @Bean
-    public ReportManager reportManager() { return new ReportManager();}
-
     @Bean(name = "artifact-cassandra-dao")
     public ArtifactCassandraDao artifactCassandraDao(CassandraClient cassandraClient) {
         return new ArtifactCassandraDao(cassandraClient);

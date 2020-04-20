@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,12 +28,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public class ArtifactValidatorTool {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
         String outputPath = args[0];
         ValidationConfigManager.setOutputFullFilePath(outputPath);
-        ValidationConfigManager.setCsvReportFilePath(outputPath);
-        
+
         String appConfigDir = args[1];
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         ArtifactToolBL validationToolBL = context.getBean(ArtifactToolBL.class);
@@ -47,12 +46,13 @@ public class ArtifactValidatorTool {
             System.out.println("ArtifactValidation finished with warnings");
             System.exit(2);
         }
-	}
-	
-	private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
-      ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ValidationToolConfiguration.class);
-		return context;
-	}
+    }
+
+    private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
+        ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
+            ValidationToolConfiguration.class);
+        return context;
+    }
 
 }
