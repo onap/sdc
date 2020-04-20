@@ -107,7 +107,7 @@ public class SdcSchemaFileImport {
         SchemaZipFileEnum[] schemaFileList = SchemaZipFileEnum.values();
         for (SchemaZipFileEnum schemaZipFileEnum : schemaFileList) {
             String folderName = schemaZipFileEnum.getSourceFolderName();
-            String fileName = schemaZipFileEnum.getFileName();
+            String fileName = schemaZipFileEnum.getSourceFileName();
 
             if ((folderName != null) && (fileName != null)) {
                 File folder = new File(importToscaPath, folderName);
