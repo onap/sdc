@@ -21,6 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import org.junit.Test;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
@@ -38,11 +39,12 @@ public class ServiceArtifactValidationTaskTest {
 
     @Test
     public void testValidate() {
+        Report report = Report.make();
         GraphVertex vertex = null;
         ServiceArtifactValidationTask testSubject = createTestSubject();
         // Initially no outputFilePath was passed to this function (hence it is set to null)
         // TODO: Fix this null and see if the argument is used by this function
-        VertexResult actual = testSubject.validate(vertex, null);
+        VertexResult actual = testSubject.validate(report, vertex, null);
         assertThat(actual, is(nullValue()));
     }
 }

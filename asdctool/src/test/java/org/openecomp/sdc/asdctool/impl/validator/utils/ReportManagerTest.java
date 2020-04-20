@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -36,7 +37,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -72,7 +72,7 @@ public class ReportManagerTest {
     private final SortedSet<String> successTasksNames =
         new TreeSet<>(Arrays.asList(TASK_1_NAME, TASK_2_NAME));
 
-    private VertexResult successResult = new VertexResult();
+    private final VertexResult successResult = new VertexResult();
 
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
     private final static String csvReportFilePath = ValidationConfigManager
@@ -96,9 +96,10 @@ public class ReportManagerTest {
     @Test
     public void testReportTaskEnd() {
         // when
-        ReportManager.reportTaskEnd(VERTEX_1_ID, TASK_1_NAME, successResult);
-        ReportManager.reportTaskEnd(VERTEX_2_ID, TASK_2_NAME, successResult);
-        ReportManager.printAllResults(csvReportFilePath);
+        Report report = Report.make();
+        report.addSuccess(VERTEX_1_ID, TASK_1_NAME, successResult);
+        report.addSuccess(VERTEX_2_ID, TASK_2_NAME, successResult);
+        ReportManager.printAllResults(report, csvReportFilePath);
 
         List<String> reportCsvFile = ReportManagerHelper.getReportCsvFileAsList(csvReportFilePath);
 
@@ -112,10 +113,11 @@ public class ReportManagerTest {
     @Test
     public void testAddFailedVertex() {
         // when
-        ReportManager.addFailedVertex(TASK_1_NAME, VERTEX_1_ID);
-        ReportManager.reportEndOfToolRun(csvReportFilePath, txtReportFilePath);
+        Report report = Report.make();
+        report.addFailure(TASK_1_NAME, VERTEX_1_ID);
+        ReportManager.reportEndOfToolRun(report, csvReportFilePath, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertNotNull(reportOutputFile);

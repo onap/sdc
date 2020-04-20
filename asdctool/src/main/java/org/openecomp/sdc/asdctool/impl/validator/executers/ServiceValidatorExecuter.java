@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -30,9 +31,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by chaya on 7/4/2017.
- */
 @Component
 public class ServiceValidatorExecuter extends TopologyTemplateValidatorExecuter implements ValidatorExecuter {
 
@@ -45,9 +43,9 @@ public class ServiceValidatorExecuter extends TopologyTemplateValidatorExecuter 
     }
 
     @Override
-    public boolean executeValidations(String outputFilePath) {
+    public boolean executeValidations(Report report, String outputFilePath) {
         List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.SERVICE);
-        return validate(tasks, vertices, outputFilePath);
+        return validate(report, tasks, vertices, outputFilePath);
     }
 
     @Override
