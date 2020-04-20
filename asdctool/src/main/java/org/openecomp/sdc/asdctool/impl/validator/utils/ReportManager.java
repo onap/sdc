@@ -44,13 +44,16 @@ public class ReportManager {
 
     private static Logger log = LoggerFactory.getLogger(ReportManager.class);
     private static String reportOutputFilePath;
-    private static String csvReportFilePath;
     private static Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
     private static Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
 
-    public ReportManager() {
+    public static ReportManager make(String csvReportFilePath) {
+        return new ReportManager(csvReportFilePath);
+    }
+
+    private ReportManager(String csvReportFilePath) {
         try {
-            initCsvFile();
+            initCsvFile(csvReportFilePath);
             initReportFile();
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,8 +68,7 @@ public class ReportManager {
         Files.write(Paths.get(reportOutputFilePath), sb.toString().getBytes());
     }
 
-    private void initCsvFile() throws IOException {
-        csvReportFilePath = ValidationConfigManager.getCsvReportFilePath();
+    private void initCsvFile(String csvReportFilePath) throws IOException {
         StrBuilder sb = new StrBuilder();
         sb.append("Vertex ID,Task Name,Success,Result Details,Result Description");
         sb.appendNewLine();
@@ -75,12 +77,12 @@ public class ReportManager {
 
     public static void reportTaskEnd(String vertexId, String taskName, VertexResult result) {
         Map<String, VertexResult> vertexTasksResults =
-                Optional.ofNullable(resultsPerVertex.get(vertexId)).orElse(new HashMap<>());
+            Optional.ofNullable(resultsPerVertex.get(vertexId)).orElse(new HashMap<>());
         vertexTasksResults.put(taskName, result);
         resultsPerVertex.put(vertexId, vertexTasksResults);
     }
 
-    public static void addFailedVertex (String taskName, String vertexId) {
+    public static void addFailedVertex(String taskName, String vertexId) {
         Set<String> failedVertices = failedVerticesPerTask.get(taskName);
         if (failedVertices == null) {
             failedVertices = new HashSet<>();
@@ -91,7 +93,9 @@ public class ReportManager {
 
     public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success) {
         String successStatus = success ? "success" : "failed";
-        String line = "-----------------------Vertex: "+vertexScanned.getUniqueId()+", Task " + taskName + " " +successStatus+"-----------------------";
+        String line =
+            "-----------------------Vertex: " + vertexScanned.getUniqueId() + ", Task " + taskName + " " + successStatus
+                + "-----------------------";
         StrBuilder sb = new StrBuilder();
         sb.appendln(line);
         writeReportLineToFile(line);
@@ -99,7 +103,8 @@ public class ReportManager {
 
     public static void writeReportLineToFile(String message) {
         try {
-            Files.write(Paths.get(reportOutputFilePath), new StrBuilder().appendNewLine().toString().getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(reportOutputFilePath), new StrBuilder().appendNewLine().toString().getBytes(),
+                StandardOpenOption.APPEND);
             Files.write(Paths.get(reportOutputFilePath), message.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
             e.printStackTrace();
@@ -107,27 +112,31 @@ public class ReportManager {
         }
     }
 
-    public static void reportValidatorTypeSummary(String validatorName, Set<String> failedTasksNames, Set<String> successTasksNames){
+    public static void reportValidatorTypeSummary(String validatorName, Set<String> failedTasksNames,
+        Set<String> successTasksNames) {
         StrBuilder sb = new StrBuilder();
-        sb.appendln("-----------------------ValidatorExecuter " + validatorName + " Validation Summary-----------------------");
-        sb.appendln("Failed tasks: "+ failedTasksNames);
-        sb.appendln("Success tasks: "+ successTasksNames);
+        sb.appendln(
+            "-----------------------ValidatorExecuter " + validatorName + " Validation Summary-----------------------");
+        sb.appendln("Failed tasks: " + failedTasksNames);
+        sb.appendln("Success tasks: " + successTasksNames);
         writeReportLineToFile(sb.toString());
     }
 
     public static void reportStartValidatorRun(String validatorName, int componenentsNum) {
         StrBuilder sb = new StrBuilder();
-        sb.appendln("------ValidatorExecuter " + validatorName + " Validation Started, on "+componenentsNum+" components---------");
+        sb.appendln("------ValidatorExecuter " + validatorName + " Validation Started, on " + componenentsNum
+            + " components---------");
         writeReportLineToFile(sb.toString());
     }
 
-    public static void reportStartTaskRun(GraphVertex vertex, String taskName){
+    public static void reportStartTaskRun(GraphVertex vertex, String taskName) {
         StrBuilder sb = new StrBuilder();
-        sb.appendln("-----------------------Vertex: "+vertex.getUniqueId()+", Task " + taskName + " Started-----------------------");
+        sb.appendln("-----------------------Vertex: " + vertex.getUniqueId() + ", Task " + taskName
+            + " Started-----------------------");
         writeReportLineToFile(sb.toString());
     }
 
-    public static void reportEndOfToolRun() {
+    public static void reportEndOfToolRun(String csvReportFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
         failedVerticesPerTask.forEach((taskName, failedVertices) -> {
@@ -137,10 +146,10 @@ public class ReportManager {
             sb.appendNewLine();
         });
         writeReportLineToFile(sb.toString());
-        printAllResults();
+        printAllResults(csvReportFilePath);
     }
 
-    public static void printAllResults() {
+    public static void printAllResults(String csvReportFilePath) {
         resultsPerVertex.forEach((vertex, tasksResults) -> tasksResults.forEach((task, result) -> {
             try {
                 String resultLine = vertex + "," + task + "," + result.getStatus() + "," + result.getResult();
@@ -150,7 +159,7 @@ public class ReportManager {
                     new StrBuilder().appendNewLine().toString().getBytes(),
                     StandardOpenOption.APPEND);
             } catch (IOException e) {
-                    e.printStackTrace();
+                e.printStackTrace();
                 log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
             }
         }));

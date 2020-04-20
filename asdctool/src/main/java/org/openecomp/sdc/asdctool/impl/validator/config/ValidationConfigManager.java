@@ -24,12 +24,22 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
+import java.util.function.Supplier;
+
 public class ValidationConfigManager {
+
+    private static final String CSV_FILE_PREFIX = "/csvSummary_";
+    private static final String CSV_EXT = ".csv";
+    public static final String DEFAULT_CSV_PATH = "summary.csv";
 
     private static String outputFullFilePath;
     private static String outputFilePath;
 
     private ValidationConfigManager() {
+    }
+
+    public static String csvReportFilePath(String outputPath, Supplier<Long> getTime) {
+        return outputPath + CSV_FILE_PREFIX + getTime.get() + CSV_EXT;
     }
 
     public static String getOutputFullFilePath() {
@@ -44,15 +54,4 @@ public class ValidationConfigManager {
         ValidationConfigManager.outputFilePath = outputPath;
         ValidationConfigManager.outputFullFilePath = outputPath + "/reportOutput.txt";
     }
-
-    public static String getCsvReportFilePath() {
-        return csvReportFilePath;
-    }
-
-    public static void setCsvReportFilePath(String outputPath) {
-        ValidationConfigManager.csvReportFilePath =
-            outputPath + "/csvSummary_" + System.currentTimeMillis() + ".csv";
-    }
-
-    private static String csvReportFilePath = "summary.csv";
 }
