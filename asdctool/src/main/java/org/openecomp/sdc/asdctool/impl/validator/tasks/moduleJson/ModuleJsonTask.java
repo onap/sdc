@@ -21,6 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson;
 
 import fj.data.Either;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
@@ -45,9 +46,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by chaya on 7/18/2017.
- */
 public class ModuleJsonTask extends ServiceValidationTask {
 
     private TopologyTemplateOperation topologyTemplateOperation;
@@ -59,7 +57,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     @Override
-    public VertexResult validate(GraphVertex vertex, String outputFilePath) {
+    public VertexResult validate(Report report, GraphVertex vertex, String outputFilePath) {
         if (!isAfterSubmitForTesting(vertex)) {
             return new VertexResult(true);
         }
@@ -82,15 +80,20 @@ public class ModuleJsonTask extends ServiceValidationTask {
             .orElse(Collections.emptyMap()).entrySet()) {
             MapGroupsDataDefinition groups = pair.getValue();
             if (groups != null && !groups.getMapToscaDataDefinition().isEmpty()) {
-                return new VertexResult(findCoordinateModuleJson(pair, instDeploymentArtifacts, vertex, outputFilePath));
+                return new VertexResult(
+                    findCoordinateModuleJson(report, pair, instDeploymentArtifacts, vertex, outputFilePath));
             }
             return new VertexResult(true);
         }
         return new VertexResult(true);
     }
 
-    private boolean findCoordinateModuleJson(Map.Entry<String, MapGroupsDataDefinition> pair,
-        Map<String, MapArtifactDataDefinition> instDeploymentArtifacts, GraphVertex vertex, String outputFilePath) {
+    private boolean findCoordinateModuleJson(
+        Report report,
+        Map.Entry<String, MapGroupsDataDefinition> pair,
+        Map<String, MapArtifactDataDefinition> instDeploymentArtifacts,
+        GraphVertex vertex, String outputFilePath
+    ) {
         String groupKey = pair.getKey();
         String[] split = groupKey.split("\\.");
         String instanceName = split[split.length - 1];
@@ -114,12 +117,12 @@ public class ModuleJsonTask extends ServiceValidationTask {
         }
         String status = "Instance " + instanceName + " doesn't have a corresponding modules.json file";
         ReportManager.writeReportLineToFile(status, outputFilePath);
-        ReportManager.addFailedVertex(getTaskName(), vertex.getUniqueId());
+        report.addFailure(getTaskName(), vertex.getUniqueId());
         return false;
     }
 
     private boolean isAfterSubmitForTesting(GraphVertex vertex) {
-        List allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.CERTIFIED.name()));
+        List<String> allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.CERTIFIED.name()));
         return allowedStates.contains(vertex.getMetadataProperty(GraphPropertyEnum.STATE));
     }
 }

@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-/**
- * Created by chaya on 7/3/2017.
- */
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+
 public interface ValidatorExecuter {
 
-    boolean executeValidations(String outputFilePath);
+    boolean executeValidations(Report report, String outputFilePath);
     String getName();
 }
