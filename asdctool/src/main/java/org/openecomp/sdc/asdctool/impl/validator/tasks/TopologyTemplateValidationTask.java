@@ -27,7 +27,7 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
  * Created by chaya on 7/5/2017.
  */
 public interface TopologyTemplateValidationTask {
-    VertexResult validate(GraphVertex vertex);
+    VertexResult validate(GraphVertex vertex, String outputFilePath);
     String getTaskName();
     String getTaskResultStatus();
     void setTaskResultStatus(String status);

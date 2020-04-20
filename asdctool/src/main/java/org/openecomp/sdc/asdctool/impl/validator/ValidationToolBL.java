@@ -45,10 +45,10 @@ public class ValidationToolBL {
         this.validators = validators;
     }
 
-    public boolean validateAll() {
+    public boolean validateAll(String outputFilePath) {
         for (ValidatorExecuter validatorExec: validators) {
             log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
-            if (!validatorExec.executeValidations()) {
+            if (!validatorExec.executeValidations(outputFilePath)) {
                 allValid = false;
                 log.debug("ValidatorExecuter "+validatorExec.getName()+" finished with warnings");
             }

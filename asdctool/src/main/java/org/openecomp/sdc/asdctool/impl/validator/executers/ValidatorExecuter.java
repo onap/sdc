@@ -25,6 +25,6 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
  */
 public interface ValidatorExecuter {
 
-    boolean executeValidations();
+    boolean executeValidations(String outputFilePath);
     String getName();
 }

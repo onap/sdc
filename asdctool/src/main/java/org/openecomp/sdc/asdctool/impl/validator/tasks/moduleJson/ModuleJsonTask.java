@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     @Override
-    public VertexResult validate(GraphVertex vertex) {
+    public VertexResult validate(GraphVertex vertex, String outputFilePath) {
         if (!isAfterSubmitForTesting(vertex)) {
             return new VertexResult(true);
         }
@@ -69,7 +69,8 @@ public class ModuleJsonTask extends ServiceValidationTask {
         paramView.setIgnoreArtifacts(false);
         paramView.setIgnoreGroups(false);
         paramView.setIgnoreComponentInstances(false);
-        Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation.getToscaElement(vertex.getUniqueId(), paramView);
+        Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation
+            .getToscaElement(vertex.getUniqueId(), paramView);
         if (toscaElementEither.isRight()) {
             return new VertexResult(false);
         }
@@ -77,42 +78,47 @@ public class ModuleJsonTask extends ServiceValidationTask {
         Map<String, MapGroupsDataDefinition> instGroups = element.getInstGroups();
         Map<String, MapArtifactDataDefinition> instDeploymentArtifacts = element.getInstDeploymentArtifacts();
 
-        for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups).orElse(Collections.emptyMap()).entrySet()) {
+        for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups)
+            .orElse(Collections.emptyMap()).entrySet()) {
             MapGroupsDataDefinition groups = pair.getValue();
             if (groups != null && !groups.getMapToscaDataDefinition().isEmpty()) {
-                return new VertexResult(findCoordinateModuleJson(pair, instDeploymentArtifacts, vertex));
+                return new VertexResult(findCoordinateModuleJson(pair, instDeploymentArtifacts, vertex, outputFilePath));
             }
             return new VertexResult(true);
         }
         return new VertexResult(true);
     }
 
-    private boolean findCoordinateModuleJson(Map.Entry<String, MapGroupsDataDefinition> pair, Map<String, MapArtifactDataDefinition> instDeploymentArtifacts, GraphVertex vertex) {
+    private boolean findCoordinateModuleJson(Map.Entry<String, MapGroupsDataDefinition> pair,
+        Map<String, MapArtifactDataDefinition> instDeploymentArtifacts, GraphVertex vertex, String outputFilePath) {
         String groupKey = pair.getKey();
         String[] split = groupKey.split("\\.");
-        String instanceName = split[split.length-1];
+        String instanceName = split[split.length - 1];
         MapArtifactDataDefinition deploymentsArtifacts = instDeploymentArtifacts.get(groupKey);
         if (deploymentsArtifacts != null && !deploymentsArtifacts.getMapToscaDataDefinition().isEmpty()) {
-            List<ArtifactDataDefinition> moduleJsonArtifacts = deploymentsArtifacts.getMapToscaDataDefinition().values().stream().filter(artifact -> {
-                String artifactName = artifact.getArtifactName();
-                if (artifactName.startsWith(instanceName) && artifactName.endsWith("modules.json")) {
-                    return true;
-                }
-                return false;
-            }).collect(Collectors.toList());
+            List<ArtifactDataDefinition> moduleJsonArtifacts = deploymentsArtifacts.getMapToscaDataDefinition().values()
+                .stream().filter(artifact -> {
+                    String artifactName = artifact.getArtifactName();
+                    if (artifactName.startsWith(instanceName) && artifactName.endsWith("modules.json")) {
+                        return true;
+                    }
+                    return false;
+                }).collect(Collectors.toList());
             if (moduleJsonArtifacts.size() > 0) {
-                String status = "Instance "+instanceName+" has a corresponding modules.json file: "+moduleJsonArtifacts.get(0).getArtifactName();
-                ReportManager.writeReportLineToFile(status);
+                String status =
+                    "Instance " + instanceName + " has a corresponding modules.json file: " + moduleJsonArtifacts.get(0)
+                        .getArtifactName();
+                ReportManager.writeReportLineToFile(status, outputFilePath);
                 return true;
             }
         }
-        String status = "Instance "+instanceName+" doesn't have a corresponding modules.json file";
-        ReportManager.writeReportLineToFile(status);
+        String status = "Instance " + instanceName + " doesn't have a corresponding modules.json file";
+        ReportManager.writeReportLineToFile(status, outputFilePath);
         ReportManager.addFailedVertex(getTaskName(), vertex.getUniqueId());
         return false;
     }
 
-    private boolean isAfterSubmitForTesting(GraphVertex vertex){
+    private boolean isAfterSubmitForTesting(GraphVertex vertex) {
         List allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.CERTIFIED.name()));
         return allowedStates.contains(vertex.getMetadataProperty(GraphPropertyEnum.STATE));
     }
