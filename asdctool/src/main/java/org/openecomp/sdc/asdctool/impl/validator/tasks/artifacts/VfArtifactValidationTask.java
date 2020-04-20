@@ -40,7 +40,7 @@ public class VfArtifactValidationTask extends VfValidationTask {
     }
 
     @Override
-    public VertexResult validate(GraphVertex vertex) {
-        return artifactValidationUtils.validateTopologyTemplateArtifacts(vertex, getTaskName());
+    public VertexResult validate(GraphVertex vertex, String outputFilePath) {
+        return artifactValidationUtils.validateTopologyTemplateArtifacts(vertex, getTaskName(), outputFilePath);
     }
 }

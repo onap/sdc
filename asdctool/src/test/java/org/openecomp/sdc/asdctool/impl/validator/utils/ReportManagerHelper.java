@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,17 +32,17 @@ public class ReportManagerHelper {
     private ReportManagerHelper() {
     }
 
-    public static List<String> getReportOutputFileAsList() {
-        return readFileAsList(ValidationConfigManager.getOutputFullFilePath());
+    public static List<String> getReportOutputFileAsList(String txtReportFilePath) {
+        return readFileAsList(txtReportFilePath);
     }
 
     public static List<String> getReportCsvFileAsList(String csvReportFilePath) {
         return readFileAsList(csvReportFilePath);
     }
 
-    public static void cleanReports(String csvReportFilePath) {
+    public static void cleanReports(String csvReportFilePath, String txtReportFilePath) {
         cleanFile(csvReportFilePath);
-        cleanFile(ValidationConfigManager.getOutputFullFilePath());
+        cleanFile(txtReportFilePath);
     }
 
     private static List<String> readFileAsList(String filePath) {

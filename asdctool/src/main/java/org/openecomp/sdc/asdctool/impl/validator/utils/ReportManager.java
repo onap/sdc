@@ -22,7 +22,6 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
 import org.apache.commons.lang.text.StrBuilder;
-import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,28 +39,27 @@ import java.util.Set;
 public class ReportManager {
 
     private static Logger log = LoggerFactory.getLogger(ReportManager.class);
-    private static String reportOutputFilePath;
+
     private static final Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
     private static final Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
 
-    public static ReportManager make(String csvReportFilePath) {
-        return new ReportManager(csvReportFilePath);
+    public static ReportManager make(String csvReportFilePath, String txtReportFilePath) {
+        return new ReportManager(csvReportFilePath, txtReportFilePath);
     }
 
-    private ReportManager(String csvReportFilePath) {
+    private ReportManager(String csvReportFilePath, String txtReportFilePath) {
         try {
             initCsvFile(csvReportFilePath);
-            initReportFile();
+            initReportFile(txtReportFilePath);
         } catch (IOException e) {
             log.info("Init file failed - {}", e.getClass().getSimpleName(), e);
         }
     }
 
-    private void initReportFile() throws IOException {
-        reportOutputFilePath = ValidationConfigManager.getOutputFullFilePath();
+    private void initReportFile(String txtReportFilePath) throws IOException {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------Validation Tool Results:-------------------------");
-        Files.write(Paths.get(reportOutputFilePath), sb.toString().getBytes());
+        Files.write(Paths.get(txtReportFilePath), sb.toString().getBytes());
     }
 
     private void initCsvFile(String csvReportFilePath) throws IOException {
@@ -87,51 +85,52 @@ public class ReportManager {
         failedVerticesPerTask.put(taskName, failedVertices);
     }
 
-    public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success) {
+    public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success,
+        String outputFilePath) {
         String successStatus = success ? "success" : "failed";
         String line =
             "-----------------------Vertex: " + vertexScanned.getUniqueId() + ", Task " + taskName + " " + successStatus
                 + "-----------------------";
         StrBuilder sb = new StrBuilder();
         sb.appendln(line);
-        writeReportLineToFile(line);
+        writeReportLineToFile(line, outputFilePath);
     }
 
-    public static void writeReportLineToFile(String message) {
+    public static void writeReportLineToFile(String message, String outputFilePath) {
         try {
-            Files.write(Paths.get(reportOutputFilePath), new StrBuilder().appendNewLine().toString().getBytes(),
+            Files.write(Paths.get(outputFilePath), new StrBuilder().appendNewLine().toString().getBytes(),
                 StandardOpenOption.APPEND);
-            Files.write(Paths.get(reportOutputFilePath), message.getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(outputFilePath), message.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
             log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
         }
     }
 
     public static void reportValidatorTypeSummary(String validatorName, Set<String> failedTasksNames,
-        Set<String> successTasksNames) {
+        Set<String> successTasksNames, String outputFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln(
             "-----------------------ValidatorExecuter " + validatorName + " Validation Summary-----------------------");
         sb.appendln("Failed tasks: " + failedTasksNames);
         sb.appendln("Success tasks: " + successTasksNames);
-        writeReportLineToFile(sb.toString());
+        writeReportLineToFile(sb.toString(), outputFilePath);
     }
 
-    public static void reportStartValidatorRun(String validatorName, int componenentsNum) {
+    public static void reportStartValidatorRun(String validatorName, int componenentsNum, String outputFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("------ValidatorExecuter " + validatorName + " Validation Started, on " + componenentsNum
             + " components---------");
-        writeReportLineToFile(sb.toString());
+        writeReportLineToFile(sb.toString(), outputFilePath);
     }
 
-    public static void reportStartTaskRun(GraphVertex vertex, String taskName) {
+    public static void reportStartTaskRun(GraphVertex vertex, String taskName, String outputFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------Vertex: " + vertex.getUniqueId() + ", Task " + taskName
             + " Started-----------------------");
-        writeReportLineToFile(sb.toString());
+        writeReportLineToFile(sb.toString(), outputFilePath);
     }
 
-    public static void reportEndOfToolRun(String csvReportFilePath) {
+    public static void reportEndOfToolRun(String csvReportFilePath, String outputFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
         failedVerticesPerTask.forEach((taskName, failedVertices) -> {
@@ -140,7 +139,7 @@ public class ReportManager {
             sb.append("FailedVertices: " + failedVertices);
             sb.appendNewLine();
         });
-        writeReportLineToFile(sb.toString());
+        writeReportLineToFile(sb.toString(), outputFilePath);
         printAllResults(csvReportFilePath);
     }
 
