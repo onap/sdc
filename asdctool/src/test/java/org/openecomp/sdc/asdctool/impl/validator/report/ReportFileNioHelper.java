@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 Samsung. All rights reserved.
+ * Copyright (C) 2020 Bell. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,41 +18,35 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.utils;
+package org.openecomp.sdc.asdctool.impl.validator.report;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
-public class ReportManagerHelper {
-
-    private ReportManagerHelper() {
+/**
+ * Provides facilities to for writing report files when testing
+ */
+public class ReportFileNioHelper {
+    private ReportFileNioHelper() {
     }
 
-    public static List<String> getReportOutputFileAsList(String txtReportFilePath) {
-        return readFileAsList(txtReportFilePath);
-    }
-
-    public static void cleanReports(String txtReportFilePath) {
-        cleanFile(txtReportFilePath);
-    }
-
-    public static List<String> readFileAsList(String filePath) {
-        try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
-            return br.lines().collect(Collectors.toList());
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    private static void cleanFile(String filePath) {
+    /**
+     * Provides a transactional context for CSV report file writing
+     *
+     * @param csvReportFilePath The resulting file path
+     * @param f The function to write in a CSV file
+     * @param <A> A Phantom type only required for type-safety
+     */
+    public static <A> A withCsvFile(String csvReportFilePath, Function<ReportFile.CSVFile, A> f) {
+        ReportFile.CSVFile file = ReportFile.makeCsvFile(ReportFileWriterTestFactory.makeNioWriter(csvReportFilePath));
+        A result = f.apply(file);
         try {
-            Files.delete(Paths.get(filePath));
-        } catch (IOException ignored) {
-
+            Files.delete(Paths.get(csvReportFilePath));
+            return result;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }
