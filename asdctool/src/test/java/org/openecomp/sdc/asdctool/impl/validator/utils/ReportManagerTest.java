@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileNioHelper;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
 import java.io.File;
@@ -75,13 +76,13 @@ public class ReportManagerTest {
 
     @BeforeEach
     public void setup() {
-        ReportManager.make(csvReportFilePath, txtReportFilePath);
+        ReportManager.make(txtReportFilePath);
         successResult.setStatus(true);
     }
 
     @AfterEach
     public void clean() {
-        ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
+        ReportManagerHelper.cleanReports(txtReportFilePath);
     }
 
     @Test
@@ -90,9 +91,11 @@ public class ReportManagerTest {
         Report report = Report.make();
         report.addSuccess(VERTEX_1_ID, TASK_1_NAME, successResult);
         report.addSuccess(VERTEX_2_ID, TASK_2_NAME, successResult);
-        ReportManager.printAllResults(report, csvReportFilePath);
 
-        List<String> reportCsvFile = ReportManagerHelper.getReportCsvFileAsList(csvReportFilePath);
+        List<String> reportCsvFile = ReportFileNioHelper.withCsvFile(csvReportFilePath, file -> {
+            file.printAllResults(report);
+            return ReportManagerHelper.readFileAsList(csvReportFilePath);
+        });
 
         // then
         assertNotNull(reportCsvFile);
@@ -106,13 +109,12 @@ public class ReportManagerTest {
         // when
         Report report = Report.make();
         report.addFailure(TASK_1_NAME, VERTEX_1_ID);
-        ReportManager.reportEndOfToolRun(report, csvReportFilePath, txtReportFilePath);
 
+        ReportManager.reportEndOfToolRun(report, txtReportFilePath);
         List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertNotNull(reportOutputFile);
-
         assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
         assertEquals(EXPECTED_OUTPUT_FILE_SUMMARY, reportOutputFile.get(2));
         assertEquals("Task: " + TASK_1_NAME, reportOutputFile.get(3));
