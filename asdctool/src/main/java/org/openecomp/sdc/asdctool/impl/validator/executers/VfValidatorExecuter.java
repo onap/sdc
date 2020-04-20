@@ -43,9 +43,9 @@ public class VfValidatorExecuter extends TopologyTemplateValidatorExecuter imple
     }
 
     @Override
-    public boolean executeValidations() {
+    public boolean executeValidations(String outputFilePath) {
         List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.RESOURCE);
-        return validate(tasks, vertices);
+        return validate(tasks, vertices, outputFilePath);
     }
 
     @Override

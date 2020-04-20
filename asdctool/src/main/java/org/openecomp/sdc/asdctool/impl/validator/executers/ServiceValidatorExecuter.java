@@ -45,9 +45,9 @@ public class ServiceValidatorExecuter extends TopologyTemplateValidatorExecuter 
     }
 
     @Override
-    public boolean executeValidations() {
+    public boolean executeValidations(String outputFilePath) {
         List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.SERVICE);
-        return validate(tasks, vertices);
+        return validate(tasks, vertices, outputFilePath);
     }
 
     @Override

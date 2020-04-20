@@ -26,32 +26,21 @@ package org.openecomp.sdc.asdctool.impl.validator.config;
 
 import java.util.function.Supplier;
 
-public class ValidationConfigManager {
+public final class ValidationConfigManager {
 
+    private static final String REPORT_OUTPUT_FILE_NAME = "/reportOutput.txt";
     private static final String CSV_FILE_PREFIX = "/csvSummary_";
     private static final String CSV_EXT = ".csv";
     public static final String DEFAULT_CSV_PATH = "summary.csv";
 
-    private static String outputFullFilePath;
-    private static String outputFilePath;
-
     private ValidationConfigManager() {
+    }
+
+    public static String txtReportFilePath(String outputPath) {
+        return outputPath + REPORT_OUTPUT_FILE_NAME;
     }
 
     public static String csvReportFilePath(String outputPath, Supplier<Long> getTime) {
         return outputPath + CSV_FILE_PREFIX + getTime.get() + CSV_EXT;
-    }
-
-    public static String getOutputFullFilePath() {
-        return outputFullFilePath;
-    }
-
-    public static String getOutputFilePath() {
-        return outputFilePath;
-    }
-
-    public static void setOutputFullFilePath(String outputPath) {
-        ValidationConfigManager.outputFilePath = outputPath;
-        ValidationConfigManager.outputFullFilePath = outputPath + "/reportOutput.txt";
     }
 }
