@@ -31,14 +31,14 @@ public class ArtifactValidatorTool {
     public static void main(String[] args) {
 
         String outputPath = args[0];
-        ValidationConfigManager.setOutputFullFilePath(outputPath);
+        String txtReportFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
 
         String appConfigDir = args[1];
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         ArtifactToolBL validationToolBL = context.getBean(ArtifactToolBL.class);
 
         System.out.println("Start ArtifactValidation Tool");
-        Boolean result = validationToolBL.validateAll();
+        Boolean result = validationToolBL.validateAll(txtReportFilePath);
         if (result) {
             System.out.println("ArtifactValidation finished successfully");
             System.exit(0);

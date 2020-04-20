@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
@@ -93,13 +92,10 @@ public class ArtifactValidationUtilsTest {
 
     private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
     private final static String csvReportFilePath = ValidationConfigManager.DEFAULT_CSV_PATH;
+    private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
 
     public void initReportManager() {
-        String resourcePath = new File(Objects
-            .requireNonNull(ArtifactValidationUtilsTest.class.getClassLoader().getResource(""))
-            .getFile()).getAbsolutePath();
-        ValidationConfigManager.setOutputFullFilePath(resourcePath);
-        ReportManager.make(csvReportFilePath);
+        ReportManager.make(csvReportFilePath, txtReportFilePath);
     }
 
     @Before
@@ -118,7 +114,7 @@ public class ArtifactValidationUtilsTest {
 
     @After
     public void clean() {
-        ReportManagerHelper.cleanReports(csvReportFilePath);
+        ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
     }
 
     @Test
@@ -129,9 +125,9 @@ public class ArtifactValidationUtilsTest {
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts);
+            testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertTrue(result.getStatus());
@@ -148,10 +144,10 @@ public class ArtifactValidationUtilsTest {
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts);
-        ReportManager.reportEndOfToolRun(csvReportFilePath);
+            testSubject.validateArtifactsAreInCassandra(vertex, TASK_NAME, artifacts, txtReportFilePath);
+        ReportManager.reportEndOfToolRun(csvReportFilePath, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertFalse(result.getStatus());
@@ -225,9 +221,9 @@ public class ArtifactValidationUtilsTest {
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME);
+            testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME, txtReportFilePath);
 
-        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
 
         // then
         assertTrue(result.getStatus());
@@ -245,7 +241,7 @@ public class ArtifactValidationUtilsTest {
 
         // when
         ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME);
+            testSubject.validateTopologyTemplateArtifacts(vertex, TASK_NAME, txtReportFilePath);
 
         // then
         assertFalse(result.getStatus());

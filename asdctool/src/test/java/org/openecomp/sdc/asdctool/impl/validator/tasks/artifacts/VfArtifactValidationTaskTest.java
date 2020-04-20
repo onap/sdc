@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,24 +24,25 @@ import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class VfArtifactValidationTaskTest {
 
-	private VfArtifactValidationTask createTestSubject() {
-		ArtifactValidationUtils artifactValidationUtilsMock = mock(ArtifactValidationUtils.class);
-		return new VfArtifactValidationTask(artifactValidationUtilsMock);
-	}
+    private VfArtifactValidationTask createTestSubject() {
+        ArtifactValidationUtils artifactValidationUtilsMock = mock(ArtifactValidationUtils.class);
+        return new VfArtifactValidationTask(artifactValidationUtilsMock);
+    }
 
-	@Test
-	public void testValidate() throws Exception {
-		VfArtifactValidationTask testSubject;
-		GraphVertex vertex = null;
-		VertexResult result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.validate(vertex);
-	}
-
+    @Test
+    public void testValidate() {
+        GraphVertex vertex = null;
+        VfArtifactValidationTask testSubject = createTestSubject();
+        // Initially no outputFilePath was passed to this function (hence it is set to null)
+        // TODO: Fix this null and see if the argument is used by this function
+        VertexResult actual = testSubject.validate(vertex, null);
+        assertThat(actual, is(nullValue()));
+    }
 }
