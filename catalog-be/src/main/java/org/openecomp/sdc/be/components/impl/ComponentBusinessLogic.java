@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -132,7 +132,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         ComponentValidator componentValidator,
         ComponentIconValidator componentIconValidator,
         ComponentProjectCodeValidator componentProjectCodeValidator,
-        ComponentDescriptionValidator componentDescriptionValidator){
+        ComponentDescriptionValidator componentDescriptionValidator) {
 
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
@@ -179,13 +179,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ComponentBusinessLogic.class.getName());
 
-    private static final String TAG_FIELD_LABEL = "tag";
-
     public abstract Either<List<String>, ResponseFormat> deleteMarkedComponents();
 
     public abstract ComponentInstanceBusinessLogic getComponentInstanceBL();
 
-    public abstract Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, String userId);
+    public abstract Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(
+        String componentId, String userId);
 
     /**
      *
@@ -193,41 +192,46 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
      * @param dataParamsToReturn
      * @return
      */
-    public abstract  Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String componentId, List<String> dataParamsToReturn);
+    public abstract Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(
+        String componentId, List<String> dataParamsToReturn);
 
-    User validateUser(User user, String ecompErrorContext, Component component, AuditingActionEnum auditAction, boolean inTransaction) {
+    User validateUser(User user, String ecompErrorContext, Component component, AuditingActionEnum auditAction,
+        boolean inTransaction) {
         User validatedUser;
         ResponseFormat responseFormat;
         try {
             validateUserNotEmpty(user, ecompErrorContext);
             validatedUser = validateUserExists(user);
-        } catch(ByActionStatusComponentException e){
-            if(e.getActionStatus() == ActionStatus.MISSING_INFORMATION){
+        } catch (ByActionStatusComponentException e) {
+            if (e.getActionStatus() == ActionStatus.MISSING_INFORMATION) {
                 user.setUserId("UNKNOWN");
             }
             responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, auditAction, component.getComponentType());
+            componentsUtils
+                .auditComponentAdmin(responseFormat, user, component, auditAction, component.getComponentType());
             throw e;
-        } catch(ByResponseFormatComponentException e){
+        } catch (ByResponseFormatComponentException e) {
             responseFormat = e.getResponseFormat();
-            componentsUtils.auditComponentAdmin(responseFormat, user, component, auditAction, component.getComponentType());
+            componentsUtils
+                .auditComponentAdmin(responseFormat, user, component, auditAction, component.getComponentType());
             throw e;
         }
         return validatedUser;
     }
 
-    protected void validateUserRole(User user, Component component, List<Role> roles, AuditingActionEnum auditAction, String comment) {
+    protected void validateUserRole(User user, Component component, List<Role> roles, AuditingActionEnum auditAction,
+        String comment) {
         if (roles != null && roles.isEmpty()) {
             roles.add(Role.ADMIN);
             roles.add(Role.DESIGNER);
         }
         try {
             validateUserRole(user, roles);
-        }catch (ByActionStatusComponentException e) {
+        } catch (ByActionStatusComponentException e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
             handleComponentException(component, comment, responseFormat, user, auditAction);
             throw e;
-        }catch (ByResponseFormatComponentException e) {
+        } catch (ByResponseFormatComponentException e) {
             ResponseFormat responseFormat = e.getResponseFormat();
             handleComponentException(component, comment, responseFormat, user, auditAction);
             throw e;
@@ -235,21 +239,24 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     private void handleComponentException(Component component, String comment, ResponseFormat responseFormat,
-        User user, AuditingActionEnum auditAction){
+        User user, AuditingActionEnum auditAction) {
         String commentStr = null;
         String distrStatus = null;
         ComponentTypeEnum componentType = component.getComponentType();
-            if (componentType == ComponentTypeEnum.SERVICE) {
-            distrStatus = ((ServiceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getDistributionStatus();
+        if (componentType == ComponentTypeEnum.SERVICE) {
+            distrStatus = ((ServiceMetadataDataDefinition) component.getComponentMetadataDefinition()
+                .getMetadataDataDefinition()).getDistributionStatus();
             commentStr = comment;
         }
-        componentsUtils.auditComponent(responseFormat, user, component, auditAction, new ResourceCommonInfo(componentType.getValue()),
+        componentsUtils.auditComponent(responseFormat, user, component, auditAction,
+            new ResourceCommonInfo(componentType.getValue()),
             ResourceVersionInfo.newBuilder().distributionStatus(distrStatus).build(),
             ResourceVersionInfo.newBuilder().distributionStatus(distrStatus).build(),
             commentStr, null, null);
     }
 
-    public Either<Boolean, ResponseFormat> validateConformanceLevel(String componentUuid, ComponentTypeEnum componentTypeEnum, String userId) {
+    public Either<Boolean, ResponseFormat> validateConformanceLevel(String componentUuid,
+        ComponentTypeEnum componentTypeEnum, String userId) {
         log.trace("validate conformance level");
 
         if (componentTypeEnum != ComponentTypeEnum.SERVICE) {
@@ -260,10 +267,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
         validateUserExists(userId);
 
-        Either<ComponentMetadataData, StorageOperationStatus> eitherComponent = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, null);
+        Either<ComponentMetadataData, StorageOperationStatus> eitherComponent = toscaOperationFacade
+            .getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, null);
         if (eitherComponent.isRight()) {
             log.error("can't validate conformance level, component not found, uuid {}", componentUuid);
-            BeEcompErrorManager.getInstance().logBeComponentMissingError("validateConformanceLevel", componentTypeEnum.getValue(), componentUuid);
+            BeEcompErrorManager.getInstance()
+                .logBeComponentMissingError("validateConformanceLevel", componentTypeEnum.getValue(), componentUuid);
 
             StorageOperationStatus status = eitherComponent.right().value();
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(status, componentTypeEnum);
@@ -271,17 +280,20 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return Either.right(responseFormat);
         }
 
-        String componentConformanceLevel = eitherComponent.left().value().getMetadataDataDefinition().getConformanceLevel();
+        String componentConformanceLevel = eitherComponent.left().value().getMetadataDataDefinition()
+            .getConformanceLevel();
         if (StringUtils.isBlank(componentConformanceLevel)) {
             log.error("component conformance level property is null or empty, uuid {}", componentUuid);
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             return Either.right(errorResponse);
         }
 
-        String configConformanceLevel = ConfigurationManager.getConfigurationManager().getConfiguration().getMinToscaConformanceLevel();
+        String configConformanceLevel = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getMinToscaConformanceLevel();
         Boolean result = true;
         if (CommonBeUtils.conformanceLevelCompare(componentConformanceLevel, configConformanceLevel) < 0) {
-            log.error("invalid asset conformance level, uuid {}, asset conformanceLevel {}, config conformanceLevel {}", componentUuid, componentConformanceLevel, configConformanceLevel);
+            log.error("invalid asset conformance level, uuid {}, asset conformanceLevel {}, config conformanceLevel {}",
+                componentUuid, componentConformanceLevel, configConformanceLevel);
             result = false;
         }
         log.trace("conformance level validation finished");
@@ -324,7 +336,8 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public CapReqDef getRequirementsAndCapabilities(String componentId, ComponentTypeEnum componentTypeEnum, String userId) {
+    public CapReqDef getRequirementsAndCapabilities(String componentId, ComponentTypeEnum componentTypeEnum,
+        String userId) {
 
         validateUserExists(userId);
         ComponentParametersView filter = new ComponentParametersView(true);
@@ -335,34 +348,39 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         try {
             Component component = validateComponentExists(componentId, componentTypeEnum, filter);
             return new CapReqDef(component.getRequirements(), component.getCapabilities());
-        }catch (ComponentException e){
-            BeEcompErrorManager.getInstance().logBeComponentMissingError("getRequirementsAndCapabilities", componentTypeEnum.getValue(), componentId);
+        } catch (ComponentException e) {
+            BeEcompErrorManager.getInstance()
+                .logBeComponentMissingError("getRequirementsAndCapabilities", componentTypeEnum.getValue(),
+                    componentId);
             throwComponentException(e.getResponseFormat());
         }
         return null;
     }
 
-    public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponents(boolean isAbstractAbstract, ComponentTypeEnum componentTypeEnum, String internalComponentType, List<String> componentUids,
-                                                                                         String userId) {
-        try{
+    public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponents(boolean isAbstractAbstract,
+        ComponentTypeEnum componentTypeEnum, String internalComponentType, List<String> componentUids,
+        String userId) {
+        try {
             validateUserExists(userId);
             List<Component> result = new ArrayList<>();
             List<String> componentsUidToFetch = new ArrayList<>();
             componentsUidToFetch.addAll(componentUids);
             if (!componentsUidToFetch.isEmpty()) {
                 log.debug("Number of Components to fetch from graph is {}", componentsUidToFetch.size());
-                Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = toscaOperationFacade.getLatestVersionNotAbstractComponents(isAbstractAbstract, componentTypeEnum, internalComponentType, componentsUidToFetch);
+                Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = toscaOperationFacade
+                    .getLatestVersionNotAbstractComponents(isAbstractAbstract, componentTypeEnum, internalComponentType,
+                        componentsUidToFetch);
 
                 if (nonCheckoutCompResponse.isLeft()) {
                     log.debug("Retrived Resource successfully.");
                     result.addAll(nonCheckoutCompResponse.left().value());
                 } else {
-                    return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value())));
+                    return Either.right(componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value())));
                 }
             }
             return Either.left(result);
-        }
-        finally{
+        } finally {
             janusGraphDao.commit();
         }
     }
@@ -370,33 +388,37 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     private Boolean isHighest(HighestFilterEnum highestFilter) {
         Boolean isHighest = null;
         switch (highestFilter) {
-        case ALL:
-            break;
-        case HIGHEST_ONLY:
-            isHighest = true;
-            break;
-        case NON_HIGHEST_ONLY:
-            isHighest = false;
-            break;
-        default:
-            break;
+            case ALL:
+                break;
+            case HIGHEST_ONLY:
+                isHighest = true;
+                break;
+            case NON_HIGHEST_ONLY:
+                isHighest = false;
+                break;
+            default:
+                break;
         }
         return isHighest;
     }
 
-    public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponentsMetadata(boolean isAbstractAbstract, HighestFilterEnum highestFilter, ComponentTypeEnum componentTypeEnum, String internalComponentType, String userId) {
+    public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponentsMetadata(
+        boolean isAbstractAbstract, HighestFilterEnum highestFilter, ComponentTypeEnum componentTypeEnum,
+        String internalComponentType, String userId) {
         ResponseFormat responseFormat = null;
 
-        try{
+        try {
             validateUserExists(userId);
             Boolean isHighest = isHighest(highestFilter);
-            Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = toscaOperationFacade.getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType);
+            Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = toscaOperationFacade
+                .getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType);
 
             if (nonCheckoutCompResponse.isLeft()) {
                 log.debug("Retrieved Resource successfully.");
                 return Either.left(nonCheckoutCompResponse.left().value());
             }
-            responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value()));
+            responseFormat = componentsUtils
+                .getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value()));
         } finally {
             janusGraphDao.commit();
         }
@@ -416,32 +438,43 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         String componentUniqueId = component.getUniqueId();
         String componentSystemName = component.getSystemName();
         String componentType = component.getComponentType().getValue().toLowerCase();
-        Map<String, Object> toscaArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts();
+        Map<String, Object> toscaArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration()
+            .getToscaArtifacts();
 
         if (toscaArtifacts != null) {
             for (Entry<String, Object> artifactInfoMap : toscaArtifacts.entrySet()) {
                 Map<String, Object> artifactInfo = (Map<String, Object>) artifactInfoMap.getValue();
-                ArtifactDefinition artifactDefinition = artifactsBusinessLogic.createArtifactPlaceHolderInfo(componentUniqueId, artifactInfoMap.getKey(), artifactInfo, user, ArtifactGroupTypeEnum.TOSCA);
-                artifactDefinition.setArtifactName(ValidationUtils.normalizeFileName(componentType + "-" + componentSystemName + artifactInfo.get("artifactName")));
+                ArtifactDefinition artifactDefinition = artifactsBusinessLogic
+                    .createArtifactPlaceHolderInfo(componentUniqueId, artifactInfoMap.getKey(), artifactInfo, user,
+                        ArtifactGroupTypeEnum.TOSCA);
+                artifactDefinition.setArtifactName(ValidationUtils
+                    .normalizeFileName(componentType + "-" + componentSystemName + artifactInfo.get("artifactName")));
                 artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
             }
         }
         component.setToscaArtifacts(artifactMap);
     }
 
-    public Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user, boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock) {
+    public Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user,
+        boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock) {
         return populateToscaArtifacts(component, user, isInCertificationRequest, inTransaction, shouldLock, true, true);
     }
 
-    public Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user, boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock, boolean retrieveResource) {
-        return populateToscaArtifacts(component, user, isInCertificationRequest, inTransaction, shouldLock, true, retrieveResource);
+    public Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user,
+        boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock, boolean retrieveResource) {
+        return populateToscaArtifacts(component, user, isInCertificationRequest, inTransaction, shouldLock, true,
+            retrieveResource);
     }
 
-    private Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user, boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock, boolean fetchTemplatesFromDB, boolean retrieveResource) {
+    private Either<ArtifactDefinition, Operation> populateToscaArtifacts(Component component, User user,
+        boolean isInCertificationRequest, boolean inTransaction, boolean shouldLock, boolean fetchTemplatesFromDB,
+        boolean retrieveResource) {
         if (retrieveResource) {
-            Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaFullElement(component.getUniqueId());
-            if ( toscaElement.isRight() ){
-                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(toscaElement.right().value(), component.getComponentType()));
+            Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade
+                .getToscaFullElement(component.getUniqueId());
+            if (toscaElement.isRight()) {
+                throw new ByActionStatusComponentException(componentsUtils
+                    .convertFromStorageResponse(toscaElement.right().value(), component.getComponentType()));
             }
             component = toscaElement.left().value();
         }
@@ -449,16 +482,19 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         Either<ArtifactDefinition, Operation> generateToscaRes = null;
         if (component.getToscaArtifacts() != null && !component.getToscaArtifacts().isEmpty()) {
             ArtifactDefinition toscaArtifact = component.getToscaArtifacts().values().stream()
-                    .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType()))
-                    .findAny().get();
-            generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest, shouldLock, inTransaction, fetchTemplatesFromDB);
+                .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType()))
+                .findAny().get();
+            generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest,
+                shouldLock, inTransaction, fetchTemplatesFromDB);
             toscaArtifact = generateToscaRes.left().value();
             component.getToscaArtifacts().put(toscaArtifact.getArtifactLabel(), toscaArtifact);
-            if(!isAbstractResource(component)){
+
+            if (!isAbstractResource(component)) {
                 toscaArtifact = component.getToscaArtifacts().values().stream()
-                        .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType()))
-                        .findAny().get();
-                generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest, shouldLock, inTransaction, true);
+                    .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType()))
+                    .findAny().get();
+                generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest,
+                    shouldLock, inTransaction, true);
                 if (generateToscaRes.isRight()) {
                     return generateToscaRes;
                 }
@@ -470,41 +506,50 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     private boolean isAbstractResource(Component component) {
-        return component.getComponentType() == ComponentTypeEnum.RESOURCE && ((Resource)component).isAbstract();
+        return component.getComponentType() == ComponentTypeEnum.RESOURCE && ((Resource) component).isAbstract();
     }
 
-    private Either<ArtifactDefinition, Operation> saveToscaArtifactPayload(ArtifactDefinition artifactDefinition, org.openecomp.sdc.be.model.Component component, User user, boolean isInCertificationRequest, boolean shouldLock,
-                                                                                                   boolean inTransaction, boolean fetchTemplatesFromDB) {
-        return artifactsBusinessLogic.generateAndSaveToscaArtifact(artifactDefinition, component, user, isInCertificationRequest, shouldLock, inTransaction, fetchTemplatesFromDB);
+    private Either<ArtifactDefinition, Operation> saveToscaArtifactPayload(ArtifactDefinition artifactDefinition,
+        org.openecomp.sdc.be.model.Component component, User user, boolean isInCertificationRequest, boolean shouldLock,
+        boolean inTransaction, boolean fetchTemplatesFromDB) {
+        return artifactsBusinessLogic
+            .generateAndSaveToscaArtifact(artifactDefinition, component, user, isInCertificationRequest, shouldLock,
+                inTransaction, fetchTemplatesFromDB);
     }
 
-    public ImmutablePair<String, byte[]> getToscaModelByComponentUuid(ComponentTypeEnum componentType, String uuid, ResourceCommonInfo resourceCommonInfo) {
+    public ImmutablePair<String, byte[]> getToscaModelByComponentUuid(ComponentTypeEnum componentType, String uuid,
+        ResourceCommonInfo resourceCommonInfo) {
 
-        Either<List<Component>, StorageOperationStatus> latestVersionEither = toscaOperationFacade.getComponentListByUuid(uuid, null);
+        Either<List<Component>, StorageOperationStatus> latestVersionEither = toscaOperationFacade
+            .getComponentListByUuid(uuid, null);
 
         if (latestVersionEither.isRight()) {
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(latestVersionEither.right().value(), componentType));
+            throw new ByActionStatusComponentException(
+                componentsUtils.convertFromStorageResponse(latestVersionEither.right().value(), componentType));
         }
 
         List<Component> components = latestVersionEither.left().value();
 
         Component component = components.stream().filter(Component::isHighestVersion).findFirst().orElse(null);
-        if(component == null){
-            component = components.stream().filter(c -> c.getLifecycleState() == LifecycleStateEnum.CERTIFIED).findFirst().orElse(null);
+        if (component == null) {
+            component = components.stream().filter(c -> c.getLifecycleState() == LifecycleStateEnum.CERTIFIED)
+                .findFirst().orElse(null);
         }
 
-        if(component == null){
-            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND, componentType)));
+        if (component == null) {
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(
+                componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND, componentType)));
         }
         resourceCommonInfo.setResourceName(component.getName());
         // TODO remove after migration - handle artifact not found(no
         // placeholder)
         if (null == component.getToscaArtifacts() || component.getToscaArtifacts().isEmpty()) {
-            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ArtifactTypeEnum.TOSCA_CSAR.name()));
+            throw new ByResponseFormatComponentException(
+                componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ArtifactTypeEnum.TOSCA_CSAR.name()));
         }
         ArtifactDefinition csarArtifact = component.getToscaArtifacts().values().stream()
-                .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType()))
-                .findAny().get();
+            .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType()))
+            .findAny().get();
         return artifactsBusinessLogic.handleDownloadToscaModelRequest(component, csarArtifact);
     }
 
@@ -513,13 +558,15 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         ComponentTypeEnum componentType = component.getComponentType();
         String uniqueId = component.getUniqueId();
         if (Boolean.TRUE.equals(component.getIsDeleted())) {
-            log.info("component {} already marked as deleted. id= {}, type={}", component.getName(), uniqueId, componentType);
+            log.info("component {} already marked as deleted. id= {}, type={}", component.getName(), uniqueId,
+                componentType);
             return StorageOperationStatus.NOT_FOUND;
         }
 
         StorageOperationStatus markResourceToDelete = toscaOperationFacade.markComponentToDelete(component);
         if (StorageOperationStatus.OK != markResourceToDelete) {
-            log.debug("failed to mark component {} of type {} for delete. error = {}", uniqueId, componentType, markResourceToDelete);
+            log.debug("failed to mark component {} of type {} for delete. error = {}", uniqueId, componentType,
+                markResourceToDelete);
             return markResourceToDelete;
         } else {
             log.debug("Component {}  of type {} was marked as deleted", uniqueId, componentType);
@@ -528,7 +575,8 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<Boolean, ResponseFormat> validateAndUpdateDescription(User user, Component currentComponent, Component updatedComponent, AuditingActionEnum auditingAction) {
+    public Either<Boolean, ResponseFormat> validateAndUpdateDescription(User user, Component currentComponent,
+        Component updatedComponent, AuditingActionEnum auditingAction) {
         String descriptionUpdated = updatedComponent.getDescription();
         String descriptionCurrent = currentComponent.getDescription();
         if (descriptionUpdated != null && !descriptionCurrent.equals(descriptionUpdated)) {
@@ -538,7 +586,8 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return Either.left(true);
     }
 
-    public Either<Boolean, ResponseFormat> validateAndUpdateProjectCode(User user, Component currentComponent, Component updatedComponent) {
+    public Either<Boolean, ResponseFormat> validateAndUpdateProjectCode(User user, Component currentComponent,
+        Component updatedComponent) {
         String projectCodeUpdated = updatedComponent.getProjectCode();
         String projectCodeCurrent = currentComponent.getProjectCode();
         if (projectCodeUpdated != null && !projectCodeCurrent.equals(projectCodeUpdated)) {
@@ -553,7 +602,8 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return Either.left(true);
     }
 
-    public Either<Boolean, ResponseFormat> validateAndUpdateIcon(User user, Component currentComponent, Component updatedComponent, boolean hasBeenCertified) {
+    public Either<Boolean, ResponseFormat> validateAndUpdateIcon(User user, Component currentComponent,
+        Component updatedComponent, boolean hasBeenCertified) {
         String iconUpdated = updatedComponent.getIcon();
         String iconCurrent = currentComponent.getIcon();
         if (iconUpdated != null && !iconCurrent.equals(iconUpdated)) {
@@ -562,7 +612,9 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
                 currentComponent.setIcon(updatedComponent.getIcon());
             } else {
                 log.info("icon {} cannot be updated once the component has been certified once.", iconUpdated);
-                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_PARAMETER_CANNOT_BE_CHANGED, "Icon", currentComponent.getComponentType().name().toLowerCase());
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(ActionStatus.COMPONENT_PARAMETER_CANNOT_BE_CHANGED, "Icon",
+                        currentComponent.getComponentType().name().toLowerCase());
                 return Either.right(errorResponse);
             }
         }
@@ -572,12 +624,13 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     protected Either<List<String>, ResponseFormat> deleteMarkedComponents(ComponentTypeEnum componentType) {
 
         log.trace("start deleteMarkedComponents");
-        Either<List<String>, StorageOperationStatus> deleteMarkedElements = toscaOperationFacade.deleteMarkedElements(componentType);
+        Either<List<String>, StorageOperationStatus> deleteMarkedElements = toscaOperationFacade
+            .deleteMarkedElements(componentType);
 
-
-        if ( deleteMarkedElements.isRight()){
+        if (deleteMarkedElements.isRight()) {
             janusGraphDao.rollback();
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteMarkedElements.right().value(), componentType));
+            ResponseFormat responseFormat = componentsUtils.getResponseFormat(
+                componentsUtils.convertFromStorageResponse(deleteMarkedElements.right().value(), componentType));
             return Either.right(responseFormat);
         }
         log.trace("end deleteMarkedComponents");
@@ -585,9 +638,11 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return Either.left(deleteMarkedElements.left().value());
     }
 
-    public Either<List<ArtifactDefinition>, StorageOperationStatus> getComponentArtifactsForDelete(String parentId, NodeTypeEnum parentType) {
+    public Either<List<ArtifactDefinition>, StorageOperationStatus> getComponentArtifactsForDelete(String parentId,
+        NodeTypeEnum parentType) {
         List<ArtifactDefinition> artifacts = new ArrayList<>();
-        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse = artifactToscaOperation.getArtifacts(parentId);
+        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse = artifactToscaOperation
+            .getArtifacts(parentId);
         if (artifactsResponse.isRight()) {
             if (artifactsResponse.right().value() != StorageOperationStatus.NOT_FOUND) {
                 log.debug("failed to retrieve artifacts for {} {}", parentType, parentId);
@@ -607,20 +662,22 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
      * @return
      */
 
-    public Either<UiComponentDataTransfer, ResponseFormat> getComponentDataFilteredByParams(String componentId, User user, List<String> dataParamsToReturn) {
+    public Either<UiComponentDataTransfer, ResponseFormat> getComponentDataFilteredByParams(String componentId,
+        User user, List<String> dataParamsToReturn) {
 
         if (user != null) {
             validateUserExists(user);
         }
 
-        UiComponentDataTransfer result =  new UiComponentDataTransfer();
+        UiComponentDataTransfer result = new UiComponentDataTransfer();
 
-        if(dataParamsToReturn == null ||  dataParamsToReturn.isEmpty()) {
+        if (dataParamsToReturn == null || dataParamsToReturn.isEmpty()) {
             Either.left(result);
 
         } else {
-            Either<UiComponentDataTransfer, ResponseFormat> uiDataTransferEither = getUiComponentDataTransferByComponentId(componentId, dataParamsToReturn);
-            if(uiDataTransferEither.isRight()){
+            Either<UiComponentDataTransfer, ResponseFormat> uiDataTransferEither = getUiComponentDataTransferByComponentId(
+                componentId, dataParamsToReturn);
+            if (uiDataTransferEither.isRight()) {
                 return Either.right(uiDataTransferEither.right().value());
             }
             result = uiDataTransferEither.left().value();
@@ -629,18 +686,22 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return Either.left(result);
     }
 
-    protected <T extends Component> void generateAndAddInputsFromGenericTypeProperties(T component, Resource genericType) {
+    protected <T extends Component> void generateAndAddInputsFromGenericTypeProperties(T component,
+        Resource genericType) {
         List<InputDefinition> genericAndComponentInputs = new ArrayList<>();
-        List<InputDefinition> genericInputs = genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericType);
+        List<InputDefinition> genericInputs = genericTypeBusinessLogic
+            .generateInputsFromGenericTypeProperties(genericType);
         genericAndComponentInputs.addAll(genericInputs);
-        if (null != component.getInputs()){
-            List<InputDefinition> nonGenericInputsFromComponent = getAllNonGenericInputsFromComponent(genericInputs, component.getInputs());
+        if (null != component.getInputs()) {
+            List<InputDefinition> nonGenericInputsFromComponent = getAllNonGenericInputsFromComponent(genericInputs,
+                component.getInputs());
             genericAndComponentInputs.addAll(nonGenericInputsFromComponent);
         }
         component.setInputs(genericAndComponentInputs);
     }
 
-    private List<InputDefinition> getAllNonGenericInputsFromComponent(List<InputDefinition> genericInputs, List<InputDefinition> componentInputs) {
+    private List<InputDefinition> getAllNonGenericInputsFromComponent(List<InputDefinition> genericInputs,
+        List<InputDefinition> componentInputs) {
         if (genericInputs == null) {
             return componentInputs;
         }
@@ -655,10 +716,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return componentNonGenericInputs;
     }
 
-    protected <T extends Component> Resource fetchAndSetDerivedFromGenericType(T component){
-        Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic.fetchDerivedFromGenericType(component);
-        if(genericTypeEither.isRight()){
-            log.debug("Failed to fetch latest generic type for component {} of type", component.getName(), component.assetType());
+    protected <T extends Component> Resource fetchAndSetDerivedFromGenericType(T component) {
+        Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic
+            .fetchDerivedFromGenericType(component);
+        if (genericTypeEither.isRight()) {
+            log.debug("Failed to fetch latest generic type for component {} of type {}", component.getName(),
+                component.assetType());
             throw new ByActionStatusComponentException(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType());
         }
         Resource genericTypeResource = genericTypeEither.left().value();
@@ -666,30 +729,35 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return genericTypeResource;
     }
 
-    public Either<Map<String, List<IComponentInstanceConnectedElement>>, ResponseFormat> getFilteredComponentInstanceProperties(String componentId, Map<FilterKeyEnum, List<String>> filters, String userId) {
+    public Either<Map<String, List<IComponentInstanceConnectedElement>>, ResponseFormat> getFilteredComponentInstanceProperties(
+        String componentId, Map<FilterKeyEnum, List<String>> filters, String userId) {
         Either<Map<String, List<IComponentInstanceConnectedElement>>, ResponseFormat> response = null;
         Either<Component, StorageOperationStatus> getResourceRes = null;
-        try{
-            if(!filters.containsKey(FilterKeyEnum.NAME_FRAGMENT) && StringUtils.isEmpty(filters.get(FilterKeyEnum.NAME_FRAGMENT).get(0))){
+        try {
+            if (!filters.containsKey(FilterKeyEnum.NAME_FRAGMENT) && StringUtils
+                .isEmpty(filters.get(FilterKeyEnum.NAME_FRAGMENT).get(0))) {
                 response = Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
             if (userId != null && response == null) {
                 validateUserExists(userId);
             }
-            if(response == null){
+            if (response == null) {
                 getResourceRes = toscaOperationFacade.getToscaElement(componentId);
-                if(getResourceRes.isRight()){
-                    response = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getResourceRes.right().value())));
+                if (getResourceRes.isRight()) {
+                    response = Either.right(componentsUtils
+                        .getResponseFormat(componentsUtils.convertFromStorageResponse(getResourceRes.right().value())));
                 }
             }
-            if(response == null){
+            if (response == null) {
                 response = getFilteredComponentInstancesProperties(getResourceRes.left().value(), filters);
             }
-        } catch(Exception e){
-            log.debug("The exception {} occured during filtered instance properties fetching. the  containing component is {}. ", e, componentId);
+        } catch (Exception e) {
+            log.debug(
+                "The exception {} occured during filtered instance properties fetching. the  containing component is {}. ",
+                e, componentId);
             response = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-        } finally{
-            if (response.isLeft()){
+        } finally {
+            if (response != null && response.isLeft()) {
                 toscaOperationFacade.commit();
             } else {
                 toscaOperationFacade.rollback();
@@ -698,22 +766,31 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return response;
     }
 
-    private Either<Map<String, List<IComponentInstanceConnectedElement>>, ResponseFormat> getFilteredComponentInstancesProperties(Component component, Map<FilterKeyEnum, List<String>> filters) {
+    private Either<Map<String, List<IComponentInstanceConnectedElement>>, ResponseFormat> getFilteredComponentInstancesProperties(
+        Component component, Map<FilterKeyEnum, List<String>> filters) {
 
-        Map<String,  List<IComponentInstanceConnectedElement>> filteredProperties = new HashMap<>();
-        Either<Map<String, List<IComponentInstanceConnectedElement>>, ResponseFormat> result = Either.left(filteredProperties);
-        List<ComponentInstance> filteredInstances = getFilteredInstances(component, filters.get(FilterKeyEnum.RESOURCE_TYPE));
-        String propertyNameFragment= filters.get(FilterKeyEnum.NAME_FRAGMENT).get(0);
-        boolean searchByFragment = propertyNameFragment.length() > 3 ;
-        if(CollectionUtils.isNotEmpty(filteredInstances)){
-            for(ComponentInstance instance : filteredInstances){
-                if(component.getComponentInstancesProperties()!=null &&component.getComponentInstancesProperties().containsKey(instance.getUniqueId())){
-                    List<IComponentInstanceConnectedElement> currProperties =  getFilteredComponentInstanceProperties(component.getComponentInstancesProperties().get(instance.getUniqueId()), propertyNameFragment, searchByFragment);
+        Map<String, List<IComponentInstanceConnectedElement>> filteredProperties = new HashMap<>();
+        Either<Map<String, List<IComponentInstanceConnectedElement>>, ResponseFormat> result = Either
+            .left(filteredProperties);
+        List<ComponentInstance> filteredInstances = getFilteredInstances(component,
+            filters.get(FilterKeyEnum.RESOURCE_TYPE));
+        String propertyNameFragment = filters.get(FilterKeyEnum.NAME_FRAGMENT).get(0);
+        boolean searchByFragment = propertyNameFragment.length() > 3;
+        if (CollectionUtils.isNotEmpty(filteredInstances)) {
+            for (ComponentInstance instance : filteredInstances) {
+                if (component.getComponentInstancesProperties() != null && component.getComponentInstancesProperties()
+                    .containsKey(instance.getUniqueId())) {
+                    List<IComponentInstanceConnectedElement> currProperties = getFilteredComponentInstanceProperties(
+                        component.getComponentInstancesProperties().get(instance.getUniqueId()), propertyNameFragment,
+                        searchByFragment);
                     setFilteredProperties(filteredProperties, instance, currProperties);
                 }
-                if(component.getComponentInstancesInputs()!=null && component.getComponentInstancesInputs().containsKey(instance.getUniqueId())){
-                    List<IComponentInstanceConnectedElement> currInputs =  getFilteredComponentInstanceInputs(component.getComponentInstancesInputs().get(instance.getUniqueId()), propertyNameFragment, searchByFragment);
-                    if(CollectionUtils.isNotEmpty(currInputs)){
+                if (component.getComponentInstancesInputs() != null && component.getComponentInstancesInputs()
+                    .containsKey(instance.getUniqueId())) {
+                    List<IComponentInstanceConnectedElement> currInputs = getFilteredComponentInstanceInputs(
+                        component.getComponentInstancesInputs().get(instance.getUniqueId()), propertyNameFragment,
+                        searchByFragment);
+                    if (CollectionUtils.isNotEmpty(currInputs)) {
                         checkFilteredProperties(filteredProperties, instance, currInputs);
                     }
                 }
@@ -722,93 +799,100 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private void setFilteredProperties(Map<String, List<IComponentInstanceConnectedElement>> filteredProperties, ComponentInstance instance, List<IComponentInstanceConnectedElement> currProperties) {
-        if(CollectionUtils.isNotEmpty(currProperties)){
+    private void setFilteredProperties(Map<String, List<IComponentInstanceConnectedElement>> filteredProperties,
+        ComponentInstance instance, List<IComponentInstanceConnectedElement> currProperties) {
+        if (CollectionUtils.isNotEmpty(currProperties)) {
             filteredProperties.put(instance.getUniqueId(), currProperties);
         }
     }
 
-    private void checkFilteredProperties(Map<String, List<IComponentInstanceConnectedElement>> filteredProperties, ComponentInstance instance, List<IComponentInstanceConnectedElement> currInputs) {
-        if(filteredProperties.get(instance.getUniqueId())!=null){
+    private void checkFilteredProperties(Map<String, List<IComponentInstanceConnectedElement>> filteredProperties,
+        ComponentInstance instance, List<IComponentInstanceConnectedElement> currInputs) {
+        if (filteredProperties.get(instance.getUniqueId()) != null) {
             filteredProperties.get(instance.getUniqueId()).addAll(currInputs);
         } else {
             filteredProperties.put(instance.getUniqueId(), currInputs);
         }
     }
 
-    private List<IComponentInstanceConnectedElement> getFilteredComponentInstanceInputs(List<ComponentInstanceInput> inputs, String propertyNameFragment, boolean searchByFragment) {
-        return inputs.stream().filter(i -> isMatchingInput(i, propertyNameFragment, searchByFragment)).collect(Collectors.toList());
+    private List<IComponentInstanceConnectedElement> getFilteredComponentInstanceInputs(
+        List<ComponentInstanceInput> inputs, String propertyNameFragment, boolean searchByFragment) {
+        return inputs.stream().filter(i -> isMatchingInput(i, propertyNameFragment, searchByFragment))
+            .collect(Collectors.toList());
     }
 
-    private List<IComponentInstanceConnectedElement> getFilteredComponentInstanceProperties(List<ComponentInstanceProperty> instanceProperties, String propertyNameFragment, boolean searchByFragment) {
-        return instanceProperties.stream().filter(p -> isMatchingProperty(p, propertyNameFragment, searchByFragment)).collect(Collectors.toList());
+    private List<IComponentInstanceConnectedElement> getFilteredComponentInstanceProperties(
+        List<ComponentInstanceProperty> instanceProperties, String propertyNameFragment, boolean searchByFragment) {
+        return instanceProperties.stream().filter(p -> isMatchingProperty(p, propertyNameFragment, searchByFragment))
+            .collect(Collectors.toList());
     }
 
-    private boolean isMatchingInput(ComponentInstanceInput input, String propertyNameFragment, boolean searchByFragment) {
+    private boolean isMatchingInput(ComponentInstanceInput input, String propertyNameFragment,
+        boolean searchByFragment) {
         boolean isMatching = false;
-        if(searchByFragment && input.getName().toLowerCase().contains(propertyNameFragment)){
+        if (searchByFragment && input.getName().toLowerCase().contains(propertyNameFragment)) {
             isMatching = true;
         }
-        if(!searchByFragment && input.getName().equalsIgnoreCase(propertyNameFragment)){
+        if (!searchByFragment && input.getName().equalsIgnoreCase(propertyNameFragment)) {
             isMatching = true;
         }
         return isMatching;
     }
 
-    private boolean isMatchingProperty(ComponentInstanceProperty property, String propertyNameFragment, boolean searchByFragment) {
+    private boolean isMatchingProperty(ComponentInstanceProperty property, String propertyNameFragment,
+        boolean searchByFragment) {
         boolean isMatching = false;
-        if(searchByFragment && property.getName().toLowerCase().contains(propertyNameFragment)){
+        if (searchByFragment && property.getName().toLowerCase().contains(propertyNameFragment)) {
             isMatching = true;
         }
-        if(!searchByFragment && property.getName().equalsIgnoreCase(propertyNameFragment)){
+        if (!searchByFragment && property.getName().equalsIgnoreCase(propertyNameFragment)) {
             isMatching = true;
         }
-        if (!isMatching && !ToscaPropertyType.isPrimitiveType(property.getType())){
+        if (!isMatching && !ToscaPropertyType.isPrimitiveType(property.getType())) {
             isMatching = isMatchingComplexPropertyByRecursively(property, propertyNameFragment, searchByFragment);
         }
         return isMatching;
     }
 
-    private boolean isMatchingComplexPropertyByRecursively(PropertyDataDefinition property, String propertyNameFragment,  boolean searchByFragment) {
+    private boolean isMatchingComplexPropertyByRecursively(PropertyDataDefinition property, String propertyNameFragment,
+        boolean searchByFragment) {
         String propertyType;
-        List<PropertyDefinition>  dataTypeProperties;
+        List<PropertyDefinition> dataTypeProperties;
         DataTypeDefinition currentProperty;
-        if(searchByFragment && property.getName().toLowerCase().contains(propertyNameFragment.toLowerCase())){
+        if (searchByFragment && property.getName().toLowerCase().contains(propertyNameFragment.toLowerCase())) {
             return true;
         }
-        if(!searchByFragment && property.getName().equalsIgnoreCase(propertyNameFragment)){
+        if (!searchByFragment && property.getName().equalsIgnoreCase(propertyNameFragment)) {
             return true;
         }
 
         propertyType = isEmptyInnerType(property) ? property.getType() : property.getSchema().getProperty().getType();
 
-        if(ToscaPropertyType.isScalarType(propertyType)){
+        if (ToscaPropertyType.isScalarType(propertyType)) {
             return false;
         }
-        Either<DataTypeDefinition, StorageOperationStatus>  getDataTypeByNameRes = propertyOperation.getDataTypeByName(propertyType);
-        if(getDataTypeByNameRes.isRight()){
+        Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameRes = propertyOperation
+            .getDataTypeByName(propertyType);
+        if (getDataTypeByNameRes.isRight()) {
             return false;
         }
         currentProperty = getDataTypeByNameRes.left().value();
         dataTypeProperties = currentProperty.getProperties();
 
-        if(CollectionUtils.isNotEmpty(dataTypeProperties)){
-            if (isMatchingComplexProperty(propertyNameFragment, searchByFragment, dataTypeProperties)){
-                return true;
-            }
+        if (CollectionUtils.isNotEmpty(dataTypeProperties)
+            && isMatchingComplexProperty(propertyNameFragment, searchByFragment, dataTypeProperties)) {
+            return true;
         }
+
         dataTypeProperties = currentProperty.getDerivedFrom().getProperties();
-        if(CollectionUtils.isNotEmpty(dataTypeProperties)){
-            if (isMatchingComplexProperty(propertyNameFragment, searchByFragment, dataTypeProperties)){
-                return true;
-            }
-        }
-        return false;
+        return CollectionUtils.isNotEmpty(dataTypeProperties)
+            && isMatchingComplexProperty(propertyNameFragment, searchByFragment, dataTypeProperties);
     }
 
-    private boolean isMatchingComplexProperty(String propertyNameFragment, boolean searchByFragment, List<PropertyDefinition> dataTypeProperties) {
-        for(PropertyDefinition prop : dataTypeProperties){
-            if(isMatchingComplexPropertyByRecursively(prop, propertyNameFragment, searchByFragment)){
+    private boolean isMatchingComplexProperty(String propertyNameFragment, boolean searchByFragment,
+        List<PropertyDefinition> dataTypeProperties) {
+        for (PropertyDefinition prop : dataTypeProperties) {
+            if (isMatchingComplexPropertyByRecursively(prop, propertyNameFragment, searchByFragment)) {
                 return true;
             }
         }
@@ -816,49 +900,59 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     private boolean isEmptyInnerType(PropertyDataDefinition property) {
-        return property == null|| property.getSchema() == null || property.getSchema().getProperty() == null || property.getSchema().getProperty().getType() == null;
+        return property == null || property.getSchema() == null || property.getSchema().getProperty() == null
+            || property.getSchema().getProperty().getType() == null;
     }
 
     public Either<Boolean, ResponseFormat> shouldUpgradeToLatestGeneric(Component clonedComponent) {
 
-        if(!clonedComponent.deriveFromGeneric())
+        if (!clonedComponent.deriveFromGeneric()) {
             return Either.left(false);
+        }
+
         Boolean shouldUpgrade = false;
         String currentGenericType = clonedComponent.getDerivedFromGenericType();
         String currentGenericVersion = clonedComponent.getDerivedFromGenericVersion();
         Resource genericTypeResource = fetchAndSetDerivedFromGenericType(clonedComponent);
-        if(null == currentGenericType || !currentGenericType.equals(genericTypeResource.getToscaResourceName()) || !currentGenericVersion.equals(genericTypeResource.getVersion())){
+        if (null == currentGenericType || !currentGenericType.equals(genericTypeResource.getToscaResourceName())
+            || !currentGenericVersion.equals(genericTypeResource.getVersion())) {
             shouldUpgrade = upgradeToLatestGeneric(clonedComponent, genericTypeResource);
-            if(!shouldUpgrade) {
+            if (!shouldUpgrade) {
                 reverntUpdateOfGenericVersion(clonedComponent, currentGenericType, currentGenericVersion);
             }
         }
         return Either.left(shouldUpgrade);
     }
 
-    private void reverntUpdateOfGenericVersion(Component clonedComponent, String currentGenericType, String currentGenericVersion) {
+    private void reverntUpdateOfGenericVersion(Component clonedComponent, String currentGenericType,
+        String currentGenericVersion) {
         clonedComponent.setDerivedFromGenericType(currentGenericType);
         clonedComponent.setDerivedFromGenericVersion(currentGenericVersion);
     }
 
-    private <T extends PropertyDataDefinition> Either<Map<String, T>, String> validateNoConflictingProperties(List<T> currentList, List<T> upgradedList) {
+    private <T extends PropertyDataDefinition> Either<Map<String, T>, String> validateNoConflictingProperties(
+        List<T> currentList, List<T> upgradedList) {
         Map<String, T> currentMap = ToscaDataDefinition.listToMapByName(currentList);
         Map<String, T> upgradedMap = ToscaDataDefinition.listToMapByName(upgradedList);
         return ToscaDataDefinition.mergeDataMaps(upgradedMap, currentMap, true);
     }
 
-    private boolean shouldUpgradeNodeType(Component componentToCheckOut, Resource latestGeneric){
+    private boolean shouldUpgradeNodeType(Component componentToCheckOut, Resource latestGeneric) {
 
         List<PropertyDefinition> genericTypeProps = latestGeneric.getProperties();
-        Either<Map<String, PropertyDefinition>, String> validMerge = validateNoConflictingProperties(genericTypeProps, ((Resource)componentToCheckOut).getProperties());
+        Either<Map<String, PropertyDefinition>, String> validMerge = validateNoConflictingProperties(genericTypeProps,
+            ((Resource) componentToCheckOut).getProperties());
         if (validMerge.isRight()) {
-            log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic", validMerge.right().value());
+            log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic",
+                validMerge.right().value());
             return false;
         }
         List<PropertyDefinition> genericTypeAttributes = latestGeneric.getAttributes();
-        validMerge = validateNoConflictingProperties(genericTypeAttributes, ((Resource)componentToCheckOut).getAttributes());
+        validMerge = validateNoConflictingProperties(genericTypeAttributes,
+            ((Resource) componentToCheckOut).getAttributes());
         if (validMerge.isRight()) {
-            log.debug("attribute {} cannot be overriden, check out performed without upgrading to latest generic", validMerge.right().value());
+            log.debug("attribute {} cannot be overriden, check out performed without upgrading to latest generic",
+                validMerge.right().value());
             return false;
         }
         return true;
@@ -871,11 +965,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return shouldUpgradeNodeType(componentToCheckOut, latestGeneric);
         }
         List<PropertyDefinition> genericTypeProps = latestGeneric.getProperties();
-        List<InputDefinition> genericTypeInputs = null == genericTypeProps? null : genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericTypeProps, latestGeneric.getUniqueId());
+        List<InputDefinition> genericTypeInputs = null == genericTypeProps ? null : genericTypeBusinessLogic
+            .convertGenericTypePropertiesToInputsDefintion(genericTypeProps, latestGeneric.getUniqueId());
         List<InputDefinition> currentList = new ArrayList<>();
         // nullify existing ownerId from existing list and merge into updated list
         if (null != componentToCheckOut.getInputs()) {
-            for(InputDefinition input : componentToCheckOut.getInputs()) {
+            for (InputDefinition input : componentToCheckOut.getInputs()) {
                 InputDefinition copy = new InputDefinition(input);
                 copy.setOwnerId(null);
                 currentList.add(copy);
@@ -886,9 +981,11 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return true;
         }
 
-        Either<Map<String, InputDefinition>, String> eitherMerged = validateNoConflictingProperties(genericTypeInputs, currentList);
+        Either<Map<String, InputDefinition>, String> eitherMerged = validateNoConflictingProperties(genericTypeInputs,
+            currentList);
         if (eitherMerged.isRight()) {
-            log.debug("input {} cannot be overriden, check out performed without upgrading to latest generic", eitherMerged.right().value());
+            log.debug("input {} cannot be overriden, check out performed without upgrading to latest generic",
+                eitherMerged.right().value());
             return false;
         }
         componentToCheckOut.setInputs(new ArrayList<>(eitherMerged.left().value().values()));
@@ -898,14 +995,13 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
     private List<ComponentInstance> getFilteredInstances(Component component, List<String> resourceTypes) {
         List<ComponentInstance> filteredInstances = null;
-        if(CollectionUtils.isEmpty(resourceTypes)){
+        if (CollectionUtils.isEmpty(resourceTypes)) {
             filteredInstances = component.getComponentInstances();
-        }
-        else if(CollectionUtils.isNotEmpty(component.getComponentInstances())){
+        } else if (CollectionUtils.isNotEmpty(component.getComponentInstances())) {
             filteredInstances = component.getComponentInstances()
-                    .stream().filter(i -> isMatchingType(i.getOriginType(), resourceTypes)).collect(Collectors.toList());
+                .stream().filter(i -> isMatchingType(i.getOriginType(), resourceTypes)).collect(Collectors.toList());
         }
-        if(filteredInstances == null){
+        if (filteredInstances == null) {
             filteredInstances = new ArrayList<>();
         }
         return filteredInstances;
@@ -913,8 +1009,8 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
     private boolean isMatchingType(OriginTypeEnum originType, List<String> resourceTypes) {
         boolean isMatchingType = false;
-        for(String resourceType : resourceTypes){
-            if(originType == OriginTypeEnum.findByValue(resourceType.toUpperCase())){
+        for (String resourceType : resourceTypes) {
+            if (originType == OriginTypeEnum.findByValue(resourceType.toUpperCase())) {
                 isMatchingType = true;
                 break;
             }
@@ -927,14 +1023,15 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return Either.right(ActionStatus.GENERAL_ERROR);
     }
 
-    protected Either<Component, ResponseFormat>  updateCatalog(Component component, ChangeTypeEnum changeStatus){
-        log.debug("update Catalog start with Component Type {} And Componet Name {} with change status {}", component.getComponentType().name(), component.getName(), changeStatus.name());
-        ActionStatus status =  catalogOperations.updateCatalog(changeStatus,component);
-        if(status != ActionStatus.OK){
-            return Either.right( componentsUtils.getResponseFormat(status));
+    protected Either<Component, ResponseFormat> updateCatalog(Component component, ChangeTypeEnum changeStatus) {
+        log.debug("update Catalog start with Component Type {} And Componet Name {} with change status {}",
+            component.getComponentType().name(), component.getName(), changeStatus.name());
+        ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);
+        if (status != ActionStatus.OK) {
+            return Either.right(componentsUtils.getResponseFormat(status));
         }
 
-       return Either.left(component);
+        return Either.left(component);
     }
 
     public CatalogOperation getCatalogOperations() {
@@ -949,7 +1046,4 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     public List<GroupDefinition> throwComponentException(ResponseFormat responseFormat) {
         throw new ByResponseFormatComponentException(responseFormat);
     }
-
 }
-
-
