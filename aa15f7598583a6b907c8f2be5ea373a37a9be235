@@ -16,6 +16,29 @@
       "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "580e5e99_506baf3b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1743,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-20T14:45:13Z",
+      "side": 1,
+      "message": "wouldn\u0027t be better to delegate this to Juint\n@Test(expected \u003d ByActionStatusComponentException.class)",
+      "range": {
+        "startLine": 1739,
+        "startChar": 12,
+        "endLine": 1743,
+        "endChar": 5
+      },
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
