@@ -26,7 +26,7 @@ Modifications copyright (c) 2018-2019 Nokia
 
   <groupId>org.openecomp.sdc</groupId>
   <artifactId>sdc-main</artifactId>
-  <version>1.6.4-SNAPSHOT</version>
+  <version>1.6.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>sdc</name>
 
@@ -101,7 +101,7 @@ Modifications copyright (c) 2018-2019 Nokia
 
     <!-- Logging end -->
     <!-- System Metrics -->
-    <sigar.version>1.6.4</sigar.version>
+    <sigar.version>1.6.5</sigar.version>
 
     <regex.version>3.0.3</regex.version>
 
