@@ -74,24 +74,28 @@ public class ReportManagerTest {
 
     private VertexResult successResult = new VertexResult();
 
+    private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
+    private final static String csvReportFilePath = ValidationConfigManager
+        .csvReportFilePath(resourcePath, System::currentTimeMillis);
+
+
     @Mock
     GraphVertex vertexScanned;
 
-	@Before
+    @Before
     public void setup() {
         String resourcePath = new File(Objects
             .requireNonNull(ReportManagerTest.class.getClassLoader().getResource("")).getFile())
-                .getAbsolutePath();
+            .getAbsolutePath();
         ValidationConfigManager.setOutputFullFilePath(resourcePath);
-        ValidationConfigManager.setCsvReportFilePath(resourcePath);
-        new ReportManager();
+        ReportManager.make(csvReportFilePath);
 
         successResult.setStatus(true);
     }
 
     @After
     public void clean() {
-        ReportManagerHelper.cleanReports();
+        ReportManagerHelper.cleanReports(csvReportFilePath);
     }
 
     @Test
@@ -99,9 +103,9 @@ public class ReportManagerTest {
         // when
         ReportManager.reportTaskEnd(VERTEX_1_ID, TASK_1_NAME, successResult);
         ReportManager.reportTaskEnd(VERTEX_2_ID, TASK_2_NAME, successResult);
-        ReportManager.printAllResults();
+        ReportManager.printAllResults(csvReportFilePath);
 
-        List reportCsvFile = ReportManagerHelper.getReportCsvFileAsList();
+        List<String> reportCsvFile = ReportManagerHelper.getReportCsvFileAsList(csvReportFilePath);
 
         // then
         assertNotNull(reportCsvFile);
@@ -114,7 +118,7 @@ public class ReportManagerTest {
     public void testAddFailedVertex() {
         // when
         ReportManager.addFailedVertex(TASK_1_NAME, VERTEX_1_ID);
-        ReportManager.reportEndOfToolRun();
+        ReportManager.reportEndOfToolRun(csvReportFilePath);
 
         List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
 
@@ -178,19 +182,19 @@ public class ReportManagerTest {
             reportOutputFile.get(4));
     }
 
-	@Test
-	public void testReportStartValidatorRun() {
-		// when
-		ReportManager.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM);
+    @Test
+    public void testReportStartValidatorRun() {
+        // when
+        ReportManager.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM);
 
-		List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
+        List reportOutputFile = ReportManagerHelper.getReportOutputFileAsList();
 
-		// then
+        // then
         assertNotNull(reportOutputFile);
         assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
         assertEquals("------ValidatorExecuter " + VALIDATOR_NAME + " Validation Started, on "
             + COMPONENT_SUM + " components---------", reportOutputFile.get(2));
-	}
+    }
 
     @Test
     public void testReportStartTaskRun() {
@@ -206,11 +210,11 @@ public class ReportManagerTest {
         assertNotNull(reportOutputFile);
         assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
         assertEquals("-----------------------Vertex: " + UNIQUE_ID + ", Task " + TASK_1_NAME
-                + " Started-----------------------", reportOutputFile.get(2));
+            + " Started-----------------------", reportOutputFile.get(2));
     }
 
     private String getCsvExpectedResult(String vertexID, String taskID) {
-        return String.join(",", new String[] {vertexID, taskID,
+        return String.join(",", new String[]{vertexID, taskID,
             String.valueOf(successResult.getStatus()), successResult.getResult()});
     }
 }
