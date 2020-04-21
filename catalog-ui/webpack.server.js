@@ -56,6 +56,14 @@ module.exports = function (env) {
             middlewares.push(
                 proxy(['/sdc1/feProxy/rest'], feProxyOptions));
 
+            // Redirect all '/sdc1/feProxy/uicache' to feHost
+            middlewares.push(
+              proxy(['/sdc1/feProxy/uicache'], {
+                target: protocol + '://' + feHost + ':' + fePort,
+                changeOrigin: true,
+                secure: false
+              }));
+
             // Redirect all '/sdc1/rest' to feHost
             middlewares.push(
                 proxy(['/sdc1/rest'],{
