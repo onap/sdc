@@ -81,6 +81,30 @@
       "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e1c4015_ed32cd69",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1743,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-21T11:48:02Z",
+      "side": 1,
+      "message": "please see\norg.junit.rules.ExpectedException\nand 22 usages of it in SDC code",
+      "parentUuid": "4823f397_6d1870c4",
+      "range": {
+        "startLine": 1739,
+        "startChar": 12,
+        "endLine": 1743,
+        "endChar": 5
+      },
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
