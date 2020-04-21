@@ -88,14 +88,17 @@ public class GroupVersionUpdater implements OnChangeVersionCommand {
     }
 
     private boolean isGenerateGroupUUID(GroupDefinition group, Component container) {
-        if(GroupTypeEnum.VF_MODULE.getGroupTypeName().equals(group.getType())){
+        if (GroupTypeEnum.VF_MODULE.getGroupTypeName().equals(group.getType())) {
             List<String> artifactsUuid = group.getArtifactsUuid();
-            List<String> heatArtifactUniqueIDs = group.getArtifacts().stream().filter(a->!a.endsWith("env")).collect(Collectors.toList());
+            List<String> heatArtifactUniqueIDs = group.getArtifacts().stream()
+                .filter(a -> !a.endsWith("env"))
+                .collect(Collectors.toList());
             Map<String, ArtifactDefinition> deploymentArtifacts = container.getDeploymentArtifacts();
-            for (String heatArtifactUniqueID : heatArtifactUniqueIDs){
-                ArtifactDefinition artifactDefinition = deploymentArtifacts.get(heatArtifactUniqueID.split("\\.", -1)[1]);
-                if((artifactDefinition == null || artifactDefinition.isEmpty())
-                        && !artifactsUuid.contains(artifactDefinition.getArtifactUUID()) ){
+            for (String heatArtifactUniqueID : heatArtifactUniqueIDs) {
+                ArtifactDefinition artifactDefinition = deploymentArtifacts
+                    .get(heatArtifactUniqueID.split("\\.", -1)[1]);
+                if ((artifactDefinition == null) || (artifactDefinition.isEmpty() && !artifactsUuid
+                    .contains(artifactDefinition.getArtifactUUID()))) {
                     return true;
                 }
             }
