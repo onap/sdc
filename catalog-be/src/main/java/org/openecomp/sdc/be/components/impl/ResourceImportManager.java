@@ -461,11 +461,11 @@ public class ResourceImportManager {
                 Boolean validateVsParentCap = validateCapNameVsDerived(reqName2TypeMap, requirementDef
                         .getCapability(), requirementDef.getName());
                 if (!validateVsParentCap) {
-                    log.debug("Requirement with name {} already exists in parent {}", requirementDef.getName(), parentResource
-                            .getName());
+                    String parentResourceName = parentResource != null ? parentResource.getName() : "";
+                    log.debug("Requirement with name {} already exists in parent {}", requirementDef.getName(), parentResourceName);
                     throw new ByActionStatusComponentException(ActionStatus.IMPORT_REQ_CAP_NAME_EXISTS_IN_DERIVED, "requirement", requirementDef
                             .getName()
-                            .toLowerCase(), parentResource.getName());
+                            .toLowerCase(), parentResourceName);
                 }
             }
             if (moduleRequirements.size() > 0) {
@@ -623,11 +623,12 @@ public class ResourceImportManager {
                 if (!validateVsParentCap) {
                     // Here parentResource is for sure not null, so it's
                     // null-safe
-                    log.debug("Capability with name {} already exists in parent {}", capabilityDef.getName(), parentResource
-                            .getName());
+                    // Check added to avoid sonar warning
+                    String parentResourceName = parentResource != null ? parentResource.getName() : "";
+                    log.debug("Capability with name {} already exists in parent {}", capabilityDef.getName(), parentResourceName);
                     throw new ByActionStatusComponentException(ActionStatus.IMPORT_REQ_CAP_NAME_EXISTS_IN_DERIVED, "capability", capabilityDef
                             .getName()
-                            .toLowerCase(), parentResource.getName());
+                            .toLowerCase(), parentResourceName);
                 }
             }
             if (moduleCapabilities.size() > 0) {
