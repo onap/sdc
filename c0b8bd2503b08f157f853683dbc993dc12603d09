@@ -22,6 +22,30 @@
       "revId": "c0b8bd2503b08f157f853683dbc993dc12603d09",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05f6512b_a4235e86",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/GroupBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-21T18:07:39Z",
+      "side": 0,
+      "message": "In the absolute, you\u0027re right: it\u0027s just that, to me, it might change the behaviour of the method more than I\u0027d like.",
+      "parentUuid": "acbe2a6c_dc8f4893",
+      "range": {
+        "startLine": 1185,
+        "startChar": 8,
+        "endLine": 1185,
+        "endChar": 86
+      },
+      "revId": "c0b8bd2503b08f157f853683dbc993dc12603d09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
