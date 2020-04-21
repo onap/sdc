@@ -61,7 +61,7 @@ public class PolicyTypeImportUtils {
         if (pt1Props == null && isEmpty(pt2Props) || pt2Props == null && isEmpty(pt1Props)) {
             return true;
         }
-        if (isPropertiesListSizesNotEquals(pt1Props, pt2Props)) {
+        if (pt1Props == null || pt2Props == null || isPropertiesListSizesNotEquals(pt1Props, pt2Props)) {
             return false;
         }
         Map<String, PropertyDefinition> pt1PropsByName = MapUtil.toMap(pt1Props, PropertyDefinition::getName);
