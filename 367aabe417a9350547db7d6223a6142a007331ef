@@ -16,6 +16,24 @@
       "revId": "367aabe417a9350547db7d6223a6142a007331ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4af26508_0c80a135",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/GroupTypeOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-21T10:17:24Z",
+      "side": 1,
+      "message": "Look at line 401: I made a mistake in the commit message, it was removed in `getGroupTypeByCriteria`",
+      "parentUuid": "9c6910c3_37f13f56",
+      "revId": "367aabe417a9350547db7d6223a6142a007331ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
