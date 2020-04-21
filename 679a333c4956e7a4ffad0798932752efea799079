@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea00d312_a9ec6a04",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-04-21T11:47:53Z",
+      "side": 1,
+      "message": "duplicate",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 54
+      },
+      "revId": "679a333c4956e7a4ffad0798932752efea799079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
