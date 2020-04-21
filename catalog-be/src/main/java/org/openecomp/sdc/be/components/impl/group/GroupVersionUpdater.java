@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.be.components.impl.group;
 
-
+import java.util.Collections;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.be.components.impl.version.OnChangeVersionCommand;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.GroupTypeEnum;
@@ -37,7 +38,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
@@ -84,26 +84,38 @@ public class GroupVersionUpdater implements OnChangeVersionCommand {
             }
             group.setVersion(String.valueOf(newVersion));
         }
-
     }
 
-    private boolean isGenerateGroupUUID(GroupDefinition group, Component container) {
-        if(GroupTypeEnum.VF_MODULE.getGroupTypeName().equals(group.getType())){
-            List<String> artifactsUuid = group.getArtifactsUuid();
-            List<String> heatArtifactUniqueIDs = group.getArtifacts().stream().filter(a->!a.endsWith("env")).collect(Collectors.toList());
-            Map<String, ArtifactDefinition> deploymentArtifacts = container.getDeploymentArtifacts();
-            for (String heatArtifactUniqueID : heatArtifactUniqueIDs){
-                ArtifactDefinition artifactDefinition = deploymentArtifacts.get(heatArtifactUniqueID.split("\\.", -1)[1]);
-                if((artifactDefinition == null || artifactDefinition.isEmpty())
-                        && !artifactsUuid.contains(artifactDefinition.getArtifactUUID()) ){
+    static <T> List<T> emptyIfNull(final List<T> list) {
+        return (list == null? Collections.emptyList() : list);
+    }
+
+    static <T, U> Map<T, U> emptyIfNull(final Map<T, U> list) {
+        return (list == null? Collections.emptyMap() : list);
+    }
+
+    static boolean isGenerateGroupUUID(GroupDefinition group, Component container) {
+        if (!GroupTypeEnum.VF_MODULE.getGroupTypeName().equals(group.getType())) {
+            return true;
+        } else {
+            List<String> artifactsUuid = emptyIfNull(group.getArtifactsUuid());
+            Map<String, ArtifactDefinition> deploymentArtifacts = emptyIfNull(container.getDeploymentArtifacts());
+            List<String> heatArtifactUniqueIDs = emptyIfNull(group.getArtifacts()).stream().filter(a -> !a.endsWith("env")).collect(
+                Collectors.toList());
+
+            for (String heatArtifactUniqueID : heatArtifactUniqueIDs) {
+                ArtifactDefinition artifactDefinition = deploymentArtifacts
+                    .get(heatArtifactUniqueID.split("\\.", -1)[1]);
+
+                if ((artifactDefinition == null
+                    || artifactDefinition.isEmpty())
+                    || !artifactsUuid.contains(artifactDefinition.getArtifactUUID())) {
                     return true;
                 }
             }
             return false;
         }
-        return true;
     }
-
 
     private ActionStatus updateGroupsVersion(Component groupsContainer, Consumer<List<GroupDefinition>> updateGroupVersion) {
         List<GroupDefinition> groups = groupsContainer.getGroups();
