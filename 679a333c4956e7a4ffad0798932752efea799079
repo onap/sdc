@@ -45,6 +45,30 @@
       "revId": "679a333c4956e7a4ffad0798932752efea799079",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c53bbc8a_c59dedc0",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-04-21T14:47:01Z",
+      "side": 1,
+      "message": "The reason is that version 2.22.0 can\u0027t execute Junit5 tests.\nThat what was the cause that our unit tests didn\u0027t run at all.\n\nSource - https://dzone.com/articles/why-your-junit-5-tests-are-not-running-under-maven",
+      "parentUuid": "ece0d80f_f0007469",
+      "range": {
+        "startLine": 128,
+        "startChar": 3,
+        "endLine": 128,
+        "endChar": 73
+      },
+      "revId": "679a333c4956e7a4ffad0798932752efea799079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
