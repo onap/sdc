@@ -122,7 +122,7 @@ public class EcompIntImplTest {
 
 		// default test
 		testSubject  = createTestSubject();
-        result = testSubject.isAppAuthenticated(httpServletRequestImpl, null);
+        result = testSubject.isAppAuthenticated(httpServletRequestImpl);
         assertThat(result).isFalse();
 	}
 
