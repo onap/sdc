@@ -23,6 +23,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.Vector;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -1181,12 +1182,20 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private void addCalculatedCapabilitiesWithPropertiesToComponent(Component component, final List<GroupDefinition> groupDefinitions, boolean fromCsar) {
-        groupDefinitions.forEach(GroupDefinition::updateEmptyCapabilitiesOwnerFields);
-        StorageOperationStatus status = groupsOperation.addCalculatedCapabilitiesWithProperties(component.getUniqueId(),
-                extractCapabilitiesFromGroups(groupDefinitions), extractCapabilityPropertiesFromGroups(groupDefinitions, fromCsar));
-        if(status != StorageOperationStatus.OK){
-            log.error("#addCalculatedCapabilitiesWithPropertiesToComponent - failed to add the groups' calculated capabilities with the properties to the component {}. ", component.getUniqueId());
+    private void addCalculatedCapabilitiesWithPropertiesToComponent(Component component,
+        final List<GroupDefinition> groupDefinitions, boolean fromCsar) {
+        final List<GroupDefinition> nonNullGroupDefinitions =
+            (groupDefinitions == null) ? Collections.emptyList() : groupDefinitions;
+
+        nonNullGroupDefinitions.forEach(GroupDefinition::updateEmptyCapabilitiesOwnerFields);
+        StorageOperationStatus status = groupsOperation.addCalculatedCapabilitiesWithProperties(
+            component.getUniqueId(),
+            extractCapabilitiesFromGroups(nonNullGroupDefinitions),
+            extractCapabilityPropertiesFromGroups(nonNullGroupDefinitions, fromCsar));
+        if (status != StorageOperationStatus.OK) {
+            log.error(
+                "#addCalculatedCapabilitiesWithPropertiesToComponent - failed to add the groups' calculated capabilities with the properties to the component {}. ",
+                component.getUniqueId());
             rollbackWithException(componentsUtils.convertFromStorageResponse(status));
         }
     }
