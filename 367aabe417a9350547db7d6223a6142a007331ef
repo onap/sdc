@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c6910c3_37f13f56",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/GroupTypeOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-04-21T09:45:38Z",
+      "side": 1,
+      "message": "Hey, can you please specify to me where we handle this part of the user story:\n-Removed unchecked call to Optional.get() in `getCapablities`?",
+      "revId": "367aabe417a9350547db7d6223a6142a007331ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
