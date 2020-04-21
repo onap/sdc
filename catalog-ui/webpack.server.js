@@ -5,16 +5,8 @@ const devPort = 9000;
 const fePort = 8181;
 const feHost = "localhost";
 const protocol="http";
-const isDirectToFE = false;
+const isDirectToFE = true;
 
-/*
-For kubernetes
-const fePort = 30207;
-const wfPort = 30256;
-const feHost = "kubernetes_master";
-const protocol="https";
-const isDirectToFE = true;// whether to proxy to the k8s proxy or to the BE
-*/
 const portalCookieValue = "randomValue"; //for dev solely, in production - the webseal would add the cookie by itself.
 
 module.exports = function (env) {
@@ -56,15 +48,11 @@ module.exports = function (env) {
                 secure: false,
                 logLevel: 'debug'
             }    
-            if (isDirectToFE) {
-                feProxyOptions.pathRewrite= {
-                    '^/sdc1/feProxy/rest' : '/sdc1/feProxy/rest'
-                }
-            } else {
-                feProxyOptions.pathRewrite= {
-                    '^/sdc1/feProxy/rest' : '/sdc2/rest'
-                }
-            }    
+            if (!isDirectToFE) {
+              feProxyOptions.pathRewrite= {
+                '^/sdc1/feProxy/rest' : '/sdc2/rest'
+              }
+            }
             middlewares.push(
                 proxy(['/sdc1/feProxy/rest'], feProxyOptions));
 
@@ -106,14 +94,11 @@ module.exports = function (env) {
 
             // Redirect workflow urls to feHost
             middlewares.push(
-                proxy(['/sdc1/feProxy/wf', '/wf'], {
-                    target: protocol + '://' + feHost + ':' + wfPort,
+                proxy(['/wf', '/sdc1/feProxy/wf'], {
+                    target: protocol + '://' + feHost + ':' + fePort,
                     changeOrigin: true,
                     logLevel: 'debug',
                     secure: false,
-                    pathRewrite: {
-                        '^/sdc1/feProxy' : ''
-                    },
                     onProxyRes: (proxyRes, req, res) => {
                         let setCookie = proxyRes.headers['set-cookie'];
                         if (setCookie) {
