@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.components.merge.input;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
@@ -61,7 +60,6 @@ public class ComponentInputsMergeBLTest extends BaseComponentInputsMerge {
     }
 
     @Test
-    @DisplayName("When old component has no inputs then return ok")
     public void whenOldComponentHasNoInputs_returnOk() {
         ActionStatus actionStatus = testInstance.mergeComponents(new Resource(), new Resource());
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
@@ -69,7 +67,6 @@ public class ComponentInputsMergeBLTest extends BaseComponentInputsMerge {
     }
 
     @Test
-    @DisplayName("When current resource has no properties no redeclaration of inputs required")
     public void whenCurrResourceHasNoProperties_noRedeclarationOFInputsRequired() {
         Resource newResource = new ResourceBuilder().setUniqueId(RESOURCE_ID).build();
         when(toscaOperationFacade.updateInputsToComponent(emptyList(), RESOURCE_ID)).thenReturn(Either.left(null));
@@ -80,7 +77,6 @@ public class ComponentInputsMergeBLTest extends BaseComponentInputsMerge {
     }
 
     @Test
-    @DisplayName("When current resource has no inputs no merge required, update resource with inputs declared in previous version")
     public void whenCurrResourceHasNoInputs_noMergeRequired_updateResourceWithInputsDeclaredInPrevVersion() {
         List<InputDefinition> prevDeclaredInputs = ObjectGenerator.buildInputs("declared1", "declared2");
         currResource.setInputs(null);
@@ -94,7 +90,6 @@ public class ComponentInputsMergeBLTest extends BaseComponentInputsMerge {
     }
 
     @Test
-    @DisplayName("Find inputs declared from properties and merge them into new component")
     public void findInputsDeclaredFromPropertiesAndMergeThemIntoNewComponent() {
         List<InputDefinition> prevDeclaredInputs = ObjectGenerator.buildInputs("declared1", "declared2");
         List<InputDefinition> currInputsPreMerge = new ArrayList<>(currResource.getInputs());
@@ -109,7 +104,6 @@ public class ComponentInputsMergeBLTest extends BaseComponentInputsMerge {
     }
 
     @Test
-    @DisplayName("Identify already existing inputs and don't merge them into new component")
     public void identifyAlreadyExistingInputsAndDontMergeThemIntoNewComponent() {
         List<InputDefinition> prevDeclaredInputs = ObjectGenerator.buildInputs("declared1", "declared2", "input1");
         List<InputDefinition> prevDeclaredInputsNotPresentInCurrent = ObjectGenerator.buildInputs("declared1", "declared2");
@@ -127,7 +121,6 @@ public class ComponentInputsMergeBLTest extends BaseComponentInputsMerge {
 
 
     @Test
-    @DisplayName("When failing to update inputs propagate the error")
     public void whenFailingToUpdateInputs_propagateTheError() {
         Resource newResource = new ResourceBuilder().setUniqueId(RESOURCE_ID).build();
         when(toscaOperationFacade.updateInputsToComponent(emptyList(), RESOURCE_ID)).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
