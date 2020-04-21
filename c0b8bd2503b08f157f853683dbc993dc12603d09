@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "acbe2a6c_dc8f4893",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/GroupBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-21T17:43:51Z",
+      "side": 0,
+      "message": "wouldn\u0027t be more simple check for null, and skip iteration, instead of iterating on empty synchronized Vector?",
+      "range": {
+        "startLine": 1185,
+        "startChar": 8,
+        "endLine": 1185,
+        "endChar": 86
+      },
+      "revId": "c0b8bd2503b08f157f853683dbc993dc12603d09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
