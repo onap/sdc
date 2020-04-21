@@ -54,19 +54,22 @@ public class PolicyTypeImportUtils {
                 PolicyTypeImportUtils.isPolicyPropertiesEquals(pt1.getProperties(), pt2.getProperties());
     }
 
-    private static boolean isPolicyPropertiesEquals(List<PropertyDefinition> pt1Props, List<PropertyDefinition> pt2Props) {
-        if (pt1Props == pt2Props) {
+    private static boolean isPolicyPropertiesEquals(List<PropertyDefinition> pt1Props,
+        List<PropertyDefinition> pt2Props) {
+        if ((pt1Props == pt2Props)
+            || pt1Props == null && isEmpty(pt2Props)
+            || pt2Props == null && isEmpty(pt1Props)) {
             return true;
-        }
-        if (pt1Props == null && isEmpty(pt2Props) || pt2Props == null && isEmpty(pt1Props)) {
-            return true;
-        }
-        if (isPropertiesListSizesNotEquals(pt1Props, pt2Props)) {
+        } else if (!isPropertiesListSizesEquals(pt1Props, pt2Props)) {
             return false;
+        } else {
+            // The two cases tested by these assertions should have been taken care of by the previous two tests
+            assert (pt1Props != null && pt2Props != null);
+            Map<String, PropertyDefinition> pt1PropsByName = MapUtil.toMap(pt1Props, PropertyDefinition::getName);
+            long numberOfEqualsProperties = pt2Props.stream()
+                .filter(pt2Prop -> policyPropertyEquals(pt1PropsByName.get(pt2Prop.getName()), pt2Prop)).count();
+            return numberOfEqualsProperties == pt1Props.size();
         }
-        Map<String, PropertyDefinition> pt1PropsByName = MapUtil.toMap(pt1Props, PropertyDefinition::getName);
-        long numberOfEqualsProperties = pt2Props.stream().filter(pt2Prop -> policyPropertyEquals(pt1PropsByName.get(pt2Prop.getName()), pt2Prop)).count();
-        return numberOfEqualsProperties == pt1Props.size();
     }
 
     private static boolean policyPropertyEquals(PropertyDefinition pt1Prop, PropertyDefinition pt2Prop) {
@@ -85,10 +88,8 @@ public class PolicyTypeImportUtils {
                Objects.equals(pt1Prop.getType(), pt2Prop.getType());
     }
 
-    private static boolean isPropertiesListSizesNotEquals(List<PropertyDefinition> pt1Props, List<PropertyDefinition> pt2Props) {
-        return isEmpty(pt1Props) && isNotEmpty(pt2Props) ||
-               isEmpty(pt2Props) && isNotEmpty(pt1Props) ||
-               pt1Props.size() != pt2Props.size();
+    private static boolean isPropertiesListSizesEquals(List<PropertyDefinition> pt1Props, List<PropertyDefinition> pt2Props) {
+        return (isEmpty(pt1Props) && isEmpty(pt2Props))
+            || (isNotEmpty(pt1Props) && isNotEmpty(pt2Props) && pt1Props.size() == pt2Props.size());
     }
-
 }
