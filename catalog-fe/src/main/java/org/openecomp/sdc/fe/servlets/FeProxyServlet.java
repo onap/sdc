@@ -46,7 +46,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class FeProxyServlet extends SSLProxyServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String URL = "%s://%s%s";
+	private static final String URL = "%s://%s%s%s";
 	private static final String MS_URL = "%s://%s:%s";
 	private static final String ONBOARDING_CONTEXT = "/onboarding-api";
 	private static final String DCAED_CONTEXT = "/dcae-api";
@@ -134,6 +134,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 		String protocol;
 		String host;
 		String port;
+		String path = "";
 		if (uri.contains(ONBOARDING_CONTEXT)){
 			uri = uri.replace(SDC1_FE_PROXY+ONBOARDING_CONTEXT,ONBOARDING_CONTEXT);
 			protocol = config.getOnboarding().getProtocolBe();
@@ -160,6 +161,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 			java.net.URL workflowURL = new URL(workflowPluginURL);
 			protocol = workflowURL.getProtocol();
 			host = workflowURL.getHost();
+			path = workflowURL.getPath();
 			port = String.valueOf(workflowURL.getPort());
 		}
 		else{
@@ -173,15 +175,15 @@ public class FeProxyServlet extends SSLProxyServlet {
 			}
 		}	
 
-		String authority = getAuthority(host, port);
-		String modifiedUrl = String.format(URL,protocol,authority,uri);
-		if( !StringUtils.isEmpty(queryString)){
+		final String authority = getAuthority(host, port);
+		String modifiedUrl = String.format(URL, protocol, authority, path, uri);
+		if (StringUtils.isNotEmpty(queryString)) {
 			modifiedUrl += "?" + queryString;
 		}
 		 
-		return  modifiedUrl;
-
+		return modifiedUrl;
 	}
+
 	@VisibleForTesting
 	String redirectMsRequestToMservice(HttpServletRequest request, Configuration config) throws MalformedURLException {
 
@@ -299,11 +301,10 @@ private PluginsConfiguration getPluginConfiguration(HttpServletRequest request) 
 
 	private String getAuthority(String host, String port) {
 		String authority;
-		if (port==null){
-			authority=host;
-		}
-		else{
-			authority=host+":"+port;
+		if (port == null) {
+			authority = host;
+		} else {
+			authority = host + ":" + port;
 		}
 		return authority;
 	}
