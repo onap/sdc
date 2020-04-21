@@ -69,6 +69,30 @@
       "revId": "679a333c4956e7a4ffad0798932752efea799079",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dd7d260_8c568906",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-21T16:01:37Z",
+      "side": 1,
+      "message": "ok, I see, \n@Ofir, can we ask CI guys to upgrade maven to 3.6",
+      "parentUuid": "c53bbc8a_c59dedc0",
+      "range": {
+        "startLine": 128,
+        "startChar": 3,
+        "endLine": 128,
+        "endChar": 73
+      },
+      "revId": "679a333c4956e7a4ffad0798932752efea799079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
