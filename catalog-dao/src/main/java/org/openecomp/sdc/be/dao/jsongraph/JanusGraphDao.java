@@ -154,7 +154,7 @@ public class JanusGraphDao {
                     return Either.left(graphVertex);
                 }
                 if (logger.isDebugEnabled()) {
-                    logger.debug("No vertex in graph for key = {}  and value = {}   label = {}" + name, value, label);
+                    logger.debug("No vertex in graph for key = {}  and value = {}   label = {}", name, value, label);
                 }
                 return Either.right(JanusGraphOperationStatus.NOT_FOUND);
             } catch (Exception e) {
@@ -982,16 +982,18 @@ public class JanusGraphDao {
      * @param newLabel
      * @return
      */
-    public JanusGraphOperationStatus replaceEdgeLabel(Vertex fromVertex, Vertex toVertex, EdgeLabelEnum prevLabel, EdgeLabelEnum newLabel) {
+    public JanusGraphOperationStatus replaceEdgeLabel(Vertex fromVertex, Vertex toVertex, EdgeLabelEnum prevLabel,
+        EdgeLabelEnum newLabel) {
 
         JanusGraphOperationStatus result = null;
         Iterator<Edge> prevEdgeIter = toVertex.edges(Direction.IN, prevLabel.name());
         if (prevEdgeIter == null || !prevEdgeIter.hasNext()) {
-            CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to replace edge with label {} to {} between vertices {} and {}", prevLabel, newLabel, fromVertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty()),
-                    toVertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty()));
+            CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG,
+                "Failed to replace edge with label {} to {} between vertices {} and {}", prevLabel, newLabel,
+                fromVertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty()),
+                toVertex.property(GraphPropertyEnum.UNIQUE_ID.getProperty()));
             result = JanusGraphOperationStatus.NOT_FOUND;
-        }
-        if (result == null) {
+        } else {
             result = replaceEdgeLabel(fromVertex, toVertex, prevEdgeIter.next(), prevLabel, newLabel);
         }
         return result;
