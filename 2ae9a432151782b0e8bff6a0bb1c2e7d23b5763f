@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac8c295e_99949dd3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/group/GroupVersionUpdater.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-22T11:45:49Z",
+      "side": 1,
+      "message": "something wrong with logic:\nif artifactDefinition is EMPTY, artifactDefinition.getArtifactUUID() return NULL,\nare we check for artifactsUuid does not have NULLs?\nit is very unclear,\nI\u0027d suggest better understanding/testing.",
+      "range": {
+        "startLine": 100,
+        "startChar": 16,
+        "endLine": 101,
+        "endChar": 71
+      },
+      "revId": "2ae9a432151782b0e8bff6a0bb1c2e7d23b5763f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
