@@ -38,6 +38,7 @@ import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -716,7 +717,7 @@ public class ArtifactServlet extends BeGenericServlet {
             Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither =
                 artifactsBusinessLogic.updateArtifactOnInterfaceOperationByResourceUUID(data, request,
                             ComponentTypeEnum.findByParamName(assetType), uuid, interfaceUUID, operationUUID, artifactUUID,
-                            new ResourceCommonInfo(assetType), artifactsBusinessLogic.new ArtifactOperationInfo(true,
+                            new ResourceCommonInfo(assetType), new ArtifactOperationInfo(true,
                                     false, ArtifactOperationEnum.UPDATE));
             if (uploadArtifactEither.isRight()) {
                 log.debug("failed to update artifact");
@@ -775,7 +776,7 @@ public class ArtifactServlet extends BeGenericServlet {
 
     private Response handleDeleteRequest(HttpServletRequest request, String componentId, String artifactId, ComponentTypeEnum componentType, String interfaceType, String operationName, String parentId) {
         String userId = request.getHeader(Constants.USER_ID_HEADER);
-        Either<ArtifactDefinition, org.openecomp.sdc.be.model.Operation> actionResult = artifactsBusinessLogic.handleArtifactRequest(componentId, userId, componentType, artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.DELETE), artifactId, null, null, null, interfaceType, operationName,
+        Either<ArtifactDefinition, org.openecomp.sdc.be.model.Operation> actionResult = artifactsBusinessLogic.handleArtifactRequest(componentId, userId, componentType, new ArtifactOperationInfo(false, false, ArtifactOperationEnum.DELETE), artifactId, null, null, null, interfaceType, operationName,
                 parentId, null);
         Response response;
 
@@ -798,7 +799,7 @@ public class ArtifactServlet extends BeGenericServlet {
         String userId = request.getHeader(Constants.USER_ID_HEADER);
 
         Either<ArtifactDefinition, org.openecomp.sdc.be.model.Operation> result = artifactsBusinessLogic.handleArtifactRequest(componentId, userId, componentType,
-                artifactsBusinessLogic.new ArtifactOperationInfo(false, false, operationEnum), artifactId, artifactInfo, origMd5, data, interfaceName, operationName, parentId,
+                new ArtifactOperationInfo(false, false, operationEnum), artifactId, artifactInfo, origMd5, data, interfaceName, operationName, parentId,
                 containerComponentType);
         Response response;
         if (result.isLeft()) {
