@@ -61,7 +61,7 @@ import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -792,7 +792,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		} else {
 			Either<Resource, ResponseFormat> createdCsarArtifactsEither = handleVfCsarArtifacts(preparedResource,
 					csarInfo, createdArtifacts,
-					artifactsBusinessLogic.new ArtifactOperationInfo(false, false, operation), shouldLock,
+					new ArtifactOperationInfo(false, false, operation), shouldLock,
 					inTransaction);
 			log.trace("************* Finished to add artifacts from yaml {}", yamlFileName);
 			if (createdCsarArtifactsEither.isRight()) {
@@ -1079,7 +1079,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 							nodeTypeResource.getName());
 					handleNodeTypeArtifactsRequestRes = artifactsBusinessLogic
 							.handleArtifactsRequestForInnerVfcComponent(curArtifactsToHandle, nodeTypeResource, user,
-									createdArtifacts, artifactsBusinessLogic.new ArtifactOperationInfo(false,
+									createdArtifacts, new ArtifactOperationInfo(false,
 											ignoreLifecycleState, curOperation),
 									false, inTransaction);
 					if (ArtifactOperationEnum.isCreateOrLink(curOperation)) {
@@ -2226,7 +2226,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			String vendorLicenseModelId = null;
 			String vfLicenseModelId = null;
 
-			if (artifactOperation.getArtifactOperationEnum() == ArtifactOperationEnum.UPDATE) {
+			if (artifactOperation.isUpdate()) {
 				Map<String, ArtifactDefinition> deploymentArtifactsMap = resource.getDeploymentArtifacts();
 				if (deploymentArtifactsMap != null && !deploymentArtifactsMap.isEmpty()) {
 					for (Entry<String, ArtifactDefinition> artifactEntry : deploymentArtifactsMap.entrySet()) {
@@ -2277,7 +2277,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 						.value()
 						.getValue();
 				Either<Resource, ResponseFormat> createArtifactsFromCsar;
-				if (ArtifactOperationEnum.isCreateOrLink(artifactOperation.getArtifactOperationEnum())) {
+				if (artifactOperation.isCreateOrLink()) {
 					createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic.createResourceArtifactsFromCsar(
 							csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts);
 				} else {
@@ -2317,8 +2317,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					.get(artifactPath);
 		}
 		Either<Boolean, ResponseFormat> result = Either.left(true);
-		if (operation.getArtifactOperationEnum() == ArtifactOperationEnum.UPDATE
-				|| operation.getArtifactOperationEnum() == ArtifactOperationEnum.DELETE) {
+		if (operation.isUpdate() || operation.isDelete()) {
 			if (isArtifactDeletionRequired(artifactId, artifactFileBytes, isFromCsar)) {
 				Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic
 						.handleDelete(resource.getUniqueId(), artifactId, csarInfo.getModifier(),
@@ -2342,7 +2341,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 
 			if (StringUtils.isEmpty(artifactId) && artifactFileBytes != null) {
-				operation = artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
+				operation = new ArtifactOperationInfo(false, false,
 						ArtifactOperationEnum.CREATE);
 			}
 
@@ -2385,7 +2384,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private void addNonMetaCreatedArtifactsToSupportRollback(ArtifactOperationInfo operation,
 															 List<ArtifactDefinition> createdArtifacts,
 															 Either<Either<ArtifactDefinition, Operation>, ResponseFormat> eitherNonMetaArtifacts) {
-		if (ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum()) && createdArtifacts != null
+		if (operation.isCreateOrLink() && createdArtifacts != null
 				&& eitherNonMetaArtifacts.isLeft()) {
 			Either<ArtifactDefinition, Operation> eitherResult = eitherNonMetaArtifacts.left()
 					.value();
@@ -2413,7 +2412,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 			EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> vfCsarArtifactsToHandle = null;
 
-			if (ArtifactOperationEnum.isCreateOrLink(artifactOperation.getArtifactOperationEnum())) {
+			if (artifactOperation.isCreateOrLink()) {
 				vfCsarArtifactsToHandle = new EnumMap<>(ArtifactOperationEnum.class);
 				vfCsarArtifactsToHandle.put(artifactOperation.getArtifactOperationEnum(), artifactPathAndNameList.left()
 						.value());
@@ -2464,7 +2463,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 									e.getArtifactName(), e.getArtifactType(),
 									e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(),
 									CsarUtils.ARTIFACT_CREATED_FROM_CSAR, e.getArtifactUniqueId(),
-									artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
+									new ArtifactOperationInfo(false, false,
 											currArtifactOperationPair.getKey()),
 									createdArtifacts, e.isFromCsar(), shouldLock, inTransaction))
 							// filter in only error
@@ -5851,7 +5850,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 											currNewArtifact.getArtifactName(), currNewArtifact.getArtifactType(),
 											foundArtifact.getArtifactType());
 							AuditingActionEnum auditingAction = artifactsBusinessLogic
-									.detectAuditingType(artifactsBusinessLogic.new ArtifactOperationInfo(false, false,
+									.detectAuditingType(new ArtifactOperationInfo(false, false,
 											ArtifactOperationEnum.CREATE), foundArtifact.getArtifactChecksum());
 							artifactsBusinessLogic.handleAuditing(auditingAction, resource, resource.getUniqueId(),
 									user, null, null, foundArtifact.getUniqueId(), responseFormat,
