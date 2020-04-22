@@ -22,6 +22,30 @@
       "revId": "2ae9a432151782b0e8bff6a0bb1c2e7d23b5763f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a00ffaf4_5dd628a5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/group/GroupVersionUpdater.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-22T12:03:06Z",
+      "side": 1,
+      "message": "So you mean the initial test was incorrect (have to admit I wasn\u0027t sure about it either)?\nWe need to return true if either `artifactDefinition` is null, empty OR not in the list of `artifactsUuid`?\n\nThis would therefore simplify the change to ```if(artifactDefinition \u003d\u003d null || artifactDefinition.isEmpty() || !artifactsUuid.contains(artifactDefinition.getArtifactUUID()) )```",
+      "parentUuid": "ac8c295e_99949dd3",
+      "range": {
+        "startLine": 100,
+        "startChar": 16,
+        "endLine": 101,
+        "endChar": 71
+      },
+      "revId": "2ae9a432151782b0e8bff6a0bb1c2e7d23b5763f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
