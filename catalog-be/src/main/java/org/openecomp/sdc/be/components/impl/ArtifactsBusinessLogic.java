@@ -59,6 +59,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactTypeToPayloadTypeSelector;
 import org.openecomp.sdc.be.components.impl.artifact.PayloadTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -223,32 +224,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public class ArtifactOperationInfo {
-
-        private ArtifactOperationEnum artifactOperationEnum;
-        private boolean isExternalApi;
-        private boolean ignoreLifecycleState;
-
-        public ArtifactOperationInfo(boolean isExternalApi, boolean ignoreLifecycleState, ArtifactOperationEnum artifactOperationEnum) {
-            this.artifactOperationEnum = artifactOperationEnum;
-            this.isExternalApi = isExternalApi;
-            this.ignoreLifecycleState = ignoreLifecycleState;
-        }
-
-        public boolean isExternalApi() {
-            return isExternalApi;
-        }
-
-        public boolean ignoreLifecycleState() {
-            return ignoreLifecycleState;
-        }
-
-        public ArtifactOperationEnum getArtifactOperationEnum() {
-            return artifactOperationEnum;
-        }
-
-    }
-
     // new flow US556184
     public Either<ArtifactDefinition, Operation> handleArtifactRequest(String componentId, String userId, ComponentTypeEnum componentType,
                                                                        ArtifactOperationInfo operation, String artifactId, ArtifactDefinition artifactInfo,
@@ -321,7 +296,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         ArtifactOperationEnum operationEnum = operation.getArtifactOperationEnum();
         if (operationEnum == ArtifactOperationEnum.UPDATE || operationEnum == ArtifactOperationEnum.DELETE || operationEnum == ArtifactOperationEnum.DOWNLOAD) {
             ArtifactDefinition dbArtifact = getArtifactIfBelongsToComponent(componentId, componentType, artifactId, component);
-            if (operationEnum == ArtifactOperationEnum.DOWNLOAD) {
+            if (operation.isDownload()) {
                 artifactInfoToReturn = dbArtifact;
                 handleHeatEnvDownload(componentId, componentType, user, component, dbArtifact, shouldLock, inTransaction);
             }
@@ -1046,7 +1021,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     private void validateMd5(String origMd5, String originData, byte[] payload, ArtifactOperationInfo operation) {
         if (origMd5 == null) {
-            if (ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum()) && ArrayUtils.isNotEmpty(payload)) {
+            if (operation.isCreateOrLink() && ArrayUtils.isNotEmpty(payload)) {
                 log.debug("Missing md5 header during artifact create");
                 throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_INVALID_MD5);
             }
@@ -1108,8 +1083,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         final ArtifactGroupTypeEnum artifactGroupType =
             operationName != null ? ArtifactGroupTypeEnum.LIFE_CYCLE : ArtifactGroupTypeEnum.INFORMATIONAL;
-        final boolean isCreateOrLink = ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum());
-        if (!isCreateOrLink) {
+        if (operation.isNotCreateOrLink()) {
             checkAndSetUnUpdatableFields(user, artifactInfo, existingArtifactInfo, artifactGroupType);
         } else {
             checkCreateFields(user, artifactInfo, artifactGroupType);
@@ -1118,13 +1092,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         composeArtifactId(componentId, artifactId, artifactInfo, interfaceName, operationName);
         if (existingArtifactInfo != null) {
             artifactInfo.setMandatory(existingArtifactInfo.getMandatory());
-            if (!isCreateOrLink) {
+            if (operation.isNotCreateOrLink()) {
                 validateArtifactTypeNotChanged(artifactInfo, existingArtifactInfo);
             }
         }
 
         // artifactGroupType is not allowed to be updated
-        if (!isCreateOrLink) {
+        if (operation.isNotCreateOrLink()) {
             Either<ArtifactDefinition, ResponseFormat> validateGroupType = validateOrSetArtifactGroupType(artifactInfo, existingArtifactInfo);
             if (validateGroupType.isRight()) {
                 return Either.right(validateGroupType.right().value());
@@ -1138,7 +1112,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (isDeploymentArtifact(artifactInfo)) {
             if (componentType != ComponentTypeEnum.RESOURCE_INSTANCE) {
                 final String artifactName = artifactInfo.getArtifactName();
-                if (isCreateOrLink || !artifactName.equalsIgnoreCase(existingArtifactInfo.getArtifactName())) {
+                if (operation.isCreateOrLink() || !artifactName.equalsIgnoreCase(existingArtifactInfo.getArtifactName())) {
                     validateSingleDeploymentArtifactName(artifactName, parentComponent);
                 }
             }
@@ -1193,7 +1167,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     private void ignoreUnupdateableFieldsInUpdate(ArtifactOperationInfo operation, ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifactInfo) {
-        if (operation.getArtifactOperationEnum() == ArtifactOperationEnum.UPDATE) {
+        if (operation.isUpdate()) {
             artifactInfo.setArtifactType(currentArtifactInfo.getArtifactType());
             artifactInfo.setArtifactGroupType(currentArtifactInfo.getArtifactGroupType());
             artifactInfo.setArtifactLabel(currentArtifactInfo.getArtifactLabel());
@@ -1207,11 +1181,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (StringUtils.isNotEmpty(artifactId)) {
             foundArtifact = findArtifact(parentComponent, componentType, parentId, artifactId);
         }
-        if (foundArtifact != null && ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum())) {
+        if (foundArtifact != null && operation.isCreateOrLink()) {
             log.debug("Artifact {} already exist", artifactId);
             throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_EXIST, foundArtifact.getArtifactLabel());
         }
-        if (foundArtifact == null && !ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum())) {
+        if (foundArtifact == null && operation.isNotCreateOrLink()) {
             log.debug("The artifact {} was not found on parent component or instance {}. ", artifactId, parentId);
             throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_NOT_FOUND, "");
         }
@@ -1621,7 +1595,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             log.debug("missing artifact logical name for component {}", componentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, ARTIFACT_LABEL));
         }
-        if (ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum()) && !artifactInfo.getMandatory()) {
+        if (operation.isCreateOrLink() && !artifactInfo.getMandatory()) {
 
             if (operationName != null) {
                 if (artifactInfo.getArtifactLabel() != null && !operationName.equals(artifactInfo.getArtifactLabel())) {
@@ -3072,7 +3046,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return componentResult.left().value();
     }
 
-    private Boolean validateWorkOnComponent(Component component, String userId, AuditingActionEnum auditingAction, User user, String artifactId, ArtifactOperationInfo operation) {
+    private void validateWorkOnComponent(Component component, String userId, AuditingActionEnum auditingAction, User user, String artifactId, ArtifactOperationInfo operation) {
         if (operation.getArtifactOperationEnum() != ArtifactOperationEnum.DOWNLOAD && !operation.ignoreLifecycleState()) {
             try {
                 validateCanWorkOnComponent(component, userId);
@@ -3084,12 +3058,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 throw e;
             }
         }
-        return true;
     }
 
     private void validateUserRole(User user, AuditingActionEnum auditingAction, String componentId, String artifactId, ComponentTypeEnum componentType, ArtifactOperationInfo operation) {
 
-        if (operation.getArtifactOperationEnum() != ArtifactOperationEnum.DOWNLOAD) {
+        if (operation.isNotDownload()) {
             String role = user.getRole();
             if (!role.equals(Role.ADMIN.name()) && !role.equals(Role.DESIGNER.name())) {
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
@@ -4621,7 +4594,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         } catch (ComponentException e) {
             log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, componentType, component
                     .getName(), e.getResponseFormat());
-            if (ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum())) {
+            if (operation.isCreateOrLink()) {
                 vfcsNewCreatedArtifacts.addAll(uploadedArtifacts);
             }
             throw e;
@@ -4689,7 +4662,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
             handleArtifactsResult = uploadedArtifacts;
         }catch (ComponentException e){
-            if (ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum())) {
+            if (operation.isCreateOrLink()) {
                 vfcsNewCreatedArtifacts.addAll(uploadedArtifacts);
             }
             throw e;

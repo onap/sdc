@@ -78,7 +78,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.MockGenerator;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -346,7 +346,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
                 .thenReturn(Either.left(new ArrayList()));
         when(toscaOperationFacade.generateCustomizationUUIDOnInstanceGroup(service.getUniqueId(), ci.getUniqueId(), new ArrayList<>(Arrays.asList("guid"))))
                 .thenReturn(StorageOperationStatus.OK);
-        artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+        artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,
+            new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
                 "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
         assertThat(ci.getDeploymentArtifacts().get("HEAT").getTimeout()).isEqualTo(envArtifact.getTimeout());
         assertThat(ci.getDeploymentArtifacts().get("HEAT_ENV").getTimeout()).isEqualTo(origEnvArtifact.getTimeout());
@@ -381,7 +382,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         when(toscaOperationFacade.generateCustomizationUUIDOnInstanceGroup(service.getUniqueId(), ci.getUniqueId(), new ArrayList<>(Arrays.asList("guid"))))
                 .thenReturn(StorageOperationStatus.OK);
         try {
-            artifactBL.handleUpdate(ci.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE, artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+            artifactBL.handleUpdate(ci.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE, new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
                     "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
         } catch (ComponentException exp) {
             assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.ARTIFACT_INVALID_TIMEOUT);
@@ -419,7 +420,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         when(toscaOperationFacade.generateCustomizationUUIDOnInstanceGroup(service.getUniqueId(), ci.getUniqueId(), new ArrayList<>(Arrays.asList("guid"))))
                 .thenReturn(StorageOperationStatus.OK);
         try {
-            artifactBL.handleUpdate(ci.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE, artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+            artifactBL.handleUpdate(ci.getUniqueId(), ComponentTypeEnum.RESOURCE_INSTANCE, new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
                     "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
         } catch (ComponentException exp) {
             assertThat(exp.getActionStatus()).isEqualTo(ActionStatus.ARTIFACT_INVALID_TIMEOUT);
@@ -452,7 +453,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
                 .thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.updateGroupInstancesOnComponent(eq(service),eq(ci.getUniqueId()), any(List.class)))
                 .thenReturn(Either.left(new ArrayList()));
-        artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+        artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,
+            new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
                 "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
         assertThat(ci.getDeploymentArtifacts().get("HEAT").getTimeout()).isEqualTo(origEnvArtifact.getTimeout());
     }
@@ -477,7 +479,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         when(toscaOperationFacade.updateGroupInstancesOnComponent(eq(service),eq(ci.getUniqueId()), any(List.class)))
                 .thenReturn(Either.left(new ArrayList()));
         assertThatThrownBy(() -> {
-            artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+            artifactBL.handleUpdate(ci.getUniqueId(),ComponentTypeEnum.RESOURCE_INSTANCE,
+                new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
                     "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, service, true);
         }).isInstanceOf(ComponentException.class);
     }
@@ -488,7 +491,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         envArtifact.setArtifactType("invalid");
 
         try {
-            artifactBL.handleUpdate("uid", ComponentTypeEnum.RESOURCE_INSTANCE, artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
+            artifactBL.handleUpdate("uid", ComponentTypeEnum.RESOURCE_INSTANCE, new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE),
                     "uid2", envArtifact, null, null, null, null, null, AuditingActionEnum.ARTIFACT_METADATA_UPDATE, user, null, true);
             fail();
         } catch(ComponentException exp) {
@@ -952,7 +955,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         String componentId = "";
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
         ArtifactsBusinessLogic arb = getTestSubject();
-        ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
+        ArtifactOperationInfo operation = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         String artifactId = "";
         ArtifactDefinition artifactInfo = buildArtifactPayload();
         AuditingActionEnum auditingAction = AuditingActionEnum.ADD_CATEGORY;
@@ -1048,7 +1051,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     public void testIgnoreUnupdateableFieldsInUpdate() throws Exception {
         ArtifactsBusinessLogic testSubject;
         ArtifactsBusinessLogic arb = getTestSubject();
-        ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
+        ArtifactOperationInfo operation = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         ArtifactDefinition artifactInfo = buildArtifactPayload();
         ArtifactDefinition currentArtifactInfo = null;
 
@@ -1065,7 +1068,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
         String parentId = "";
         ArtifactsBusinessLogic arb = getTestSubject();
-        ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
+        ArtifactOperationInfo operation = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         String artifactId = "";
         Either<ArtifactDefinition, ResponseFormat> result;
 
@@ -1579,7 +1582,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         String artifactId = "";
         ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
         ArtifactsBusinessLogic arb = getTestSubject();
-        ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
+        ArtifactOperationInfo operation = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         Either<Boolean, ResponseFormat> result;
 
         // default test
@@ -1594,7 +1597,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     public void testDetectAuditingType() throws Exception {
         ArtifactsBusinessLogic testSubject;
         ArtifactsBusinessLogic arb = getTestSubject();
-        ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
+        ArtifactOperationInfo operation = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         String origMd5 = "";
         AuditingActionEnum result;
 
@@ -1609,7 +1612,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     public void testDetectNoAuditingType() throws Exception {
         ArtifactsBusinessLogic testSubject;
         ArtifactsBusinessLogic arb = getTestSubject();
-        ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.LINK);
+        ArtifactOperationInfo operation = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.LINK);
         String origMd5 = "";
         AuditingActionEnum result;
 
@@ -1921,7 +1924,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         List<ArtifactDefinition> vfcsNewCreatedArtifacts = new ArrayList<>();
         ArtifactsBusinessLogic arb = getTestSubject();
-        ArtifactOperationInfo operation = arb.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
+        ArtifactOperationInfo operation = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
         boolean shouldLock = false;
         boolean inTransaction = false;
         List<ArtifactDefinition> result;
@@ -2035,7 +2038,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         service.setLastUpdaterUserId(user.getUserId());
 
         final ArtifactOperationInfo operationInfo =
-            artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
+            new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
 
         final String componentId = "componentId";
         final ComponentInstance componentInstance = new ComponentInstance();
@@ -2089,7 +2092,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         service.setLastUpdaterUserId(user.getUserId());
 
         final ArtifactOperationInfo operationInfo =
-            artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
+            new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE);
 
         final String componentId = "componentId";
         final ComponentInstance componentInstance = new ComponentInstance();
@@ -2103,6 +2106,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         final ArtifactsBusinessLogic artifactsBusinessLogic = getTestSubject();
         artifactsBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+
         final Object result = Deencapsulation
             .invoke(artifactsBusinessLogic, "validateInput", componentId, artifactDefinition, operationInfo, artifactId,
                 user, "interfaceName", ARTIFACT_LABEL, ComponentTypeEnum.RESOURCE_INSTANCE, service);
@@ -2115,7 +2119,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     public void testHandleArtifactRequest() {
 
         String componentId = "componentId";
-        ArtifactOperationInfo operationInfo = artifactBL.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE);
+        ArtifactOperationInfo operationInfo = new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE);
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setArtifactName("other");
         artifactDefinition.setUniqueId("artifactId");

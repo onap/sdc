@@ -112,17 +112,11 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
     @Mock
     private UserBusinessLogic userBusinessLogic;
     @Mock
-    private ArtifactOperation artifactOperation;
-    @Mock
     public ComponentsUtils componentsUtils;
-    @Mock
-    private UserAdminOperation userOperation;
     @Mock
     private ArtifactCassandraDao artifactCassandraDao;
     @Mock
     public ToscaOperationFacade toscaOperationFacade;
-    @Mock
-    private NodeTemplateOperation nodeTemplateOperation;
     @Mock
     private IGraphLockOperation graphLockOperation;
     @Mock
@@ -148,13 +142,7 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        Either<ArtifactDefinition, StorageOperationStatus> NotFoundResult = Either.right(StorageOperationStatus.NOT_FOUND);
-
-        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> NotFoundResult2 = Either.right(StorageOperationStatus.NOT_FOUND);
-
         when(userBusinessLogic.getUser(eq("jh0003"), anyBoolean())).thenReturn(USER);
-
-
         when(resource.getResourceType()).thenReturn(ResourceTypeEnum.VFC);
     }
 

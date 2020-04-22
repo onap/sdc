@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.merge.instance;
 
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -107,7 +108,7 @@ public class ComponentInstanceArtifactsMerge implements ComponentInstanceMergeIn
                     null, currentArtifactDefinition.getValue().getListHeatParameters());
             addEsIdToArtifactJson(jsonForUpdateArtifact, currentArtifactDefinition.getValue().getEsId());
             artifactsBusinessLogic.updateResourceInstanceArtifactNoContent(newInstanceId, updatedContainerComponent,
-                            user, jsonForUpdateArtifact, artifactsBusinessLogic.new ArtifactOperationInfo(
+                            user, jsonForUpdateArtifact, new ArtifactOperationInfo(
                                     false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.LINK), currentArtifactDefinition.getValue());
         }
         return updatedContainerComponent;

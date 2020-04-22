@@ -38,6 +38,7 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -188,7 +189,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic
                         .updateArtifactOnInterfaceOperationByResourceUUID(data, request, ComponentTypeEnum
                                         .findByParamName(assetType), uuid, interfaceUUID, operationUUID, artifactUUID,
-                                resourceCommonInfo, artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                                resourceCommonInfo, new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug(FAILED_TO_UPDATE_ARTIFACT);
                     responseFormat = uploadArtifactEither.right().value();
@@ -293,7 +294,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         try {
             if (responseWrapper.isEmpty()) {
                 artifactDefinition = artifactsBusinessLogic.uploadArtifactToComponentByUUID(data, request, componentType, uuid,
-                        resourceCommonInfo, artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
+                        resourceCommonInfo, new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
                 headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
@@ -402,7 +403,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         try {
             if (responseWrapper.isEmpty()) {
                 artifactDefinition = artifactsBusinessLogic.uploadArtifactToRiByUUID(data, request, componentType, uuid, resourceInstanceName,
-                        artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
+                        new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
                 headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
@@ -506,7 +507,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         try {
             if (responseWrapper.isEmpty()) {
                 artifactDefinition = artifactsBusinessLogic.updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUUID,
-                        resourceCommonInfo, artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                        resourceCommonInfo, new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
                 headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
@@ -616,7 +617,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         try {
             if (responseWrapper.isEmpty()) {
                 artifactDefinition = artifactsBusinessLogic.updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName, artifactUUID,
-                        artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                        new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
                 headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
@@ -719,7 +720,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         try {
             if (responseWrapper.isEmpty()) {
                 artifactDefinition = artifactsBusinessLogic.deleteArtifactOnComponentByUUID(request, componentType, uuid, artifactUUID,
-                        resourceCommonInfo, artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
+                        resourceCommonInfo, new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
                 headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
@@ -822,7 +823,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         try {
             if (responseWrapper.isEmpty()) {
                 artifactDefinition = artifactsBusinessLogic.deleteArtifactOnRiByUUID(request, componentType, uuid, resourceInstanceName, artifactUUID,
-                        artifactsBusinessLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
+                        new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
                 headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
