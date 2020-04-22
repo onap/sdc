@@ -28,7 +28,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -135,7 +135,7 @@ public class ComponentInstanceArtifactsMergeTest {
 		User user = new User();
 
 		when(artifactsBusinessLogicMock.updateResourceInstanceArtifactNoContent("mock", originComponent, user,
-				new HashMap<>(), artifactsBusinessLogicMock.new ArtifactOperationInfo(false, false,
+				new HashMap<>(), new ArtifactOperationInfo(false, false,
 						ArtifactsBusinessLogic.ArtifactOperationEnum.LINK), currentDeploymentArtifacts.get("artifactOne"))).thenReturn(left);
 
 		when(artifactsBusinessLogicMock.updateResourceInstanceArtifactNoContent(Mockito.anyString(), Mockito.any(Component.class), Mockito.any(User.class),

@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
@@ -820,7 +820,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = createOrUpdateCsarArtifactFromJson(
                 resource, csarInfo.getModifier(), json,
-                artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE));
+                new ArtifactOperationInfo(false, false, ArtifactOperationEnum.CREATE));
 
         if (uploadArtifactToService.isRight()) {
             return Either.right(uploadArtifactToService.right().value());
@@ -1705,7 +1705,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
         Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = createOrUpdateCsarArtifactFromJson(
                 resource, csarInfo.getModifier(), json,
-                artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE));
+                new ArtifactOperationInfo(false, false, ArtifactOperationEnum.UPDATE));
 
         if (uploadArtifactToService.isRight()) {
             resStatus = Either.right(uploadArtifactToService.right().value());
