@@ -276,10 +276,10 @@ public class UpgradeBusinessLogic {
             }
             return result;
         } finally  {
-            if ( result.isRight() ){
+            if ( result != null && result.isRight() ){
                 // undo checkout resource in case of failure
                 LOGGER.debug("Failed to update Allotted resource {} {}, Error {}. UNDOCHEKOUT our resource", resource.getName(), resource.getUniqueId(), result.right().value());
-                       
+
                 upgradeStatus.addServiceStatus(request.getServiceId(), ActionStatus.GENERAL_ERROR);
             }
         }
