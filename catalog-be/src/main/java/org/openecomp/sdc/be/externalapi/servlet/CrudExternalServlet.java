@@ -264,19 +264,19 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
                 }
 
                 //validate name exist
-                if(responseWrapper.isEmpty() &&  isNullOrEmpty(service.getName())){
+                if(responseWrapper.isEmpty() && service != null && isNullOrEmpty(service.getName())){
                     responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
                     ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue()));
                 }
 
                 //validate category
-                if(responseWrapper.isEmpty() && service.getCategories().size()>0 && !ExternalCategoryTypeEnum.containsIgnoreCase(service.getCategories().get(0).getName())){
+                if(responseWrapper.isEmpty() && service != null && service.getCategories() != null && !service.getCategories().isEmpty() && !ExternalCategoryTypeEnum.containsIgnoreCase(service.getCategories().get(0).getName())){
                     log.debug("Service category is not supported {}", service.getCategories().get(0).getName());
                     responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
                             ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.SERVICE.getValue()));
                 }
 
-                if(responseWrapper.isEmpty()){
+                if(responseWrapper.isEmpty() && service != null){
                     service.setSystemName(ValidationUtils.convertToSystemName(service.getName()));
                     log.debug("Service system name :"+service.getSystemName());
                 }
