@@ -1481,6 +1481,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private boolean isNotEmptyMapOfProperties(String instanceId, Map<String, MapCapabilityProperty> mapPropertiesDataDefinition) {
         return  MapUtils.isNotEmpty(mapPropertiesDataDefinition) &&
+                instanceId != null &&
                 mapPropertiesDataDefinition.get(instanceId) != null &&
                 MapUtils.isNotEmpty(mapPropertiesDataDefinition.get(instanceId).getMapToscaDataDefinition());
     }
