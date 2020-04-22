@@ -686,22 +686,30 @@ public class ArtifactsOperations extends BaseOperation {
             List<String> pathKeys = new ArrayList<>();
             pathKeys.add(instanceId);
             if (isNeedToClone) {
-                MapArtifactDataDefinition artifatcsOnInstance = artifactInst.get(instanceId);
-                if (artifatcsOnInstance != null) {
-                    Map<String, ArtifactDataDefinition> mapToscaDataDefinition = artifatcsOnInstance.getMapToscaDataDefinition();
-                    ArtifactDataDefinition artifactDataDefinitionToUpdate = new ArtifactDataDefinition(artifactToUpdate);
-                    mapToscaDataDefinition.put(artifactToUpdate.getArtifactLabel(), artifactDataDefinitionToUpdate);
-                }
+                if (artifactInst != null) {
+                    MapArtifactDataDefinition artifatcsOnInstance = artifactInst.get(instanceId);
+                    if (artifatcsOnInstance != null) {
+                        Map<String, ArtifactDataDefinition> mapToscaDataDefinition = artifatcsOnInstance
+                            .getMapToscaDataDefinition();
+                        ArtifactDataDefinition artifactDataDefinitionToUpdate = new ArtifactDataDefinition(
+                            artifactToUpdate);
+                        mapToscaDataDefinition.put(artifactToUpdate.getArtifactLabel(), artifactDataDefinitionToUpdate);
+                    }
 
-                for (Entry<String, MapArtifactDataDefinition> e : artifactInst.entrySet()) {
-                    List<ArtifactDataDefinition> toscaDataListPerInst = e.getValue().getMapToscaDataDefinition().values().stream().collect(Collectors.toList());
-                    List<String> pathKeysPerInst = new ArrayList<>();
-                    pathKeysPerInst.add(e.getKey());
-                    status = updateToscaDataDeepElementsOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, toscaDataListPerInst, pathKeysPerInst, JsonPresentationFields.ARTIFACT_LABEL);
-                    if (status != StorageOperationStatus.OK) {
-                        log.debug("Failed to update atifacts group for instance {} in component {} edge type {} error {}", instanceId, componentId, edgeLabelEnum, status);
-                        res = Either.right(status);
-                        break;
+                    for (Entry<String, MapArtifactDataDefinition> e : artifactInst.entrySet()) {
+                        List<ArtifactDataDefinition> toscaDataListPerInst = e.getValue().getMapToscaDataDefinition()
+                            .values().stream().collect(Collectors.toList());
+                        List<String> pathKeysPerInst = new ArrayList<>();
+                        pathKeysPerInst.add(e.getKey());
+                        status = updateToscaDataDeepElementsOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum,
+                            toscaDataListPerInst, pathKeysPerInst, JsonPresentationFields.ARTIFACT_LABEL);
+                        if (status != StorageOperationStatus.OK) {
+                            log.debug(
+                                "Failed to update atifacts group for instance {} in component {} edge type {} error {}",
+                                instanceId, componentId, edgeLabelEnum, status);
+                            res = Either.right(status);
+                            break;
+                        }
                     }
                 }
             } else {
