@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.filters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.binary.Base64;
 import org.onap.sdc.security.Passwords;
 import org.openecomp.sdc.be.components.impl.ConsumerBusinessLogic;
@@ -48,7 +49,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
 
 @Priority(10)
@@ -81,14 +81,9 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
                 String basic = st.nextToken();
 
                 if ("Basic".equalsIgnoreCase(basic)) {
-                    try {
-                        String credentials = new String(Base64.decodeBase64(st.nextToken()), "UTF-8");
-                        log.debug("Credentials: {}", credentials);
-                        checkUserCredentials(requestContext, credentials);
-                    } catch (UnsupportedEncodingException e) {
-                        log.error("Authentication Filter Failed Couldn't retrieve authentication", e);
-                        authInvalidHeaderError(requestContext);
-                    }
+                    String credentials = new String(Base64.decodeBase64(st.nextToken()), StandardCharsets.UTF_8);
+                    log.debug("Credentials: {}", credentials);
+                    checkUserCredentials(requestContext, credentials);
                 } else {
 					log.error(failedToRetrieveAuthErrorMsg);
                     authInvalidHeaderError(requestContext);
@@ -144,22 +139,27 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
         }
     }
 
-	private void authSuccessful(ContainerRequestContext requestContext, String userName) {
+    private void authSuccessful(ContainerRequestContext requestContext, String userName) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
-			abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
+            abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
+        } else {
+            componentUtils
+                .auditAuthEvent(requestContext.getUriInfo().getPath(), userName, AuthStatus.AUTH_SUCCESS.toString(),
+                    realm);
         }
-        componentUtils.auditAuthEvent(requestContext.getUriInfo().getPath(), userName, AuthStatus.AUTH_SUCCESS.toString(), realm);
     }
 
-	private void authInvalidPasswordError(ContainerRequestContext requestContext, String userName) {
+    private void authInvalidPasswordError(ContainerRequestContext requestContext, String userName) {
         ComponentsUtils componentUtils = getComponentsUtils();
         if (componentUtils == null) {
-			abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
+            abortWith(requestContext, COMPONENT_UTILS_FAILED, Response.status(Status.INTERNAL_SERVER_ERROR).build());
+        } else {
+            componentUtils.auditAuthEvent(requestContext.getUriInfo().getPath(), userName,
+                AuthStatus.AUTH_FAILED_INVALID_PASSWORD.toString(), realm);
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED);
+            abortWith(requestContext, responseFormat.getFormattedMessage(), buildErrorResponse(responseFormat, false));
         }
-        componentUtils.auditAuthEvent(requestContext.getUriInfo().getPath(), userName, AuthStatus.AUTH_FAILED_INVALID_PASSWORD.toString(), realm);
-        ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED);
-		abortWith(requestContext, responseFormat.getFormattedMessage(), buildErrorResponse(responseFormat, false));
     }
 
     private void authUserNotFoundError(ContainerRequestContext requestContext, String userName) {
