@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c3e5f219_1f149a21",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/utils/PolicyTypeImportUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-22T12:13:18Z",
+      "side": 1,
+      "message": "besides the fact it can work, logic is unclear,\nto improve it, I\u0027d suggest to refactor like this:\n//////////////////////////////////////////////////////////////\n        if (!isPropertiesListSizesEquals(pt1Props, pt2Props)) {\n//////////////////////////////////////////////////////////////\n    private boolean isPropertiesListSizesEquals(final Collection\u003cPropertyDefinition\u003e pt1Props,\n                                                final Collection\u003cPropertyDefinition\u003e pt2Props) {\n        return (isEmpty(pt1Props) \u0026\u0026 isEmpty(pt2Props))\n            || (isNotEmpty(pt1Props) \u0026\u0026 isNotEmpty(pt2Props) \u0026\u0026 pt1Props.size() \u003d\u003d pt2Props.size());\n    }\n//////////////////////////////////////////////////////////////\nwhat do you think?",
+      "range": {
+        "startLine": 64,
+        "startChar": 8,
+        "endLine": 64,
+        "endChar": 105
+      },
+      "revId": "41bd98380bbe732ad1ba5bbf62df12de9c56a3fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14dd7d86_65694b57",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/utils/PolicyTypeImportUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-22T12:13:18Z",
+      "side": 1,
+      "message": "//////////////////////////////////////////////////////////////\n    private boolean isPropertiesListSizesEquals(final Collection\u003cPropertyDefinition\u003e pt1Props,\n                                                final Collection\u003cPropertyDefinition\u003e pt2Props) {\n        return (isEmpty(pt1Props) \u0026\u0026 isEmpty(pt2Props))\n            || (isNotEmpty(pt1Props) \u0026\u0026 isNotEmpty(pt2Props) \u0026\u0026 pt1Props.size() \u003d\u003d pt2Props.size());\n    }\n//////////////////////////////////////////////////////////////",
+      "range": {
+        "startLine": 88,
+        "startChar": 3,
+        "endLine": 92,
+        "endChar": 5
+      },
+      "revId": "41bd98380bbe732ad1ba5bbf62df12de9c56a3fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
