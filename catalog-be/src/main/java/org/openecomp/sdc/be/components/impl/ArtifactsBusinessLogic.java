@@ -1075,6 +1075,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         final ArtifactDefinition existingArtifactInfo =
             findArtifact(parentComponent, componentType, componentId, operation, artifactId);
+        final boolean isCreateOrLinkOperation =
+            ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum());
+        if (!isCreateOrLinkOperation && existingArtifactInfo == null) {
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_NOT_FOUND, artifactId);
+        }
         final Component component;
         if (parentComponent.getUniqueId().equals(componentId)) {
             component = parentComponent;
@@ -1083,8 +1088,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             component = findComponent(componentInstance.getComponentUid());
             component.setComponentType(componentType);
         }
-
-        ignoreUnupdateableFieldsInUpdate(operation, artifactInfo, existingArtifactInfo);
+        if (!isCreateOrLinkOperation) {
+            ignoreUnupdateableFieldsInUpdate(operation, artifactInfo, existingArtifactInfo);
+        }
         if (isInformationalArtifact(artifactInfo)) {
             validateInformationalArtifact(artifactInfo, component);
         }
@@ -1108,8 +1114,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         final ArtifactGroupTypeEnum artifactGroupType =
             operationName != null ? ArtifactGroupTypeEnum.LIFE_CYCLE : ArtifactGroupTypeEnum.INFORMATIONAL;
-        final boolean isCreateOrLink = ArtifactOperationEnum.isCreateOrLink(operation.getArtifactOperationEnum());
-        if (!isCreateOrLink) {
+        if (!isCreateOrLinkOperation) {
             checkAndSetUnUpdatableFields(user, artifactInfo, existingArtifactInfo, artifactGroupType);
         } else {
             checkCreateFields(user, artifactInfo, artifactGroupType);
@@ -1118,13 +1123,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         composeArtifactId(componentId, artifactId, artifactInfo, interfaceName, operationName);
         if (existingArtifactInfo != null) {
             artifactInfo.setMandatory(existingArtifactInfo.getMandatory());
-            if (!isCreateOrLink) {
+            if (!isCreateOrLinkOperation) {
                 validateArtifactTypeNotChanged(artifactInfo, existingArtifactInfo);
             }
         }
 
         // artifactGroupType is not allowed to be updated
-        if (!isCreateOrLink) {
+        if (!isCreateOrLinkOperation) {
             Either<ArtifactDefinition, ResponseFormat> validateGroupType = validateOrSetArtifactGroupType(artifactInfo, existingArtifactInfo);
             if (validateGroupType.isRight()) {
                 return Either.right(validateGroupType.right().value());
@@ -1138,7 +1143,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (isDeploymentArtifact(artifactInfo)) {
             if (componentType != ComponentTypeEnum.RESOURCE_INSTANCE) {
                 final String artifactName = artifactInfo.getArtifactName();
-                if (isCreateOrLink || !artifactName.equalsIgnoreCase(existingArtifactInfo.getArtifactName())) {
+                if (isCreateOrLinkOperation || !artifactName.equalsIgnoreCase(existingArtifactInfo.getArtifactName())) {
                     validateSingleDeploymentArtifactName(artifactName, parentComponent);
                 }
             }
@@ -1192,7 +1197,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return component.left().value();
     }
 
-    private void ignoreUnupdateableFieldsInUpdate(ArtifactOperationInfo operation, ArtifactDefinition artifactInfo, ArtifactDefinition currentArtifactInfo) {
+    private void ignoreUnupdateableFieldsInUpdate(final ArtifactOperationInfo operation,
+                                                  final ArtifactDefinition artifactInfo,
+                                                  final ArtifactDefinition currentArtifactInfo) {
         if (operation.getArtifactOperationEnum() == ArtifactOperationEnum.UPDATE) {
             artifactInfo.setArtifactType(currentArtifactInfo.getArtifactType());
             artifactInfo.setArtifactGroupType(currentArtifactInfo.getArtifactGroupType());
