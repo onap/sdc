@@ -22,6 +22,30 @@
       "revId": "cda9d2a5fa771830fa493bd3885178a4e4987c8c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24872e48_b30f52b5",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1484,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-04-22T17:08:28Z",
+      "side": 1,
+      "message": "@Vasyl: it is probably a case of \"false positive\" from Sonar as the \u0027nullability\u0027 of \u0027mapPropertiesDataDefinition\u0027 is tested with \u0027MapUtils.isNotEmpty\u0027",
+      "parentUuid": "4ff0a5e2_25f53a4f",
+      "range": {
+        "startLine": 1484,
+        "startChar": 16,
+        "endLine": 1484,
+        "endChar": 37
+      },
+      "revId": "cda9d2a5fa771830fa493bd3885178a4e4987c8c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
