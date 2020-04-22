@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b1008086_7aba6931",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/utils/PolicyTypeImportUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-22T12:27:39Z",
+      "side": 1,
+      "message": "`isEmpty` already checks for nulls so Vasyl\u0027s proposal should work. I would also add this:\n```\nif((pt1Props \u003d\u003d pt2Props) || (isEmpty(pt1Props) \u0026\u0026 isEmpty(pt2Props)))\n  return true;\nelse if (isPropertiesListSizesEquals(pt1Props, pt2Props))\n  return false;\nelse {\n  // the rest of the code.\n}\n```\nBut overall, there is clearly a design issue that is screaming to be solved here. These \"optimizations\" seem to be here for performance purpose. What size are the lists passed in argument? If we are not talking about hundreds of elements, I would simplify this logic.",
+      "parentUuid": "c3e5f219_1f149a21",
+      "range": {
+        "startLine": 64,
+        "startChar": 8,
+        "endLine": 64,
+        "endChar": 105
+      },
+      "revId": "41bd98380bbe732ad1ba5bbf62df12de9c56a3fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "14dd7d86_65694b57",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/utils/PolicyTypeImportUtils.java",
         "patchSetId": 1
