@@ -22,7 +22,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import fj.data.Either;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -689,7 +692,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             log.debug("The exception {} occured during filtered instance properties fetching. the  containing component is {}. ", e, componentId);
             response = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally{
-            if (response.isLeft()){
+            if (response != null && response.isLeft()){
                 toscaOperationFacade.commit();
             } else {
                 toscaOperationFacade.rollback();
@@ -792,18 +795,16 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         currentProperty = getDataTypeByNameRes.left().value();
         dataTypeProperties = currentProperty.getProperties();
 
-        if(CollectionUtils.isNotEmpty(dataTypeProperties)){
-            if (isMatchingComplexProperty(propertyNameFragment, searchByFragment, dataTypeProperties)){
-                return true;
-            }
-        }
-        dataTypeProperties = currentProperty.getDerivedFrom().getProperties();
-        if(CollectionUtils.isNotEmpty(dataTypeProperties)){
-            if (isMatchingComplexProperty(propertyNameFragment, searchByFragment, dataTypeProperties)){
-                return true;
-            }
-        }
-        return false;
+        boolean dataPropertiesNotNull = CollectionUtils.isNotEmpty(dataTypeProperties);
+        BooleanSupplier dataMatchesComplexProperty = () -> isMatchingComplexProperty(propertyNameFragment,
+            searchByFragment, dataTypeProperties);
+        BooleanSupplier parentPropertiesNotNull = () -> CollectionUtils
+            .isNotEmpty(currentProperty.getDerivedFrom().getProperties());
+        BooleanSupplier parentDataMatchesComplexProperty = () -> isMatchingComplexProperty(propertyNameFragment,
+            searchByFragment, currentProperty.getDerivedFrom().getProperties());
+
+        return ((dataPropertiesNotNull && dataMatchesComplexProperty.getAsBoolean())
+            || (parentPropertiesNotNull.getAsBoolean() && parentDataMatchesComplexProperty.getAsBoolean()));
     }
 
     private boolean isMatchingComplexProperty(String propertyNameFragment, boolean searchByFragment, List<PropertyDefinition> dataTypeProperties) {
