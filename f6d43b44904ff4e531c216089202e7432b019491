@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8fb644ff_dd6f26ec",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4355,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-04-23T15:26:38Z",
+      "side": 1,
+      "message": "1. Please use spaces instead of tabs for indentation.\nYou can configure your IDE to use ONAP java coding style by importing style configuration\nSee https://wiki.onap.org/display/DW/Setting+Up+Your+Development+Environment#SettingUpYourDevelopmentEnvironment-ConfigureONAPcheckstyleforIntelliJ\n\n2. If actionResult is null, this method will return Either.left(null)\nand that may cause another NullPointerException\nbecause Either.left indicates success.",
+      "revId": "f6d43b44904ff4e531c216089202e7432b019491",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
