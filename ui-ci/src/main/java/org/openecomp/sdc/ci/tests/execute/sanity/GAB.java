@@ -30,12 +30,13 @@ import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
+import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
 import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
@@ -44,8 +45,6 @@ import org.testng.annotations.Test;
 public class GAB extends SetupCDTest {
 
     private static final int THREAD_SLEEP_TIME = 1000;
-    private static final int MAIN_PAGE_ROWS_SIZE = 2;
-    private static final int MAIN_PAGE_COLUMN_SIZE = 6;
 
     private String pnfFilePath;
     private String vnfFilePath;
@@ -58,11 +57,11 @@ public class GAB extends SetupCDTest {
 
     @Test
     public void addPmDictionaryDeploymentArtifactToPnfAndCheckMagnifierTest() throws Exception {
-        final int expectedHeaderSize = MAIN_PAGE_COLUMN_SIZE + 10;
-        final int expectedRowSize = MAIN_PAGE_ROWS_SIZE + 3;
+        final int expectedHeaderSize = 10;
+        final int expectedRowSize = 3;
         ResourceReqDetails pnfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.PNF, getUser());
         ResourceUIUtils.createPNF(pnfMetaData, getUser());
-        ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
+        GeneralPageElements.getLeftMenu().moveToDeploymentArtifactScreen();
         ArtifactInfo art1 = new ArtifactInfo(pnfFilePath, "pmDictionary.yml", "desc", "artifactpm", "PM_DICTIONARY");
         addArtifactAndOpenGAB(art1);
         assertHeaderAndRowSize(expectedHeaderSize, expectedRowSize);
@@ -70,11 +69,11 @@ public class GAB extends SetupCDTest {
 
     @Test
     public void addVesEventsDeploymentArtifactToVfAndCheckMagnifierTest() throws Exception {
-        final int expectedHeaderSize = MAIN_PAGE_COLUMN_SIZE + 4;
-        final int expectedRowSize = MAIN_PAGE_ROWS_SIZE + 3;
+        final int expectedHeaderSize = 4;
+        final int expectedRowSize = 3;
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
-        ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
+        GeneralPageElements.getLeftMenu().moveToDeploymentArtifactScreen();
         ArtifactInfo art1 = new ArtifactInfo(vnfFilePath, "vesEvent.yml", "desc", "artifactfault", "VES_EVENTS");
         addArtifactAndOpenGAB(art1);
         assertHeaderAndRowSize(expectedHeaderSize, expectedRowSize);
@@ -85,11 +84,15 @@ public class GAB extends SetupCDTest {
         openGABPopup(art1);
     }
 
-    private void assertHeaderAndRowSize(int expectedHeaderSize, int expectedRowSize) {
-        List<WebElement> headers = getListOfHeaders();
+    private void assertHeaderAndRowSize(final int expectedHeaderSize, final int expectedRowSize) {
+        final List<WebElement> headers = getListOfHeaders();
         AssertJUnit.assertEquals(expectedHeaderSize, headers.size());
-        List<WebElement> rows = GeneralUIUtils.getWebElementsListByContainsClassName("datatable-body-row");
+        final List<WebElement> rows = getListOfRows();
         AssertJUnit.assertEquals(expectedRowSize, rows.size());
+    }
+
+    private List<WebElement> getListOfRows() {
+        return GeneralUIUtils.getWebElementsListBy(By.xpath("//sdc-modal//datatable-body//datatable-body-row"));
     }
 
     private void openGABPopup(ArtifactInfo art1) throws InterruptedException {
@@ -104,7 +107,7 @@ public class GAB extends SetupCDTest {
     }
 
     private List<WebElement> getListOfHeaders() {
-        return GeneralUIUtils.getWebElementsListByClassName("datatable-header-cell");
+        return GeneralUIUtils.getWebElementsListBy(By.xpath("//sdc-modal//datatable-header//datatable-header-cell"));
     }
 
     private void addNewArtifact(List<ArtifactInfo> deploymentArtifactList) throws Exception {
