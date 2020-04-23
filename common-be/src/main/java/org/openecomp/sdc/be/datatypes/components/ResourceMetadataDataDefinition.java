@@ -20,10 +20,11 @@
 
 package org.openecomp.sdc.be.datatypes.components;
 
+import lombok.EqualsAndHashCode;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
-
+@EqualsAndHashCode(callSuper = true)
 public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
     private String vendorName;
@@ -50,16 +51,16 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
         this.isAbstract = other.isHighestVersion();
         this.resourceType = other.getResourceType();
         this.toscaResourceName = other.getToscaResourceName();
-	}
+    }
 
-	public ResourceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
-		super(extractor);
-		this.vendorName = extractor.getVendorName();
-		this.vendorRelease = extractor.getVendorRelease();
-		this.resourceVendorModelNumber = extractor.getResourceVendorModelNumber();
-		this.isAbstract = extractor.isAbstract();
-		this.resourceType = extractor.getResourceType();
-		this.toscaResourceName = extractor.getToscaResourceName();
+    public ResourceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
+        super(extractor);
+        this.vendorName = extractor.getVendorName();
+        this.vendorRelease = extractor.getVendorRelease();
+        this.resourceVendorModelNumber = extractor.getResourceVendorModelNumber();
+        this.isAbstract = extractor.isAbstract();
+        this.resourceType = extractor.getResourceType();
+        this.toscaResourceName = extractor.getToscaResourceName();
     }
 
     public String getVendorName() {
@@ -85,7 +86,6 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
     public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
         this.resourceVendorModelNumber = resourceVendorModelNumber;
     }
-
 
     public ResourceTypeEnum getResourceType() {
         return resourceType;
@@ -130,88 +130,8 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
     @Override
     public String toString() {
         return "ResourceMetadataDataDefinition [vendorName=" + vendorName + ", vendorRelease=" + vendorRelease
-                + ", resourceVendorModelNumber=" + resourceVendorModelNumber + ", resourceType=" + resourceType
-                + ", isAbstract=" + isAbstract + super.toString() + "]";
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((cost == null) ? 0 : cost.hashCode());
-        result = prime * result + ((isAbstract == null) ? 0 : isAbstract.hashCode());
-        result = prime * result + ((licenseType == null) ? 0 : licenseType.hashCode());
-        result = prime * result + ((resourceType == null) ? 0 : resourceType.hashCode());
-        result = prime * result + ((vendorName == null) ? 0 : vendorName.hashCode());
-        result = prime * result + ((vendorRelease == null) ? 0 : vendorRelease.hashCode());
-        result = prime * result + ((resourceVendorModelNumber == null) ? 0 : resourceVendorModelNumber.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ResourceMetadataDataDefinition other = (ResourceMetadataDataDefinition) obj;
-        if (cost == null) {
-            if (other.cost != null) {
-                return false;
-            }
-        } else if (!cost.equals(other.cost)) {
-            return false;
-        }
-        if (isAbstract == null) {
-            if (other.isAbstract != null) {
-                return false;
-            }
-        } else if (!isAbstract.equals(other.isAbstract)) {
-            return false;
-        }
-        if (licenseType == null) {
-            if (other.licenseType != null) {
-                return false;
-            }
-        } else if (!licenseType.equals(other.licenseType)) {
-            return false;
-        }
-        if (resourceType != other.resourceType) {
-            return false;
-        }
-        if (vendorName == null) {
-            if (other.vendorName != null) {
-                return false;
-            }
-        } else if (!vendorName.equals(other.vendorName)) {
-            return false;
-        }
-        if (vendorRelease == null) {
-            if (other.vendorRelease != null) {
-                return false;
-            }
-        }
-        if (toscaResourceName == null) {
-            if (other.toscaResourceName != null) {
-                return false;
-            }
-        } else if (!vendorRelease.equals(other.vendorRelease)) {
-            return false;
-        }
-        if (resourceVendorModelNumber == null) {
-            if (other.resourceVendorModelNumber != null) {
-                return false;
-            }
-        } else if (!resourceVendorModelNumber.equals(other.resourceVendorModelNumber)) {
-            return false;
-        }
-
-        return super.equals(obj);
+            + ", resourceVendorModelNumber=" + resourceVendorModelNumber + ", resourceType=" + resourceType
+            + ", isAbstract=" + isAbstract + super.toString() + "]";
     }
 
     @Override
