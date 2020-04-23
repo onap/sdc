@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "58e5f8b7_0a2c0f82",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/artifact/ArtifactOperationInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-23T12:13:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da3f83c0_5279b7ed",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "1425748f38cdf9e13d6b392e4230e4852a3666bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a527f0c1_2700971d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/artifact/ArtifactOperationInfo.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2020-04-23T10:28:42Z",
       "side": 1,
       "message": "I\u0027d suggest to use LOMBOK",
+      "range": {
+        "startLine": 31,
+        "startChar": 1,
+        "endLine": 54,
+        "endChar": 5
+      },
+      "revId": "1425748f38cdf9e13d6b392e4230e4852a3666bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4e4b223_7724c212",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/artifact/ArtifactOperationInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-23T12:13:07Z",
+      "side": 1,
+      "message": "The problem with Lombok is that as far as I know it makes the code harder to debug. If I add an annotation `Getter`, how could I retrieve where the property is get and set? Secondly, this is temporary. Ideally, one should not be able to access the internal state of `ArtifactOperationInfo` and I plan to solve this in latter changes.\n\nIn other words, this is an intermediate step of refactoring.",
+      "parentUuid": "a527f0c1_2700971d",
       "range": {
         "startLine": 31,
         "startChar": 1,
