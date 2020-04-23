@@ -54,10 +54,12 @@ public abstract class ToscaDataDefinition {
     }
 
     public void setToscaPresentationValue(JsonPresentationFields name, Object value) {
-        if (toscaPresentation == null && value != null) {
-            toscaPresentation = new HashMap<>();
+        if(name !=null) {
+            if (toscaPresentation == null) {
+                toscaPresentation = new HashMap<>();
+            }
+            toscaPresentation.put(name.getPresentation(), value);
         }
-        toscaPresentation.put(name.getPresentation(), value);
 
     }
 
