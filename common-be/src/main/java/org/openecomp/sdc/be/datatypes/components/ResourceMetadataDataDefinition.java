@@ -50,16 +50,16 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
         this.isAbstract = other.isHighestVersion();
         this.resourceType = other.getResourceType();
         this.toscaResourceName = other.getToscaResourceName();
-	}
+    }
 
-	public ResourceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
-		super(extractor);
-		this.vendorName = extractor.getVendorName();
-		this.vendorRelease = extractor.getVendorRelease();
-		this.resourceVendorModelNumber = extractor.getResourceVendorModelNumber();
-		this.isAbstract = extractor.isAbstract();
-		this.resourceType = extractor.getResourceType();
-		this.toscaResourceName = extractor.getToscaResourceName();
+    public ResourceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
+        super(extractor);
+        this.vendorName = extractor.getVendorName();
+        this.vendorRelease = extractor.getVendorRelease();
+        this.resourceVendorModelNumber = extractor.getResourceVendorModelNumber();
+        this.isAbstract = extractor.isAbstract();
+        this.resourceType = extractor.getResourceType();
+        this.toscaResourceName = extractor.getToscaResourceName();
     }
 
     public String getVendorName() {
@@ -130,8 +130,8 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
     @Override
     public String toString() {
         return "ResourceMetadataDataDefinition [vendorName=" + vendorName + ", vendorRelease=" + vendorRelease
-                + ", resourceVendorModelNumber=" + resourceVendorModelNumber + ", resourceType=" + resourceType
-                + ", isAbstract=" + isAbstract + super.toString() + "]";
+            + ", resourceVendorModelNumber=" + resourceVendorModelNumber + ", resourceType=" + resourceType
+            + ", isAbstract=" + isAbstract + super.toString() + "]";
     }
 
     @Override
@@ -200,7 +200,7 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
             if (other.toscaResourceName != null) {
                 return false;
             }
-        } else if (!vendorRelease.equals(other.vendorRelease)) {
+        } else if (vendorRelease != null && !vendorRelease.equals(other.vendorRelease)) {
             return false;
         }
         if (resourceVendorModelNumber == null) {
