@@ -177,24 +177,30 @@ public class ToscaOperationFacade {
         return getToscaElementByOperation(componentV, new ComponentParametersView());
     }
 
-    private <T extends Component> Either<T, StorageOperationStatus> getToscaElementByOperation(GraphVertex componentV, ComponentParametersView filters) {
-        VertexTypeEnum label = componentV.getLabel();
-
-        ToscaElementOperation toscaOperation = getToscaElementOperation(componentV);
-        log.debug("getToscaElementByOperation: toscaOperation={}", toscaOperation.getClass());
-        Either<ToscaElement, StorageOperationStatus> toscaElement;
-        String componentId = componentV.getUniqueId();
-        if (toscaOperation != null) {
-            log.debug("Need to fetch tosca element for id {}", componentId);
-            toscaElement = toscaOperation.getToscaElement(componentV, filters);
+    private <T extends Component> Either<T, StorageOperationStatus> getToscaElementByOperation(GraphVertex componentV,
+        ComponentParametersView filters) {
+        if (componentV == null) {
+            log.debug("Unexpected null value for `componentV`");
+            return Either.right(StorageOperationStatus.GENERAL_ERROR);
         } else {
-            log.debug("not supported tosca type {} for id {}", label, componentId);
-            toscaElement = Either.right(StorageOperationStatus.BAD_REQUEST);
+            VertexTypeEnum label = componentV.getLabel();
+
+            ToscaElementOperation toscaOperation = getToscaElementOperation(componentV);
+            if (log.isDebugEnabled() && toscaOperation != null) {
+                log.debug("getToscaElementByOperation: toscaOperation={}", toscaOperation.getClass());
+            }
+
+            Either<ToscaElement, StorageOperationStatus> toscaElement;
+            String componentId = componentV.getUniqueId();
+            if (toscaOperation != null) {
+                log.debug("Need to fetch tosca element for id {}", componentId);
+                toscaElement = toscaOperation.getToscaElement(componentV, filters);
+            } else {
+                log.debug("not supported tosca type {} for id {}", label, componentId);
+                toscaElement = Either.right(StorageOperationStatus.BAD_REQUEST);
+            }
+            return toscaElement.left().map(ModelConverter::convertFromToscaElement);
         }
-        if (toscaElement.isRight()) {
-            return Either.right(toscaElement.right().value());
-        }
-        return Either.left(ModelConverter.convertFromToscaElement(toscaElement.left().value()));
     }
 
     // endregion
@@ -540,12 +546,20 @@ public class ToscaOperationFacade {
         ToscaElementOperation toscaElementOperation = getToscaElementOperation(elementV);
 
         ToscaElement toscaElementToUpdate = ModelConverter.convertToToscaElement(componentToUpdate);
-        Either<ToscaElement, StorageOperationStatus> updateToscaElement = toscaElementOperation.updateToscaElement(toscaElementToUpdate, elementV, filterResult);
-        if (updateToscaElement.isRight()) {
-            log.debug("Failed to update tosca element {} error {}", componentId, updateToscaElement.right().value());
-            return Either.right(updateToscaElement.right().value());
+        Either<ToscaElement, StorageOperationStatus> updateToscaElement = null;
+        if (toscaElementOperation != null) {
+            updateToscaElement = toscaElementOperation.updateToscaElement(toscaElementToUpdate, elementV, filterResult);
+        } else {
+            log.debug("Null value returned by `getToscaElementOperation` with value {}", elementV);
+            updateToscaElement = Either.right(StorageOperationStatus.GENERAL_ERROR);
         }
-        return Either.left(ModelConverter.convertFromToscaElement(updateToscaElement.left().value()));
+
+        return updateToscaElement.bimap(
+            ModelConverter::convertFromToscaElement,
+            status -> {
+                log.debug("Failed to update tosca element {} error {}", componentId, status);
+                return status;
+            });
     }
 
     private <T extends Component> Either<T, StorageOperationStatus> getLatestByName(GraphPropertyEnum property, String nodeName, JsonParseFlagEnum parseFlag) {
