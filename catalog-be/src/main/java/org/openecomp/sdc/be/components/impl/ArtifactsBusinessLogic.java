@@ -4350,7 +4350,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
 
         if (errorWrapper.isEmpty()) {
-            updateArtifact = actionResult.left().value().left().value();
+			if(actionResult != null){
+            	updateArtifact = actionResult.left().value().left().value();
+			}
             updateArtifactResult = Either.left(updateArtifact);
 
         }
