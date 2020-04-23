@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da3f83c0_5279b7ed",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/artifact/ArtifactOperationInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-23T10:28:42Z",
+      "side": 1,
+      "message": "2020",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "1425748f38cdf9e13d6b392e4230e4852a3666bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a527f0c1_2700971d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/artifact/ArtifactOperationInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-23T10:28:42Z",
+      "side": 1,
+      "message": "I\u0027d suggest to use LOMBOK",
+      "range": {
+        "startLine": 31,
+        "startChar": 1,
+        "endLine": 54,
+        "endChar": 5
+      },
+      "revId": "1425748f38cdf9e13d6b392e4230e4852a3666bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
