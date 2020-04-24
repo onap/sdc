@@ -38,7 +38,6 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
-import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.elements.*;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -85,34 +84,53 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
      * @param ownerId
      * @return
      */
-    public Either<ToscaElement, StorageOperationStatus> checkinToscaELement(LifecycleStateEnum currState, String toscaElementId, String modifierId, String ownerId) {
-        Either<GraphVertex, StorageOperationStatus> updateResult = null;
-        Either<ToscaElement, StorageOperationStatus> result = null;
-        Map<String, GraphVertex> vertices = null;
-        ToscaElementOperation operation;
+    public Either<ToscaElement, StorageOperationStatus> checkinToscaELement(LifecycleStateEnum currState,
+        String toscaElementId, String modifierId, String ownerId) {
         try {
-            Either<Map<String, GraphVertex>, JanusGraphOperationStatus> getVerticesRes = janusGraphDao
-                .getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForCheckin(toscaElementId, modifierId, ownerId));
-            if (getVerticesRes.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
-                updateResult = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVerticesRes.right().value()));
-            } else {
-                vertices = getVerticesRes.left().value();
-                updateResult = checkinToscaELement(currState, vertices.get(toscaElementId), vertices.get(ownerId), vertices.get(modifierId), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-            }
-            if (updateResult.isLeft()) {
-                operation = getToscaElementOperation(vertices.get(toscaElementId).getLabel());
-                result = operation.getToscaElement(updateResult.left().value().getUniqueId());
-                if (result.isRight()) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to get updated tosca element {}. Status is {}", toscaElementId, result.right().value());
-                }
-            } else {
-                result = Either.right(updateResult.right().value());
-            }
+            return janusGraphDao
+                .getVerticesByUniqueIdAndParseFlag(
+                    prepareParametersToGetVerticesForCheckin(toscaElementId, modifierId, ownerId))
+                .right().map(status -> handleFailureToPrepareParameters(status, toscaElementId))
+                .left().bind(
+                    verticesMap ->
+                        checkinToscaELement(
+                            currState,
+                            verticesMap.get(toscaElementId),
+                            verticesMap.get(ownerId),
+                            verticesMap.get(modifierId),
+                            LifecycleStateEnum.NOT_CERTIFIED_CHECKIN
+                        ).left().bind(checkinResult -> {
+                            //We retrieve the operation
+                            ToscaElementOperation operation =
+                                getToscaElementOperation(verticesMap.get(toscaElementId).getLabel());
+
+                            //We retrieve the ToscaElement from the operation
+                            return getToscaElementFromOperation(operation, checkinResult.getUniqueId(), toscaElementId);
+                        })
+                );
         } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during checkin of tosca element {}. {} ", toscaElementId, e.getMessage());
+            CommonUtility.addRecordToLog(
+                log, LogLevelEnum.DEBUG, "Exception occurred during checkin of tosca element {}. {} ", toscaElementId,
+                e.getMessage());
+            return Either.right(StorageOperationStatus.GENERAL_ERROR);
         }
-        return result;
+    }
+
+    static StorageOperationStatus handleFailureToPrepareParameters(final JanusGraphOperationStatus status, final String toscaElementId) {
+        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
+        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
+    }
+
+    static Either<ToscaElement, StorageOperationStatus> getToscaElementFromOperation(final ToscaElementOperation operation,
+        final String uniqueId, final String toscaElementId) {
+        return operation.getToscaElement(uniqueId)
+            .right().map(status -> {
+                //We log a potential error we got while retrieving the ToscaElement
+                CommonUtility
+                    .addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to get updated tosca element {}. Status is {}",
+                        toscaElementId, status);
+                return status;
+            });
     }
 
     /**
