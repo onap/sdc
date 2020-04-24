@@ -41,7 +41,7 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.ServiceMetadataDefinition;
-import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.tosca.InterfacesOperationsConverter;
 import org.openecomp.sdc.be.tosca.PropertyConvertor;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
@@ -58,7 +58,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
 import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.addInterfaceTypeElement;
 @RunWith(MockitoJUnitRunner.class)

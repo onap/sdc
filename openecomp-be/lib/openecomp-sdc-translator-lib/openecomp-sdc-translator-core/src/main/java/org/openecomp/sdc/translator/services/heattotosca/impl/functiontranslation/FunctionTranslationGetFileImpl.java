@@ -47,7 +47,7 @@ public class FunctionTranslationGetFileImpl implements FunctionTranslation {
         Map<String, Object> returnValue = new HashMap<>();
         List<String> artifactParameters = new ArrayList<>();
         artifactParameters.add(ToscaConstants.MODELABLE_ENTITY_NAME_SELF);
-        returnValue.put(ToscaFunctions.GET_ARTIFACT.getDisplayName(), artifactParameters);
+        returnValue.put(ToscaFunctions.GET_ARTIFACT.getFunctionName(), artifactParameters);
         artifactParameters.add(artifactId);
 
         ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();

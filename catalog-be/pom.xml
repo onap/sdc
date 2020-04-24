@@ -680,6 +680,11 @@
             <artifactId>security-util-lib</artifactId>
             <version>${security.util.lib.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.core</groupId>
+            <artifactId>openecomp-tosca-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

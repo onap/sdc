@@ -427,7 +427,7 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
       return Optional.of((Boolean) dhcp);
     } else if (dhcp instanceof Map) {
       String inputParameterName =
-          (String) ((Map) dhcp).get(ToscaFunctions.GET_INPUT.getDisplayName());
+          (String) ((Map) dhcp).get(ToscaFunctions.GET_INPUT.getFunctionName());
       if (inputParameterName != null) {
         ParameterDefinition inputParameterDefinition =
             serviceTemplate.getTopology_template().getInputs().get(inputParameterName);

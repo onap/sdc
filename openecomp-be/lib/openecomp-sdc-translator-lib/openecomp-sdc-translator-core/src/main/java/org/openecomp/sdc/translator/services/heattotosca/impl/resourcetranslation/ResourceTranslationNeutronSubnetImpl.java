@@ -112,7 +112,7 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
         if (!(dhcpEnabled instanceof Map)) {
             return;
         }
-        Object dhcpEnabledParameterName = ((Map) dhcpEnabled).get(ToscaFunctions.GET_INPUT.getDisplayName());
+        Object dhcpEnabledParameterName = ((Map) dhcpEnabled).get(ToscaFunctions.GET_INPUT.getFunctionName());
         if (dhcpEnabledParameterName == null) {
             return;
         }

@@ -630,7 +630,7 @@ public class HeatToToscaUtil {
         if (toscaPropertyValue instanceof List && ((List) toscaPropertyValue).get(0) instanceof Map) {
             Resource subInterfaceResource = subInterfaceTo.getResource();
             Map<String, String> toscaPropertyValueMap = (Map) ((List) toscaPropertyValue).get(0);
-            String parentPortPropertyInput = toscaPropertyValueMap.get(ToscaFunctions.GET_INPUT.getDisplayName());
+            String parentPortPropertyInput = toscaPropertyValueMap.get(ToscaFunctions.GET_INPUT.getFunctionName());
             Map<String, Object> resourceDefPropertiesMap;
             if (!isYamlFile(subInterfaceResource.getType())) {
                 resourceDefPropertiesMap =

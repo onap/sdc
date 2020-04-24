@@ -496,7 +496,7 @@ public class DataModelUtilTest {
         Map inputPropertyMap = DataModelUtil.createGetInputPropertyValueFromListParameter("inputPropertyList", 1,
                 "nestedPropertyName");
 
-        assertNotNull(inputPropertyMap.get(ToscaFunctions.GET_INPUT.getDisplayName()));
+        assertNotNull(inputPropertyMap.get(ToscaFunctions.GET_INPUT.getFunctionName()));
     }
 
     @Test

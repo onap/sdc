@@ -27,7 +27,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.tosca.InterfacesOperationsConverter;
 
 import java.util.ArrayList;

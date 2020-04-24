@@ -257,7 +257,7 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
                 List<String> outputGetAttributeList = new ArrayList<>();
                 outputGetAttributeList.add(nodeTemplateId);
                 outputGetAttributeList.add(attributeDefinitionEntry.getKey());
-                outputValue.put(ToscaFunctions.GET_ATTRIBUTE.getDisplayName(), outputGetAttributeList);
+                outputValue.put(ToscaFunctions.GET_ATTRIBUTE.getFunctionName(), outputGetAttributeList);
                 nestedSubstitutionServiceTemplateOutputs.put(attributeDefinitionEntry.getKey(),
                         DataModelUtil.convertAttributeDefToParameterDef(abstractAttributeDef, outputValue));
             }
@@ -457,7 +457,7 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
             if (contrailComputeProperties != null) {
                 for (String computePropertyKey : contrailComputeProperties.keySet()) {
                     Map<String, Object> getInputProperty = new HashMap<>();
-                    getInputProperty.put(ToscaFunctions.GET_INPUT.getDisplayName(), computePropertyKey);
+                    getInputProperty.put(ToscaFunctions.GET_INPUT.getFunctionName(), computePropertyKey);
                     computeNodeTemplateProperties.put(computePropertyKey, getInputProperty);
                 }
             }

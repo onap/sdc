@@ -356,7 +356,7 @@ public class UnifiedCompositionService {
     for (String propertyName : exposedVfcInstanceGroupingProperties) {
       Map<String, Object> getInputMap = new HashMap<>();
       String vfcGroupPropertyInputName = subInterfaceNetworkRole + "_" + propertyName;
-      getInputMap.put(GET_INPUT.getDisplayName(), vfcGroupPropertyInputName);
+      getInputMap.put(GET_INPUT.getFunctionName(), vfcGroupPropertyInputName);
       properties.put(propertyName, getInputMap);
 
       addInputParameter(vfcGroupPropertyInputName, PropertyType.STRING.getDisplayName(), null,
@@ -1448,9 +1448,9 @@ public class UnifiedCompositionService {
     List<List<Object>> getAttrValueList = new ArrayList<>();
 
     if (valueObject instanceof Map) {
-      if (((Map) valueObject).containsKey(ToscaFunctions.GET_ATTRIBUTE.getDisplayName())) {
+      if (((Map) valueObject).containsKey(ToscaFunctions.GET_ATTRIBUTE.getFunctionName())) {
         getAttrValueList.add(
-                (List<Object>) ((Map) valueObject).get(ToscaFunctions.GET_ATTRIBUTE.getDisplayName()));
+                (List<Object>) ((Map) valueObject).get(ToscaFunctions.GET_ATTRIBUTE.getFunctionName()));
       }
 
       for (Object key : ((Map) valueObject).keySet()) {
@@ -1468,7 +1468,7 @@ public class UnifiedCompositionService {
 
   private boolean isIncludeToscaFunc(Object valueObject, ToscaFunctions toscaFunction) {
     if (valueObject instanceof Map) {
-      if (((Map) valueObject).containsKey(toscaFunction.getDisplayName())) {
+      if (((Map) valueObject).containsKey(toscaFunction.getFunctionName())) {
         return true;
       }
 
@@ -1620,7 +1620,7 @@ public class UnifiedCompositionService {
     List<Object> valueList = new ArrayList<>();
     valueList.add(newNodeTemplateId);
     valueList.add(getAttrFuncData.getAttributeName());
-    parameterValue.put(ToscaFunctions.GET_ATTRIBUTE.getDisplayName(), valueList);
+    parameterValue.put(ToscaFunctions.GET_ATTRIBUTE.getFunctionName(), valueList);
     ParameterDefinition outputParameter = new ParameterDefinition();
     outputParameter.setValue(parameterValue);
     setOutputParameterType(substitutionServiceTemplate, newNodeTemplateId, getAttrFuncData
@@ -1724,7 +1724,7 @@ public class UnifiedCompositionService {
 
     Map<String, Object> indexPropertyValue = new HashMap<>();
     Map<String, Object> properties = nodeTemplate.getProperties();
-    indexPropertyValue.put(ToscaFunctions.GET_PROPERTY.getDisplayName(),
+    indexPropertyValue.put(ToscaFunctions.GET_PROPERTY.getFunctionName(),
             indexValueGetPropertyValue);
     properties.put(ToscaConstants.INDEX_VALUE_PROPERTY_NAME,
             indexPropertyValue);
@@ -2312,7 +2312,7 @@ public class UnifiedCompositionService {
       if (nodeTemplateProperties.containsKey(enrichPropertyName)) {
         handleExistingEnrichedProperty(enrichPropertyName, nodeTemplateProperties, inputParamId);
       } else {
-        propertyValMap.put(ToscaFunctions.GET_INPUT.getDisplayName(), inputParamId);
+        propertyValMap.put(GET_INPUT.getFunctionName(), inputParamId);
         nodeTemplate.getProperties().put(enrichPropertyName, propertyValMap);
       }
       propertyType =
@@ -2331,7 +2331,7 @@ public class UnifiedCompositionService {
     Object enrichedProperty = nodeTemplateProperties.get(enrichPropertyName);
     if (!isPropertyContainsToscaFunction(enrichedProperty)) {
       Map<String, Object> propertyWithGetInput = new HashMap<>();
-      propertyWithGetInput.put(ToscaFunctions.GET_INPUT.getDisplayName(), inputParamId);
+      propertyWithGetInput.put(ToscaFunctions.GET_INPUT.getFunctionName(), inputParamId);
       nodeTemplateProperties.put(enrichPropertyName, propertyWithGetInput);
     }
   }
@@ -2476,7 +2476,7 @@ public class UnifiedCompositionService {
       case COMPUTE:
         inputParamId = COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX + propertyId
                 + COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX;
-        propertyVal.put(ToscaFunctions.GET_INPUT.getDisplayName(), inputParamId);
+        propertyVal.put(ToscaFunctions.GET_INPUT.getFunctionName(), inputParamId);
         nodeTemplate.getProperties().put(propertyId, propertyVal);
         break;
       case PORT:
@@ -2490,7 +2490,7 @@ public class UnifiedCompositionService {
         ComputeTemplateConsolidationData computeTemplateConsolidationData =
                 getConnectedComputeConsolidationData(unifiedCompositionDataList, nodeTemplateId);
         inputParamId = getInputParamIdForPort(nodeTemplateId, propertyId, portType, computeTemplateConsolidationData);
-        propertyVal.put(ToscaFunctions.GET_INPUT.getDisplayName(), inputParamId);
+        propertyVal.put(ToscaFunctions.GET_INPUT.getFunctionName(), inputParamId);
         nodeTemplate.getProperties().put(propertyId, propertyVal);
         break;
       default:
@@ -2559,7 +2559,7 @@ public class UnifiedCompositionService {
     List<String> getInputFuncParams = new ArrayList<>();
     getInputFuncParams.add(inputParamId);
     getInputFuncParams.add(ToscaConstants.INDEX_VALUE_PROPERTY_NAME);
-    propertyVal.put(ToscaFunctions.GET_INPUT.getDisplayName(), getInputFuncParams);
+    propertyVal.put(ToscaFunctions.GET_INPUT.getFunctionName(), getInputFuncParams);
     return propertyVal;
   }
 

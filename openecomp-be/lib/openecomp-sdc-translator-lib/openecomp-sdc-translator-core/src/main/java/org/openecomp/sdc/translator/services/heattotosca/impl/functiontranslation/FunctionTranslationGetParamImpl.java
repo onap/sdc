@@ -88,7 +88,7 @@ public class FunctionTranslationGetParamImpl implements FunctionTranslation {
     @Override
     public Object translateFunction(FunctionTranslator functionTranslator) {
         Map<String, Object> returnValue = new HashMap<>();
-        returnValue.put(ToscaFunctions.GET_INPUT.getDisplayName(),
+        returnValue.put(ToscaFunctions.GET_INPUT.getFunctionName(),
                 translateGetParamFunctionExpression(functionTranslator));
         return returnValue;
     }

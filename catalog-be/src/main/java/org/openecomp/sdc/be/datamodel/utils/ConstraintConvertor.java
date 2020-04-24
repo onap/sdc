@@ -22,7 +22,7 @@ package org.openecomp.sdc.be.datamodel.utils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.slf4j.Logger;

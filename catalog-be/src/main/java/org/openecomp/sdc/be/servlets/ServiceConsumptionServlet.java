@@ -45,7 +45,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.OperationInput;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
 import org.openecomp.sdc.be.types.ServiceConsumptionSource;

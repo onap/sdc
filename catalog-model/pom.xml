@@ -319,6 +319,11 @@
 			<artifactId>joda-time</artifactId>
 			<version>${joda.time.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.openecomp.sdc.core</groupId>
+			<artifactId>openecomp-tosca-lib</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 	</dependencies>
 	<build>

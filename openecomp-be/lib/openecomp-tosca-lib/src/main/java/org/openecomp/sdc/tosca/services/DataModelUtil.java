@@ -599,7 +599,7 @@ public class DataModelUtil {
             Collections.addAll(propertyList, nestedPropertyName);
         }
         Map<String, Object> getInputProperty = new HashMap<>();
-        getInputProperty.put(ToscaFunctions.GET_INPUT.getDisplayName(), propertyList);
+        getInputProperty.put(ToscaFunctions.GET_INPUT.getFunctionName(), propertyList);
         return getInputProperty;
     }
 
