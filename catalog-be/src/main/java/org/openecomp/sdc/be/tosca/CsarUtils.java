@@ -202,13 +202,12 @@ public class CsarUtils {
         final String toscaBlock0 = createToscaBlock0(TOSCA_META_VERSION, CSAR_VERSION, createdBy, fileName);
         byte[] toscaBlock0Byte = toscaBlock0.getBytes();
 
-        Either<byte[], ResponseFormat> generateCsarZipResponse = generateCsarZip(csarBlock0Byte, toscaBlock0Byte, component, getFromCS, isInCertificationRequest);
-
-        if (generateCsarZipResponse.isRight()) {
-            return Either.right(generateCsarZipResponse.right().value());
-        }
-        loggerSupportability.log(LoggerSupportabilityActions.GENERATE_CSAR, StatusCode.COMPLETE,"Ended create Csar for component {} ",component.getName());
-        return Either.left(generateCsarZipResponse.left().value());
+        return generateCsarZip(csarBlock0Byte, toscaBlock0Byte, component, getFromCS, isInCertificationRequest)
+            .left().map(responseFormat -> {
+            loggerSupportability.log(LoggerSupportabilityActions.GENERATE_CSAR, StatusCode.COMPLETE,
+                "Ended create Csar for component {} ", component.getName());
+            return responseFormat;
+        });
     }
 
     private Either<byte[], ResponseFormat> generateCsarZip(byte[] csarBlock0Byte, byte[] toscaBlock0Byte, Component component, boolean getFromCS, boolean isInCertificationRequest) {
