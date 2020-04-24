@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import fj.F;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
@@ -261,8 +262,6 @@ public class ComponentInstanceOperation extends AbstractOperation {
      * @return
      */
     private Either<AttributeValueData, JanusGraphOperationStatus> updateAttributeOfResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId) {
-
-        Either<AttributeValueData, JanusGraphOperationStatus> result = null;
         Wrapper<JanusGraphOperationStatus> errorWrapper = new Wrapper<>();
         UpdateDataContainer<AttributeData, AttributeValueData> updateDataContainer = new UpdateDataContainer<>(GraphEdgeLabels.ATTRIBUTE_IMPL, (() -> AttributeData.class), (() -> AttributeValueData.class), NodeTypeEnum.Attribute,
                 NodeTypeEnum.AttributeValue);
@@ -271,20 +270,13 @@ public class ComponentInstanceOperation extends AbstractOperation {
             AttributeValueData attributeValueData = updateDataContainer.getValueDataWrapper().getInnerElement();
             attributeValueData.setHidden(resourceInstanceAttribute.isHidden());
             attributeValueData.setValue(resourceInstanceAttribute.getValue());
-            Either<AttributeValueData, JanusGraphOperationStatus> updateRes = janusGraphGenericDao
-                .updateNode(attributeValueData, AttributeValueData.class);
-            if (updateRes.isRight()) {
-                JanusGraphOperationStatus status = updateRes.right().value();
-                errorWrapper.setInnerElement(status);
-            } else {
-                result = Either.left(updateRes.left().value());
-            }
-        }
-        if (!errorWrapper.isEmpty()) {
-            result = Either.right(errorWrapper.getInnerElement());
-        }
-        return result;
 
+            return janusGraphGenericDao.updateNode(
+                attributeValueData, AttributeValueData.class
+            );
+        } else {
+            return Either.right(errorWrapper.getInnerElement());
+        }
     }
 
     private Either<AttributeValueData, JanusGraphOperationStatus> addAttributeToResourceInstance(ComponentInstanceProperty attributeInstanceProperty, String resourceInstanceId, Integer index) {
@@ -587,32 +579,41 @@ public class ComponentInstanceOperation extends AbstractOperation {
         return new ComponentInstanceProperty(hidden, resourceInstanceAttribute, uid);
     }
 
-    public Either<ComponentInstanceProperty, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId, boolean inTransaction) {
-
+    public Either<ComponentInstanceProperty, StorageOperationStatus> updateAttributeValueInResourceInstance(
+        ComponentInstanceProperty resourceInstanceAttribute,
+        String resourceInstanceId,
+        boolean inTransaction
+    ) {
+        //TODO This null could bubble up. Shouldn't we set a default value (such as Either.left(StorageOperationStatus.GENERAL_ERROR)) ?
         Either<ComponentInstanceProperty, StorageOperationStatus> result = null;
-
         try {
-            Either<AttributeValueData, JanusGraphOperationStatus> eitherAttributeValue = updateAttributeOfResourceInstance(resourceInstanceAttribute, resourceInstanceId);
-
-            if (eitherAttributeValue.isRight()) {
-                log.error("Failed to add attribute value {} to resource instance {} in Graph. status is {}", resourceInstanceAttribute, resourceInstanceId, eitherAttributeValue.right().value().name());
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherAttributeValue.right().value()));
-                return result;
-            } else {
-                AttributeValueData attributeValueData = eitherAttributeValue.left().value();
-
-                ComponentInstanceProperty attributeValueResult = buildResourceInstanceAttribute(attributeValueData, resourceInstanceAttribute);
-                log.debug("The returned ResourceInstanceAttribute is {}", attributeValueResult);
-
-                result = Either.left(attributeValueResult);
-                return result;
-            }
-        }
-
-        finally {
+            result = updateAttributeOfResourceInstance(resourceInstanceAttribute, resourceInstanceId)
+                .bimap(
+                    buildResourceInstanceAttribute(resourceInstanceAttribute),
+                    handleFailedAttributeAdditionError(resourceInstanceAttribute, resourceInstanceId));
+        } finally {
             handleTransactionCommitRollback(inTransaction, result);
         }
+        return result;
+    }
 
+    private F<JanusGraphOperationStatus, StorageOperationStatus> handleFailedAttributeAdditionError(
+        ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId) {
+        return status -> {
+            log.error("Failed to add attribute value {} to resource instance {} in Graph. status is {}",
+                resourceInstanceAttribute, resourceInstanceId, status.name());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
+        };
+    }
+
+    private F<AttributeValueData, ComponentInstanceProperty> buildResourceInstanceAttribute(
+        ComponentInstanceProperty resourceInstanceAttribute) {
+        return attributeValueData -> {
+            ComponentInstanceProperty attributeValueResult =
+                buildResourceInstanceAttribute(attributeValueData, resourceInstanceAttribute);
+            log.debug("The returned ResourceInstanceAttribute is {}", attributeValueResult);
+            return attributeValueResult;
+        };
     }
 
     public Either<ComponentInstanceInput, StorageOperationStatus> addInputValueToResourceInstance(ComponentInstanceInput resourceInstanceInput, String resourceInstanceId, Integer index, boolean inTransaction) {
