@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.tosca;
 
 
+import fj.F;
 import fj.data.Either;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -584,26 +585,23 @@ public class CsarUtils {
 		return Either.left(zip);
 	}
 
-	private Either<byte[], ActionStatus> getEntryData(String cassandraId, Component childComponent) {
-		byte[] content;
-		if (cassandraId == null || cassandraId.isEmpty()) {
-			Either<ToscaRepresentation, ToscaError> exportRes = toscaExportUtils.exportComponent(childComponent);
-			if (exportRes.isRight()) {
-				log.debug("Failed to export tosca template for child component {} error {}",
-						childComponent.getUniqueId(), exportRes.right().value());
-				return Either.right(componentsUtils.convertFromToscaError(exportRes.right().value()));
-			}
-			content = exportRes.left().value().getMainYaml().getBytes();
-		} else {
-			Either<byte[], ActionStatus> fromCassandra = getFromCassandra(cassandraId);
-			if (fromCassandra.isRight()) {
-				return Either.right(fromCassandra.right().value());
-			} else {
-				content = fromCassandra.left().value();
-			}
-		}
-		return Either.left(content);
-	}
+    private Either<byte[], ActionStatus> getEntryData(String cassandraId, Component childComponent) {
+        if (cassandraId == null || cassandraId.isEmpty()) {
+            return toscaExportUtils.exportComponent(childComponent)
+                .right().map(toscaErrorToActionStatus(childComponent))
+                .left().map(toscaRepresentation -> toscaRepresentation.getMainYaml().getBytes());
+        } else {
+            return getFromCassandra(cassandraId);
+        }
+    }
+
+    private F<ToscaError, ActionStatus> toscaErrorToActionStatus(Component childComponent) {
+        return toscaError -> {
+            log.debug("Failed to export tosca template for child component {} error {}",
+                childComponent.getUniqueId(), toscaError);
+            return componentsUtils.convertFromToscaError(toscaError);
+        };
+    }
 
     private Either<byte[], ResponseFormat> getLatestSchemaFilesFromCassandra() {
         Either<List<SdcSchemaFilesData>, CassandraOperationStatus> specificSchemaFiles = sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(getVersionFirstThreeOctets(), CONFORMANCE_LEVEL);
