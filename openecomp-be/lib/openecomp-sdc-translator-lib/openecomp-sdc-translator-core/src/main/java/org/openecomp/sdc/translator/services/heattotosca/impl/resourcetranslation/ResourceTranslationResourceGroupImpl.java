@@ -111,7 +111,7 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
         indexVarValList.add(ToscaConstants.MODELABLE_ENTITY_NAME_SELF);
         indexVarValList.add(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
         indexVarValList.add(ToscaConstants.INDEX_VALUE_PROPERTY_NAME);
-        newIndexVarValue.put(ToscaFunctions.GET_PROPERTY.getDisplayName(), indexVarValList);
+        newIndexVarValue.put(ToscaFunctions.GET_PROPERTY.getFunctionName(), indexVarValList);
         return newIndexVarValue;
     }
 
@@ -190,7 +190,7 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
                 concatList.add(value);
             }
 
-            concatMap.put(ToscaFunctions.CONCAT.getDisplayName(), concatList);
+            concatMap.put(ToscaFunctions.CONCAT.getFunctionName(), concatList);
             return concatMap;
         }
         return propertyValue; //no update is needed

@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.model.tosca.converters;
 
 import com.google.gson.JsonObject;
-import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 
 public class ToscaConverterUtils {
 

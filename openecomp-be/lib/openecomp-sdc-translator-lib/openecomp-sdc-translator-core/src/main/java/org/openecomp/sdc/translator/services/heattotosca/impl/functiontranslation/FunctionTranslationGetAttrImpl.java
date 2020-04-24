@@ -298,7 +298,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
         if (functionTranslator.isResourceSupported(attributeFunctionExpression.get(0).toString())
                 && functionTranslator.isAttributeSupported(attributeFunctionExpression.get(0).toString())) {
             Map<String, Object> getAttrValue = new HashMap<>();
-            getAttrValue.put(ToscaFunctions.GET_ATTRIBUTE.getDisplayName(), attributeFunctionExpression);
+            getAttrValue.put(ToscaFunctions.GET_ATTRIBUTE.getFunctionName(), attributeFunctionExpression);
             returnValue = getAttrValue;
         } else {
             returnValue = attributeFunctionExpression;

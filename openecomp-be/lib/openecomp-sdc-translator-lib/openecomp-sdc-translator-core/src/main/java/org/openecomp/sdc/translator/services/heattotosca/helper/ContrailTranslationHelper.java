@@ -110,7 +110,7 @@ public class ContrailTranslationHelper {
           if (refParameter instanceof Map && ((Map) refParameter).get("Ref") != null) {
             Map<String, String> stringWithToken = new HashMap<>();
             ((Map) stringWithToken)
-                .put(ToscaFunctions.GET_INPUT.getDisplayName(), ((Map) refParameter).get("Ref"));
+                .put(ToscaFunctions.GET_INPUT.getFunctionName(), ((Map) refParameter).get("Ref"));
             tokenPropertyValue.get("token").add(stringWithToken);
           } else if (refParameter instanceof String) {
             if (includeBooleanValue) {
