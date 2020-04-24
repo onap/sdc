@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import java.util.Optional;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
@@ -592,27 +593,34 @@ public class ComponentInstanceOperation extends AbstractOperation {
         Either<ComponentInstanceProperty, StorageOperationStatus> result = null;
 
         try {
-            Either<AttributeValueData, JanusGraphOperationStatus> eitherAttributeValue = updateAttributeOfResourceInstance(resourceInstanceAttribute, resourceInstanceId);
+            Optional<Either<AttributeValueData, JanusGraphOperationStatus>> updateResultOpt =
+                Optional.ofNullable(updateAttributeOfResourceInstance(resourceInstanceAttribute, resourceInstanceId));
 
-            if (eitherAttributeValue.isRight()) {
-                log.error("Failed to add attribute value {} to resource instance {} in Graph. status is {}", resourceInstanceAttribute, resourceInstanceId, eitherAttributeValue.right().value().name());
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherAttributeValue.right().value()));
-                return result;
-            } else {
-                AttributeValueData attributeValueData = eitherAttributeValue.left().value();
-
-                ComponentInstanceProperty attributeValueResult = buildResourceInstanceAttribute(attributeValueData, resourceInstanceAttribute);
-                log.debug("The returned ResourceInstanceAttribute is {}", attributeValueResult);
-
-                result = Either.left(attributeValueResult);
-                return result;
-            }
-        }
-
-        finally {
+            result = updateResultOpt.map(updateResult ->
+                updateResult.bimap(
+                    attributeValueData -> {
+                        ComponentInstanceProperty attributeValueResult = buildResourceInstanceAttribute(
+                            attributeValueData,
+                            resourceInstanceAttribute);
+                        log.debug("The returned ResourceInstanceAttribute is {}", attributeValueResult);
+                        return attributeValueResult;
+                    },
+                    status -> {
+                        log.error("Failed to add attribute value {} to resource instance {} in Graph. status is {}",
+                            resourceInstanceAttribute, resourceInstanceId, status.name());
+                        return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
+                    }
+                )).orElseGet(() -> {
+                log.debug(
+                    "A null value was returned after calling `updateAttributeOfResourceInstance` with values {} and {}",
+                    resourceInstanceAttribute, resourceInstanceId);
+                return Either.right(StorageOperationStatus.GENERAL_ERROR);
+            });
+        } finally {
             handleTransactionCommitRollback(inTransaction, result);
         }
 
+        return result;
     }
 
     public Either<ComponentInstanceInput, StorageOperationStatus> addInputValueToResourceInstance(ComponentInstanceInput resourceInstanceInput, String resourceInstanceId, Integer index, boolean inTransaction) {
