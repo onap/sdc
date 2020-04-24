@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15681ad4_3623fdec",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/components/ResourceMetadataDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-04-24T10:20:26Z",
+      "side": 1,
+      "message": "I\u0027d suggest to replace with LOMBOK \n@EqualsAndHashCode(callSuper \u003d true)",
+      "range": {
+        "startLine": 137,
+        "startChar": 4,
+        "endLine": 212,
+        "endChar": 9
+      },
+      "revId": "e7022322674d3ab526a62a9bea326abdfa6137b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
