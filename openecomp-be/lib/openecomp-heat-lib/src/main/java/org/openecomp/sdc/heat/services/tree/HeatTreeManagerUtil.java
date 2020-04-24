@@ -18,6 +18,7 @@
 package org.openecomp.sdc.heat.services.tree;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -142,7 +143,7 @@ public class HeatTreeManagerUtil {
     @SuppressWarnings("unchecked")
     public static Resource getResourceDef(Resource resource) {
         Resource resourceDef = null;
-        Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? null
+        Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? new HashMap<>()
                 : (Map<String, Object>) resource.getProperties().get(
                         PropertiesMapKeyTypes.RESOURCE_DEF.getKeyMap());
         if (MapUtils.isNotEmpty(resourceDefValueMap)) {
@@ -162,7 +163,7 @@ public class HeatTreeManagerUtil {
     public static void checkResourceGroupTypeValid(String filename, String resourceName,
                                                    Resource resource,
                                                    GlobalValidationContext globalContext) {
-        Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? null
+        Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? new HashMap<>()
                 : (Map<String, Object>) resource.getProperties().get(
                         PropertiesMapKeyTypes.RESOURCE_DEF.getKeyMap());
         if (MapUtils.isNotEmpty(resourceDefValueMap)) {
@@ -181,7 +182,7 @@ public class HeatTreeManagerUtil {
     public static void checkResourceTypeValid(String filename, String resourceName,
                                               Resource resource,
                                               GlobalValidationContext globalContext) {
-        Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? null
+        Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? new HashMap<>()
                 : (Map<String, Object>) resource.getProperties().get(PropertiesMapKeyTypes.RESOURCE_DEF.getKeyMap());
         if (MapUtils.isNotEmpty(resourceDefValueMap)) {
             Object resourceDefType = resourceDefValueMap.get(TYPE);
@@ -202,7 +203,7 @@ public class HeatTreeManagerUtil {
                                                            Resource resource,
                                                            GlobalValidationContext globalContext) {
         //noinspection unchecked
-        Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? null
+        Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? new HashMap<>()
                 : (Map<String, Object>) resource.getProperties().get(PropertiesMapKeyTypes.RESOURCE_DEF.getKeyMap());
         if (MapUtils.isNotEmpty(resourceDefValueMap)) {
             Object resourceDefType = resourceDefValueMap.get(TYPE);
