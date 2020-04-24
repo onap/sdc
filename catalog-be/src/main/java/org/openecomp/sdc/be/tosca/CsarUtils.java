@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -234,47 +235,37 @@ public class CsarUtils {
 
     private Either<ZipOutputStream, ResponseFormat> populateZip(Component component, boolean getFromCS, ZipOutputStream zip, boolean isInCertificationRequest) throws IOException {
 
+        ArtifactDefinition artifactDef = component
+            .getToscaArtifacts()
+            .get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
+
         LifecycleStateEnum lifecycleState = component.getLifecycleState();
-        String componentYaml;
-        Either<ToscaRepresentation, ToscaError> exportComponent;
-        byte[] mainYaml;
-        // <file name, cassandraId, component>
-        List<Triple<String, String, Component>> dependencies = null;
-
-        Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
-        ArtifactDefinition artifactDefinition = toscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
-        String fileName = artifactDefinition.getArtifactName();
-
+        // Assigning to null is a bad practice but in order to keep the refactoring small enough we keep this for now.
+        Either<MainYamlWithDependencies, ResponseFormat> result = null;
         if (getFromCS || !(lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN || lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
-            String cassandraId = artifactDefinition.getEsId();
-            Either<byte[], ActionStatus> fromCassandra = getFromCassandra(cassandraId);
-            if (fromCassandra.isRight()) {
-                log.debug(ARTIFACT_NAME_UNIQUE_ID, artifactDefinition.getArtifactName(), artifactDefinition.getUniqueId());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(fromCassandra.right().value());
-                return Either.right(responseFormat);
-            }
-            mainYaml = fromCassandra.left().value();
-
+            result = getArtifactFromCassandra(artifactDef);
         } else {
-            exportComponent = toscaExportUtils.exportComponent(component);
-            if (exportComponent.isRight()) {
-                log.debug("exportComponent failed", exportComponent.right().value());
-                ActionStatus convertedFromToscaError = componentsUtils.convertFromToscaError(exportComponent.right().value());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(convertedFromToscaError);
-                return Either.right(responseFormat);
-            }
-            ToscaRepresentation exportResult = exportComponent.left().value();
-            componentYaml = exportResult.getMainYaml();
-            mainYaml = componentYaml.getBytes();
-            dependencies = exportResult.getDependencies();
+            result = exportComponent(component);
         }
 
+        // TODO: Refactor the rest of this function
+        byte[] mainYaml;
+        List<Triple<String, String, Component>> dependencies = null;
+        // This should not be done but in order to keep the refactoring small enough we stop here.
+        if(result.isLeft()) {
+            mainYaml = result.left().value().mainYaml;
+            dependencies = result.left().value().dependencies.orElse(null);
+        } else {
+            return Either.right(result.right().value());
+        }
+
+        String fileName = artifactDef.getArtifactName();
         zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + fileName));
         zip.write(mainYaml);
         //US798487 - Abstraction of complex types
         if (!ModelConverter.isAtomicComponent(component)){
             log.debug("Component {} is complex - generating abstract type for it..", component.getName());
-			writeComponentInterface(component, zip, fileName, false);
+			      writeComponentInterface(component, zip, fileName, false);
         }
 
         if (dependencies == null) {
@@ -327,6 +318,40 @@ public class CsarUtils {
         }
 
         return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
+    }
+
+    private Either<MainYamlWithDependencies, ResponseFormat> exportComponent(Component component) {
+        return toscaExportUtils.exportComponent(component).right().map(toscaError -> {
+            log.debug("exportComponent failed", toscaError);
+            return componentsUtils.getResponseFormat(componentsUtils.convertFromToscaError(toscaError));
+        }).left().map(MainYamlWithDependencies::make);
+    }
+
+    private Either<MainYamlWithDependencies, ResponseFormat> getArtifactFromCassandra(ArtifactDefinition artifactDef) {
+        return getFromCassandra(artifactDef.getEsId()).right().map(as -> {
+            log.debug(ARTIFACT_NAME_UNIQUE_ID, artifactDef.getArtifactName(), artifactDef.getUniqueId());
+            return componentsUtils.getResponseFormat(as);
+        }).left().map(MainYamlWithDependencies::make);
+    }
+
+    private static class MainYamlWithDependencies {
+
+        private final byte[] mainYaml;
+        private final Optional<List<Triple<String, String, Component>>> dependencies;
+
+        private MainYamlWithDependencies(byte[] mainYaml,
+            Optional<List<Triple<String, String, Component>>> dependencies) {
+            this.mainYaml = mainYaml;
+            this.dependencies = dependencies;
+        }
+
+        static public MainYamlWithDependencies make(byte[] mainYaml) {
+            return new MainYamlWithDependencies(mainYaml, Optional.empty());
+        }
+
+        static public MainYamlWithDependencies make(ToscaRepresentation tr) {
+            return new MainYamlWithDependencies(tr.getMainYaml().getBytes(), Optional.ofNullable(tr.getDependencies()));
+        }
     }
 
     /**
