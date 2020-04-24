@@ -37,7 +37,7 @@ import java.util.Set;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.tosca.ToscaFunctions;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 

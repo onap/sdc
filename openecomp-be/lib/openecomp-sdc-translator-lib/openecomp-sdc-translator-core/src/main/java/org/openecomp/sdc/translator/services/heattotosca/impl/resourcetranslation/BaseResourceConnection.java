@@ -162,8 +162,8 @@ abstract class BaseResourceConnection<T> {
         for (String propertyName : nestedPropertyNames) {
             Object propertyValue = mappedNodeTemplate.getProperties().get(propertyName);
             if (propertyValue instanceof Map
-                    && ((Map) propertyValue).containsKey(ToscaFunctions.GET_INPUT.getDisplayName())) {
-                Object paramName = ((Map) propertyValue).get(ToscaFunctions.GET_INPUT.getDisplayName());
+                    && ((Map) propertyValue).containsKey(ToscaFunctions.GET_INPUT.getFunctionName())) {
+                Object paramName = ((Map) propertyValue).get(ToscaFunctions.GET_INPUT.getFunctionName());
                 if (paramName instanceof String) {
                     connectionParameterNameList.add((String) paramName);
                 }

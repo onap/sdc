@@ -23,16 +23,40 @@ package org.openecomp.sdc.tosca.datatypes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * TOSCA Simple Profile in YAML Version 1.3.
+ * <p>
+ * OASIS Standard (26 February 2020).
+ * <p>
+ * https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html
+ */
 @Getter
 @AllArgsConstructor
 public enum ToscaFunctions {
 
+    // Intrinsic functions, section 4.3 in TOSCA 1.3
+    CONCAT("concat"),
+    JOIN("join"),   //  since 1.2
     TOKEN("token"),
-    GET_PROPERTY("get_property"),
-    GET_ATTRIBUTE("get_attribute"),
-    GET_ARTIFACT("get_artifact"),
-    GET_INPUT("get_input"),
-    CONCAT("concat");
 
-    private String displayName;
+    // Property functions, section 4.4 in TOSCA 1.3
+    GET_INPUT("get_input"),
+    GET_PROPERTY("get_property"),
+
+    // Attribute functions, section 4.5 in TOSCA 1.3
+    GET_ATTRIBUTE("get_attribute"),
+
+    // Operation functions, section 4.6 in TOSCA 1.3
+    GET_OPERATION_OUTPUT("get_operation_output"),
+
+    // Navigation functions, section 4.7 in TOSCA 1.3
+    GET_NODES_OF_TYPE("get_nodes_of_type"),
+
+    // Artifact functions, section 4.8 in TOSCA 1.3
+    GET_ARTIFACT("get_artifact"),
+
+    // non TOSCA-compliant function
+    GET_POLICY("get_policy");
+
+    private String functionName;
 }
