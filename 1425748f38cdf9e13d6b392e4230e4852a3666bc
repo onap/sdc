@@ -93,6 +93,30 @@
       "revId": "1425748f38cdf9e13d6b392e4230e4852a3666bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1266f2a6_d34c6b42",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/artifact/ArtifactOperationInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-04-25T00:20:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4e4b223_7724c212",
+      "range": {
+        "startLine": 31,
+        "startChar": 1,
+        "endLine": 54,
+        "endChar": 5
+      },
+      "revId": "1425748f38cdf9e13d6b392e4230e4852a3666bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
