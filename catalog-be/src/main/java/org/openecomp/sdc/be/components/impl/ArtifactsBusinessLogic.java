@@ -3984,8 +3984,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     public byte[] downloadResourceInstanceArtifactByUUIDs(ComponentTypeEnum componentType, String componentUuid,
                                                           String resourceInstanceName, String artifactUUID) {
         ComponentInstance resourceInstance = getRelatedComponentInstance(componentType, componentUuid, resourceInstanceName);
-        return downloadArtifact(resourceInstance == null ? null : resourceInstance.getDeploymentArtifacts(),
+
+        if (resourceInstance != null) {
+            return downloadArtifact(resourceInstance.getDeploymentArtifacts(),
                 artifactUUID, resourceInstance.getName());
+        } else {
+            return downloadArtifact(null, artifactUUID, null);
+        }
     }
 
     /**
@@ -4698,21 +4703,29 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     private ComponentInstance getRelatedComponentInstance(ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName) {
-        ComponentInstance componentInstance;
         String normalizedName = ValidationUtils.normalizeComponentInstanceName(resourceInstanceName);
-        Component component = getComponentByUuid(componentType, componentUuid);
-        componentInstance = (component == null) ? null : component.getComponentInstances()
+        Optional<Component> componentOpt = Optional.ofNullable(getComponentByUuid(componentType, componentUuid));
+
+        Optional<ComponentInstance> componentInstanceOpt = componentOpt.flatMap( component ->
+            component.getComponentInstances()
                 .stream()
                 .filter(ci -> ValidationUtils.normalizeComponentInstanceName(ci.getName())
-                        .equals(normalizedName))
+                    .equals(normalizedName))
                 .findFirst()
-                .orElse(null);
-        if (componentInstance == null) {
-            log.debug(COMPONENT_INSTANCE_NOT_FOUND, resourceInstanceName, component.getName());
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName,
+        );
+
+        return componentInstanceOpt.orElseThrow(() ->
+            componentOpt.map( component -> {
+                if (log.isDebugEnabled())
+                    log.debug(COMPONENT_INSTANCE_NOT_FOUND, resourceInstanceName, component.getName());
+                return new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
+                    resourceInstanceName,
                     RESOURCE_INSTANCE, component.getComponentType().getValue(), component.getName());
-        }
-        return componentInstance;
+            }).orElseGet(() -> {
+                log.debug("Unable to retrieve component with of type {} with UUID {}", componentType, componentUuid);
+                return new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+            })
+        );
     }
 
     private ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(Component component, String resourceInstanceName) {
