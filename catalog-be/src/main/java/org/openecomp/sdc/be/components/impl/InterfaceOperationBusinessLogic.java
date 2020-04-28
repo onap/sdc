@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import fj.data.Either;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
@@ -30,6 +31,7 @@ import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -474,22 +476,29 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 			setParentPropertyTypeAndInputPath(input, component);
             defaultInputValue = createMappedInputPropertyDefaultValue(propertyName);
         } else if (isCapabilityProperty(input.getInputId(), component).isPresent()) {
-            ComponentInstanceProperty instanceProperty = isCapabilityProperty(input.getInputId(), component).get();
-            String parentPropertyId = instanceProperty.getParentUniqueId();
+            Optional<ComponentInstanceProperty> instancePropertyOpt = isCapabilityProperty(input.getInputId(),
+                component);
+            Optional<String> parentPropertyIdOpt = instancePropertyOpt.map(PropertyDataDefinition::getParentUniqueId);
             Map<String, List<CapabilityDefinition>> componentCapabilities = component.getCapabilities();
             if(MapUtils.isNotEmpty(componentCapabilities)) {
                 List<CapabilityDefinition> capabilityDefinitionList = componentCapabilities.values().stream()
-                        .flatMap(Collection::stream).filter(capabilityDefinition -> capabilityDefinition.getOwnerId()
-                                .equals(component.getUniqueId())).collect(Collectors.toList());
-                Optional<CapabilityDefinition> propertyCapability = getPropertyCapabilityFromAllCapProps(parentPropertyId,
-                        capabilityDefinitionList);
-                if (propertyCapability.isPresent()) {
-                    String propertyName = instanceProperty.getName();
-                    defaultInputValue = createMappedCapabilityPropertyDefaultValue(propertyCapability.get().getName(),
-                            propertyName);
-                }
-            }
+                    .flatMap(Collection::stream)
+                    .filter(capabilityDefinition -> capabilityDefinition.getOwnerId().equals(component.getUniqueId()))
+                    .collect(Collectors.toList());
 
+                defaultInputValue = parentPropertyIdOpt
+                    .flatMap(parentPropertyId ->
+                        getPropertyCapabilityFromAllCapProps(parentPropertyId, capabilityDefinitionList))
+                    .flatMap(capability ->
+                        instancePropertyOpt.map(instanceProperty ->
+                            new ImmutablePair<>(capability.getName(), instanceProperty.getName())))
+                    .map(tuple -> {
+                        String propertyName = tuple.right;
+                        String capabilityName = tuple.left;
+
+                        return createMappedCapabilityPropertyDefaultValue(capabilityName, propertyName);
+                    }).orElse(null);
+            }
         } else {
             //Currently inputs can only be mapped to a declared input or an other operation outputs
             defaultInputValue = createMappedOutputDefaultValue(SELF, input.getInputId());
