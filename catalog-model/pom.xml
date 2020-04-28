@@ -190,11 +190,6 @@
 			<version>${cassandra.driver.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.thrift</groupId>
-			<artifactId>libthrift</artifactId>
-			<version>${libthrift.version}</version>
-		</dependency>
 		<!-- CASSANDRA END -->
 
 		<dependency>
