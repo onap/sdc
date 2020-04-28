@@ -22,23 +22,22 @@
 package org.openecomp.sdc.be.utils;
 
 import com.datastax.driver.core.Cluster;
+import java.io.IOException;
 import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
-import java.io.IOException;
-
 public class CassandraTestHelper {
-    public static final String SERVER = "localhost";
-    public static final int BINARY_PORT = 9142;
 
-    public CassandraTestHelper() {
+    public static final String SERVER = "localhost";
+    private static final int BINARY_PORT = 9142;
+
+    private CassandraTestHelper() {
     }
 
     public static void startServer() {
         try {
             EmbeddedCassandraServerHelper.startEmbeddedCassandra(80000);
-        } catch(TTransportException | ConfigurationException | IOException ex) {
+        } catch (ConfigurationException | IOException ex) {
             throw new RuntimeException(ex);
         }
     }

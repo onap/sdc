@@ -309,6 +309,11 @@ Modifications copyright (c) 2018 Nokia
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-core</artifactId>
+			<version>${java.driver.core.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.cassandraunit</groupId>
 			<artifactId>cassandra-unit</artifactId>
 			<version>${cassandra.unit.version}</version>
@@ -329,11 +334,6 @@ Modifications copyright (c) 2018 Nokia
 			<artifactId>cassandra-all</artifactId>
 			<version>3.11.3</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.thrift</groupId>
-			<artifactId>libthrift</artifactId>
-			<version>${libthrift.version}</version>
 		</dependency>
 		<!-- CASSANDRA END -->
 
