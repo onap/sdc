@@ -139,10 +139,13 @@ public class CompositionBusinessLogic {
     protected void buildCirclePatternForCps(Map<ImmutablePair<Double, Double>, ComponentInstance> componentInstLocations, Map<ComponentInstance, List<ComponentInstance>> connectedCps) {
 
         for (Entry<ComponentInstance, List<ComponentInstance>> vfcCpList : connectedCps.entrySet()) {
-            Entry<ImmutablePair<Double, Double>, ComponentInstance> vfcOfTheCps = componentInstLocations.entrySet().stream().filter(p -> p.getValue().getUniqueId().equals(vfcCpList.getKey().getUniqueId())).findAny().get();
-            buildCirclePatternForOneGroupOfCps(vfcOfTheCps.getKey(), vfcCpList.getValue(), componentInstLocations);
+            componentInstLocations.entrySet().stream()
+                .filter(p -> p.getValue().getUniqueId().equals(vfcCpList.getKey().getUniqueId()))
+                .findAny()
+                .ifPresent(vfcOfTheCps ->
+                    buildCirclePatternForOneGroupOfCps(vfcOfTheCps.getKey(), vfcCpList.getValue(),
+                        componentInstLocations));
         }
-
     }
 
     private void buildCirclePatternForOneGroupOfCps(ImmutablePair<Double, Double> vfcLocation, List<ComponentInstance> cpsGroup, Map<ImmutablePair<Double, Double>, ComponentInstance> componentInstLocations) {
