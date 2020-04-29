@@ -14,89 +14,103 @@
   ~ limitations under the License.
   -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <name>openecomp-sdc</name>
-    <artifactId>openecomp-sdc</artifactId>
-    <packaging>pom</packaging>
+  <name>openecomp-sdc</name>
+  <artifactId>openecomp-sdc</artifactId>
+  <packaging>pom</packaging>
 
-    <url>http://maven.apache.org</url>
+  <url>http://maven.apache.org</url>
 
-    <parent>
-        <groupId>org.openecomp.sdc</groupId>
-        <artifactId>sdc-onboarding</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../onboarding/pom.xml</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>sdc-onboarding</artifactId>
+    <version>1.7.0-SNAPSHOT</version>
+    <relativePath>../onboarding/pom.xml</relativePath>
+  </parent>
 
-    <dependencies>
+  <dependencies>
+    <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junitJupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!--JUnit Jupiter Engine to depend on the JUnit4 engine and JUnit 4 API  -->
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junitJupiter.version}</version>
+    </dependency>
 
-        <dependency>
-            <groupId>com.google.code.bean-matchers</groupId>
-            <artifactId>bean-matchers</artifactId>
-            <version>${bean-matchers.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.logging-analytics</groupId>
-            <artifactId>logging-slf4j</artifactId>
-            <version>${onap.logging.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.togglz</groupId>
-            <artifactId>togglz-core</artifactId>
-            <version>${togglz.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.togglz</groupId>
-            <artifactId>togglz-testing</artifactId>
-            <version>${togglz.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junitJupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockitoJupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>com.google.code.bean-matchers</groupId>
+      <artifactId>bean-matchers</artifactId>
+      <version>${bean-matchers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.logging-analytics</groupId>
+      <artifactId>logging-slf4j</artifactId>
+      <version>${onap.logging.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.togglz</groupId>
+      <artifactId>togglz-core</artifactId>
+      <version>${togglz.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.togglz</groupId>
+      <artifactId>togglz-testing</artifactId>
+      <version>${togglz.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junitJupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>${mockitoJupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${mvn.jar.version}</version>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${mvn.jar.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 
-    <modules>
-        <module>/api</module>
-        <module>/lib</module>
-        <module>/tools/swagger-ui</module>
-        <module>/tools/zusammen-tools</module>
-        <module>/backend</module>
-    </modules>
+  <modules>
+    <module>/api</module>
+    <module>/lib</module>
+    <module>/tools/swagger-ui</module>
+    <module>/tools/zusammen-tools</module>
+    <module>/backend</module>
+  </modules>
 
-    <profiles>
-        <profile>
-            <id>docker</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>/dist</module>
-            </modules>
-        </profile>
-    </profiles>
+  <profiles>
+    <profile>
+      <id>docker</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>/dist</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>
 
