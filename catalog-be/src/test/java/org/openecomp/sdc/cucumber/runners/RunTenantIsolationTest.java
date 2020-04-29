@@ -20,11 +20,13 @@
 
 package org.openecomp.sdc.cucumber.runners;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.junit.Cucumber;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 
+@Ignore
 @RunWith(Cucumber.class)
 @CucumberOptions(features = "classpath:cucumber/tenantIsolation.feature", glue = "org.openecomp.sdc.be.components.distribution.engine")
 public class RunTenantIsolationTest  extends BeConfDependentTest {

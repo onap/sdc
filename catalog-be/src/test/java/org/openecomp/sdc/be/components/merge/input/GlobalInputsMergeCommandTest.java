@@ -21,8 +21,8 @@
 package org.openecomp.sdc.be.components.merge.input;
 
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -55,7 +55,7 @@ public class GlobalInputsMergeCommandTest extends BaseComponentInputsMerge {
     private ExceptionUtils exceptionUtils;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         new ComponentInputsMergeBL(inputsValuesMergingBusinessLogic, declaredInputsResolver, toscaOperationFacade, new ComponentsUtils(mock(AuditingManager.class)));

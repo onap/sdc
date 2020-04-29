@@ -342,35 +342,35 @@
     </dependency>
 
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>1.2.4</version>
+      <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-core</artifactId>
-      <version>1.2.4</version>
-      <scope>test</scope>
+      <version>${cucumber.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>gherkin</artifactId>
-      <version>2.12.2</version>
+      <version>13.0.0</version>
     </dependency>
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
-      <version>1.2.5</version>
+      <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-jvm-deps</artifactId>
-      <version>1.0.5</version>
+      <version>1.0.6</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -395,9 +395,9 @@
 
     <!-- With TestNG -->
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-testng</artifactId>
-      <version>1.2.5</version>
+      <version>${cucumber.version}</version>
     </dependency>
 
     <!-- spring -->
