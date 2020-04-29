@@ -21,15 +21,19 @@
 package org.openecomp.sdc.be.servlets;
 
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.springframework.context.annotation.Bean;
 
 import static org.mockito.Mockito.mock;
 
 public class BaseTestConfig {
+    private final ConfigurationManager configurationManager = new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 
     @Bean
     ComponentsUtils componentsUtils() {return new ComponentsUtils(mock(AuditingManager.class));}

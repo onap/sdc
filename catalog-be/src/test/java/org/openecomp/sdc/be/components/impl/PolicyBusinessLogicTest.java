@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -134,17 +135,16 @@ public class PolicyBusinessLogicTest {
     private static ResponseFormat notFoundResponse;
     private static ResponseFormat invalidContentResponse;
     private static ResponseFormat nameExistsResponse;
+    private final ConfigurationManager configurationManager = new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 
     @BeforeClass
     public static void setup() {
-        String appConfigDir = "src/test/resources/config/catalog-be";
-        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir));
         createResponses();
-        new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir));
     }
 
     @Before
     public void initBl() {
+        MockitoAnnotations.initMocks(this);
         businessLogic.setComponentsUtils(componentsUtils);
         businessLogic.setToscaOperationFacade(toscaOperationFacade);
         businessLogic.setJanusGraphDao(janusGraphDao);
