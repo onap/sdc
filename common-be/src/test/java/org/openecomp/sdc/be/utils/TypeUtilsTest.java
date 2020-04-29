@@ -22,37 +22,41 @@
 package org.openecomp.sdc.be.utils;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(MockitoJUnitRunner.class)
+
 public class TypeUtilsTest {
 
     private static final String ANY_GROUP = "anyGroup";
 
-    @SuppressWarnings("unchecked")
-    private Consumer<String> anyConsumer = (Consumer<String>) Mockito.spy(Consumer.class);
+    private class DummyClass {
+        private String field;
+
+        public void setField(String field) { this.field = field; }
+        public String getField() { return this.field; }
+    }
 
     @Test
     public void testSetFieldShouldConsumeForJSONContainingParam() {
+        DummyClass dummyObject = new DummyClass();
         Map<String, Object> toscaJson = new HashMap<>();
         toscaJson.put(ToscaTagNamesEnum.GROUPS.getElementName(), ANY_GROUP);
-        TypeUtils.setField(toscaJson, ToscaTagNamesEnum.GROUPS, anyConsumer);
-        Mockito.verify(anyConsumer).accept(ANY_GROUP);
+        TypeUtils.setField(toscaJson, ToscaTagNamesEnum.GROUPS, dummyObject::setField);
+        assertEquals(ANY_GROUP, dummyObject.getField());
     }
 
     @Test
     public void testSetFieldShouldDoNothingForJSONNotContainingParam() {
+        DummyClass dummyObject = new DummyClass();
         Map<String, Object> toscaJson = new HashMap<>();
         toscaJson.put(ToscaTagNamesEnum.GROUPS.getElementName(), ANY_GROUP);
-        TypeUtils.setField(toscaJson, ToscaTagNamesEnum.INPUTS, anyConsumer);
-        Mockito.verifyZeroInteractions(anyConsumer);
+        TypeUtils.setField(toscaJson, ToscaTagNamesEnum.INPUTS, dummyObject::setField);
+        assertNull(dummyObject.getField());
     }
 
 }
