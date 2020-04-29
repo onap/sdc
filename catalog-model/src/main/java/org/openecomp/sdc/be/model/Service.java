@@ -25,6 +25,7 @@ import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
@@ -36,6 +37,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@ToString
 public class Service extends Component {
 
     private Map<String, ArtifactDefinition> serviceApiArtifacts;
@@ -153,16 +155,6 @@ public class Service extends Component {
         if (this.getInstantiationType().equals(StringUtils.EMPTY)) {
             this.setInstantiationType(InstantiationTypes.A_LA_CARTE.getValue());
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Service [componentMetadataDefinition=" + getComponentMetadataDefinition()
-            // + ", resourceInstances=" + resourceInstances + ",
-            // resourceInstancesRelations=" + resourceInstancesRelations + ",
-            // resourceInstancesRelations="
-            // + resourceInstancesRelations
-            + " ]";
     }
 
     @Override

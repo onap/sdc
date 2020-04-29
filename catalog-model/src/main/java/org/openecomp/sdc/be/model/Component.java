@@ -57,7 +57,7 @@ import org.openecomp.sdc.common.log.api.ILogConfiguration;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class Component implements PropertiesOwner {
 
     protected List<AdditionalInformationDefinition> additionalInformation;
@@ -66,6 +66,7 @@ public abstract class Component implements PropertiesOwner {
     private Map<String, ArtifactDefinition> artifacts;
     private Map<String, ArtifactDefinition> deploymentArtifacts;
     private Map<String, ArtifactDefinition> toscaArtifacts;
+    @EqualsAndHashCode.Include
     private List<CategoryDefinition> categories;
     private List<ComponentInstance> componentInstances;
     private List<RequirementCapabilityRelDef> componentInstancesRelations;
@@ -82,8 +83,6 @@ public abstract class Component implements PropertiesOwner {
     private String derivedFromGenericVersion;
     private String toscaType;
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
-    private Map<String, List<UploadNodeFilterInfo>> nodeFilters;
-    private Map<String, List<UploadNodeFilterInfo>> serviceFilters;
     private Map<String, InterfaceDefinition> interfaces;
     private List<DataTypeDefinition> dataTypes;
 
@@ -97,6 +96,7 @@ public abstract class Component implements PropertiesOwner {
     }
 
     @Override
+    @EqualsAndHashCode.Include
     public String getUniqueId() {
         return componentMetadataDefinition.getMetadataDataDefinition().getUniqueId();
     }
@@ -146,6 +146,7 @@ public abstract class Component implements PropertiesOwner {
     }
 
     @Override
+    @EqualsAndHashCode.Include
     public String getName() {
         return componentMetadataDefinition.getMetadataDataDefinition().getName();
     }
@@ -272,6 +273,7 @@ public abstract class Component implements PropertiesOwner {
     }
 
     @Override
+    @EqualsAndHashCode.Include
     public String getNormalizedName() {
         return componentMetadataDefinition.getMetadataDataDefinition().getNormalizedName();
     }
@@ -323,15 +325,6 @@ public abstract class Component implements PropertiesOwner {
             .stream()
             .filter(artifact -> ArtifactTypeEnum.HEAT_ENV.getType().equals(artifact.getArtifactType()))
             .collect(Collectors.toList());
-    }
-
-    public Map<String, List<ComponentInstanceProperty>> getComponentInstancesProperties() {
-        return componentInstancesProperties;
-    }
-
-    public void setComponentInstancesProperties(
-        Map<String, List<ComponentInstanceProperty>> resourceInstancesProperties) {
-        this.componentInstancesProperties = resourceInstancesProperties;
     }
 
     public Map<String, List<ComponentInstanceProperty>> safeGetComponentInstancesProperties() {
@@ -610,6 +603,7 @@ public abstract class Component implements PropertiesOwner {
         List<T> cmptInstanceProps = instanceEntities.get(cmptInstanceId);
         return cmptInstanceProps == null ? emptyPropsList : cmptInstanceProps;
     }
+
 
     public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
         // Implement where needed
