@@ -1,29 +1,44 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <name>onap-configuration-management-api</name>
-    <artifactId>onap-configuration-management-api</artifactId>
+  <name>onap-configuration-management-api</name>
+  <artifactId>onap-configuration-management-api</artifactId>
 
-    <parent>
-        <artifactId>onap-common-configuration-management</artifactId>
-        <groupId>org.onap.sdc.common</groupId>
-        <version>1.7.0-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <artifactId>onap-common-configuration-management</artifactId>
+    <groupId>org.onap.sdc.common</groupId>
+    <version>1.7.0-SNAPSHOT</version>
+  </parent>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junitJupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!--JUnit Jupiter Engine to depend on the JUnit4 engine and JUnit 4 API  -->
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junitJupiter.version}</version>
+    </dependency>
+    <!-- Optional : override the JUnit 4 API version provided by junit-vintage-engine -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>
