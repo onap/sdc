@@ -87,7 +87,6 @@ public class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
 		MockitoAnnotations.initMocks(this);
 		user = new User("Stan", "Lee", "stan.lee",
 				"stan.lee@marvel.com", "ADMIN", 1542024000L);
-		new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 	}
 
 	@Test

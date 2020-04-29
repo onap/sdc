@@ -22,10 +22,10 @@ package org.onap.sdc.gab.cucumber.actions.gabcontroller;
 
 import static org.junit.Assert.assertEquals;
 
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.When;
-import cucumber.api.java.en.Then;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+import io.cucumber.java.en.Then;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
