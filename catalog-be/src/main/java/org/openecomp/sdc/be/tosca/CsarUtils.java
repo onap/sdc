@@ -84,6 +84,8 @@ import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
+import org.openecomp.sdc.be.tosca.utils.Eithers;
+import org.openecomp.sdc.be.tosca.utils.Eithers.LeftBiased;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
@@ -241,13 +243,20 @@ public class CsarUtils {
             .get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
 
         LifecycleStateEnum lifecycleState = component.getLifecycleState();
-        // Assigning to null is a bad practice but in order to keep the refactoring small enough we keep this for now.
-        Either<MainYamlWithDependencies, ResponseFormat> result = null;
-        if (getFromCS || !(lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN || lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
-            result = getArtifactFromCassandra(artifactDef);
-        } else {
-            result = exportComponent(component);
-        }
+        boolean shouldLoadArtifactFromCassandra = getFromCS ||
+            !(lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN ||
+                lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        Either<MainYamlWithDependencies, ResponseFormat> result = LeftBiased.iff(
+            shouldLoadArtifactFromCassandra,
+            () -> getArtifactFromCassandra(artifactDef),
+            () -> exportComponent(component)
+        ).bindIf(
+            myd -> !myd.dependencies.isPresent(),
+            myd -> fetchToscaTemplate(component).left().map(tt ->
+                MainYamlWithDependencies.make(myd.mainYaml, tt)
+            )
+        ).toEither();
 
         // TODO: Refactor the rest of this function
         byte[] mainYaml;
@@ -256,6 +265,7 @@ public class CsarUtils {
         if(result.isLeft()) {
             mainYaml = result.left().value().mainYaml;
             dependencies = result.left().value().dependencies.orElse(null);
+
         } else {
             return Either.right(result.right().value());
         }
@@ -267,18 +277,6 @@ public class CsarUtils {
         if (!ModelConverter.isAtomicComponent(component)){
             log.debug("Component {} is complex - generating abstract type for it..", component.getName());
 			      writeComponentInterface(component, zip, fileName, false);
-        }
-
-        if (dependencies == null) {
-            Either<ToscaTemplate, ToscaError> dependenciesRes = toscaExportUtils.getDependencies(component);
-            if (dependenciesRes.isRight()) {
-                log.debug("Failed to retrieve dependencies for component {}, error {}", component.getUniqueId(),
-                        dependenciesRes.right().value());
-                ActionStatus convertFromToscaError = componentsUtils.convertFromToscaError(dependenciesRes.right().value());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(convertFromToscaError);
-                return Either.right(responseFormat);
-            }
-            dependencies = dependenciesRes.left().value().getDependencies();
         }
 
         //UID <cassandraId,filename,component>
@@ -321,6 +319,13 @@ public class CsarUtils {
         return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
     }
 
+    private Either<ToscaTemplate, ResponseFormat> fetchToscaTemplate(Component component) {
+        return toscaExportUtils.getDependencies(component).right().map(ds -> {
+            log.debug("Failed to retrieve dependencies for component {}, error {}", component.getUniqueId(), ds);
+            return componentsUtils.getResponseFormat(componentsUtils.convertFromToscaError(ds));
+        });
+    }
+
     private Either<MainYamlWithDependencies, ResponseFormat> exportComponent(Component component) {
         return toscaExportUtils.exportComponent(component).right().map(toscaError -> {
             log.debug("exportComponent failed", toscaError);
@@ -346,12 +351,16 @@ public class CsarUtils {
             this.dependencies = dependencies;
         }
 
-        static public MainYamlWithDependencies make(byte[] mainYaml) {
+        public static MainYamlWithDependencies make(byte[] mainYaml) {
             return new MainYamlWithDependencies(mainYaml, Optional.empty());
         }
 
-        static public MainYamlWithDependencies make(ToscaRepresentation tr) {
+        public static MainYamlWithDependencies make(ToscaRepresentation tr) {
             return new MainYamlWithDependencies(tr.getMainYaml().getBytes(), Optional.ofNullable(tr.getDependencies()));
+        }
+
+        public static MainYamlWithDependencies make(byte[] mainYaml, ToscaTemplate tt) {
+            return new MainYamlWithDependencies(mainYaml, Optional.ofNullable(tt.getDependencies()));
         }
     }
 
