@@ -92,7 +92,7 @@ public class InterfacesOperationsConverterTest {
     public void addInterfaceTypeElementToResource() {
         Component component = new Resource();
         component.setNormalizedName("normalizedComponentName");
-        component.setMetadataDefinition(new ServiceMetadataDefinition());
+        component.setComponentMetadataDefinition(new ServiceMetadataDefinition());
         component.getComponentMetadataDefinition().getMetadataDataDefinition().setName("NodeTypeName");
         component.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("NodeTypeName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
@@ -118,7 +118,7 @@ public class InterfacesOperationsConverterTest {
     public void addInterfaceTypeElementToService() {
         Component component = new Service();
         component.setNormalizedName("normalizedServiceComponentName");
-        component.setMetadataDefinition(new ServiceMetadataDefinition());
+        component.setComponentMetadataDefinition(new ServiceMetadataDefinition());
         component.getComponentMetadataDefinition().getMetadataDataDefinition().setName("NodeTypeName");
         component.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("NodeTypeName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
@@ -523,7 +523,7 @@ public class InterfacesOperationsConverterTest {
     @Test
     public void testAddInterfaceTypeElementGetCorrectLocalInterfaceName() {
         Service service = new Service();
-        service.setMetadataDefinition(new ServiceMetadataDefinition());
+        service.setComponentMetadataDefinition(new ServiceMetadataDefinition());
         service.getComponentMetadataDefinition().getMetadataDataDefinition().setName("LocalInterface");
         service.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("LocalInterface");
         service.setInterfaces(Collections.singletonMap("Local", new InterfaceDefinition("Local", null, new HashMap<>())));
@@ -538,7 +538,7 @@ public class InterfacesOperationsConverterTest {
     @Test
     public void testAddInterfaceTypeElementNoTypeChangeIfNotLocal() {
         Service service = new Service();
-        service.setMetadataDefinition(new ServiceMetadataDefinition());
+        service.setComponentMetadataDefinition(new ServiceMetadataDefinition());
         service.getComponentMetadataDefinition().getMetadataDataDefinition().setName("LocalInterface");
         service.setInterfaces(Collections.singletonMap("NotLocal", new InterfaceDefinition("NotLocal", null,
                 new HashMap<>())));

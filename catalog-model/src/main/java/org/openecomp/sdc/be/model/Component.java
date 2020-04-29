@@ -36,6 +36,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
@@ -52,144 +55,62 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.log.api.ILogConfiguration;
 
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class Component implements PropertiesOwner {
 
-	private ComponentMetadataDefinition componentMetadataDefinition;
-	private Map<String, ArtifactDefinition> artifacts;
-	private Map<String, ArtifactDefinition> deploymentArtifacts;
-	private Map<String, ArtifactDefinition> toscaArtifacts;
-	private List<CategoryDefinition> categories;
-	private List<ComponentInstance> componentInstances;
-	private List<RequirementCapabilityRelDef> componentInstancesRelations;
-	private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
-	private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
-	private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
-	private Map<String, List<CapabilityDefinition>> capabilities;
-	private Map<String, List<RequirementDefinition>> requirements;
-	private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
-	private List<InputDefinition> inputs;
-	private List<GroupDefinition> groups;
-	private Map<String, PolicyDefinition> policies;
-	private String derivedFromGenericType;
-	private String derivedFromGenericVersion;
-	private String toscaType;
-	protected List<AdditionalInformationDefinition> additionalInformation;
-	private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
-	private Map<String, List<UploadNodeFilterInfo>> nodeFilters;
-	private Map<String, List<UploadNodeFilterInfo>> serviceFilters;
-	protected List<PropertyDefinition> properties;
-	private Map<String, InterfaceDefinition> interfaces;
+    protected List<AdditionalInformationDefinition> additionalInformation;
+    protected List<PropertyDefinition> properties;
+    private ComponentMetadataDefinition componentMetadataDefinition;
+    private Map<String, ArtifactDefinition> artifacts;
+    private Map<String, ArtifactDefinition> deploymentArtifacts;
+    private Map<String, ArtifactDefinition> toscaArtifacts;
+    @EqualsAndHashCode.Include
+    private List<CategoryDefinition> categories;
+    private List<ComponentInstance> componentInstances;
+    private List<RequirementCapabilityRelDef> componentInstancesRelations;
+    private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
+    private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
+    private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
+    private Map<String, List<CapabilityDefinition>> capabilities;
+    private Map<String, List<RequirementDefinition>> requirements;
+    private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
+    private List<InputDefinition> inputs;
+    private List<GroupDefinition> groups;
+    private Map<String, PolicyDefinition> policies;
+    private String derivedFromGenericType;
+    private String derivedFromGenericVersion;
+    private String toscaType;
+    private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
+    private Map<String, InterfaceDefinition> interfaces;
     private List<DataTypeDefinition> dataTypes;
-
-    public List<DataTypeDefinition> getDataTypes() {
-        return dataTypes;
-    }
-
-    public void setDataTypes(List<DataTypeDefinition> dataTypes) {
-        this.dataTypes = dataTypes;
-    }
-
-    public Map<String, InterfaceDefinition> getInterfaces() {
-		return interfaces;
-	}
-
-	public void setInterfaces(Map<String, InterfaceDefinition> interfaces) {
-		this.interfaces = interfaces;
-	}
 
     public Component(ComponentMetadataDefinition componentMetadataDefinition) {
         this.componentMetadataDefinition = componentMetadataDefinition;
     }
-
-    public String getDerivedFromGenericVersion() {
-        return derivedFromGenericVersion;
-    }
-
-    public void setDerivedFromGenericVersion(String derivedFromGenericVersion) {
-        this.derivedFromGenericVersion = derivedFromGenericVersion;
-    }
-
-    public String getDerivedFromGenericType() {
-        return derivedFromGenericType;
-    }
-
-    public void setDerivedFromGenericType(String derivedFromGenericType) {
-        this.derivedFromGenericType = derivedFromGenericType;
-    }
-
 
     @JsonIgnore
     public ComponentMetadataDefinition getComponentMetadataDefinition() {
         return componentMetadataDefinition;
     }
 
-    public Map<String, ArtifactDefinition> getArtifacts() {
-        return artifacts;
+    @Override
+    @EqualsAndHashCode.Include
+    public String getUniqueId() {
+        return componentMetadataDefinition.getMetadataDataDefinition().getUniqueId();
     }
-
-    public void setArtifacts(Map<String, ArtifactDefinition> artifacts) {
-        this.artifacts = artifacts;
-    }
-
-    public Map<String, ArtifactDefinition> getToscaArtifacts() {
-        return toscaArtifacts;
-    }
-
-    public void setToscaArtifacts(Map<String, ArtifactDefinition> toscaArtifacts) {
-        this.toscaArtifacts = toscaArtifacts;
-    }
-
-	@Override
-	public String getUniqueId() {
-		return componentMetadataDefinition.getMetadataDataDefinition().getUniqueId();
-	}
 
     public void setUniqueId(String uniqueId) {
         componentMetadataDefinition.getMetadataDataDefinition().setUniqueId(uniqueId);
-    }
-
-    public void setName(String name) {
-        componentMetadataDefinition.getMetadataDataDefinition().setName(name);
-    }
-
-    public void setVersion(String version) {
-        componentMetadataDefinition.getMetadataDataDefinition().setVersion(version);
     }
 
     public void setHighestVersion(Boolean isHighestVersion) {
         componentMetadataDefinition.getMetadataDataDefinition().setHighestVersion(isHighestVersion);
     }
 
-    public void setCreationDate(Long creationDate) {
-        componentMetadataDefinition.getMetadataDataDefinition().setCreationDate(creationDate);
-    }
-
-    public void setLastUpdateDate(Long lastUpdateDate) {
-        componentMetadataDefinition.getMetadataDataDefinition().setLastUpdateDate(lastUpdateDate);
-    }
-
-    public void setDescription(String description) {
-        componentMetadataDefinition.getMetadataDataDefinition().setDescription(description);
-    }
-
     public void setState(LifecycleStateEnum state) {
         componentMetadataDefinition.getMetadataDataDefinition().setState(state.name());
-    }
-
-    public void setTags(List<String> tags) {
-        componentMetadataDefinition.getMetadataDataDefinition().setTags(tags);
-    }
-
-    public void setConformanceLevel(String conformanceLevel) {
-        componentMetadataDefinition.getMetadataDataDefinition().setConformanceLevel(conformanceLevel);
-    }
-
-    public void setIcon(String icon) {
-        componentMetadataDefinition.getMetadataDataDefinition().setIcon(icon);
-    }
-
-    public void setContactId(String contactId) {
-        componentMetadataDefinition.getMetadataDataDefinition().setContactId(contactId);
     }
 
     public String getCreatorUserId() {
@@ -224,13 +145,22 @@ public abstract class Component implements PropertiesOwner {
         this.componentMetadataDefinition.getMetadataDataDefinition().setLastUpdaterFullName(lastUpdaterFullName);
     }
 
-	@Override
-	public String getName() {
-		return componentMetadataDefinition.getMetadataDataDefinition().getName();
-	}
+    @Override
+    @EqualsAndHashCode.Include
+    public String getName() {
+        return componentMetadataDefinition.getMetadataDataDefinition().getName();
+    }
+
+    public void setName(String name) {
+        componentMetadataDefinition.getMetadataDataDefinition().setName(name);
+    }
 
     public String getVersion() {
         return componentMetadataDefinition.getMetadataDataDefinition().getVersion();
+    }
+
+    public void setVersion(String version) {
+        componentMetadataDefinition.getMetadataDataDefinition().setVersion(version);
     }
 
     public Boolean isHighestVersion() {
@@ -241,20 +171,37 @@ public abstract class Component implements PropertiesOwner {
         return componentMetadataDefinition.getMetadataDataDefinition().getCreationDate();
     }
 
+    public void setCreationDate(Long creationDate) {
+        componentMetadataDefinition.getMetadataDataDefinition().setCreationDate(creationDate);
+    }
+
     public Long getLastUpdateDate() {
         return componentMetadataDefinition.getMetadataDataDefinition().getLastUpdateDate();
+    }
+
+    public void setLastUpdateDate(Long lastUpdateDate) {
+        componentMetadataDefinition.getMetadataDataDefinition().setLastUpdateDate(lastUpdateDate);
     }
 
     public String getDescription() {
         return componentMetadataDefinition.getMetadataDataDefinition().getDescription();
     }
 
+    public void setDescription(String description) {
+        componentMetadataDefinition.getMetadataDataDefinition().setDescription(description);
+    }
+
     public LifecycleStateEnum getLifecycleState() {
         if (componentMetadataDefinition.getMetadataDataDefinition().getState() != null) {
             return LifecycleStateEnum.valueOf(componentMetadataDefinition.getMetadataDataDefinition().getState());
-        }
-        else {
+        } else {
             return null;
+        }
+    }
+
+    public void setLifecycleState(LifecycleStateEnum state) {
+        if (state != null) {
+            this.componentMetadataDefinition.getMetadataDataDefinition().setState(state.name());
         }
     }
 
@@ -262,34 +209,36 @@ public abstract class Component implements PropertiesOwner {
         return componentMetadataDefinition.getMetadataDataDefinition().getTags();
     }
 
+    public void setTags(List<String> tags) {
+        componentMetadataDefinition.getMetadataDataDefinition().setTags(tags);
+    }
+
     public String getConformanceLevel() {
         return componentMetadataDefinition.getMetadataDataDefinition().getConformanceLevel();
+    }
+
+    public void setConformanceLevel(String conformanceLevel) {
+        componentMetadataDefinition.getMetadataDataDefinition().setConformanceLevel(conformanceLevel);
     }
 
     public String getIcon() {
         return componentMetadataDefinition.getMetadataDataDefinition().getIcon();
     }
 
+    public void setIcon(String icon) {
+        componentMetadataDefinition.getMetadataDataDefinition().setIcon(icon);
+    }
+
     public String getContactId() {
         return componentMetadataDefinition.getMetadataDataDefinition().getContactId();
     }
 
-    public List<InputDefinition> getInputs() {
-        return inputs;
+    public void setContactId(String contactId) {
+        componentMetadataDefinition.getMetadataDataDefinition().setContactId(contactId);
     }
 
     public List<InputDefinition> safeGetInputs() {
         return inputs == null ? new ArrayList<>() : inputs;
-    }
-
-    public void setInputs(List<InputDefinition> inputs) {
-        this.inputs = inputs;
-    }
-
-    public void setLifecycleState(LifecycleStateEnum state) {
-        if (state != null) {
-            this.componentMetadataDefinition.getMetadataDataDefinition().setState(state.name());
-        }
     }
 
     public String getUUID() {
@@ -300,28 +249,20 @@ public abstract class Component implements PropertiesOwner {
         componentMetadataDefinition.getMetadataDataDefinition().setUUID(uUID);
     }
 
-    public void setSystemName(String systemName) {
-        componentMetadataDefinition.getMetadataDataDefinition().setSystemName(systemName);
-    }
-
     public String getSystemName() {
         return componentMetadataDefinition.getMetadataDataDefinition().getSystemName();
     }
 
-    public void setAllVersions(Map<String, String> allVersions) {
-        componentMetadataDefinition.getMetadataDataDefinition().setAllVersions(allVersions);
+    public void setSystemName(String systemName) {
+        componentMetadataDefinition.getMetadataDataDefinition().setSystemName(systemName);
     }
 
     public Map<String, String> getAllVersions() {
         return componentMetadataDefinition.getMetadataDataDefinition().getAllVersions();
     }
 
-    public Map<String, ArtifactDefinition> getDeploymentArtifacts() {
-        return deploymentArtifacts;
-    }
-
-    public void setDeploymentArtifacts(Map<String, ArtifactDefinition> deploymentArtifacts) {
-        this.deploymentArtifacts = deploymentArtifacts;
+    public void setAllVersions(Map<String, String> allVersions) {
+        componentMetadataDefinition.getMetadataDataDefinition().setAllVersions(allVersions);
     }
 
     public Map<String, ArtifactDefinition> getAllArtifacts() {
@@ -331,26 +272,11 @@ public abstract class Component implements PropertiesOwner {
         return allArtifacts;
     }
 
-    Optional<ArtifactDefinition> getArtifact(String id) {
-        HashMap<String, ArtifactDefinition> allArtifacts = new HashMap<>();
-        allArtifacts.putAll(Optional.ofNullable(this.artifacts).orElse(emptyMap()));
-        allArtifacts.putAll(Optional.ofNullable(this.deploymentArtifacts).orElse(emptyMap()));
-        allArtifacts.putAll(Optional.ofNullable(this.toscaArtifacts).orElse(emptyMap()));
-        return Optional.ofNullable(allArtifacts.get(id));
+    @Override
+    @EqualsAndHashCode.Include
+    public String getNormalizedName() {
+        return componentMetadataDefinition.getMetadataDataDefinition().getNormalizedName();
     }
-
-    public List<CategoryDefinition> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<CategoryDefinition> categories) {
-        this.categories = categories;
-    }
-
-	@Override
-	public String getNormalizedName() {
-		return componentMetadataDefinition.getMetadataDataDefinition().getNormalizedName();
-	}
 
     public void setNormalizedName(String normalizedName) {
         componentMetadataDefinition.getMetadataDataDefinition().setNormalizedName(normalizedName);
@@ -371,28 +297,12 @@ public abstract class Component implements PropertiesOwner {
         return capabilities;
     }
 
-    public void setCapabilities(Map<String, List<CapabilityDefinition>> capabilities) {
-        this.capabilities = capabilities;
-    }
-
-    public Map<String, List<RequirementDefinition>> getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(Map<String, List<RequirementDefinition>> requirements) {
-        this.requirements = requirements;
-    }
-
-    public List<ComponentInstance> getComponentInstances() {
-        return componentInstances;
-    }
-
     public List<ComponentInstance> safeGetComponentInstances() {
-    	if(componentInstances != null) {
-    		return componentInstances;
-    	}else {
-    		return emptyList();
-    	}
+        if (componentInstances != null) {
+            return componentInstances;
+        } else {
+            return emptyList();
+        }
     }
 
     public Optional<ComponentInstance> fetchInstanceById(String instanceId) {
@@ -401,36 +311,20 @@ public abstract class Component implements PropertiesOwner {
 
     public Map<String, ArtifactDefinition> safeGetComponentInstanceDeploymentArtifacts(String componentInstanceId) {
         return getComponentInstanceById(componentInstanceId).map(ComponentInstance::safeGetDeploymentArtifacts)
-                                                            .orElse(emptyMap());
+            .orElse(emptyMap());
     }
 
     public Map<String, ArtifactDefinition> safeGetComponentInstanceInformationalArtifacts(String componentInstanceId) {
         return getComponentInstanceById(componentInstanceId).map(ComponentInstance::safeGetInformationalArtifacts)
-                                                            .orElse(emptyMap());
+            .orElse(emptyMap());
     }
 
     public List<ArtifactDefinition> safeGetComponentInstanceHeatArtifacts(String componentInstanceId) {
         return safeGetComponentInstanceDeploymentArtifacts(componentInstanceId)
-                .values()
-                .stream()
-                .filter(artifact -> ArtifactTypeEnum.HEAT_ENV.name().equals(artifact.getArtifactType()))
-                .collect(Collectors.toList());
-    }
-
-    public void setComponentInstances(List<ComponentInstance> resourceInstances) {
-        this.componentInstances = resourceInstances;
-    }
-
-    public List<RequirementCapabilityRelDef> getComponentInstancesRelations() {
-        return componentInstancesRelations;
-    }
-
-    public void setComponentInstancesRelations(List<RequirementCapabilityRelDef> resourceInstancesRelations) {
-        this.componentInstancesRelations = resourceInstancesRelations;
-    }
-
-    public Map<String, List<ComponentInstanceProperty>> getComponentInstancesProperties() {
-        return componentInstancesProperties;
+            .values()
+            .stream()
+            .filter(artifact -> ArtifactTypeEnum.HEAT_ENV.name().equals(artifact.getArtifactType()))
+            .collect(Collectors.toList());
     }
 
     public Map<String, List<ComponentInstanceProperty>> safeGetComponentInstancesProperties() {
@@ -441,14 +335,14 @@ public abstract class Component implements PropertiesOwner {
         return componentInstancesProperties == null ? emptyMap() : findUiComponentInstancesProperties();
     }
 
-    private Map<String,List<ComponentInstanceProperty>> findUiComponentInstancesProperties() {
+    private Map<String, List<ComponentInstanceProperty>> findUiComponentInstancesProperties() {
         List<String> instancesFromUi = componentInstances.stream()
-                .filter(i->!i.isCreatedFromCsar())
-                .map(ComponentInstance::getUniqueId)
-                .collect(Collectors.toList());
+            .filter(i -> !i.isCreatedFromCsar())
+            .map(ComponentInstance::getUniqueId)
+            .collect(Collectors.toList());
         return componentInstancesProperties.entrySet().stream()
-                .filter(e -> instancesFromUi.contains(e.getKey()))
-                .collect(Collectors.toMap(e->e.getKey(), e->e.getValue()));
+            .filter(e -> instancesFromUi.contains(e.getKey()))
+            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
     }
 
     public Map<String, List<ComponentInstanceInput>> safeGetComponentInstancesInputs() {
@@ -459,14 +353,14 @@ public abstract class Component implements PropertiesOwner {
         return componentInstancesInputs == null ? emptyMap() : findUiComponentInstancesInputs();
     }
 
-    private Map<String,List<ComponentInstanceInput>> findUiComponentInstancesInputs() {
+    private Map<String, List<ComponentInstanceInput>> findUiComponentInstancesInputs() {
         List<String> instancesFromUi = componentInstances.stream()
-                .filter(i->!i.isCreatedFromCsar())
-                .map(ComponentInstance::getUniqueId)
-                .collect(Collectors.toList());
+            .filter(i -> !i.isCreatedFromCsar())
+            .map(ComponentInstance::getUniqueId)
+            .collect(Collectors.toList());
         return componentInstancesInputs.entrySet().stream()
-                .filter(e -> instancesFromUi.contains(e.getKey()))
-                .collect(Collectors.toMap(e->e.getKey(), e->e.getValue()));
+            .filter(e -> instancesFromUi.contains(e.getKey()))
+            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
     }
 
     public List<ComponentInstanceProperty> safeGetComponentInstanceProperties(String cmptInstacneId) {
@@ -477,14 +371,9 @@ public abstract class Component implements PropertiesOwner {
         return this.safeGetComponentInstanceEntity(comptInstanceId, this.componentInstancesInputs);
     }
 
-	public List<ComponentInstanceInterface> safeGetComponentInstanceInterfaces(String cmptInstacneId) {
-		return this.safeGetComponentInstanceEntity(cmptInstacneId, this.componentInstancesInterfaces);
-	}
-
-	public void setComponentInstancesProperties(
-			Map<String, List<ComponentInstanceProperty>> resourceInstancesProperties) {
-		this.componentInstancesProperties = resourceInstancesProperties;
-	}
+    public List<ComponentInstanceInterface> safeGetComponentInstanceInterfaces(String cmptInstacneId) {
+        return this.safeGetComponentInstanceEntity(cmptInstacneId, this.componentInstancesInterfaces);
+    }
 
     public Boolean getIsDeleted() {
         return componentMetadataDefinition.getMetadataDataDefinition().isDeleted();
@@ -549,10 +438,6 @@ public abstract class Component implements PropertiesOwner {
         return componentInstances.stream().filter(predicate).findFirst();
     }
 
-    public List<GroupDefinition> getGroups() {
-        return groups;
-    }
-
     public List<GroupDefinition> safeGetGroups() {
         return groups == null ? emptyList() : groups;
     }
@@ -574,259 +459,32 @@ public abstract class Component implements PropertiesOwner {
             return Optional.empty();
         }
         return groups.stream()
-                     .filter(predicate)
-                     .findAny();
+            .filter(predicate)
+            .findAny();
     }
 
-	public Map<String, List<ComponentInstanceInterface>> getComponentInstancesInterfaces() {
-		return componentInstancesInterfaces;
-	}
-
-	public void setComponentInstancesInterfaces(Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces) {
-		this.componentInstancesInterfaces = componentInstancesInterfaces;
-	}
-
-	public void setGroups(List<GroupDefinition> groups) {
-		this.groups = groups;
-	}
-
-  public void addGroups(List<GroupDefinition> groupsToAdd) {
-    if (groups == null) {
-      groups = new ArrayList<>();
-    }
-    groups.addAll(groupsToAdd);
-  }
-
-	public Map<String, PolicyDefinition> getPolicies() {
-		return policies;
-	}
-
-    public void setPolicies(Map<String, PolicyDefinition> policies) {
-        this.policies = policies;
+    public void addGroups(List<GroupDefinition> groupsToAdd) {
+        if (groups == null) {
+            groups = new ArrayList<>();
+        }
+        groups.addAll(groupsToAdd);
     }
 
     public void addPolicy(PolicyDefinition policyDefinition) {
-	    if(MapUtils.isEmpty(this.policies)) {
-	        this.policies = new HashMap<>();
+        if (MapUtils.isEmpty(this.policies)) {
+            this.policies = new HashMap<>();
         }
 
         this.policies.put(policyDefinition.getUniqueId(), policyDefinition);
     }
 
-	public Map<String, CINodeFilterDataDefinition> getNodeFilterComponents() {
-		return nodeFilterComponents;
-	}
-
-	public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilter) {
-		this.nodeFilterComponents = nodeFilter;
-	}
-
-
-
-	public Map<String, List<UploadNodeFilterInfo>> getNodeFilters() {
-		return nodeFilters;
-	}
-
-	public void setNodeFilters(
-			Map<String, List<UploadNodeFilterInfo>> nodeFilters) {
-		this.nodeFilters = nodeFilters;
-	}
-
-	public Map<String, List<UploadNodeFilterInfo>> getServiceFilters() {
-		return serviceFilters;
-	}
-
-	public void setServiceFilters(
-			Map<String, List<UploadNodeFilterInfo>> serviceFilters) {
-		this.serviceFilters = serviceFilters;
-	}
-
-	public List<PropertyDefinition> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(List<PropertyDefinition> properties) {
-		this.properties = properties;
-	}
-
-	public void addProperty(PropertyDefinition propertyDefinition) {
-	    if(org.apache.commons.collections.CollectionUtils.isEmpty(this.properties)) {
-	        this.properties = new ArrayList<>();
+    public void addProperty(PropertyDefinition propertyDefinition) {
+        if (org.apache.commons.collections.CollectionUtils.isEmpty(this.properties)) {
+            this.properties = new ArrayList<>();
         }
 
-        this.properties.add(propertyDefinition);;
-    }
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((artifacts == null) ? 0 : artifacts.hashCode());
-		result = prime * result + ((categories == null) ? 0 : categories.hashCode());
-		result = prime * result + ((componentMetadataDefinition == null) ? 0 : componentMetadataDefinition.hashCode());
-		result = prime * result + ((deploymentArtifacts == null) ? 0 : deploymentArtifacts.hashCode());
-		result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
-		result = prime * result + ((requirements == null) ? 0 : requirements.hashCode());
-		result = prime * result + ((componentInstances == null) ? 0 : componentInstances.hashCode());
-		result = prime * result
-				+ ((componentInstancesProperties == null) ? 0 : componentInstancesProperties.hashCode());
-		result = prime * result
-				+ ((componentInstancesAttributes == null) ? 0 : componentInstancesAttributes.hashCode());
-		result = prime * result + ((componentInstancesInputs == null) ? 0 : componentInstancesInputs.hashCode());
-		result = prime * result + ((componentInstancesRelations == null) ? 0 : componentInstancesRelations.hashCode());
-		result = prime * result + ((groups == null) ? 0 : groups.hashCode());
-		result = prime * result + ((policies == null) ? 0 : policies.hashCode());
-		result = prime * result + ((derivedFromGenericType == null) ? 0 : derivedFromGenericType.hashCode());
-		result = prime * result + ((derivedFromGenericVersion == null) ? 0 : derivedFromGenericVersion.hashCode());
-		result = prime * result + ((interfaces == null) ? 0 : interfaces.hashCode());
-		return result;
-	}
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Component other = (Component) obj;
-        if (artifacts == null) {
-            if (other.artifacts != null) {
-                return false;
-            }
-        }
-        else if (!artifacts.equals(other.artifacts)) {
-            return false;
-        }
-        if (categories == null) {
-            if (other.categories != null) {
-                return false;
-            }
-        }
-        else if (!categories.equals(other.categories)) {
-            return false;
-        }
-        if (componentMetadataDefinition == null) {
-            if (other.componentMetadataDefinition != null) {
-                return false;
-            }
-        }
-        else if (!componentMetadataDefinition.equals(other.componentMetadataDefinition)) {
-            return false;
-        }
-
-        if (deploymentArtifacts == null) {
-            if (other.deploymentArtifacts != null) {
-                return false;
-            }
-        }
-        else if (!deploymentArtifacts.equals(other.deploymentArtifacts)) {
-            return false;
-        }
-
-        if (componentInstances == null) {
-            if (other.componentInstances != null) {
-                return false;
-            }
-        }
-        else if (!componentInstances.equals(other.componentInstances)) {
-            return false;
-        }
-        if (componentInstancesProperties == null) {
-            if (other.componentInstancesProperties != null) {
-                return false;
-            }
-        }
-        else if (!componentInstancesProperties.equals(other.componentInstancesProperties)) {
-            return false;
-        }
-
-        if (!Objects.equals(componentInstancesAttributes, other.componentInstancesAttributes)) {
-            return false;
-        }
-        if (!Objects.equals(componentInstancesInputs, other.componentInstancesInputs)) {
-            return false;
-        }
-        if (componentInstancesRelations == null) {
-            if (other.componentInstancesRelations != null) {
-                return false;
-            }
-        }
-        else if (!componentInstancesRelations.equals(other.componentInstancesRelations)) {
-            return false;
-        }
-        if (requirements == null) {
-            if (other.requirements != null) {
-                return false;
-            }
-        }
-        else if (!requirements.equals(other.requirements)) {
-            return false;
-        }
-        if (capabilities == null) {
-            if (other.capabilities != null) {
-                return false;
-            }
-        }
-        else if (!capabilities.equals(other.capabilities)) {
-            return false;
-        }
-        if (groups == null) {
-            if (other.groups != null) {
-                return false;
-            }
-        }
-        else if (!groups.equals(other.groups)) {
-            return false;
-        }
-        if (policies == null) {
-            if (other.policies != null) {
-                return false;
-            }
-        }
-        else if (!policies.equals(other.policies)) {
-            return false;
-        }
-        if (derivedFromGenericType == null) {
-            if (other.derivedFromGenericType != null) {
-                return false;
-            }
-        }
-        else if (!derivedFromGenericType.equals(other.derivedFromGenericType)) {
-            return false;
-        }
-        if (derivedFromGenericVersion == null) {
-            if (other.derivedFromGenericVersion != null) {
-                return false;
-            }
-        }
-        else if (!derivedFromGenericVersion.equals(other.derivedFromGenericVersion)) {
-            return false;
-        }
-        if (interfaces == null) {
-            if (other.interfaces != null) {
-                return false;
-            }
-        }
-        else if (!interfaces.equals(other.interfaces)) {
-            return false;
-        }
-        if (properties == null) {
-            if (other.properties != null) {
-                return false;
-            }
-        }
-        else if (!properties.equals(other.properties)) {
-            return false;
-        }
-        else if (!nodeFilterComponents.equals(other.nodeFilterComponents)) {
-            return false;
-        }
-        return true;
+        this.properties.add(propertyDefinition);
+        ;
     }
 
     public void addCategory(String category, String subCategory) {
@@ -903,27 +561,14 @@ public abstract class Component implements PropertiesOwner {
         }
     }
 
-    public Map<String, List<ComponentInstanceProperty>> getComponentInstancesAttributes() {
-        return componentInstancesAttributes;
-    }
-
-    public void setComponentInstancesAttributes(
-            Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes) {
-        this.componentInstancesAttributes = componentInstancesAttributes;
-    }
-
-    public Map<String, List<ComponentInstanceInput>> getComponentInstancesInputs() {
-        return componentInstancesInputs;
-    }
-
     public Map<String, List<PropertyDataDefinition>> safeGetGroupsProperties() {
         if (isEmpty(groups)) {
             return emptyMap();
         }
         return groups.stream()
-              .filter(gr -> Objects.nonNull(gr.getProperties()))
-              .collect(toMap(GroupDataDefinition::getUniqueId,
-                             GroupDataDefinition::getProperties));
+            .filter(gr -> Objects.nonNull(gr.getProperties()))
+            .collect(toMap(GroupDataDefinition::getUniqueId,
+                GroupDataDefinition::getProperties));
     }
 
     public Map<String, List<PropertyDataDefinition>> safeGetPolicyProperties() {
@@ -931,10 +576,10 @@ public abstract class Component implements PropertiesOwner {
             return emptyMap();
         }
         return policies.values()
-                .stream()
-                .filter(policy -> Objects.nonNull(policy.getProperties()))
-                .collect(toMap(PolicyDataDefinition::getUniqueId,
-                               PolicyDataDefinition::getProperties));
+            .stream()
+            .filter(policy -> Objects.nonNull(policy.getProperties()))
+            .collect(toMap(PolicyDataDefinition::getUniqueId,
+                PolicyDataDefinition::getProperties));
     }
 
     public List<ComponentInstanceInput> safeGetComponentInstanceInputsByName(String cmptInstanceName) {
@@ -943,11 +588,11 @@ public abstract class Component implements PropertiesOwner {
             return emptyPropsList;
         }
         return this.componentInstances.stream()
-                                      .filter(ci -> ci.getName().equals(cmptInstanceName))
-                                      .map(ComponentInstance::getUniqueId)
-                                      .map(instanceId -> safeGetComponentInstanceEntity(instanceId, this.componentInstancesInputs))
-                                      .findAny()
-                                      .orElse(emptyPropsList);
+            .filter(ci -> ci.getName().equals(cmptInstanceName))
+            .map(ComponentInstance::getUniqueId)
+            .map(instanceId -> safeGetComponentInstanceEntity(instanceId, this.componentInstancesInputs))
+            .findAny()
+            .orElse(emptyPropsList);
     }
 
     private <T> List<T> safeGetComponentInstanceEntity(String cmptInstanceId, Map<String, List<T>> instanceEntities) {
@@ -960,24 +605,16 @@ public abstract class Component implements PropertiesOwner {
     }
 
 
-    public void setComponentInstancesInputs(Map<String, List<ComponentInstanceInput>> componentInstancesInputs) {
-        this.componentInstancesInputs = componentInstancesInputs;
-    }
-
     public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
         // Implement where needed
-    }
-
-    public void setMetadataDefinition(ComponentMetadataDefinition metadataDefinition) {
-        this.componentMetadataDefinition = metadataDefinition;
     }
 
     public String fetchGenericTypeToscaNameFromConfig() {
         // Implement where needed
         return ConfigurationManager.getConfigurationManager()
-                                   .getConfiguration()
-                                   .getGenericAssetNodeTypes()
-                                   .get(this.assetType());
+            .getConfiguration()
+            .getGenericAssetNodeTypes()
+            .get(this.assetType());
     }
 
     public String assetType() {
@@ -1004,22 +641,6 @@ public abstract class Component implements PropertiesOwner {
         return ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue().equals(toscaType);
     }
 
-    public String getToscaType() {
-        return toscaType;
-    }
-
-    public void setToscaType(String toscaType) {
-        this.toscaType = toscaType;
-    }
-
-    public List<AdditionalInformationDefinition> getAdditionalInformation() {
-        return additionalInformation;
-    }
-
-    public void setAdditionalInformation(List<AdditionalInformationDefinition> additionalInformation) {
-        this.additionalInformation = additionalInformation;
-    }
-
     public PolicyDefinition getPolicyById(String id) {
         return policies != null ? policies.get(id) : null;
     }
@@ -1041,8 +662,8 @@ public abstract class Component implements PropertiesOwner {
             return emptyList();
         }
         return policies.values().stream()
-                       .filter(policyPredicate)
-                       .collect(Collectors.toList());
+            .filter(policyPredicate)
+            .collect(Collectors.toList());
     }
 
     public List<GroupDefinition> resolveGroupsByMember(String instanceId) {
@@ -1050,34 +671,46 @@ public abstract class Component implements PropertiesOwner {
             return emptyList();
         }
         return groups.stream()
-                     .filter(group -> group.containsInstanceAsMember(instanceId))
-                     .collect(Collectors.toList());
+            .filter(group -> group.containsInstanceAsMember(instanceId))
+            .collect(Collectors.toList());
     }
 
     public String getActualComponentType() {
         return componentMetadataDefinition.getMetadataDataDefinition().getActualComponentType();
     }
 
-    public Boolean isArchived() { return componentMetadataDefinition.getMetadataDataDefinition().isArchived(); }
+    public Boolean isArchived() {
+        return componentMetadataDefinition.getMetadataDataDefinition().isArchived();
+    }
 
-    public void setArchived(Boolean archived) { componentMetadataDefinition.getMetadataDataDefinition().setArchived(archived); }
+    public void setArchived(Boolean archived) {
+        componentMetadataDefinition.getMetadataDataDefinition().setArchived(archived);
+    }
 
-    public Long getArchiveTime() { return componentMetadataDefinition.getMetadataDataDefinition().getArchiveTime(); }
+    public Long getArchiveTime() {
+        return componentMetadataDefinition.getMetadataDataDefinition().getArchiveTime();
+    }
 
-    public void setArchiveTime(Long archiveTime) { componentMetadataDefinition.getMetadataDataDefinition().setArchiveTime(archiveTime); }
+    public void setArchiveTime(Long archiveTime) {
+        componentMetadataDefinition.getMetadataDataDefinition().setArchiveTime(archiveTime);
+    }
 
-    public Boolean isVspArchived() { return componentMetadataDefinition.getMetadataDataDefinition().isVspArchived();	}
+    public Boolean isVspArchived() {
+        return componentMetadataDefinition.getMetadataDataDefinition().isVspArchived();
+    }
 
-    public void setVspArchived(Boolean vspArchived) { componentMetadataDefinition.getMetadataDataDefinition().setVspArchived(vspArchived); }
+    public void setVspArchived(Boolean vspArchived) {
+        componentMetadataDefinition.getMetadataDataDefinition().setVspArchived(vspArchived);
+    }
 
     //supportability log method return map of component metadata teddy.h
-    public Map<String,String> getComponentMetadataForSupportLog(){
-        Map<String,String>componentMetadata=new HashMap<>();
-        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME,this.getName());
-        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION,this.getVersion());
-        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID,this.getUUID());
-        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID,this.getCsarUUID());
-        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION,this.getCsarVersion());
+    public Map<String, String> getComponentMetadataForSupportLog() {
+        Map<String, String> componentMetadata = new HashMap<>();
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME, this.getName());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION, this.getVersion());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID, this.getUUID());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_UUID, this.getCsarUUID());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_CSAR_VERSION, this.getCsarVersion());
         return componentMetadata;
     }
 
