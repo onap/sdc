@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,17 +20,20 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.UUID;
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
-import org.openecomp.sdc.vendorsoftwareproduct.NetworkManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
@@ -41,138 +44,106 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.ws.rs.core.Response;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.UUID;
-
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({NetworksImpl.class, NetworkManagerFactory.class})
 public class NetworksImplTest {
 
-  private Logger logger = LoggerFactory.getLogger(NetworksImplTest.class);
+    @Mock
+    private NetworkManager mockedNetworkManager;
 
-  @Mock
-  private NetworkManagerFactory networkManagerFactory;
+    private final String vspId = UUID.randomUUID().toString();
+    private final String versionId = UUID.randomUUID().toString();
+    private final String networkId = "" + System.currentTimeMillis();
+    private final String user = "cs0008";
 
-  @Mock
-  private NetworkManager networkManager;
+    @Before
+    public void setUp() {
+        initMocks(this);
 
+        NetworkEntity e = new NetworkEntity();
+        e.setId(networkId);
+        e.setVspId(vspId);
+        e.setVersion(new Version(versionId));
+        e.setCompositionData("{\"name\":\"nm\",\"description\":\"d\"}");
 
-  private final String vspId = UUID.randomUUID().toString();
-  private final String versionId = UUID.randomUUID().toString();
-  private final String networkId = "" + System.currentTimeMillis();
-  private final String user = "cs0008";
+        Collection<NetworkEntity> lst = Collections.singletonList(e);
+        when(mockedNetworkManager.listNetworks(
+            ArgumentMatchers.eq(vspId),
+            ArgumentMatchers.any())).thenReturn(lst);
 
-  @Before
-  public void setUp() {
-    try {
-      initMocks(this);
+        when(mockedNetworkManager.createNetwork(
+            ArgumentMatchers.any())).thenReturn(e);
 
-      mockStatic(NetworkManagerFactory.class);
-      when(NetworkManagerFactory.getInstance()).thenReturn(networkManagerFactory);
-      when(networkManagerFactory.createInterface()).thenReturn(networkManager);
+        CompositionEntityResponse<Network> r = new CompositionEntityResponse<>();
+        r.setId(vspId);
+        when(mockedNetworkManager.getNetwork(
+            ArgumentMatchers.eq(vspId),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.eq(networkId))).thenReturn(r);
 
-
-      NetworkEntity e = new NetworkEntity();
-      e.setId(networkId);
-      e.setVspId(vspId);
-      e.setVersion(new Version(versionId));
-      e.setCompositionData("{\"name\":\"nm\",\"description\":\"d\"}");
-
-
-      Collection<NetworkEntity> lst = Collections.singletonList(e);
-      when(networkManager.listNetworks(
-              ArgumentMatchers.eq(vspId),
-              ArgumentMatchers.any())).thenReturn(lst);
-
-      when(networkManager.createNetwork(
-              ArgumentMatchers.any())).thenReturn(e);
-
-      CompositionEntityResponse<Network> r = new CompositionEntityResponse<>();
-      r.setId(vspId);
-      when(networkManager.getNetwork(
-              ArgumentMatchers.eq(vspId),
-              ArgumentMatchers.any(),
-              ArgumentMatchers.eq(networkId))).thenReturn(r);
-
-      CompositionEntityType tpe = CompositionEntityType.component;
-      CompositionEntityValidationData data = new CompositionEntityValidationData(tpe, vspId);
-      when(networkManager.updateNetwork(
-              ArgumentMatchers.any())).thenReturn(data);
-
-
-    } catch (Exception e) {
-      logger.error(e.getMessage(), e);
+        CompositionEntityType tpe = CompositionEntityType.component;
+        CompositionEntityValidationData data = new CompositionEntityValidationData(tpe, vspId);
+        when(mockedNetworkManager.updateNetwork(
+            ArgumentMatchers.any())).thenReturn(data);
     }
-  }
 
-  @Test
-  public void testList() {
-    NetworksImpl bean = new NetworksImpl();
+    @Test
+    public void testList() {
+        NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
 
-    Response rsp = bean.list(vspId, versionId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
-    Assert.assertNotNull(e);
-    @SuppressWarnings("unchecked")
-    GenericCollectionWrapper<NetworkDto> results = (GenericCollectionWrapper<NetworkDto>)e;
-    Assert.assertEquals("result length", 1, results.getListCount());
-  }
-
-
-  @Test
-  public void testCreate() {
-
-    NetworkRequestDto dto = new NetworkRequestDto();
-    dto.setName("name");
-    dto.setDhcp(true);
-
-    NetworksImpl bean = new NetworksImpl();
-    Response rsp = bean.create(dto, vspId, versionId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
-    Assert.assertNotNull(e);
-    try {
-      StringWrapperResponse s = (StringWrapperResponse)e;
-      Assert.assertEquals(networkId, s.getValue());
-    } catch (ClassCastException ex) {
-      Assert.fail("unexpected class for DTO " + e.getClass().getName());
+        Response rsp = bean.list(vspId, versionId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
+        Object e = rsp.getEntity();
+        Assert.assertNotNull(e);
+        @SuppressWarnings("unchecked")
+        GenericCollectionWrapper<NetworkDto> results = (GenericCollectionWrapper<NetworkDto>) e;
+        Assert.assertEquals("result length", 1, results.getListCount());
     }
-  }
 
 
-  @Test
-  public void testDelete() {
-    NetworksImpl bean = new NetworksImpl();
-    Response rsp = bean.delete(vspId, versionId, networkId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
-  }
+    @Test
+    public void testCreate() {
+
+        NetworkRequestDto dto = new NetworkRequestDto();
+        dto.setName("name");
+        dto.setDhcp(true);
+
+        NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
+        Response rsp = bean.create(dto, vspId, versionId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
+        Object e = rsp.getEntity();
+        Assert.assertNotNull(e);
+        try {
+            StringWrapperResponse s = (StringWrapperResponse) e;
+            Assert.assertEquals(networkId, s.getValue());
+        } catch (ClassCastException ex) {
+            Assert.fail("unexpected class for DTO " + e.getClass().getName());
+        }
+    }
 
 
-  @Test
-  public void testGet() {
-    NetworksImpl bean = new NetworksImpl();
-    Response rsp = bean.get(vspId, versionId, networkId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNotNull(rsp.getEntity());
-  }
+    @Test
+    public void testDelete() {
+        NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
+        Response rsp = bean.delete(vspId, versionId, networkId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
+        Assert.assertNull(rsp.getEntity());
+    }
 
-  @Test
-  public void testUpdate() {
-    NetworksImpl bean = new NetworksImpl();
-    NetworkRequestDto dto = new NetworkRequestDto();
-    Response rsp = bean.update(dto, vspId, versionId, networkId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
-  }
 
+    @Test
+    public void testGet() {
+        NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
+        Response rsp = bean.get(vspId, versionId, networkId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
+        Assert.assertNotNull(rsp.getEntity());
+    }
+
+    @Test
+    public void testUpdate() {
+        NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
+        NetworkRequestDto dto = new NetworkRequestDto();
+        Response rsp = bean.update(dto, vspId, versionId, networkId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
+        Assert.assertNull(rsp.getEntity());
+    }
 }
