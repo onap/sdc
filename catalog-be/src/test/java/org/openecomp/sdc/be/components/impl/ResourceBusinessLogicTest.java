@@ -59,6 +59,7 @@ import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -2221,5 +2222,29 @@ public class ResourceBusinessLogicTest {
         Assert.assertEquals(true,res.isLeft());
     }
 
+    @Test
+	public void rollbackWithEitherAlwaysReturnARuntimeException() {
+		JanusGraphDao janusGraphDao = mockJanusGraphDao;
+		ActionStatus actionStatus = ActionStatus.INPUTS_NOT_FOUND;
+		String params = "testName";
 
+		Either<Object, RuntimeException> result =
+			ResourceBusinessLogic.rollbackWithEither(janusGraphDao, actionStatus, params);
+
+		assertTrue(result.isRight());
+		assertTrue(result.right().value() instanceof ByActionStatusComponentException);
+	}
+
+	@Test
+	public void rollbackWithEitherWorksWithNullJanusGraphDao() {
+		JanusGraphDao janusGraphDao = null;
+		ActionStatus actionStatus = ActionStatus.INPUTS_NOT_FOUND;
+		String params = "testName";
+
+		Either<Object, RuntimeException> result =
+			ResourceBusinessLogic.rollbackWithEither(janusGraphDao, actionStatus, params);
+
+		assertTrue(result.isRight());
+		assertTrue(result.right().value() instanceof ByActionStatusComponentException);
+	}
 }
