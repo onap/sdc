@@ -24,6 +24,17 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager.csvReportFilePath;
 
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collector.Characteristics;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
@@ -68,4 +79,5 @@ public class ValidationConfigManagerTest {
         // default test
         ValidationConfigManager.setOutputFullFilePath(outputPath);
     }
+
 }
