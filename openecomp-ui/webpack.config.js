@@ -3,7 +3,7 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { DefinePlugin, HotModuleReplacementPlugin } = require('webpack');
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const devConfig = require('./tools/getDevConfig');
 const proxyServer = require('./proxy-server');
 const fs = require('fs');
@@ -46,7 +46,7 @@ module.exports = (env, argv) => {
         },
         output: {
             path: path.join(__dirname, 'dist'),
-            publicPath: DEV ? publicPath : '/onboarding/',
+            publicPath: DEV ? publicPath : './',
             filename: DEV ? '[name].js' : '[name]_' + language + '.js'
         },
         module: {
@@ -130,6 +130,10 @@ module.exports = (env, argv) => {
                   new DefinePlugin({
                       DEBUG: DEV === true,
                       DEV: DEV === true
+                  }),
+                  new HtmlWebpackPlugin({
+                    filename: 'index.html',
+                    template: __dirname + '/src/index.html'
                   })
               ]
     };
