@@ -30,8 +30,6 @@ import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Properties;
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ReportManager.class})
 public class ValidationConfigManagerTest {
@@ -68,4 +66,5 @@ public class ValidationConfigManagerTest {
         // default test
         ValidationConfigManager.setOutputFullFilePath(outputPath);
     }
+
 }

@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.tosca;
 
 import fj.F;
 import fj.data.Either;
+import io.vavr.Tuple2;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -56,10 +57,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.config.ComponentType;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -460,33 +461,47 @@ public class CsarUtils {
         return null;
     }
 
-    private Either<ZipOutputStream, ResponseFormat> addInnerComponentsToCSAR(ZipOutputStream zip, Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache) throws IOException {
-        for (Entry<String, ImmutableTriple<String, String, Component>> innerComponentTripleEntry : innerComponentsCache.entrySet()) {
-
-            ImmutableTriple<String, String, Component> innerComponentTriple = innerComponentTripleEntry.getValue();
-
-            Component innerComponent = innerComponentTriple.getRight();
-            String icFileName = innerComponentTriple.getMiddle();
+    private Either<ZipOutputStream, ResponseFormat> addInnerComponentsToCSAR(
+        ZipOutputStream zip,
+        Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache
+    ) throws IOException {
+        for (Entry<String, ImmutableTriple<String, String, Component>> entry : innerComponentsCache.entrySet()) {
+            ImmutableTriple<String, String, Component> ict = entry.getValue();
+            Component innerComponent = ict.getRight();
+            String icFileName = ict.getMiddle();
 
             // add component to zip
-            Either<byte[], ActionStatus> entryData = getEntryData(innerComponentTriple.getLeft(), innerComponent);
-            if (entryData.isRight()) {
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
-                log.debug("Failed adding to zip component {}, error {}", innerComponentTriple.getLeft(),
-                        entryData.right().value());
-                return Either.right(responseFormat);
+            Either<Tuple2<byte[], ZipEntry>, ResponseFormat> zipEntry = toZipEntry(ict);
+            // TODO: this should not be done, we should instead compose this either further,
+            // but in order to keep this refactoring small, we'll stop here.
+            if(zipEntry.isRight()) {
+                return Either.right(zipEntry.right().value());
             }
-            byte[] content = entryData.left().value();
-            zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + icFileName));
-            zip.write(content);
+            Tuple2<byte[], ZipEntry> value = zipEntry.left().value();
+
+            zip.putNextEntry(value._2);
+            zip.write(value._1);
 
             // add component interface to zip
             if (!ModelConverter.isAtomicComponent(innerComponent)) {
-					writeComponentInterface(innerComponent, zip, icFileName, true);
+					      writeComponentInterface(innerComponent, zip, icFileName, true);
             }
         }
         return null;
     }
+
+    private Either<Tuple2<byte[], ZipEntry>, ResponseFormat> toZipEntry(
+        ImmutableTriple<String, String, Component> ict
+    ) {
+        Component innerComponent = ict.getRight();
+        String fileName = ict.getMiddle();
+        return getEntryData(ict.getLeft(), innerComponent)
+            .right().map(status -> {
+                log.debug("Failed adding to zip component {}, error {}", ict.getLeft(), status);
+                return componentsUtils.getResponseFormat(status);
+            }).left().map(content -> new Tuple2<>(content, new ZipEntry(DEFINITIONS_PATH + fileName)));
+    }
+
 
     private void addSchemaFilesFromCassandra(final ZipOutputStream zip,
                                              final byte[] schemaFileZip,
