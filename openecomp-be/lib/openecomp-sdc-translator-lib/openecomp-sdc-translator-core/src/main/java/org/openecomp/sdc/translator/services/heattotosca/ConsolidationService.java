@@ -494,7 +494,18 @@ public class ConsolidationService {
             return true;
         }
         return !CommonUtil.isMultimapEmpty(firstEntityMap) && !CommonUtil.isMultimapEmpty(secondEntityMap)
-                && firstEntityMap.keySet().equals(secondEntityMap.keySet());
+                && equalsIgnoreSuffix(new HashSet<>(firstEntityMap.keySet()),new HashSet<>(secondEntityMap.keySet()));
+    }
+
+    private boolean equalsIgnoreSuffix(Set<String> firstKeySet, Set<String> secondKeySet){
+      Set<String> firstKeySetTrimmed = firstKeySet.stream().map(this::trimSuffix).collect(Collectors.toSet());
+      Set<String> secondKeySetTrimmed = secondKeySet.stream().map(this::trimSuffix).collect(Collectors.toSet());
+      return firstKeySetTrimmed.equals(secondKeySetTrimmed);
+    }
+
+    private String trimSuffix(String volumeName){
+      int suffixPosition = volumeName.lastIndexOf("_");
+      return volumeName.substring(0, suffixPosition);
     }
 
   private boolean checkGroupIdsRelations(EntityConsolidationData startingEntity,
