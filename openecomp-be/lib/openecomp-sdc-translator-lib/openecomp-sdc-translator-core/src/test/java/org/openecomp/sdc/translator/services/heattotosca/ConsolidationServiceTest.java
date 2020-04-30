@@ -981,7 +981,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1283,7 +1283,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -1351,7 +1351,7 @@ public class ConsolidationServiceTest {
 
     translationContext.setConsolidationData(consolidationData);
     List<UnifiedCompositionMode> expectedUnifiedModes =
-        Collections.singletonList(UnifiedCompositionMode.CatalogInstance);
+        Collections.singletonList(UnifiedCompositionMode.ScalingInstances);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
   }
 
@@ -2441,7 +2441,7 @@ public class ConsolidationServiceTest {
                 "role_1", "interface_2", Collections.singletonList("node_2"), null, null, null,
                 consolidationData));
 
-    testConsolidation(1, toscaServiceModel, consolidationData, Collections.singletonList(UnifiedCompositionMode.CatalogInstance));
+    testConsolidation(1, toscaServiceModel, consolidationData, Collections.singletonList(UnifiedCompositionMode.ScalingInstances));
   }
 
   @Test
@@ -2467,7 +2467,7 @@ public class ConsolidationServiceTest {
                 "role_1", "interface_2", null, Collections.singletonList("node_2"), null, null,
                 consolidationData));
 
-    testConsolidation(1, toscaServiceModel, consolidationData, Collections.singletonList(UnifiedCompositionMode.CatalogInstance));
+    testConsolidation(1, toscaServiceModel, consolidationData, Collections.singletonList(UnifiedCompositionMode.ScalingInstances));
   }
 
   @Test
