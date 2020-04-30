@@ -88,6 +88,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
@@ -742,29 +743,31 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		boolean isTopologyChanged) {
 		if (oldResource == null || preparedResource == null) {
 			log.debug("Failed to update resource instances names : oldResource or preparedResource is null");
-		} else if (CollectionUtils.isNotEmpty(oldResource.getComponentInstances())) {
-			Map<String, String> oldInstances = oldResource.getComponentInstances()
-				.stream()
-				.collect(toMap(ComponentInstance::getInvariantName, ComponentInstance::getName));
-			List<ComponentInstance> updatedInstances = preparedResource.getComponentInstances()
-				.stream()
-				.filter(i -> oldInstances.containsKey(i.getInvariantName()) && !i.getName()
-					.equals(oldInstances.get(i.getInvariantName())))
-				.collect(toList());
-			if (CollectionUtils.isNotEmpty(updatedInstances)) {
-				if (isTopologyChanged) {
-					updatedInstances.stream().filter(i -> !i.isCreatedFromCsar())
-						.forEach(i -> i.setName(oldInstances.get(i.getInvariantName())));
-				} else {
-					updatedInstances.forEach(i -> i.setName(oldInstances.get(i.getInvariantName())));
+		} else {
+			if (CollectionUtils.isNotEmpty(oldResource.getComponentInstances())) {
+				Map<String, String> oldInstances = oldResource.getComponentInstances()
+					.stream()
+					.collect(toMap(ComponentInstance::getInvariantName, ComponentInstance::getName));
+				List<ComponentInstance> updatedInstances = preparedResource.getComponentInstances()
+					.stream()
+					.filter(i -> oldInstances.containsKey(i.getInvariantName()) && !i.getName()
+						.equals(oldInstances.get(i.getInvariantName())))
+					.collect(toList());
+				if (CollectionUtils.isNotEmpty(updatedInstances)) {
+					if (isTopologyChanged) {
+						updatedInstances.stream().filter(i -> !i.isCreatedFromCsar())
+							.forEach(i -> i.setName(oldInstances.get(i.getInvariantName())));
+					} else {
+						updatedInstances.forEach(i -> i.setName(oldInstances.get(i.getInvariantName())));
+					}
 				}
 			}
 
+			componentInstanceBusinessLogic.updateComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME,
+				null, preparedResource.getUniqueId(), csarInfo.getModifier()
+					.getUserId(),
+				preparedResource.getComponentInstances(), false);
 		}
-		componentInstanceBusinessLogic.updateComponentInstance(ComponentTypeEnum.RESOURCE_PARAM_NAME,
-			null, preparedResource.getUniqueId(), csarInfo.getModifier()
-				.getUserId(),
-			preparedResource.getComponentInstances(), false);
 	}
 
 	private Either<Resource, ResponseFormat> createOrUpdateArtifacts(ArtifactOperationEnum operation,
@@ -1822,36 +1825,62 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					.listIterator();
 			while (getInputValuesIter.hasNext()) {
 				GetInputValueDataDefinition getInput = getInputValuesIter.next();
-				InputDefinition input = findInputByName(inputs, getInput);
-				getInput.setInputId(input.getUniqueId());
-				if (getInput.getGetInputIndex() != null) {
-					GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
-					input = findInputByName(inputs, getInputIndex);
-					getInputIndex.setInputId(input.getUniqueId());
-					getInputValuesIter.add(getInputIndex);
+				Either<InputDefinition, RuntimeException> inputEither = findInputByName(inputs, getInput);
+				if (inputEither.isRight()) {
+					throw inputEither.right().value();
+				} else {
+					InputDefinition input = inputEither.left().value();
+					getInput.setInputId(input.getUniqueId());
+					if (getInput.getGetInputIndex() != null) {
+						GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
+						Either<InputDefinition, RuntimeException> newInputEither = findInputByName(inputs,
+							getInputIndex);
+						if (newInputEither.isRight()) {
+							throw newInputEither.right().value();
+						} else {
+							InputDefinition newInput = newInputEither.left().value();
+							getInputIndex.setInputId(newInput.getUniqueId());
+						}
+						getInputValuesIter.add(getInputIndex);
+					}
 				}
 			}
 		}
 	}
 
-	private InputDefinition findInputByName(List<InputDefinition> inputs, GetInputValueDataDefinition getInput) {
+	static <T> Either<T, RuntimeException> rollbackWithEither(
+		final JanusGraphDao janusGraphDao,
+		final ActionStatus actionStatus,
+		final String... params) {
+		if (janusGraphDao != null)
+			janusGraphDao.rollback();
+		return Either.right(new ByActionStatusComponentException(actionStatus, params));
+	}
+
+	<T> Either<T, RuntimeException> rollbackWithEither(
+		final ActionStatus actionStatus,
+		final String... params) {
+		return rollbackWithEither(janusGraphDao, actionStatus, params);
+	}
+
+	private Either<InputDefinition, RuntimeException> findInputByName(List<InputDefinition> inputs, GetInputValueDataDefinition getInput) {
 
 		final String inputName = getInput != null ? getInput.getInputName() : "";
 
 		if(inputs == null || inputs.isEmpty()) {
 			log.debug("#findInputByName - Inputs list is empty");
-			rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, inputName);
-		}
-
-		Optional<InputDefinition> inputOpt = inputs.stream()
-				.filter(p -> p.getName()
-						.equals(inputName))
+			return rollbackWithEither(ActionStatus.INPUTS_NOT_FOUND, inputName);
+		} else {
+			Optional<InputDefinition> inputOpt = inputs.stream()
+				.filter(p -> p.getName().equals(inputName))
 				.findFirst();
-		if (!inputOpt.isPresent()) {
-			log.debug("#findInputByName - Failed to find the input {} ", inputName);
-			rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, inputName);
+			if (!inputOpt.isPresent()) {
+				log.debug("#findInputByName - Failed to find the input {} ", inputName);
+				return rollbackWithEither(ActionStatus.INPUTS_NOT_FOUND, inputName);
+			} else {
+				return Either.left(inputOpt.get());
+			}
 		}
-		return inputOpt.get();
 	}
 
 	private void fillGroupsFinalFields(List<GroupDefinition> groupsAsList) {
@@ -3417,18 +3446,28 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 									.collect(toList())
 									.toString());
 						}
-						InputDefinition input = findInputByName(inputs, getInput);
-						getInput.setInputId(input.getUniqueId());
-						getInputValues.add(getInput);
+						Either<InputDefinition, RuntimeException> inputEither = findInputByName(inputs, getInput);
+						if (inputEither.isRight()) {
+							throw inputEither.right().value();
+						} else {
+							InputDefinition input = inputEither.left().value();
+							getInput.setInputId(input.getUniqueId());
+							getInputValues.add(getInput);
 
-						GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
-						if (getInputIndex != null) {
-							input = findInputByName(inputs, getInputIndex);
-							getInputIndex.setInputId(input.getUniqueId());
-							getInputValues.add(getInputIndex);
+							GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
+							if (getInputIndex != null) {
+								Either<InputDefinition, RuntimeException> newInputEither = findInputByName(inputs,
+									getInputIndex);
+								if (inputEither.isRight()) {
+									throw newInputEither.right().value();
+								} else {
+									InputDefinition newInput = newInputEither.left().value();
+									getInputIndex.setInputId(newInput.getUniqueId());
+								}
+								getInputValues.add(getInputIndex);
 
+							}
 						}
-
 					}
 					property.setGetInputValues(getInputValues);
 				}
