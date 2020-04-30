@@ -48,8 +48,15 @@ import java.util.Collection;
 @Scope(value = "prototype")
 public class NetworksImpl implements Networks {
 
-  private NetworkManager networkManager =
-      NetworkManagerFactory.getInstance().createInterface();
+  private final NetworkManager networkManager;
+
+  public NetworksImpl(NetworkManager networkManager) {
+    this.networkManager = networkManager;
+  }
+
+  public NetworksImpl() {
+    this(NetworkManagerFactory.getInstance().createInterface());
+  }
 
   @Override
   public Response list(String vspId, String versionId, String user) {
