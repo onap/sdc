@@ -24,9 +24,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,18 +38,15 @@ import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
-import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
-import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileStatus;
@@ -61,12 +56,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.Module;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplateActionResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({VspManagerFactory.class, ActivityLogManagerFactory.class,
-        OrchestrationTemplateCandidateManagerFactory.class, OrchestrationTemplateCandidateImpl.class})
 public class OrchestrationTemplateCandidateImplTest {
 
     private Logger logger = LoggerFactory.getLogger(OrchestrationTemplateCandidateImplTest.class);
@@ -75,14 +65,9 @@ public class OrchestrationTemplateCandidateImplTest {
     private OrchestrationTemplateCandidateManager candidateManager;
     @Mock
     private VendorSoftwareProductManager vendorSoftwareProductManager;
-    @Mock
-    private VspManagerFactory vspManagerFactory;
+
     @Mock
     private ActivityLogManager activityLogManager;
-    @Mock
-    private ActivityLogManagerFactory activityLogManagerFactory;
-    @Mock
-    OrchestrationTemplateCandidateManagerFactory orchestrationTemplateCandidateManagerFactory;
 
     private OrchestrationTemplateCandidateImpl orchestrationTemplateCandidate;
 
@@ -96,15 +81,6 @@ public class OrchestrationTemplateCandidateImplTest {
     public void setUp(){
         try {
             initMocks(this);
-            mockStatic(VspManagerFactory.class);
-            when(VspManagerFactory.getInstance()).thenReturn(vspManagerFactory);
-            when(vspManagerFactory.createInterface()).thenReturn(vendorSoftwareProductManager);
-            mockStatic(ActivityLogManagerFactory.class);
-            when(ActivityLogManagerFactory.getInstance()).thenReturn(activityLogManagerFactory);
-            when(activityLogManagerFactory.createInterface()).thenReturn(activityLogManager);
-            mockStatic(OrchestrationTemplateCandidateManagerFactory.class);
-            when(OrchestrationTemplateCandidateManagerFactory.getInstance()).thenReturn(orchestrationTemplateCandidateManagerFactory);
-            when(orchestrationTemplateCandidateManagerFactory.createInterface()).thenReturn(candidateManager);
             UploadFileResponse uploadFileResponse = new UploadFileResponse();
             uploadFileResponse.setOnboardingType(OnboardingTypesEnum.ZIP);
             uploadFileResponse.setNetworkPackageName("test");
@@ -148,6 +124,9 @@ public class OrchestrationTemplateCandidateImplTest {
                     ArgumentMatchers.eq(candidateId),
                     ArgumentMatchers.any())).thenReturn(Optional.of(fds));
 
+            orchestrationTemplateCandidate =
+                new OrchestrationTemplateCandidateImpl(candidateManager, vendorSoftwareProductManager, activityLogManager);
+
 
         }catch (Exception e){
            logger.error(e.getMessage(), e);
@@ -156,22 +135,20 @@ public class OrchestrationTemplateCandidateImplTest {
 
     @Test
     public void uploadSignedTest() {
-        orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
         Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.zip"), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void uploadNotSignedTest(){
-        orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
         Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.csar"), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     private Attachment mockAttachment(final String fileName) {
-        final Attachment attachment = mock(Attachment.class);
+        final Attachment attachment = Mockito.mock(Attachment.class);
         when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));
-        final DataHandler dataHandler = mock(DataHandler.class);
+        final DataHandler dataHandler = Mockito.mock(DataHandler.class);
         when(dataHandler.getName()).thenReturn(fileName);
         when(attachment.getDataHandler()).thenReturn(dataHandler);
         final byte[] bytes = "upload package Test".getBytes();
@@ -181,7 +158,6 @@ public class OrchestrationTemplateCandidateImplTest {
 
     @Test
     public void uploadSignNotValidTest() {
-        orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
         Response response = orchestrationTemplateCandidate.upload("1", "1", mockAttachment("filename.zip"), "1");
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertFalse(((UploadFileResponseDto)response.getEntity()).getErrors().isEmpty());
@@ -189,7 +165,6 @@ public class OrchestrationTemplateCandidateImplTest {
 
     @Test
     public void testCandidateGet() throws IOException {
-        orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
         Response rsp = orchestrationTemplateCandidate.get(candidateId, versionId, user);
         Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
         Assert.assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Candidate"),-1);
@@ -199,7 +174,6 @@ public class OrchestrationTemplateCandidateImplTest {
 
     @Test
     public void testVendorSoftwareProductGet() throws IOException {
-        orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
         Response rsp = orchestrationTemplateCandidate.get(softwareProductId, versionId, user);
         Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
         Assert.assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Processed"),-1);
@@ -209,7 +183,6 @@ public class OrchestrationTemplateCandidateImplTest {
 
     @Test
     public void testMissingGet() throws IOException {
-        orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
         Response rsp = orchestrationTemplateCandidate.get(UUID.randomUUID().toString(), versionId, user);
         Assert.assertEquals("Response status equals", Response.Status.NOT_FOUND.getStatusCode(), rsp.getStatus());
     }
@@ -217,7 +190,6 @@ public class OrchestrationTemplateCandidateImplTest {
     @Test
     public void testAbort() {
         try {
-            orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
             Response rsp = orchestrationTemplateCandidate.abort(candidateId, versionId);
             Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
             Assert.assertNull(rsp.getEntity());
@@ -231,7 +203,6 @@ public class OrchestrationTemplateCandidateImplTest {
     @Test
     public void testProcess() {
         try {
-            orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
             Response rsp = orchestrationTemplateCandidate.process(candidateId, versionId, user);
             Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
             Assert.assertNotNull(rsp.getEntity());
@@ -249,7 +220,6 @@ public class OrchestrationTemplateCandidateImplTest {
         try {
             FileDataStructureDto dto = new FileDataStructureDto();
             dto.setArtifacts(Arrays.asList("a", "b", "c"));
-            orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
             Response rsp = orchestrationTemplateCandidate.updateFilesDataStructure(candidateId, versionId, dto, user);
             Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
         }
@@ -264,7 +234,6 @@ public class OrchestrationTemplateCandidateImplTest {
         try {
             FileDataStructureDto dto = new FileDataStructureDto();
             dto.setArtifacts(Arrays.asList("a", "b", "c"));
-            orchestrationTemplateCandidate = new OrchestrationTemplateCandidateImpl();
             Response rsp = orchestrationTemplateCandidate.getFilesDataStructure(candidateId, versionId, user);
             Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
         }
