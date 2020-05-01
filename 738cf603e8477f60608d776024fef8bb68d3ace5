@@ -34,6 +34,24 @@
       "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe84859f_5ba51a9a",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/ComponentDaoFactoryImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-01T20:28:59Z",
+      "side": 1,
+      "message": "I would instead not add this test, as overall, it mainly adds more code to maintain without providing much benefit. However it would be interesting to have a test for ComponentDaoZusammenImpl. This may have to be done in a different change though.\n\nOverall, I avoid testing implementation details and favor API/Interface details. So anything that needs to be exposed must be tested, the implementations details do not need that. In order to ensure that all the implementations of an interface satisfy its contract, a contract-test has to be created.\n\nConcretely, this is done using an abstract class. I put an example here: https://gist.github.com/FrancisToth/14ab5620910787c9318dd90ac1fea351\n\nThe idea is to create a contract used to test all the common properties of the interface against each implementation.",
+      "parentUuid": "a24a9d82_55b182e1",
+      "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
