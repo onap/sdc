@@ -38,6 +38,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -830,31 +832,31 @@ public class CsarUtils {
      * @param collectedWarningMessages
      * @return
      */
-    public static Either<NonMetaArtifactInfo, Boolean> validateNonMetaArtifact(String artifactPath, byte[] payloadData, Map<String, Set<List<String>>> collectedWarningMessages) {
-        Either<NonMetaArtifactInfo, Boolean> ret;
+    public static Either<NonMetaArtifactInfo, Boolean> validateNonMetaArtifact(
+        String artifactPath,
+        byte[] payloadData,
+        Map<String, Set<List<String>>> collectedWarningMessages
+    ) {
         try {
             String[] parsedArtifactPath = artifactPath.split(PATH_DELIMITER);
-            // Validate Artifact Group Type
-            Either<ArtifactGroupTypeEnum, Boolean> eitherGroupType = detectArtifactGroupType(parsedArtifactPath[1], collectedWarningMessages);
-            if (eitherGroupType.isLeft()) {
-                final ArtifactGroupTypeEnum groupTypeEnum = eitherGroupType.left().value();
+            String groupType = parsedArtifactPath[1];
+            String receivedTypeName = parsedArtifactPath[2];
+            String artifactFileNameType = parsedArtifactPath[3];
 
-                // Validate Artifact Type
-                String artifactType = parsedArtifactPath[2];
-                artifactType = detectArtifactTypeVF(groupTypeEnum, artifactType, collectedWarningMessages);
+            return detectArtifactGroupType(groupType, collectedWarningMessages)
+                .left().bind(artifactGroupType -> {
+                    String artifactType =
+                        detectArtifactTypeVF(artifactGroupType, receivedTypeName, collectedWarningMessages);
 
-                String artifactFileNameType = parsedArtifactPath[3];
-                ret = Either.left(new NonMetaArtifactInfo(artifactFileNameType, artifactPath, artifactType, groupTypeEnum, payloadData, null, true));
-
-            } else {
-                ret = Either.right(eitherGroupType.right().value());
-            }
+                    return Either.left(new NonMetaArtifactInfo(
+                        artifactFileNameType, artifactPath, artifactType,
+                        artifactGroupType, payloadData, null, true
+                    ));
+                });
         } catch (Exception e) {
             log.debug("detectArtifactGroupType failed with exception", e);
-            ret = Either.right(false);
+            return Either.right(false);
         }
-        return ret;
-
     }
 
     private static String detectArtifactTypeVFC(ArtifactGroupTypeEnum artifactGroupType, String receivedTypeName, String parentVfName, Map<String, Set<List<String>>> collectedWarningMessages) {
