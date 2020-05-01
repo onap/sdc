@@ -16,9 +16,8 @@
 
 package org.openecomp.sdcrests.externaltesting.rest.services;
 
-import static org.mockito.Mockito.when;
+
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +27,6 @@ import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.openecomp.core.externaltesting.api.ClientConfiguration;
 import org.openecomp.core.externaltesting.api.ExternalTestingManager;
@@ -41,12 +39,8 @@ import org.openecomp.core.externaltesting.api.VtpTestExecutionRequest;
 import org.openecomp.core.externaltesting.api.VtpTestExecutionResponse;
 import org.openecomp.core.externaltesting.errors.ExternalTestingException;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
-import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({VspManagerFactory.class})
+
 public class ApiTest {
 
     private static final String EP = "ep";
@@ -58,8 +52,7 @@ public class ApiTest {
 
     @Mock
     private ExternalTestingManager testingManager;
-    @Mock
-    private VspManagerFactory vspManagerFactory;
+
     @Mock
     VendorSoftwareProductManager vendorSoftwareProductManager;
 
@@ -67,10 +60,6 @@ public class ApiTest {
     public void setUp() {
         try {
             initMocks(this);
-            mockStatic(VspManagerFactory.class);
-            when(VspManagerFactory.getInstance()).thenReturn(vspManagerFactory);
-            when(vspManagerFactory.createInterface()).thenReturn(vendorSoftwareProductManager);
-            when(vspManagerFactory.getInstance().createInterface()).thenReturn(vendorSoftwareProductManager);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,7 +74,7 @@ public class ApiTest {
     public void testApi() {
 
 
-        ExternalTestingImpl testing = new ExternalTestingImpl(testingManager);
+        ExternalTestingImpl testing = new ExternalTestingImpl(testingManager, vendorSoftwareProductManager);
         Assert.assertNotNull(testing.getConfig());
         Assert.assertNotNull(testing.getEndpoints());
         Assert.assertNotNull(testing.getExecution(EP, EXEC));
@@ -181,7 +170,7 @@ public class ApiTest {
         initMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
-        ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+        ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
         Response getResponse = testingF.getConfig();
         Assert.assertEquals(500, getResponse.getStatus());
@@ -198,7 +187,7 @@ public class ApiTest {
         initMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
-        ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+        ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
         Response getResponse = testingF.getEndpoints();
         Assert.assertEquals(500, getResponse.getStatus());
@@ -215,7 +204,7 @@ public class ApiTest {
         initMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
-        ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+        ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
         Response invokeResponse = testingF.execute("vspId", "vspVersionId", "abc", null, "[]");
         Assert.assertEquals(500, invokeResponse.getStatus());
@@ -234,7 +223,7 @@ public class ApiTest {
         initMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
-        ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+        ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
         Response response = testingF.getScenarios(EP);
         Assert.assertEquals(500, response.getStatus());
@@ -249,7 +238,7 @@ public class ApiTest {
         initMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
-        ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+        ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
         Response response = testingF.getTestcase(EP, SC, TS, TC);
         Assert.assertEquals(500, response.getStatus());
@@ -264,7 +253,7 @@ public class ApiTest {
         initMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
-        ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+        ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
         Response response = testingF.getTestcases(EP, SC);
         Assert.assertEquals(500, response.getStatus());
@@ -279,7 +268,7 @@ public class ApiTest {
         initMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
-        ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+        ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
         Response response = testingF.getTestsuites(EP, SC);
         Assert.assertEquals(500, response.getStatus());
@@ -294,7 +283,7 @@ public class ApiTest {
         initMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
-        ExternalTestingImpl testingF = new ExternalTestingImpl(m);
+        ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
         Response response = testingF.getTestCasesAsTree();
         Assert.assertEquals(500, response.getStatus());
