@@ -652,17 +652,12 @@ public class CsarUtils {
     }
 
     private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {
-        Either<DAOArtifactData, CassandraOperationStatus> artifactResponse = artifactCassandraDao.getArtifact(cassandraId);
-
-        if (artifactResponse.isRight()) {
-            log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId, artifactResponse.right().value());
-
-            StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(artifactResponse.right().value());
-            ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
-            return Either.right(convertedFromStorageResponse);
-        }
-        DAOArtifactData artifactData = artifactResponse.left().value();
-        return Either.left(artifactData.getDataAsArray());
+        return artifactCassandraDao.getArtifact(cassandraId)
+            .right().map(cos -> {
+                log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId, cos);
+                StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(cos);
+                return componentsUtils.convertFromStorageResponse(storageStatus);
+            }).left().map(DAOArtifactData::getDataAsArray);
     }
 
     private String createCsarBlock0(String metaFileVersion, String toscaConformanceLevel) {
