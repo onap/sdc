@@ -16,110 +16,45 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
+import java.nio.ByteBuffer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 
-import java.nio.ByteBuffer;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class OrchestrationTemplateCandidateData {
-  private ByteBuffer contentData;
-  private String filesDataStructure;
-  private String fileSuffix;
-  private String fileName;
-  private String validationData;
-  private ByteBuffer originalFileContentData;
-  private String originalFileName;
-  private String originalFileSuffix;
 
-  public OrchestrationTemplateCandidateData() {
-  }
+    private ByteBuffer contentData;
+    private String filesDataStructure;
+    private String fileSuffix;
+    private String fileName;
+    private String validationData;
+    private ByteBuffer originalFileContentData;
+    private String originalFileName;
+    private String originalFileSuffix;
 
-  public OrchestrationTemplateCandidateData(final ByteBuffer contentData,
-                                            final String dataStructureJson,
-                                            final String fileSuffix, final String fileName,
-                                            final String originalFileName,
-                                            final String originalFileSuffix,
-                                            final ByteBuffer originalFileContentData) {
-    this.contentData = contentData;
-    this.filesDataStructure = dataStructureJson;
-    this.fileSuffix = fileSuffix;
-    this.fileName = fileName;
-    this.originalFileName = originalFileName;
-    this.originalFileSuffix = originalFileSuffix;
-    this.originalFileContentData = originalFileContentData;
-  }
+    public OrchestrationTemplateCandidateData(final ByteBuffer contentData,
+                                              final String dataStructureJson,
+                                              final String fileSuffix, final String fileName,
+                                              final String originalFileName,
+                                              final String originalFileSuffix,
+                                              final ByteBuffer originalFileContentData) {
+        this.contentData = contentData;
+        this.filesDataStructure = dataStructureJson;
+        this.fileSuffix = fileSuffix;
+        this.fileName = fileName;
+        this.originalFileName = originalFileName;
+        this.originalFileSuffix = originalFileSuffix;
+        this.originalFileContentData = originalFileContentData;
+    }
 
-  public ByteBuffer getContentData() {
-    return contentData;
-  }
+    public ValidationStructureList getValidationDataStructure() {
+        return validationData == null ? null
+            : JsonUtil.json2Object(validationData, ValidationStructureList.class);
+    }
 
-  public void setContentData(ByteBuffer contentData) {
-    this.contentData = contentData;
-  }
-
-  public String getFilesDataStructure() {
-    return filesDataStructure;
-  }
-
-  public void setFilesDataStructure(String filesDataStructure) {
-    this.filesDataStructure = filesDataStructure;
-  }
-
-  public String getFileSuffix() {
-    return fileSuffix;
-  }
-
-  public void setFileSuffix(String fileSuffix) {
-    this.fileSuffix = fileSuffix;
-  }
-
-  public String getFileName() {
-    return fileName;
-  }
-
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
-  }
-
-  public String getValidationData() {
-    return validationData;
-  }
-
-  public void setValidationData(String validationData) {
-    this.validationData = validationData;
-  }
-
-  public ValidationStructureList getValidationDataStructure() {
-    return validationData == null ? null
-        : JsonUtil.json2Object(validationData, ValidationStructureList.class);
-  }
-
-  public void setValidationDataStructure(ValidationStructureList validationData) {
-    this.validationData = validationData == null ? null
-        : JsonUtil.object2Json(validationData);
-  }
-
-  public ByteBuffer getOriginalFileContentData() {
-    return originalFileContentData;
-  }
-
-  public void setOriginalFileContentData(ByteBuffer originalFileContentData) {
-    this.originalFileContentData = originalFileContentData;
-  }
-
-  public String getOriginalFileName() {
-    return originalFileName;
-  }
-
-  public void setOriginalFileName(String originalFileName) {
-    this.originalFileName = originalFileName;
-  }
-
-  public String getOriginalFileSuffix() {
-    return originalFileSuffix;
-  }
-
-  public void setOriginalFileSuffix(String originalFileSuffix) {
-    this.originalFileSuffix = originalFileSuffix;
-  }
 }
