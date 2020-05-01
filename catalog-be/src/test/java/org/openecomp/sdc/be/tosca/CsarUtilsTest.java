@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import fj.data.Either;
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -660,10 +662,14 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		map.put(path, "value".getBytes());
 		Entry<String, byte[]> entry = map.entrySet().iterator().next();
 
-		ImmutablePair<String, ArtifactDefinition> output = Deencapsulation.invoke(testSubject, "extractVfcArtifact", entry, new HashMap<>());
+		Optional<ImmutablePair<String, ArtifactDefinition>> output =
+			Deencapsulation.invoke(testSubject, "extractVfcArtifact", entry, new HashMap<>());
 
-		assertNotNull(output);
-		assertEquals("to",output.left);
+		if(output.isPresent()) {
+			assertEquals("to", output.get().left);
+		} else {
+			fail("`output` is empty!");
+		}
 	}
 
 	@Test
