@@ -72,12 +72,27 @@ import org.springframework.stereotype.Service;
 public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplateCandidate {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(OrchestrationTemplateCandidateImpl.class);
-  private OrchestrationTemplateCandidateManager candidateManager =
-      OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
-  private VendorSoftwareProductManager vendorSoftwareProductManager = VspManagerFactory
-      .getInstance().createInterface();
-  private ActivityLogManager activityLogManager =
-          ActivityLogManagerFactory.getInstance().createInterface();
+  private final OrchestrationTemplateCandidateManager candidateManager;
+
+  private final VendorSoftwareProductManager vendorSoftwareProductManager;
+  private final ActivityLogManager activityLogManager;
+
+
+  public OrchestrationTemplateCandidateImpl() {
+    this.candidateManager = OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
+    this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
+    this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
+  }
+
+  // Constructor used in test to avoid mock static
+  public OrchestrationTemplateCandidateImpl(
+      OrchestrationTemplateCandidateManager candidateManager,
+      VendorSoftwareProductManager vendorSoftwareProductManager,
+      ActivityLogManager activityLogManager) {
+    this.candidateManager = candidateManager;
+    this.vendorSoftwareProductManager = vendorSoftwareProductManager;
+    this.activityLogManager = activityLogManager;
+  }
 
   @Override
   public Response upload(final String vspId, final String versionId,
