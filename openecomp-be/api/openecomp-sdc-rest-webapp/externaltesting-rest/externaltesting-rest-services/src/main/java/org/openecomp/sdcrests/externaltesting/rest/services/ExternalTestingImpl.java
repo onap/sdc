@@ -58,12 +58,19 @@ public class ExternalTestingImpl implements ExternalTesting {
     private final ExternalTestingManager testingManager;
     private static final int REQUEST_ID_LENGTH = 8;
     private static final String TESTING_INTERNAL_ERROR = "SDC-TEST-005";
-    private final VendorSoftwareProductManager vendorSoftwareProductManager =
-            VspManagerFactory.getInstance().createInterface();
+    private final VendorSoftwareProductManager vendorSoftwareProductManager;
+
     private static final Logger logger = LoggerFactory.getLogger(ExternalTestingImpl.class);
 
     public ExternalTestingImpl(@Autowired ExternalTestingManager testingManager) {
         this.testingManager = testingManager;
+        this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
+    }
+
+    public ExternalTestingImpl(ExternalTestingManager testingManager,
+        VendorSoftwareProductManager vendorSoftwareProductManager) {
+        this.testingManager = testingManager;
+        this.vendorSoftwareProductManager = vendorSoftwareProductManager;
     }
 
     /**
