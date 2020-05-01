@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "747c73ec_49bfe4fb",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Component.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-01T19:00:23Z",
+      "side": 1,
+      "message": "Usually, this kind of function is called `getHeadOption`. The `head` being the first item of the collection.",
+      "revId": "743d9b77bd1bcd3873b7c42f9b3958f9c5518dbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fcd2603_105d049a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Resource.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-01T19:00:23Z",
+      "side": 1,
+      "message": "A minor comment, but as far as I remember, we use spaces not tabs (https://wiki.onap.org/display/DW/Java+code+style)",
+      "revId": "743d9b77bd1bcd3873b7c42f9b3958f9c5518dbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b6311fd_3eb13c52",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ResourceTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-01T19:00:23Z",
+      "side": 1,
+      "message": "You should reformat this code according the standards (same for any code you added or modified).",
+      "revId": "743d9b77bd1bcd3873b7c42f9b3958f9c5518dbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a3d4e8b_6bbdf33b",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ServiceTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-01T19:00:23Z",
+      "side": 1,
+      "message": "The declaration of a variable should be done as close as possible as to where it is used (as explained by Effective Java and Clean Code). Therefore, we could clean this a bit like following:\n```\nService testSubject \u003d createTestSubject();\n// ...\nString result \u003d testSubject.fetchGenericTypeToscaNameFromConfig();\n// ...\n```",
+      "revId": "743d9b77bd1bcd3873b7c42f9b3958f9c5518dbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bfbe1ce7_0f9cd1fa",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/ServiceTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-01T19:00:23Z",
+      "side": 1,
+      "message": "You should reformat the code according the coding standards.",
+      "revId": "743d9b77bd1bcd3873b7c42f9b3958f9c5518dbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
