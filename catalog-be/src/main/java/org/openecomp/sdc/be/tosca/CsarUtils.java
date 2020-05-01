@@ -57,10 +57,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.config.ComponentType;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -85,7 +85,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
-import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
@@ -700,7 +699,11 @@ public class CsarUtils {
                 // filter CSAR entry by node type artifact path
                 .filter(e -> Pattern.compile(VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN).matcher(e.getKey()).matches())
                 // extract ArtifactDefinition from CSAR entry for each entry with matching artifact path
-                .forEach(e -> addExtractedVfcArtifact(extractVfcArtifact(e, collectedWarningMessages), artifacts));
+                .forEach(e ->
+                    extractVfcArtifact(e, collectedWarningMessages).ifPresent(ip ->
+                        addExtractedVfcArtifact(ip, artifacts)
+                    )
+                );
             // add counter suffix to artifact labels
             handleWarningMessages(collectedWarningMessages);
 
@@ -722,30 +725,30 @@ public class CsarUtils {
 
     }
 
-    private static void addExtractedVfcArtifact(ImmutablePair<String, ArtifactDefinition> extractedVfcArtifact, Map<String, List<ArtifactDefinition>> artifacts) {
-        if (extractedVfcArtifact != null) {
-            List<ArtifactDefinition> currArtifactsList;
-            String vfcToscaNamespace = extractedVfcArtifact.getKey();
-            if (artifacts.containsKey(vfcToscaNamespace)) {
-                currArtifactsList = artifacts.get(vfcToscaNamespace);
-            } else {
-                currArtifactsList = new ArrayList<>();
-                artifacts.put(vfcToscaNamespace, currArtifactsList);
-            }
-            currArtifactsList.add(extractedVfcArtifact.getValue());
-        }
+    private static void addExtractedVfcArtifact(
+        ImmutablePair<String, ArtifactDefinition> extractedVfcArtifact,
+        Map<String, List<ArtifactDefinition>> artifacts
+    ) {
+        String vfcToscaNamespace = extractedVfcArtifact.getKey();
+
+        artifacts.computeIfAbsent(vfcToscaNamespace, k -> new ArrayList<>());
+        artifacts.get(vfcToscaNamespace).add(extractedVfcArtifact.getValue());
     }
 
-    private static ImmutablePair<String, ArtifactDefinition> extractVfcArtifact(Entry<String, byte[]> entry, Map<String, Set<List<String>>> collectedWarningMessages) {
-        ArtifactDefinition artifact;
+    private static Optional<ImmutablePair<String, ArtifactDefinition>> extractVfcArtifact(
+        Entry<String, byte[]> entry,
+        Map<String, Set<List<String>>> collectedWarningMessages
+    ) {
         String[] parsedCsarArtifactPath = entry.getKey().split(PATH_DELIMITER);
-        Either<ArtifactGroupTypeEnum, Boolean> eitherArtifactGroupType = detectArtifactGroupType(parsedCsarArtifactPath[2].toUpperCase(), collectedWarningMessages);
-        if (eitherArtifactGroupType.isLeft()) {
-            artifact = buildArtifactDefinitionFromCsarArtifactPath(entry, collectedWarningMessages, parsedCsarArtifactPath, eitherArtifactGroupType.left().value());
-        } else {
-            return null;
-        }
-        return new ImmutablePair<>(parsedCsarArtifactPath[1], artifact);
+        String groupType = parsedCsarArtifactPath[2].toUpperCase();
+
+        return detectArtifactGroupType(groupType, collectedWarningMessages)
+            .left()
+            .map(buildArtifactDefinitionFromCsarArtifactPath(entry, collectedWarningMessages, parsedCsarArtifactPath))
+            .either(
+                ad -> Optional.of(new ImmutablePair<>(parsedCsarArtifactPath[1], ad)),
+                b -> Optional.empty()
+            );
     }
 
     private static Either<ArtifactGroupTypeEnum, Boolean> detectArtifactGroupType(String groupType, Map<String, Set<List<String>>> collectedWarningMessages) {
@@ -776,19 +779,29 @@ public class CsarUtils {
         return result;
     }
 
-    private static ArtifactDefinition buildArtifactDefinitionFromCsarArtifactPath(Entry<String, byte[]> entry, Map<String, Set<List<String>>> collectedWarningMessages, String[] parsedCsarArtifactPath, ArtifactGroupTypeEnum artifactGroupType) {
-        ArtifactDefinition artifact;
-        artifact = new ArtifactDefinition();
-        artifact.setArtifactGroupType(artifactGroupType);
-        artifact.setArtifactType(detectArtifactTypeVFC(artifactGroupType, parsedCsarArtifactPath[3], parsedCsarArtifactPath[1], collectedWarningMessages));
-        artifact.setArtifactName(ValidationUtils.normalizeFileName(parsedCsarArtifactPath[parsedCsarArtifactPath.length - 1]));
-        artifact.setPayloadData(Base64.encodeBase64String(entry.getValue()));
-        artifact.setArtifactDisplayName(artifact.getArtifactName().lastIndexOf('.') > 0 ? artifact.getArtifactName().substring(0, artifact.getArtifactName().lastIndexOf('.')) : artifact.getArtifactName());
-        artifact.setArtifactLabel(ValidationUtils.normalizeArtifactLabel(artifact.getArtifactName()));
-        artifact.setDescription(ARTIFACT_CREATED_FROM_CSAR);
-        artifact.setIsFromCsar(true);
-        artifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(entry.getValue()));
-        return artifact;
+    private static F<ArtifactGroupTypeEnum, ArtifactDefinition> buildArtifactDefinitionFromCsarArtifactPath(
+        Entry<String, byte[]> entry,
+        Map<String, Set<List<String>>> collectedWarningMessages,
+        String[] parsedCsarArtifactPath
+    ) {
+        return artifactGroupType -> {
+            ArtifactDefinition artifact;
+            artifact = new ArtifactDefinition();
+            artifact.setArtifactGroupType(artifactGroupType);
+            artifact.setArtifactType(
+                detectArtifactTypeVFC(artifactGroupType, parsedCsarArtifactPath[3], parsedCsarArtifactPath[1],
+                    collectedWarningMessages));
+            artifact.setArtifactName(
+                ValidationUtils.normalizeFileName(parsedCsarArtifactPath[parsedCsarArtifactPath.length - 1]));
+            artifact.setPayloadData(Base64.encodeBase64String(entry.getValue()));
+            artifact.setArtifactDisplayName(artifact.getArtifactName().lastIndexOf('.') > 0 ? artifact.getArtifactName()
+                .substring(0, artifact.getArtifactName().lastIndexOf('.')) : artifact.getArtifactName());
+            artifact.setArtifactLabel(ValidationUtils.normalizeArtifactLabel(artifact.getArtifactName()));
+            artifact.setDescription(ARTIFACT_CREATED_FROM_CSAR);
+            artifact.setIsFromCsar(true);
+            artifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(entry.getValue()));
+            return artifact;
+        };
     }
 
     @Getter
