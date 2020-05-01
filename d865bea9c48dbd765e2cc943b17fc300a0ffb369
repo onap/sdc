@@ -16,6 +16,24 @@
       "revId": "d865bea9c48dbd765e2cc943b17fc300a0ffb369",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11385ac7_f32a83dd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Resource.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2020-05-01T22:24:26Z",
+      "side": 1,
+      "message": "Not at all, tidies the method up nicely",
+      "parentUuid": "5b22631c_a59bc336",
+      "revId": "d865bea9c48dbd765e2cc943b17fc300a0ffb369",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
