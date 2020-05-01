@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,39 +21,19 @@
 package org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator;
 
 
+import java.util.Collection;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 
-import java.util.Collection;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class DeploymentFlavorCompositionSchemaInput implements SchemaTemplateInput {
 
-  private boolean manual;
-  private DeploymentFlavor deploymentFlavor;
-  private Collection<String> featureGroupIds;
-
-  public boolean isManual() {
-    return manual;
-  }
-
-  public void setManual(boolean manual) {
-    this.manual = manual;
-  }
-
-  public DeploymentFlavor getDeploymentFlavor() {
-    return deploymentFlavor;
-  }
-
-  public void setDeploymentFlavor(
-      DeploymentFlavor deploymentFlavor) {
-    this.deploymentFlavor = deploymentFlavor;
-  }
-
-  public Collection<String> getFeatureGroupIds() {
-    return featureGroupIds;
-  }
-
-  public void setFeatureGroupIds(Collection<String> featureGroupIds) {
-    this.featureGroupIds = featureGroupIds;
-  }
+    private boolean manual;
+    private DeploymentFlavor deploymentFlavor;
+    private Collection<String> featureGroupIds;
 
 }

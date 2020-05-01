@@ -17,41 +17,18 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator;
 
-import com.google.common.annotations.VisibleForTesting;
-
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class ComponentQuestionnaireSchemaInput implements SchemaTemplateInput {
-  private String componentDisplayName;
-  private boolean manual;
-  private List<String> nicNames;
-  private Map componentQuestionnaireData;
 
-  @VisibleForTesting
-  ComponentQuestionnaireSchemaInput() {}
+    private List<String> nicNames;
+    private Map componentQuestionnaireData;
+    private String componentDisplayName;
+    private boolean manual;
 
-  public ComponentQuestionnaireSchemaInput(List<String> nicNames, Map componentQuestionnaireData,
-                               String componentDisplayName, boolean manual) {
-    this.nicNames = nicNames;
-    this.componentQuestionnaireData = componentQuestionnaireData;
-    this.componentDisplayName = componentDisplayName;
-    this.manual = manual;
-  }
-
-  public List<String> getNicNames() {
-    return nicNames;
-  }
-
-  public Map getComponentQuestionnaireData() {
-    return componentQuestionnaireData;
-  }
-
-  public String getComponentDisplayName() {
-    return componentDisplayName;
-  }
-
-  public boolean isManual() {
-    return manual;
-  }
 }

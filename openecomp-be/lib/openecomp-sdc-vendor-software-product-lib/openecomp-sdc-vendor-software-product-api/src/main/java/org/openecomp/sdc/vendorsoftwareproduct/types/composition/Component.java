@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,43 +21,18 @@
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Component {
-  private ComponentData data;
-  private List<Nic> nics;
-  private List<Image> images;
-  private List<ComputeData> compute;
 
-  public ComponentData getData() {
-    return data;
-  }
+    private ComponentData data;
+    private List<Nic> nics;
+    private List<Image> images;
+    private List<ComputeData> compute;
 
-  public void setData(ComponentData data) {
-    this.data = data;
-  }
-
-  public List<Nic> getNics() {
-    return nics;
-  }
-
-  public void setNics(List<Nic> nics) {
-    this.nics = nics;
-  }
-
-  public List<Image> getImages() {
-    return images;
-  }
-
-  public void setImages(List<Image> images) {
-    this.images = images;
-  }
-
-  public List<ComputeData> getCompute() {
-    return compute;
-  }
-
-  public void setCompute(
-      List<ComputeData> compute) {
-    this.compute = compute;
-  }
 }
