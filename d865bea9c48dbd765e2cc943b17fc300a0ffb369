@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b22631c_a59bc336",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/Resource.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-01T21:11:13Z",
+      "side": 1,
+      "message": "You could refactor this one and avoid the `if` block like following:\n```\nreturn getHeadOption(this.getCategories()).flatMap(category -\u003e \n    getHeadOption(category.get().getSubcategories())\n        .map(subCategory -\u003e \n            fetchToscaNameFromConfigBasedOnCategory(category.get().getName(), subCategory.getName())\n));\n```\nI hope you don\u0027t mind me making these comments. If these do not sound relevant or are too picky, please tell me :) In any case the rest is ok to me.",
+      "revId": "d865bea9c48dbd765e2cc943b17fc300a0ffb369",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
