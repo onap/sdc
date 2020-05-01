@@ -20,10 +20,9 @@
 
 package org.openecomp.core.model.types;
 
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class ServiceArtifact extends ServiceElement {
 
-  public ServiceArtifact() {
-    super();
-  }
 }
