@@ -39,6 +39,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -630,25 +631,39 @@ public class CsarUtils {
     }
 
     private Either<byte[], ResponseFormat> getLatestSchemaFilesFromCassandra() {
-        Either<List<SdcSchemaFilesData>, CassandraOperationStatus> specificSchemaFiles = sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(getVersionFirstThreeOctets(), CONFORMANCE_LEVEL);
+        String fto = getVersionFirstThreeOctets();
+        return sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(fto, CONFORMANCE_LEVEL)
+            .right().map(schemaFilesFetchDBError(fto))
+            .left().bind(iff(
+                List::isEmpty,
+                () -> schemaFileFetchError(fto),
+                s -> Either.left(s.iterator().next().getPayloadAsArray())
+                )
+            );
+    }
 
-        if(specificSchemaFiles.isRight()){
-            log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}. Please fix DB table accordingly.", getVersionFirstThreeOctets(), CONFORMANCE_LEVEL);
-            StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(specificSchemaFiles.right().value());
-            ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
-            return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse));
-        }
+    private static <A, B> F<A, B> iff(Predicate<A> p, Supplier<B> s, Function<A, B> orElse) {
+        return a -> p.test(a) ? s.get() : orElse.apply(a);
+    }
 
-        List<SdcSchemaFilesData> listOfSchemas = specificSchemaFiles.left().value();
+    private F<CassandraOperationStatus, ResponseFormat> schemaFilesFetchDBError(String firstThreeOctets) {
+        return cos -> {
+            log.debug(
+                "Failed to get the schema files SDC-Version: {} Conformance-Level {}. Please fix DB table accordingly.",
+                firstThreeOctets, CONFORMANCE_LEVEL);
+            StorageOperationStatus sos = DaoStatusConverter.convertCassandraStatusToStorageStatus(cos);
+            return componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(sos));
+        };
+    }
 
-        if(listOfSchemas.isEmpty()){
-            log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}", getVersionFirstThreeOctets(), CONFORMANCE_LEVEL);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_SCHEMA_FILES_NOT_FOUND, getVersionFirstThreeOctets(), CONFORMANCE_LEVEL));
-        }
-
-        SdcSchemaFilesData schemaFile = listOfSchemas.iterator().next();
-
-        return Either.left(schemaFile.getPayloadAsArray());
+    private Either<byte[], ResponseFormat> schemaFileFetchError(String firstThreeOctets) {
+        log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}",
+            firstThreeOctets, CONFORMANCE_LEVEL);
+        return Either.right(
+            componentsUtils.getResponseFormat(
+                ActionStatus.TOSCA_SCHEMA_FILES_NOT_FOUND, firstThreeOctets, CONFORMANCE_LEVEL
+            )
+        );
     }
 
     private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {
