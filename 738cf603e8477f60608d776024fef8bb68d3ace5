@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d22c0727_8401b7b7",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/ComponentDaoFactoryImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-01T18:53:01Z",
+      "side": 1,
+      "message": "I\u0027m sorry to ask, but what is the purpose of this test? The `createInterface` function returns an implementation of `ComponentDao`. No matter the implementation returned, it should stick to `ComponentDao`\u0027s inherent contract. therefore, from the caller perspective, it should not matter which implementation is chosen. What do you think?",
+      "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
