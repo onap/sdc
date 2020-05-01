@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,50 +22,18 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public class Network implements CompositionDataEntity {
-  private String name;
-  private boolean dhcp;
 
-  public String getName() {
-    return name;
-  }
+    private String name;
+    private boolean dhcp;
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public boolean isDhcp() {
-    return dhcp;
-  }
-
-  public void setDhcp(boolean dhcp) {
-    this.dhcp = dhcp;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = name != null ? name.hashCode() : 0;
-    result = 31 * result + (dhcp ? 1 : 0);
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (this == object) {
-      return true;
-    }
-    if (object == null || getClass() != object.getClass()) {
-      return false;
-    }
-
-    Network network = (Network) object;
-
-    if (!Objects.equals(dhcp, network.dhcp)) {
-      return false;
-    }
-    return name != null ? name.equals(network.name) : network.name == null;
-
-  }
 }

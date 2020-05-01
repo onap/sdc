@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,42 +22,18 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class FilesDataStructure {
-  private List<Module> modules = new ArrayList<>();
-  private List<String> unassigned = new ArrayList<>();
-  private List<String> artifacts = new ArrayList<>();
-  private List<String> nested = new ArrayList<>();
 
-  public List<Module> getModules() {
-    return modules;
-  }
+    private List<Module> modules = new ArrayList<>();
+    private List<String> unassigned = new ArrayList<>();
+    private List<String> artifacts = new ArrayList<>();
+    private List<String> nested = new ArrayList<>();
 
-  public void setModules(List<Module> modules) {
-    this.modules = modules;
-  }
-
-  public List<String> getUnassigned() {
-    return unassigned;
-  }
-
-  public void setUnassigned(List<String> unassigned) {
-    this.unassigned = unassigned;
-  }
-
-  public List<String> getArtifacts() {
-    return artifacts;
-  }
-
-  public void setArtifacts(List<String> artifacts) {
-    this.artifacts = artifacts;
-  }
-
-  public List<String> getNested() {
-    return nested;
-  }
-
-  public void setNested(List<String> nested) {
-    this.nested = nested;
-  }
 }

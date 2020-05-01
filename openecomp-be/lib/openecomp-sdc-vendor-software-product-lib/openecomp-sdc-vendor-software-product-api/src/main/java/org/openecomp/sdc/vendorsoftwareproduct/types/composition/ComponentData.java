@@ -20,63 +20,19 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public class ComponentData implements CompositionDataEntity {
-  private String name;
-  private String description;
-  private String displayName;
 
-  public String getName() {
-    return name;
-  }
+    private String name;
+    private String description;
+    private String displayName;
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = name != null ? name.hashCode() : 0;
-    result = 31 * result + (description != null ? description.hashCode() : 0);
-    result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (this == object) {
-      return true;
-    }
-    if (!(object instanceof ComponentData)) {
-      return false;
-    }
-
-    ComponentData that = (ComponentData) object;
-
-    if (!Objects.equals(name, that.name)) {
-      return false;
-    }
-    if (description != null ? !description.equals(that.description) : that.description != null) {
-      return false;
-    }
-    return displayName != null ? displayName.equals(that.displayName) : that.displayName == null;
-
-  }
 }

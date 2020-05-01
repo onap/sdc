@@ -16,10 +16,15 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.general;
 
-/**
- * Created by TALIO on 11/22/2016.
- */
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class General {
+
     private Hypervisor hypervisor;
     private Image image;
     protected Recovery recovery;
@@ -28,59 +33,4 @@ public class General {
     private String nfcNamingCode;
     private String nfcFunction;
 
-    public Hypervisor getHypervisor() {
-        return hypervisor;
-    }
-
-    public void setHypervisor(Hypervisor hypervisor) {
-        this.hypervisor = hypervisor;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public Recovery getRecovery() {
-        return recovery;
-    }
-
-    public void setRecovery(Recovery recovery) {
-        this.recovery = recovery;
-    }
-
-    public String getDnsConfiguration() {
-        return dnsConfiguration;
-    }
-
-    public void setDnsConfiguration(String dnsConfiguration) {
-        this.dnsConfiguration = dnsConfiguration;
-    }
-
-    public String getVmCloneUsage() {
-        return vmCloneUsage;
-    }
-
-    public void setVmCloneUsage(String vmCloneUsage) {
-        this.vmCloneUsage = vmCloneUsage;
-    }
-
-    public String getNfcNamingCode() {
-        return nfcNamingCode;
-    }
-
-    public void setNfcNamingCode(String nfcNamingCode) {
-        this.nfcNamingCode = nfcNamingCode;
-    }
-
-    public String getNfcFunction() {
-        return nfcFunction;
-    }
-
-    public void setNfcFunction(String nfcFunction) {
-        this.nfcFunction = nfcFunction;
-    }
 }
