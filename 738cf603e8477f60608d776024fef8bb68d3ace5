@@ -70,6 +70,24 @@
       "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a26e91ec_886f8e64",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/ComponentDaoFactoryImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-02T12:38:05Z",
+      "side": 1,
+      "message": "I think this goes back to test an implementation detail which is not considered as a best practice. This is well documented as shown by googling \"test against interface not implementation\".\n\nIf the goal is to ensure that the caller gets always a ComponentDaoZusammenImpl back then I would rather return one than a `VersionableDao`. As if this is only possible implementation, then what is the point of having an interface in the first place?\n```\npublic class ComponentDaoFactoryImpl extends ComponentDaoFactory {\n  private static final ComponentDaoZusammenImpl INSTANCE \u003d new ComponentDaoZusammenImpl(\n      ZusammenAdaptorFactory.getInstance().createInterface());\n\n  @Override\n  public ComponentDaoZusammenImpl createInterface() {\n    return INSTANCE;\n  }\n}\n\n//...\n@Test\nvoid createInterface() {\n\t\n  final ComponentDaoZusammenImpl testSubject \u003d ComponentDaoFactoryImpl.getInstance().createInterface();\n  assertNotNull(testSubject);\n  assertSame(ComponentDaoZusammenImpl.class, testSubject.getClass());\n}\n```\nBut in that case, the test does not make sense anymore. You\u0027d be guaranteed to get a `ComponentDaoFactoryImpl` whenever `createInterface` is called by the type system itself. \n\nSecondly, as it test an implementation detail, this test would have to be modified whenever we decide to return another kind of implementation. So it would increase the efforts required to introduce a new change for no real benefit. In other words, adding a test is still adding some code which at some point will have to be maintained.\n\nAlso, this breaks the encapsulation of the `ComponentDaoFactoryImpl` class, as it exposes its internal aspects. Encapsulation as you probably know is also a fundamental object oriented principle.",
+      "parentUuid": "a0a53490_842e0e69",
+      "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
