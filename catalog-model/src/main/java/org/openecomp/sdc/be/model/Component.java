@@ -286,6 +286,10 @@ public abstract class Component implements PropertiesOwner {
         return this.componentMetadataDefinition.getMetadataDataDefinition().getComponentType();
     }
 
+    public boolean isService() {
+        return getComponentType() == ComponentTypeEnum.SERVICE;
+    }
+
     public void setComponentType(ComponentTypeEnum componentType) {
         this.componentMetadataDefinition.getMetadataDataDefinition().setComponentType(componentType);
     }
