@@ -27,8 +27,7 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-//import com.google.gson.reflect.TypeToken;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 public class ArtifactDataDefinition extends ToscaDataDefinition {
 
@@ -90,6 +89,10 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
 
     public String getArtifactType() {
         return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_TYPE);
+    }
+
+    public boolean isHeatEnvType() {
+        return getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.getType());
     }
 
     public void setArtifactType(String artifactType) {
@@ -203,6 +206,10 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
 
     public String getEsId() {
         return (String) getToscaPresentationValue(JsonPresentationFields.ES_ID);
+    }
+
+    public boolean hasNoMandatoryEsId() {
+        return getEsId() == null && getMandatory();
     }
 
     public void setEsId(String esId) {
