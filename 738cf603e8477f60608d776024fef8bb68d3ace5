@@ -52,6 +52,24 @@
       "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0a53490_842e0e69",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/ComponentDaoFactoryImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-02T11:23:13Z",
+      "side": 1,
+      "message": "Agree we should create create \"contract-test\" for ComponentDaoZusammenImpl and others, but this is out of scope for this change.\nHowever, cannot agree for this TC, just for testing getInstance() and createInterface(), I think, it good enough, without any additional complexity. From caller perspective, I except to get ComponentDaoZusammenImpl and not any other implementation of interface when I call ComponentDaoFactoryImpl, right? What do you think?",
+      "parentUuid": "fe84859f_5ba51a9a",
+      "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
