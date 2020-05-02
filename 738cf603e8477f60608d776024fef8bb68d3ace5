@@ -124,6 +124,24 @@
       "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30b24a55_cef12b68",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/ComponentDaoFactoryImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-02T13:42:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c4ca01c_a495aafd",
+      "revId": "738cf603e8477f60608d776024fef8bb68d3ace5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
