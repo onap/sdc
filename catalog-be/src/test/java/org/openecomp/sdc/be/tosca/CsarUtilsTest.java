@@ -43,6 +43,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import mockit.Deencapsulation;
@@ -778,24 +780,6 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	@Test
 	public void testValidateNonMetaArtifactWithExceptionCaught() {
 		CsarUtils.validateNonMetaArtifact("", new byte[0], new HashMap<>());
-	}
-
-	@Test
-	public void testWriteArtifactDefinition() throws IOException {
-		Component component = new Service();
-		List<ArtifactDefinition> artifactDefinitionList = new ArrayList<>();
-		String artifactPathAndFolder = "";
-
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactType(ArtifactTypeEnum.HEAT_ENV.getType());
-		artifactDefinitionList.add(artifact);
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Either<ZipOutputStream, ResponseFormat> output = Deencapsulation.invoke(testSubject, "writeArtifactDefinition", component, zip, artifactDefinitionList, artifactPathAndFolder, false);
-
-			assertNotNull(output);
-			assertTrue(output.isLeft());
-		}
 	}
 
 	@Test
