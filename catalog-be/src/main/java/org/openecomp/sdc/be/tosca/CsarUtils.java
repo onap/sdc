@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.tosca;
 
 
 import fj.F;
+import fj.Unit;
 import fj.data.Either;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -38,8 +39,11 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -1020,73 +1024,79 @@ public class CsarUtils {
     }
 
     private Either<ZipOutputStream, ResponseFormat> writeArtifactsInfoToSpecifiedPath(final Component mainComponent,
-                                                                                      final ArtifactsInfo currArtifactsInfo,
-                                                                                      final ZipOutputStream zip,
-                                                                                      final String path,
-                                                                                      final boolean isInCertificationRequest) throws IOException {
+        final ArtifactsInfo currArtifactsInfo,
+        final ZipOutputStream zip,
+        final String path,
+        final boolean isInCertificationRequest) throws IOException {
+
         final Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> artifactsInfo =
             currArtifactsInfo.getArtifactsInfo();
         for (final ArtifactGroupTypeEnum artifactGroupTypeEnum : artifactsInfo.keySet()) {
-            final String groupTypeFolder = path + WordUtils.capitalizeFully(artifactGroupTypeEnum.getType()) + PATH_DELIMITER;
+            final String groupTypeFolder =
+                path + WordUtils.capitalizeFully(artifactGroupTypeEnum.getType()) + PATH_DELIMITER;
 
             final Map<String, List<ArtifactDefinition>> artifactTypesMap = artifactsInfo.get(artifactGroupTypeEnum);
 
             for (final String artifactType : artifactTypesMap.keySet()) {
                 final List<ArtifactDefinition> artifactDefinitionList = artifactTypesMap.get(artifactType);
-				String artifactTypeFolder = groupTypeFolder + artifactType + PATH_DELIMITER;
+                String artifactTypeFolder = groupTypeFolder + artifactType + PATH_DELIMITER;
 
-				if(ArtifactTypeEnum.WORKFLOW.getType().equals(artifactType) && path.contains(ARTIFACTS_PATH + RESOURCES_PATH)){
-					// Ignore this packaging as BPMN artifacts needs to be packaged in different manner
-					continue;
-				}
-				if (ArtifactTypeEnum.WORKFLOW.getType().equals(artifactType)) {
-					artifactTypeFolder += OperationArtifactUtil.BPMN_ARTIFACT_PATH + File.separator;
-				}
+                if (ArtifactTypeEnum.WORKFLOW.getType().equals(artifactType) && path
+                    .contains(ARTIFACTS_PATH + RESOURCES_PATH)) {
+                    // Ignore this packaging as BPMN artifacts needs to be packaged in different manner
+                    continue;
+                }
+                if (ArtifactTypeEnum.WORKFLOW.getType().equals(artifactType)) {
+                    artifactTypeFolder += OperationArtifactUtil.BPMN_ARTIFACT_PATH + File.separator;
+                }
 
-                Either<ZipOutputStream, ResponseFormat> writeArtifactDefinition =
-                    writeArtifactDefinition(mainComponent, zip, artifactDefinitionList, artifactTypeFolder, isInCertificationRequest);
-
-                if (writeArtifactDefinition.isRight()) {
-                    return writeArtifactDefinition;
+                // TODO: We should not do this but in order to keep this refactoring small enough,
+                // we'll leave this as is for now
+                List<ArtifactDefinition> collect =
+                    filterArtifactDefinitionToZip(mainComponent, artifactDefinitionList, isInCertificationRequest)
+                        .collect(Collectors.toList());
+                for (ArtifactDefinition ad : collect) {
+                    zip.putNextEntry(new ZipEntry(artifactTypeFolder + ad.getArtifactName()));
+                    zip.write(ad.getPayloadData());
                 }
             }
         }
-
         return Either.left(zip);
     }
 
-    private Either<ZipOutputStream, ResponseFormat> writeArtifactDefinition(Component mainComponent, ZipOutputStream zip, List<ArtifactDefinition> artifactDefinitionList,
-            String artifactPathAndFolder, boolean isInCertificationRequest) throws IOException {
+    private Stream<ArtifactDefinition> filterArtifactDefinitionToZip(Component mainComponent,
+        List<ArtifactDefinition> artifactDefinitionList, boolean isInCertificationRequest) {
+        return artifactDefinitionList
+            .stream()
+            .filter(shouldBeInZip(isInCertificationRequest, mainComponent))
+            .map(this::fetchPayLoadData)
+            .filter(Either::isLeft)
+            .map(e -> e.left().value());
+    }
 
-        ComponentTypeEnum componentType = mainComponent.getComponentType();
-        String heatEnvType = ArtifactTypeEnum.HEAT_ENV.getType();
+    private Predicate<ArtifactDefinition> shouldBeInZip(boolean isInCertificationRequest, Component component) {
+        return artifactDefinition ->
+            !(!isInCertificationRequest
+                && component.isService()
+                && artifactDefinition.isHeatEnvType()
+                || artifactDefinition.hasNoMandatoryEsId());
+    }
 
-        for (ArtifactDefinition artifactDefinition : artifactDefinitionList) {
-            if (!isInCertificationRequest && componentType == ComponentTypeEnum.SERVICE
-                        && artifactDefinition.getArtifactType().equals(heatEnvType) ||
-                        //this is placeholder
-                        (artifactDefinition.getEsId() == null && artifactDefinition.getMandatory())){
-                continue;
-            }
-
-            byte[] payloadData = artifactDefinition.getPayloadData();
-            String artifactFileName = artifactDefinition.getArtifactName();
-
-            if (payloadData == null) {
-                Either<byte[], ActionStatus> fromCassandra = getFromCassandra(artifactDefinition.getEsId());
-
-                if (fromCassandra.isRight()) {
-                    log.debug(ARTIFACT_NAME_UNIQUE_ID, artifactDefinition.getArtifactName(), artifactDefinition.getUniqueId());
-                    log.debug("Failed to get {} payload from DB reason: {}", artifactFileName, fromCassandra.right().value());
-                    continue;
-                }
-                payloadData = fromCassandra.left().value();
-            }
-            zip.putNextEntry(new ZipEntry(artifactPathAndFolder + artifactFileName));
-            zip.write(payloadData);
+    private Either<ArtifactDefinition, ActionStatus> fetchPayLoadData(ArtifactDefinition ad) {
+        byte[] payloadData = ad.getPayloadData();
+        if(payloadData == null) {
+            return getFromCassandra(ad.getEsId())
+                .left().map(pd -> {
+                    ad.setPayload(pd);
+                    return ad;
+                }).right().map(as -> {
+                    log.debug(ARTIFACT_NAME_UNIQUE_ID, ad.getArtifactName(), ad.getUniqueId());
+                    log.debug("Failed to get {} payload from DB reason: {}", ad.getArtifactName(), as);
+                    return as;
+                });
+        } else {
+            return Either.left(ad);
         }
-
-        return Either.left(zip);
     }
 
     /************************************ Artifacts Structure ******************************************************************/
