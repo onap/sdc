@@ -52,6 +52,24 @@
       "revId": "3d8199e2ec129264bb91bddcd249214137ff5cb2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d82fc237_03a22e51",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-03T16:41:28Z",
+      "side": 1,
+      "message": "If we think about the options, this constructor could be private, but that would prevent it from being accessible from the tests. So the only remaining options are protected and default (aka package private). This would then expose the constructor either to all classes inhering from it or to all classes in the same package (including the tests). In both cases, it\u0027s impossible to ensure the constructor is only accessible from the tests.\n\nConsidering these dependencies are anyway \"injected\" in the class, why not making this clear at the constructor level? Or using a factory method?",
+      "parentUuid": "a5f20a8c_3c4245b4",
+      "revId": "3d8199e2ec129264bb91bddcd249214137ff5cb2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
