@@ -1124,6 +1124,10 @@ public class CsarUtils {
             return artifactsInfoField.isEmpty();
         }
 
+        public boolean isNotEmpty() {
+            return !isEmpty();
+        }
+
     }
 
     /**
@@ -1290,19 +1294,13 @@ public class CsarUtils {
         return result.toString();
     }
 
-    private ComponentTypeArtifacts collectComponentTypeArtifacts(Map<String, ComponentTypeArtifacts> resourcesArtifacts, ComponentInstance componentInstance,
-            Component fetchedComponent) {
-        String toscaComponentName = componentInstance.getToscaComponentName() + "_v" + componentInstance.getComponentVersion();
-
-        ComponentTypeArtifacts componentArtifactsInfo = resourcesArtifacts.get(toscaComponentName);
-        //if there are no artifacts for this component type we need to fetch and build them
-        if (componentArtifactsInfo==null){
-            ArtifactsInfo componentArtifacts = collectComponentArtifacts(fetchedComponent);
-            componentArtifactsInfo = new ComponentTypeArtifacts();
-            if (!componentArtifacts.isEmpty()){
-                componentArtifactsInfo.setComponentArtifacts(componentArtifacts);
-                resourcesArtifacts.put(toscaComponentName, componentArtifactsInfo);
-            }
+    private ComponentTypeArtifacts collectComponentTypeArtifacts(
+        Component fetchedComponent
+    ) {
+        ArtifactsInfo componentArtifacts = collectComponentArtifacts(fetchedComponent);
+        ComponentTypeArtifacts componentArtifactsInfo = new ComponentTypeArtifacts();
+        if (componentArtifacts.isNotEmpty()) {
+            componentArtifactsInfo.setComponentArtifacts(componentArtifacts);
         }
         return componentArtifactsInfo;
     }
@@ -1327,7 +1325,17 @@ public class CsarUtils {
 		Component fetchedComponent = component.left().value();
 
         //2. fill the artifacts for the current component parent type
-        ComponentTypeArtifacts componentParentArtifacts = collectComponentTypeArtifacts(resourcesTypeArtifacts, componentInstance, fetchedComponent);
+        String toscaComponentName =
+            componentInstance.getToscaComponentName() + "_v" + componentInstance.getComponentVersion();
+
+        // if there are no artifacts for this component type we need to fetch and build them
+        ComponentTypeArtifacts componentParentArtifacts = Optional
+            .ofNullable(resourcesTypeArtifacts.get(toscaComponentName))
+            .orElseGet(() -> collectComponentTypeArtifacts(fetchedComponent));
+
+        if (componentParentArtifacts.getComponentArtifacts().isNotEmpty()) {
+            resourcesTypeArtifacts.put(toscaComponentName, componentParentArtifacts);
+        }
 
         //3. find the artifacts specific to the instance
         Map<String, List<ArtifactDefinition>> componentInstanceSpecificInformationalArtifacts =
