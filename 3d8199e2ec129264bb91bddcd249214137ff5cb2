@@ -16,6 +16,24 @@
       "revId": "3d8199e2ec129264bb91bddcd249214137ff5cb2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83ed2b0b_ccf99441",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-03T15:55:53Z",
+      "side": 1,
+      "message": "So by default the constructor is public, so technically, the access modifier has not changed. What do you think?",
+      "parentUuid": "fc742779_50a238a3",
+      "revId": "3d8199e2ec129264bb91bddcd249214137ff5cb2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
