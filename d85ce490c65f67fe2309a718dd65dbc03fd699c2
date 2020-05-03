@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1b728c9_03ea1db7",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-05-03T10:37:50Z",
+      "side": 1,
+      "message": "Regard to this change, make sure that unit tests are actually running.",
+      "revId": "d85ce490c65f67fe2309a718dd65dbc03fd699c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
