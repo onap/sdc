@@ -70,6 +70,24 @@
       "revId": "3d8199e2ec129264bb91bddcd249214137ff5cb2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84668df8_138a16cd",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-05-04T05:59:13Z",
+      "side": 1,
+      "message": "We can make it clear at the constructor level, that will work too. i am not completely comfortable with adding constructors/code purely for the sake of testing without comments or modifiers to not kae it accessible to all.",
+      "parentUuid": "d82fc237_03a22e51",
+      "revId": "3d8199e2ec129264bb91bddcd249214137ff5cb2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
