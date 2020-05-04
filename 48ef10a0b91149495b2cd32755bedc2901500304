@@ -22,6 +22,30 @@
       "revId": "48ef10a0b91149495b2cd32755bedc2901500304",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7e4f070_1404bff1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-04T09:50:42Z",
+      "side": 1,
+      "message": "Hi,\n\nAs explained in the thread of SDC-2812, the scope of the JIRA has changed. Ofir and Chaya agreed that the goal is not to remove the Eithers but to refactor them so they are used properly. This change aligns with this goal.\n\nPlease look at the thread: https://jira.onap.org/browse/SDC-2812?focusedCommentId\u003d56083\u0026page\u003dcom.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-56083",
+      "parentUuid": "549e47d7_9870ce2b",
+      "range": {
+        "startLine": 473,
+        "startChar": 71,
+        "endLine": 473,
+        "endChar": 73
+      },
+      "revId": "48ef10a0b91149495b2cd32755bedc2901500304",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
