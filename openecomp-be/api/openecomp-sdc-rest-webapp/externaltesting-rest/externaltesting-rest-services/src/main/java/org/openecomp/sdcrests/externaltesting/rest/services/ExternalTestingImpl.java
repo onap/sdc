@@ -62,7 +62,8 @@ public class ExternalTestingImpl implements ExternalTesting {
 
     private static final Logger logger = LoggerFactory.getLogger(ExternalTestingImpl.class);
 
-    public ExternalTestingImpl(@Autowired ExternalTestingManager testingManager) {
+    @Autowired
+    public ExternalTestingImpl(ExternalTestingManager testingManager) {
         this.testingManager = testingManager;
         this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
     }
