@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0d47801b_35ab4335",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/config/ValidationConfigManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-04T15:41:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d5157af_f406702b",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 0
+      },
+      "revId": "48ef10a0b91149495b2cd32755bedc2901500304",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "549e47d7_9870ce2b",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
         "patchSetId": 2
