@@ -65,6 +65,7 @@ import org.openecomp.sdc.be.components.impl.artifact.PayloadTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.json.JsonUtils;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
@@ -4662,7 +4663,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String origMd5;
         try {
             for (ArtifactDefinition artifact : artifactsToHandle) {
-                originData = buildJsonStringForCsarVfcArtifact(artifact);
+                originData = JsonUtils.buildJsonStringForCsarVfcArtifact(artifact);
                 origMd5 = GeneralUtility.calculateMD5Base64EncodedByString(originData);
                 actionResult = handleArtifactRequest(component.getUniqueId(), user.getUserId(), componentType, operation, artifact
                         .getUniqueId(), artifact, origMd5, originData, null, null, null, null, shouldLock, inTransaction);
@@ -4851,19 +4852,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return checkoutRes.left().value();
     }
 
-    private String buildJsonStringForCsarVfcArtifact(ArtifactDefinition artifact) {
-        Map<String, Object> json = new HashMap<>();
-        String artifactName = artifact.getArtifactName();
-        json.put(Constants.ARTIFACT_NAME, artifactName);
-        json.put(Constants.ARTIFACT_LABEL, artifact.getArtifactLabel());
-        json.put(Constants.ARTIFACT_TYPE, artifact.getArtifactType());
-        json.put(Constants.ARTIFACT_GROUP_TYPE, ArtifactGroupTypeEnum.DEPLOYMENT.getType());
-        json.put(Constants.ARTIFACT_DESCRIPTION, artifact.getDescription());
-        json.put(Constants.ARTIFACT_PAYLOAD_DATA, artifact.getPayloadData());
-        json.put(Constants.ARTIFACT_DISPLAY_NAME, artifact.getArtifactDisplayName());
-        return gson.toJson(json);
-    }
-
     @Autowired
     void setNodeTemplateOperation(NodeTemplateOperation nodeTemplateOperation) {
         this.nodeTemplateOperation = nodeTemplateOperation;
@@ -4872,6 +4860,4 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     public List<ArtifactConfiguration> getConfiguration() {
         return ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
     }
-
 }
-
