@@ -69,6 +69,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.ArtifactUtils;
+import org.openecomp.sdc.be.components.impl.utils.ComponentUtils;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
@@ -855,10 +856,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         switch (componentType) {
             case RESOURCE:
             case SERVICE:
-                found = checkArtifactInComponent(component, artifactId);
+                found = ComponentUtils.checkArtifactInComponent(component, artifactId);
                 break;
             case RESOURCE_INSTANCE:
-                found = checkArtifactInResourceInstance(component, componentId, artifactId);
+                found = ComponentUtils.checkArtifactInResourceInstance(component, componentId, artifactId);
                 break;
             default:
                 found = false;
@@ -2900,108 +2901,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
 
         return downloadArtifact(artifactDefinition);
-    }
-
-    private boolean checkArtifactInComponent(Component component, String artifactId) {
-        boolean found = false;
-        Map<String, ArtifactDefinition> artifactsS = component.getArtifacts();
-        if (artifactsS != null) {
-            for (Map.Entry<String, ArtifactDefinition> entry : artifactsS.entrySet()) {
-                if (entry.getValue().getUniqueId().equals(artifactId)) {
-                    found = true;
-                    break;
-                }
-            }
-        }
-        Map<String, ArtifactDefinition> deploymentArtifactsS = component.getDeploymentArtifacts();
-        if (!found && deploymentArtifactsS != null) {
-            for (Map.Entry<String, ArtifactDefinition> entry : deploymentArtifactsS.entrySet()) {
-                if (entry.getValue().getUniqueId().equals(artifactId)) {
-                    found = true;
-                    break;
-                }
-            }
-        }
-        Map<String, ArtifactDefinition> toscaArtifactsS = component.getToscaArtifacts();
-        if (!found && toscaArtifactsS != null) {
-            for (Map.Entry<String, ArtifactDefinition> entry : toscaArtifactsS.entrySet()) {
-                if (entry.getValue().getUniqueId().equals(artifactId)) {
-                    found = true;
-                    break;
-                }
-            }
-        }
-
-        Map<String, InterfaceDefinition> interfaces = component.getInterfaces();
-        if (!found && interfaces != null) {
-            for (Map.Entry<String, InterfaceDefinition> entry : interfaces.entrySet()) {
-                Map<String, Operation> operations = entry.getValue().getOperationsMap();
-                for (Map.Entry<String, Operation> entryOp : operations.entrySet()) {
-                    if (entryOp.getValue().getImplementation() != null && entryOp.getValue()
-                            .getImplementation()
-                            .getUniqueId()
-                            .equals(artifactId)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-        }
-        switch (component.getComponentType()) {
-            case RESOURCE:
-                break;
-            case SERVICE:
-                Map<String, ArtifactDefinition> apiArtifacts = ((Service) component).getServiceApiArtifacts();
-                if (!found && apiArtifacts != null) {
-                    for (Map.Entry<String, ArtifactDefinition> entry : apiArtifacts.entrySet()) {
-                        if (entry.getValue().getUniqueId().equals(artifactId)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                break;
-            default:
-
-        }
-
-        return found;
-    }
-
-    private boolean checkArtifactInResourceInstance(Component component, String resourceInstanceId, String artifactId) {
-
-        boolean found = false;
-        List<ComponentInstance> resourceInstances = component.getComponentInstances();
-        ComponentInstance resourceInstance = null;
-        for (ComponentInstance ri : resourceInstances) {
-            if (ri.getUniqueId().equals(resourceInstanceId)) {
-                resourceInstance = ri;
-                break;
-            }
-        }
-        if (resourceInstance != null) {
-            Map<String, ArtifactDefinition> artifacts = resourceInstance.getDeploymentArtifacts();
-            if (artifacts != null) {
-                for (Map.Entry<String, ArtifactDefinition> entry : artifacts.entrySet()) {
-                    if (entry.getValue().getUniqueId().equals(artifactId)) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            if (!found) {
-                artifacts = resourceInstance.getArtifacts();
-                if (artifacts != null) {
-                    for (Map.Entry<String, ArtifactDefinition> entry : artifacts.entrySet()) {
-                        if (entry.getValue().getUniqueId().equals(artifactId)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return found;
     }
 
     private Component validateComponentExists(String componentId, AuditingActionEnum auditingAction, User user, String artifactId, ComponentTypeEnum componentType,
