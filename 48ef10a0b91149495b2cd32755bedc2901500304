@@ -46,6 +46,30 @@
       "revId": "48ef10a0b91149495b2cd32755bedc2901500304",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6f09b00_073cac60",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-04T09:53:38Z",
+      "side": 1,
+      "message": "I have updated the Jira\u0027s title and description to reflect this. Could you please remove the -1? Thanks in advance.",
+      "parentUuid": "f7e4f070_1404bff1",
+      "range": {
+        "startLine": 473,
+        "startChar": 71,
+        "endLine": 473,
+        "endChar": 73
+      },
+      "revId": "48ef10a0b91149495b2cd32755bedc2901500304",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
