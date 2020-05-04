@@ -355,12 +355,50 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         ArtifactDefinition artifactDefinition, Component component,
         User user, boolean isInCertificationRequest, boolean shouldLock, boolean inTransaction,
         boolean fetchTemplatesFromDB) {
-        generateToscaArtifact(component, artifactDefinition, isInCertificationRequest, fetchTemplatesFromDB);
-        byte[] decodedPayload = artifactDefinition.getPayloadData();
-        artifactDefinition.setEsId(artifactDefinition.getUniqueId());
-        artifactDefinition.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
-        return lockComponentAndUpdateArtifact(component.getUniqueId(), artifactDefinition, AuditingActionEnum.ARTIFACT_PAYLOAD_UPDATE, artifactDefinition.getUniqueId(),
-                user, component.getComponentType(), component, decodedPayload, null, null, shouldLock, inTransaction);
+
+        Either<byte[], ComponentException> decodedPayload = decodeToscaArtifactPayload(
+            component, isInCertificationRequest, fetchTemplatesFromDB, artifactDefinition.getArtifactType()
+        );
+        // TODO: This should not be done, but in order to keep this refactoring relatively small, we stop here
+        if(decodedPayload.isRight())
+            throw decodedPayload.right().value();
+        else {
+            byte[] payload = decodedPayload.left().value();
+            artifactDefinition.setPayload(payload);
+            artifactDefinition.setEsId(artifactDefinition.getUniqueId());
+            artifactDefinition.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(payload));
+            return lockComponentAndUpdateArtifact(component.getUniqueId(), artifactDefinition,
+                AuditingActionEnum.ARTIFACT_PAYLOAD_UPDATE, artifactDefinition.getUniqueId(),
+                user, component.getComponentType(), component, payload, null, null, shouldLock, inTransaction
+            );
+        }
+    }
+
+    private Either<byte[], ComponentException> decodeToscaArtifactPayload(
+        Component parent,
+        boolean isInCertificationRequest,
+        boolean fetchTemplatesFromDB,
+        String artifactType
+    ) {
+        log.debug("tosca artifact generation");
+        if (ArtifactTypeEnum.TOSCA_CSAR.getType().equals(artifactType)) {
+            return csarUtils
+                .createCsar(parent, fetchTemplatesFromDB, isInCertificationRequest)
+                .right().map(error -> {
+                    log.debug("Failed to generate tosca csar for component {} error {}", parent.getUniqueId(), error);
+                    return new ByResponseFormatComponentException(error);
+                });
+        } else {
+            return toscaExportUtils
+                .exportComponent(parent)
+                .left().map(toscaRepresentation -> {
+                    log.debug("Tosca yaml exported for component {} ", parent.getUniqueId());
+                    return toscaRepresentation.getMainYaml().getBytes();
+                }).right().map(toscaError -> {
+                    log.debug("Failed export tosca yaml for component {} error {}", parent.getUniqueId(), toscaError);
+                    return new ByActionStatusComponentException(componentsUtils.convertFromToscaError(toscaError));
+                });
+        }
     }
 
     private ArtifactDefinition generateToscaArtifact(Component parent, ArtifactDefinition artifactInfo, boolean isInCertificationRequest, boolean fetchTemplatesFromDB) {
@@ -646,20 +684,28 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return ActionStatus.OK;
     }
 
-    ArtifactDefinition generateNotSavedArtifact(Component parent, ArtifactDefinition artifactInfo) {
-        if (artifactInfo.getArtifactGroupType() == ArtifactGroupTypeEnum.TOSCA) {
-            return generateToscaArtifact(parent, artifactInfo, false, false);
+    ArtifactDefinition generateNotSavedArtifact(Component parent, ArtifactDefinition artifactDefinition) {
+        if (artifactDefinition.getArtifactGroupType() == ArtifactGroupTypeEnum.TOSCA) {
+            Either<byte[], ComponentException> decodedPayload = decodeToscaArtifactPayload(parent, false,
+                false, artifactDefinition.getArtifactType());
+            // TODO: This should not be done, but in order to keep this refactoring relatively small, we stop here
+            if(decodedPayload.isRight())
+                throw decodedPayload.right().value();
+            else {
+                artifactDefinition.setPayload(decodedPayload.left().value());
+                return artifactDefinition;
+            }
         }
         else {
-            String heatArtifactId = artifactInfo.getGeneratedFromId();
+            String heatArtifactId = artifactDefinition.getGeneratedFromId();
             Either<ArtifactDefinition, StorageOperationStatus> heatRes = artifactToscaOperation.getArtifactById(parent.getUniqueId(), heatArtifactId);
             if (heatRes.isRight()) {
-                log.debug("Failed to fetch heat artifact by generated id {} for heat env {}", heatArtifactId, artifactInfo.getUniqueId());
+                log.debug("Failed to fetch heat artifact by generated id {} for heat env {}", heatArtifactId, artifactDefinition.getUniqueId());
                 throw new StorageException(heatRes.right().value());
             }
             String generatedPayload = generateHeatEnvPayload(heatRes.left().value());
-            artifactInfo.setPayloadData(generatedPayload);
-            return artifactInfo;
+            artifactDefinition.setPayloadData(generatedPayload);
+            return artifactDefinition;
         }
     }
 
