@@ -845,17 +845,6 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void testBuildJsonStringForCsarVfcArtifact() throws Exception {
-        ArtifactsBusinessLogic testSubject;
-        ArtifactDefinition artifact = new ArtifactDefinition();
-        String result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "buildJsonStringForCsarVfcArtifact", new Object[]{artifact});
-    }
-
-    @Test
     public void testCheckArtifactInComponent() throws Exception {
         ArtifactsBusinessLogic testSubject;
         Component component = new Resource();
@@ -868,7 +857,6 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         result = Deencapsulation.invoke(testSubject, "checkArtifactInComponent",
                 new Object[]{component, artifactId});
     }
-
 
     @Test
     public void testCheckCreateFields() throws Exception {
