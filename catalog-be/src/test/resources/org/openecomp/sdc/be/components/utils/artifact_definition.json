@@ -1,0 +1,21 @@
+{
+  "artifactType": "artifactType",
+  "artifactDisplayName": "displayName",
+  "artifactName": "artifactName",
+  "artifactGroupType": "DEPLOYMENT",
+  "description": "description",
+  "payloadData": [
+    112,
+    97,
+    121,
+    108,
+    111,
+    97,
+    100,
+    68,
+    97,
+    116,
+    97
+  ],
+  "artifactLabel": "label"
+}
