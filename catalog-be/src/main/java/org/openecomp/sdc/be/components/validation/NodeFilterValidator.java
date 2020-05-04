@@ -183,23 +183,33 @@ public class NodeFilterValidator {
     private Either<Boolean, ResponseFormat> validatePropertyData(UIConstraint uiConstraint,
             Optional<? extends PropertyDefinition> sourceSelectedProperty,
             Optional<? extends PropertyDefinition> targetComponentInstanceProperty) {
-        final PropertyDefinition sourcePropDefinition = sourceSelectedProperty.get();
-        final String sourceType = sourcePropDefinition.getType();
-        final PropertyDefinition targetPropDefinition = targetComponentInstanceProperty.get();
-        final String targetType = targetPropDefinition.getType();
-        if (sourceType.equals(targetType)) {
-            if (schemableTypes.contains(sourceType)) {
-                final SchemaDefinition sourceSchemaDefinition = sourcePropDefinition.getSchema();
-                final SchemaDefinition targetSchemaDefinition = targetPropDefinition.getSchema();
-                if (!sourceSchemaDefinition.equals(targetSchemaDefinition)) {
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_SCHEMA_MISMATCH,
-                            uiConstraint.getServicePropertyName(), uiConstraint.getValue().toString()));
+        if (sourceSelectedProperty.isPresent() && targetComponentInstanceProperty.isPresent()) {
+            final PropertyDefinition sourcePropDefinition = sourceSelectedProperty.get();
+            final String sourceType = sourcePropDefinition.getType();
+            final PropertyDefinition targetPropDefinition = targetComponentInstanceProperty.get();
+            final String targetType = targetPropDefinition.getType();
+            if (sourceType.equals(targetType)) {
+                if (schemableTypes.contains(sourceType)) {
+                    final SchemaDefinition sourceSchemaDefinition = sourcePropDefinition.getSchema();
+                    final SchemaDefinition targetSchemaDefinition = targetPropDefinition.getSchema();
+                    if (!sourceSchemaDefinition.equals(targetSchemaDefinition)) {
+                        return Either
+                            .right(componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_SCHEMA_MISMATCH,
+                                uiConstraint.getServicePropertyName(), uiConstraint.getValue().toString()));
+                    }
                 }
-            }
-            return Either.left(Boolean.TRUE);
-        } else {
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_PROPERTY_TYPE_MISMATCH,
+                return Either.left(Boolean.TRUE);
+            } else {
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_PROPERTY_TYPE_MISMATCH,
                     uiConstraint.getServicePropertyName(), uiConstraint.getValue().toString()));
+            }
+        } else {
+            LOGGER.debug(
+                "Null value passed to `validatePropertyData` - sourceSelectedProperty: '{}' - targetComponentInstanceProperty: '{}'",
+                sourceSelectedProperty, targetComponentInstanceProperty);
+            return Either.right(componentsUtils
+                .getResponseFormat(ActionStatus.GENERAL_ERROR, uiConstraint.getServicePropertyName(),
+                    uiConstraint.getValue().toString()));
         }
     }
 
