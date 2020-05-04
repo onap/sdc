@@ -53,15 +53,19 @@ public class IdMapper {
             Map<String, CompositionDataDefinition> jsonComposition = (Map<String, CompositionDataDefinition>) serviceVertex.getJson();
             CompositionDataDefinition compositionDataDefinition = jsonComposition.get(JsonConstantKeysEnum.COMPOSITION.getValue());
 
-            Optional<ComponentInstanceDataDefinition> componentInstanceDataDefinitionOptional = null;
+            Optional<ComponentInstanceDataDefinition> componentInstanceDataDefinitionOptional;
             if (fromCompName) {
                 componentInstanceDataDefinitionOptional = compositionDataDefinition.getComponentInstances().values().stream().filter(c -> c.getNormalizedName().equals(componentUniqueIdOrName)).findAny();
-                result = componentInstanceDataDefinitionOptional.get().getUniqueId();
-                log.debug("Compponent Instance Unique Id = {}", result);
+                if (log.isDebugEnabled() && componentInstanceDataDefinitionOptional.isPresent()) {
+                    result = componentInstanceDataDefinitionOptional.get().getUniqueId();
+                    log.debug("Component Instance Unique Id = {}", result);
+                }
             } else {
                 componentInstanceDataDefinitionOptional = compositionDataDefinition.getComponentInstances().values().stream().filter(c -> c.getUniqueId().equals(componentUniqueIdOrName)).findAny();
-                result = componentInstanceDataDefinitionOptional.get().getNormalizedName();
-                log.debug("Compponent Instance Normalized Name = {}", result);
+                if (log.isDebugEnabled() && componentInstanceDataDefinitionOptional.isPresent()) {
+                    result = componentInstanceDataDefinitionOptional.get().getNormalizedName();
+                    log.debug("Component Instance Normalized Name = {}", result);
+                }
             }
 
         } catch (Exception e) {
