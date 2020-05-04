@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "549e47d7_9870ce2b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-05-04T09:08:42Z",
+      "side": 1,
+      "message": "https://jira.onap.org/browse/SDC-2812\n\nRemove all usages of Eithers.\nThanks.",
+      "range": {
+        "startLine": 473,
+        "startChar": 71,
+        "endLine": 473,
+        "endChar": 73
+      },
+      "revId": "48ef10a0b91149495b2cd32755bedc2901500304",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
