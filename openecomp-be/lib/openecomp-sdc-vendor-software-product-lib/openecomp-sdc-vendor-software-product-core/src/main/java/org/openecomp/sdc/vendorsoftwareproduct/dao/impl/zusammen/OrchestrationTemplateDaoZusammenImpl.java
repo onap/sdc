@@ -104,41 +104,50 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
       return orchestrationTemplate;
     }
 
-    Optional<Element> orchestrationTemplateElement = zusammenAdaptor
+    Optional<Element> orchestrationTemplateElementOpt = zusammenAdaptor
         .getElementByName(context, elementContext, vspModel.get().getId(),
             ElementType.OrchestrationTemplate.name());
-    if (orchestrationTemplateElement.isPresent() &&
-        VspZusammenUtil.hasEmptyData(orchestrationTemplateElement.get().getData())) {
+
+    if (! orchestrationTemplateElementOpt.isPresent()) {
       return orchestrationTemplate;
-    }
+    } else {
+      Element orchestrationTemplateElement = orchestrationTemplateElementOpt.get();
 
-    orchestrationTemplate.setContentData(
-          ByteBuffer.wrap(FileUtils.toByteArray(orchestrationTemplateElement.get().getData())));
+      if (VspZusammenUtil.hasEmptyData(orchestrationTemplateElement.getData())) {
+        return orchestrationTemplate;
+      }
 
-    Collection<Element> subElements = orchestrationTemplateElement.get().getSubElements();
-    if (subElements.isEmpty()) {
-      return orchestrationTemplate;
-    }
+      orchestrationTemplate.setContentData(
+          ByteBuffer.wrap(FileUtils.toByteArray(orchestrationTemplateElement.getData())));
 
-    for (Element element : subElements) {
-      Optional<Element> subElement = zusammenAdaptor.getElement(context,
-          elementContext, element.getElementId().toString());
+      Collection<Element> subElements = orchestrationTemplateElement.getSubElements();
+      if (subElements.isEmpty()) {
+        return orchestrationTemplate;
+      }
 
-      if (subElement.get().getInfo().getName().equals(ElementType
-          .OrchestrationTemplateValidationData.name())) {
-        orchestrationTemplate.setFileSuffix(subElement.get().getInfo()
-            .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
-        orchestrationTemplate.setFileName(subElement.get().getInfo()
-            .getProperty(InfoPropertyName.FILE_NAME.getVal()));
-        if (!VspZusammenUtil.hasEmptyData(subElement.get().getData())) {
-          orchestrationTemplate.setValidationData(
-              new String(FileUtils.toByteArray(subElement.get().getData())));
-        }
-      } else if (subElement.get().getInfo().getName().equals(ElementType
-          .OrchestrationTemplateStructure.name())) {
-        orchestrationTemplate.setFilesDataStructure(new String(FileUtils.toByteArray(subElement
-            .get().getData())));
+      for (Element element : subElements) {
+        Optional<Element> subElementOpt = zusammenAdaptor.getElement(context,
+            elementContext, element.getElementId().toString());
 
+        subElementOpt.ifPresent(subElement -> {
+          if (subElement.getInfo().getName().equals(ElementType
+              .OrchestrationTemplateValidationData.name())) {
+
+            orchestrationTemplate.setFileSuffix(subElement.getInfo()
+                .getProperty(InfoPropertyName.FILE_SUFFIX.getVal()));
+            orchestrationTemplate.setFileName(subElement.getInfo()
+                .getProperty(InfoPropertyName.FILE_NAME.getVal()));
+
+            if (!VspZusammenUtil.hasEmptyData(subElement.getData())) {
+              orchestrationTemplate.setValidationData(
+                  new String(FileUtils.toByteArray(subElement.getData())));
+            }
+          } else if (subElement.getInfo().getName().equals(ElementType
+              .OrchestrationTemplateStructure.name())) {
+            orchestrationTemplate.setFilesDataStructure(new String(FileUtils.toByteArray(subElement
+                .getData())));
+          }
+        });
       }
     }
     return orchestrationTemplate;
