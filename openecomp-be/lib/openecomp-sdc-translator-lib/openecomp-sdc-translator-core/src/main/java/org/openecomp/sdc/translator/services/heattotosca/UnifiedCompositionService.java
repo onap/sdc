@@ -3641,12 +3641,9 @@ public class UnifiedCompositionService {
                                                     List<String> identicalValuePropertyList) {
     switch (unifiedCompositionEntity) {
       case COMPUTE:
-        return identicalValuePropertyList.contains(getIdenticalValuePropertyName(inputName,
-                unifiedCompositionEntity).get());
-
       case OTHER:
-        return identicalValuePropertyList.contains(getIdenticalValuePropertyName(inputName,
-                unifiedCompositionEntity).get());
+        Optional<String> identicalValueProperty = getIdenticalValuePropertyName(inputName, unifiedCompositionEntity);
+        return identicalValueProperty.filter(identicalValuePropertyList::contains).isPresent();
 
       case PORT:
         return getPortPropertyNameFromInput(inputName, identicalValuePropertyList).isPresent();
