@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "00a3d4e1_4d7c4fba",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4703,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-05T18:04:41Z",
+      "side": 0,
+      "message": "1. getComponentByUuid return null, component is null",
+      "range": {
+        "startLine": 4703,
+        "startChar": 8,
+        "endLine": 4703,
+        "endChar": 79
+      },
+      "revId": "3bb06374d5b6747d32ea9554259596d0a45fadc2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75a443d4_408d9c6f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4704,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-05T18:04:41Z",
+      "side": 0,
+      "message": "2. componentInstance is null",
+      "range": {
+        "startLine": 4704,
+        "startChar": 8,
+        "endLine": 4704,
+        "endChar": 55
+      },
+      "revId": "3bb06374d5b6747d32ea9554259596d0a45fadc2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7c88d24_3eb516dc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4711,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-05T18:04:41Z",
+      "side": 0,
+      "message": "3. print log",
+      "range": {
+        "startLine": 4710,
+        "startChar": 8,
+        "endLine": 4711,
+        "endChar": 95
+      },
+      "revId": "3bb06374d5b6747d32ea9554259596d0a45fadc2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
