@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15c6de16_56d560cc",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/IdMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2020-05-05T11:02:18Z",
+      "side": 1,
+      "message": "Why is log.isDebugEnabled being called in the condition along with business logic ? The code in the success block will only get called when debug logs are enabled. Is that what you want ?",
+      "revId": "578096d21fdf60b1fc633aebad9e34dc3232b20f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ab9dba3_183dd00b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/IdMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2020-05-05T11:02:18Z",
+      "side": 1,
+      "message": "Same as above. Also the debug method Logger wrapper class already checks whether debug is enabled before logging the statement. So this check seems to be redundant",
+      "revId": "578096d21fdf60b1fc633aebad9e34dc3232b20f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
