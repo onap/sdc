@@ -107,9 +107,12 @@ import org.yaml.snakeyaml.Yaml;
  */
 @org.springframework.stereotype.Component("csar-utils")
 public class CsarUtils {
+
     private static final Logger log = Logger.getLogger(CsarUtils.class);
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(CsarUtils.class.getName());
     private static final String PATH_DELIMITER = "/";
+    public static final String ANNOTATIONS_YML = "annotations.yml";
+    public static final String NODES_YML = "nodes.yml";
     @Autowired
     private SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
     @Autowired
@@ -299,8 +302,12 @@ public class CsarUtils {
 
         final List<String> nodesFromPackage = findNonRootNodesFromPackage(dependencies);
 
+        final boolean isHeatPackage = component.getArtifacts().entrySet().stream()
+            .anyMatch(artifact -> ArtifactTypeEnum.HEAT.getType()
+                .equalsIgnoreCase(artifact.getValue().getArtifactType()));
+
         //add files from retrieved SDC.zip to Definitions folder in CSAR
-        addSchemaFilesFromCassandra(zip, schemaFileZip, nodesFromPackage);
+        addSchemaFilesFromCassandra(zip, schemaFileZip, nodesFromPackage, isHeatPackage);
 
         Either<CsarDefinition, ResponseFormat> collectedComponentCsarDefinition = collectComponentCsarDefinition(component);
 
@@ -487,40 +494,67 @@ public class CsarUtils {
         return null;
     }
 
-    private void addSchemaFilesFromCassandra(final ZipOutputStream zip,
+    /**
+     * Writes to a CSAR zip from casandra schema data
+     *
+     * @param zipOutputStream stores the input stream content
+     * @param schemaFileZip zip data from Cassandra
+     * @param nodesFromPackage list of all nodes found on the onboarded package
+     * @param isHeatPackage true if the onboardead package is a Heat package
+     */
+    private void addSchemaFilesFromCassandra(final ZipOutputStream zipOutputStream,
                                              final byte[] schemaFileZip,
-                                             final List<String> nodesFromPackage) {
+                                             final List<String> nodesFromPackage,
+                                             final boolean isHeatPackage) {
         final int initSize = 2048;
         log.debug("Starting copy from Schema file zip to CSAR zip");
-        try (final ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final BufferedOutputStream bos = new BufferedOutputStream(out, initSize)) {
+        try (final ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final BufferedOutputStream bufferedOutputStream =
+                new BufferedOutputStream(byteArrayOutputStream, initSize)) {
 
             ZipEntry entry;
-            while ((entry = zipStream.getNextEntry()) != null) {
+            while ((entry = zipInputStream.getNextEntry()) != null) {
                 ZipUtils.checkForZipSlipInRead(entry);
                 final String entryName = entry.getName();
                 int readSize = initSize;
                 final byte[] entryData = new byte[initSize];
-                if (entryName.equalsIgnoreCase("nodes.yml")) {
-                    handleNode(zipStream, out, nodesFromPackage);
-                } else {
-                    while ((readSize = zipStream.read(entryData, 0, readSize)) != -1) {
-                        bos.write(entryData, 0, readSize);
+                if (shouldZipEntryBeHandled(entryName, isHeatPackage)) {
+                    if (NODES_YML.equalsIgnoreCase(entryName)) {
+                        handleNode(zipInputStream, byteArrayOutputStream, nodesFromPackage);
+                    } else {
+                        while ((readSize = zipInputStream.read(entryData, 0, readSize)) != -1) {
+                            bufferedOutputStream.write(entryData, 0, readSize);
+                        }
+                        bufferedOutputStream.flush();
                     }
-                    bos.flush();
+                    byteArrayOutputStream.flush();
+                    zipOutputStream.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
+                    zipOutputStream.write(byteArrayOutputStream.toByteArray());
+                    zipOutputStream.flush();
+                    byteArrayOutputStream.reset();
                 }
-                out.flush();
-                zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
-                zip.write(out.toByteArray());
-                zip.flush();
-                out.reset();
             }
         } catch (final Exception e) {
             log.error("Error while writing the SDC schema file to the CSAR", e);
             throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
-        log.debug("Finished copy from Schema file zip to CSAR zip");
+        log.debug("Finished copy from Schema file zipOutputStream to CSAR zipOutputStream");
+    }
+
+    /**
+     *  Checks if the zip entry should or should not be handled before written
+     *
+     * @param entryName the zip entry name
+     * @param isHeatPackage true if its a Heat package
+     * @return true if the zip entry should be handled
+     */
+    private boolean shouldZipEntryBeHandled(final String entryName, final boolean isHeatPackage) {
+        boolean result = true;
+        if (ANNOTATIONS_YML.equalsIgnoreCase(entryName) && !isHeatPackage) {
+            result = false;
+        }
+        return result;
     }
 
     /**

@@ -955,7 +955,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 			try (final ByteArrayOutputStream out = new ByteArrayOutputStream();
 				final ZipOutputStream zip = new ZipOutputStream(out);) {
 				Deencapsulation.invoke(testSubject, "addSchemaFilesFromCassandra",
-					zip, data, nodesFromPackage);
+					zip, data, nodesFromPackage, false);
 				zip.putNextEntry(new ZipEntry("Definitions/nodes.yml"));
 				zip.finish();
 			}
