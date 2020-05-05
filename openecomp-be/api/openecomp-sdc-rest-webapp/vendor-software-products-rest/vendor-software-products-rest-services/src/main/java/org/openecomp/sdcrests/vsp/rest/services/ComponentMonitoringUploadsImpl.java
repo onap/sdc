@@ -50,10 +50,19 @@ import java.io.InputStream;
 @Scope(value = "prototype")
 //@Validated
 public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUploads {
-  private MonitoringUploadsManager
-      monitoringUploadsManager = MonitoringUploadsManagerFactory.getInstance().createInterface();
-  private ComponentManager componentManager =
-      ComponentManagerFactory.getInstance().createInterface();
+  private final MonitoringUploadsManager monitoringUploadsManager;
+  private final ComponentManager componentManager;
+
+  public ComponentMonitoringUploadsImpl() {
+    this.monitoringUploadsManager = MonitoringUploadsManagerFactory.getInstance().createInterface();
+    this.componentManager = ComponentManagerFactory.getInstance().createInterface();
+  }
+
+  public ComponentMonitoringUploadsImpl(MonitoringUploadsManager monitoringUploadsManager,
+      ComponentManager componentManager) {
+    this.monitoringUploadsManager = monitoringUploadsManager;
+    this.componentManager = componentManager;
+  }
 
   @Override
   public Response upload(Attachment attachment,
