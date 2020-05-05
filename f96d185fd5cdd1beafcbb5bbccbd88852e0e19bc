@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac592be8_2e27a6d4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4737,
+      "author": {
+        "id": 6152
+      },
+      "writtenOn": "2020-05-05T15:36:42Z",
+      "side": 1,
+      "message": "looks better :)\nanother thing - More specific ActionStatus could fit better here.",
+      "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
