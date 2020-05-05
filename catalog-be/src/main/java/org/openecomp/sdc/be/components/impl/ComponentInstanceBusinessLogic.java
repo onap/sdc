@@ -714,7 +714,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     }
                 }
             }
-            groupInstancesArtifacts.forEach((k,v) -> listOfCloudSpecificArts.forEach((e) -> v.add(e)));
+            groupInstancesArtifacts.forEach((k,v) -> v.addAll(listOfCloudSpecificArts));
             filteredGroups.forEach(g ->  listOfCloudSpecificArts.forEach((e) -> {
                 g.getArtifactsUuid().add(e.getArtifactUUID());
                 g.getArtifacts().add(e.getUniqueId());
