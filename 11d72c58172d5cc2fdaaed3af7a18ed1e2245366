@@ -70,6 +70,24 @@
       "revId": "11d72c58172d5cc2fdaaed3af7a18ed1e2245366",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0bc9d0ae_fa5895d7",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-05T13:56:36Z",
+      "side": 1,
+      "message": "I have to agree with Ojas Dubey, \u0027isDebugEnabled()\u0027 is redundant, and we are not going to gain anything significant by preventing evaluation of \u0027toscaOperation.getClass()\u0027, otherwise we have to put \u0027isDebugEnabled\u0027 everywhere (any de-reference).",
+      "parentUuid": "bf0fc03e_e1888f58",
+      "revId": "11d72c58172d5cc2fdaaed3af7a18ed1e2245366",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
