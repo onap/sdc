@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad8d0f95_2b8c758a",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/utils/JettySSLUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T11:41:23Z",
+      "side": 1,
+      "message": "This code could be simplified to:\n```\npublic String getKeystoreType() {\n  return sslProperties.getOrDefault(KEY_STORE_TYPE_PROPERTY_NAME, KeyStore.getDefaultType());\n}\n```",
+      "revId": "0cee68a904110b3fa1bc5aab0e47efc47e457693",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1465b367_94e6a99b",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/utils/JettySSLUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T11:41:23Z",
+      "side": 1,
+      "message": "This code could be simplified to:\n```\npublic String getTruststoreType() {\n  return sslProperties.getOrDefault(TRUST_STORE_TYPE_PROPERTY_NAME, KeyStore.getDefaultType());\n}\n```\nAlso please use the constant created for that purpose.",
+      "revId": "0cee68a904110b3fa1bc5aab0e47efc47e457693",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
