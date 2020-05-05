@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,8 +29,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import fj.data.Either;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,14 +44,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import mockit.Deencapsulation;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -63,6 +66,7 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -85,7 +89,9 @@ import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 public class CsarUtilsTest extends BeConfDependentTest {
@@ -111,14 +117,30 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	@Mock
 	private ArtifactsBusinessLogic artifactsBusinessLogic;
 
+	public CsarUtilsTest() throws IOException {
+	}
+
 	@Before
 	public void setUpMock() throws Exception {
 		ExternalConfiguration.setAppName("catalog-be");
 		MockitoAnnotations.initMocks(this);
-		
+		initConfigurationManager();
+	}
+
+	private static void initConfigurationManager() {
+		final String confPath = new File(Objects
+			.requireNonNull(
+				CsarUtilsTest.class.getClassLoader().getResource("config/catalog-be/configuration.yaml"))
+			.getFile()).getParent();
+		final ConfigurationSource confSource =
+			new FSConfigurationSource(ExternalConfiguration.getChangeListener(), confPath);
+		new ConfigurationManager(confSource);
 	}
 
 	private final List<String> nodesFromPackage = Arrays.asList("tosca.nodes.Root", "tosca.nodes.Container.Application");
+
+	private final byte[] contentData = getFileResource("yamlValidation/resource-serviceTemplate.yml");
+
 
 	private NonMetaArtifactInfo createNonMetaArtifactInfoTestSubject() {
 		return new CsarUtils.NonMetaArtifactInfo("mock", "mock", ArtifactTypeEnum.AAI_SERVICE_MODEL.getType(),
@@ -283,13 +305,12 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		component.setLastUpdaterUserId("userId");
 		component.setUniqueId("uid");
 		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
+		ByteBuffer bufferData = ByteBuffer.wrap(contentData);
 		artifactData.setData(bufferData);
 
 		List<SdcSchemaFilesData> filesData = new ArrayList<>();
 		SdcSchemaFilesData filedata = new SdcSchemaFilesData();
-		filedata.setPayloadAsArray(data);
+		filedata.setPayloadAsArray(contentData);
 		filesData.add(filedata);
 
 		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
@@ -405,8 +426,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		component.setLastUpdaterUserId("userId");
 		component.setUniqueId("uid");
 		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
+		ByteBuffer bufferData = ByteBuffer.wrap(contentData);
 		artifactData.setData(bufferData);
 
 		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
@@ -416,7 +436,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		toscaTemplate.setDependencies(dependencies);
 
 		ToscaRepresentation tosca = new ToscaRepresentation();
-		tosca.setMainYaml("value");
+		tosca.setMainYaml(new String(contentData, StandardCharsets.UTF_8));
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
@@ -457,8 +477,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		component.setLastUpdaterUserId("userId");
 		component.setUniqueId("uid");
 		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
+		ByteBuffer bufferData = ByteBuffer.wrap(contentData);
 		artifactData.setData(bufferData);
 
 		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
@@ -468,7 +487,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		toscaTemplate.setDependencies(dependencies);
 
 		ToscaRepresentation tosca = new ToscaRepresentation();
-		tosca.setMainYaml("value");
+		tosca.setMainYaml(new String(contentData, StandardCharsets.UTF_8));
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
@@ -969,5 +988,15 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		assertTrue(CollectionUtils.isNotEmpty(result));
 		assertEquals(expectedResult, result);
 	}
+
+    private byte[] getFileResource(final String filePath) throws IOException {
+        try (final InputStream inputStream = getFileResourceAsInputStream(filePath)) {
+            return IOUtils.toByteArray(inputStream);
+        }
+    }
+
+    private InputStream getFileResourceAsInputStream(final String filePath) {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+    }
 
 }
