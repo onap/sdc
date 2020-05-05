@@ -68,6 +68,30 @@
       "revId": "3bb06374d5b6747d32ea9554259596d0a45fadc2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a437eb4_28133be2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4711,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T18:27:21Z",
+      "side": 0,
+      "message": "If \u0027component\u0027 is null, the debug will not be printed since there\u0027ll be a NPE when we try to access \u0027component.getName()\u0027.\n\nThe goal of this CR is to get rid of this NPE (amongst others).",
+      "parentUuid": "a7c88d24_3eb516dc",
+      "range": {
+        "startLine": 4710,
+        "startChar": 8,
+        "endLine": 4711,
+        "endChar": 95
+      },
+      "revId": "3bb06374d5b6747d32ea9554259596d0a45fadc2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
