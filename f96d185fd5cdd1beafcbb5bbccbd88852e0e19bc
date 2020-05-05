@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "788d8326_baee6ec2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4731,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T17:38:18Z",
+      "side": 1,
+      "message": "Not sure I understand your comment: there is no \u0027componentInstance\u0027 any more since it is replaced by \u0027componentInstanceOpt\u0027.\nIf \u0027componentInstanceOpt\u0027 is empty (equivalent to \u0027null\u0027), we print the message.\nHowever, since \u0027componentOpt\u0027 could also be empty, we test this first before we trigger a NPE by calling \u0027component.getName()\u0027.",
+      "parentUuid": "8a5a9d4d_e25bb851",
+      "range": {
+        "startLine": 4731,
+        "startChar": 16,
+        "endLine": 4731,
+        "endChar": 99
+      },
+      "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ac592be8_2e27a6d4",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 3
