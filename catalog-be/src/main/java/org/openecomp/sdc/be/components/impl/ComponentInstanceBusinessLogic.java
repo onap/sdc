@@ -665,7 +665,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     protected ActionStatus addComponentInstanceArtifacts(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance componentInstance, org.openecomp.sdc.be.model.Component originComponent, User user,    Map<String, String> existingEnvVersions) {
 
         log.debug("add artifacts to resource instance");
-        List<GroupDefinition> filteredGroups = null;
+        List<GroupDefinition> filteredGroups = new ArrayList<>();
         ActionStatus status = setResourceArtifactsOnResourceInstance(componentInstance);
         if (ActionStatus.OK != status) {
             throw new ByResponseFormatComponentException(componentsUtils.getResponseFormatForResourceInstance(status, "", null));
@@ -679,6 +679,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             Map<String, List<ArtifactDefinition>> groupInstancesArtifacts = new HashMap<>();
             Integer defaultHeatTimeout = ConfigurationManager.getConfigurationManager().getConfiguration()
                     .getHeatArtifactDeploymentTimeout().getDefaultMinutes();
+            List<ArtifactDefinition> listOfCloudSpecificArts = new ArrayList<>();
             for (ArtifactDefinition artifact : componentDeploymentArtifacts.values()) {
                 String type = artifact.getArtifactType();
                 if (!type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType())) {
@@ -700,6 +701,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     if (CollectionUtils.isNotEmpty(originComponent.getGroups())) {
                         filteredGroups = originComponent.getGroups().stream().filter(g -> g.getType().equals(VF_MODULE)).collect(Collectors.toList());
                     }
+                    if (isCloudSpecificArtifact(artifactDefinition.getArtifactName())) {
+                        listOfCloudSpecificArts.add(artifact);
+                    }
                     if (CollectionUtils.isNotEmpty(filteredGroups)) {
                         filteredGroups.stream().filter(g ->
                                 g.getArtifacts()
@@ -710,6 +714,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     }
                 }
             }
+            groupInstancesArtifacts.forEach((k,v) -> v.addAll(listOfCloudSpecificArts));
+            filteredGroups.forEach(g ->  listOfCloudSpecificArts.forEach((e) -> {
+                g.getArtifactsUuid().add(e.getArtifactUUID());
+                g.getArtifacts().add(e.getUniqueId());
+            }));
             artStatus = toscaOperationFacade.addDeploymentArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, finalDeploymentArtifacts);
             if (artStatus != StorageOperationStatus.OK) {
                 log.debug("Failed to add instance deployment artifacts for instance {} in conatiner {} error {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
@@ -743,9 +752,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         artifactsUid.add(artifactDefinition);
         groupInstancesArtifacts.put(groupInstance.getUniqueId(), artifactsUid);
-        if (isCloudSpecificArtifact(artifactDefinition.getArtifactName())) {
-            groupInstance.getArtifacts().add(artifactDefinition.getGeneratedFromId());
-        }
     }
 
     private ActionStatus setResourceArtifactsOnResourceInstance(ComponentInstance resourceInstance) {

@@ -553,10 +553,11 @@ public class ComponentInstanceBusinessLogicTest {
             NodeTypeEnum.ResourceInstance, componentInstance.getName(), user, containerComponent,
             null)).thenReturn(heatEnvPlaceHolder2);
 
+        componentInstanceBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
         when(toscaOperationFacade.addDeploymentArtifactsToInstance(containerComponent.getUniqueId(), componentInstance,
             finalDeploymentArtifacts)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade
-            .addGroupInstancesToComponentInstance(containerComponent, componentInstance, null, new HashMap<>()))
+            .addGroupInstancesToComponentInstance(containerComponent, componentInstance, new ArrayList<>(), new HashMap<>()))
             .thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade
             .addInformationalArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, null))
@@ -584,6 +585,7 @@ public class ComponentInstanceBusinessLogicTest {
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
         artifactDefinition.setEsId("esId" + artifactLabel);
         artifactDefinition.setArtifactType(artifactType);
+        artifactDefinition.setArtifactName("artifactName");
         return artifactDefinition;
     }
 
