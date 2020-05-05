@@ -74,7 +74,8 @@ public class JettySSLUtils {
     public static class JettySslConfig {
         Properties sslProperties;
         static final String JETTY_BASE = System.getenv("JETTY_BASE");
-
+        static final String KEY_STORE_TYPE_PROPERTY_NAME="jetty.sslContext.keyStoreType";
+        static final String TRUST_STORE_TYPE_PROPERTY_NAME="jetty.sslContext.trustStoreType";
         JettySslConfig(Properties sslProperties) {
             this.sslProperties = sslProperties;
         }
@@ -92,7 +93,11 @@ public class JettySSLUtils {
         }
 
         public String getKeystoreType() {
-            return sslProperties.getProperty("jetty.sslContext.keyStoreType");
+            if (sslProperties.containsKey(KEY_STORE_TYPE_PROPERTY_NAME)) {
+                return sslProperties.getProperty(KEY_STORE_TYPE_PROPERTY_NAME);
+            } else {
+                return KeyStore.getDefaultType();
+            }
         }
 
         public String getTruststorePath() {
@@ -104,7 +109,11 @@ public class JettySSLUtils {
         }
 
         public String getTruststoreType() {
-            return sslProperties.getProperty("jetty.sslContext.trustStoreType");
+            if (sslProperties.containsKey("jetty.sslContext.trustStoreType")) {
+                return sslProperties.getProperty(TRUST_STORE_TYPE_PROPERTY_NAME);
+            } else {
+                    return KeyStore.getDefaultType();
+            }
         }
 
         public String getKeyStoreManager() {
