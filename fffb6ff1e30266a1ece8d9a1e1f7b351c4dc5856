@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "242d493a_d7cc8588",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/IdMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-05T14:31:27Z",
+      "side": 1,
+      "message": "could be replaced with parameterized log",
+      "range": {
+        "startLine": 75,
+        "startChar": 63,
+        "endLine": 75,
+        "endChar": 68
+      },
+      "revId": "fffb6ff1e30266a1ece8d9a1e1f7b351c4dc5856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
