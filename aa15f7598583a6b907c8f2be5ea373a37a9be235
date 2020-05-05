@@ -37,6 +37,40 @@
     },
     {
       "key": {
+        "uuid": "a10a0d9f_b9006e61",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T17:20:25Z",
+      "side": 1,
+      "message": "Could you please simplify this to:\n```\nassertNotNull(result);\nassertThat(result.size()).isOne();\n```\nIf the size of the list is one, it\u0027s therefore not empty so line 892 is not necessary.",
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3a35cb1_0d0ca86c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1623,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T17:20:25Z",
+      "side": 1,
+      "message": "Instead of using `@Test()`, you could simplify this with `@Test`",
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "580e5e99_506baf3b",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
         "patchSetId": 2
@@ -102,6 +136,23 @@
         "endLine": 1743,
         "endChar": 5
       },
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e13ce279_2bb6b678",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1779,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T17:20:25Z",
+      "side": 1,
+      "message": "Theses tests are way too long. This is probably due to the lack of factory method to create ComponentIntances and Resources. Please factor these object building with additional methods.\n\nAlso, the mocks look like these tests target the internal details of the createComponentInstance function. A test should always be done against the API of a function, not against its internals. If this is not possible, this means the function probably needs to be refactored by leveraging inversion of control and/or be split into multiple smaller functions (Considering the size of the class, I would probably go with extracting meaningful testable chunks). This is probably not possible here, but should be kept in mind in the future.",
       "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
