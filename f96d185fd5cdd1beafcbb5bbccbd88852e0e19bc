@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "8a5a9d4d_e25bb851",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4731,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-05T17:12:59Z",
+      "side": 1,
+      "message": "is this only my impression, this LOG prints on different from original condition?\n\nin original:\nif component\u003dgetComponentByUuid(componentType, componentUuid) is null, componentInstance\u003d\u003dnull, print LOG\n\nin new code:\nif getComponentByUuid(componentType, componentUuid) return null, componentOpt is empty, LOG prints if isPresent()\n\nAm I missing something?",
+      "range": {
+        "startLine": 4731,
+        "startChar": 16,
+        "endLine": 4731,
+        "endChar": 99
+      },
+      "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ac592be8_2e27a6d4",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 3
