@@ -88,6 +88,24 @@
       "revId": "11d72c58172d5cc2fdaaed3af7a18ed1e2245366",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6da49c0_97f3608c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T14:59:50Z",
+      "side": 1,
+      "message": "If you\u0027re OK evaluating methods before ultimately discarding the result of this evaluation, I\u0027ll follow your advice.\n\nHowever, because we\u0027re using call-by-value parameters instead of call-by-name, I still think this is an unnecessary call to a method.",
+      "parentUuid": "0bc9d0ae_fa5895d7",
+      "revId": "11d72c58172d5cc2fdaaed3af7a18ed1e2245366",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
