@@ -16,6 +16,24 @@
       "revId": "c72b31a176aaf3e2e0c92946ce839f76e1c76277",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0dca360d_2c573e73",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2477,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T14:40:38Z",
+      "side": 0,
+      "message": "Nevermind. The jira is pretty clear about it. Sorry for the inconvenience.",
+      "parentUuid": "6c4fa466_6c61cfa0",
+      "revId": "c72b31a176aaf3e2e0c92946ce839f76e1c76277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
