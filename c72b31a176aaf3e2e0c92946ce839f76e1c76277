@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c4fa466_6c61cfa0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2477,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T11:59:51Z",
+      "side": 0,
+      "message": "Could you please explain me why this fixes the issue? Is this verification no longer needed?",
+      "revId": "c72b31a176aaf3e2e0c92946ce839f76e1c76277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
