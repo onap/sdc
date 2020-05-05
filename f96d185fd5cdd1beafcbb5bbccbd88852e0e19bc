@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e4307e76_c3538af4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4707,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T19:44:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "915f2749_72a24986",
+      "range": {
+        "startLine": 4707,
+        "startChar": 0,
+        "endLine": 4707,
+        "endChar": 113
+      },
+      "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9806c0f4_f69466de",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "d6b7d07f_74b1dbf5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4709,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T19:44:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9806c0f4_f69466de",
+      "range": {
+        "startLine": 4709,
+        "startChar": 0,
+        "endLine": 4709,
+        "endChar": 93
+      },
+      "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "38ba6b91_25ea77a2",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90088432_68fd0359",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4726,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T19:44:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "38ba6b91_25ea77a2",
+      "range": {
+        "startLine": 4726,
+        "startChar": 28,
+        "endLine": 4726,
+        "endChar": 40
+      },
+      "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -115,6 +187,30 @@
       "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23cd08b5_e5417c27",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4728,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T19:44:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7fe01ae_59621f74",
+      "range": {
+        "startLine": 4728,
+        "startChar": 12,
+        "endLine": 4728,
+        "endChar": 43
+      },
+      "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {

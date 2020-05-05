@@ -52,6 +52,24 @@
       "revId": "a90a9154c6e68433592212f04e6cc5185403b395",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bbaa101e_e334c8f9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4717,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T19:44:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a5a9ddb_c6d98934",
+      "revId": "a90a9154c6e68433592212f04e6cc5185403b395",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
