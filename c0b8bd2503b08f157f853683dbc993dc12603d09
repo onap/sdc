@@ -46,6 +46,30 @@
       "revId": "c0b8bd2503b08f157f853683dbc993dc12603d09",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9644500d_51c37b5f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/GroupBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T16:56:32Z",
+      "side": 0,
+      "message": "Also, not using nulls in general is a good practice.\n\n@Chris: If you look at how this function is later used, it is only iterated over (it\u0027s never modified). This means you can use `Collections.emptyList()` instead of the empty `Vector`:\n```\nfinal List\u003cGroupDefinition\u003e nonNullGroupDefinitions \u003d\n  (groupDefinitions \u003d\u003d null) ? Collections.emptyList() : groupDefinitions;\n```",
+      "parentUuid": "05f6512b_a4235e86",
+      "range": {
+        "startLine": 1185,
+        "startChar": 8,
+        "endLine": 1185,
+        "endChar": 86
+      },
+      "revId": "c0b8bd2503b08f157f853683dbc993dc12603d09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
