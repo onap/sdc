@@ -113,6 +113,7 @@ public class CsarUtils {
     private static final Logger log = Logger.getLogger(CsarUtils.class);
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(CsarUtils.class.getName());
     private static final String PATH_DELIMITER = "/";
+    public static final String NODES_YML = "nodes.yml";
     @Autowired
     private SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
     @Autowired
@@ -127,6 +128,8 @@ public class CsarUtils {
     @Autowired(required = false)
     private List<CsarEntryGenerator> generators;
 
+    private static final List<String> globalCsarImports = ConfigurationManager.getConfigurationManager()
+        .getConfiguration().getGlobalCsarImports();
     private static final String CONFORMANCE_LEVEL = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
     private static final String SDC_VERSION = ExternalConfiguration.getAppVersion();
     public static final String ARTIFACTS_PATH = "Artifacts/";
@@ -535,40 +538,62 @@ public class CsarUtils {
             }).left().map(content -> new Tuple2<>(content, new ZipEntry(DEFINITIONS_PATH + fileName)));
     }
 
-    private void addSchemaFilesFromCassandra(final ZipOutputStream zip,
+    /**
+     * Writes to a CSAR zip from casandra schema data
+     *
+     * @param zipOutputStream stores the input stream content
+     * @param schemaFileZip zip data from Cassandra
+     * @param nodesFromPackage list of all nodes found on the onboarded package
+     * @param isHeatPackage true if the onboardead package is a Heat package
+     */
+    private void addSchemaFilesFromCassandra(final ZipOutputStream zipOutputStream,
                                              final byte[] schemaFileZip,
                                              final List<String> nodesFromPackage) {
         final int initSize = 2048;
         log.debug("Starting copy from Schema file zip to CSAR zip");
-        try (final ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final BufferedOutputStream bos = new BufferedOutputStream(out, initSize)) {
+        try (final ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final BufferedOutputStream bufferedOutputStream =
+                new BufferedOutputStream(byteArrayOutputStream, initSize)) {
 
             ZipEntry entry;
-            while ((entry = zipStream.getNextEntry()) != null) {
+            while ((entry = zipInputStream.getNextEntry()) != null) {
                 ZipUtils.checkForZipSlipInRead(entry);
                 final String entryName = entry.getName();
                 int readSize = initSize;
                 final byte[] entryData = new byte[initSize];
-                if (entryName.equalsIgnoreCase("nodes.yml")) {
-                    handleNode(zipStream, out, nodesFromPackage);
-                } else {
-                    while ((readSize = zipStream.read(entryData, 0, readSize)) != -1) {
-                        bos.write(entryData, 0, readSize);
+                if (shouldZipEntryBeHandled(entryName)) {
+                    if (NODES_YML.equalsIgnoreCase(entryName)) {
+                        handleNode(zipInputStream, byteArrayOutputStream, nodesFromPackage);
+                    } else {
+                        while ((readSize = zipInputStream.read(entryData, 0, readSize)) != -1) {
+                            bufferedOutputStream.write(entryData, 0, readSize);
+                        }
+                        bufferedOutputStream.flush();
                     }
-                    bos.flush();
+                    byteArrayOutputStream.flush();
+                    zipOutputStream.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
+                    zipOutputStream.write(byteArrayOutputStream.toByteArray());
+                    zipOutputStream.flush();
+                    byteArrayOutputStream.reset();
                 }
-                out.flush();
-                zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
-                zip.write(out.toByteArray());
-                zip.flush();
-                out.reset();
             }
         } catch (final Exception e) {
             log.error("Error while writing the SDC schema file to the CSAR", e);
             throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         log.debug("Finished copy from Schema file zip to CSAR zip");
+    }
+
+    /**
+     *  Checks if the zip entry should or should not be added to the CSAR based on the given global type list
+     *
+     * @param entryName the zip entry name
+     * @return true if the zip entry should be handled
+     */
+    private boolean shouldZipEntryBeHandled(final String entryName) {
+        return globalCsarImports.stream()
+            .anyMatch(entry -> entry.contains(entryName));
     }
 
     /**
