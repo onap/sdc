@@ -106,6 +106,24 @@
       "revId": "3d8199e2ec129264bb91bddcd249214137ff5cb2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fbddaed_a2ddfd23",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2020-05-05T18:18:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e53c5c96_4c140116",
+      "revId": "3d8199e2ec129264bb91bddcd249214137ff5cb2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
