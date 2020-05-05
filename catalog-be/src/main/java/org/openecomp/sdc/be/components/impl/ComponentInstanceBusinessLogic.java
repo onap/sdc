@@ -2286,8 +2286,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return changeInstanceVersion(containerComponent, currentResourceInstance, newComponentInstance, user, containerComponentType );
     }
 
-    public ComponentInstance changeInstanceVersion(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance currentResourceInstance,
-                                                   ComponentInstance newComponentInstance, User user, final ComponentTypeEnum containerComponentType    ) {
+    public ComponentInstance changeInstanceVersion(org.openecomp.sdc.be.model.Component containerComponent,
+        ComponentInstance currentResourceInstance,
+        ComponentInstance newComponentInstance,
+        User user,
+        final ComponentTypeEnum containerComponentType) {
         boolean failed = false;
         Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus;
 
@@ -2300,10 +2303,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             String resourceId = newComponentInstance.getComponentUid();
 
-            Either<Boolean, StorageOperationStatus> componentExistsRes = toscaOperationFacade.validateComponentExists(resourceId);
+            Either<Boolean, StorageOperationStatus> componentExistsRes = toscaOperationFacade
+                .validateComponentExists(resourceId);
             if (componentExistsRes.isRight()) {
-                log.debug("Failed to validate existing of the component {}. Status is {} ", resourceId, componentExistsRes.right().value());
-                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(componentExistsRes.right().value()), resourceId);
+                StorageOperationStatus errorStatus = componentExistsRes.right().value();
+
+                log.debug("Failed to validate existing of the component {}. Status is {} ", resourceId, errorStatus);
+                throw new ByActionStatusComponentException(
+                    componentsUtils.convertFromStorageResponse(errorStatus), resourceId);
             } else if (!componentExistsRes.left().value()) {
                 log.debug("The resource {} not found ", resourceId);
                 throw new ByActionStatusComponentException(ActionStatus.RESOURCE_NOT_FOUND, resourceId);
@@ -2311,60 +2318,79 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
             Component eitherOriginComponent = getInstanceOriginNode(currentResourceInstance);
 
-            DataForMergeHolder dataHolder = compInstMergeDataBL.saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent);
-            ComponentInstance resResourceInfo = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
-            Component origComponent = null;
-            OriginTypeEnum originType = currentResourceInstance.getOriginType();
-            if (originType == OriginTypeEnum.ServiceProxy) {
-                Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
-                if (isServiceProxyOrigin(serviceProxyOrigin))
-                    throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
-                origComponent = serviceProxyOrigin.left().value();
+            DataForMergeHolder dataHolder = compInstMergeDataBL
+                .saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent);
+            ComponentInstance resResourceInfo = deleteComponentInstance(containerComponent, componentInstanceId,
+                containerComponentType);
 
-                StorageOperationStatus fillProxyRes = fillProxyInstanceData(newComponentInstance, origComponent);
+            if (resResourceInfo == null) {
+                log.error("Calling `deleteComponentInstance` for the resource {} returned a null", resourceId);
+                throw new ByActionStatusComponentException(ActionStatus.RESOURCE_NOT_FOUND, resourceId);
+            } else {
+                Component origComponent = null;
+                OriginTypeEnum originType = currentResourceInstance.getOriginType();
+                if (originType == OriginTypeEnum.ServiceProxy) {
+                    Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade
+                        .getLatestByName("serviceProxy");
+                    if (isServiceProxyOrigin(serviceProxyOrigin)) {
+                        throw new ByActionStatusComponentException(
+                            componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
+                    }
+                    origComponent = serviceProxyOrigin.left().value();
 
-                if (isFillProxyRes(fillProxyRes))
-                    throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(fillProxyRes));
-                newComponentInstance.setOriginType(originType);
-            }else{
-                origComponent = getOriginComponentFromComponentInstance(newComponentInstance);
-                newComponentInstance.setName(resResourceInfo.getName());
-            }
+                    StorageOperationStatus fillProxyRes = fillProxyInstanceData(newComponentInstance, origComponent);
 
-            newComponentInstance.setInvariantName(resResourceInfo.getInvariantName());
-            newComponentInstance.setPosX(resResourceInfo.getPosX());
-            newComponentInstance.setPosY(resResourceInfo.getPosY());
-            newComponentInstance.setDescription(resResourceInfo.getDescription());
+                    if (isFillProxyRes(fillProxyRes)) {
+                        throw new ByActionStatusComponentException(
+                            componentsUtils.convertFromStorageResponse(fillProxyRes));
+                    }
+                    newComponentInstance.setOriginType(originType);
+                } else {
+                    origComponent = getOriginComponentFromComponentInstance(newComponentInstance);
+                    newComponentInstance.setName(resResourceInfo.getName());
+                }
 
-            ComponentInstance updatedComponentInstance = createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
-            dataHolder.setCurrInstanceNode(origComponent);
-            Component mergeStatusEither = compInstMergeDataBL.mergeComponentUserOrigData(user, dataHolder, containerComponent, containerComponentId, newComponentInstance.getUniqueId());
+                newComponentInstance.setInvariantName(resResourceInfo.getInvariantName());
+                newComponentInstance.setPosX(resResourceInfo.getPosX());
+                newComponentInstance.setPosY(resResourceInfo.getPosY());
+                newComponentInstance.setDescription(resResourceInfo.getDescription());
 
-            ActionStatus postChangeVersionResult = onChangeInstanceOperationOrchestrator.doPostChangeVersionOperations(containerComponent, currentResourceInstance, newComponentInstance);
-            if (postChangeVersionResult != ActionStatus.OK) {
-                throw new ByActionStatusComponentException(postChangeVersionResult);
-            }
+                ComponentInstance updatedComponentInstance = createComponentInstanceOnGraph(containerComponent,
+                    origComponent, newComponentInstance, user);
+                dataHolder.setCurrInstanceNode(origComponent);
+                Component mergeStatusEither = compInstMergeDataBL
+                    .mergeComponentUserOrigData(user, dataHolder, containerComponent, containerComponentId,
+                        newComponentInstance.getUniqueId());
 
-            ComponentParametersView filter = new ComponentParametersView(true);
-            filter.setIgnoreComponentInstances(false);
-            Either<Component, StorageOperationStatus> updatedComponentRes = toscaOperationFacade.getToscaElement(containerComponentId, filter);
-            if (updatedComponentRes.isRight()) {
-                StorageOperationStatus storageOperationStatus = updatedComponentRes.right().value();
-                ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(storageOperationStatus, containerComponent.getComponentType());
-                log.debug("Component with id {} was not found", containerComponentId);
-                throw new ByActionStatusComponentException(actionStatus, Constants.EMPTY_STRING);
-            }
-            resourceInstanceStatus = getResourceInstanceById(updatedComponentRes.left().value(), updatedComponentInstance.getUniqueId());
-            if (resourceInstanceStatus.isRight()) {
-                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse
+                ActionStatus postChangeVersionResult = onChangeInstanceOperationOrchestrator
+                    .doPostChangeVersionOperations(containerComponent, currentResourceInstance, newComponentInstance);
+                if (postChangeVersionResult != ActionStatus.OK) {
+                    throw new ByActionStatusComponentException(postChangeVersionResult);
+                }
+
+                ComponentParametersView filter = new ComponentParametersView(true);
+                filter.setIgnoreComponentInstances(false);
+                Either<Component, StorageOperationStatus> updatedComponentRes = toscaOperationFacade
+                    .getToscaElement(containerComponentId, filter);
+                if (updatedComponentRes.isRight()) {
+                    StorageOperationStatus storageOperationStatus = updatedComponentRes.right().value();
+                    ActionStatus actionStatus = componentsUtils
+                        .convertFromStorageResponse(storageOperationStatus, containerComponent.getComponentType());
+                    log.debug("Component with id {} was not found", containerComponentId);
+                    throw new ByActionStatusComponentException(actionStatus, Constants.EMPTY_STRING);
+                }
+                resourceInstanceStatus = getResourceInstanceById(updatedComponentRes.left().value(),
+                    updatedComponentInstance.getUniqueId());
+                if (resourceInstanceStatus.isRight()) {
+                    throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse
                         (resourceInstanceStatus.right().value()), updatedComponentInstance.getUniqueId());
+                }
+                return resourceInstanceStatus.left().value();
             }
-            return  resourceInstanceStatus.left().value();
-
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             failed = true;
             throw e;
-        }finally {
+        } finally {
             unlockComponent(failed, containerComponent);
         }
     }
