@@ -26,44 +26,30 @@ import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
-import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.MonitoringUploadsManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.MonitoringUploadStatus;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.MonitoringUploadStatusDto;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+
 
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.util.UUID;
 
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({MonitoringUploadsManagerImpl.class, MonitoringUploadsManagerFactory.class, ComponentManagerFactory.class})
 public class ComponentMonitoringUploadsImplTest {
 
   private Logger logger = LoggerFactory.getLogger(ComponentMonitoringUploadsImplTest.class);
 
   @Mock
-  private ComponentManagerFactory componentManagerFactory;
-
-  @Mock
   private ComponentManager componentManager;
-
-  @Mock
-  private MonitoringUploadsManagerFactory uploadsFactory;
 
   @Mock
   private MonitoringUploadsManager uploadsManager;
@@ -73,18 +59,12 @@ public class ComponentMonitoringUploadsImplTest {
   private final String componentId = "" + System.currentTimeMillis();
   private final String user = "cs0008";
 
+  private ComponentMonitoringUploadsImpl bean;
+
   @Before
   public void setUp() {
     try {
       initMocks(this);
-
-      mockStatic(ComponentManagerFactory.class);
-      when(ComponentManagerFactory.getInstance()).thenReturn(componentManagerFactory);
-      when(componentManagerFactory.createInterface()).thenReturn(componentManager);
-
-      mockStatic(MonitoringUploadsManagerFactory.class);
-      when(MonitoringUploadsManagerFactory.getInstance()).thenReturn(uploadsFactory);
-      when(uploadsFactory.createInterface()).thenReturn(uploadsManager);
 
       MonitoringUploadStatus result = new MonitoringUploadStatus();
       result.setSnmpPoll("p");
@@ -95,6 +75,8 @@ public class ComponentMonitoringUploadsImplTest {
               ArgumentMatchers.any(),
               ArgumentMatchers.eq(componentId))).thenReturn(result);
 
+      this.bean = new ComponentMonitoringUploadsImpl(uploadsManager, componentManager);
+
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
     }
@@ -102,7 +84,6 @@ public class ComponentMonitoringUploadsImplTest {
 
   @Test
   public void testUpload() {
-    ComponentMonitoringUploadsImpl bean = new ComponentMonitoringUploadsImpl();
     byte[] bytes = "Hello".getBytes();
     Attachment a = new Attachment("foo", new ByteArrayInputStream(bytes), new ContentDisposition("filename"));
     String type = MonitoringUploadType.SNMP_POLL.toString();
@@ -120,7 +101,6 @@ public class ComponentMonitoringUploadsImplTest {
 
   @Test
   public void testDelete() {
-    ComponentMonitoringUploadsImpl bean = new ComponentMonitoringUploadsImpl();
     String type = MonitoringUploadType.SNMP_POLL.toString();
     try {
       Response rsp = bean.delete(vspId, versionId, componentId, type, user);
@@ -135,7 +115,6 @@ public class ComponentMonitoringUploadsImplTest {
 
   @Test
   public void testList() {
-    ComponentMonitoringUploadsImpl bean = new ComponentMonitoringUploadsImpl();
     try {
       Response rsp = bean.list(vspId, versionId, componentId, user);
       Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
