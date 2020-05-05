@@ -79,6 +79,7 @@ public class Configuration extends BasicConfiguration {
     private Long uebHealthCheckReadTimeout;
     private List<Map<String, Map<String, String>>> defaultImports;
 
+    private List<String> globalCsarImports;
     private List<String> resourceTypes;
     private List<String> excludeResourceCategory;
     private List<String> excludeResourceType;
@@ -1575,6 +1576,14 @@ public class Configuration extends BasicConfiguration {
 
     public void setArtifactsIndex(String artifactsIndex) {
         this.artifactsIndex = artifactsIndex;
+    }
+
+    public List<String> getGlobalCsarImports() {
+        return globalCsarImports;
+    }
+
+    public void setGlobalCsarImports(List<String> globalCsarImports) {
+        this.globalCsarImports = globalCsarImports;
     }
 
     public List<String> getResourceTypes() {

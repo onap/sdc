@@ -59,6 +59,18 @@ defaultImports:
    - policies:
         file: policies.yml
 
+# Global CSAR Import Files
+globalCsarImports:
+  - annotations.yml
+  - artifacts.yml
+  - capabilities.yml
+  - data.yml
+  - groups.yml
+  - interfaces.yml
+  - nodes.yml
+  - policies.yml
+  - relationships.yml
+
 # Users
 users:
     tom: passwd

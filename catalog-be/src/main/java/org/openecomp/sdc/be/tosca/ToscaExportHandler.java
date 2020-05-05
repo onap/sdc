@@ -249,7 +249,6 @@ public class ToscaExportHandler {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
         }
-
         log.trace("start tosca export for {}", component.getUniqueId());
         String toscaVersion = null;
         if (component instanceof Resource) {
