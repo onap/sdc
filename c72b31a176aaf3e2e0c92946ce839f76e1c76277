@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99f1a5f7_9ecf40cc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T11:58:10Z",
+      "side": 1,
+      "message": "This code could be simplified to:\n```\ngroupInstancesArtifacts.forEach((k,v) -\u003e v.addAll(listOfCloudSpecificArts));\n```\nIn general, please avoid using nested forEach or nested for-loops. Most of the time, there is a way to express this through `map` and `flatMap`. In this case, there could be a problem of data-structure. Probably that it does not fit for the problem. A refactoring of this method would help identifying this.\n\nThank you.",
+      "revId": "c72b31a176aaf3e2e0c92946ce839f76e1c76277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
