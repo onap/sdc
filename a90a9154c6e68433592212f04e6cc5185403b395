@@ -34,6 +34,24 @@
       "revId": "a90a9154c6e68433592212f04e6cc5185403b395",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a5a9ddb_c6d98934",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4717,
+      "author": {
+        "id": 6152
+      },
+      "writtenOn": "2020-05-05T15:13:17Z",
+      "side": 1,
+      "message": "Right.. my mistake regarding the exception throw.",
+      "parentUuid": "24bea09f_943b0705",
+      "revId": "a90a9154c6e68433592212f04e6cc5185403b395",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
