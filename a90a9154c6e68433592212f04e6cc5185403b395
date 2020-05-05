@@ -16,6 +16,24 @@
       "revId": "a90a9154c6e68433592212f04e6cc5185403b395",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24bea09f_943b0705",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4717,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T15:08:30Z",
+      "side": 1,
+      "message": "Not sure what you mean here: \u0027orElseThrow\u0027 does throw an Exception if the content of an Optional is not found.\nHowever, I agree the Supplier could be extracted into its own separate method.",
+      "parentUuid": "45f203c2_94d86d01",
+      "revId": "a90a9154c6e68433592212f04e6cc5185403b395",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
