@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b57c87f2_44bf0826",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/IdMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T11:54:57Z",
+      "side": 1,
+      "message": "Indeed, I\u0027ll rework this accordingly.",
+      "parentUuid": "15c6de16_56d560cc",
+      "revId": "578096d21fdf60b1fc633aebad9e34dc3232b20f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5ab9dba3_183dd00b",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/IdMapper.java",
         "patchSetId": 1
