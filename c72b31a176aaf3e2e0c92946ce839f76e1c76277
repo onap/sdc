@@ -16,6 +16,24 @@
       "revId": "c72b31a176aaf3e2e0c92946ce839f76e1c76277",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ce1941a_e258a68a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-05T14:41:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99f1a5f7_9ecf40cc",
+      "revId": "c72b31a176aaf3e2e0c92946ce839f76e1c76277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
