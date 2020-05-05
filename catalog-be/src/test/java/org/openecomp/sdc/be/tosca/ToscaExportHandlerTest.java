@@ -186,6 +186,11 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         resource.setVendorRelease("vendorRelease");
         resource.setResourceVendorModelNumber("resourceVendorModelNumber");
         resource.setDataTypes(dataTypes);
+        ArtifactDefinition artifact1 = new ArtifactDefinition();
+        artifact1.setUniqueId("artifact1");
+        Map<String, ArtifactDefinition> artifactMap = Collections.singletonMap("HEAT", artifact1);
+        resource.setDeploymentArtifacts(artifactMap);
+        resource.setArtifacts(artifactMap);
 
         return resource;
     }

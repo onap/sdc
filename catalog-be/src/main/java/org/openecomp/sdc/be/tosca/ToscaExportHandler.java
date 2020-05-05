@@ -106,6 +106,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil;
 import org.openecomp.sdc.be.tosca.utils.InputConverter;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.externalupload.utils.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,6 +250,7 @@ public class ToscaExportHandler {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
         }
+        removeUnnecessaryImport(component.getArtifacts());
 
         log.trace("start tosca export for {}", component.getUniqueId());
         String toscaVersion = null;
@@ -511,6 +513,21 @@ public class ToscaExportHandler {
             log.debug("currently imports supported for VF and service only");
         }
         return Either.left(new ImmutablePair<>(toscaTemplate, componentCache));
+    }
+
+    /**
+     * Removes unnecessary import for non Heat from the default imports list
+     *
+     * @param artifacts artifact definition data
+     */
+    private void removeUnnecessaryImport(final Map<String, ArtifactDefinition> artifacts) {
+        if (MapUtils.isNotEmpty(artifacts)) {
+            if (artifacts.entrySet().stream()
+                .noneMatch(artifact -> ArtifactTypeEnum.HEAT.getType()
+                    .equalsIgnoreCase(artifact.getValue().getArtifactType()))) {
+                DEFAULT_IMPORTS.removeIf(importEntry -> importEntry.containsKey("annotations"));
+            }
+        }
     }
 
     private void createDependency(final Map<String, Component> componentCache, 

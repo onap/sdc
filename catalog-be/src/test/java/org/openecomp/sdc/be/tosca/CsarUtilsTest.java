@@ -29,7 +29,9 @@ import static org.junit.Assert.assertTrue;
 
 import fj.data.Either;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,6 +47,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import mockit.Deencapsulation;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -107,6 +110,9 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	@Mock
 	private ArtifactsBusinessLogic artifactsBusinessLogic;
 
+	public CsarUtilsTest() throws IOException {
+	}
+
 	@Before
 	public void setUpMock() throws Exception {
 		ExternalConfiguration.setAppName("catalog-be");
@@ -115,6 +121,8 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	private final List<String> nodesFromPackage = Arrays.asList("tosca.nodes.Root", "tosca.nodes.Container.Application");
+
+	private final byte[] contentData = getFileResource("yamlValidation/resource-serviceTemplate.yml");
 
 	private NonMetaArtifactInfo createNonMetaArtifactInfoTestSubject() {
 		return new CsarUtils.NonMetaArtifactInfo("mock", "mock", ArtifactTypeEnum.AAI_SERVICE_MODEL.getType(),
@@ -279,13 +287,12 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		component.setLastUpdaterUserId("userId");
 		component.setUniqueId("uid");
 		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
+		ByteBuffer bufferData = ByteBuffer.wrap(contentData);
 		artifactData.setData(bufferData);
 
 		List<SdcSchemaFilesData> filesData = new ArrayList<>();
 		SdcSchemaFilesData filedata = new SdcSchemaFilesData();
-		filedata.setPayloadAsArray(data);
+		filedata.setPayloadAsArray(contentData);
 		filesData.add(filedata);
 
 		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
@@ -453,8 +460,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		component.setLastUpdaterUserId("userId");
 		component.setUniqueId("uid");
 		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
+		ByteBuffer bufferData = ByteBuffer.wrap(contentData);
 		artifactData.setData(bufferData);
 
 		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
@@ -464,7 +470,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		toscaTemplate.setDependencies(dependencies);
 
 		ToscaRepresentation tosca = new ToscaRepresentation();
-		tosca.setMainYaml("value");
+		tosca.setMainYaml(new String(contentData, StandardCharsets.UTF_8));
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
@@ -955,7 +961,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 			try (final ByteArrayOutputStream out = new ByteArrayOutputStream();
 				final ZipOutputStream zip = new ZipOutputStream(out);) {
 				Deencapsulation.invoke(testSubject, "addSchemaFilesFromCassandra",
-					zip, data, nodesFromPackage);
+					zip, data, nodesFromPackage, false);
 				zip.putNextEntry(new ZipEntry("Definitions/nodes.yml"));
 				zip.finish();
 			}
@@ -978,6 +984,15 @@ public class CsarUtilsTest extends BeConfDependentTest {
 			"findNonRootNodesFromPackage", dependencies);
 		assertTrue(CollectionUtils.isNotEmpty(result));
 		assertEquals(expectedResult, result);
+	}
+
+	private byte[] getFileResource(final String filePath) throws IOException {
+		try (final InputStream inputStream = getFileResourceAsInputStream(filePath)) {
+			return IOUtils.toByteArray(inputStream);
+		}
+	}
+	private InputStream getFileResourceAsInputStream(final String filePath) {
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
 	}
 
 }

@@ -53,11 +53,13 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.onap.sdc.tosca.datatypes.model.Import;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.config.ComponentType;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -107,9 +109,12 @@ import org.yaml.snakeyaml.Yaml;
  */
 @org.springframework.stereotype.Component("csar-utils")
 public class CsarUtils {
+
     private static final Logger log = Logger.getLogger(CsarUtils.class);
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(CsarUtils.class.getName());
     private static final String PATH_DELIMITER = "/";
+    public static final String ANNOTATIONS_YML = "annotations.yml";
+    public static final String NODES_YML = "nodes.yml";
     @Autowired
     private SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
     @Autowired
@@ -284,7 +289,12 @@ public class CsarUtils {
         //UID <cassandraId,filename,component>
         Map<String, ImmutableTriple<String,String, Component>> innerComponentsCache = new HashMap<>();
 
-        Either<ZipOutputStream, ResponseFormat> responseFormat = getZipOutputStreamResponseFormatEither(zip, dependencies, innerComponentsCache);
+        final boolean isHeatPackage = component.getArtifacts().entrySet().stream()
+            .anyMatch(artifact -> ArtifactTypeEnum.HEAT.getType()
+                .equalsIgnoreCase(artifact.getValue().getArtifactType()));
+
+        final Either<ZipOutputStream, ResponseFormat> responseFormat = getZipOutputStreamResponseFormatEither(zip,
+            dependencies, innerComponentsCache, isHeatPackage);
         if (responseFormat != null) return responseFormat;
 
         //retrieve SDC.zip from Cassandra
@@ -300,7 +310,7 @@ public class CsarUtils {
         final List<String> nodesFromPackage = findNonRootNodesFromPackage(dependencies);
 
         //add files from retrieved SDC.zip to Definitions folder in CSAR
-        addSchemaFilesFromCassandra(zip, schemaFileZip, nodesFromPackage);
+        addSchemaFilesFromCassandra(zip, schemaFileZip, nodesFromPackage, isHeatPackage);
 
         Either<CsarDefinition, ResponseFormat> collectedComponentCsarDefinition = collectComponentCsarDefinition(component);
 
@@ -433,16 +443,20 @@ public class CsarUtils {
         }
     }
 
-    private Either<ZipOutputStream, ResponseFormat> getZipOutputStreamResponseFormatEither(ZipOutputStream zip, List<Triple<String, String, Component>> dependencies, Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache) throws IOException {
+    private Either<ZipOutputStream, ResponseFormat> getZipOutputStreamResponseFormatEither(final ZipOutputStream zip,
+                                                                                           final List<Triple<String, String, Component>> dependencies,
+                                                                                           final Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache,
+                                                                                           final boolean isHeatPackage)
+        throws IOException {
         String fileName;
         if (dependencies != null && !dependencies.isEmpty()) {
-            for (Triple<String, String, Component> d : dependencies) {
-                String cassandraId = d.getMiddle();
-                Component childComponent = d.getRight();
-                Either<byte[], ActionStatus> entryData = getEntryData(cassandraId, childComponent);
+            for (final Triple<String, String, Component> d : dependencies) {
+                final String cassandraId = d.getMiddle();
+                final Component childComponent = d.getRight();
+                final Either<byte[], ActionStatus> entryData = getEntryData(cassandraId, childComponent);
 
                 if (entryData.isRight()) {
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
+                    final ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
                     return Either.right(responseFormat);
                 }
 
@@ -453,74 +467,125 @@ public class CsarUtils {
             }
 
             //add inner components to CSAR
-            Either<ZipOutputStream, ResponseFormat> responseFormat = addInnerComponentsToCSAR(zip, innerComponentsCache);
-            if (responseFormat != null) return responseFormat;
+            final Either<ZipOutputStream, ResponseFormat> responseFormat = addInnerComponentsToCSAR(zip,
+                innerComponentsCache, isHeatPackage);
+            if (responseFormat != null) {
+                return responseFormat;
+            }
         }
         return null;
     }
 
-    private Either<ZipOutputStream, ResponseFormat> addInnerComponentsToCSAR(ZipOutputStream zip, Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache) throws IOException {
-        for (Entry<String, ImmutableTriple<String, String, Component>> innerComponentTripleEntry : innerComponentsCache.entrySet()) {
+    private Either<ZipOutputStream, ResponseFormat> addInnerComponentsToCSAR(final ZipOutputStream zip,
+                                                                             final Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache,
+                                                                             final boolean isHeatPackage)
+        throws IOException {
+        for (Entry<String, ImmutableTriple<String, String, Component>> innerComponentTripleEntry : innerComponentsCache
+            .entrySet()) {
 
-            ImmutableTriple<String, String, Component> innerComponentTriple = innerComponentTripleEntry.getValue();
+            final ImmutableTriple<String, String, Component> innerComponentTriple = innerComponentTripleEntry
+                .getValue();
 
-            Component innerComponent = innerComponentTriple.getRight();
-            String icFileName = innerComponentTriple.getMiddle();
+            final Component innerComponent = innerComponentTriple.getRight();
+            final String icFileName = innerComponentTriple.getMiddle();
 
             // add component to zip
-            Either<byte[], ActionStatus> entryData = getEntryData(innerComponentTriple.getLeft(), innerComponent);
+            final Either<byte[], ActionStatus> entryData = getEntryData(innerComponentTriple.getLeft(), innerComponent);
             if (entryData.isRight()) {
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
+                final ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
                 log.debug("Failed adding to zip component {}, error {}", innerComponentTriple.getLeft(),
-                        entryData.right().value());
+                    entryData.right().value());
                 return Either.right(responseFormat);
             }
             byte[] content = entryData.left().value();
+            if (!isHeatPackage) {
+                content = removeUnnecessaryImport(content);
+            }
             zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + icFileName));
             zip.write(content);
 
             // add component interface to zip
             if (!ModelConverter.isAtomicComponent(innerComponent)) {
-					writeComponentInterface(innerComponent, zip, icFileName, true);
+                writeComponentInterface(innerComponent, zip, icFileName, true);
             }
         }
         return null;
     }
 
-    private void addSchemaFilesFromCassandra(final ZipOutputStream zip,
+    /**
+     * Removes unnecessary import for non Heat from the given content data
+     *
+     * @param content yml data
+     * @return content byte
+     */
+    private byte[] removeUnnecessaryImport(final byte[] content) {
+        final YamlUtil yamlUtil = new YamlUtil();
+        final ServiceTemplate serviceTemplateFromYaml =
+            yamlUtil.yamlToObject (new ByteArrayInputStream(content), ServiceTemplate.class);
+        final List<Map<String, Import>> imports = serviceTemplateFromYaml.getImports();
+        if (CollectionUtils.isNotEmpty(imports)) {
+            imports.removeIf(importEntry -> importEntry.containsKey("annotations"));
+        }
+        return yamlUtil.objectToYaml(serviceTemplateFromYaml).getBytes();
+    }
+
+    /**
+     * Writes to a CSAR zip from casandra schema data
+     *
+     * @param zipOutputStream stores the input stream content
+     * @param schemaFileZip zip data from Cassandra
+     * @param nodesFromPackage list of all nodes found on the onboarded package
+     * @param isHeatPackage true if the onboardead package is a Heat package
+     */
+    private void addSchemaFilesFromCassandra(final ZipOutputStream zipOutputStream,
                                              final byte[] schemaFileZip,
-                                             final List<String> nodesFromPackage) {
+                                             final List<String> nodesFromPackage,
+                                             final boolean isHeatPackage) {
         final int initSize = 2048;
         log.debug("Starting copy from Schema file zip to CSAR zip");
-        try (final ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final BufferedOutputStream bos = new BufferedOutputStream(out, initSize)) {
+        try (final ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final BufferedOutputStream bufferedOutputStream =
+                new BufferedOutputStream(byteArrayOutputStream, initSize)) {
 
             ZipEntry entry;
-            while ((entry = zipStream.getNextEntry()) != null) {
+            while ((entry = zipInputStream.getNextEntry()) != null) {
                 ZipUtils.checkForZipSlipInRead(entry);
                 final String entryName = entry.getName();
                 int readSize = initSize;
                 final byte[] entryData = new byte[initSize];
-                if (entryName.equalsIgnoreCase("nodes.yml")) {
-                    handleNode(zipStream, out, nodesFromPackage);
-                } else {
-                    while ((readSize = zipStream.read(entryData, 0, readSize)) != -1) {
-                        bos.write(entryData, 0, readSize);
+                if (shouldZipEntryBeHandled(entryName, isHeatPackage)) {
+                    if (NODES_YML.equalsIgnoreCase(entryName)) {
+                        handleNode(zipInputStream, byteArrayOutputStream, nodesFromPackage);
+                    } else {
+                        while ((readSize = zipInputStream.read(entryData, 0, readSize)) != -1) {
+                            bufferedOutputStream.write(entryData, 0, readSize);
+                        }
+                        bufferedOutputStream.flush();
                     }
-                    bos.flush();
+                    byteArrayOutputStream.flush();
+                    zipOutputStream.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
+                    zipOutputStream.write(byteArrayOutputStream.toByteArray());
+                    zipOutputStream.flush();
+                    byteArrayOutputStream.reset();
                 }
-                out.flush();
-                zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
-                zip.write(out.toByteArray());
-                zip.flush();
-                out.reset();
             }
         } catch (final Exception e) {
             log.error("Error while writing the SDC schema file to the CSAR", e);
             throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
-        log.debug("Finished copy from Schema file zip to CSAR zip");
+        log.debug("Finished copy from Schema file zipOutputStream to CSAR zipOutputStream");
+    }
+
+    /**
+     *  Checks if the zip entry should or should not be handled before written
+     *
+     * @param entryName the zip entry name
+     * @param isHeatPackage true if its a Heat package
+     * @return true if the zip entry should be handled
+     */
+    private boolean shouldZipEntryBeHandled(final String entryName, final boolean isHeatPackage) {
+        return !ANNOTATIONS_YML.equalsIgnoreCase(entryName) || isHeatPackage;
     }
 
     /**
