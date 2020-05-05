@@ -52,6 +52,24 @@
       "revId": "11d72c58172d5cc2fdaaed3af7a18ed1e2245366",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf0fc03e_e1888f58",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T13:13:09Z",
+      "side": 1,
+      "message": "To me, both are required:\n- \u0027isDebugEnabled\u0027 to prevent useless evaluation of \u0027toscaOperation.getClass\u0027\n- \u0027toscaOperation !\u003d null\u0027 to prevent NPE when trying to write to debug logs.",
+      "parentUuid": "ae68f0a2_52f95525",
+      "revId": "11d72c58172d5cc2fdaaed3af7a18ed1e2245366",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
