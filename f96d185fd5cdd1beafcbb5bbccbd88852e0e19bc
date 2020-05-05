@@ -16,6 +16,24 @@
       "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01d0872c_54f0312a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4737,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-05T15:58:40Z",
+      "side": 1,
+      "message": "Since I\u0027m still new to the project, I would be more than happy to change it to a more specific value if you tell me which one to use!",
+      "parentUuid": "ac592be8_2e27a6d4",
+      "revId": "f96d185fd5cdd1beafcbb5bbccbd88852e0e19bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
