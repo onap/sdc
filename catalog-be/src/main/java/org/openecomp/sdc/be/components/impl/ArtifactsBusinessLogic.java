@@ -2521,11 +2521,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String prevArtifactId;
         String currArtifactId = artifactId;
         ArtifactDefinition artifactDefinition = artifactInfo;
-        if (interfaceType != null && operationName != null) {
-            BeEcompErrorManager.getInstance().logBeDaoSystemError(UPDATE_ARTIFACT);
-            log.debug("Received both interface and operation for update artifact - something is wrong");
-            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
-        }
         log.debug("Entry on graph is updated. Update artifact in ES");
         // Changing previous and current artifactId for auditing
         prevArtifactId = currArtifactId;
