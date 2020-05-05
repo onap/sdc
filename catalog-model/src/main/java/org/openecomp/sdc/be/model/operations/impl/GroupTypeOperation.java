@@ -232,10 +232,12 @@ public class GroupTypeOperation implements IGroupTypeOperation {
      * @param oldCapabilities
      * @return
      */
-    private Map<String, CapabilityDefinition> collectNewCapabilities(Map<String, CapabilityDefinition> updatedGroupTypeCapabilities, Map<String, CapabilityDefinition> oldCapabilities) {
-        return updatedGroupTypeCapabilities != null? updatedGroupTypeCapabilities.entrySet().stream()
-                .filter(entry -> !oldCapabilities.containsKey(entry.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue) ): null;
+    private Map<String, CapabilityDefinition> collectNewCapabilities(
+        Map<String, CapabilityDefinition> updatedGroupTypeCapabilities,
+        Map<String, CapabilityDefinition> oldCapabilities) {
+        return updatedGroupTypeCapabilities != null ? updatedGroupTypeCapabilities.entrySet().stream()
+            .filter(entry -> !oldCapabilities.containsKey(entry.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)) : new HashMap<>();
     }
 
     private JanusGraphOperationStatus createCapabilities(GroupTypeData groupTypeData, Map<String, CapabilityDefinition> groupCapabilities) {
