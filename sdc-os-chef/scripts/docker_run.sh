@@ -151,17 +151,6 @@ function probe_test_docker {
 #
 
 
-function probe_es {
-    health_Check_http_code=$(curl --noproxy "*" -o /dev/null -w '%{http_code}' http://${IP}:9200/_cluster/health?wait_for_status=yellow&timeout=120s)
-    if [[ "$health_Check_http_code" -eq 200 ]] ; then
-        echo DOCKER start finished in $1 seconds
-        return ${SUCCESS}
-    fi
-    return ${FAILURE}
-}
-#
-
-
 function probe_sim {
     if lsof -Pi :8285 -sTCP:LISTEN -t >/dev/null ; then
         echo "Already running"
@@ -236,7 +225,6 @@ function monitor_docker {
 
 # healthCheck script used the secure connection to send request (https is always turn on)
 function healthCheck {
-	curl --noproxy "*" ${IP}:9200/_cluster/health?pretty=true
 
 	echo "BE Health Check:"
 	curl -k --noproxy "*" https://${IP}:8443/sdc2/rest/healthCheck
