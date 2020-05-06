@@ -24,6 +24,9 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
@@ -36,10 +39,8 @@ import org.openecomp.sdc.be.components.impl.version.VesionUpdateHandler;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
@@ -63,10 +64,6 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
 
 @org.springframework.stereotype.Component("lifecycleBusinessLogic")
 public class LifecycleBusinessLogic {
@@ -144,21 +141,17 @@ public class LifecycleBusinessLogic {
 
     // TODO: rhalili - should use changeComponentState when possible
     public Either<Resource, ResponseFormat> changeState(String resourceId, User modifier, LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction, boolean needLock) {
-        return (Either<Resource, ResponseFormat>) changeComponentState(ComponentTypeEnum.RESOURCE, resourceId, modifier, transitionEnum, changeInfo, inTransaction, needLock);
+        return changeComponentState(ComponentTypeEnum.RESOURCE, resourceId, modifier, transitionEnum, changeInfo, inTransaction, needLock);
     }
 
-    private boolean isComponentVFCMT(Component component, ComponentTypeEnum componentType) {
-        if (componentType.equals(ComponentTypeEnum.RESOURCE)) {
-            ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
-            if (resourceType.equals(ResourceTypeEnum.VFCMT)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Either<? extends Component, ResponseFormat> changeComponentState(ComponentTypeEnum componentType, String componentId, User modifier, LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction,
-            boolean needLock) {
+    public <T extends Component> Either<T, ResponseFormat> changeComponentState(
+        ComponentTypeEnum componentType,
+        String componentId,
+        User modifier,
+        LifeCycleTransitionEnum transitionEnum,
+        LifecycleChangeInfoWithAction changeInfo,
+        boolean inTransaction,
+        boolean needLock) {
 
         LifeCycleTransition lifeCycleTransition = stateTransitions.get(transitionEnum.name());
         if (lifeCycleTransition == null) {
@@ -166,15 +159,16 @@ public class LifecycleBusinessLogic {
             ResponseFormat error = componentUtils.getInvalidContentErrorAndAudit(modifier, componentId, AuditingActionEnum.CHECKOUT_RESOURCE);
             return Either.right(error);
         }
-        Component component;
         log.debug("get resource from graph");
         ResponseFormat errorResponse;
 
-        Either<? extends Component, ResponseFormat> eitherResourceResponse = getComponentForChange(componentType, componentId, modifier, lifeCycleTransition, changeInfo);
+        Either<T, ResponseFormat> eitherResourceResponse = getComponentForChange(
+            componentType, componentId, modifier, lifeCycleTransition, changeInfo
+        );
         if (eitherResourceResponse.isRight()) {
             return eitherResourceResponse;
         }
-        component = eitherResourceResponse.left().value();
+        T component = eitherResourceResponse.left().value();
         String resourceCurrVersion = component.getVersion();
         LifecycleStateEnum resourceCurrState = component.getLifecycleState();
 
@@ -218,8 +212,10 @@ public class LifecycleBusinessLogic {
                 return Either.right(validateHighestVersion.right().value());
             }
             log.debug("after validate Highest Version");
-            final Component oldComponent = component;
-            Either<? extends Component, ResponseFormat> checkedInComponentEither = checkInBeforeCertifyIfNeeded(componentType, modifier, transitionEnum, changeInfo, inTransaction, component);
+            final T oldComponent = component;
+            Either<T, ResponseFormat> checkedInComponentEither =
+                checkInBeforeCertifyIfNeeded(componentType, modifier, transitionEnum, changeInfo, inTransaction,
+                    component);
             if(checkedInComponentEither.isRight()) {
                 return Either.right(checkedInComponentEither.right().value());
             }
@@ -242,39 +238,58 @@ public class LifecycleBusinessLogic {
 
     }
 
-    private Either<Component, ResponseFormat>  updateCatalog(Component component,  Component oldComponent, ChangeTypeEnum changeStatus){
+    private <T extends Component> Either<T, ResponseFormat>  updateCatalog(
+        T component,
+        T oldComponent,
+        ChangeTypeEnum changeStatus
+    ){
 
         log.debug("updateCatalog start");
-        Component result = component == null? oldComponent : component;
+        T result = component == null? oldComponent : component;
             if(component != null){
                 ActionStatus status =  catalogOperations.updateCatalog(changeStatus,component);
                 if(status != ActionStatus.OK){
-                    return Either.right( componentUtils.getResponseFormat(status));
+                    return Either.right(componentUtils.getResponseFormat(status));
                 }
         }
 
        return Either.left(result);
     }
 
-    private Either<? extends Component, ResponseFormat> checkInBeforeCertifyIfNeeded(ComponentTypeEnum componentType, User modifier, LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction,
-                                              Component component) {
+    private <T extends Component> Either<T, ResponseFormat> checkInBeforeCertifyIfNeeded(
+        ComponentTypeEnum componentType,
+        User modifier,
+        LifeCycleTransitionEnum transitionEnum,
+        LifecycleChangeInfoWithAction changeInfo,
+        boolean inTransaction,
+        T component
+    ) {
 
         LifecycleStateEnum oldState = component.getLifecycleState();
-        Component updatedComponent = component;
         log.debug("Certification request for resource {} ", component.getUniqueId());
         if (oldState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT && transitionEnum == LifeCycleTransitionEnum.CERTIFY) {
             log.debug("Resource {} is in Checkout state perform checkin", component.getUniqueId());
-            Either<? extends Component, ResponseFormat> actionResponse = changeState(component, stateTransitions.get(LifeCycleTransitionEnum.CHECKIN.name()), componentType, modifier, changeInfo, inTransaction);
+            Either<T, ResponseFormat> actionResponse = changeState(
+                component,
+                stateTransitions.get(LifeCycleTransitionEnum.CHECKIN.name()),
+                componentType, modifier, changeInfo, inTransaction);
             if (actionResponse.isRight()) {
                 log.debug("Failed to check in Resource {} error {}", component.getUniqueId(), actionResponse.right().value());
             }
             return actionResponse;
         }
 
-        return Either.left(updatedComponent);
+        return Either.left(component);
     }
 
-    private Either<? extends Component, ResponseFormat> changeState(Component component, LifeCycleTransition lifeCycleTransition, ComponentTypeEnum componentType, User modifier, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction) {
+    private <T extends Component> Either<T, ResponseFormat> changeState(
+        T component,
+        LifeCycleTransition lifeCycleTransition,
+        ComponentTypeEnum componentType,
+        User modifier,
+        LifecycleChangeInfoWithAction changeInfo,
+        boolean inTransaction
+    ) {
         ResponseFormat errorResponse;
 
         LifecycleStateEnum oldState = component.getLifecycleState();
@@ -302,7 +317,8 @@ public class LifecycleBusinessLogic {
             return Either.right(errorResponse);
         }
         
-        Either<? extends Component, ResponseFormat> operationResult = lifeCycleTransition.changeState(componentType, component, bl, modifier, owner, false, inTransaction);
+        Either<T, ResponseFormat> operationResult = lifeCycleTransition.changeState(
+            componentType, component, bl, modifier, owner, false, inTransaction);
 
         if (operationResult.isRight()) {
             errorResponse = operationResult.right().value();
@@ -328,9 +344,15 @@ public class LifecycleBusinessLogic {
     }
 
 
-	private Either<? extends Component, ResponseFormat> getComponentForChange(ComponentTypeEnum componentType, String componentId, User modifier, LifeCycleTransition lifeCycleTransition, LifecycleChangeInfoWithAction changeInfo) {
+	private <T extends Component> Either<T, ResponseFormat> getComponentForChange(
+	    ComponentTypeEnum componentType,
+      String componentId,
+      User modifier,
+      LifeCycleTransition lifeCycleTransition,
+      LifecycleChangeInfoWithAction changeInfo
+  ) {
 
-        Either<? extends Component, StorageOperationStatus> eitherResourceResponse = toscaOperationFacade.getToscaElement(componentId);
+        Either<T, StorageOperationStatus> eitherResourceResponse = toscaOperationFacade.getToscaElement(componentId);
 
         ResponseFormat errorResponse;
         if (eitherResourceResponse.isRight()) {
