@@ -49,9 +49,19 @@ import java.util.Collection;
 @Scope(value = "prototype")
 public class ImagesImpl implements Images {
 
-  private ImageManager imageManager = ImageManagerFactory.getInstance().createInterface();
-  private ComponentManager componentManager =
-      ComponentManagerFactory.getInstance().createInterface();
+  private final ImageManager imageManager;
+  private final ComponentManager componentManager;
+
+  public ImagesImpl() {
+    this.imageManager = ImageManagerFactory.getInstance().createInterface();
+    this.componentManager =
+        ComponentManagerFactory.getInstance().createInterface();
+  }
+
+  public ImagesImpl(ImageManager imageManager, ComponentManager componentManager) {
+    this.imageManager = imageManager;
+    this.componentManager = componentManager;
+  }
 
   @Override
   public Response create(ImageRequestDto request, String vspId, String versionId,
