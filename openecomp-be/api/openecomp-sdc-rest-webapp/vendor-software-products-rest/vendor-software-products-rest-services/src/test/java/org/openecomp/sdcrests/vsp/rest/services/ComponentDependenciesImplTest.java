@@ -23,16 +23,12 @@ package org.openecomp.sdcrests.vsp.rest.services;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.ProcessManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDependencyCreationDto;
@@ -41,8 +37,6 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDependencyRe
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRelationType;
 import org.openecomp.sdcrests.vsp.rest.ComponentDependencies;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -50,11 +44,8 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ComponentDependenciesImpl.class, ComponentDependencyModelManagerFactory.class})
 public class ComponentDependenciesImplTest {
 
   private Logger logger = LoggerFactory.getLogger(org.openecomp.sdcrests.vsp.rest.services.ComponentDependenciesImplTest.class);
@@ -70,14 +61,12 @@ public class ComponentDependenciesImplTest {
   private final String entityId = "" + System.currentTimeMillis();
   private final String user = "cs0008";
 
+  private ComponentDependencies componentDependencies;
+
   @Before
   public void setUp() {
     try {
       initMocks(this);
-
-      mockStatic(ComponentDependencyModelManagerFactory.class);
-      when(ComponentDependencyModelManagerFactory.getInstance()).thenReturn(componentDependencyModelManagerFactory);
-      when(componentDependencyModelManagerFactory.createInterface()).thenReturn(componentDependencyModelManager);
 
       ComponentDependencyModelEntity e = new ComponentDependencyModelEntity();
       e.setSourceComponentId("sourceid");
@@ -107,6 +96,8 @@ public class ComponentDependenciesImplTest {
           ArgumentMatchers.eq(entityId)
           )).thenReturn(e);
 
+      componentDependencies = new ComponentDependenciesImpl(componentDependencyModelManager);
+
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
     }
@@ -119,8 +110,6 @@ public class ComponentDependenciesImplTest {
     model.setSourceId("sourceid");
     model.setTargetId("targetid");
 
-
-    ComponentDependencies componentDependencies = new ComponentDependenciesImpl();
     Response rsp = componentDependencies.create(model, vspId, versionId, user);
     Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -136,7 +125,6 @@ public class ComponentDependenciesImplTest {
   @Test
   public void testList() {
 
-    ComponentDependencies componentDependencies = new ComponentDependenciesImpl();
     Response rsp = componentDependencies.list(vspId, versionId, user);
     Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -157,8 +145,6 @@ public class ComponentDependenciesImplTest {
   @Test
   public void testDelete() {
 
-    ComponentDependencies componentDependencies = new ComponentDependenciesImpl();
-
     Response rsp = componentDependencies.delete(vspId, versionId, entityId, user);
     Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
@@ -167,8 +153,6 @@ public class ComponentDependenciesImplTest {
 
   @Test
   public void testUpdate() {
-
-    ComponentDependencies componentDependencies = new ComponentDependenciesImpl();
 
     ComponentDependencyModel model = new ComponentDependencyModel();
     model.setRelationType(ComponentRelationType.dependsOn.name());
@@ -183,7 +167,6 @@ public class ComponentDependenciesImplTest {
   @Test
   public void testGet() {
 
-    ComponentDependencies componentDependencies = new ComponentDependenciesImpl();
     Response rsp = componentDependencies.get(vspId, versionId, entityId, user);
     Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
     Assert.assertNotNull(rsp.getEntity());
@@ -193,8 +176,5 @@ public class ComponentDependenciesImplTest {
     } catch (ClassCastException ex) {
       Assert.fail("unexpected class for DTO " + rsp.getEntity().getClass().getName());
     }
-
-
-
   }
 }

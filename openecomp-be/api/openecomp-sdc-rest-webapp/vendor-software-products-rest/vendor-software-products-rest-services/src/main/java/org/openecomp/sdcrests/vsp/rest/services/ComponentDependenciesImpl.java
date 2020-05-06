@@ -40,8 +40,16 @@ import java.util.Collection;
 @Scope(value = "prototype")
 public class ComponentDependenciesImpl implements ComponentDependencies {
 
-  private final ComponentDependencyModelManager componentDependencyModelManager =
-      ComponentDependencyModelManagerFactory.getInstance().createInterface();
+  private final ComponentDependencyModelManager componentDependencyModelManager;
+
+  public ComponentDependenciesImpl() {
+    this.componentDependencyModelManager =
+        ComponentDependencyModelManagerFactory.getInstance().createInterface();
+  }
+
+  public ComponentDependenciesImpl(ComponentDependencyModelManager componentDependencyModelManager) {
+    this.componentDependencyModelManager = componentDependencyModelManager;
+  }
 
   @Override
   public Response create(ComponentDependencyModel request, String vspId, String versionId,
