@@ -51,6 +51,24 @@
       "revId": "e35832ddd5e1ddc16d526534508f033156cbb021",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "893e7e05_dd427694",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/Eithers.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-06T22:02:54Z",
+      "side": 1,
+      "message": "Thank you, I plan to provide more utilities in the future, once the changes regarding CsarUtils are merged. At some point we should be able to drastically reduce the size of this file while making it easier to test and maintain.",
+      "parentUuid": "97cbac83_beb445bd",
+      "revId": "e35832ddd5e1ddc16d526534508f033156cbb021",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
