@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ce80158c_53ed5734",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-06T11:12:41Z",
+      "side": 1,
+      "message": "Hi Chaya,\n\nYou are indeed right, the Either returned by this function is populated more than 4 levels up, but if you look closely, this is mostly done for logging purpose. This could be improved with a proper usage of Either using map for example or some additional utility.\n\nSecondly, if you look at the different refactorings I made, the code usually look more concise and is easier to compose (like at line 250). This is made possible precisely because we are using Either. Using try-catch would not allow this and add a lot of boilerplate. By the way I plan to add more functions to the Eithers utility class to reduce it even more.\n\nRegarding the zip writing logic, I actually plan to extract it from the function. The goal is to make `populateZip` more testable by leveraging inversion of control. In other words, we would provide the function with an interface abstracting the writing logic. This interface would have two implementations, one specific to the production code, and another one for the tests that would work in-memory only. This would enable us to provide proper testing of the populateZip function (which is not done as of now). Therefore, I would wait before deciding anything regarding what this function should return and see if we can improve it first. If you want, I can work on this next.\n\nThe refactoring not being completely done (keep in mind this change is an intermediate step), would it be possible to wait a bit regarding the changes you suggest until we are ready to apply them? This would ensure we have all the pieces and information before making the right decision.\n\nWould that be alright?",
+      "parentUuid": "2b0c82b4_277cf621",
+      "revId": "e35832ddd5e1ddc16d526534508f033156cbb021",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "97cbac83_beb445bd",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/Eithers.java",
         "patchSetId": 2
