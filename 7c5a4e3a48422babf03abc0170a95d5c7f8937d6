@@ -16,6 +16,24 @@
       "revId": "7c5a4e3a48422babf03abc0170a95d5c7f8937d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfe2bbb7_33ac30f2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/json/JsonUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-06T10:54:10Z",
+      "side": 1,
+      "message": "Hi Ojas,\n\nI agree with everything you said, I will do the changes as requested. To answer your question regarding the motivation for moving this code, the goal is to decompose the ArtifactsBusinessLogic class into smaller chunks to make it more manageable. Currently, the responsibility of that class is too broad, which makes it hard to test and to maintain.\n\nI agree that moving this method does not add much but it is a first step. In the future, this logic may be put elsewhere. So see this as an intermediate refactoring step, not a final state.\n\nDoes this answer your question?",
+      "parentUuid": "6c56322a_2a531adc",
+      "revId": "7c5a4e3a48422babf03abc0170a95d5c7f8937d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
