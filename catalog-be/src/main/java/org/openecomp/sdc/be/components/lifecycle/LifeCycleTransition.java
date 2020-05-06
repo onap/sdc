@@ -107,7 +107,12 @@ public abstract class LifeCycleTransition {
         this.resourceAuthorizedRoles.put(resourceType, authorizedRoles);
     }
 
-    public abstract Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean needLock, boolean inTransaction);
+    public abstract <T extends Component> Either<T, ResponseFormat> changeState(
+        ComponentTypeEnum componentType,
+        Component component,
+        ComponentBusinessLogic componentBl,
+        User modifier, User owner, boolean needLock, boolean inTransaction
+    );
 
     public abstract Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier, User owner, LifecycleStateEnum oldState, LifecycleChangeInfoWithAction lifecycleChangeInfo);
 
