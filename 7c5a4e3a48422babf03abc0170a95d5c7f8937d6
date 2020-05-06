@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c56322a_2a531adc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/json/JsonUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2020-05-06T09:20:12Z",
+      "side": 1,
+      "message": "Instead of JsonUtils it would be better if we name this class as ArtifactUtils as we already have JsonUtils class which has methods for generic json handling.\n\nSince the only method here is specific to building a json for Artifact so I feel that naming this class in terms of artifact and keeping under src\\main\\java\\org\\openecomp\\sdc\\be\\components\\utils in catalog-be would be better.",
+      "revId": "7c5a4e3a48422babf03abc0170a95d5c7f8937d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
