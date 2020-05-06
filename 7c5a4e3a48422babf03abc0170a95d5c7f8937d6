@@ -34,6 +34,24 @@
       "revId": "7c5a4e3a48422babf03abc0170a95d5c7f8937d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b084df33_a22e0391",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/json/JsonUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-06T13:08:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dfe2bbb7_33ac30f2",
+      "revId": "7c5a4e3a48422babf03abc0170a95d5c7f8937d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
