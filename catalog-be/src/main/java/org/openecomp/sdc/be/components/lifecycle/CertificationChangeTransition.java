@@ -134,10 +134,14 @@ public class CertificationChangeTransition extends LifeCycleTransition {
     }
 
     @Override
-    public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction) {
+    public <T extends Component> Either<T, ResponseFormat> changeState(
+        ComponentTypeEnum componentType,
+        Component component,
+        ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction
+    ) {
 
         log.info("start performing certification change for resource {}", component.getUniqueId());
-        Either<? extends Component, ResponseFormat> result = null;
+        Either<T, ResponseFormat> result = null;
 
         try {
             handleValidationsAndArtifactsGenerationBeforeCertifying(componentType, component, componentBl, modifier, shouldLock, inTransaction);
@@ -151,7 +155,7 @@ public class CertificationChangeTransition extends LifeCycleTransition {
             }
 
             ToscaElement certificationResult = certificationChangeResult.left().value();
-            Component componentAfterCertification = ModelConverter.convertFromToscaElement(certificationResult);
+            T componentAfterCertification = ModelConverter.convertFromToscaElement(certificationResult);
             if ( result == null || result.isLeft() ){
                 //update edges for allotted resource 
                 StorageOperationStatus status = handleConnectionsForAllotted(componentAfterCertification);
