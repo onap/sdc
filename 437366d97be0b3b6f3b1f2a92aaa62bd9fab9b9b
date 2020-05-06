@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1ae60d69_8cedf476",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 68,
+        "endChar": 58
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ebe9fb3_67448629",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 111,
+        "startChar": 12,
+        "endLine": 113,
+        "endChar": 39
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d0f32a5_c0c318a7",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 115,
+        "startChar": 12,
+        "endLine": 118,
+        "endChar": 32
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d42d61f3_8963fe43",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 120,
+        "startChar": 12,
+        "endLine": 122,
+        "endChar": 32
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37e4d3e5_b9c2adda",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 124,
+        "startChar": 12,
+        "endLine": 126,
+        "endChar": 32
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d763ebcb_4050077b",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 159,
+        "startChar": 12,
+        "endLine": 161,
+        "endChar": 39
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58f9aa69_235a4a10",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 163,
+        "startChar": 12,
+        "endLine": 166,
+        "endChar": 32
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "305a1c44_38e4a70a",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 169,
+        "startChar": 12,
+        "endLine": 171,
+        "endChar": 32
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54be8982_00cc7499",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/main/java/org/openecomp/sdc/securityutil/SecurityUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-06T17:00:15Z",
+      "side": 1,
+      "message": "avoid loosing exception, log exception properly",
+      "range": {
+        "startLine": 180,
+        "startChar": 12,
+        "endLine": 183,
+        "endChar": 32
+      },
+      "revId": "437366d97be0b3b6f3b1f2a92aaa62bd9fab9b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
