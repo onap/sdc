@@ -24,7 +24,6 @@ import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.openecomp.sdc.logging.api.Logger;
@@ -44,8 +43,6 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -53,11 +50,8 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ComputeImpl.class, ComponentManagerFactory.class, ImageManagerFactory.class})
 public class ImagesImplTest {
 
   private Logger logger = LoggerFactory.getLogger(ImagesImplTest.class);
@@ -80,20 +74,12 @@ public class ImagesImplTest {
   private final String imageId = "" + System.currentTimeMillis();
   private final String user = "cs0008";
 
+  private ImagesImpl ii;
+
   @Before
   public void setUp() {
     try {
       initMocks(this);
-
-      mockStatic(ComponentManagerFactory.class);
-      when(ComponentManagerFactory.getInstance()).thenReturn(componentManagerFactory);
-      when(componentManagerFactory.createInterface()).thenReturn(componentManager);
-
-      mockStatic(ImageManagerFactory.class);
-      when(ImageManagerFactory.getInstance()).thenReturn(imageManagerFactory);
-      when(imageManagerFactory.createInterface()).thenReturn(imageManager);
-
-
 
       ImageEntity ie = new ImageEntity();
       ie.setComponentId(componentId);
@@ -132,6 +118,7 @@ public class ImagesImplTest {
               ArgumentMatchers.eq(componentId),
               ArgumentMatchers.eq(imageId))).thenReturn(qr);
 
+      ii = new ImagesImpl(imageManager, componentManager);
 
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -140,7 +127,6 @@ public class ImagesImplTest {
 
   @Test
   public void testList() {
-    ImagesImpl ii = new ImagesImpl();
 
     Response rsp = ii.list(vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
@@ -159,7 +145,6 @@ public class ImagesImplTest {
     dto.setDescription("hello");
     dto.setFileName("name");
 
-    ImagesImpl ii = new ImagesImpl();
     Response rsp = ii.create(dto, vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -175,7 +160,6 @@ public class ImagesImplTest {
 
   @Test
   public void testDelete() {
-    ImagesImpl ii = new ImagesImpl();
     Response rsp = ii.delete(vspId, versionId, componentId, imageId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
@@ -184,7 +168,6 @@ public class ImagesImplTest {
 
   @Test
   public void testGet() {
-    ImagesImpl ii = new ImagesImpl();
     Response rsp = ii.get(vspId, versionId, componentId, imageId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNotNull(rsp.getEntity());
@@ -192,7 +175,6 @@ public class ImagesImplTest {
 
   @Test
   public void testUpdate() {
-    ImagesImpl ii = new ImagesImpl();
     ImageRequestDto dto = new ImageRequestDto();
     Response rsp = ii.update(dto, vspId, versionId, componentId, imageId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
@@ -201,7 +183,6 @@ public class ImagesImplTest {
 
   @Test
   public void testGetQuestionaire() {
-    ImagesImpl ii = new ImagesImpl();
     Response rsp = ii.getQuestionnaire(vspId, versionId, componentId, imageId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     try {
@@ -217,7 +198,6 @@ public class ImagesImplTest {
 
   @Test
   public void testUpdateQuestionaire() {
-    ImagesImpl ii = new ImagesImpl();
     Response rsp = ii.updateQuestionnaire("helloworld", vspId, versionId, componentId, imageId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
