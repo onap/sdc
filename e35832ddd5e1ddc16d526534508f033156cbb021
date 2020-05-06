@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2b0c82b4_277cf621",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 4928
+      },
+      "writtenOn": "2020-05-06T10:30:45Z",
+      "side": 1,
+      "message": "The code look nicer indeed, but in this case I think the correct solution will be to throw a ComponentException in the bottom and not handle it with Either.\nIf you look at the call hierarchy of this method, you\u0027ll see that this Either is being populated more than 4 levels up, and in each level, in case of right value, we just propagate the error to the upper level, so in this case it\u0027s unnecessary to handle it with either, and throwing an Exception would be cleaner.\n\nIn this case I suggest the following solution:\nDecide that method \"populateZip\" will not return an Either, but ZipOutputStrem.\nIn case it gets \"right\" values from methods it calls, it\u0027ll throw an Exception.\nIt means that we should add to your current implementation, the handling with Right value, that will throw an Exception.\n\nIn the Upper level, whoever calls \"populateZip(...)\" there are two options:\n1. Refactor there as well all the way up (meaning changing the return value of all methods in the hierarchy, to not be Either). \n2. Keep all the upper level methods as is, only add a try, catch block, where the catch returna Either.right().\n\nThe first option is a whole correct solution, but it\u0027s a huge change.\nThe second one is a temporary solution, assuming we refactor the code gradually.",
+      "revId": "e35832ddd5e1ddc16d526534508f033156cbb021",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97cbac83_beb445bd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/Eithers.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4928
+      },
+      "writtenOn": "2020-05-06T10:30:45Z",
+      "side": 1,
+      "message": "It\u0027s nice utility to support our LeftBiased use of Either.",
+      "revId": "e35832ddd5e1ddc16d526534508f033156cbb021",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
