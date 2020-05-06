@@ -44,8 +44,15 @@ import java.util.Collection;
 @Service("components")
 @Scope(value = "prototype")
 public class ComponentsImpl implements Components {
-  private ComponentManager componentManager =
-      ComponentManagerFactory.getInstance().createInterface();
+  private final ComponentManager componentManager;
+
+  public ComponentsImpl() {
+    this.componentManager = ComponentManagerFactory.getInstance().createInterface();
+  }
+
+  public ComponentsImpl(ComponentManager componentManager) {
+    this.componentManager = componentManager;
+  }
 
   @Override
   public Response list(String vspId, String versionId, String user) {
