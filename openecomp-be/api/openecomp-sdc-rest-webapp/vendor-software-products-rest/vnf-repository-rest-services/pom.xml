@@ -84,7 +84,7 @@
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
       <artifactId>wiremock-standalone</artifactId>
-      <version>2.6.0</version>
+      <version>${wire-mock.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -33,6 +33,7 @@
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <version>${junitJupiter.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <!--JSON and YAML Parsing-->
@@ -564,12 +565,6 @@
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-client</artifactId>
       <version>${jersey-bom.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock-standalone</artifactId>
-      <scope>test</scope>
     </dependency>
 
     <dependency>

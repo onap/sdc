@@ -26,6 +26,7 @@
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <version>${junitJupiter.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
