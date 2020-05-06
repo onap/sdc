@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ca7b15b_53b4a3bc",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6146
+      },
+      "writtenOn": "2020-05-06T09:12:50Z",
+      "side": 1,
+      "message": "catalog-be don\u0027t need Juint4 API?\nWe still have test class that using junit4, no?",
+      "revId": "c6d63265eff9975638b2a813a673c09bb4e9ed50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
