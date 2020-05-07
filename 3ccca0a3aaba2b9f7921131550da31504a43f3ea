@@ -16,6 +16,24 @@
       "revId": "3ccca0a3aaba2b9f7921131550da31504a43f3ea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d36b2f5f_2bcc7cb6",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-07T08:21:58Z",
+      "side": 1,
+      "message": "3.10 \u003e 3.3.2, 3.10 is latest",
+      "parentUuid": "7573873e_5932b8df",
+      "revId": "3ccca0a3aaba2b9f7921131550da31504a43f3ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
