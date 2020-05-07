@@ -26,25 +26,19 @@ import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ProcessManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
@@ -54,27 +48,18 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ComponentDependenciesImpl.class, ActivityLogManagerFactory.class, ComponentManagerFactory.class, ProcessManagerFactory.class})
 public class ComponentProcessesImplTest {
 
   private Logger logger = LoggerFactory.getLogger(ComponentProcessesImplTest.class);
 
   @Mock
   private ActivityLogManager activityLogManager;
-  @Mock
-  private ActivityLogManagerFactory activityLogManagerFactory;
-
-  @Mock
-  private ProcessManagerFactory processManagerFactory;
 
   @Mock
   private ProcessManager processManager;
-
-  @Mock
-  private ComponentManagerFactory componentManagerFactory;
 
   @Mock
   private ComponentManager componentManager;
@@ -85,22 +70,12 @@ public class ComponentProcessesImplTest {
   private final String processId = "" + System.currentTimeMillis();
   private final String user = "cs0008";
 
+  private ComponentProcessesImpl cpi;
+
   @Before
   public void setUp() {
     try {
       initMocks(this);
-
-      mockStatic(ProcessManagerFactory.class);
-      when(ProcessManagerFactory.getInstance()).thenReturn(processManagerFactory);
-      when(processManagerFactory.createInterface()).thenReturn(processManager);
-
-      mockStatic(ActivityLogManagerFactory.class);
-      when(ActivityLogManagerFactory.getInstance()).thenReturn(activityLogManagerFactory);
-      when(activityLogManagerFactory.createInterface()).thenReturn(activityLogManager);
-
-      mockStatic(ComponentManagerFactory.class);
-      when(ComponentManagerFactory.getInstance()).thenReturn(componentManagerFactory);
-      when(componentManagerFactory.createInterface()).thenReturn(componentManager);
 
       ProcessEntity pe = new ProcessEntity();
       pe.setId(vspId);
@@ -130,6 +105,8 @@ public class ComponentProcessesImplTest {
               ArgumentMatchers.eq(componentId),
               ArgumentMatchers.eq(processId))).thenReturn(processArtifact);
 
+      cpi = new ComponentProcessesImpl(processManager, componentManager, activityLogManager);
+
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
     }
@@ -137,8 +114,6 @@ public class ComponentProcessesImplTest {
 
   @Test
   public void testList() {
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
-
     Response rsp = cpi.list(vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -150,7 +125,6 @@ public class ComponentProcessesImplTest {
 
   @Test
   public void testDeleteList() {
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
     Response rsp = cpi.deleteList(vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
@@ -166,7 +140,6 @@ public class ComponentProcessesImplTest {
     dto.setName("name");
     dto.setType(ProcessType.Other);
 
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
     Response rsp = cpi.create(dto, vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -182,7 +155,6 @@ public class ComponentProcessesImplTest {
 
   @Test
   public void testDelete() {
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
     Response rsp = cpi.delete(vspId, versionId, componentId, processId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
@@ -191,7 +163,6 @@ public class ComponentProcessesImplTest {
 
   @Test
   public void testGet() {
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
     Response rsp = cpi.get(vspId, versionId, componentId, processId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNotNull(rsp.getEntity());
@@ -199,7 +170,6 @@ public class ComponentProcessesImplTest {
 
   @Test
   public void testUpdate() {
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
     ProcessRequestDto dto = new ProcessRequestDto();
     Response rsp = cpi.update(dto, vspId, versionId, componentId, processId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
@@ -208,7 +178,6 @@ public class ComponentProcessesImplTest {
 
   @Test
   public void testGetUploadedFile() {
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
     Response rsp = cpi.getUploadedFile(vspId, versionId, componentId, processId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf(vspId),-1);
@@ -217,7 +186,6 @@ public class ComponentProcessesImplTest {
 
   @Test
   public void testDeleteUploadedFile() {
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
     Response rsp = cpi.deleteUploadedFile(vspId, versionId, componentId, processId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
@@ -226,7 +194,6 @@ public class ComponentProcessesImplTest {
 
   @Test
   public void testUploadFile() {
-    ComponentProcessesImpl cpi = new ComponentProcessesImpl();
 
     Attachment attachment = mock(Attachment.class);
     when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));

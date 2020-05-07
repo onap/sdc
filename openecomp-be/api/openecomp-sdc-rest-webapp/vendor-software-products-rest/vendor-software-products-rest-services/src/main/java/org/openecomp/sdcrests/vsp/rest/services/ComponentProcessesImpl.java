@@ -48,11 +48,22 @@ import java.util.Collection;
 @Scope(value = "prototype")
 public class ComponentProcessesImpl implements ComponentProcesses {
 
-  private ProcessManager processManager = ProcessManagerFactory.getInstance().createInterface();
-  private ComponentManager componentManager =
-      ComponentManagerFactory.getInstance().createInterface();
-  private ActivityLogManager activityLogManager =
-          ActivityLogManagerFactory.getInstance().createInterface();
+  private final ProcessManager processManager;
+  private final ComponentManager componentManager;
+  private final ActivityLogManager activityLogManager;
+
+  public ComponentProcessesImpl() {
+    this.processManager = ProcessManagerFactory.getInstance().createInterface();
+    this.componentManager = ComponentManagerFactory.getInstance().createInterface();
+    this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
+  }
+
+  public ComponentProcessesImpl(ProcessManager processManager,
+      ComponentManager componentManager, ActivityLogManager activityLogManager) {
+    this.processManager = processManager;
+    this.componentManager = componentManager;
+    this.activityLogManager = activityLogManager;
+  }
 
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {
