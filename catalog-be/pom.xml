@@ -880,9 +880,7 @@
                   </includes>
                 </fileset>
                 <fileset>
-                  <directory>
-                    ${project.basedir}/sdc-backend-init/chef-repo/cookbooks/sdc-normatives/files/default
-                  </directory>
+                  <directory>sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default</directory>
                   <followSymlinks>false</followSymlinks>
                   <includes>
                     <include>normatives.tar.gz</include>
