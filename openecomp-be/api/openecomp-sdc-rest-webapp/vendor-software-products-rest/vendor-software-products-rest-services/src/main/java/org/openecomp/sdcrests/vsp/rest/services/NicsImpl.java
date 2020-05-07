@@ -46,9 +46,18 @@ import java.util.Collection;
 @Service("nics")
 @Scope(value = "prototype")
 public class NicsImpl implements Nics {
-  private NicManager nicManager = NicManagerFactory.getInstance().createInterface();
-  private ComponentManager componentManager =
-      ComponentManagerFactory.getInstance().createInterface();
+  private final NicManager nicManager;
+  private final ComponentManager componentManager;
+
+  public NicsImpl() {
+    this.nicManager = NicManagerFactory.getInstance().createInterface();
+    this.componentManager = ComponentManagerFactory.getInstance().createInterface();
+  }
+
+  public NicsImpl(NicManager nicManager, ComponentManager componentManager) {
+    this.nicManager = nicManager;
+    this.componentManager = componentManager;
+  }
 
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {

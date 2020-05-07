@@ -24,15 +24,12 @@ import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
-import org.openecomp.sdc.vendorsoftwareproduct.NicManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -44,8 +41,6 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -53,23 +48,14 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({NicsImpl.class, ComponentManagerFactory.class, NicManagerFactory.class})
 public class NicsImplTest {
 
   private Logger logger = LoggerFactory.getLogger(NicsImplTest.class);
 
   @Mock
-  private NicManagerFactory nicManagerFactory;
-
-  @Mock
   private NicManager nicManager;
-
-  @Mock
-  private ComponentManagerFactory componentManagerFactory;
 
   @Mock
   private ComponentManager componentManager;
@@ -80,20 +66,12 @@ public class NicsImplTest {
   private final String nicId = "" + System.currentTimeMillis();
   private final String user = "cs0008";
 
+  private NicsImpl bean;
+
   @Before
   public void setUp() {
     try {
       initMocks(this);
-
-      mockStatic(ComponentManagerFactory.class);
-      when(ComponentManagerFactory.getInstance()).thenReturn(componentManagerFactory);
-      when(componentManagerFactory.createInterface()).thenReturn(componentManager);
-
-      mockStatic(NicManagerFactory.class);
-      when(NicManagerFactory.getInstance()).thenReturn(nicManagerFactory);
-      when(nicManagerFactory.createInterface()).thenReturn(nicManager);
-
-
 
       NicEntity e = new NicEntity();
       e.setComponentId(componentId);
@@ -132,6 +110,7 @@ public class NicsImplTest {
               ArgumentMatchers.eq(componentId),
               ArgumentMatchers.eq(nicId))).thenReturn(qr);
 
+      bean = new NicsImpl(nicManager, componentManager);
 
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -140,7 +119,6 @@ public class NicsImplTest {
 
   @Test
   public void testList() {
-    NicsImpl bean = new NicsImpl();
 
     Response rsp = bean.list(vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
@@ -162,7 +140,6 @@ public class NicsImplTest {
     dto.setNetworkId(nicId);
     dto.setNetworkType("External");
 
-    NicsImpl bean = new NicsImpl();
     Response rsp = bean.create(dto, vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -178,7 +155,6 @@ public class NicsImplTest {
 
   @Test
   public void testDelete() {
-    NicsImpl bean = new NicsImpl();
     Response rsp = bean.delete(vspId, versionId, componentId, nicId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
@@ -187,7 +163,6 @@ public class NicsImplTest {
 
   @Test
   public void testGet() {
-    NicsImpl bean = new NicsImpl();
     Response rsp = bean.get(vspId, versionId, componentId, nicId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNotNull(rsp.getEntity());
@@ -195,7 +170,6 @@ public class NicsImplTest {
 
   @Test
   public void testUpdate() {
-    NicsImpl bean = new NicsImpl();
     NicRequestDto dto = new NicRequestDto();
     dto.setDescription("hello");
     dto.setName("name");
@@ -210,7 +184,6 @@ public class NicsImplTest {
 
   @Test
   public void testGetQuestionaire() {
-    NicsImpl bean = new NicsImpl();
     Response rsp = bean.getQuestionnaire(vspId, versionId, componentId, nicId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     try {
@@ -226,7 +199,6 @@ public class NicsImplTest {
 
   @Test
   public void testUpdateQuestionaire() {
-    NicsImpl bean = new NicsImpl();
     Response rsp = bean.updateQuestionnaire("helloworld", vspId, versionId, componentId, nicId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
