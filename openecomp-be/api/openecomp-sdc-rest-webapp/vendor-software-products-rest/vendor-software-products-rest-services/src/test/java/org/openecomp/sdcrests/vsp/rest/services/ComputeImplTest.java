@@ -24,15 +24,12 @@ import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ComputeManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ComputeManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ListComputeResponse;
@@ -45,8 +42,6 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComputeDetailsDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComputeDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -54,23 +49,14 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ComputeImpl.class, ComponentManagerFactory.class, ComputeManagerFactory.class})
 public class ComputeImplTest {
 
   private Logger logger = LoggerFactory.getLogger(ComputeImplTest.class);
 
   @Mock
-  private ComputeManagerFactory computeManagerFactory;
-
-  @Mock
   private ComputeManager computeManager;
-
-  @Mock
-  private ComponentManagerFactory componentManagerFactory;
 
   @Mock
   private ComponentManager componentManager;
@@ -81,19 +67,12 @@ public class ComputeImplTest {
   private final String computeId = "" + System.currentTimeMillis();
   private final String user = "cs0008";
 
+  private ComputeImpl ci;
+
   @Before
   public void setUp() {
     try {
       initMocks(this);
-
-      mockStatic(ComponentManagerFactory.class);
-      when(ComponentManagerFactory.getInstance()).thenReturn(componentManagerFactory);
-      when(componentManagerFactory.createInterface()).thenReturn(componentManager);
-
-      mockStatic(ComputeManagerFactory.class);
-      when(ComputeManagerFactory.getInstance()).thenReturn(computeManagerFactory);
-      when(computeManagerFactory.createInterface()).thenReturn(computeManager);
-
 
       ListComputeResponse lcr = new ListComputeResponse();
       lcr.setAssociatedWithDeploymentFlavor(false);
@@ -137,6 +116,7 @@ public class ComputeImplTest {
               ArgumentMatchers.eq(componentId),
               ArgumentMatchers.eq(computeId))).thenReturn(qr);
 
+      ci = new ComputeImpl(computeManager, componentManager);
 
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -145,7 +125,6 @@ public class ComputeImplTest {
 
   @Test
   public void testList() {
-    ComputeImpl ci = new ComputeImpl();
 
     Response rsp = ci.list(vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
@@ -164,7 +143,6 @@ public class ComputeImplTest {
     dto.setDescription("hello");
     dto.setName("name");
 
-    ComputeImpl ci = new ComputeImpl();
     Response rsp = ci.create(dto, vspId, versionId, componentId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -180,7 +158,6 @@ public class ComputeImplTest {
 
   @Test
   public void testDelete() {
-    ComputeImpl ci = new ComputeImpl();
     Response rsp = ci.delete(vspId, versionId, componentId, computeId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
@@ -189,7 +166,6 @@ public class ComputeImplTest {
 
   @Test
   public void testGet() {
-    ComputeImpl ci = new ComputeImpl();
     Response rsp = ci.get(vspId, versionId, componentId, computeId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNotNull(rsp.getEntity());
@@ -197,7 +173,6 @@ public class ComputeImplTest {
 
   @Test
   public void testUpdate() {
-    ComputeImpl ci = new ComputeImpl();
     ComputeDetailsDto dto = new ComputeDetailsDto();
     Response rsp = ci.update(dto, vspId, versionId, componentId, computeId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
@@ -206,7 +181,6 @@ public class ComputeImplTest {
 
   @Test
   public void testGetQuestionaire() {
-    ComputeImpl ci = new ComputeImpl();
     Response rsp = ci.getQuestionnaire(vspId, versionId, componentId, computeId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     try {
@@ -222,7 +196,6 @@ public class ComputeImplTest {
 
   @Test
   public void testUpdateQuestionaire() {
-    ComputeImpl ci = new ComputeImpl();
     Response rsp = ci.updateQuestionnaire("helloworld", vspId, versionId, componentId, computeId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());

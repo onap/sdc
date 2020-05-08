@@ -47,10 +47,18 @@ import java.util.Collection;
 @Service("computes")
 @Scope(value = "prototype")
 public class ComputeImpl implements Compute {
-  private ComputeManager computetManager =
-      ComputeManagerFactory.getInstance().createInterface();
-  private ComponentManager componentManager =
-      ComponentManagerFactory.getInstance().createInterface();
+  private final ComputeManager computetManager;
+  private final ComponentManager componentManager;
+
+  public ComputeImpl() {
+    this.computetManager = ComputeManagerFactory.getInstance().createInterface();
+    this.componentManager = ComponentManagerFactory.getInstance().createInterface();
+  }
+
+  public ComputeImpl(ComputeManager computetManager, ComponentManager componentManager) {
+    this.computetManager = computetManager;
+    this.componentManager = componentManager;
+  }
 
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {
