@@ -42,6 +42,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -126,9 +127,7 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
-import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
-import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -4000,13 +3999,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String origMd5 = request.getHeader(Constants.MD5_HEADER);
         String userId = request.getHeader(Constants.USER_ID_HEADER);
 
-        Either<ComponentMetadataData, StorageOperationStatus> getComponentRes =
-                toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
-        if (getComponentRes.isRight()) {
-            StorageOperationStatus status = getComponentRes.right().value();
-            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status, componentType), componentUuid);
-        }
+        Either<ComponentMetadataData, ActionStatus> getComponentRes =
+            fetchLatestComponentMetadataOrThrow(componentType, componentUuid);
 
         ComponentMetadataDataDefinition componentMetadataDataDefinition = getComponentRes.left().value().getMetadataDataDefinition();
         componentId = componentMetadataDataDefinition.getUniqueId();
@@ -4049,12 +4043,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String userId = request.getHeader(Constants.USER_ID_HEADER);
 
         ImmutablePair<Component, ComponentInstance> componentRiPair = null;
-        Either<ComponentMetadataData, StorageOperationStatus> getComponentRes = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
-        if (getComponentRes.isRight()) {
-            StorageOperationStatus status = getComponentRes.right().value();
-            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status, componentType), resourceInstanceName);
-        }
+
+        Either<ComponentMetadataData, ActionStatus> getComponentRes =
+            fetchLatestComponentMetadataOrThrow(componentType, componentUuid, resourceInstanceName);
         if (!getComponentRes.left()
                 .value()
                 .getMetadataDataDefinition()
@@ -4104,12 +4095,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String origMd5 = request.getHeader(Constants.MD5_HEADER);
         String userId = request.getHeader(Constants.USER_ID_HEADER);
 
-        Either<ComponentMetadataData, StorageOperationStatus> getComponentRes = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
-        if (getComponentRes.isRight()) {
-            StorageOperationStatus status = getComponentRes.right().value();
-            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status));
-        }
+        Either<ComponentMetadataData, ActionStatus> getComponentRes =
+            fetchLatestComponentMetadataOrThrow(componentType, componentUuid);
         componentId = getComponentRes.left().value().getMetadataDataDefinition().getUniqueId();
         String componentName = getComponentRes.left().value().getMetadataDataDefinition().getName();
 
@@ -4161,12 +4148,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String userId = request.getHeader(Constants.USER_ID_HEADER);
 
         ImmutablePair<Component, ComponentInstance> componentRiPair = null;
-        Either<ComponentMetadataData, StorageOperationStatus> getComponentRes = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
-        if (getComponentRes.isRight()) {
-            StorageOperationStatus status = getComponentRes.right().value();
-            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status));
-        }
+        Either<ComponentMetadataData, ActionStatus> getComponentRes =
+            fetchLatestComponentMetadataOrThrow(componentType, componentUuid);
         if (!getComponentRes.left()
                 .value()
                 .getMetadataDataDefinition()
@@ -4271,11 +4254,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         ArtifactDefinition existingArtifactInfo = null;
         String interfaceName = null;
 
-        Either<ComponentMetadataData, StorageOperationStatus> getComponentRes = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
-        if (getComponentRes.isRight()) {
-            StorageOperationStatus status = getComponentRes.right().value();
-            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
-            errorWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status)));
+        Either<ComponentMetadataData, ActionStatus> getComponentRes =
+            fetchLatestComponentMetadata(componentType, componentUuid).right().map(as -> {
+                errorWrapper.setInnerElement(componentsUtils.getResponseFormat(as));
+                return as;
+            });
+
+        if(getComponentRes.isRight()) {
+            errorWrapper.setInnerElement(componentsUtils.getResponseFormat(getComponentRes.right().value()));
         }
 
         if (errorWrapper.isEmpty()) {
@@ -4351,6 +4337,32 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return updateArtifactResult;
     }
 
+
+    private Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadataOrThrow(
+        ComponentTypeEnum componentType, String componentUuid
+    ) {
+        return fetchLatestComponentMetadataOrThrow(componentType, componentUuid, componentUuid);
+    }
+
+    private Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadataOrThrow(
+        ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName
+    ) {
+        return fetchLatestComponentMetadata(componentType, componentUuid).right().map(as -> {
+            throw new ByActionStatusComponentException(as, resourceInstanceName);
+        });
+    }
+
+    private Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadata(
+        ComponentTypeEnum componentType, String componentUuid
+    ) {
+        return toscaOperationFacade
+            .getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true)
+            .right().map(sos -> {
+                log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, sos);
+                return componentsUtils.convertFromStorageResponse(sos, componentType);
+            });
+    }
+
     private Either<String, ResponseFormat> fetchInterfaceName(String componentId, String interfaceUUID) {
         Either<Component, StorageOperationStatus> componentStorageOperationStatusEither = toscaOperationFacade.getToscaElement(componentId);
         if (componentStorageOperationStatusEither.isRight()) {
@@ -4389,12 +4401,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String origMd5 = request.getHeader(Constants.MD5_HEADER);
         String userId = request.getHeader(Constants.USER_ID_HEADER);
 
-        Either<ComponentMetadataData, StorageOperationStatus> getComponentRes = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
-        if (getComponentRes.isRight()) {
-            StorageOperationStatus status = getComponentRes.right().value();
-            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status, componentType), componentUuid);
-        }
+        Either<ComponentMetadataData, ActionStatus> getComponentRes =
+            fetchLatestComponentMetadataOrThrow(componentType, componentUuid);
         componentId = getComponentRes.left().value().getMetadataDataDefinition().getUniqueId();
         String componentName = getComponentRes.left().value().getMetadataDataDefinition().getName();
         if (!getComponentRes.left()
@@ -4437,13 +4445,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String origMd5 = request.getHeader(Constants.MD5_HEADER);
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         ImmutablePair<Component, ComponentInstance> componentRiPair = null;
-        Either<ComponentMetadataData, StorageOperationStatus> getComponentRes =
-                toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, true);
-        if (getComponentRes.isRight()) {
-            StorageOperationStatus status = getComponentRes.right().value();
-            log.debug(FAILED_FETCH_COMPONENT, componentType, componentUuid, status);
-            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status));
-        }
+        Either<ComponentMetadataData, ActionStatus> getComponentRes =
+            fetchLatestComponentMetadataOrThrow(componentType, componentUuid);
         if (!getComponentRes.left()
                 .value()
                 .getMetadataDataDefinition()
