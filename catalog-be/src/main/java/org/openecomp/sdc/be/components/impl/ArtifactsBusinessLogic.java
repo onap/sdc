@@ -1247,26 +1247,31 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     // This method is here for backward compatibility - when other parts of the code are cleaned can change to use the internal version
-    public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete(String parentId, String artifactId, User user, AuditingActionEnum auditingAction, ComponentTypeEnum componentType, Component parent,
-                                                                                      boolean shouldLock, boolean inTransaction) {
+    public Either<ArtifactDefinition, ResponseFormat> handleDelete(
+        String parentId, String artifactId, User user, Component parent,
+        boolean shouldLock, boolean inTransaction) {
+
         ResponseFormat responseFormat;
         boolean operationSucceeded = false;
         if (shouldLock) {
-            lockComponent(componentType, artifactId, auditingAction, user, parent);
+            lockComponent(ComponentTypeEnum.RESOURCE, artifactId, AuditingActionEnum.ARTIFACT_DELETE, user, parent);
         }
         try {
-            ArtifactDefinition artifactDefinition = handleDeleteInternal(parentId, artifactId, componentType, parent);
+            ArtifactDefinition artifactDefinition = handleDeleteInternal(parentId, artifactId,
+                ComponentTypeEnum.RESOURCE, parent);
             operationSucceeded = true;
-            return Either.left(Either.left(artifactDefinition));
+            return Either.left(artifactDefinition);
         }
         catch (ComponentException ce) {
             responseFormat = componentsUtils.getResponseFormat(ce);
-            handleAuditing(auditingAction, parent, parentId, user, null, null, artifactId, responseFormat, componentType, null);
+            handleAuditing(AuditingActionEnum.ARTIFACT_DELETE, parent, parentId, user, null, null,
+                artifactId, responseFormat, ComponentTypeEnum.RESOURCE, null);
             return Either.right(responseFormat);
         }
         catch (StorageException se) {
             responseFormat = componentsUtils.getResponseFormat(se);
-            handleAuditing(auditingAction, parent, parentId, user, null, null, artifactId, responseFormat, componentType, null);
+            handleAuditing(AuditingActionEnum.ARTIFACT_DELETE, parent, parentId, user, null, null,
+                artifactId, responseFormat, ComponentTypeEnum.RESOURCE, null);
             return Either.right(responseFormat);
         } finally {
             handleLockingAndCommit(parent, shouldLock, inTransaction, operationSucceeded);
@@ -2669,28 +2674,18 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(decodedPayload);
     }
 
+    public Either<ArtifactDefinition, ResponseFormat> deleteArtifactByInterface(
+        String resourceId, String userUserId, String artifactId, boolean inTransaction) {
 
-    public Either<Operation, ResponseFormat> deleteArtifactByInterface(String resourceId, String userUserId, String artifactId,
-                                                                       boolean inTransaction) {
-        User user = new User();
-        user.setUserId(userUserId);
-        Either<Resource, StorageOperationStatus> parent = toscaOperationFacade.getToscaElement(resourceId, JsonParseFlagEnum.ParseMetadata);
-        if (parent.isRight()) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(parent
-                    .right()
-                    .value()));
-            return Either.right(responseFormat);
-        }
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = handleDelete(resourceId, artifactId, user, AuditingActionEnum.ARTIFACT_DELETE, ComponentTypeEnum.RESOURCE, parent
-                        .left()
-                        .value(),
-                false, inTransaction);
-        if (handleDelete.isRight()) {
-            return Either.right(handleDelete.right().value());
-        }
-        Either<ArtifactDefinition, Operation> result = handleDelete.left().value();
-        return Either.left(result.right().value());
-
+        return toscaOperationFacade
+            .getToscaElement(resourceId, JsonParseFlagEnum.ParseMetadata)
+            .right().map(componentsUtils.toResponseFormat())
+            .left().bind(parentComponent -> {
+                User user = new User(userUserId);
+                return handleDelete(resourceId, artifactId, user,
+                    parentComponent,
+                    false, inTransaction);
+            });
     }
 
     private Operation convertToOperation(ArtifactDefinition artifactInfo, String operationName) {
@@ -4228,7 +4223,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
         return Either.left(artifactInfo);
     }
-
 
     /**
      * updates an artifact on a component by UUID

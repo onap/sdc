@@ -2385,12 +2385,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         String parentId = "parentId";
         String artifactId = "artifactId";
-        AuditingActionEnum auditingAction = AuditingActionEnum.ARTIFACT_DELETE;
         ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         Resource resource = new Resource();
-        ComponentTypeEnum componentType = ComponentTypeEnum.RESOURCE;
-        boolean shouldUnlock = true;
-        boolean inTransaction = false;
         User user = new User();
 
         artifactDefinition.setArtifactName("test.csar");
@@ -2417,9 +2413,9 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         when(artifactCassandraDao.deleteArtifact(any()))
                 .thenReturn(CassandraOperationStatus.OK);
 
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result = artifactBL.handleDelete(parentId, artifactId, user, auditingAction, componentType, resource, shouldUnlock, inTransaction);
-        Either<ArtifactDefinition, Operation> leftValue = result.left().value();
-        Assert.assertEquals(artifactDefinition.getArtifactName(), leftValue.left().value().getArtifactName());
+        Either<ArtifactDefinition, ResponseFormat> result = artifactBL.handleDelete(
+            parentId, artifactId, user, resource, true, false);
+        Assert.assertEquals(artifactDefinition.getArtifactName(), result.left().value().getArtifactName());
     }
 
     @Test

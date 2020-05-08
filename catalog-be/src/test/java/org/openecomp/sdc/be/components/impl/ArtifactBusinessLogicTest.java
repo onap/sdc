@@ -65,10 +65,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
-import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
@@ -573,7 +570,6 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
 
     @Test
     public void testDeleteComponent_ArtifactNotFound(){
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result;
         Resource resource = new Resource();
         String uniqueId = "uniqueId";
         resource.setUniqueId(uniqueId);
@@ -593,9 +589,9 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
                 .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.unlockComponent(uniqueId, NodeTypeEnum.Resource))
                 .thenReturn(StorageOperationStatus.OK);
-        result = artifactBL.handleDelete("parentId", "artifactId", USER, AuditingActionEnum.ARTIFACT_DELETE,
-                ComponentTypeEnum.RESOURCE, resource,
-                true, false);
+        Either<ArtifactDefinition, ResponseFormat>  result = artifactBL.handleDelete(
+            "parentId", "artifactId", USER,
+            resource, true, false);
         assertThat(result.isRight()).isTrue();
     }
 

@@ -28,7 +28,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import fj.F;
 import fj.data.Either;
+import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
@@ -1667,5 +1669,7 @@ public class ComponentsUtils {
         return uiLeftPaletteComponents;
     }
 
-
+    public F<StorageOperationStatus, ResponseFormat> toResponseFormat() {
+        return sos -> getResponseFormat(convertFromStorageResponse(sos));
+    }
 }
