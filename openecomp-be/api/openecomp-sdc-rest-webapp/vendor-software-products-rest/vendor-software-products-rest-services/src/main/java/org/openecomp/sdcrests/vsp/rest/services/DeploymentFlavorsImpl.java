@@ -43,8 +43,16 @@ import java.util.Collection;
 @Service("deploymentFlavors")
 @Scope(value = "prototype")
 public class DeploymentFlavorsImpl implements DeploymentFlavors {
-  private DeploymentFlavorManager deploymentFlavorManager =
-      DeploymentFlavorManagerFactory.getInstance().createInterface();
+  private final DeploymentFlavorManager deploymentFlavorManager;
+
+  public DeploymentFlavorsImpl() {
+    this.deploymentFlavorManager =
+        DeploymentFlavorManagerFactory.getInstance().createInterface();
+  }
+
+  public DeploymentFlavorsImpl(DeploymentFlavorManager deploymentFlavorManager) {
+    this.deploymentFlavorManager = deploymentFlavorManager;
+  }
 
   @Override
   public Response create(DeploymentFlavorRequestDto request, String vspId, String versionId,

@@ -24,13 +24,11 @@ import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManager;
-import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
@@ -40,8 +38,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -49,18 +45,11 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DeploymentFlavorsImpl.class, DeploymentFlavorManagerFactory.class})
 public class DeploymentFlavorsImplTest {
 
   private Logger logger = LoggerFactory.getLogger(DeploymentFlavorsImplTest.class);
-
-
-  @Mock
-  private DeploymentFlavorManagerFactory deploymentFlavorManagerFactory;
 
   @Mock
   private DeploymentFlavorManager deploymentFlavorManager;
@@ -70,14 +59,12 @@ public class DeploymentFlavorsImplTest {
   private final String deploymentFlavorId = "" + System.currentTimeMillis();
   private final String user = "cs0008";
 
+  private DeploymentFlavorsImpl dfi;
+
   @Before
   public void setUp() {
     try {
       initMocks(this);
-
-      mockStatic(DeploymentFlavorManagerFactory.class);
-      when(DeploymentFlavorManagerFactory.getInstance()).thenReturn(deploymentFlavorManagerFactory);
-      when(deploymentFlavorManagerFactory.createInterface()).thenReturn(deploymentFlavorManager);
 
       DeploymentFlavorEntity e = new DeploymentFlavorEntity();
       e.setId(deploymentFlavorId);
@@ -110,6 +97,7 @@ public class DeploymentFlavorsImplTest {
               ArgumentMatchers.eq(vspId),
               ArgumentMatchers.any())).thenReturn(r);
 
+      dfi = new DeploymentFlavorsImpl(deploymentFlavorManager);
 
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
@@ -118,8 +106,6 @@ public class DeploymentFlavorsImplTest {
 
   @Test
   public void testList() {
-    DeploymentFlavorsImpl dfi = new DeploymentFlavorsImpl();
-
     Response rsp = dfi.list(vspId, versionId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -137,7 +123,6 @@ public class DeploymentFlavorsImplTest {
     dto.setModel("model");
     dto.setFeatureGroupId("fgi");
 
-    DeploymentFlavorsImpl dfi = new DeploymentFlavorsImpl();
     Response rsp = dfi.create(dto, vspId, versionId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Object e = rsp.getEntity();
@@ -153,7 +138,6 @@ public class DeploymentFlavorsImplTest {
 
   @Test
   public void testDelete() {
-    DeploymentFlavorsImpl dfi = new DeploymentFlavorsImpl();
     Response rsp = dfi.delete(vspId, versionId, deploymentFlavorId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNull(rsp.getEntity());
@@ -162,7 +146,6 @@ public class DeploymentFlavorsImplTest {
 
   @Test
   public void testGet() {
-    DeploymentFlavorsImpl dfi = new DeploymentFlavorsImpl();
     Response rsp = dfi.get(vspId, versionId, deploymentFlavorId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNotNull(rsp.getEntity());
@@ -170,7 +153,6 @@ public class DeploymentFlavorsImplTest {
 
   @Test
   public void testGetSchema() {
-    DeploymentFlavorsImpl dfi = new DeploymentFlavorsImpl();
     Response rsp = dfi.get(vspId, versionId, deploymentFlavorId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
     Assert.assertNotNull(rsp.getEntity());
@@ -178,7 +160,6 @@ public class DeploymentFlavorsImplTest {
 
   @Test
   public void testUpdate() {
-    DeploymentFlavorsImpl dfi = new DeploymentFlavorsImpl();
     DeploymentFlavorRequestDto dto = new DeploymentFlavorRequestDto();
     Response rsp = dfi.update(dto, vspId, versionId, deploymentFlavorId, user);
     Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
