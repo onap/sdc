@@ -27,6 +27,7 @@ import static org.openecomp.sdc.be.dao.api.ActionStatus.MISMATCH_BETWEEN_ARTIFAC
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fj.F;
 import fj.data.Either;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -1298,34 +1300,45 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ArtifactDefinition handleDeleteInternal(String parentId, String artifactId, ComponentTypeEnum componentType, Component parent) {
+    private ArtifactDefinition handleDeleteInternal(
+        String parentId, String artifactId,
+        ComponentTypeEnum componentType, Component parent
+    ) {
         NodeTypeEnum parentType = convertParentType(componentType);
         log.debug("Going to find the artifact {} on the component {}", artifactId, parent.getUniqueId());
-        Either<ImmutablePair<ArtifactDefinition, ComponentInstance>, ActionStatus> getArtifactRes = findArtifact(artifactId, parent, parentId, componentType);
+
+        Either<ImmutablePair<ArtifactDefinition, ComponentInstance>, ActionStatus> getArtifactRes =
+            findArtifact(artifactId, parent, parentId, componentType);
         if (getArtifactRes.isRight()) {
-            log.debug("Failed to find the artifact {} belonging to {} on the component {}", artifactId, parentId, parent.getUniqueId());
+            log.debug("Failed to find the artifact {} belonging to {} on the component {}",
+                artifactId, parentId, parent.getUniqueId());
             throw new ByActionStatusComponentException(getArtifactRes.right().value(), artifactId);
         }
         ArtifactDefinition foundArtifact = getArtifactRes.left().value().getLeft();
         ComponentInstance foundInstance = getArtifactRes.left().value().getRight();
+
         String esId = foundArtifact.getEsId();
+        Either<Boolean, StorageOperationStatus> needClone = ifTrue(StringUtils.isNotEmpty(esId), () -> forEach(
+            artifactToscaOperation.isCloneNeeded(parent.getUniqueId(), foundArtifact, parentType),
+            b -> log.debug("handleDelete: clone is needed for deleting {} held by {} in component {} {}? {}",
+                foundArtifact.getArtifactName(), parentType, parent.getUniqueId(), parent.getName(), b)
+        ));
+
         boolean needToClone = false;
-        if (StringUtils.isNotEmpty(esId)) {
-            Either<Boolean, StorageOperationStatus> needCloneRes = null;
-            needCloneRes = artifactToscaOperation.isCloneNeeded(parent.getUniqueId(), foundArtifact, parentType);
-            if (needCloneRes.isRight()) {
-                throw new StorageException(needCloneRes.right().value(), foundArtifact.getArtifactDisplayName());
-            } else if (log.isDebugEnabled()) {
-                needToClone = needCloneRes.left().value();
-                log.debug("handleDelete: clone is needed for deleting {} held by {} in component {} ? {}",
-                        foundArtifact.getArtifactName(), parentType, parent.getUniqueId(), parent.getName(), needCloneRes.left().value());
-            }
+        // TODO: This should not be done, but in order to keep this refactoring small, we stop here.
+        // Remove this block once the above refactoring is merged.
+        if(needClone.isLeft()) {
+            needToClone = needClone.left().value();
+        } else {
+            throw new StorageException(needClone.right().value(), foundArtifact.getArtifactDisplayName());
         }
-        boolean isNeedToDeleteArtifactFromDB = true;
+
+        boolean isNeedToDeleteArtifactFromDB =
+            componentType == ComponentTypeEnum.RESOURCE_INSTANCE &&
+                isArtifactOnlyResourceInstanceArtifact(foundArtifact, parent, parentId);
+
         boolean isDuplicated = false;
-        if (componentType == ComponentTypeEnum.RESOURCE_INSTANCE) {
-            isNeedToDeleteArtifactFromDB = isArtifactOnlyResourceInstanceArtifact(foundArtifact, parent, parentId);
-        }
+
         ArtifactDataDefinition updatedArtifact = deleteOrUpdateArtifactOnGraph(parent, parentId, artifactId, parentType, foundArtifact, needToClone);
         isDuplicated = updatedArtifact.getDuplicated();
 
@@ -1362,6 +1375,17 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
         }
         return foundArtifact;
+    }
+
+    public static <R> Either<Boolean, R> ifTrue(boolean predicate, Supplier<Either<Boolean, R>> ifTrue) {
+        return predicate ? ifTrue.get() : Either.left(false);
+    }
+
+    public static <L, R> Either<L, R> forEach(Either<L, R> e, Consumer<L> c) {
+        return e.left().map(l -> {
+            c.accept(l);
+            return l;
+        });
     }
 
     private boolean isArtifactOnlyResourceInstanceArtifact(ArtifactDefinition foundArtifact, Component parent, String instanceId) {
