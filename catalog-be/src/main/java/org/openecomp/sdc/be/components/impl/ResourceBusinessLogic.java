@@ -2319,22 +2319,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Either<Boolean, ResponseFormat> result = Either.left(true);
 		if (operation.isUpdate() || operation.isDelete()) {
 			if (isArtifactDeletionRequired(artifactId, artifactFileBytes, isFromCsar)) {
-				Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic
+				Either<ArtifactDefinition, ResponseFormat> handleDelete = artifactsBusinessLogic
 						.handleDelete(resource.getUniqueId(), artifactId, csarInfo.getModifier(),
-								AuditingActionEnum.ARTIFACT_DELETE, ComponentTypeEnum.RESOURCE, resource, shouldLock,
+							resource, shouldLock,
 								inTransaction);
 				if (handleDelete.isRight()) {
 					result = Either.right(handleDelete.right()
 							.value());
 				} else {
-					Either<ArtifactDefinition, Operation> value = handleDelete.left().value();
-					if (value.isLeft()) {
-						String updatedArtifactId = value.left().value().getUniqueId();
-						if (artifactGroupType == ArtifactGroupTypeEnum.DEPLOYMENT) {
-							resource.getDeploymentArtifacts().remove(updatedArtifactId);
-						} else {
-							resource.getArtifacts().remove(updatedArtifactId);
-						}
+					ArtifactDefinition value = handleDelete.left().value();
+					String updatedArtifactId = value.getUniqueId();
+					if (artifactGroupType == ArtifactGroupTypeEnum.DEPLOYMENT) {
+						resource.getDeploymentArtifacts().remove(updatedArtifactId);
+					} else {
+						resource.getArtifacts().remove(updatedArtifactId);
 					}
 				}
 				return result;
@@ -5505,7 +5503,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	private Either<Boolean, ResponseFormat> processUpdateOfDerivedFrom(Resource currentResource,
 																	   Resource updatedResource, String userId, boolean inTransaction) {
-		Either<Operation, ResponseFormat> deleteArtifactByInterface;
 		if (updatedResource.getDerivedFrom() != null) {
 			log.debug("Starting derived from update for resource {}", updatedResource.getUniqueId());
 			log.debug("1. Removing interface artifacts from graph");
@@ -5529,12 +5526,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 								log.debug("Removing interface artifact definition {}, operation {}, interfaceType {}",
 										uniqueId, operationEntry.getKey(), interfaceType);
 								// only thing that transacts and locks here
-								deleteArtifactByInterface = artifactsBusinessLogic.deleteArtifactByInterface(resourceId,
-										userId, uniqueId, true);
+								Either<ArtifactDefinition, ResponseFormat> deleteArtifactByInterface =
+									artifactsBusinessLogic.deleteArtifactByInterface(resourceId, userId, uniqueId, true);
 								if (deleteArtifactByInterface.isRight()) {
 									log.debug("Couldn't remove artifact definition with id {}", uniqueId);
 									if (!inTransaction) {
-                                        janusGraphDao.rollback();
+										janusGraphDao.rollback();
 									}
 									return Either.right(deleteArtifactByInterface.right()
 											.value());

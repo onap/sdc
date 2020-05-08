@@ -1247,14 +1247,15 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 String artifactType = artifact.getArtifactType();
                 final ArtifactTypeEnum artifactTypeEnum = ArtifactTypeEnum.parse(artifactType);
                 if (artifactTypeEnum != ArtifactTypeEnum.HEAT_ENV) {
-                    Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic
-                            .handleDelete(resourceId, artifact.getUniqueId(), user, AuditingActionEnum.ARTIFACT_DELETE,
-                                    ComponentTypeEnum.RESOURCE, updatedResource, shouldLock, inTransaction);
+                    Either<ArtifactDefinition, ResponseFormat> handleDelete = artifactsBusinessLogic
+                            .handleDelete(resourceId, artifact.getUniqueId(), user,
+                                updatedResource, shouldLock, inTransaction);
+
                     if (handleDelete.isRight()) {
                         return Either.right(handleDelete.right().value());
                     }
 
-                    deletedArtifacts.add(handleDelete.left().value().left().value());
+                    deletedArtifacts.add(handleDelete.left().value());
                 }
 
             }
@@ -1740,7 +1741,9 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 for(GroupDefinition gr : vfGroupsToDelete){
                     List<String> artifacts = gr.getArtifacts();
                     for (String artifactId : artifacts) {
-                        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic.handleDelete(updatedResource.getUniqueId(), artifactId, csarInfo.getModifier(), AuditingActionEnum.ARTIFACT_DELETE, ComponentTypeEnum.RESOURCE,
+                        Either<ArtifactDefinition, ResponseFormat> handleDelete =
+                            artifactsBusinessLogic.handleDelete(
+                                updatedResource.getUniqueId(), artifactId, csarInfo.getModifier(),
                                 updatedResource, shouldLock, inTransaction);
                         if (handleDelete.isRight()) {
                             log.debug("Couldn't delete  artifact {}", artifactId);
