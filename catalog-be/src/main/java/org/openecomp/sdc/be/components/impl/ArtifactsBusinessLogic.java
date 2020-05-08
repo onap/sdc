@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.F;
 import fj.data.Either;
+import io.vavr.control.Option;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -4645,65 +4646,62 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return handleArtifactsResult;
     }
 
-    private ComponentInstance getRelatedComponentInstance(ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName) {
-        ComponentInstance componentInstance;
+    private ComponentInstance getRelatedComponentInstance(
+        ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName
+    ) {
         String normalizedName = ValidationUtils.normalizeComponentInstanceName(resourceInstanceName);
-        Component component = getComponentByUuid(componentType, componentUuid);
-        componentInstance = (component == null) ? null : component.getComponentInstances()
-                .stream()
-                .filter(ci -> ValidationUtils.normalizeComponentInstanceName(ci.getName())
-                        .equals(normalizedName))
-                .findFirst()
-                .orElse(null);
-        if (componentInstance == null) {
-            log.debug(COMPONENT_INSTANCE_NOT_FOUND, resourceInstanceName, component.getName());
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName,
-                    RESOURCE_INSTANCE, component.getComponentType().getValue(), component.getName());
-        }
-        return componentInstance;
+        Option<Component> oComponent = Option.of(getComponentByUuid(componentType, componentUuid));
+        return oComponent
+            .toTry(componentNotFound(componentType, componentUuid))
+            .flatMap(component -> findFirstMatching(component,
+                ci -> ValidationUtils.normalizeComponentInstanceName(ci.getName()).equals(normalizedName)
+            ).toTry(componentInstanceNotFound(componentType, resourceInstanceName, component))
+        ).get();
     }
 
-    private ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(Component component, String resourceInstanceName) {
-
-        ImmutablePair<Component, ComponentInstance> relatedComponentComponentInstancePair = null;
+    private ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(
+        Component component, String resourceInstanceName
+    ) {
         String normalizedName = ValidationUtils.normalizeComponentInstanceName(resourceInstanceName);
-        ComponentInstance componentInstance = component.getComponentInstances()
-                .stream()
-                .filter(ci -> ValidationUtils.normalizeComponentInstanceName(ci.getName())
-                        .equals(normalizedName))
-                .findFirst()
-                .orElse(null);
-        if (componentInstance == null) {
-            log.debug(COMPONENT_INSTANCE_NOT_FOUND, resourceInstanceName, component.getName());
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, resourceInstanceName,
-                    RESOURCE_INSTANCE, component.getComponentType().getValue(), component.getName());
-        }
-        else {
-            relatedComponentComponentInstancePair = new ImmutablePair<>(component, componentInstance);
-        }
-        return relatedComponentComponentInstancePair;
+        ComponentInstance componentInstance = findFirstMatching(component,
+            ci -> ValidationUtils.normalizeComponentInstanceName(ci.getName()).equals(normalizedName)
+        ).toTry(componentInstanceNotFound(component.getComponentType(), resourceInstanceName, component)).get();
+        return new ImmutablePair<>(component, componentInstance);
     }
 
-    private ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(ComponentTypeEnum componentType,
-                                                                                             String componentUuid, String resourceInstanceName) {
-        ComponentInstance componentInstance;
-        ImmutablePair<Component, ComponentInstance> relatedComponentComponentInstancePair;
+    private ImmutablePair<Component, ComponentInstance> getRelatedComponentComponentInstance(
+        ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName
+    ) {
         Component component = getLatestComponentByUuid(componentType, componentUuid);
-        componentInstance = component.getComponentInstances()
-                .stream()
-                .filter(ci -> ci.getNormalizedName().equals(resourceInstanceName))
-                .findFirst()
-                .orElse(null);
-        if (componentInstance == null) {
+        ComponentInstance componentInstance = findFirstMatching(component,
+            ci -> ci.getNormalizedName().equals(resourceInstanceName)
+        ).toTry(componentInstanceNotFound(component.getComponentType(), resourceInstanceName, component)).get();
+        return new ImmutablePair<>(component, componentInstance);
+    }
+
+    private Supplier<Throwable> componentNotFound(ComponentTypeEnum componentType, String componentUuid) {
+        return () -> {
+            log.debug(FAILED_FETCH_COMPONENT, componentType.getValue(), componentUuid);
+            return new ByActionStatusComponentException(ActionStatus.COMPONENT_NOT_FOUND, componentUuid);
+        };
+    }
+
+    private Supplier<Throwable> componentInstanceNotFound(
+        ComponentTypeEnum componentType, String resourceInstanceName, Component component
+    ) {
+        return () -> {
             log.debug(COMPONENT_INSTANCE_NOT_FOUND, resourceInstanceName, component.getName());
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
-                    resourceInstanceName, RESOURCE_INSTANCE, component
-                    .getComponentType().getValue(), component.getName());
-        }
-        else {
-            relatedComponentComponentInstancePair = new ImmutablePair<>(component, componentInstance);
-        }
-        return relatedComponentComponentInstancePair;
+            return new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
+                resourceInstanceName,
+                RESOURCE_INSTANCE, componentType.getValue(), component.getName());
+        };
+    }
+
+    private static Option<ComponentInstance> findFirstMatching(Component component, Predicate<ComponentInstance> filter) {
+        return Option.ofOptional(component.getComponentInstances()
+            .stream()
+            .filter(filter)
+            .findFirst());
     }
 
     private byte[] downloadArtifact(Map<String, ArtifactDefinition> artifacts, String artifactUUID, String componentName) {
