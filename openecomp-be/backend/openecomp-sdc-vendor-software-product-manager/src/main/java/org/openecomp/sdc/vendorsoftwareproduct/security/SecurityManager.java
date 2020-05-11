@@ -86,7 +86,13 @@ public class SecurityManager {
     }
 
     private SecurityManager() {
-        certificateDirectory = this.getcertDirectory();
+        certificateDirectory = this.getcertDirectory(System.getenv("SDC_CERT_DIR"));
+    }
+
+
+    // Package level constructor use in tests to avoid power mock
+    SecurityManager(String sdcCertDir) {
+        certificateDirectory = this.getcertDirectory(sdcCertDir);
     }
 
     public static SecurityManager getInstance() {
@@ -193,8 +199,8 @@ public class SecurityManager {
         }
     }
 
-    private File getcertDirectory() {
-        String certDirLocation = System.getenv("SDC_CERT_DIR");
+    private File getcertDirectory(String sdcCertDir) {
+        String certDirLocation = sdcCertDir;
         if (certDirLocation == null) {
             certDirLocation = CERTIFICATE_DEFAULT_LOCATION;
         }
