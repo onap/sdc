@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9de048ea_fe3bc52d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3979,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T11:20:51Z",
+      "side": 1,
+      "message": "Hi Vasyl, these functions did not have a unit-test in the past, and adding them in this change would be too much of refactoring. As I said, the amount of technical debt is way to high to attempt anything and this should be tackled separately.\n\nI used IDEA\u0027s refactoring tools and leveraged the type system to make these changes and to make sure nothing is broken. I plan to do more refactoring to make this class testable, but for now we\u0027ll have to live with this a bit.\n\nIs that ok?",
+      "parentUuid": "1e028b2c_8b0471e3",
+      "range": {
+        "startLine": 3979,
+        "startChar": 30,
+        "endLine": 3979,
+        "endChar": 61
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fe294274_26f8d9eb",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 5
@@ -145,6 +169,24 @@
       "writtenOn": "2020-05-11T07:52:25Z",
       "side": 1,
       "message": "I\u0027m not sure I understand the functionality here:\nonError.accept will throw an Exception, so line # 4349 will never be called.\nWhy no just throwing the ByActionStatusComponentException here instead of receiving the onError Consumer as a parameter?",
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22e6cc9d_f096e01a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4346,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T11:20:51Z",
+      "side": 1,
+      "message": "That\u0027s correct, thanks for catching this. There is one case where an exception should not be thrown, I\u0027m gonna fix that now.",
+      "parentUuid": "f46545a3_9f82f432",
       "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
