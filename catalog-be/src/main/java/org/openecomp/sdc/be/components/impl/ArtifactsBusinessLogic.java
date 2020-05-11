@@ -126,9 +126,7 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
-import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
-import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -357,22 +355,22 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         User user, boolean isInCertificationRequest, boolean shouldLock, boolean inTransaction,
         boolean fetchTemplatesFromDB) {
 
-        Either<byte[], ComponentException> decodedPayload = decodeToscaArtifactPayload(
+        return decodeToscaArtifactPayload(
             component, isInCertificationRequest, fetchTemplatesFromDB, artifactDefinition.getArtifactType()
-        );
-        // TODO: This should not be done, but in order to keep this refactoring relatively small, we stop here
-        if(decodedPayload.isRight())
-            throw decodedPayload.right().value();
-        else {
-            byte[] payload = decodedPayload.left().value();
+        ).left().bind(payload -> {
+            // TODO: Avoid output argument
             artifactDefinition.setPayload(payload);
             artifactDefinition.setEsId(artifactDefinition.getUniqueId());
             artifactDefinition.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(payload));
             return lockComponentAndUpdateArtifact(component.getUniqueId(), artifactDefinition,
                 AuditingActionEnum.ARTIFACT_PAYLOAD_UPDATE, artifactDefinition.getUniqueId(),
-                user, component.getComponentType(), component, payload, null, null, shouldLock, inTransaction
+                user, component.getComponentType(), component, payload, shouldLock, inTransaction
             );
-        }
+        }).right().map(ex -> {
+            // TODO: This should not be done but in order to keep this refactoring small enough, we stop here.
+            // Bubble up this exception
+            throw ex;
+        });
     }
 
     private Either<byte[], ComponentException> decodeToscaArtifactPayload(
@@ -486,7 +484,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 decodedPayload = validateInput(componentId, artifactInfo, operation, auditingAction, artifactId, user,
                         componentType, parent, origMd5, originData, interfaceName, operationName);
             }
-            result = updateArtifactFlow(parent, componentId, artifactId, artifactInfo, decodedPayload, componentType, auditingAction, interfaceName, operationName);
+            result = updateArtifactFlow(parent, componentId, artifactId, artifactInfo, decodedPayload, componentType, auditingAction
+            );
             if (needUpdateGroup && result.isLeft()) {
                 ArtifactDefinition updatedArtifact = result.left().value();
                 updateGroupForHeat(artifactInfo, updatedArtifact, parent);
@@ -892,23 +891,23 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return artifactDefinitionEither.left().value();
     }
 
-    private Either<ArtifactDefinition, Operation> lockComponentAndUpdateArtifact(
-            String parentId, ArtifactDefinition artifactInfo, AuditingActionEnum auditingAction, String artifactId,
-            User user, ComponentTypeEnum componentType, Component parent, byte[] decodedPayload, String interfaceType,
-            String operationName, boolean shouldLock, boolean inTransaction) {
+    private <T> Either<ArtifactDefinition, T> lockComponentAndUpdateArtifact(
+        String parentId, ArtifactDefinition artifactInfo, AuditingActionEnum auditingAction, String artifactId,
+        User user, ComponentTypeEnum componentType, Component parent, byte[] decodedPayload,
+        boolean shouldLock, boolean inTransaction) {
 
-        Either<ArtifactDefinition, Operation> resultOp = null;
         boolean failed = false;
         boolean writeAudit = true;
         try {
             lockComponent(parent, shouldLock, ARTIFACT_ACTION_LOCK);
             writeAudit = false;
-            resultOp = updateArtifactFlow(parent, parentId, artifactId, artifactInfo, decodedPayload, componentType, auditingAction, interfaceType, operationName);
-            return resultOp;
+            return updateArtifactFlow(parent, parentId, artifactId, artifactInfo, decodedPayload, componentType,
+                auditingAction);
         }
         catch (ComponentException ce) {
             if(writeAudit) {
-                handleAuditing(auditingAction, parent, parentId, user, null, null, artifactId, ce.getResponseFormat(), componentType, null);
+                handleAuditing(auditingAction, parent, parentId, user, null, null, artifactId, ce.getResponseFormat(),
+                    componentType, null);
             }
             failed = true;
             throw ce;
@@ -2485,27 +2484,24 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(true);
     }
 
-    private Either<ArtifactDefinition, Operation> updateArtifactFlow(Component parent, String parentId, String artifactId, ArtifactDefinition artifactInfo, byte[] decodedPayload,
-                                                                     ComponentTypeEnum componentType, AuditingActionEnum auditingAction, String interfaceType, String operationName) {
+    private <T> Either<ArtifactDefinition, T> updateArtifactFlow(Component parent, String parentId, String artifactId,
+        ArtifactDefinition artifactInfo, byte[] decodedPayload,
+        ComponentTypeEnum componentType, AuditingActionEnum auditingAction) {
         DAOArtifactData artifactData = createEsArtifactData(artifactInfo, decodedPayload);
         if (artifactData == null) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError(UPDATE_ARTIFACT);
             log.debug("Failed to create artifact object for ES.");
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
-        String prevArtifactId;
-        String currArtifactId = artifactId;
-        ArtifactDefinition artifactDefinition = artifactInfo;
         log.debug("Entry on graph is updated. Update artifact in ES");
         // Changing previous and current artifactId for auditing
-        prevArtifactId = currArtifactId;
-        currArtifactId = artifactDefinition.getUniqueId();
+        String currArtifactId = artifactInfo.getUniqueId();
 
         NodeTypeEnum parentType = convertParentType(componentType);
 
         if (decodedPayload == null) {
-            if (!artifactDefinition.getMandatory() || artifactDefinition.getEsId() != null) {
-                Either<DAOArtifactData, CassandraOperationStatus> artifactFromCassandra = artifactCassandraDao.getArtifact(artifactDefinition.getEsId());
+            if (!artifactInfo.getMandatory() || artifactInfo.getEsId() != null) {
+                Either<DAOArtifactData, CassandraOperationStatus> artifactFromCassandra = artifactCassandraDao.getArtifact(artifactInfo.getEsId());
                 if (artifactFromCassandra.isRight()) {
                     throw new StorageException(artifactFromCassandra.right().value());
                 }
@@ -2513,9 +2509,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 artifactData.setData(artifactFromCassandra.left().value().getData());
                 artifactData.setId(artifactFromCassandra.left().value().getId());
             }
-        } else if (artifactDefinition.getEsId() == null) {
-            artifactDefinition.setEsId(artifactDefinition.getUniqueId());
-            artifactData.setId(artifactDefinition.getUniqueId());
+        } else if (artifactInfo.getEsId() == null) {
+            artifactInfo.setEsId(artifactInfo.getUniqueId());
+            artifactData.setId(artifactInfo.getUniqueId());
         }
 
         Either<ArtifactDefinition, StorageOperationStatus> result = artifactToscaOperation.updateArtifactOnResource(artifactInfo,
@@ -2523,7 +2519,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (result.isRight()) {
             throw new StorageException(result.right().value());
         }
-        artifactDefinition = result.left().value();
+        ArtifactDefinition artifactDefinition = result.left().value();
         updateGeneratedIdInHeatEnv(parent, parentId, artifactId, artifactInfo, artifactDefinition, parentType);
 
         StorageOperationStatus storageOperationStatus = generateCustomizationUUIDOnInstance(parent.getUniqueId(), parentId, componentType);
@@ -2534,7 +2530,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             if (!artifactDefinition.getDuplicated() || artifactData.getId() == null) {
                 artifactData.setId(artifactDefinition.getEsId());
             }
-            saveArtifactInCassandra(artifactData, parent, artifactInfo, currArtifactId, prevArtifactId, auditingAction, componentType);
+            saveArtifactInCassandra(artifactData, parent, artifactInfo, currArtifactId, artifactId, auditingAction, componentType);
         }
         return Either.left(artifactDefinition);
     }
