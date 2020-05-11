@@ -2,6 +2,121 @@
   "comments": [
     {
       "key": {
+        "uuid": "1e028b2c_8b0471e3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3979,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-11T08:35:36Z",
+      "side": 1,
+      "message": "according to \nhttps://sonarcloud.io/code?id\u003donap_sdc\u0026selected\u003donap_sdc%3Acatalog-be%2Fsrc%2Fmain%2Fjava%2Forg%2Fopenecomp%2Fsdc%2Fbe%2Fcomponents%2Fimpl%2FArtifactsBusinessLogic.java\nuploadArtifactToComponentByUUID not covered by any test",
+      "range": {
+        "startLine": 3979,
+        "startChar": 30,
+        "endLine": 3979,
+        "endChar": 61
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe294274_26f8d9eb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4022,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-11T08:35:36Z",
+      "side": 1,
+      "message": "same here, uploadArtifactToRiByUUID not covered by any test",
+      "range": {
+        "startLine": 4022,
+        "startChar": 30,
+        "endLine": 4022,
+        "endChar": 54
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fa4e35a_afeadd71",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4074,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-11T08:35:36Z",
+      "side": 1,
+      "message": "same here, updateArtifactOnComponentByUUID not covered by any test",
+      "range": {
+        "startLine": 4074,
+        "startChar": 30,
+        "endLine": 4074,
+        "endChar": 61
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0fa67558_13974c51",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4125,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-11T08:35:36Z",
+      "side": 1,
+      "message": "same here, updateArtifactOnRiByUUID not covered by any test",
+      "range": {
+        "startLine": 4125,
+        "startChar": 30,
+        "endLine": 4125,
+        "endChar": 54
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a82c4170_afda5353",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4229,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-11T08:35:36Z",
+      "side": 1,
+      "message": "same here, updateArtifactOnInterfaceOperationByResourceUUID not covered by any test",
+      "range": {
+        "startLine": 4229,
+        "startChar": 54,
+        "endLine": 4229,
+        "endChar": 102
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ad34102d_4178e73e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 5
@@ -30,6 +145,52 @@
       "writtenOn": "2020-05-11T07:52:25Z",
       "side": 1,
       "message": "I\u0027m not sure I understand the functionality here:\nonError.accept will throw an Exception, so line # 4349 will never be called.\nWhy no just throwing the ByActionStatusComponentException here instead of receiving the onError Consumer as a parameter?",
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "010d8d8b_9aef83ff",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4380,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-11T08:35:36Z",
+      "side": 1,
+      "message": "same here, deleteArtifactOnComponentByUUID not covered by any test",
+      "range": {
+        "startLine": 4380,
+        "startChar": 30,
+        "endLine": 4380,
+        "endChar": 61
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7de95b5f_d34679fd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4422,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-11T08:35:36Z",
+      "side": 1,
+      "message": "same here, deleteArtifactOnRiByUUID not covered by any test",
+      "range": {
+        "startLine": 4422,
+        "startChar": 30,
+        "endLine": 4422,
+        "endChar": 54
+      },
       "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
