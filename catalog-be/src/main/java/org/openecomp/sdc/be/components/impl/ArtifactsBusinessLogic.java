@@ -2539,69 +2539,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return Either.left(artifactDefinition);
     }
 
-    private Either<Either<ArtifactDefinition, Operation>, ResponseFormat> updateArtifactsFlowForInterfaceOperations(
-            Component parent, String parentId, String artifactId, ArtifactDefinition artifactInfo, User user,
-            byte[] decodedPayload, ComponentTypeEnum componentType, AuditingActionEnum auditingAction, String interfaceType,
-            String operationUuid, DAOArtifactData artifactData, String prevArtifactId, String currArtifactId,
-            ArtifactDefinition artifactDefinition) {
-        StorageOperationStatus error;
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> resultOp;
-        if (decodedPayload == null) {
-            if (!artifactDefinition.getMandatory() || artifactDefinition.getEsId() != null) {
-                Either<DAOArtifactData, CassandraOperationStatus> artifactFromCassandra = artifactCassandraDao.getArtifact(artifactDefinition
-                        .getEsId());
-                if (artifactFromCassandra.isRight()) {
-                    log.debug("Failed to get artifact data from ES for artifact id  {}", artifactId);
-                    error = DaoStatusConverter.convertCassandraStatusToStorageStatus(artifactFromCassandra.right()
-                            .value());
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(error));
-                    handleAuditing(auditingAction, parent, parentId, user, artifactInfo, prevArtifactId, currArtifactId, responseFormat, componentType, null);
-                    resultOp = Either.right(responseFormat);
-                    return resultOp;
-                }
-                // clone data to new artifact
-                artifactData.setData(artifactFromCassandra.left().value().getData());
-                artifactData.setId(artifactFromCassandra.left().value().getId());
-            } else {
-                // todo if not exist(first time)
-            }
-
-        } else {
-            if (artifactDefinition.getEsId() == null) {
-                artifactDefinition.setEsId(artifactDefinition.getUniqueId());
-                artifactData.setId(artifactDefinition.getUniqueId());
-            }
-        }
-        NodeTypeEnum convertParentType = convertParentType(componentType);
-        // Set additional fields for artifact
-        artifactInfo.setArtifactLabel(artifactInfo.getArtifactName());
-        artifactInfo.setArtifactDisplayName(artifactInfo.getArtifactName());
-
-        Either<ArtifactDefinition, StorageOperationStatus> updateArtifactOnResourceEither =
-                artifactToscaOperation.updateArtifactOnResource(artifactInfo, parent, artifactId, convertParentType, parentId, true);
-        if(updateArtifactOnResourceEither.isRight()){
-            log.debug("Failed to persist operation artifact {} in resource, error is {}",artifactInfo.getArtifactName(), updateArtifactOnResourceEither.right().value());
-            ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(updateArtifactOnResourceEither.right().value());
-            return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse));
-        }
-        if (artifactData.getData() != null) {
-            CassandraOperationStatus cassandraOperationStatus = artifactCassandraDao.saveArtifact(artifactData);
-            if(cassandraOperationStatus != CassandraOperationStatus.OK){
-                log.debug("Failed to persist operation artifact {}, error is {}",artifactInfo.getArtifactName(),cassandraOperationStatus);
-                StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(cassandraOperationStatus);
-                ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
-                return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse));
-            }
-        }
-
-        Either<ArtifactDefinition, ResponseFormat> updateOprEither = updateOperationArtifact(parentId, interfaceType, operationUuid, updateArtifactOnResourceEither.left().value());
-        if(updateOprEither.isRight()){
-            return Either.right(updateOprEither.right().value());
-        }
-
-        return Either.left(Either.left(updateOprEither.left().value()));
-    }
-
     private String updateGeneratedIdInHeatEnv(Component parent, String parentId, String artifactId, ArtifactDefinition artifactInfo, ArtifactDefinition artifactDefinition, NodeTypeEnum parentType) {
         if (NodeTypeEnum.Resource == parentType) {
             return updateGeneratedIdInHeatEnv(parent.getDeploymentArtifacts(), parent, parentId, artifactId, artifactInfo, artifactDefinition, parentType, false);
