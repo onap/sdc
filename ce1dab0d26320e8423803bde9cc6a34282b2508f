@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad34102d_4178e73e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4324,
+      "author": {
+        "id": 4928
+      },
+      "writtenOn": "2020-05-11T07:52:25Z",
+      "side": 1,
+      "message": "Since there are other usages of toscaOperationFacade.getLatestComponentMetadataByUuid(), better expose those methods in toscaOperationFacade itself, and not as ArtifactsBussinessLogic private methods (return the parameter of isHighest).",
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f46545a3_9f82f432",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4346,
+      "author": {
+        "id": 4928
+      },
+      "writtenOn": "2020-05-11T07:52:25Z",
+      "side": 1,
+      "message": "I\u0027m not sure I understand the functionality here:\nonError.accept will throw an Exception, so line # 4349 will never be called.\nWhy no just throwing the ByActionStatusComponentException here instead of receiving the onError Consumer as a parameter?",
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
