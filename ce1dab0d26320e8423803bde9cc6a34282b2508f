@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "10da27e6_4c7a5f7d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3979,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9de048ea_fe3bc52d",
+      "range": {
+        "startLine": 3979,
+        "startChar": 30,
+        "endLine": 3979,
+        "endChar": 61
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fe294274_26f8d9eb",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 5
@@ -69,6 +93,30 @@
       "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f734ab20_71f6794d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4022,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fe294274_26f8d9eb",
+      "range": {
+        "startLine": 4022,
+        "startChar": 30,
+        "endLine": 4022,
+        "endChar": 54
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -95,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "ca083304_0c749d29",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4074,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4fa4e35a_afeadd71",
+      "range": {
+        "startLine": 4074,
+        "startChar": 30,
+        "endLine": 4074,
+        "endChar": 61
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0fa67558_13974c51",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 5
@@ -115,6 +187,30 @@
       "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d725ecd_0a7e4ece",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4125,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fa67558_13974c51",
+      "range": {
+        "startLine": 4125,
+        "startChar": 30,
+        "endLine": 4125,
+        "endChar": 54
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -141,6 +237,30 @@
     },
     {
       "key": {
+        "uuid": "785c5371_c4490f3a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4229,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a82c4170_afda5353",
+      "range": {
+        "startLine": 4229,
+        "startChar": 54,
+        "endLine": 4229,
+        "endChar": 102
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ad34102d_4178e73e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 5
@@ -152,6 +272,24 @@
       "writtenOn": "2020-05-11T07:52:25Z",
       "side": 1,
       "message": "Since there are other usages of toscaOperationFacade.getLatestComponentMetadataByUuid(), better expose those methods in toscaOperationFacade itself, and not as ArtifactsBussinessLogic private methods (return the parameter of isHighest).",
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "276986ff_dcd86cb8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4324,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "The issue with this is that componentsUtils is not accessible from there. It would have to be passed to the ToscaOperationFacade somehow. I would rather suggest to keep refactoring ArtifactsBusinessLogic until we get to a cleaner state, and then reorganize the resulting functions. Also keep in mind that the ToscaOperationFace has a pretty high technical debt, and changing it is probably an epic on its own.",
+      "parentUuid": "ad34102d_4178e73e",
       "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -193,6 +331,24 @@
     },
     {
       "key": {
+        "uuid": "443287c8_036808db",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4346,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22e6cc9d_f096e01a",
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "010d8d8b_9aef83ff",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 5
@@ -216,6 +372,30 @@
     },
     {
       "key": {
+        "uuid": "41f1140e_35602b2c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4380,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "010d8d8b_9aef83ff",
+      "range": {
+        "startLine": 4380,
+        "startChar": 30,
+        "endLine": 4380,
+        "endChar": 61
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7de95b5f_d34679fd",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 5
@@ -236,6 +416,30 @@
       "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50a10636_2fef6dfc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4422,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-11T13:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7de95b5f_d34679fd",
+      "range": {
+        "startLine": 4422,
+        "startChar": 30,
+        "endLine": 4422,
+        "endChar": 54
+      },
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
