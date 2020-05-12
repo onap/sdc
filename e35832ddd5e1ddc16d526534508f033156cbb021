@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9ab5598e_28260eda",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 4928
+      },
+      "writtenOn": "2020-05-12T04:55:13Z",
+      "side": 1,
+      "message": "- Log messages are meaningless in case we throw an Exception (the exception will be logged better)\n- It\u0027s ok not to refactor the upper level methods now.\n- I don\u0027t think the code will look much worse if we throw an Exception instead of returning Either.right, in case you use Either methods like .map.\n- I do prefer to throw here an Exception and not propagate the Either up. I don\u0027t see why it could hurt the further refactoring of this method.\n- your ambition, effort and initiative are much appreciated\n\nThanks!",
+      "parentUuid": "ce80158c_53ed5734",
+      "revId": "e35832ddd5e1ddc16d526534508f033156cbb021",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "97cbac83_beb445bd",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/Eithers.java",
         "patchSetId": 2
