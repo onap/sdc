@@ -340,6 +340,61 @@ public class SOL004MetaDirectoryValidatorTest {
         final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
         assertExpectedErrors("Manifest referenced import file missing", errors, 1);
     }
+    
+    @Test
+    public void testGivenDefinitionFile_whenFileInPackageNotInManifest_thenErrorIsReturned() {
+        final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
+
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
+
+        handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
+
+        handler.addFile(SAMPLE_SOURCE, "".getBytes());
+
+        final byte [] sampleDefinitionFile =
+            getResourceBytesOrFail("validation.files/definition/sampleDefinitionFile2.yaml");
+        handler.addFile("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml", sampleDefinitionFile);
+        manifestBuilder.withSource("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml");
+
+        manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
+        handler.addFile(TOSCA_DEFINITION_FILEPATH,
+            getResourceBytesOrFail("validation.files/definition/sampleDefinitionFile2.yaml"));
+
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
+        assertExpectedErrors("Artifact is not being referenced in manifest file", errors, 1);
+    }
+    
+    @Test
+    public void testGivenDefinitionFile_whenManifestNotreferencedInManifest_thenNoErrorIsReturned() {
+        final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
+
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_META_PATH_FILE_NAME);
+
+        handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
+        manifestBuilder.withSource(TOSCA_CHANGELOG_FILEPATH);
+
+        handler.addFile(SAMPLE_SOURCE, "".getBytes());
+        manifestBuilder.withSource(SAMPLE_SOURCE);
+
+        final byte [] sampleDefinitionFile =
+            getResourceBytesOrFail("validation.files/definition/sampleDefinitionFile2.yaml");
+        handler.addFile("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml", sampleDefinitionFile);
+        manifestBuilder.withSource("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml");
+
+        manifestBuilder.withSource(TOSCA_DEFINITION_FILEPATH);
+        handler.addFile(TOSCA_DEFINITION_FILEPATH,
+            getResourceBytesOrFail("validation.files/definition/sampleDefinitionFile2.yaml"));
+
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
+        assertEquals(0, errors.size());
+    }
 
     /**
      * Reference with invalid YAML format.

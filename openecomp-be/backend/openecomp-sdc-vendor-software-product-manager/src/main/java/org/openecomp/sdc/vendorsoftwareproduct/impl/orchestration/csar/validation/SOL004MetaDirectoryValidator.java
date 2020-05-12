@@ -467,11 +467,15 @@ class SOL004MetaDirectoryValidator implements Validator {
      */
     private void verifyFilesBeingReferred(final Set<String> referredFileSet, final Set<String> packageFileSet) {
         packageFileSet.forEach(filePath -> {
-            if (!referredFileSet.contains(filePath)) {
+            if (!isManifestFile(filePath) && !referredFileSet.contains(filePath)) {
                 reportError(ErrorLevel.ERROR,
                     String.format(Messages.MISSING_MANIFEST_REFERENCE.getErrorMessage(), filePath));
             }
         });
+    }
+    
+    private boolean isManifestFile(final String filePath) {
+        return filePath.equals(toscaMetadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName()));
     }
 
     private List<String> filterSources(final List<String> source) {
