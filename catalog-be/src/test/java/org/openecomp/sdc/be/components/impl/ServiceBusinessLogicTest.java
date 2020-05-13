@@ -21,6 +21,9 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -38,8 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,6 +57,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -93,7 +95,6 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     @Test
     public void testHappyScenario() {
         Service service = createServiceObject(false);
-        validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
@@ -135,11 +136,58 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         assertTrue(createResponse.isLeft());
     }
 
+
+    @Test
+    public void testCreateServiceWhenGenericTypeHasProperties() {
+        final Service service = createServiceObject(false);
+
+        final Resource genericTypeResource = mockGenericTypeResource();
+
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericTypeResource));
+        final Service expectedService = createServiceObject(true);
+        expectedService.setProperties(mockPropertyList());
+        when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(expectedService));
+        Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+
+        org.hamcrest.MatcherAssert.assertThat("Service creation should be successful",
+            createResponse.isLeft(), is(true));
+        final Service actualService = createResponse.left().value();
+        org.hamcrest.MatcherAssert.assertThat("Service should not be null", service, is(notNullValue()));
+
+        assertEqualsServiceObject(expectedService, actualService);
+    }
+
+    @Test
+    public void testCreateServiceWhenGenericTypeAndServiceHasProperties() {
+        final Service service = createServiceObject(false);
+        service.setProperties(mockPropertyList());
+        service.getProperties().remove(0);
+        final PropertyDefinition serviceProperty = new PropertyDefinition();
+        serviceProperty.setName("aServiceProperty");
+        service.getProperties().add(serviceProperty);
+
+        final Resource genericTypeResource = mockGenericTypeResource();
+
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericTypeResource));
+        final Service expectedService = createServiceObject(true);
+        expectedService.setProperties(mockPropertyList());
+        expectedService.getProperties().add(serviceProperty);
+        when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(expectedService));
+        Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+
+        org.hamcrest.MatcherAssert.assertThat("Service creation should be successful",
+            createResponse.isLeft(), is(true));
+        final Service actualService = createResponse.left().value();
+        org.hamcrest.MatcherAssert.assertThat("Service should not be null", service, is(notNullValue()));
+
+
+        assertEqualsServiceObject(expectedService, actualService);
+    }
+
     @Test
     public void testHappyScenarioCRNullProjectCode() {
         Service service = createServiceObject(false);
         service.setProjectCode(null);
-        validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
@@ -148,12 +196,12 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         }
         assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
     }
+
     @Test
     public void testHappyScenarioCREmptyStringProjectCode() {
         createServiceValidator();
         Service service = createServiceObject(false);
         service.setProjectCode("");
-        validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
@@ -162,35 +210,36 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         }
         assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
     }
-
-    private void validateUserRoles(Role ... roles) {
-        List<Role> listOfRoles = Stream.of(roles).collect(Collectors.toList());
+    private void assertEqualsServiceObject(final Service expectedService, final Service actualService) {
+        assertEquals(expectedService.getContactId(), actualService.getContactId());
+        assertEquals(expectedService.getCategories(), actualService.getCategories());
+        assertEquals(expectedService.getCreatorUserId(), actualService.getCreatorUserId());
+        assertEquals(expectedService.getCreatorFullName(), actualService.getCreatorFullName());
+        assertEquals(expectedService.getDescription(), actualService.getDescription());
+        assertEquals(expectedService.getIcon(), actualService.getIcon());
+        assertEquals(expectedService.getLastUpdaterUserId(), actualService.getLastUpdaterUserId());
+        assertEquals(expectedService.getLastUpdaterFullName(), actualService.getLastUpdaterFullName());
+        assertEquals(expectedService.getName(), actualService.getName());
+        assertEquals(expectedService.getUniqueId(), actualService.getUniqueId());
+        assertEquals(expectedService.getVersion(), actualService.getVersion());
+        assertEquals(expectedService.getArtifacts(), actualService.getArtifacts());
+        assertEquals(expectedService.getCreationDate(), actualService.getCreationDate());
+        assertEquals(expectedService.getLastUpdateDate(), actualService.getLastUpdateDate());
+        assertEquals(expectedService.getLifecycleState(), actualService.getLifecycleState());
+        assertEquals(expectedService.getTags(), actualService.getTags());
+        if (expectedService.getProperties() == null) {
+            org.hamcrest.MatcherAssert.assertThat("Service properties should be null",
+                actualService.getProperties(), is(nullValue()));
+            return;
+        }
+        org.hamcrest.MatcherAssert.assertThat("Service properties should be as expected",
+            actualService.getProperties(), is(expectedService.getProperties()));
     }
 
-    private void assertEqualsServiceObject(Service origService, Service newService) {
-        assertEquals(origService.getContactId(), newService.getContactId());
-        assertEquals(origService.getCategories(), newService.getCategories());
-        assertEquals(origService.getCreatorUserId(), newService.getCreatorUserId());
-        assertEquals(origService.getCreatorFullName(), newService.getCreatorFullName());
-        assertEquals(origService.getDescription(), newService.getDescription());
-        assertEquals(origService.getIcon(), newService.getIcon());
-        assertEquals(origService.getLastUpdaterUserId(), newService.getLastUpdaterUserId());
-        assertEquals(origService.getLastUpdaterFullName(), newService.getLastUpdaterFullName());
-        assertEquals(origService.getName(), newService.getName());
-        assertEquals(origService.getName(), newService.getName());
-        assertEquals(origService.getUniqueId(), newService.getUniqueId());
-        assertEquals(origService.getVersion(), newService.getVersion());
-        assertEquals(origService.getArtifacts(), newService.getArtifacts());
-        assertEquals(origService.getCreationDate(), newService.getCreationDate());
-        assertEquals(origService.getLastUpdateDate(), newService.getLastUpdateDate());
-        assertEquals(origService.getLifecycleState(), newService.getLifecycleState());
-        assertEquals(origService.getTags(), newService.getTags());
-    }
 
 
     /* CREATE validations - start ***********************/
     // Service name - start
-
 
     @Test
     public void testFailedServiceValidations() {
@@ -229,7 +278,6 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         List<String> tgs = new ArrayList<>();
         tgs.add(serviceName);
         serviceExccedsNameLimit.setTags(tgs);
-        validateUserRoles(Role.ADMIN, Role.DESIGNER);
         try {
             bl.createService(serviceExccedsNameLimit, user);
         } catch (ComponentException exp) {
@@ -267,6 +315,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
     // Service name - end
     // Service description - start
+
     private void testServiceDescriptionEmpty() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setDescription("");
@@ -278,7 +327,6 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         }
         fail();
     }
-
     private void testServiceDescriptionMissing() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setDescription(null);
@@ -329,6 +377,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
     // Service description - stop
     // Service icon - start
+
     private void testServiceIconEmpty() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setIcon("");
@@ -336,7 +385,6 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         assertThat(service.left().value().getIcon()).isEqualTo(DEFAULT_ICON);
 
     }
-
     private void testServiceIconMissing() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setIcon(null);
@@ -401,6 +449,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
     // Service tags - stop
     // Service contactId - start
+
     private void testContactIdTooLong() {
         Service serviceContactId = createServiceObject(false);
         // 59 chars instead of 50
@@ -414,7 +463,6 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         }
         fail();
     }
-
     private void testContactIdWrongFormatCreate() {
         Service serviceContactId = createServiceObject(false);
         // 3 letters and 3 digits and special characters
@@ -443,6 +491,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
     // Service contactId - stop
     // Service category - start
+
     private void testServiceCategoryExist() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setCategories(null);
@@ -454,7 +503,6 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         }
         fail();
     }
-
     @Test
     public void markDistributionAsDeployedTestAlreadyDeployed() {
         String notifyAction = "DNotify";
@@ -538,6 +586,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
     // Service category - stop
     // Service projectCode - start
+
     private void testInvalidProjectCode() {
 
         Service serviceExist = createServiceObject(false);
@@ -551,7 +600,6 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         }
         fail();
     }
-
 
     private void testProjectCodeTooLong() {
 
@@ -695,7 +743,6 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     @Test
     public void testDerivedFromGeneric() {
         Service service = createServiceObject(true);
-        validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(service));
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
@@ -945,6 +992,31 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
                         user.getUserId(), new ServiceConsumptionData());
         Assert.assertTrue(operationEither.isRight());
         Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+    }
+
+    private Resource mockGenericTypeResource() {
+        final Resource genericTypeResource = new Resource();
+        genericTypeResource.setProperties(mockPropertyList());
+        return genericTypeResource;
+    }
+
+    private List<PropertyDefinition> mockPropertyList() {
+        final List<PropertyDefinition> propertyList = new ArrayList<>();
+        final PropertyDefinition propertyDefinition1 = new PropertyDefinition();
+        propertyDefinition1.setName("property1");
+        propertyDefinition1.setType("string");
+        propertyList.add(propertyDefinition1);
+
+        final PropertyDefinition propertyDefinition2 = new PropertyDefinition();
+        propertyDefinition2.setName("property2");
+        propertyDefinition2.setType("boolean");
+        propertyList.add(propertyDefinition2);
+
+        final PropertyDefinition propertyDefinition3 = new PropertyDefinition();
+        propertyDefinition3.setName("property3");
+        propertyDefinition3.setType("string");
+        propertyList.add(propertyDefinition3);
+        return propertyList;
     }
 
 }
