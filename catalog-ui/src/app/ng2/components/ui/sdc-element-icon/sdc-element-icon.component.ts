@@ -51,6 +51,7 @@ export class SdcElementIconComponent {
             case SdcElementType.POLICY:
                 this.elementIcon = new ElementIcon("policy", "resources_24", "darkBlue2", 'white', 'rectangle');
                 break;
+            case ResourceType.VFC:
             case ResourceType.CP:
             case ResourceType.VL:
                 this.elementIcon = new ElementIcon(this.iconName, "resources_24", "purple", '', '', 'medium');

@@ -34,6 +34,7 @@ import {
 import {ResourceType, ComponentType} from "../../utils/constants";
 import {Capability} from "../capability";
 import {Requirement} from "../requirement";
+import {DirectivesEnum} from "../../ng2/components/logic/service-dependencies/directive-option";
 
 export interface IComponentInstance {
 
@@ -104,10 +105,6 @@ export class ComponentInstance implements IComponentInstance{
     public originArchived:boolean;
     public directives: string[];
 
-    DIRECTIVES_TYPES = {
-        SELECTABLE: 'selectable'
-    };
-
     constructor(componentInstance?:ComponentInstance) {
 
         if (componentInstance) {
@@ -159,6 +156,10 @@ export class ComponentInstance implements IComponentInstance{
 
     public isServiceProxy = ():boolean => {
         return this.originType === ComponentType.SERVICE_PROXY;
+    }
+
+    public isVFC = ():boolean => {
+        return this.originType === ResourceType.VFC;
     }
 
     public getComponentUid = ():string => {
@@ -229,17 +230,24 @@ export class ComponentInstance implements IComponentInstance{
         return this.iconSprite + ' ' + this.icon;
     }
     public isDependent = () : boolean => {
-        return this.directives && this.directives.indexOf(this.DIRECTIVES_TYPES.SELECTABLE) !== -1;
+       return this.directives && this.directives.indexOf(DirectivesEnum.SELECT) !== -1 ||
+            this.directives.indexOf(DirectivesEnum.SUBSTITUTE) !== -1;
     }
 
-    public markAsDependent = () : void => {
-        this.directives.push(this.DIRECTIVES_TYPES.SELECTABLE);
+    public markAsSelect = () : void => {
+        this.directives.push(DirectivesEnum.SELECT);
     }
 
-    public unmarkAsDependent = () : void => {
-        let index = this.directives.indexOf(this.DIRECTIVES_TYPES.SELECTABLE);
+    public markAsSubstitute = () : void => {
+        this.directives.push(DirectivesEnum.SUBSTITUTE);
+    }
+
+    public unmarkAsDependent = (actualDirectiveValue: string) : void => {
+        console.info("[START] this.directives: ", this.directives)
+        let index = this.directives.indexOf(actualDirectiveValue);
         if(index >= 0) {
             this.directives.splice(index, 1);
         }
+        console.info("[STOP] this.directives: ", this.directives)
     }
 }
