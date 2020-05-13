@@ -20,9 +20,26 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import fj.data.Either;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,6 +60,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.plugins.ServiceCreationPlugin;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
@@ -51,24 +69,6 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.http.HttpStatus;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.when;
 
 public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup {
 
@@ -102,6 +102,19 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         }
         assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
     }
+
+    @Test
+    public void testServiceCreationPluginCall() {
+        final Service service = createServiceObject(false);
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
+        final List<ServiceCreationPlugin> serviceCreationPlugins = new ArrayList<>();
+        serviceCreationPlugins.add(service1 -> { /*do nothing*/ });
+        serviceCreationPlugins.add(service1 -> { throw new RuntimeException(); });
+        bl.setServiceCreationPluginList(serviceCreationPlugins);
+        final Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+        assertTrue(createResponse.isLeft());
+    }
+
     @Test
     public void testHappyScenarioCRNullProjectCode() {
         Service service = createServiceObject(false);
