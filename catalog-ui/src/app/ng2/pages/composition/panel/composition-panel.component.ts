@@ -53,7 +53,7 @@ const tabs = {
     inputs: {titleIcon: 'inputs-o', component: PropertiesTabComponent, input: {title: 'Inputs'}, isActive: false, tooltipText: 'Inputs'},
     settings: {titleIcon: 'settings-o', component: PropertiesTabComponent, input: {}, isActive: false, tooltipText: 'Settings'},
     consumption: {titleIcon: 'api-o', component: ServiceConsumptionTabComponent, input: {title: 'OPERATION CONSUMPTION'}, isActive: false, tooltipText: 'Service Consumption'},
-    dependencies: {titleIcon: 'archive', component: ServiceDependenciesTabComponent, input: {title: 'SERVICE DEPENDENCIES'}, isActive: false, tooltipText: 'Service Dependencies'}
+    dependencies: {titleIcon: 'archive', component: ServiceDependenciesTabComponent, input: {title: 'DIRECTIVES AND NODE FILTER'}, isActive: false, tooltipText: 'Service Dependencies'}
 };
 
 @Component({
@@ -144,6 +144,8 @@ export class CompositionPanelComponent {
         if (component.isService() && this.selectedComponentIsServiceProxyInstance()) {
             this.tabs.push(tabs.consumption);
             this.tabs.push(tabs.dependencies);
+        } else if (component.isResource() && this.selectedComponentIsVfcInstance()) {
+            this.tabs.push(tabs.dependencies);
         }
 
     }
@@ -167,5 +169,9 @@ export class CompositionPanelComponent {
 
     private selectedComponentIsServiceProxyInstance = (): boolean => {
         return this.isComponentInstanceSelected() && this.selectedComponent.isServiceProxy();
+    }
+
+    private selectedComponentIsVfcInstance = (): boolean => {
+        return this.isComponentInstanceSelected() && this.selectedComponent.isVFC();
     }
 }

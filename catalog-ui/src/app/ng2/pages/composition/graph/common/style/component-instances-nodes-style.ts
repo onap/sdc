@@ -135,6 +135,21 @@ export class ComponentInstanceNodesStyle {
                 }
             },
             {
+                selector: '.vfc-node',
+                css: {
+                    'background-color': 'transparent',
+                    'label': 'data(displayName)',
+                    'background-image': 'data(img)',
+                    'width': 64,
+                    'height': 64,
+                    'text-valign': 'bottom',
+                    'text-halign': 'center',
+                    'background-opacity': 0,
+                    'overlay-color': GraphColors.NODE_BACKGROUND_COLOR,
+                    'overlay-opacity': 0
+                }
+            },
+            {
                 selector: '.ucpe-cp',
                 css: {
                     'background-color': GraphColors.NODE_UCPE_CP,

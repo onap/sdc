@@ -39,7 +39,7 @@ export class GraphState {
     setSelectedComponent({dispatch, getState, patchState}:StateContext<CompositionStateModel>, action: SetSelectedComponentAction) {
         
         const state:CompositionStateModel = getState();
-        
+
         patchState({ panelLoading: true });
 
         if(action.payload.component instanceof ComponentInstance){

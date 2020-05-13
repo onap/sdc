@@ -55,7 +55,7 @@ export class ServicePathsListComponent {
         });
         this.onAddServicePath = this.input.onCreateServicePath;
         this.onEditServicePath = this.input.onEditServicePath;
-        this.isViewOnly =  this.input.isViewOnly;
+        this.isViewOnly = this.input.isViewOnly;
     }
 
     deletePath = (id:string):void =>   {
