@@ -845,7 +845,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (createServiceResponse.isRight()) {
             return createServiceResponse;
         }
-        return createServiceByDao(service, AuditingActionEnum.CREATE_RESOURCE, user)
+        return createServiceByDao(service, user)
                 .left()
                 .bind(c -> updateCatalog(c, ChangeTypeEnum.LIFECYCLE)
                         .left()
@@ -859,42 +859,42 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Either<Service, ResponseFormat> createServiceByDao(Service service, AuditingActionEnum actionEnum, User user) {
+    private Either<Service, ResponseFormat> createServiceByDao(final Service service, final User user) {
         log.debug("send service {} to dao for create", service.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
 
         Either<Boolean, ResponseFormat> lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
         if (lockResult.isRight()) {
             ResponseFormat responseFormat = lockResult.right().value();
-            componentsUtils.auditComponentAdmin(responseFormat, user, service, actionEnum, ComponentTypeEnum.SERVICE);
+            componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE,
+                ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
         }
 
         log.debug("System name locked is {}, status = {}", service.getSystemName(), lockResult);
 
         try {
-
             createMandatoryArtifactsData(service, user);
             createServiceApiArtifactsData(service, user);
             setToscaArtifactsPlaceHolders(service, user);
-            generateAndAddInputsFromGenericTypeProperties(service, fetchAndSetDerivedFromGenericType(service));
+            final Resource genericType = fetchAndSetDerivedFromGenericType(service);
+            generatePropertiesFromGenericType(service, genericType);
+            generateAndAddInputsFromGenericTypeProperties(service, genericType);
             beforeCreate(service);
 
             Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
-
-            // service created successfully!!!
             if (dataModelResponse.isLeft()) {
-                log.debug("Service created successfully!!!");
+                log.debug("Service '{}' created successfully", service.getName());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
-                componentsUtils.auditComponentAdmin(responseFormat, user, service, actionEnum, ComponentTypeEnum.SERVICE);
+                componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE,
+                    ComponentTypeEnum.SERVICE);
                 ASDCKpiApi.countCreatedServicesKPI();
                 return Either.left(dataModelResponse.left().value());
             }
-
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service, ComponentTypeEnum.SERVICE);
             log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
-            componentsUtils.auditComponentAdmin(responseFormat, user, service, actionEnum, ComponentTypeEnum.SERVICE);
+            componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE,
+                ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
-
         } finally {
             graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
         }
@@ -914,6 +914,27 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                         serviceCreationPlugin.getClass(), e);
                 }
             });
+    }
+
+    private void generatePropertiesFromGenericType(final Service service, final Resource genericType) {
+        if (CollectionUtils.isEmpty(genericType.getProperties())) {
+            return;
+        }
+        final List<PropertyDefinition> genericTypePropertyList = genericType.getProperties().stream()
+            .map(PropertyDefinition::new)
+            .peek(propertyDefinition -> propertyDefinition.setUniqueId(null))
+            .collect(Collectors.toList());
+        if (service.getProperties() == null) {
+            service.setProperties(new ArrayList<>(genericTypePropertyList));
+        } else {
+            List<PropertyDefinition> servicePropertyList = service.getProperties();
+            genericTypePropertyList.stream()
+                .filter(property -> servicePropertyList.stream()
+                    .noneMatch(property1 -> property1.getName().equals(property.getName())))
+                .forEach(servicePropertyList::add);
+        }
+
+        service.getProperties().forEach(propertyDefinition -> propertyDefinition.setUniqueId(null));
     }
 
     @SuppressWarnings("unchecked")
