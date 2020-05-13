@@ -115,6 +115,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
+import org.openecomp.sdc.be.plugins.ServiceCreationPlugin;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
@@ -198,6 +199,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final NodeFilterValidator serviceFilterValidator;
 
     private ServiceTypeValidator serviceTypeValidator;
+    private List<ServiceCreationPlugin> serviceCreationPluginList;
 
     @Autowired
     public void setServiceTypeValidator(ServiceTypeValidator serviceTypeValidator) {
@@ -887,6 +889,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             createServiceApiArtifactsData(service, user);
             setToscaArtifactsPlaceHolders(service, user);
             generateAndAddInputsFromGenericTypeProperties(service, fetchAndSetDerivedFromGenericType(service));
+            beforeCreate(service);
 
             Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
 
@@ -906,6 +909,19 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         } finally {
             graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
+        }
+    }
+
+    private void beforeCreate(final Service service) {
+        if (CollectionUtils.isEmpty(serviceCreationPluginList)) {
+            return;
+        }
+        for (final ServiceCreationPlugin serviceCreationPlugin : serviceCreationPluginList) {
+            try {
+                serviceCreationPlugin.beforeCreate(service);
+            } catch (final Exception e) {
+                log.error("An error has occurred while running a serviceCreationPlugin", e);
+            }
         }
     }
 
@@ -2735,7 +2751,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(serviceFilterResult);
     }
 
-
-
-
+    @Autowired(required = false)
+    public void setServiceCreationPluginList(List<ServiceCreationPlugin> serviceCreationPluginList) {
+        this.serviceCreationPluginList = serviceCreationPluginList;
+    }
 }
