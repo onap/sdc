@@ -25,11 +25,17 @@ import java.util.Optional;
 
 public class DirectivesUtils {
 
-    public static final String SUBSTITUTABLE = "substitutable";
+    public static final String SELECT = "select";
     public static final String SELECTABLE = "selectable";
+    public static final String SUBSTITUTE = "substitute";
+    public static final String SUBSTITUTABLE = "substitutable";
+
     public enum DIRECTIVE {
 
-        SUBSTITUTABLE(DirectivesUtils.SUBSTITUTABLE), SELECTABLE(DirectivesUtils.SELECTABLE);
+        SELECT(DirectivesUtils.SELECT),
+        SELECTABLE(DirectivesUtils.SELECTABLE),
+        SUBSTITUTE(DirectivesUtils.SUBSTITUTE),
+        SUBSTITUTABLE(DirectivesUtils.SUBSTITUTABLE);
 
         private final String value;
 

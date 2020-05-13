@@ -17,19 +17,44 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-import {CompositionCiNodeBase} from "./composition-ci-node-base";
+import {ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
+import {ComponentInstance, CompositionCiNodeBase} from "../../../../models";
 import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
-import {ComponentInstance} from "../../../componentsInstances/componentInstance";
-import {ImagesUrl} from "../../../../utils/constants";
 
 export class CompositionCiNodeVfc extends CompositionCiNodeBase {
-    constructor(instance:ComponentInstance, imageCreator:ImageCreatorService) {
-        super(instance, imageCreator);
-        this.initVfc();
-    }
+  private isDependent: boolean;
+  private originalImg: string;
 
-    private initVfc():void {
-        this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
-        this.img = this.imagesPath + this.componentInstance.icon + '.png';
+  constructor(instance: ComponentInstance, imageCreator: ImageCreatorService) {
+    super(instance, imageCreator);
+    this.isDependent = instance.isDependent();
+    this.initVfc();
+  }
+
+  private initVfc(): void {
+    this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
+    this.img = this.imagesPath + this.componentInstance.icon + '.png';
+    this.originalImg = this.img;
+    this.imgWidth = GraphUIObjects.DEFAULT_RESOURCE_WIDTH;
+    this.classes = 'vfc-node';
+    if (this.archived) {
+      this.classes = this.classes + ' archived';
+      return;
     }
+    if (this.isDependent) {
+      this.classes += ' dependent';
+    }
+    if (!this.certified) {
+      this.classes = this.classes + ' not-certified';
+    }
+  }
+
+  public initUncertifiedDependentImage(node:Cy.Collection, nodeMinSize:number):string {
+    return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'uncertified_dependent.png');
+  }
+
+  public initDependentImage(node:Cy.Collection, nodeMinSize:number):string {
+    return this.enhanceImage(node, nodeMinSize, this.imagesPath + 'dependent.png');
+  }
+
 }
