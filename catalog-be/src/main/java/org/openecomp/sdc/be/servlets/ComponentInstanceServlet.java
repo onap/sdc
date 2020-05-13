@@ -38,6 +38,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import org.apache.commons.collections.CollectionUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;

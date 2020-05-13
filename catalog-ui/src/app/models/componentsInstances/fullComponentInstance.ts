@@ -25,10 +25,6 @@ export class FullComponentInstance extends ComponentInstance {
     public isResourceInstance: boolean;
     public directives: string[];
 
-    DIRECTIVES_TYPES = {
-        SELECTABLE: 'selectable'
-    };
-
     //service
     public serviceApiArtifacts:ArtifactGroupModel;
     public serviceType:string;
@@ -91,20 +87,6 @@ export class FullComponentInstance extends ComponentInstance {
 
     public isService = ():boolean => {
         return this.isServiceInstance;
-    }
-    public isDependent = () : boolean => {
-        return this.directives && this.directives.indexOf(this.DIRECTIVES_TYPES.SELECTABLE) !== -1;
-    }
-
-    public markAsDependent = () : void => {
-        this.directives.push(this.DIRECTIVES_TYPES.SELECTABLE);
-    }
-
-    public unmarkAsDependent = () : void => {
-        const index = this.directives.indexOf(this.DIRECTIVES_TYPES.SELECTABLE);
-        if(index >= 0) {
-            this.directives.splice(index, 1);
-        }
     }
 
 }

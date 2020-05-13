@@ -19,8 +19,21 @@
  */
 'use strict';
 
-import {CompositionCiNodeUcpeCp, Module, ModuleNodeBase, CompositionCiNodeVf, CompositionCiNodeVl, CompositionCiNodeCp, CompositionCiNodeConfiguration,
-    NodeUcpe, CompositionCiNodeService,CompositionCiNodeServiceProxy, CompositionCiNodeBase, ComponentInstance} from "./../../../models";
+import {
+    CompositionCiNodeUcpeCp,
+    Module,
+    ModuleNodeBase,
+    CompositionCiNodeVf,
+    CompositionCiNodeVl,
+    CompositionCiNodeCp,
+    CompositionCiNodeConfiguration,
+    NodeUcpe,
+    CompositionCiNodeService,
+    CompositionCiNodeServiceProxy,
+    CompositionCiNodeBase,
+    ComponentInstance,
+    CompositionCiNodeVfc
+} from "./../../../models";
 import {ComponentType, ResourceType} from "../../../utils/constants";
 import {ImageCreatorService} from "app/ng2/pages/composition/graph/common/image-creator.service";
 import {Injectable} from "@angular/core";
@@ -41,6 +54,9 @@ export class NodesFactory {
         }
         if (instance.originType === ComponentType.SERVICE_PROXY) {
             return new CompositionCiNodeServiceProxy(instance, this.imageCreator);
+        }
+        if (instance.originType == ResourceType.VFC) {
+            return new CompositionCiNodeVfc(instance, this.imageCreator);
         }
         if (instance.originType === ResourceType.CP) {
             return new CompositionCiNodeCp(instance, this.imageCreator);
