@@ -39,7 +39,7 @@ export class NodesFactory {
         if (instance.originType === ComponentType.SERVICE) {
             return new CompositionCiNodeService(instance, this.imageCreator);
         }
-        if (instance.originType === ComponentType.SERVICE_PROXY) {
+        if (instance.originType === ComponentType.SERVICE_PROXY || ResourceType.VFC) {
             return new CompositionCiNodeServiceProxy(instance, this.imageCreator);
         }
         if (instance.originType === ResourceType.CP) {

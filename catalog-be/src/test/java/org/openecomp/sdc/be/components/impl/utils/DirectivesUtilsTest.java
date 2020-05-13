@@ -42,8 +42,8 @@ public class DirectivesUtilsTest {
 
     @Test
     public void testGivenValidDirectives_returnsTrue(){
-        directives.add(DirectivesUtils.DIRECTIVE.SUBSTITUTABLE.toString());
-        directives.add(DirectivesUtils.DIRECTIVE.SELECTABLE.toString());
+        directives.add(DirectivesUtils.DIRECTIVE.SUBSTITUTE.toString());
+        directives.add(DirectivesUtils.DIRECTIVE.SELECT.toString());
         assertTrue(DirectivesUtils.isValid(directives));
     }
 

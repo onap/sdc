@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { UiElementsModule } from 'app/ng2/components/ui/ui-elements.module';
