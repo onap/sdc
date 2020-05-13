@@ -29,6 +29,7 @@ import { TranslateService } from 'app/ng2/shared/translator/translate.service';
 import { ComponentMetadata } from '../../../../models/component-metadata';
 import { ServiceInstanceObject } from '../../../../models/service-instance-properties-and-interfaces';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
+import {DirectivesEnum, DirectiveValue} from "./directive-option";
 
 export class ConstraintObject {
     servicePropertyName: string;
@@ -78,30 +79,34 @@ export const OPERATOR_TYPES = {
 
 // tslint:disable-next-line:max-classes-per-file
 class I18nTexts {
-    static uncheckModalTitle: string;
-    static uncheckModalText: string;
+    static removeDirectiveModalTitle: string;
+    static removeDirectiveModalText: string;
+    static updateDirectiveModalTitle: string;
+    static updateDirectiveModalText: string;
     static modalApprove: string;
     static modalCancel: string;
     static modalCreate: string;
     static modalSave: string;
     static modalDelete: string;
-    static addRuleTxt: string;
-    static updateRuleTxt: string;
-    static deleteRuleTxt: string;
-    static deleteRuleMsg: string;
+    static addNodeFilterTxt: string;
+    static updateNodeFilterTxt: string;
+    static deleteNodeFilterTxt: string;
+    static deleteNodeFilterMsg: string;
 
     public static translateTexts(translateService) {
-            I18nTexts.uncheckModalTitle = translateService.translate('SERVICE_DEPENDENCY_UNCHECK_TITLE');
-            I18nTexts.uncheckModalText = translateService.translate('SERVICE_DEPENDENCY_UNCHECK_TEXT');
+            I18nTexts.removeDirectiveModalTitle = translateService.translate('DIRECTIVES_AND_NODE_FILTER_REMOVE_TITLE');
+            I18nTexts.removeDirectiveModalText = translateService.translate('DIRECTIVES_AND_NODE_FILTER_REMOVE_TEXT');
+            I18nTexts.updateDirectiveModalTitle = translateService.translate('DIRECTIVES_AND_NODE_FILTER_UPDATE_TITLE');
+            I18nTexts.updateDirectiveModalText = translateService.translate('DIRECTIVES_AND_NODE_FILTER_UPDATE_TEXT');
             I18nTexts.modalApprove = translateService.translate('MODAL_APPROVE');
             I18nTexts.modalCancel = translateService.translate('MODAL_CANCEL');
             I18nTexts.modalCreate = translateService.translate('MODAL_CREATE');
             I18nTexts.modalSave = translateService.translate('MODAL_SAVE');
             I18nTexts.modalDelete = translateService.translate('MODAL_DELETE');
-            I18nTexts.addRuleTxt = translateService.translate('SERVICE_DEPENDENCY_ADD_RULE');
-            I18nTexts.updateRuleTxt = translateService.translate('SERVICE_DEPENDENCY_UPDATE_RULE');
-            I18nTexts.deleteRuleTxt = translateService.translate('SERVICE_DEPENDENCY_DELETE_RULE');
-            I18nTexts.deleteRuleMsg = translateService.translate('SERVICE_DEPENDENCY_DELETE_RULE_MSG');
+            I18nTexts.addNodeFilterTxt = translateService.translate('DIRECTIVES_AND_NODE_FILTER_ADD_NODE_FILTER');
+            I18nTexts.updateNodeFilterTxt = translateService.translate('DIRECTIVES_AND_NODE_FILTER_UPDATE_NODE_FILTER');
+            I18nTexts.deleteNodeFilterTxt = translateService.translate('DIRECTIVES_AND_NODE_FILTER_DELETE_NODE_FILTER');
+            I18nTexts.deleteNodeFilterMsg = translateService.translate('DIRECTIVES_AND_NODE_FILTER_DELETE_NODE_FILTER_MSG');
     }
 }
 
@@ -127,6 +132,7 @@ export class ServiceDependenciesComponent {
     @Input() selectedInstanceSiblings: ServiceInstanceObject[];
     @Input() selectedInstanceConstraints: ConstraintObject[] = [];
     @Input() selectedInstanceProperties: PropertyBEModel[] = [];
+    @Input() directiveValues: any = DirectiveValue;
     @Output() updateRulesListEvent: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
     @Output() loadRulesListEvent:EventEmitter<any> = new EventEmitter();
     @Output() dependencyStatus = new EventEmitter<boolean>();
@@ -161,10 +167,27 @@ export class ServiceDependenciesComponent {
         }
     }
 
+    private getActualDirectiveValue = (): string => {
+        return this.currentServiceInstance.directives.length > 0 ? this.currentServiceInstance.directives[0] : "";
+    }
+
+    private isServiceProxy = (): boolean => {
+        return this.currentServiceInstance.isServiceProxy();
+    }
+
     public openRemoveDependencyModal = (): ComponentRef<ModalComponent> => {
         const actionButton: ButtonModel = new ButtonModel(I18nTexts.modalApprove, 'blue', this.onUncheckDependency);
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
-        const modalModel: ModalModel = new ModalModel('sm', I18nTexts.uncheckModalTitle, I18nTexts.uncheckModalText, [actionButton, cancelButton]);
+        const modalModel: ModalModel = new ModalModel('sm', I18nTexts.removeDirectiveModalTitle,
+            I18nTexts.removeDirectiveModalText, [actionButton, cancelButton]);
+        return this.modalServiceNg2.createCustomModal(modalModel);
+    }
+
+    public openUpdateDependencyModal = (): ComponentRef<ModalComponent> => {
+        const actionButton: ButtonModel = new ButtonModel(I18nTexts.modalApprove, 'blue', this.onUncheckDependency);
+        const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
+        const modalModel: ModalModel = new ModalModel('sm', I18nTexts.updateDirectiveModalTitle,
+            I18nTexts.updateDirectiveModalText, [actionButton, cancelButton]);
         return this.modalServiceNg2.createCustomModal(modalModel);
     }
 
@@ -183,7 +206,7 @@ export class ServiceDependenciesComponent {
         this.isLoading = true;
         const isDepOrig = this.isDependent;
         const rulesListOrig = this.rulesList;
-        this.currentServiceInstance.unmarkAsDependent();
+        this.currentServiceInstance.unmarkAsDependent(this.getActualDirectiveValue());
         this.updateComponentInstance(isDepOrig, rulesListOrig);
     }
 
@@ -192,25 +215,38 @@ export class ServiceDependenciesComponent {
         this.modalServiceNg2.closeCurrentModal();
     }
 
-    onCheckDependency = () => {
-        const isDepOrig = this.isDependent;
-        const rulesListOrig = this.rulesList;
-        this.currentServiceInstance.markAsDependent();
-        this.rulesList = [];
-        this.updateComponentInstance(isDepOrig, rulesListOrig);
+    onOptionsSelected(event: any) {
+        const newDirectiveValue = event.target.value;
+        if (newDirectiveValue.toLowerCase() !== this.getActualDirectiveValue()) {
+            const rulesListOrig = this.rulesList;
+            this.setDirectiveValue(newDirectiveValue);
+            this.rulesList = [];
+            this.updateComponentInstance(this.isDependent, rulesListOrig);
+        }
     }
 
-    onMarkAsDependent() {
-        if (!this.currentServiceInstance.isDependent()) {
-            this.onCheckDependency();
+    private onRemoveDirective() {
+        this.openRemoveDependencyModal().instance.open();
+        this.rulesList = [];
+    }
+
+    private setDirectiveValue(newDirectiveValue: string) {
+        if (this.isDependent) {
+            this.openUpdateDependencyModal().instance.open();
+        }
+        if (DirectivesEnum.SELECT == newDirectiveValue.toLowerCase()) {
+            this.currentServiceInstance.markAsSelect();
         } else {
-            this.openRemoveDependencyModal().instance.open();
+            this.currentServiceInstance.markAsSubstitute();
         }
     }
 
     updateComponentInstance(isDependentOrigVal: boolean, rulesListOrig: ConstraintObject[]) {
         this.isLoading = true;
-        this.topologyTemplateService.updateComponentInstance(this.compositeService.uniqueId, this.currentServiceInstance).subscribe((updatedServiceIns: ComponentInstance) => {
+        this.topologyTemplateService.updateComponentInstance(this.compositeService.uniqueId,
+                                                             this.compositeService.componentType,
+                                                             this.currentServiceInstance)
+                                                             .subscribe((updatedServiceIns: ComponentInstance) => {
             this.currentServiceInstance = new ComponentInstance(updatedServiceIns);
             this.isDependent = this.currentServiceInstance.isDependent();
             this.dependencyStatus.emit(this.isDependent);
@@ -229,7 +265,7 @@ export class ServiceDependenciesComponent {
     onAddRule() {
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
         const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', this.createRule, this.getDisabled);
-        const modalModel: ModalModel = new ModalModel('l', I18nTexts.addRuleTxt, '', [saveButton, cancelButton], 'standard');
+        const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
         this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
         this.modalServiceNg2.addDynamicContentToModal(
             this.modalInstance,
@@ -249,7 +285,7 @@ export class ServiceDependenciesComponent {
     onSelectRule(index: number) {
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
         const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateRules(), this.getDisabled);
-        const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateRuleTxt, '', [saveButton, cancelButton], 'standard');
+        const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
         this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
         this.modalServiceNg2.addDynamicContentToModal(
             this.modalInstance,
@@ -328,7 +364,8 @@ export class ServiceDependenciesComponent {
     }
 
     openDeleteModal = (index: number) => {
-        this.modalServiceNg2.createActionModal(I18nTexts.deleteRuleTxt, I18nTexts.deleteRuleMsg,
+        this.modalServiceNg2.createActionModal(I18nTexts.deleteNodeFilterTxt, I18nTexts.deleteNodeFilterMsg,
             I18nTexts.modalDelete, () => this.onDeleteRule(index), I18nTexts.modalCancel).instance.open();
     }
+
 }

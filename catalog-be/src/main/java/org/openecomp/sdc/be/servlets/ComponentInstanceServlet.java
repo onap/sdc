@@ -38,6 +38,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -249,10 +250,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
             ComponentInstance resultValue = actionResponse.left().value();
             if (componentTypeEnum.equals(ComponentTypeEnum.SERVICE)){
-                boolean shouldCreateServiceFilter = resourceInstance.getDirectives() != null && resourceInstance.getDirectives().contains(
-                        DirectivesUtils.SELECTABLE);
 
-                if(shouldCreateServiceFilter) {
+                if(CollectionUtils.isNotEmpty(resourceInstance.getDirectives())) {
                     Either<CINodeFilterDataDefinition, ResponseFormat> either =
                             serviceBusinessLogic.createIfNotAlreadyExistServiceFilter(componentId, componentInstanceId, userId,
                                     true);

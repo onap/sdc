@@ -233,8 +233,9 @@ export class TopologyTemplateService {
         return this.http.post<AutomatedUpgradeGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/automatedupgrade', componentsIdsToUpgrade);
     }
 
-    updateComponentInstance(componentMetaDataId: string, componentInstance:ComponentInstance): Observable<ComponentInstance> {
-        return this.http.post<ComponentInstance>(this.baseUrl + 'services/' + componentMetaDataId + '/resourceInstance/' + componentInstance.uniqueId, componentInstance);
+    updateComponentInstance(componentMetaDataId: string, componentType: string, componentInstance:ComponentInstance): Observable<ComponentInstance> {
+        const containerComponentType = componentType == ComponentType.SERVICE ? 'services/' : 'resources/' ;
+        return this.http.post<ComponentInstance>(this.baseUrl + containerComponentType + componentMetaDataId + '/resourceInstance/' + componentInstance.uniqueId, componentInstance);
     }
 
     updateMultipleComponentInstances(componentId: string, componentType: string, instances: ComponentInstance[]): Observable<ComponentInstance[]> {

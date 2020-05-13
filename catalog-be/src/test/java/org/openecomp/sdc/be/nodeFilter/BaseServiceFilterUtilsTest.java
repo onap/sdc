@@ -46,7 +46,7 @@ public class BaseServiceFilterUtilsTest {
             componentInstance.setUniqueId(CI_NAME);
             componentInstance.setName(CI_NAME);
             service.setComponentInstances(Arrays.asList(componentInstance));
-            componentInstance.setDirectives(Arrays.asList(DirectivesUtils.SELECTABLE));
+            componentInstance.setDirectives(Arrays.asList(DirectivesUtils.SELECT));
             CINodeFilterDataDefinition serviceFilter = new CINodeFilterDataDefinition();
             componentInstance.setNodeFilter(serviceFilter);
             requirementNodeFilterPropertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
