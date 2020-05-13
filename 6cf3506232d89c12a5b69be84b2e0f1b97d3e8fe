@@ -22,6 +22,30 @@
       "revId": "6cf3506232d89c12a5b69be84b2e0f1b97d3e8fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bde475db_24af2dc7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-13T11:27:11Z",
+      "side": 1,
+      "message": "Right, any suggestion regarding the name?",
+      "parentUuid": "29ac5ae8_cec8ab6b",
+      "range": {
+        "startLine": 499,
+        "startChar": 51,
+        "endLine": 499,
+        "endChar": 54
+      },
+      "revId": "6cf3506232d89c12a5b69be84b2e0f1b97d3e8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
