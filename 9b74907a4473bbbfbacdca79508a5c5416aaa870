@@ -46,6 +46,30 @@
       "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0fb4e85d_b5daf563",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-14T17:23:07Z",
+      "side": 1,
+      "message": "...by covering populateToscaArtifacts (L437), populateToscaArtifacts (L441) and getToscaModelByComponentUuid (L526) you can cover all your new private functions, and as you can see from https://sonarcloud.io/code?id\u003donap_sdc\u0026selected\u003donap_sdc%3Acatalog-be%2Fsrc%2Fmain%2Fjava%2Forg%2Fopenecomp%2Fsdc%2Fbe%2Fcomponents%2Fimpl%2FComponentBusinessLogic.java\nnone of them is covered. \nI hope I answered your question.",
+      "parentUuid": "5d547eed_e33741ea",
+      "range": {
+        "startLine": 474,
+        "startChar": 3,
+        "endLine": 516,
+        "endChar": 0
+      },
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
