@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,18 +23,26 @@
 package org.openecomp.sdc.be.components;
 
 import fj.data.Either;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import org.apache.commons.lang3.NotImplementedException;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -43,6 +51,7 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiLeftPaletteComponent;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.ArrayList;
@@ -231,5 +240,229 @@ public class ComponentBusinessLogicTest extends ComponentBusinessLogicMock {
         tags.add("tag2");
         component.setTags(tags);
         return component;
+    }
+
+    @Test
+    @DisplayName("getToscaArtifactByType - Should return an Optional containing an ArtifactDefinition of the given type if there is a least one")
+    public void getToscaArtifactByType_elementExists(){
+        //Given
+        ArtifactTypeEnum typeEnum = ArtifactTypeEnum.TOSCA_CSAR;
+        ArtifactDefinition expectedResult = getArtifactDefinition(typeEnum);
+        Map<String, ArtifactDefinition> toscaArtifacts = getComponent(typeEnum).getToscaArtifacts();
+
+        //When
+        Optional<ArtifactDefinition> result = ComponentBusinessLogic.getToscaArtifactByType(toscaArtifacts, typeEnum);
+
+        //Then
+        assertThat(result).isPresent();
+        assertThat(result.get()).isEqualTo(expectedResult);
+    }
+
+    @Test
+    @DisplayName("getToscaArtifactByType - Should return an empty Optional if there is no ArtifactType in the Map")
+    public void getToscaArtifactByType_elementDoesntExist(){
+        //Given
+        ArtifactTypeEnum typeEnum = ArtifactTypeEnum.TOSCA_CSAR;
+        Map<String, ArtifactDefinition> toscaArtifacts = getComponent(ArtifactTypeEnum.DCAE_TOSCA).getToscaArtifacts();
+
+        //When
+        Optional<ArtifactDefinition> result = ComponentBusinessLogic.getToscaArtifactByType(toscaArtifacts, typeEnum);
+
+        //Then
+        assertThat(result).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("getToscaArtifactByTypeOrThrowException - Should return an ArtifactDefinition of the given type if it exists within the Component's artifacts")
+    public void getToscaArtifactByTypeOrThrowException_ElementExists() {
+        //Given
+        ArtifactTypeEnum typeEnum = ArtifactTypeEnum.TOSCA_CSAR;
+        Component component = getComponent(typeEnum);
+        ComponentsUtils componentsUtils = getComponentsUtils();
+
+        //When
+        Optional<ArtifactDefinition> result = Optional.empty();
+        Optional<Exception> optionalException = Optional.empty();
+        try {
+            result = Optional.ofNullable(
+                ComponentBusinessLogic.getToscaArtifactByTypeOrThrowException(component, typeEnum, componentsUtils));
+        } catch (Exception e) {
+            optionalException = Optional.of(e);
+        }
+
+        //Then
+        assertThat(result).isPresent();
+        assertThat(optionalException).isNotPresent();
+        assertThat(result.get().getArtifactType()).isEqualTo(typeEnum.getType());
+    }
+
+    @Test
+    @DisplayName("getToscaArtifactByTypeOrThrowException - Should throw a ByResponseFormatComponentException if the given Component doesn't have any ToscaArtifact of the given type")
+    public void getToscaArtifactByTypeOrThrowException_ElementDoesntExist() {
+        //Given
+        ArtifactTypeEnum typeEnum = ArtifactTypeEnum.TOSCA_CSAR;
+        Component component = getComponent(ArtifactTypeEnum.GUIDE);
+        ComponentsUtils componentsUtils = getComponentsUtils();
+
+        //When
+        Optional<ArtifactDefinition> result = Optional.empty();
+        Optional<Exception> optionalException = Optional.empty();
+        try {
+            result = Optional.ofNullable(
+                ComponentBusinessLogic.getToscaArtifactByTypeOrThrowException(component, typeEnum, componentsUtils));
+        } catch (Exception e) {
+            optionalException = Optional.of(e);
+        }
+
+        //Then
+        assertThat(result).isNotPresent();
+        assertThat(optionalException).isPresent();
+        assertThat(optionalException.get()).isInstanceOf(ByResponseFormatComponentException.class);
+    }
+
+    @Test
+    @DisplayName("getToscaArtifactByTypeOrThrowException - Should throw a ByResponseFormatComponentException if the given Component doesn't have any ToscaArtifact")
+    public void getToscaArtifactByTypeOrThrowException_NullToscaArtifacts() {
+        //Given
+        ArtifactTypeEnum typeEnum = ArtifactTypeEnum.TOSCA_CSAR;
+        ComponentsUtils componentsUtils = getComponentsUtils();
+        Component component = getComponent(typeEnum);
+        component.setToscaArtifacts(null);
+
+        //When
+        Optional<ArtifactDefinition> result = Optional.empty();
+        Optional<Exception> optionalException = Optional.empty();
+        try {
+            result = Optional.ofNullable(ComponentBusinessLogic.getToscaArtifactByTypeOrThrowException(component, typeEnum, componentsUtils));
+        } catch (Exception e) {
+            optionalException = Optional.of(e);
+        }
+
+        //Then
+        assertThat(result).isNotPresent();
+        assertThat(optionalException).isPresent();
+        assertThat(optionalException.get()).isInstanceOf(ByResponseFormatComponentException.class);
+    }
+
+    @Test
+    @DisplayName("saveToscaArtifactAndPopulateToscaArtifactsWithResult - Should return a Either.left if everything went fine")
+    public void saveToscaArtifactAndPopulateToscaArtifactsWithResult_ElementExists() {
+        //Given
+        ArtifactTypeEnum typeEnum = ArtifactTypeEnum.TOSCA_CSAR;
+        ComponentsUtils componentsUtils = getComponentsUtils();
+        Component component = getComponent(typeEnum);
+        BiFunction<Component, ArtifactDefinition, Either<ArtifactDefinition, Operation>> saveToscaArtifactPayloadFunction = (comp, def) -> Either.left(def);
+
+        //When
+        Optional<Either<ArtifactDefinition, Operation>> resultOpt = Optional.empty();
+        Optional<Exception> optionalException = Optional.empty();
+        try {
+            resultOpt = Optional.of(
+                ComponentBusinessLogic.saveToscaArtifactAndPopulateToscaArtifactsWithResult(component, componentsUtils, typeEnum, saveToscaArtifactPayloadFunction));
+        } catch (Exception e) {
+            optionalException = Optional.of(e);
+        }
+
+        //Then
+        assertThat(resultOpt).isPresent();
+        assertThat(optionalException).isNotPresent();
+
+        Either<ArtifactDefinition, Operation> result = resultOpt.get();
+        assertThat(result.isLeft()).isTrue();
+    }
+
+    @Test
+    @DisplayName("saveToscaArtifactAndPopulateToscaArtifactsWithResult - Should throw a ByResponseFormatComponentException if the given Component doesn't have any ToscaArtifact of the given type")
+    public void saveToscaArtifactAndPopulateToscaArtifactsWithResult_ElementDoesntExist() {
+        //Given
+        ArtifactTypeEnum typeEnum = ArtifactTypeEnum.TOSCA_CSAR;
+        ComponentsUtils componentsUtils = getComponentsUtils();
+        Component component = getComponent(ArtifactTypeEnum.GUIDE);
+        BiFunction<Component, ArtifactDefinition, Either<ArtifactDefinition, Operation>> saveToscaArtifactPayloadFunction = (comp, def) -> Either.left(def);
+
+        //When
+        Optional<Either<ArtifactDefinition, Operation>> resultOpt = Optional.empty();
+        Optional<Exception> optionalException = Optional.empty();
+        try {
+            resultOpt = Optional.of(
+                ComponentBusinessLogic.saveToscaArtifactAndPopulateToscaArtifactsWithResult(component, componentsUtils, typeEnum, saveToscaArtifactPayloadFunction));
+        } catch (Exception e) {
+            optionalException = Optional.of(e);
+        }
+
+        //Then
+        assertThat(resultOpt).isNotPresent();
+        assertThat(optionalException).isPresent();
+        assertThat(optionalException.get()).isInstanceOf(ByResponseFormatComponentException.class);
+    }
+
+    @Test
+    @DisplayName("saveToscaArtifactAndPopulateToscaArtifactsWithResult - Should return an Either.right if the saveFunction fails")
+    public void saveToscaArtifactAndPopulateToscaArtifactsWithResult_SaveFunctionFails() {
+        //Given
+        ArtifactTypeEnum typeEnum = ArtifactTypeEnum.TOSCA_CSAR;
+        ComponentsUtils componentsUtils = getComponentsUtils();
+        Component component = getComponent(typeEnum);
+        Either<ArtifactDefinition, Operation> expectedResult = Either.right(new Operation());
+        BiFunction<Component, ArtifactDefinition, Either<ArtifactDefinition, Operation>> saveToscaArtifactPayloadFunction = (comp, def) -> expectedResult;
+
+        //When
+        Optional<Either<ArtifactDefinition, Operation>> resultOpt = Optional.empty();
+        Optional<Exception> optionalException = Optional.empty();
+        try {
+            resultOpt = Optional.of(
+                ComponentBusinessLogic.saveToscaArtifactAndPopulateToscaArtifactsWithResult(component, componentsUtils, typeEnum, saveToscaArtifactPayloadFunction));
+        } catch (Exception e) {
+            optionalException = Optional.of(e);
+        }
+
+        //Then
+        assertThat(resultOpt).isPresent();
+        assertThat(optionalException).isNotPresent();
+
+        Either<ArtifactDefinition, Operation> result = resultOpt.get();
+        assertThat(result.isRight()).isTrue();
+        assertThat(result).isEqualTo(expectedResult);
+    }
+
+    ArtifactDefinition getArtifactDefinition(ArtifactTypeEnum artifactType) {
+        return getArtifactDefinition(artifactType.getType(), artifactType);
+    }
+
+    ArtifactDefinition getArtifactDefinition(String artifactLabel, ArtifactTypeEnum artifactType) {
+        return new ArtifactDefinition() {
+            @Override
+            public String getArtifactType() {
+                return artifactType.getType();
+            }
+
+            @Override
+            public String getArtifactLabel() {
+                return artifactLabel;
+            }
+        };
+    }
+
+    Component getComponent(ArtifactTypeEnum requiredArtifactType) {
+        Map<String, ArtifactDefinition> toscaArtifacts = io.vavr.collection.HashMap.of(
+            "entry1", getArtifactDefinition(requiredArtifactType),
+            "entry2", getArtifactDefinition(ArtifactTypeEnum.CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT),
+            "entry3", getArtifactDefinition(ArtifactTypeEnum.TOSCA_TEMPLATE),
+            "entry4", getArtifactDefinition(ArtifactTypeEnum.DCAE_INVENTORY_EVENT),
+            "entry5", getArtifactDefinition(ArtifactTypeEnum.ANSIBLE_PLAYBOOK),
+            "entry6", getArtifactDefinition(ArtifactTypeEnum.HEAT_ARTIFACT),
+            "entry7", getArtifactDefinition(ArtifactTypeEnum.PERFORMANCE_COUNTER),
+            "entry8", getArtifactDefinition(ArtifactTypeEnum.DCAE_POLICY),
+            "entry9", getArtifactDefinition(ArtifactTypeEnum.CHEF)
+        ).toJavaMap();
+
+        Resource resource = new ResourceBuilder().setUniqueId("uid")
+            .setComponentType(ComponentTypeEnum.RESOURCE)
+            .setSystemName("myResource")
+            .build();
+
+        resource.setToscaArtifacts(toscaArtifacts);
+
+        return resource;
     }
 }
