@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "68d7dd7d_46028c14",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-14T23:48:12Z",
+      "side": 1,
+      "message": "You\u0027re right: it\u0027d be easier to read and we don\u0027t have type erasure then.",
+      "parentUuid": "3a3d6d14_e1d332d8",
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e7954706_f33426d5",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2020-05-14T23:11:03Z",
       "side": 1,
       "message": "You could improve this using Either\u0027s combinators.\n```\nresult.left().foreach(def -\u003e\n  component.getToscaArtifacts().put(def.getArtifactLabel(), def)\n)\n```",
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e688d5c_fc46ae8e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-14T23:48:12Z",
+      "side": 1,
+      "message": "I actually did it initially but then noticed that \u0027foreach\u0027 expects a return type of Unit so we have to add another line to do `return Unit.unit()`.\nThe result was pretty verbose and I decide to go for a more \u0027procedural\u0027 approach as it\u0027s more common on the project.",
+      "parentUuid": "e7954706_f33426d5",
       "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
