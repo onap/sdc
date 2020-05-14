@@ -23,4 +23,5 @@ bash "executing-check_Backend_Health" do
      rc=$?
      if [[ $rc != 0 ]]; then exit $rc; fi
    EOH
+  returns [0]
 end

@@ -3,6 +3,7 @@ import subprocess
 #from time import sleep
 import time
 from datetime import datetime
+import sys
 
 beStat=0
 BE_IP="<%= @be_ip %>"
@@ -48,4 +49,4 @@ for i in range(1,10):
 
 if beStat == 0:
     print '[ERROR]: ' + time.strftime('%Y/%m/%d %H:%M:%S') + bcolors.FAIL + 'Backend is DOWN :-(' + bcolors.ENDC
-    exit()
+    sys.exit(1)
