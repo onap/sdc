@@ -22,6 +22,30 @@
       "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d547eed_e33741ea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-14T15:58:13Z",
+      "side": 1,
+      "message": "I thought about this as well and decided to leave them as public as these methods don\u0027t have any side-effects and leaving them public is not going to change any internal state.\nHowever, if you have suggestions on how to do what you describe in a simple manner, I am open to them!",
+      "parentUuid": "29b1ee27_044b52af",
+      "range": {
+        "startLine": 474,
+        "startChar": 3,
+        "endLine": 516,
+        "endChar": 0
+      },
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
