@@ -70,6 +70,30 @@
       "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "973fb596_282d5462",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-14T18:07:51Z",
+      "side": 1,
+      "message": "Covering the methods you mention is not the goal of the change request: the goal is to take care of unchecked calls to \u0027Optional.get()\u0027 (there is, I believe, already a task to improve code coverage).\nHowever, in order to be a good citizen on the project, I decided to create unit tests for the code I modify. To do that, I made my pure functions public so I could call them from a separate test class.\nI propose to switch the visibility of these methods to package-access only so they would be testable, writing proper tests for the mentioned methods would be a task of its own IMPO.",
+      "parentUuid": "0fb4e85d_b5daf563",
+      "range": {
+        "startLine": 474,
+        "startChar": 3,
+        "endLine": 516,
+        "endChar": 0
+      },
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
