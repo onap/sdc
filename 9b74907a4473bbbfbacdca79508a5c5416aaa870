@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "3a3d6d14_e1d332d8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-14T23:11:03Z",
+      "side": 1,
+      "message": "Isn\u0027t it simpler using a method? It seems we need to call apply every time we want to use this function.\n\nUsually I use the type `FunctionX` whenever I need to pass the function in question to some higher order function, in order to reduce the boilerplate, but in this case, and please correct me if I am wrong, we never pass it to an HO function. Is that right?",
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7954706_f33426d5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-14T23:11:03Z",
+      "side": 1,
+      "message": "You could improve this using Either\u0027s combinators.\n```\nresult.left().foreach(def -\u003e\n  component.getToscaArtifacts().put(def.getArtifactLabel(), def)\n)\n```",
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "29b1ee27_044b52af",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
         "patchSetId": 1
@@ -133,6 +167,30 @@
       "side": 1,
       "message": "Not sure why you want to make them non-static as their behaviour is not specific to a particular instance: is having them static causing a problem I am not aware of?\n\nSo, to recap, you suggest to:\n1) Make these methods private.\n2) Delete the existing tests for these methods.\n3) Create a separate task for someone to improve the coverage of this class.\nAm I understanding your suggestion properly?",
       "parentUuid": "d5ba3c8d_402a8a08",
+      "range": {
+        "startLine": 474,
+        "startChar": 3,
+        "endLine": 516,
+        "endChar": 0
+      },
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae22807b_37590a3f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-14T23:11:03Z",
+      "side": 1,
+      "message": "@Vasyl, @Chris\n\nIn this case, I would usually keep the new functions private and static and get rid of the tests as adding more public functions means more test (and more code to maintain).\n\nHaving said that, the public functions (`populateToscaArtifacts` and `getToscaModelByComponentUuid`) are pretty hard to test and this would probably require an additional change. First of all, injecting dependencies for `componentsUtils`, `toscaOperationFacade`, and `artifactsBusinessLogic` should be done among others. Then additional guarantees regarding the privates functions should be done (eg. nulls are never returned, exceptions are never thrown), finally, I have not checked yet and this is just an assumption, but considering how the logic is implemented in these functions, the tests will happen to be quiet complicated to code due to a high level of technical debt.\n\nSo I would suggest to keep the tests and the new functions as they are (because it\u0027s still better than nothing), and open a new task for a thorough re-design of the `populateToscaArtifacts` and `getToscaModelByComponentUuid` function.\n\nAt some point we have to acknowledge that the level of quality of this codebase is pretty low (which is confirmed by Sonar), and that we can make progress only by making baby steps.",
+      "parentUuid": "1dc766ab_dcf72f03",
       "range": {
         "startLine": 474,
         "startChar": 3,
