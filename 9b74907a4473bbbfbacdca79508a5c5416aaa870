@@ -118,6 +118,30 @@
       "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dc766ab_dcf72f03",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-14T21:12:21Z",
+      "side": 1,
+      "message": "Not sure why you want to make them non-static as their behaviour is not specific to a particular instance: is having them static causing a problem I am not aware of?\n\nSo, to recap, you suggest to:\n1) Make these methods private.\n2) Delete the existing tests for these methods.\n3) Create a separate task for someone to improve the coverage of this class.\nAm I understanding your suggestion properly?",
+      "parentUuid": "d5ba3c8d_402a8a08",
+      "range": {
+        "startLine": 474,
+        "startChar": 3,
+        "endLine": 516,
+        "endChar": 0
+      },
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
