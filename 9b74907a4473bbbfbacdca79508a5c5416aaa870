@@ -94,6 +94,30 @@
       "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5ba3c8d_402a8a08",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-14T19:06:06Z",
+      "side": 1,
+      "message": "\"Covering the methods you mention is not the goal of the change request\", never said it is. \nYes, it should be goal of different commit.\nBut creating \"public static\" methods only for be visible for testing, it is not best way, IMPO.\nI\u0027d suggest to change to private (non-static), and test them from public, (of cause, on different commit), remove needless tests.\nHow does it sound to you?",
+      "parentUuid": "973fb596_282d5462",
+      "range": {
+        "startLine": 474,
+        "startChar": 3,
+        "endLine": 516,
+        "endChar": 0
+      },
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
