@@ -18,6 +18,8 @@ package org.openecomp.sdc.logging.servlet;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.servlet.http.HttpServletRequest;
 import org.openecomp.sdc.logging.api.ContextData;
 import org.openecomp.sdc.logging.api.LoggingContext;
@@ -33,6 +35,9 @@ public class ContextTracker implements Tracker {
     private final HttpHeader partnerNameHeaders;
     private final HttpHeader requestIdHeaders;
 
+    private final Supplier<Void> loggingContextClear;
+    private final Consumer<ContextData> loggingContextPut;
+
     /**
      * Constructs tracker to handle required logging context in Servlet-based applications. Refer to ONAP logging
      * guidelines for fields required to be put on logging context.
@@ -43,12 +48,36 @@ public class ContextTracker implements Tracker {
     public ContextTracker(HttpHeader partnerNameHeaders, HttpHeader requestIdHeaders) {
         this.partnerNameHeaders = Objects.requireNonNull(partnerNameHeaders);
         this.requestIdHeaders = Objects.requireNonNull(requestIdHeaders);
+        this.loggingContextPut = LoggingContext::put;
+        this.loggingContextClear = () -> {
+            LoggingContext.clear();
+            return null;
+        };
+    }
+
+    /**
+     * Package level constructor used for tests. Clean and Put are passed as functions
+     * in order to avoid static mock and service loader config - LoggingServiceProvider in LoggingContext
+     *
+     * @param partnerNameHeaders
+     * @param requestIdHeaders
+     * @param loggingContextClear
+     * @param loggingContextPut
+     */
+    ContextTracker(HttpHeader partnerNameHeaders,
+        HttpHeader requestIdHeaders,
+        Supplier<Void> loggingContextClear,
+        Consumer<ContextData> loggingContextPut) {
+        this.partnerNameHeaders = Objects.requireNonNull(partnerNameHeaders);
+        this.requestIdHeaders = Objects.requireNonNull(requestIdHeaders);
+        this.loggingContextPut = loggingContextPut;
+        this.loggingContextClear =loggingContextClear;
     }
 
     @Override
     public void preRequest(HttpServletRequest request) {
 
-        LoggingContext.clear();
+        loggingContextClear.get();
 
         String serviceName = ServiceNameFormatter.format(request);
         String requestId = requestIdHeaders.getAny(request::getHeader).orElse(UUID.randomUUID().toString());
@@ -57,11 +86,11 @@ public class ContextTracker implements Tracker {
         String partnerName = partnerNameHeaders.getAny(request::getHeader).orElse("UNKNOWN");
         contextBuilder.partnerName(partnerName);
 
-        LoggingContext.put(contextBuilder.build());
+        loggingContextPut.accept(contextBuilder.build());
     }
 
     @Override
     public void postRequest(RequestProcessingResult result) {
-        LoggingContext.clear();
+        loggingContextClear.get();
     }
 }
