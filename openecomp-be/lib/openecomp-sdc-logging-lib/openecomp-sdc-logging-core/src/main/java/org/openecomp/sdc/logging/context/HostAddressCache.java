@@ -22,6 +22,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Holds a reference to local host address as returned by Java runtime. A value of host address will be cached for the
@@ -41,6 +42,8 @@ public class HostAddressCache {
 
     private volatile CacheEntry cachedAddress;
 
+    private final Supplier<InetAddress> readAddress;
+
     public HostAddressCache() {
         this(DEFAULT_REFRESH_INTERVAL);
     }
@@ -50,7 +53,20 @@ public class HostAddressCache {
      */
     public HostAddressCache(long refreshInterval) {
         this.interval = refreshInterval;
-        this.cachedAddress = new CacheEntry(System.currentTimeMillis(), read());
+        this.readAddress = HostAddressCache::read;
+        this.cachedAddress = new CacheEntry(System.currentTimeMillis(), readAddress.get());
+    }
+
+    /**
+     * Package level constructor used for unit test in order to avoid static mock
+     *
+     * @param readAddress
+     * @param refreshInterval
+     */
+    HostAddressCache(Supplier<InetAddress> readAddress, long refreshInterval) {
+        this.interval = refreshInterval;
+        this.readAddress = readAddress;
+        this.cachedAddress = new CacheEntry(System.currentTimeMillis(), this.readAddress.get());
     }
 
     /**
@@ -65,12 +81,12 @@ public class HostAddressCache {
             return Optional.ofNullable(cachedAddress.address);
         }
 
-        InetAddress address = read(); // register the attempt even if null, i.e. failed to get a meaningful address
+        InetAddress address = readAddress.get(); // register the attempt even if null, i.e. failed to get a meaningful address
         cachedAddress = new CacheEntry(current, address);
         return Optional.ofNullable(address);
     }
 
-    private InetAddress read() {
+    private static InetAddress read() {
 
         try {
             return InetAddress.getLocalHost();
@@ -85,7 +101,7 @@ public class HostAddressCache {
         }
     }
 
-    private InetAddress getFallbackLocalHost() {
+    private static InetAddress getFallbackLocalHost() {
 
         try {
 
@@ -107,7 +123,7 @@ public class HostAddressCache {
         }
     }
 
-    private InetAddress getAddress(NetworkInterface networkInterface) throws SocketException {
+    private static InetAddress getAddress(NetworkInterface networkInterface) throws SocketException {
 
         if (networkInterface.isLoopback() || networkInterface.isUp()) {
             return null;
@@ -125,7 +141,7 @@ public class HostAddressCache {
         return null;
     }
 
-    private boolean isHostAddress(InetAddress address) {
+    private static boolean isHostAddress(InetAddress address) {
         return !address.isLoopbackAddress() && !address.isAnyLocalAddress() && !address.isLinkLocalAddress()
                        && !address.isMulticastAddress();
     }
