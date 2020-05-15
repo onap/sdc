@@ -21,32 +21,23 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(MockitoJUnitRunner.class)
-@PrepareForTest({ReportManager.class})
 public class ReportManagerTest {
 
     private static final String VERTEX_1_ID = "testID1";
@@ -79,16 +70,15 @@ public class ReportManagerTest {
         .csvReportFilePath(resourcePath, System::currentTimeMillis);
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
 
-    @Mock
-    GraphVertex vertexScanned;
+    private GraphVertex vertexScanned = Mockito.mock(GraphVertex.class);
 
-    @Before
+    @BeforeEach
     public void setup() {
         ReportManager.make(csvReportFilePath, txtReportFilePath);
         successResult.setStatus(true);
     }
 
-    @After
+    @AfterEach
     public void clean() {
         ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
     }
