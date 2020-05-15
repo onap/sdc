@@ -22,14 +22,13 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import fj.data.Either;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
@@ -41,9 +40,6 @@ import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,16 +48,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockRunnerDelegate(MockitoJUnitRunner.class)
-@PrepareForTest({ReportManager.class})
 public class ArtifactValidationUtilsTest {
 
     @Mock
@@ -94,13 +87,8 @@ public class ArtifactValidationUtilsTest {
     private final static String csvReportFilePath = ValidationConfigManager.DEFAULT_CSV_PATH;
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
 
-    public void initReportManager() {
-        ReportManager.make(csvReportFilePath, txtReportFilePath);
-    }
-
-    @Before
-    public void setup() {
-        initReportManager();
+    ArtifactValidationUtilsTest () {
+        MockitoAnnotations.initMocks(this);
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID)).thenReturn(Either.left(1L));
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID_NOT_IN_CASS))
             .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
@@ -112,7 +100,12 @@ public class ArtifactValidationUtilsTest {
         when(vertex.getUniqueId()).thenReturn(UNIQUE_ID_VERTEX);
     }
 
-    @After
+    @BeforeEach
+    public void setup() {
+        ReportManager.make(csvReportFilePath, txtReportFilePath);
+    }
+
+    @AfterEach
     public void clean() {
         ReportManagerHelper.cleanReports(csvReportFilePath, txtReportFilePath);
     }
@@ -183,7 +176,7 @@ public class ArtifactValidationUtilsTest {
         List<ArtifactDataDefinition> result = testSubject.addRelevantArtifacts(artifactsMap);
 
         // then
-        result.forEach(Assert::assertNotNull);
+        result.forEach(Assertions::assertNotNull);
     }
 
     @Test
