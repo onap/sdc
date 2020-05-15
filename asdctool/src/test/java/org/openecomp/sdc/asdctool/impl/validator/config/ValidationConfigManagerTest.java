@@ -22,18 +22,12 @@ package org.openecomp.sdc.asdctool.impl.validator.config;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager.csvReportFilePath;
 import static org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager.txtReportFilePath;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.Test;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ReportManager.class})
 public class ValidationConfigManagerTest {
 
     @Test
