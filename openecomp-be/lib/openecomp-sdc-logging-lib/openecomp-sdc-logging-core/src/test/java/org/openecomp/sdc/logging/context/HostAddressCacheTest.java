@@ -16,16 +16,14 @@
 
 package org.openecomp.sdc.logging.context;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import org.easymock.EasyMock;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import java.util.function.Supplier;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Retrieval and caching of host address.
@@ -33,9 +31,23 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @author evitaliy
  * @since 28 Mar 2018
  */
-@PrepareForTest(InetAddress.class)
-@RunWith(PowerMockRunner.class)
 public class HostAddressCacheTest {
+
+    private int readAddressCalls = 0;
+
+    private Supplier<InetAddress> readAddress = () -> {
+        readAddressCalls++ ;
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            return null;
+        }
+    };
+
+    @BeforeEach
+    public void setUp() {
+        this.readAddressCalls = 0;
+    }
 
     @Test
     public void hostAddressIsAlwaysPopulated() {
@@ -44,27 +56,22 @@ public class HostAddressCacheTest {
 
     @Test
     public void cachedAddressRemainsTheSameWhenGotWithingRefreshInterval() throws UnknownHostException {
-        mockInetAddress(1);
-        HostAddressCache addressCache = new HostAddressCache(1000);
+        HostAddressCache addressCache = new HostAddressCache(readAddress, 1000);
         addressCache.get();
         addressCache.get();
+        addressCache.get();
+        addressCache.get();
+
+        assertEquals(1, readAddressCalls);
     }
 
     @Test
     public void cachedAddressReplacedWhenGotAfterRefreshInterval() throws UnknownHostException {
-        mockInetAddress(2);
-        HostAddressCache addressCache = new HostAddressCache(-1);
+        HostAddressCache addressCache = new HostAddressCache(readAddress, -1);
         addressCache.get();
         addressCache.get();
-    }
 
-    private void mockInetAddress(int times) throws UnknownHostException {
-        InetAddress inetAddress = EasyMock.mock(InetAddress.class);
-        EasyMock.replay(inetAddress);
-        PowerMock.mockStatic(InetAddress.class);
-        //noinspection ResultOfMethodCallIgnored
-        InetAddress.getLocalHost();
-        PowerMock.expectLastCall().andReturn(inetAddress).times(times);
-        PowerMock.replay(InetAddress.class);
+        // one call in the constructor and two of addressCache::get
+        assertEquals(3, readAddressCalls);
     }
 }
