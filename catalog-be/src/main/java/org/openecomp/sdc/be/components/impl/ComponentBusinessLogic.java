@@ -22,10 +22,11 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import fj.data.Either;
+import io.vavr.Function3;
+import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -55,6 +56,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.facade.operations.CatalogOperation;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.Component;
@@ -449,27 +451,67 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             component = toscaElement.left().value();
         }
 
-        Either<ArtifactDefinition, Operation> generateToscaRes = null;
-        if (component.getToscaArtifacts() != null && !component.getToscaArtifacts().isEmpty()) {
-            ArtifactDefinition toscaArtifact = component.getToscaArtifacts().values().stream()
-                    .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_TEMPLATE.getType()))
-                    .findAny().get();
-            generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest, shouldLock, inTransaction, fetchTemplatesFromDB);
-            toscaArtifact = generateToscaRes.left().value();
-            component.getToscaArtifacts().put(toscaArtifact.getArtifactLabel(), toscaArtifact);
-            if(!isAbstractResource(component)){
-                toscaArtifact = component.getToscaArtifacts().values().stream()
-                        .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType()))
-                        .findAny().get();
-                generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest, shouldLock, inTransaction, true);
-                if (generateToscaRes.isRight()) {
-                    return generateToscaRes;
-                }
-                toscaArtifact = generateToscaRes.left().value();
-                component.getToscaArtifacts().put(toscaArtifact.getArtifactLabel(), toscaArtifact);
-            }
+        Function3<Component, ArtifactDefinition, Boolean, Either<ArtifactDefinition, Operation>>
+            saveToscaArtifactPayloadFunction =
+            (comp, toscaArtifactArg, fetchTemplates) -> saveToscaArtifactPayload(toscaArtifactArg, comp, user,
+                isInCertificationRequest, shouldLock,
+                inTransaction, fetchTemplates);
+
+        Either<ArtifactDefinition, Operation> generateToscaRes =
+            saveToscaArtifactAndPopulateToscaArtifactsWithResult(component, componentsUtils,
+                ArtifactTypeEnum.TOSCA_TEMPLATE,
+                (comp, toscaArtifact) ->
+                    saveToscaArtifactPayloadFunction.apply(comp, toscaArtifact, fetchTemplatesFromDB));
+
+        if (!isAbstractResource(component)) {
+            generateToscaRes = saveToscaArtifactAndPopulateToscaArtifactsWithResult(component, componentsUtils,
+                ArtifactTypeEnum.TOSCA_CSAR,
+                (comp, toscaArtifactArg) -> saveToscaArtifactPayloadFunction.apply(comp, toscaArtifactArg, true));
         }
         return generateToscaRes;
+    }
+
+    public static Either<ArtifactDefinition, Operation> saveToscaArtifactAndPopulateToscaArtifactsWithResult(
+        Component component,
+        final ComponentsUtils componentsUtils,
+        final ArtifactTypeEnum artifactEnum,
+        final BiFunction<Component, ArtifactDefinition, Either<ArtifactDefinition, Operation>> saveToscaArtifactPayloadFunction) {
+
+        ArtifactDefinition artifactDefinition = getToscaArtifactByTypeOrThrowException(component, artifactEnum,
+            componentsUtils);
+
+        Either<ArtifactDefinition, Operation> result =
+            saveToscaArtifactPayloadFunction.apply(component, artifactDefinition);
+
+        if (result.isLeft()) {
+            ArtifactDefinition def = result.left().value();
+            component.getToscaArtifacts().put(def.getArtifactLabel(), def);
+        }
+
+        return result;
+    }
+
+    public static Optional<ArtifactDefinition> getToscaArtifactByType(
+        final Map<String, ArtifactDefinition> toscaArtifacts,
+        final ArtifactTypeEnum typeEnum) {
+        return toscaArtifacts.values().stream()
+            .filter(p -> p.getArtifactType().equals(typeEnum.getType()))
+            .findAny();
+    }
+
+    public static ArtifactDefinition getToscaArtifactByTypeOrThrowException(
+        final Component component,
+        final ArtifactTypeEnum typeEnum,
+        final ComponentsUtils componentsUtils) {
+
+        return Optional.ofNullable(component.getToscaArtifacts())
+            .flatMap(toscaArtifacts -> getToscaArtifactByType(toscaArtifacts, typeEnum))
+            .orElseThrow(() -> {
+                    log.debug("Impossible to find a ToscaArtifact with type '{}' for {}", typeEnum.getType(), component);
+                    return new ByResponseFormatComponentException(
+                        componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, typeEnum.name()));
+                }
+            );
     }
 
     private boolean isAbstractResource(Component component) {
