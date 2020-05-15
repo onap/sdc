@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "174e8c90_be34ffb8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-15T15:28:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68d7dd7d_46028c14",
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7954706_f33426d5",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
         "patchSetId": 1
@@ -69,6 +87,24 @@
       "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a852c15_8b2911aa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-15T15:28:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e688d5c_fc46ae8e",
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -260,6 +296,30 @@
       "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edb5a3b0_0a74b765",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-05-15T15:28:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a49b6f03_9405f62d",
+      "range": {
+        "startLine": 474,
+        "startChar": 3,
+        "endLine": 516,
+        "endChar": 0
+      },
+      "revId": "9b74907a4473bbbfbacdca79508a5c5416aaa870",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
