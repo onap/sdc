@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4be43a8_efa078bd",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ArtifactDataDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 4928
+      },
+      "writtenOn": "2020-05-17T06:42:48Z",
+      "side": 1,
+      "message": "we shouldn\u0027t add this method to the API of ArtifactDataDefinition,it\u0027s not a common method that we want to expose.\nWe can add this method as a private function in CsarUtils.",
+      "revId": "215a666c2941f2d768a5254b0b38a120208e028b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
