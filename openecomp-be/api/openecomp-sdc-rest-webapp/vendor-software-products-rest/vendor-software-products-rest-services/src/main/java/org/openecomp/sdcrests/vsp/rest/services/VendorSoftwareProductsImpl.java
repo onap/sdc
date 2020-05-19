@@ -115,7 +115,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     @Override
     public Response createVsp(VspRequestDto vspRequestDto, String user) {
         ItemCreationDto vspCreationDto = createVspItem(vspRequestDto, user);
-        return Response.ok(vspCreationDto).build();
+        return Response.status(200).entity(vspCreationDto).build();
     }
 
     private ItemCreationDto createVspItem(VspRequestDto vspRequestDto, String user) {
@@ -187,7 +187,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         getVspList(versionStatus, itemStatus, user)
                 .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
 
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
     @Override
@@ -211,7 +211,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         VspDetailsDto vspDetailsDto = new MapVspDetailsToDto().applyMapping(vspDetails, VspDetailsDto.class);
         addNetworkPackageInfo(vspId, vspDetails.getVersion(), vspDetailsDto);
 
-        return Response.ok(vspDetailsDto).build();
+        return Response.status(200).entity(vspDetailsDto).build();
     }
 
     private void submitHealedVersion(VspDetails vspDetails, String baseVersionId, String user) {
@@ -244,7 +244,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
         updateVspItem(vspId,vspDescriptionDto);
 
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
@@ -267,7 +267,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             notifyUsers(vspId, vsp.getName(), null, null, user,
                     NotificationEventTypes.DELETE);
 
-            return Response.ok().build();
+            return Response.status(200).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new Exception(Messages.DELETE_VSP_ERROR.getErrorMessage())).build();
@@ -302,13 +302,13 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             return createPackage(vspId, version);
         }
 
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
     public Response getValidationVsp(String user) {
         ItemCreationDto validationVsp = retrieveValidationVsp();
-        return Response.ok(validationVsp).build();
+        return Response.status(200).entity(validationVsp).build();
     }
 
     private ItemCreationDto retrieveValidationVsp() {
@@ -357,7 +357,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         if (orchestrationTemplateFile == null || orchestrationTemplateFile.length == 0) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        Response.ResponseBuilder response = Response.ok(orchestrationTemplateFile);
+        Response.ResponseBuilder response = Response.status(200).entity(orchestrationTemplateFile);
         response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "LatestHeatPackage.zip");
         return response.build();
     }
@@ -384,7 +384,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                 results.add(mapper.applyMapping(packageInfo, PackageInfoDto.class));
             }
         }
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
     @Override
@@ -407,7 +407,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
         File zipFile = vendorSoftwareProductManager.getTranslatedFile(vspId, version);
 
-        Response.ResponseBuilder response = Response.ok(zipFile);
+        Response.ResponseBuilder response = Response.status(200).entity(zipFile);
         if (zipFile == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -429,7 +429,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
         QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
                 .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-        return Response.ok(result).build();
+        return Response.status(200).entity(result).build();
     }
 
     @Override
@@ -437,14 +437,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             versionId, String user) {
         vendorSoftwareProductManager
                 .updateVspQuestionnaire(vspId, new Version(versionId), questionnaireData);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
     public Response heal(String vspId, String versionId, String user) {
         HealingManagerFactory.getInstance().createInterface()
                 .healItemVersion(vspId, new Version(versionId), ItemType.vsp, true);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
@@ -452,7 +452,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         File textInformationArtifact =
                 vendorSoftwareProductManager.getInformationArtifact(vspId, new Version(versionId));
 
-        Response.ResponseBuilder response = Response.ok(textInformationArtifact);
+        Response.ResponseBuilder response = Response.status(200).entity(textInformationArtifact);
         if (textInformationArtifact == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -473,7 +473,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             results.add(mapper.applyMapping(compute, VspComputeDto.class));
         }
 
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
 
@@ -550,7 +550,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
         PackageInfo packageInfo =
                 vendorSoftwareProductManager.createPackage(vspId, retrievedVersion);
-        return Response.ok(packageInfo == null
+        return Response.status(200).entity(packageInfo == null
                 ? null
                 : new MapPackageInfoToPackageInfoDto().applyMapping(packageInfo, PackageInfoDto.class))
                 .build();

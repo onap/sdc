@@ -37,7 +37,6 @@ import org.onap.sdc.tosca.datatypes.model.RelationshipTemplate;
 import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;

@@ -73,7 +73,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
                                     .map(lae -> getLicenseAgreementEntityDto(outputMapper, lae))
                                     .collect(Collectors.toList()));
 
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
 
@@ -99,7 +99,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
         StringWrapperResponse result =
                 createdLicenseAgreement != null ? new StringWrapperResponse(createdLicenseAgreement.getId())
                         : null;
-        return Response.ok(result).build();
+        return Response.status(200).entity(result).build();
     }
 
     /**
@@ -123,7 +123,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
         vendorLicenseManager
                 .updateLicenseAgreement(licenseAgreementEntity, request.getAddedFeatureGroupsIds(),
                         request.getRemovedFeatureGroupsIds());
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     /**
@@ -141,7 +141,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
                 .getLicenseAgreementModel(vlmId, new Version(versionId), licenseAgreementId);
 
         if (licenseAgreementModel == null) {
-            return Response.ok().build();
+            return Response.status(200).build();
         }
 
         LicenseAgreementModelDto lamDto = new LicenseAgreementModelDto();
@@ -164,7 +164,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
                 lamDto.getFeatureGroups().add(fgeDto);
             }
         }
-        return Response.ok(lamDto).build();
+        return Response.status(200).entity(lamDto).build();
     }
 
     /**
@@ -179,7 +179,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
     public Response deleteLicenseAgreement(String vlmId, String versionId, String licenseAgreementId,
                                            String user) {
         vendorLicenseManager.deleteLicenseAgreement(vlmId, new Version(versionId), licenseAgreementId);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     private LicenseAgreementEntityDto getLicenseAgreementEntityDto(

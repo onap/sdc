@@ -71,7 +71,7 @@ public class NicsImpl implements Nics {
       results.add(mapper.applyMapping(nic, NicDto.class));
     }
 
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
@@ -88,7 +88,7 @@ public class NicsImpl implements Nics {
         new MapNicEntityToNicCreationResponseDto();
     NicCreationResponseDto createdNicDto = mapping.applyMapping(createdNic,
         NicCreationResponseDto.class);
-    return Response.ok(createdNic != null ? createdNicDto : null)
+    return Response.status(200).entity(createdNic != null ? createdNicDto : null)
         .build();
   }
 
@@ -103,7 +103,7 @@ public class NicsImpl implements Nics {
     CompositionEntityResponseDto<NicDto> responseDto = new CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapNicToNicDto(), NicDto.class)
         .doMapping(response, responseDto);
-    return Response.ok(responseDto).build();
+    return Response.status(200).entity(responseDto).build();
   }
 
   @Override
@@ -112,7 +112,7 @@ public class NicsImpl implements Nics {
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     nicManager.deleteNic(vspId, vspVersion, componentId, nicId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -132,7 +132,7 @@ public class NicsImpl implements Nics {
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto()
             .applyMapping(validationData, CompositionEntityValidationDataDto.class)).build() :
-        Response.ok().build();
+        Response.status(200).build();
   }
 
   @Override
@@ -145,7 +145,7 @@ public class NicsImpl implements Nics {
 
     QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
         .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   @Override
@@ -156,6 +156,6 @@ public class NicsImpl implements Nics {
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     nicManager
         .updateNicQuestionnaire(vspId, vspVersion, componentId, nicId, questionnaireData);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 }

@@ -83,7 +83,7 @@ public class ImagesImpl implements Images {
   @Override
   public Response getImageSchema(String vspId, String versionId, String componentId, String user) {
     CompositionEntityResponse<Image> response = imageManager.getImageSchema(vspId);
-    return Response.ok(response).build();
+    return Response.status(200).entity(response).build();
   }
 
   @Override
@@ -94,7 +94,7 @@ public class ImagesImpl implements Images {
     CompositionEntityResponse<Image> response =
         imageManager.getImage(vspId, version, componentId, imageId);
 
-    return Response.ok(response).build();
+    return Response.status(200).entity(response).build();
   }
 
   @Override
@@ -109,7 +109,7 @@ public class ImagesImpl implements Images {
       results.add(mapper.applyMapping(image, ImageDto.class));
     }
 
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
@@ -118,7 +118,7 @@ public class ImagesImpl implements Images {
     Version vspVersion = new Version(versionId);
     componentManager.validateComponentExistence(vspId, vspVersion, componentId);
     imageManager.deleteImage(vspId, vspVersion, componentId, imageId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -137,7 +137,7 @@ public class ImagesImpl implements Images {
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto()
             .applyMapping(validationData, CompositionEntityValidationDataDto.class)).build() :
-        Response.ok().build();
+        Response.status(200).build();
   }
 
   @Override
@@ -150,7 +150,7 @@ public class ImagesImpl implements Images {
 
     QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
         .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
 
   }
 
@@ -160,7 +160,7 @@ public class ImagesImpl implements Images {
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     imageManager.updateImageQuestionnaire(vspId, version, componentId, imageId, questionnaireData);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
 }

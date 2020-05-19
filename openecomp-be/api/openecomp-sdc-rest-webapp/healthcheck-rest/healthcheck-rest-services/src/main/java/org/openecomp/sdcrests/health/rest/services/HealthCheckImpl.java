@@ -73,7 +73,7 @@ public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.Healt
         Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
         return responseBuilder.entity(healthCheckResult).status(500).build();
       }
-      return Response.ok(healthCheckResult).build();
+      return Response.status(200).entity(healthCheckResult).build();
     } catch (Exception ex) {
       logger.error("Health check failed", ex);
       Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
@@ -82,7 +82,7 @@ public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.Healt
           "", "Failed to perform Health Check");
       Collection<HealthInfo> healthInfos = Arrays.asList(healthInfo);
       healthCheckResult.setComponentsInfo(healthInfos);
-      return responseBuilder.entity(healthCheckResult).status(500).build();
+      return responseBuilder.status(500).entity(healthCheckResult).build();
     }
   }
 

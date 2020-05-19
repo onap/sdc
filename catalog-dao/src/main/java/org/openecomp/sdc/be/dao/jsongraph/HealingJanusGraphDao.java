@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +53,9 @@ public class HealingJanusGraphDao extends JanusGraphDao {
     }
 
     private GraphVertex transformVertex(GraphVertex graphVertex, EdgeLabelEnum edgeLabelEnum) {
-        Optional<GraphVertex> optional = healingPipelineDao.performGraphReadHealing(graphVertex, edgeLabelEnum);
+        Optional<GraphVertex> optional = Optional.empty();
+        optional =  healingPipelineDao.performGraphReadHealing(graphVertex, edgeLabelEnum);
+
         return optional.orElse(graphVertex);
     }
 

@@ -64,7 +64,7 @@ public class EntitlementPoolsImpl implements EntitlementPools {
                                     .map(item -> outputMapper.applyMapping(item, EntitlementPoolEntityDto.class))
                                     .collect(Collectors.toList()));
 
-        return Response.ok(result).build();
+        return Response.status(200).entity(result).build();
     }
 
   /**
@@ -88,7 +88,7 @@ public class EntitlementPoolsImpl implements EntitlementPools {
     StringWrapperResponse result =
         createdEntitlementPool != null ? new StringWrapperResponse(createdEntitlementPool.getId())
             : null;
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   /**
@@ -110,7 +110,7 @@ public class EntitlementPoolsImpl implements EntitlementPools {
     entitlementPoolEntity.setId(entitlementPoolId);
 
     vendorLicenseManager.updateEntitlementPool(entitlementPoolEntity);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   /**
@@ -133,7 +133,7 @@ public class EntitlementPoolsImpl implements EntitlementPools {
     EntitlementPoolEntityDto entitlementPoolEntityDto = entitlementPool == null ? null :
         new MapEntitlementPoolEntityToEntitlementPoolEntityDto()
             .applyMapping(entitlementPool, EntitlementPoolEntityDto.class);
-    return Response.ok(entitlementPoolEntityDto).build();
+    return Response.status(200).entity(entitlementPoolEntityDto).build();
   }
 
   /**
@@ -151,6 +151,6 @@ public class EntitlementPoolsImpl implements EntitlementPools {
     epInput.setId(entitlementPoolId);
     epInput.setVersion(new Version(versionId));
     vendorLicenseManager.deleteEntitlementPool(epInput);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 }

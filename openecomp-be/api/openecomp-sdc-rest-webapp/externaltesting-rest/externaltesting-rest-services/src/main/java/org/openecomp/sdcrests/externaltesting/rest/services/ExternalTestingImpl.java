@@ -82,7 +82,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response getConfig() {
         try {
-            return Response.ok(testingManager.getConfig()).build();
+            return Response.status(200).entity(testingManager.getConfig()).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -97,7 +97,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response setConfig(ClientConfiguration config) {
         try {
-            return Response.ok(testingManager.setConfig(config)).build();
+            return Response.status(200).entity(testingManager.setConfig(config)).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -112,7 +112,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response getTestCasesAsTree() {
         try {
-            return Response.ok(testingManager.getTestCasesAsTree()).build();
+            return Response.status(200).entity(testingManager.getTestCasesAsTree()).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -121,7 +121,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response getEndpoints() {
         try {
-            return Response.ok(testingManager.getEndpoints()).build();
+            return Response.status(200).entity(testingManager.getEndpoints()).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -135,7 +135,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response setEndpoints(List<RemoteTestingEndpointDefinition> endpoints) {
         try {
-            return Response.ok(testingManager.setEndpoints(endpoints)).build();
+            return Response.status(200).entity(testingManager.setEndpoints(endpoints)).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -144,7 +144,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response getScenarios(String endpoint) {
         try {
-            return Response.ok(testingManager.getScenarios(endpoint)).build();
+            return Response.status(200).entity(testingManager.getScenarios(endpoint)).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -154,7 +154,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response getTestsuites(String endpoint, String scenario) {
         try {
-            return Response.ok(testingManager.getTestSuites(endpoint, scenario)).build();
+            return Response.status(200).entity(testingManager.getTestSuites(endpoint, scenario)).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -163,7 +163,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response getTestcases(String endpoint, String scenario) {
         try {
-            return Response.ok(testingManager.getTestCases(endpoint, scenario)).build();
+            return Response.status(200).entity(testingManager.getTestCases(endpoint, scenario)).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -172,7 +172,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response getTestcase(String endpoint, String scenario, String testsuite, String testcase) {
         try {
-            return Response.ok(testingManager.getTestCase(endpoint, scenario, testsuite, testcase)).build();
+            return Response.status(200).entity(testingManager.getTestCase(endpoint, scenario, testsuite, testcase)).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -234,7 +234,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     @Override
     public Response getExecution(String endpoint, String executionId) {
         try {
-            return Response.ok(testingManager.getExecution(endpoint, executionId)).build();
+            return Response.status(200).entity(testingManager.getExecution(endpoint, executionId)).build();
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }

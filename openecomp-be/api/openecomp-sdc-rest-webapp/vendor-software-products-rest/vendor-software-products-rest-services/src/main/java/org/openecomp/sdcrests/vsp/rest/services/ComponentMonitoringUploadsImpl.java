@@ -76,7 +76,7 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
     monitoringUploadsManager.upload(attachment.getObject(InputStream.class),
         attachment.getContentDisposition().getParameter("filename"), vspId, version, componentId,
         monitoringUploadType);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   private MonitoringUploadType getMonitoringUploadType(String vspId, String componentId,
@@ -102,7 +102,7 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     monitoringUploadsManager.delete(vspId, version, componentId, monitoringUploadType);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override

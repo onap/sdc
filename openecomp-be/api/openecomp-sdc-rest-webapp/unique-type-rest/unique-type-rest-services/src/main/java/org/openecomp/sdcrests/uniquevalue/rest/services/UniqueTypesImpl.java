@@ -58,7 +58,7 @@ public class UniqueTypesImpl implements UniqueTypes {
 
   @Override
   public Response listUniqueTypes(String user) {
-    return Response.ok(
+    return Response.status(200).entity(
         new GenericCollectionWrapper<>(new ArrayList<>(UNIQUE_TYPE_TO_INTERNAL.keySet())))
         .build();
   }
@@ -75,7 +75,7 @@ public class UniqueTypesImpl implements UniqueTypes {
       return Response.status(NOT_FOUND).entity(new ErrorCodeAndMessage(NOT_FOUND, error)).build();
     }
 
-    return Response.ok(Collections
+    return Response.status(200).entity(Collections
         .singletonMap("occupied", getUniqueValueUtil().isUniqueValueOccupied(internalType, value)))
         .build();
   }
