@@ -46,6 +46,30 @@
       "revId": "6cf3506232d89c12a5b69be84b2e0f1b97d3e8fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68a1e31a_9a06c1c7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-19T12:46:31Z",
+      "side": 1,
+      "message": "@Idan Agam,\n\nAny update?",
+      "parentUuid": "bde475db_24af2dc7",
+      "range": {
+        "startLine": 499,
+        "startChar": 51,
+        "endLine": 499,
+        "endChar": 54
+      },
+      "revId": "6cf3506232d89c12a5b69be84b2e0f1b97d3e8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
