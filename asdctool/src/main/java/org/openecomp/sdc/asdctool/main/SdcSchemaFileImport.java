@@ -32,6 +32,8 @@ import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -55,6 +57,8 @@ import java.util.zip.ZipOutputStream;
 
 
 public class SdcSchemaFileImport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SdcSchemaFileImport.class);
 
     private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
 
@@ -243,7 +247,6 @@ public class SdcSchemaFileImport {
 
         String[] importFileList = new String[]{"data.yml", "artifacts.yml", "capabilities.yml", "interfaces.yml",
             "relationships.yml"};
-        String collectionTitle = "node_types";
 
         //Create node.yaml - collect all types from normative-types and heat-types directories
         String[] nodeTypesMainFolders = new String[]{"normative-types", "heat-types"};
@@ -253,27 +256,31 @@ public class SdcSchemaFileImport {
             nodeTypesMainFolders = ArrayUtils.addAll(nodeTypesMainFolders, onapNodeTypesMainFolders);
         }
 
+        final String nodeTypesToscaEntry = "node_types";
         for (String nodeTypesMainFolder : nodeTypesMainFolders) {
             try (Stream<Path> paths = Files.walk(Paths.get(importToscaPath + SEPARATOR + nodeTypesMainFolder))) {
                 paths.filter(path -> path.getFileName().toString().toLowerCase().endsWith(YAML_EXTENSION))
                     .forEach(yamlFile -> {
                         try {
-                            String path = yamlFile.toAbsolutePath().toString();
+                            final String path = yamlFile.toAbsolutePath().toString();
                             System.out.println("Processing node type file " + path + "...");
-                            FileInputStream inputStream = new FileInputStream(path);
-                            Yaml yaml = new Yaml();
-                            Map<String, Object> load = yaml.loadAs(inputStream, Map.class);
-                            Map<String, Object> nodeType = (Map<String, Object>) load.get(collectionTitle);
+                            final FileInputStream inputStream = new FileInputStream(path);
+                            final Map<String, Object> load = new Yaml().loadAs(inputStream, Map.class);
+                            final Map<String, Object> nodeType = (Map<String, Object>) load.get(nodeTypesToscaEntry);
+                            if (nodeType == null) {
+                                LOGGER.error("Expecting '{}' entry in TOSCA yaml file '{}'", nodeTypesToscaEntry, path);
+                                System.exit(1);
+                            }
                             nodeTypeList.putAll(nodeType);
-
-                        } catch (Exception e) {
-                            System.err.println("Error in opening file " + yamlFile.toAbsolutePath().toString());
+                        } catch (final Exception e) {
+                            LOGGER.error("An error has occurred while processing YAML '{}'",
+                                yamlFile.toAbsolutePath(), e);
                             System.exit(1);
                         }
                     });
             }
         }
-        createAndSaveSchemaFileYaml("nodes", importFileList, collectionTitle, nodeTypeList);
+        createAndSaveSchemaFileYaml("nodes", importFileList, nodeTypesToscaEntry, nodeTypeList);
     }
 
     private static void usageAndExit() {
