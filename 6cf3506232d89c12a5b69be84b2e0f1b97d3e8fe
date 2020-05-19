@@ -70,6 +70,30 @@
       "revId": "6cf3506232d89c12a5b69be84b2e0f1b97d3e8fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4d08c181_4cf30b49",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-19T14:17:34Z",
+      "side": 1,
+      "message": "I\u0027ve updated it to `cachedEntry`.",
+      "parentUuid": "68a1e31a_9a06c1c7",
+      "range": {
+        "startLine": 499,
+        "startChar": 51,
+        "endLine": 499,
+        "endChar": 54
+      },
+      "revId": "6cf3506232d89c12a5b69be84b2e0f1b97d3e8fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
