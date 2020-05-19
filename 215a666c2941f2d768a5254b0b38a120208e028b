@@ -16,6 +16,24 @@
       "revId": "215a666c2941f2d768a5254b0b38a120208e028b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa1376c1_2736c322",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ArtifactDataDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-19T14:07:44Z",
+      "side": 1,
+      "message": "I\u0027m actually trying to shrink the size of `ArtifactsBusinessLogic` and to encapsulate the state of `ArtifactDataDefinition` (in other words to prevent unnecessary exposure of its state). In the future, this method may be a private one. The overall goal is to maximize the \"Tell don\u0027t ask\" principle and the Law of Demeter:\n\n- https://martinfowler.com/bliki/TellDontAsk.html\n- https://en.wikipedia.org/wiki/Law_of_Demeter\n- https://pragprog.com/articles/tell-dont-ask\n- https://softwareengineering.stackexchange.com/questions/157526/explanation-on-how-tell-dont-ask-is-considered-good-oo\n\nSo for now, could we keep this as is until we get a better idea about the behaviors assigned to `ArtifactDataDefinition`? Maybe we\u0027ll figure out another object but for now I rather centralize what interacts with its state, and to encapsulate whatever possible.",
+      "parentUuid": "e4be43a8_efa078bd",
+      "revId": "215a666c2941f2d768a5254b0b38a120208e028b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
