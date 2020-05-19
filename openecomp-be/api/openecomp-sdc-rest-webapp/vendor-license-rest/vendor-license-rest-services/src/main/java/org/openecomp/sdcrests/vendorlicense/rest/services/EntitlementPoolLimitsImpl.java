@@ -71,7 +71,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
     LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
 
-    return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
+    return Response.status(200).entity(createdLimitDto != null ? createdLimitDto : null).build();
   }
 
   @Override
@@ -90,7 +90,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     for (LimitEntity limit : limits) {
       result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
     }
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   @Override
@@ -108,7 +108,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
 
     LimitEntityDto entitlementPoolEntityDto = limit == null ? null :
         new MapLimitEntityToLimitDto().applyMapping(limit, LimitEntityDto.class);
-    return Response.ok(entitlementPoolEntityDto).build();
+    return Response.status(200).entity(entitlementPoolEntityDto).build();
   }
 
   @Override
@@ -131,7 +131,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     limitEntity.setParent(PARENT);
 
     vendorLicenseManager.updateLimit(limitEntity);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   /**
@@ -157,6 +157,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     limitInput.setParent(PARENT);
 
     vendorLicenseManager.deleteLimit(limitInput);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 }

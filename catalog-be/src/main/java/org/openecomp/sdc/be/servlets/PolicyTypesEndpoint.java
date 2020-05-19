@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -81,10 +82,10 @@ public class PolicyTypesEndpoint extends BeGenericServlet{
             @ApiResponse(responseCode = "500", description = "The GET request failed due to internal SDC problem.")})
     @ResponseView(mixin = {PolicyTypeMixin.class})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public List<PolicyTypeDefinition> getPolicyTypes(@Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed")
+    public Response getPolicyTypes(@Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed")
                                    @QueryParam("internalComponentType") String internalComponentType,
                                    @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         log.debug("(get) Start handle request of GET policyTypes");
-        return policyTypeBusinessLogic.getAllPolicyTypes(userId, internalComponentType);
+        return buildOkResponse(policyTypeBusinessLogic.getAllPolicyTypes(userId, internalComponentType));
     }
 }

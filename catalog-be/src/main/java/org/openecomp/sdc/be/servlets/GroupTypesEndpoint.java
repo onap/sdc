@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -79,10 +80,10 @@ public class GroupTypesEndpoint extends BeGenericServlet{
             @ApiResponse(responseCode = "500", description = "Internal Error")})
     @ResponseView(mixin = {GroupTypeMixin.class})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public List<GroupTypeDefinition> getGroupTypes(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+    public Response getGroupTypes(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @Parameter(
                     description = "An optional parameter to indicate the type of the container from where this call is executed") @QueryParam("internalComponentType") String internalComponentType) {
-        return groupTypeBusinessLogic.getAllGroupTypes(userId, internalComponentType);
+        return buildOkResponse(groupTypeBusinessLogic.getAllGroupTypes(userId, internalComponentType));
     }
 
 }

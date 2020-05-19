@@ -66,13 +66,13 @@ public class ComponentsImpl implements Components {
       results.add(mapper.applyMapping(component, ComponentDto.class));
     }
 
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
   public Response deleteList(String vspId, String versionId, String user) {
     componentManager.deleteComponents(vspId, new Version(versionId));
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -102,13 +102,13 @@ public class ComponentsImpl implements Components {
     CompositionEntityResponseDto<ComponentDto> responseDto = new CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapComponentDataToComponentDto(),
         ComponentDto.class).doMapping(response, responseDto);
-    return Response.ok(responseDto).build();
+    return Response.status(200).entity(responseDto).build();
   }
 
   @Override
   public Response delete(String vspId, String versionId, String componentId, String user) {
     componentManager.deleteComponent(vspId, new Version(versionId), componentId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -126,7 +126,7 @@ public class ComponentsImpl implements Components {
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto().applyMapping(validationData,
-            CompositionEntityValidationDataDto.class)).build() : Response.ok().build();
+            CompositionEntityValidationDataDto.class)).build() : Response.status(200).build();
   }
 
   @Override
@@ -137,7 +137,7 @@ public class ComponentsImpl implements Components {
 
     QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
         .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   @Override
@@ -145,6 +145,6 @@ public class ComponentsImpl implements Components {
                                       String componentId, String user) {
     componentManager
         .updateQuestionnaire(vspId, new Version(versionId), componentId, questionnaireData);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 }

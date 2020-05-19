@@ -52,7 +52,7 @@ public class ConflictsImpl implements Conflicts {
         (itemId, new Version(versionId));
     ItemVersionConflictDto result = (new MapItemVersionConflictToDto()).applyMapping
         (itemVersionConflict, ItemVersionConflictDto.class);
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   @Override
@@ -62,7 +62,7 @@ public class ConflictsImpl implements Conflicts {
 
     ConflictDto result = new MapConflictToDto().applyMapping(conflict, ConflictDto.class);
 
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
 
   }
 
@@ -77,6 +77,6 @@ public class ConflictsImpl implements Conflicts {
             .applyMapping(conflictResolution, ConflictResolution.class));
     conflictsManager.finalizeMerge(itemId, version);
 
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 }

@@ -54,6 +54,7 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.TogglingBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.components.upgrade.UpgradeBusinessLogic;
@@ -133,7 +134,7 @@ public class BeGenericServlet extends BasicServlet {
     }
 
     private static Response buildOkResponseStatic(Object entity) {
-        return Response.status(Response.Status.OK)
+        return Response.status(200)
             .entity(entity)
             .build();
     }

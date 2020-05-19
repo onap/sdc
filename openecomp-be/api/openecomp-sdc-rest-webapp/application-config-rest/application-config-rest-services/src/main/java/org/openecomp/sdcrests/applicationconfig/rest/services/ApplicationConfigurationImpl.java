@@ -61,7 +61,7 @@ public class ApplicationConfigurationImpl implements ApplicationConfiguration {
   public Response insertToTable(String namespace, String key, InputStream fileContainingSchema) {
     String value = new String(FileUtils.toByteArray(fileContainingSchema));
     applicationConfigManager.insertIntoTable(namespace, key, value);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -69,7 +69,7 @@ public class ApplicationConfigurationImpl implements ApplicationConfiguration {
     ConfigurationData value = applicationConfigManager.getFromTable(namespace, key);
     ConfigurationDataDto valueDto = new MapConfigurationDataToConfigurationDataDto()
         .applyMapping(value, ConfigurationDataDto.class);
-    return Response.ok(valueDto).build();
+    return Response.status(200).entity(valueDto).build();
   }
 
   @Override
@@ -85,6 +85,6 @@ public class ApplicationConfigurationImpl implements ApplicationConfiguration {
       applicationConfigWrapper
           .add(mapper.applyMapping(applicationConfigEntity, ApplicationConfigDto.class));
     }
-    return Response.ok(applicationConfigWrapper).build();
+    return Response.status(200).entity(applicationConfigWrapper).build();
   }
 }

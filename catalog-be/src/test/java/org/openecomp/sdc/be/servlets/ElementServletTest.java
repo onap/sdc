@@ -264,26 +264,6 @@ public class ElementServletTest extends JerseyTest {
 	}
 
 	@Test
-	public void getAllCategoriesNoCategoryFoundTest() {
-		String path = "/v1/categories";
-
-		ResponseFormat notFoundResponseFormat = new ResponseFormat(HttpStatus.SC_NOT_FOUND);
-		Either<UiCategories, ResponseFormat> getAllCategoriesEither = Either.right(notFoundResponseFormat);
-
-		when(elementBusinessLogic.getAllCategories(designerUser.getUserId()))
-				.thenReturn(getAllCategoriesEither);
-
-		Response response = target()
-				.path(path)
-				.request()
-				.accept(MediaType.APPLICATION_JSON)
-				.header(Constants.USER_ID_HEADER, designerUser.getUserId())
-				.get();
-
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
-	}
-
-	@Test
 	public void getAllCategoriesExceptionDuringProcessingTest() {
 		String path = "/v1/setup/ui";
 		when(elementBusinessLogic.getAllCategories(designerUser.getUserId()))

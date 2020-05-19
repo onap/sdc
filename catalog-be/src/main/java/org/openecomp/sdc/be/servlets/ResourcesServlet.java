@@ -581,7 +581,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             // validate response
             if (eitherResource.isRight()) {
                 log.debug("failed to get resource from csarUuid : {}", csarUUID);
-                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), eitherResource.right().value());
+                response = buildErrorResponse(eitherResource.right().value());
             } else {
                 Object representation = RepresentationUtils.toRepresentation(eitherResource.left().value());
                 response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation);

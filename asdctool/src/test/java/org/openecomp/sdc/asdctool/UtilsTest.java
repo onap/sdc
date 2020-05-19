@@ -34,7 +34,7 @@ public class UtilsTest {
 
 	@Test
 	public void testBuildOkResponse() throws Exception {
-		int status = 0;
+		int status = 200;
 		Object entity = null;
 		Map<String, String> additionalHeaders = null;
 		Response result;

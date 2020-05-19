@@ -24,7 +24,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
 import org.togglz.testing.TestFeatureManagerProvider;
 

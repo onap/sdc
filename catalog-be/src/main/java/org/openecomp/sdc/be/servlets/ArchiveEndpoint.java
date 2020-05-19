@@ -95,7 +95,7 @@ public class ArchiveEndpoint extends BeGenericServlet{
         loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE,StatusCode.STARTED,"Archive Resource " + COMPONENT_ID + " " + componentId + " by "+ userId);
         archiveBusinessLogic.archiveComponent(ComponentTypeEnum.RESOURCE_PARAM_NAME, userId, componentId);
         loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE,StatusCode.COMPLETE,"Archive Resource " + COMPONENT_ID + " " + componentId + " by "+ userId);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @POST
@@ -113,7 +113,7 @@ public class ArchiveEndpoint extends BeGenericServlet{
         loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE,StatusCode.STARTED,"Restore resource from archive " + COMPONENT_ID + " " + componentId + " by "+ userId);
         archiveBusinessLogic.restoreComponent(ComponentTypeEnum.RESOURCE_PARAM_NAME, userId, componentId);
         loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE,StatusCode.COMPLETE,"Restore resource from archive " + COMPONENT_ID + " " + componentId + " by "+ userId);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @POST
@@ -131,7 +131,7 @@ public class ArchiveEndpoint extends BeGenericServlet{
         loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE, StatusCode.STARTED, "Archive Service for " + COMPONENT_ID + " " + componentId + " by " + userId);
         archiveBusinessLogic.archiveComponent(ComponentTypeEnum.SERVICE_PARAM_NAME, userId, componentId);
         loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE,StatusCode.COMPLETE, "Archive Service for " + COMPONENT_ID + " " + componentId + " by " + userId);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
 
@@ -150,7 +150,7 @@ public class ArchiveEndpoint extends BeGenericServlet{
         loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE,StatusCode.STARTED,"Restore service from archive " + COMPONENT_ID + " " + componentId + " by "+ userId);
         archiveBusinessLogic.restoreComponent(ComponentTypeEnum.SERVICE_PARAM_NAME, userId, componentId);
         loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE,StatusCode.COMPLETE,"Restore service from archive " + COMPONENT_ID + " " + componentId + " by "+ userId);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @GET
@@ -163,8 +163,8 @@ public class ArchiveEndpoint extends BeGenericServlet{
                     @ApiResponse(responseCode = "403", description = "Restricted operation"),
                     @ApiResponse(responseCode = "500", description = "Internal Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Map<String, List<CatalogComponent>> getArchivedComponents(@HeaderParam(value = Constants.USER_ID_HEADER) String userId){
-        return this.archiveBusinessLogic.getArchiveComponents(userId, new LinkedList<>());
+    public Response getArchivedComponents(@HeaderParam(value = Constants.USER_ID_HEADER) String userId){
+        return buildOkResponse(this.archiveBusinessLogic.getArchiveComponents(userId, new LinkedList<>()));
     }
 
     @POST
@@ -186,7 +186,7 @@ public class ArchiveEndpoint extends BeGenericServlet{
                     .entity(entity)
                     .build();
         }
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @POST
@@ -208,7 +208,7 @@ public class ArchiveEndpoint extends BeGenericServlet{
                     .entity(entity)
                     .build();
         }
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
 }

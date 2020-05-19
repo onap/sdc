@@ -870,7 +870,7 @@ public class ResourceServletTest extends JerseyTest {
                 .header(Constants.USER_ID_HEADER, user.getUserId())
                 .get();
 
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
     }
 
     @Test
