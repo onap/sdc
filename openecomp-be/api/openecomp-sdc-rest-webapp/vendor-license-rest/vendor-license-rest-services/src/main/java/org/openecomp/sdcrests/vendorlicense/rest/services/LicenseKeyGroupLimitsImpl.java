@@ -70,7 +70,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity);
     MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
     LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
-    return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
+    return Response.status(200).entity(createdLimitDto != null ? createdLimitDto : null).build();
   }
 
   @Override
@@ -89,7 +89,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     for (LimitEntity limit : limits) {
       result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
     }
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   @Override
@@ -112,7 +112,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     limitEntity.setParent(PARENT);
 
     vendorLicenseManager.updateLimit(limitEntity);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   /**
@@ -138,7 +138,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     limitInput.setParent(PARENT);
 
     vendorLicenseManager.deleteLimit(limitInput);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -156,6 +156,6 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
 
     LimitEntityDto entitlementPoolEntityDto = limit == null ? null
         : new MapLimitEntityToLimitDto().applyMapping(limit, LimitEntityDto.class);
-    return Response.ok(entitlementPoolEntityDto).build();
+    return Response.status(200).entity(entitlementPoolEntityDto).build();
   }
 }

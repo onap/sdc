@@ -15,8 +15,7 @@
  */
 
 package org.openecomp.sdcrests.togglz.rest.services;
-
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdcrests.togglz.rest.TogglzFeatures;
 import org.openecomp.sdcrests.togglz.rest.mapping.MapToggleableFeatureToDto;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
@@ -41,7 +40,7 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
     public Response getFeatures() {
         FeatureSetDto featureSetDto = new FeatureSetDto();
         new MapToggleableFeatureToDto().doMapping(Arrays.asList(ToggleableFeature.values()), featureSetDto);
-        return Response.ok(featureSetDto).build();
+        return Response.status(200).entity(featureSetDto).build();
     }
 
     @Override
@@ -53,7 +52,7 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
             FeatureState featureState = new FeatureState(feature,active);
             FeatureContext.getFeatureManager().setFeatureState(featureState);
         });
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
@@ -61,7 +60,7 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
         Feature feature = new NamedFeature(featureName);
         FeatureState featureState = new FeatureState(feature,active);
         FeatureContext.getFeatureManager().setFeatureState(featureState);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
@@ -69,7 +68,7 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
         boolean active = ToggleableFeature.valueOf(featureName).isActive();
         FeatureDto featureDto = new FeatureDto(featureName,active);
 
-        return Response.ok(featureDto).build();
+        return Response.status(200).entity(featureDto).build();
     }
 
 }

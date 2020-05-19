@@ -143,13 +143,19 @@
       <version>${togglz.version}</version>
     </dependency>
 
-    <!-- Togglz for testing -->
-    <dependency>
-      <groupId>org.togglz</groupId>
-      <artifactId>togglz-testing</artifactId>
-      <version>${togglz.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <!-- Togglz for testing -->
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-testing</artifactId>
+            <version>${togglz.version}</version>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.togglz</groupId>
+			<artifactId>togglz-core</artifactId>
+			<version>${togglz.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
   </dependencies>
   <build>

@@ -42,6 +42,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogicNew;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -90,14 +91,14 @@ public class GroupEndpoint extends BeGenericServlet{
             @ApiResponse(responseCode = "404", description = "Component not found"),
             @ApiResponse(responseCode = "500", description = "Internal Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public List<String> updateGroupMembers(@PathParam("containerComponentType") final String containerComponentType,
+    public Response updateGroupMembers(@PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
             @Parameter(description = "List of members unique ids", required = true) List<String> members,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_GROUP_MEMBERS, StatusCode.STARTED," Starting to update Group Members for component {} " , componentId );
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_GROUP_MEMBERS, StatusCode.COMPLETE," Ended update Group Members for component {} " , componentId );
-        return groupBusinessLogic.updateMembers(componentId, componentTypeEnum, userId, groupUniqueId, members);
+        return buildOkResponse(groupBusinessLogic.updateMembers(componentId, componentTypeEnum, userId, groupUniqueId, members));
     }
 
     @GET
@@ -109,11 +110,11 @@ public class GroupEndpoint extends BeGenericServlet{
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public List<PropertyDataDefinition> getGroupProperties(
+    public Response getGroupProperties(
             @PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        return groupBusinessLogic.getProperties(containerComponentType, userId, componentId, groupUniqueId);
+        return buildOkResponse(groupBusinessLogic.getProperties(containerComponentType, userId, componentId, groupUniqueId));
     }
 
     @PUT
@@ -125,12 +126,12 @@ public class GroupEndpoint extends BeGenericServlet{
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public List<GroupProperty> updateGroupProperties(
+    public Response updateGroupProperties(
             @PathParam("containerComponentType") final String containerComponentType,
             @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
             @Parameter(description = "Group Properties to be Updated", required = true) List<GroupProperty> properties,
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-        return groupBusinessLogic.updateProperties(componentId, componentTypeEnum, userId, groupUniqueId, properties);
+        return buildOkResponse(groupBusinessLogic.updateProperties(componentId, componentTypeEnum, userId, groupUniqueId, properties));
     }
 }

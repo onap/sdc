@@ -14,7 +14,8 @@
                          org.openecomp.sdc.be.servlets,
                          org.openecomp.sdc.be.externalapi.servlet,
                          org.openecomp.sdc.be.components.scheduledtasks,
-                         org.openecomp.sdc.be.facade.operations">
+                         org.openecomp.sdc.be.facade.operations,
+                         org.openecomp.sdc.be.components.impl">
   </context:component-scan>
 
   <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>

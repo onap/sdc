@@ -78,7 +78,7 @@ public class VersionsImpl implements Versions {
 
         getManagersProvider().getVersioningManager().list(itemId)
             .forEach(version -> results.add(mapper.applyMapping(version, VersionDto.class)));
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
     @Override
@@ -95,14 +95,14 @@ public class VersionsImpl implements Versions {
         getManagersProvider().getActivityLogManager().logActivity(
             new ActivityLogEntity(itemId, version, ActivityType.Create_Version, user, true, "", ""));
 
-        return Response.ok(versionDto).build();
+        return Response.status(200).entity(versionDto).build();
     }
 
     @Override
     public Response get(String itemId, String versionId, String user) {
         Version version = getVersion(itemId, new Version(versionId));
         VersionDto versionDto = new MapVersionToDto().applyMapping(version, VersionDto.class);
-        return Response.ok(versionDto).build();
+        return Response.status(200).entity(versionDto).build();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class VersionsImpl implements Versions {
         getManagersProvider().getActivityLogManager().listLoggedActivities(itemId, new Version(versionId))
                 .forEach(loggedActivity -> results.add(mapper.applyMapping(loggedActivity, ActivityLogDto.class)));
 
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
     @Override
@@ -124,7 +124,7 @@ public class VersionsImpl implements Versions {
         GenericCollectionWrapper<RevisionDto> results = new GenericCollectionWrapper<>();
         MapRevisionToDto mapper = new MapRevisionToDto();
         revisions.forEach(revision -> results.add(mapper.applyMapping(revision, RevisionDto.class)));
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
     @Override
@@ -150,7 +150,7 @@ public class VersionsImpl implements Versions {
             default:
                 throw new UnsupportedOperationException(String.format("Action %s not supported.", request.getAction()));
         }
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     private Version getVersion(String itemId, Version version) {

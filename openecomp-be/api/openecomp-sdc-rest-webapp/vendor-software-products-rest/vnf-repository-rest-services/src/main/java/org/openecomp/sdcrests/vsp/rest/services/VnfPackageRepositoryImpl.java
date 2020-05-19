@@ -104,7 +104,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
             }
 
             LOGGER.debug("Response from VNF Repository: {}", remoteResponse);
-            return Response.ok(remoteResponse.readEntity(String.class)).build();
+            return Response.status(200).entity(remoteResponse.readEntity(String.class)).build();
 
         } finally {
             client.close();
@@ -152,7 +152,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
                 new MapUploadFileResponseToUploadFileResponseDto()
                     .applyMapping(response, UploadFileResponseDto.class);
 
-            return Response.ok(uploadFileResponse).build();
+            return Response.status(200).entity(uploadFileResponse).build();
 
         } catch (final Exception e) {
             ErrorCode error = new GeneralErrorBuilder().build();
@@ -178,7 +178,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
             }
 
             byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
-            Response.ResponseBuilder response = Response.ok(payload);
+            Response.ResponseBuilder response = Response.status(200).entity(payload);
             response.header(CONTENT_DISPOSITION, "attachment; filename=" + formatFilename(csarId));
 
             LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);

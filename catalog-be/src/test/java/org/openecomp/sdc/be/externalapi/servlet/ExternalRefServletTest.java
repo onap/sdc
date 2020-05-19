@@ -341,7 +341,7 @@ public class ExternalRefServletTest extends JerseyTest {
         when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
-        String appConfigDir = "src/test/resources/config";
+        String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
@@ -440,7 +440,7 @@ public class ExternalRefServletTest extends JerseyTest {
                 .header(Constants.USER_ID_HEADER, designerUser.getUserId())
                 .post(Entity.json(new ExternalRefDTO(REF_1)));
 
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
         //Check that GET will include the new reference
         response = target()
@@ -468,7 +468,7 @@ public class ExternalRefServletTest extends JerseyTest {
                 .header(Constants.USER_ID_HEADER, designerUser.getUserId())
                 .post(Entity.json(new ExternalRefDTO(REF_4)));
 
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
         //Check that GET will include the new reference
         response = target()

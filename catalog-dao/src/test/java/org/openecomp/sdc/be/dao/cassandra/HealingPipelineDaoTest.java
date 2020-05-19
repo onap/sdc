@@ -22,6 +22,7 @@ import org.janusgraph.graphdb.relations.StandardVertexProperty;
 import org.janusgraph.graphdb.types.system.EmptyVertex;
 import org.janusgraph.graphdb.types.system.ImplicitKey;
 import java.util.HashMap;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
@@ -36,10 +37,22 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 import java.util.Map;
 import java.util.Optional;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
+import org.togglz.testing.TestFeatureManager;
+import org.togglz.testing.TestFeatureManagerProvider;
 
 import static org.junit.Assert.*;
 
 public class HealingPipelineDaoTest {
+    private static TestFeatureManager manager;
+
+    @BeforeClass
+    public static void enableToggleableFeatures(){
+        manager = new TestFeatureManager(ToggleableFeature.class);
+        manager.enableAll();
+        TestFeatureManagerProvider.setFeatureManager(manager);
+    }
+
 
 
     @Test
