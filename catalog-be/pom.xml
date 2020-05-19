@@ -465,10 +465,6 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>powermock-api-mockito</artifactId>
-          <groupId>org.powermock</groupId>
-        </exclusion>
-        <exclusion>
           <groupId>org.onap.aaf.authz</groupId>
           <artifactId>aaf-cadi-aaf</artifactId>
         </exclusion>

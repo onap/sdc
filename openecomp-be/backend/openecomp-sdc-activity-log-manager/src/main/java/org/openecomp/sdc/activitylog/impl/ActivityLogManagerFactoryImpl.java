@@ -20,8 +20,16 @@ import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDaoFactory;
 
 public class ActivityLogManagerFactoryImpl extends ActivityLogManagerFactory {
-  private static final ActivityLogManager INSTANCE =
-      new ActivityLogManagerImpl(ActivityLogDaoFactory.getInstance().createInterface());
+  private final ActivityLogManager INSTANCE;
+
+
+  public ActivityLogManagerFactoryImpl() {
+    this.INSTANCE = new ActivityLogManagerImpl(ActivityLogDaoFactory.getInstance().createInterface());
+  }
+
+  ActivityLogManagerFactoryImpl(ActivityLogManager activityLogManager) {
+    this.INSTANCE = activityLogManager;
+  }
 
   @Override
   public ActivityLogManager createInterface() {

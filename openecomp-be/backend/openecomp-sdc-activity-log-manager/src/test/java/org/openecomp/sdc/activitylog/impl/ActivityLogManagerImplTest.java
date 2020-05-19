@@ -20,9 +20,8 @@
 
 package org.openecomp.sdc.activitylog.impl;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
@@ -33,18 +32,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ActivityLogManagerImplTest {
     private ActivityLogManagerImpl activityLogManager;
 
-    @Mock
-    private ActivityLogDaoStub activityLogDao;
-
-    @Before
-    public void setUp(){
-        initMocks(this);
-    }
+    private ActivityLogDaoStub activityLogDao = Mockito.mock(ActivityLogDaoStub.class);
 
     @Test
     public void logActivityTest(){
