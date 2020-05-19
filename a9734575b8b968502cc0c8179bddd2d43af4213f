@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b3ef6a66_4bbeba11",
+        "filename": "openecomp-be/backend/openecomp-sdc-activity-log-manager/src/main/test/java/org/openecomp/sdc/activitylog/impl/ActivityLogManagerFactoryImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 6625
+      },
+      "writtenOn": "2020-05-19T21:18:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "00da43fd_56c988e0",
+      "range": {
+        "startLine": 23,
+        "startChar": 11,
+        "endLine": 23,
+        "endChar": 16
+      },
+      "revId": "a9734575b8b968502cc0c8179bddd2d43af4213f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "16469c34_5f63e984",
         "filename": "openecomp-be/backend/openecomp-sdc-activity-log-manager/src/main/test/java/org/openecomp/sdc/activitylog/impl/ActivityLogManagerFactoryImplTest.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "8379bc00_1127d2b0",
+        "filename": "openecomp-be/backend/openecomp-sdc-activity-log-manager/src/main/test/java/org/openecomp/sdc/activitylog/impl/ActivityLogManagerFactoryImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6625
+      },
+      "writtenOn": "2020-05-19T21:18:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "16469c34_5f63e984",
+      "range": {
+        "startLine": 25,
+        "startChar": 7,
+        "endLine": 26,
+        "endChar": 45
+      },
+      "revId": "a9734575b8b968502cc0c8179bddd2d43af4213f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b5778fda_43159ff7",
         "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/pom.xml",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "a9734575b8b968502cc0c8179bddd2d43af4213f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b0aae56_3aa941fd",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 6625
+      },
+      "writtenOn": "2020-05-19T21:18:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5778fda_43159ff7",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 20
+      },
+      "revId": "a9734575b8b968502cc0c8179bddd2d43af4213f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
