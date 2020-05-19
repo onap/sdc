@@ -51,7 +51,7 @@ public class ItemPermissionsImpl implements ItemPermissions {
         .forEach(itemPermission -> results.add(mapper.applyMapping
             (itemPermission, ItemPermissionsDto.class)));
 
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
@@ -61,6 +61,6 @@ public class ItemPermissionsImpl implements ItemPermissions {
     permissionsManager.updateItemPermissions(itemId,permission,request.getAddedUsersIds(),
         request.getRemovedUsersIds());
 
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 }

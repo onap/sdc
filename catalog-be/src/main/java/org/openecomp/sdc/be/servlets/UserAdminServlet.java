@@ -109,10 +109,10 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public User get(
+    public Response get(
         @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
         @Context final HttpServletRequest request) {
-        return userBusinessLogic.getUser(userId, false);
+        return buildOkResponse(userBusinessLogic.getUser(userId, false));
     }
 
     @GET
@@ -126,11 +126,11 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public String getRole(
+    public Response getRole(
         @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
         @Context final HttpServletRequest request) {
         User user = userBusinessLogic.getUser(userId, false);
-        return "{ \"role\" : \"" + user.getRole() + "\" }";
+        return buildOkResponse("{ \"role\" : \"" + user.getRole() + "\" }");
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,14 +149,14 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409", description = "User already exists"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public User updateUserRole(
+    public Response updateUserRole(
             @Parameter(description = "userId of user to get",
             required = true) @PathParam("userId") final String userIdUpdateUser,
             @Context final HttpServletRequest request,
             @Parameter(description = "json describe the update role", required = true) UserRole newRole,
             @HeaderParam(value = Constants.USER_ID_HEADER) String modifierUserId) {
 
-        return userBusinessLogic.updateUserRole(modifierUserId, userIdUpdateUser, newRole.getRole().name());
+        return buildOkResponse(userBusinessLogic.updateUserRole(modifierUserId, userIdUpdateUser, newRole.getRole().name()));
     }
 
     @POST
@@ -192,7 +192,7 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted Access"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public User authorize(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+    public Response authorize(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                           @HeaderParam("HTTP_CSP_FIRSTNAME") String firstName,
                           @HeaderParam("HTTP_CSP_LASTNAME") String lastName,
             @HeaderParam("HTTP_CSP_EMAIL") String email) throws UnsupportedEncodingException {
@@ -207,7 +207,7 @@ public class UserAdminServlet extends BeGenericServlet {
         authUser.setFirstName(firstName);
         authUser.setLastName(lastName);
         authUser.setEmail(email);
-        return userBusinessLogic.authorize(authUser);
+        return buildOkResponse(userBusinessLogic.authorize(authUser));
     }
 
     @GET
@@ -221,8 +221,8 @@ public class UserAdminServlet extends BeGenericServlet {
                     @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
                     @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public List<User> getAdminsUser(@Context final HttpServletRequest request) {
-        return userBusinessLogic.getAllAdminUsers();
+    public Response getAdminsUser(@Context final HttpServletRequest request) {
+        return buildOkResponse(userBusinessLogic.getAllAdminUsers());
     }
 
     @GET
@@ -239,7 +239,7 @@ public class UserAdminServlet extends BeGenericServlet {
                     @ApiResponse(responseCode = "403", description = "Restricted Access"),
                     @ApiResponse(responseCode = "400", description = "Missing content"),
                     @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    public List<User> getUsersList(@Context final HttpServletRequest request, @Parameter(
+    public Response getUsersList(@Context final HttpServletRequest request, @Parameter(
             description = "Any active user's USER_ID ") @HeaderParam(Constants.USER_ID_HEADER) final String userId,
             @Parameter(
                     description = "TESTER,DESIGNER,PRODUCT_STRATEGIST,OPS,PRODUCT_MANAGER,GOVERNOR, ADMIN OR all users by not typing anything") @QueryParam("roles") final String roles) {
@@ -254,7 +254,7 @@ public class UserAdminServlet extends BeGenericServlet {
                 rolesList.add(role.trim());
             }
         }
-        return userBusinessLogic.getUsersList(userId, rolesList, roles);
+        return buildOkResponse(userBusinessLogic.getUsersList(userId, rolesList, roles));
     }
 
     @DELETE
@@ -271,10 +271,10 @@ public class UserAdminServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "409", description = "Restricted operation"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public User deActivateUser(
+    public Response deActivateUser(
             @Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
             @Context final HttpServletRequest request,
             @HeaderParam(value = Constants.USER_ID_HEADER) String modifierId) {
-        return userBusinessLogicExt.deActivateUser(modifierId, userId);
+        return buildOkResponse(userBusinessLogicExt.deActivateUser(modifierId, userId));
     }
 }

@@ -74,7 +74,7 @@ public class ComputeImpl implements Compute {
       results.add(mapper.applyMapping(compute, ComputeDto.class));
     }
 
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
@@ -90,7 +90,7 @@ public class ComputeImpl implements Compute {
         CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapComputeDataToComputeDetailsDto(),
         ComputeDetailsDto.class).doMapping(response, responseDto);
-    return Response.ok(responseDto).build();
+    return Response.status(200).entity(responseDto).build();
   }
 
   @Override
@@ -109,7 +109,7 @@ public class ComputeImpl implements Compute {
     MapComputeEntityToComputeCreationDto mapper = new MapComputeEntityToComputeCreationDto();
     ComputeCreationDto createdComputeDto =
         mapper.applyMapping(createdCompute, ComputeCreationDto.class);
-    return Response.ok(createdComputeDto != null ? createdComputeDto : null).build();
+    return Response.status(200).entity(createdComputeDto != null ? createdComputeDto : null).build();
   }
 
   @Override
@@ -128,7 +128,7 @@ public class ComputeImpl implements Compute {
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto().applyMapping(validationData,
-            CompositionEntityValidationDataDto.class)).build() : Response.ok().build();
+            CompositionEntityValidationDataDto.class)).build() : Response.status(200).build();
   }
 
   @Override
@@ -138,7 +138,7 @@ public class ComputeImpl implements Compute {
     Version version = new Version(versionId);
     componentManager.validateComponentExistence(vspId, version, componentId);
     computetManager.deleteCompute(vspId, version, componentId, computeFlavorId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -152,7 +152,7 @@ public class ComputeImpl implements Compute {
 
     QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
         .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   @Override
@@ -163,6 +163,6 @@ public class ComputeImpl implements Compute {
     componentManager.validateComponentExistence(vspId, version, componentId);
     computetManager.updateComputeQuestionnaire(vspId, version, componentId, computeFlavorId,
         questionnaireData);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 }

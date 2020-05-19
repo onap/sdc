@@ -15,15 +15,14 @@
  */
 package org.openecomp.sdcrests.togglz.rest.mapping;
 
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
-import org.openecomp.sdcrests.mapping.MappingBase;
-import org.openecomp.sdcrests.togglz.types.FeatureDto;
-import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
+import org.openecomp.sdcrests.mapping.MappingBase;
+import org.openecomp.sdcrests.togglz.types.FeatureDto;
+import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
 
 public class MapToggleableFeatureToDto extends MappingBase<Collection<ToggleableFeature>, FeatureSetDto> {
 

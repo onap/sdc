@@ -78,7 +78,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
       results.add(mapper.applyMapping(process, ProcessEntityDto.class));
     }
 
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
@@ -88,7 +88,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     validateComponentExistence(vspId, version, componentId, user);
     processManager.deleteProcesses(vspId, version, componentId);
 
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -118,7 +118,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     ProcessEntity process = processManager.getProcess(vspId, version, componentId, processId);
     ProcessEntityDto result =
         new MapProcessEntityToProcessEntityDto().applyMapping(process, ProcessEntityDto.class);
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   @Override
@@ -128,7 +128,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     processManager.deleteProcess(vspId, version, componentId, processId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -144,7 +144,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     process.setId(processId);
     validateComponentExistence(vspId, process.getVersion(), componentId, user);
     processManager.updateProcess(process);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -155,7 +155,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     validateComponentExistence(vspId, vspVersion, componentId, user);
     File file = processManager.getProcessArtifact(vspId, vspVersion, componentId, processId);
 
-    Response.ResponseBuilder response = Response.ok(file);
+    Response.ResponseBuilder response = Response.status(200).entity(file);
     if (file == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -171,7 +171,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     processManager.deleteProcessArtifact(vspId, version, componentId, processId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -187,7 +187,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     activityLogManager.logActivity(new ActivityLogEntity(vspId, version,
             ActivityType.Upload_Artifact, user, true, "", ""));
 
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
 

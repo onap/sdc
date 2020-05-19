@@ -350,6 +350,12 @@ Modifications copyright (c) 2018 Nokia
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy</artifactId>
     </dependency>
+      <dependency>
+          <groupId>org.togglz</groupId>
+          <artifactId>togglz-testing</artifactId>
+          <version>${togglz.version}</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
   <build>

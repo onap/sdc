@@ -85,7 +85,7 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
     for (DeploymentFlavorEntity deploymentFlavor : deploymentFlavors) {
       results.add(mapper.applyMapping(deploymentFlavor, DeploymentFlavorListResponseDto.class));
     }
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
@@ -98,21 +98,21 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
     new MapCompositionEntityResponseToDto<>(new MapDeploymentFlavorToDeploymentDto(),
         DeploymentFlavorDto.class)
         .doMapping(response, responseDto);
-    return Response.ok(responseDto).build();
+    return Response.status(200).entity(responseDto).build();
   }
 
   @Override
   public Response getSchema(String vspId, String versionId, String user) {
     CompositionEntityResponse<DeploymentFlavor> response = deploymentFlavorManager
         .getDeploymentFlavorSchema(vspId, new Version(versionId));
-    return Response.ok(response).build();
+    return Response.status(200).entity(response).build();
   }
 
   @Override
   public Response delete(String vspId, String versionId, String deploymentFlavorId, String user) {
     Version version = new Version(versionId);
     deploymentFlavorManager.deleteDeploymentFlavor(vspId, version, deploymentFlavorId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -130,6 +130,6 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto().applyMapping(validationData,
-            CompositionEntityValidationDataDto.class)).build() : Response.ok().build();
+            CompositionEntityValidationDataDto.class)).build() : Response.status(200).build();
   }
 }

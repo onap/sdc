@@ -27,7 +27,7 @@ import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;

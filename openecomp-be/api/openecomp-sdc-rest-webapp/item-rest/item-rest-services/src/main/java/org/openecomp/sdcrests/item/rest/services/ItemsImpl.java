@@ -99,7 +99,7 @@ public class ItemsImpl implements Items {
             LOGGER.error("Failed to send catalog notification on item {}", itemId, e);
         }
 
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ItemsImpl implements Items {
                    .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
 
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
 
     }
 
@@ -125,7 +125,7 @@ public class ItemsImpl implements Items {
         Item item = getManagersProvider().getItemManager().get(itemId);
         ItemDto itemDto = new MapItemToDto().applyMapping(item, ItemDto.class);
 
-        return Response.ok(itemDto).build();
+        return Response.status(200).entity(itemDto).build();
     }
 
     private class ActionSideAffects {

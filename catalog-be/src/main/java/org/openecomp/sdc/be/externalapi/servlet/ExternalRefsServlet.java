@@ -101,7 +101,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
     @Path("/{assetType}/{uuid}/version/{version}/externalReferences/{objectType}")
     @Produces(MediaType.APPLICATION_JSON)
     @PermissionAllowed({AafPermission.PermNames.READ_VALUE})
-    public Map<String, List<String>> getAssetExternalRefByObjectType(
+    public Response getAssetExternalRefByObjectType(
             @PathParam("assetType") String assetType,
             @PathParam("uuid") String uuid,
             @PathParam("version") String version,
@@ -116,7 +116,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
 
         Either<Map<String, List<String>>, ActionStatus> refsResult = this.businessLogic.getExternalReferences(uuid, version, objectType);
         if (refsResult.isLeft()){
-            return refsResult.left().value();
+            return buildOkResponse(refsResult.left().value());
         } else {
             throw new WebApplicationException(this.buildExtRefErrorResponse(refsResult.right().value(), uuid, version, "", objectType, ""));
         }
@@ -144,9 +144,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
         String uid = this.businessLogic.fetchComponentUniqueIdByUuid(uuid, componentType);
         Either<String, ActionStatus> addResult = this.businessLogic.addExternalReference(uid, componentType, userId, componentInstanceName, objectType, ref);
         if (addResult.isLeft()) {
-            return Response.status(Response.Status.CREATED)
-                    .entity(ref)
-                    .build();
+            return buildOkResponse(ref);
         } else {
             return this.buildExtRefErrorResponse(addResult.right().value(), uuid, "", componentInstanceName, objectType, ref.getReferenceUUID());
         }
@@ -232,9 +230,7 @@ public class ExternalRefsServlet extends BeGenericServlet {
             case COMPONENT_INSTANCE_NOT_FOUND:
                 return buildErrorResponse(componentsUtils.getResponseFormat(status, componentInstanceName, uuid));
             case EXT_REF_ALREADY_EXIST:
-                return Response.status(Response.Status.OK)
-                        .entity(new ExternalRefDTO(ref))
-                        .build();
+                return buildOkResponse(new ExternalRefDTO(ref));
             case EXT_REF_NOT_FOUND:
                 return buildErrorResponse(componentsUtils.getResponseFormat(status, objectType + "/" + ref));
             case MISSING_X_ECOMP_INSTANCE_ID:

@@ -61,7 +61,7 @@ public class ValidationImpl implements Validation {
     ValidationFileResponseDto validationFileResponseDto =
         new MapValidationFileResponseToValidationFileResponseDto()
             .applyMapping(validationFileResponse, ValidationFileResponseDto.class);
-    return Response.ok(validationFileResponseDto).build();
+    return Response.status(200).entity(validationFileResponseDto).build();
   }
 
 

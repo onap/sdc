@@ -105,7 +105,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     if (onboardingPackageProcessor.hasErrors()) {
       final UploadFileResponseDto uploadFileResponseDto =
           buildUploadResponseWithError(onboardingPackageProcessor.getErrorMessageSet().toArray(new ErrorMessage[0]));
-      return Response.ok(uploadFileResponseDto).build();
+      return Response.status(200).entity(uploadFileResponseDto).build();
     }
 
     final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
@@ -113,7 +113,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     if (onboardPackageInfo == null) {
       final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
           new ErrorMessage(ErrorLevel.ERROR, Messages.PACKAGE_PROCESS_ERROR.formatMessage(filename)));
-      return Response.ok(uploadFileResponseDto).build();
+      return Response.status(200).entity(uploadFileResponseDto).build();
     }
 
     final VspDetails vspDetails = new VspDetails(vspId, new Version(versionId));
@@ -124,7 +124,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
         final UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
             .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
-        return Response.ok(uploadFileResponseDto).build();
+        return Response.status(200).entity(uploadFileResponseDto).build();
     }
 
   private UploadFileResponseDto buildUploadResponseWithError(final ErrorMessage... errorMessages) {
@@ -156,7 +156,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
       }
       fileName = "Processed." + zipFile.get().getLeft();
     }
-    Response.ResponseBuilder response = Response.ok(zipFile.get().getRight());
+    Response.ResponseBuilder response = Response.status(200).entity(zipFile.get().getRight());
     response.header("Content-Disposition", "attachment; filename=" + fileName);
     return response.build();
   }
@@ -164,7 +164,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
   @Override
   public Response abort(String vspId, String versionId) {
     candidateManager.abort(vspId, new Version(versionId));
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -178,7 +178,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
 
     OrchestrationTemplateActionResponseDto responseDto = copyOrchestrationTemplateActionResponseToDto(response);
 
-    return Response.ok(responseDto).build();
+    return Response.status(200).entity(responseDto).build();
   }
 
   @Override
@@ -195,7 +195,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
           new MapValidationResponseToDto()
               .applyMapping(response, ValidationResponseDto.class)).build();
     }
-    return Response.ok(fileDataStructureDto).build();
+    return Response.status(200).entity(fileDataStructureDto).build();
   }
 
   @Override
@@ -211,7 +211,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         filesDataStructure.map(dataStructure -> new MapFilesDataStructureToDto()
             .applyMapping(dataStructure, FileDataStructureDto.class))
             .orElse(new FileDataStructureDto());
-    return Response.ok(fileDataStructureDto).build();
+    return Response.status(200).entity(fileDataStructureDto).build();
   }
 
   private OrchestrationTemplateActionResponseDto copyOrchestrationTemplateActionResponseToDto(OrchestrationTemplateActionResponse response){

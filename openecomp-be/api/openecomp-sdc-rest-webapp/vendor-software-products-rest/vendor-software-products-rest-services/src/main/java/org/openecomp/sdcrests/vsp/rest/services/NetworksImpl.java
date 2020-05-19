@@ -69,7 +69,7 @@ public class NetworksImpl implements Networks {
       results.add(mapper.applyMapping(network, NetworkDto.class));
     }
 
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
@@ -94,7 +94,7 @@ public class NetworksImpl implements Networks {
     CompositionEntityResponseDto<NetworkDto> responseDto = new CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapNetworkToNetworkDto(), NetworkDto.class)
         .doMapping(response, responseDto);
-    return Response.ok(responseDto).build();
+    return Response.status(200).entity(responseDto).build();
   }
 
   @Override
@@ -102,7 +102,7 @@ public class NetworksImpl implements Networks {
     networkManager
         .deleteNetwork(vspId, new Version(versionId),
             networkId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -120,6 +120,6 @@ public class NetworksImpl implements Networks {
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto()
             .applyMapping(validationData, CompositionEntityValidationDataDto.class)).build() :
-        Response.ok().build();
+        Response.status(200).build();
   }
 }
