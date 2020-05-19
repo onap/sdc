@@ -20,14 +20,15 @@
 
 package org.openecomp.sdc.be.resources.data.togglz;
 
-import org.junit.Test;
-import org.togglz.core.repository.FeatureState;
-
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
+import org.togglz.core.repository.FeatureState;
 
 public class FeatureToggleEventTest {
     private final String strategyId = "123456";

@@ -68,7 +68,7 @@ public class FeatureGroupsImpl implements FeatureGroups {
                                     .sorted(Comparator.comparing(FeatureGroupEntity::getName))
                                     .map(fg -> getFeatureGroupEntityDto(outputMapper,fg)).collect(Collectors.toList()));
 
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class FeatureGroupsImpl implements FeatureGroups {
 
         StringWrapperResponse result =
                 createdFeatureGroup != null ? new StringWrapperResponse(createdFeatureGroup.getId()) : null;
-        return Response.ok(result).build();
+        return Response.status(200).entity(result).build();
     }
 
     @Override
@@ -102,7 +102,7 @@ public class FeatureGroupsImpl implements FeatureGroups {
                 .updateFeatureGroup(featureGroupEntity, request.getAddedLicenseKeyGroupsIds(),
                         request.getRemovedLicenseKeyGroupsIds(), request.getAddedEntitlementPoolsIds(),
                         request.getRemovedEntitlementPoolsIds());
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
@@ -115,7 +115,7 @@ public class FeatureGroupsImpl implements FeatureGroups {
         FeatureGroupModel featureGroupModel = vendorLicenseManager.getFeatureGroupModel(fgInput);
 
         if (featureGroupModel == null) {
-            return Response.ok().build();
+            return Response.status(200).build();
         }
 
         FeatureGroupModelDto fgmDto = new FeatureGroupModelDto();
@@ -146,7 +146,7 @@ public class FeatureGroupsImpl implements FeatureGroups {
 
             }
         }
-        return Response.ok(fgmDto).build();
+        return Response.status(200).entity(fgmDto).build();
     }
 
     @Override
@@ -157,7 +157,7 @@ public class FeatureGroupsImpl implements FeatureGroups {
         fgInput.setVersion(new Version(versionId));
         fgInput.setId(featureGroupId);
         vendorLicenseManager.deleteFeatureGroup(fgInput);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     private FeatureGroupEntityDto getFeatureGroupEntityDto(MapFeatureGroupEntityToFeatureGroupDescriptorDto mapper,FeatureGroupEntity fg) {

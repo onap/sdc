@@ -70,7 +70,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
         new MapComponentDependencyEntityToCreationDto();
     ComponentDependencyCreationDto createdComponentDependencyDto = mapping.applyMapping(
         componentDependency, ComponentDependencyCreationDto.class);
-    return Response.ok(componentDependency != null ? createdComponentDependencyDto : null)
+    return Response.status(200).entity(componentDependency != null ? createdComponentDependencyDto : null)
         .build();
   }
 
@@ -89,7 +89,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
       results.add(mapper.applyMapping(entity, ComponentDependencyResponseDto.class));
     }
 
-    return Response.ok(results).build();
+    return Response.status(200).entity(results).build();
   }
 
   @Override
@@ -97,7 +97,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
 
     Version vspVersion = new Version(versionId);
     componentDependencyModelManager.delete(vspId, vspVersion, dependencyId);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -113,7 +113,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
     modelEntity.setVspId(vspId);
     modelEntity.setVersion(version);
     componentDependencyModelManager.update(modelEntity);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -126,7 +126,7 @@ public class ComponentDependenciesImpl implements ComponentDependencies {
     ComponentDependencyResponseDto componentDependencyResponseDto =
         mapper.applyMapping(componentDependencyModelEntity, ComponentDependencyResponseDto.class);
 
-    return Response.ok(componentDependencyModelEntity != null ? componentDependencyResponseDto :
+    return Response.status(200).entity(componentDependencyModelEntity != null ? componentDependencyResponseDto :
         null).build();
   }
 

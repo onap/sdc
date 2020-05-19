@@ -107,7 +107,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
                        .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
                        .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
 
-        return Response.ok(results).build();
+        return Response.status(200).entity(results).build();
     }
 
     @Override
@@ -141,7 +141,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
         activityLogManager
                 .logActivity(new ActivityLogEntity(vlm.getId(), version, ActivityType.Create, user, true, "", ""));
 
-        return Response.ok(itemCreationDto).build();
+        return Response.status(200).entity(itemCreationDto).build();
     }
 
     @Override
@@ -153,7 +153,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
         vlm.setVersion(new Version(versionId));
 
         vendorLicenseManager.updateVendorLicenseModel(vlm);
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     @Override
@@ -176,7 +176,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
         VendorLicenseModelEntityDto vlmDto =
                 new MapVendorLicenseModelEntityToDto().applyMapping(vlm, VendorLicenseModelEntityDto.class);
-        return Response.ok(vlmDto).build();
+        return Response.status(200).entity(vlmDto).build();
     }
 
     @Override
@@ -196,7 +196,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
             uniqueValueUtil.deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlm.getName());
             notifyUsers(vlmId, vlm.getName(), null, null, user, NotificationEventTypes.DELETE);
 
-            return Response.ok().build();
+            return Response.status(200).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN)
                            .entity(new Exception(Messages.DELETE_VLM_ERROR.getErrorMessage())).build();
@@ -219,7 +219,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
             notifyUsers(vlmId, null, version, message, user, NotificationEventTypes.SUBMIT);
 
         }
-        return Response.ok().build();
+        return Response.status(200).build();
     }
 
     private void submit(String vlmId, Version version, String message, String user) {

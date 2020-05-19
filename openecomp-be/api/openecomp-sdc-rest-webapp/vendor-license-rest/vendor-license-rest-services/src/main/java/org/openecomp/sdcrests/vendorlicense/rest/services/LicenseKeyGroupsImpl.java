@@ -67,7 +67,7 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
                                 .map(item -> outputMapper.applyMapping(item, LicenseKeyGroupEntityDto.class))
                                 .collect(Collectors.toList()));
 
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   /**
@@ -91,7 +91,7 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
     StringWrapperResponse result =
         createdLicenseKeyGroup != null ? new StringWrapperResponse(createdLicenseKeyGroup.getId())
             : null;
-    return Response.ok(result).build();
+    return Response.status(200).entity(result).build();
   }
 
   /**
@@ -114,7 +114,7 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
     licenseKeyGroupEntity.setId(licenseKeyGroupId);
 
     vendorLicenseManager.updateLicenseKeyGroup(licenseKeyGroupEntity);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   /**
@@ -137,7 +137,7 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
     LicenseKeyGroupEntityDto licenseKeyGroupEntityDto = licenseKeyGroup == null ? null :
         new MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto()
             .applyMapping(licenseKeyGroup, LicenseKeyGroupEntityDto.class);
-    return Response.ok(licenseKeyGroupEntityDto).build();
+    return Response.status(200).entity(licenseKeyGroupEntityDto).build();
   }
 
   /**
@@ -155,6 +155,6 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
     lkgInput.setVersion(new Version(versionId));
     lkgInput.setId(licenseKeyGroupId);
     vendorLicenseManager.deleteLicenseKeyGroup(lkgInput);
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 }

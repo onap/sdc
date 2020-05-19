@@ -229,6 +229,11 @@
 		<param-value>classpath:application-context.xml</param-value>
 	</context-param>
 
+	<context-param>
+		<param-name>org.togglz.core.manager.TogglzConfig</param-name>
+		<param-value>org.openecomp.sdc.be.togglz.TogglzConfiguration</param-value>
+	</context-param>
+
 	<listener>
 		<listener-class>org.openecomp.sdc.be.listen.BEAppContextListener</listener-class>
 	</listener>

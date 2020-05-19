@@ -235,7 +235,7 @@ public class ActionsImpl implements Actions {
 
     LOGGER.debug(" exit getActionsByActionInvariantUuId ");
     actionLogPostProcessor(COMPLETE, true);
-    return Response.ok(responseList).build();
+    return Response.status(200).entity(responseList).build();
   }
 
   private ListResponseWrapper getActionsByInvId(HttpServletRequest servletRequest,
@@ -298,7 +298,7 @@ public class ActionsImpl implements Actions {
       response.setComponentList(openEcompComponents);
       LOGGER.debug(" exit getEcompComponents ");
       actionLogPostProcessor(COMPLETE, true);
-      return Response.ok(response).build();
+      return Response.status(200).entity(response).build();
     } catch (ActionException exception) {
       actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
@@ -412,7 +412,7 @@ public class ActionsImpl implements Actions {
       }
       actionLogPostProcessor(COMPLETE, true);
       LOGGER.debug(" exit API createAction with ActionInvariantUUID= " + MDC.get(SERVICE_INSTANCE_ID));
-      return Response.ok(actionResponseDTO).build();
+      return Response.status(200).entity(actionResponseDTO).build();
     } catch (ActionException exception) {
       actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
@@ -463,7 +463,7 @@ public class ActionsImpl implements Actions {
       throw exception;
     }
 
-    return Response.ok(actionResponseDTO).build();
+    return Response.status(200).entity(actionResponseDTO).build();
   }
 
   @Override
@@ -479,7 +479,7 @@ public class ActionsImpl implements Actions {
       }
 
       actionLogPostProcessor(COMPLETE, true);
-      return Response.ok(new ActionResponseDto()).build();
+      return Response.status(200).entity(new ActionResponseDto()).build();
     } catch (ActionException exception) {
       actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
@@ -539,7 +539,7 @@ public class ActionsImpl implements Actions {
 
       ActionResponseDto actionResponseDTO = new ActionResponseDto();
       new MapActionToActionResponseDto().doMapping(action, actionResponseDTO);
-      response = Response.ok(actionResponseDTO).build();
+      response = Response.status(200).entity(actionResponseDTO).build();
       actionLogPostProcessor(COMPLETE, true);
     } catch (ActionException exception) {
       actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
@@ -669,7 +669,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    return Response.ok(uploadedArtifact).build();
+    return Response.status(200).entity(uploadedArtifact).build();
   }
 
   @Override
@@ -760,7 +760,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   @Override
@@ -861,7 +861,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    return Response.ok().build();
+    return Response.status(200).build();
   }
 
   /**
@@ -877,7 +877,7 @@ public class ActionsImpl implements Actions {
       checkAndThrowError(errorMap);
     }
 
-    return Response.ok(responseList).build();
+    return Response.status(200).entity(responseList).build();
   }
 
   /**
@@ -896,7 +896,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    return Response.ok(responseList).build();
+    return Response.status(200).entity(responseList).build();
   }
 
   /**
@@ -913,7 +913,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    return Response.ok(responseList).build();
+    return Response.status(200).entity(responseList).build();
   }
 
   /**
@@ -930,7 +930,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    return Response.ok(responseList).build();
+    return Response.status(200).entity(responseList).build();
   }
 
   /**
@@ -962,7 +962,7 @@ public class ActionsImpl implements Actions {
     LOGGER.debug(
         " exit getActionByUUID with invariantID= " + actionInvariantUUID + " and actionUUID= " +
             actionUUID);
-    return Response.ok(responseDTO).build();
+    return Response.status(200).entity(responseDTO).build();
   }
 
   /**
@@ -980,7 +980,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    return Response.ok(responseList).build();
+    return Response.status(200).entity(responseList).build();
   }
 
   /**
@@ -998,7 +998,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    return Response.ok(responseList).build();
+    return Response.status(200).entity(responseList).build();
   }
 
   /**
@@ -1163,7 +1163,7 @@ public class ActionsImpl implements Actions {
         throw new ActionException(ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE,
             ActionErrorConstants.ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       }
-      Response.ResponseBuilder responseBuilder = Response.ok(artifactFile);
+      Response.ResponseBuilder responseBuilder = Response.status(200).entity(artifactFile);
       responseBuilder.header("Content-Disposition",
           "attachment; filename=" + actionartifact.getArtifactName());
       responseBuilder.header("Content-MD5", CalcMD5CheckSum(artifactsBytes));

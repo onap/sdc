@@ -67,7 +67,7 @@ public class NotificationsImpl implements Notifications {
         NotificationsStatusDto notificationsStatusDto = new NotificationsStatusDto();
         converter.doMapping(notificationsStatus, notificationsStatusDto);
 
-        return Response.ok(notificationsStatusDto).build();
+        return Response.status(200).entity(notificationsStatusDto).build();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class NotificationsImpl implements Notifications {
                 new ErrorMessage(ErrorLevel.ERROR,
                     Messages.FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION.getErrorMessage()));
         }
-        return Response.ok(updateNotificationResponseStatus).build();
+        return Response.status(200).entity(updateNotificationResponseStatus).build();
     }
 
     @Override
@@ -103,7 +103,7 @@ public class NotificationsImpl implements Notifications {
                     .FAILED_TO_MARK_NOTIFICATION_AS_READ
                     .getErrorMessage()));
         }
-        return Response.ok(updateNotificationResponseStatus).build();
+        return Response.status(200).entity(updateNotificationResponseStatus).build();
     }
 
     @Override
@@ -127,6 +127,6 @@ public class NotificationsImpl implements Notifications {
         NotificationsStatusDto notificationsStatusDto = new NotificationsStatusDto();
         converter.doMapping(notifications, notificationsStatusDto);
 
-        return Response.ok(notificationsStatusDto).build();
+        return Response.status(200).entity(notificationsStatusDto).build();
     }
 }
