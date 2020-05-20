@@ -24,6 +24,12 @@ package org.openecomp.sdc.be.components.impl;
 
 import com.google.gson.JsonElement;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -87,13 +93,6 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 public abstract class BaseBusinessLogic {
 
@@ -236,9 +235,19 @@ public abstract class BaseBusinessLogic {
 
     protected void lockComponent(String componentId, Component component, String ecompErrorContext) {
         ActionStatus lock = lockElement(componentId, component, ecompErrorContext);
-        if ( lock!= ActionStatus.OK ) {
+        if (lock!= ActionStatus.OK) {
             logAndThrowComponentException(lock, component.getUniqueId(), component.getName());
         }
+    }
+
+    protected ActionStatus lockComponentAndReturnStatus(final String componentId,
+                                                        final Component component,
+                                                        final String ecompErrorContext) {
+        final ActionStatus lock = lockElement(componentId, component, ecompErrorContext);
+        if (lock!= ActionStatus.OK) {
+            logAndThrowComponentException(lock, component.getUniqueId(), component.getName());
+        }
+        return ActionStatus.OK;
     }
 
     protected void lockComponent(String componentId, Component component, boolean needLock, String ecompErrorContext) {
