@@ -68,6 +68,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
@@ -969,34 +970,41 @@ public class CsarUtils {
 
     private Either<ZipOutputStream, ResponseFormat> writeOperationsArtifactsToCsar(Component component,
             ZipOutputStream zipstream) {
-        if (checkComponentBeforeOperation(component)) return Either.left(zipstream);
+        if (checkComponentBeforeOperation(component)) {
+            return Either.left(zipstream);
+        }
         final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
         for (Map.Entry<String, InterfaceDefinition> interfaceEntry : interfaces.entrySet()) {
             for (OperationDataDefinition operation : interfaceEntry.getValue().getOperations().values()) {
                 try {
-                    if (checkComponentBeforeWrite(component, interfaceEntry, operation)) continue;
+                    if (checkComponentBeforeWrite(component, interfaceEntry, operation)) {
+                        continue;
+                    }
                     final String artifactUUID = operation.getImplementation().getArtifactUUID();
+                    if (artifactUUID == null) {
+                        continue;
+                    }
                     final Either<byte[], ActionStatus> artifactFromCassandra = getFromCassandra(artifactUUID);
                     final String artifactName = operation.getImplementation().getArtifactName();
                     if (artifactFromCassandra.isRight()) {
                         log.error(ARTIFACT_NAME_UNIQUE_ID, artifactName, artifactUUID);
                         log.error("Failed to get {} payload from DB reason: {}", artifactName,
-                                artifactFromCassandra.right().value());
+                            artifactFromCassandra.right().value());
                         return Either.right(componentsUtils.getResponseFormat(
-                                ActionStatus.ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION, "Resource",
-                                component.getUniqueId(), artifactName, artifactUUID));
+                            ActionStatus.ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION, "Resource",
+                            component.getUniqueId(), artifactName, artifactUUID));
                     }
                     final byte[] payloadData = artifactFromCassandra.left().value();
                     zipstream.putNextEntry(new ZipEntry(OperationArtifactUtil.createOperationArtifactPath(
-                            component, null, operation,true)));
+                        component, null, operation, true)));
                     zipstream.write(payloadData);
                 } catch (IOException e) {
                     log.error("Component Name {},  Interface Name {}, Operation Name {}", component.getNormalizedName(),
-                            interfaceEntry.getKey(), operation.getName());
+                        interfaceEntry.getKey(), operation.getName());
                     log.error("Error while writing the operation's artifacts to the CSAR " + "{}", e);
                     return Either.right(componentsUtils
-                                                .getResponseFormat(ActionStatus.ERROR_DURING_CSAR_CREATION, "Resource",
-                                                        component.getUniqueId()));
+                        .getResponseFormat(ActionStatus.ERROR_DURING_CSAR_CREATION, "Resource",
+                            component.getUniqueId()));
                 }
             }
         }
@@ -1004,19 +1012,21 @@ public class CsarUtils {
     }
 
     private boolean checkComponentBeforeWrite(Component component, Entry<String, InterfaceDefinition> interfaceEntry, OperationDataDefinition operation) {
-        if (Objects.isNull(operation.getImplementation())) {
+        final ArtifactDataDefinition implementation = operation.getImplementation();
+        if (Objects.isNull(implementation)) {
             log.debug("Component Name {}, Interface Id {}, Operation Name {} - no Operation Implementation found",
                     component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
                     operation.getName());
             return true;
         }
-        if (Objects.isNull(operation.getImplementation().getArtifactName())) {
+        final String artifactName = implementation.getArtifactName();
+        if (Objects.isNull(artifactName)) {
             log.debug("Component Name {}, Interface Id {}, Operation Name {} - no artifact found",
                     component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
                     operation.getName());
             return true;
         }
-        if (operation.getImplementation().getArtifactName().startsWith(Constants.ESCAPED_DOUBLE_QUOTE) && operation.getImplementation().getArtifactName().endsWith(Constants.ESCAPED_DOUBLE_QUOTE)) {
+        if (OperationArtifactUtil.artifactNameIsALiteralValue(artifactName)) {
             log.debug("Component Name {}, Interface Id {}, Operation Name {} - artifact name is a literal value rather than an SDC artifact",
                     component.getNormalizedName(), interfaceEntry.getValue().getUniqueId(),
                     operation.getName());
