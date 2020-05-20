@@ -170,6 +170,7 @@ public final class ImportUtils {
         public static final String UI_JSON_PAYLOAD_NAME = "payloadName";
         public static final String CVFC_DESCRIPTION = "Complex node type that is used as nested type in VF";
         public static final String ESCAPED_DOUBLE_QUOTE = "\"";
+        public static final String QUOTE = "'";
 
         private Constants() {}
     }

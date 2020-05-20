@@ -33,6 +33,7 @@ import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -125,6 +126,8 @@ import org.yaml.snakeyaml.representer.Representer;
 @org.springframework.stereotype.Component("tosca-export-handler")
 public class ToscaExportHandler {
 
+    private static final Logger log = Logger.getLogger(ToscaExportHandler.class);
+
     private ApplicationDataTypeCache dataTypeCache;
     private ToscaOperationFacade toscaOperationFacade;
     private CapabilityRequirementConverter capabilityRequirementConverter;
@@ -151,9 +154,6 @@ public class ToscaExportHandler {
             this.interfaceLifecycleOperation = interfaceLifecycleOperation;
             this.interfacesOperationsConverter = interfacesOperationsConverter;
       }
-
-
-    private static final Logger log = Logger.getLogger(ToscaExportHandler.class);
 
     private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
     private static final String SERVICE_NODE_TYPE_PREFIX = "org.openecomp.service.";
@@ -1529,10 +1529,33 @@ public class ToscaExportHandler {
             if ("dependencies".equals(property.getName())) {
                 return null;
             }
+            removeDefaultP(propertyValue);
             NodeTuple defaultNode = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
 
             return "_defaultp_".equals(property.getName())
                     ? new NodeTuple(representData("default"), defaultNode.getValueNode()) : defaultNode;
+        }
+
+        private void removeDefaultP(final Object propertyValue) {
+            if (propertyValue instanceof Map) {
+                final Map mapPropertyValue = ((Map) propertyValue);
+
+                final Iterator<Entry> iter = mapPropertyValue.entrySet().iterator();
+                Object defaultValue = null;
+                while (iter.hasNext()) {
+                    final Map.Entry entry = iter.next();
+
+                    if ("_defaultp_".equals(entry.getKey())) {
+                        defaultValue = entry.getValue();
+                        iter.remove();
+                    } else if (entry.getValue() instanceof Map) {
+                        removeDefaultP(entry.getValue());
+                    }
+                }
+                if (defaultValue != null) {
+                    mapPropertyValue.putIfAbsent("default", defaultValue);
+                }
+            }
         }
 
         @Override
@@ -1637,4 +1660,3 @@ public class ToscaExportHandler {
                 .forEach(operations -> operations.values().forEach(operation -> operation.setImplementation(null)));
     }
 }
-
