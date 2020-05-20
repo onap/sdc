@@ -20,8 +20,26 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
+import static org.openecomp.sdc.be.components.utils.PropertiesUtils.getPropertyCapabilityOfChildInstance;
+
 import com.google.common.collect.Sets;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,7 +48,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOperationOrchestrator;
-import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
+import org.openecomp.sdc.be.components.impl.utils.DirectivesEnum;
 import org.openecomp.sdc.be.components.merge.instance.ComponentInstanceMergeDataBusinessLogic;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
@@ -108,25 +126,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.be.components.property.GetInputUtils.isGetInputValueForInput;
-import static org.openecomp.sdc.be.components.utils.PropertiesUtils.getPropertyCapabilityOfChildInstance;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
@@ -943,7 +942,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ", oldComponentInstance.getName(), newInstanceName);
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, containerComponentType.getValue(), componentInstance.getName());
         }
-        if(!DirectivesUtils.isValid(componentInstance.getDirectives())) {
+        if(!DirectivesEnum.isValid(componentInstance.getDirectives())) {
             final String directivesStr =
                     componentInstance.getDirectives().stream().collect(Collectors.joining(" , ", " [ ", " ] "));
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
@@ -1124,9 +1123,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                         return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
                     }
                     ComponentInstance ci = componentInstanceById.get();
-                    List<String> directives = ci.getDirectives();
-                    directives.remove(DirectivesUtils.SELECTABLE);
-                    ci.setDirectives(directives);
+                    ci.setDirectives(Collections.emptyList());
+
                     final Either<ComponentInstance, ResponseFormat> componentInstanceResponseFormatEither =
                             updateComponentInstanceMetadata(ComponentTypeEnum.SERVICE_PARAM_NAME, service.getUniqueId(),
                                     ci.getUniqueId(), userId, ci, true, false);

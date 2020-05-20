@@ -16,8 +16,13 @@
 
 package org.openecomp.sdc.be.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.javatuples.Pair;
-import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
@@ -25,12 +30,6 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class ServiceFilterUtils {
 
@@ -46,8 +45,7 @@ public class ServiceFilterUtils {
 
 
     private static boolean propertyIsUsedInCI(ComponentInstance ci, String ciName, String propertyName) {
-        final List<String> directives = ci.getDirectives();
-        if (!directives.contains(DirectivesUtils.SELECTABLE)) {
+        if (CollectionUtils.isEmpty(ci.getDirectives())) {
             return false;
         }
         if (ci.getNodeFilter() == null || ci.getNodeFilter().getProperties() == null
@@ -114,8 +112,7 @@ public class ServiceFilterUtils {
 
 
     private static boolean isNodeFilterUsingChangedCi(ComponentInstance ci, String name) {
-        final List<String> directives = ci.getDirectives();
-        if (!directives.contains(DirectivesUtils.SELECTABLE)) {
+        if (CollectionUtils.isEmpty(ci.getDirectives())) {
             return false;
         }
         if (ci.getNodeFilter() == null || ci.getNodeFilter().getProperties() == null
@@ -152,8 +149,7 @@ public class ServiceFilterUtils {
     }
 
     private static boolean isNodeFilterUsingChangedInput(ComponentInstance ci, InputDefinition changedInput) {
-        final List<String> directives = ci.getDirectives();
-        if (!directives.contains(DirectivesUtils.SELECTABLE)) {
+        if (CollectionUtils.isEmpty(ci.getDirectives())) {
             return false;
         }
         return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream()
