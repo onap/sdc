@@ -18,7 +18,7 @@ package org.openecomp.sdc.be.nodeFilter;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
+import org.openecomp.sdc.be.components.impl.utils.DirectivesEnum;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
@@ -46,7 +46,7 @@ public class BaseServiceFilterUtilsTest {
             componentInstance.setUniqueId(CI_NAME);
             componentInstance.setName(CI_NAME);
             service.setComponentInstances(Arrays.asList(componentInstance));
-            componentInstance.setDirectives(Arrays.asList(DirectivesUtils.SELECTABLE));
+            componentInstance.setDirectives(Arrays.asList(DirectivesEnum.SELECTABLE.getValue()));
             CINodeFilterDataDefinition serviceFilter = new CINodeFilterDataDefinition();
             componentInstance.setNodeFilter(serviceFilter);
             requirementNodeFilterPropertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
