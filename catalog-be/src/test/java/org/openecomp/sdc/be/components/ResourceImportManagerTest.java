@@ -410,7 +410,7 @@ public class ResourceImportManagerTest {
         assertEquals(1, operations.size());
 
         OperationDataDefinition operation = operations.get("configure");
-        assertEquals("\"camunda/vnfConfigure\"", operation.getImplementation().getArtifactName());
+        assertEquals("'camunda/vnfConfigure'", operation.getImplementation().getArtifactName());
 
     }
 
