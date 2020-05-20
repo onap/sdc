@@ -1,4 +1,9 @@
+tosca.interfaces.Root:
+  derived_from: tosca.entity.Root
+  description: The TOSCA root Interface Type all other TOSCA Interface Types derive from
+
 tosca.interfaces.nfv.vnf.lifecycle.Nfv:
+  derived_from: tosca.interfaces.Root
   instantiate:
     description: Invoked upon receipt of an Instantiate VNF request
   instantiate_start:
@@ -53,7 +58,9 @@ tosca.interfaces.nfv.vnf.lifecycle.Nfv:
     description: Invoked before scale_to_level
   scale_to_level_end:
     description: Invoked after scale_to_level
+
 tosca.interfaces.node.lifecycle.Standard:
+  derived_from: tosca.interfaces.Root
   create:
     description: Standard lifecycle create operation.
   configure:
@@ -65,10 +72,28 @@ tosca.interfaces.node.lifecycle.Standard:
   delete:
     description: Standard lifecycle delete operation.
 
+tosca.interfaces.relationship.Configure:
+  derived_from: tosca.interfaces.Root
+  pre_configure_source:
+    description: Operation to pre-configure the source endpoint.
+  pre_configure_target:
+    description: Operation to pre-configure the target endpoint.
+  post_configure_source:
+    description: Operation to post-configure the source endpoint.
+  post_configure_target:
+    description: Operation to post-configure the target endpoint.
+  add_target:
+    description: Operation to notify the source node of a target node being added via a relationship.
+  add_source:
+    description: Operation to notify the target node of a source node which is now available via a relationship.
+  target_changed:
+    description: Operation to notify source some property or attribute of the target changed
+  remove_target:
+    description: Operation to remove a target node.
 # NFV interface types
 tosca.interfaces.nfv.Vnflcm:
-  #derived_from: tosca.interfaces.Root
-  #description: This interface encompasses a set of TOSCA operations corresponding to the VNF LCM operations defined in ETSI GS NFV-IFA 007 as well as to preamble and postamble procedures to the execution of the VNF LCM operations.
+  derived_from: tosca.interfaces.Root
+  description: This interface encompasses a set of TOSCA operations corresponding to the VNF LCM operations defined in ETSI GS NFV-IFA 007 as well as to preamble and postamble procedures to the execution of the VNF LCM operations.
   instantiate:
     description: Invoked upon receipt of an Instantiate VNF request
     # inputs:

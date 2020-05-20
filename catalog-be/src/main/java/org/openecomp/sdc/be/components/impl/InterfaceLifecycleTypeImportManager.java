@@ -21,22 +21,27 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 @Component("interfaceLifecycleTypeImportManager")
 public class InterfaceLifecycleTypeImportManager {
@@ -53,7 +58,7 @@ public class InterfaceLifecycleTypeImportManager {
 
     public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml) {
 
-        Either<List<InterfaceDefinition>, ActionStatus> interfaces = createLifecyclyTypeFromYml(interfaceLifecycleTypesYml);
+        Either<List<InterfaceDefinition>, ActionStatus> interfaces = createInterfaceTypeFromYml(interfaceLifecycleTypesYml);
         if (interfaces.isRight()) {
             ActionStatus status = interfaces.right().value();
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByGroupType(status, null);
@@ -63,8 +68,8 @@ public class InterfaceLifecycleTypeImportManager {
 
     }
 
-    private Either<List<InterfaceDefinition>, ActionStatus> createLifecyclyTypeFromYml(String interfaceLifecycleTypesYml) {
-        return commonImportManager.createElementTypesFromYml(interfaceLifecycleTypesYml, this::createLifecycleType);
+    private Either<List<InterfaceDefinition>, ActionStatus> createInterfaceTypeFromYml(final String interfaceTypesYml) {
+        return commonImportManager.createElementTypesFromYml(interfaceTypesYml, this::createInterfaceDefinition);
 
     }
 
@@ -97,20 +102,59 @@ public class InterfaceLifecycleTypeImportManager {
         return eitherResult;
     }
 
-    private InterfaceDefinition createLifecycleType(String interfaceDefinition, Map<String, Object> toscaJson) {
-        InterfaceDefinition interfaceDef = new InterfaceDefinition();
+    private InterfaceDefinition createInterfaceDefinition(final String interfaceDefinition,
+                                                          final Map<String, Object> toscaJson) {
+        final InterfaceDefinition interfaceDef = new InterfaceDefinition();
         interfaceDef.setType(interfaceDefinition);
-
-        Map<String, Operation> operations = new HashMap<>();
-
-        for (Map.Entry<String, Object> entry : toscaJson.entrySet()) {
-            Operation operation = new Operation();
-            Map<String, Object> opProp = (Map<String, Object>) entry.getValue();
-
-            operation.setDescription((String) opProp.get("description"));
-            operations.put(entry.getKey(), operation);
+        final Object descriptionObj = toscaJson.get(ToscaTagNamesEnum.DESCRIPTION.getElementName());
+        if (descriptionObj instanceof String) {
+            interfaceDef.setDescription((String) descriptionObj);
         }
-        interfaceDef.setOperationsMap(operations);
+        final Object derivedFromObj = toscaJson.get(ToscaTagNamesEnum.DERIVED_FROM.getElementName());
+        if (derivedFromObj instanceof String) {
+            interfaceDef.setDerivedFrom((String) derivedFromObj);
+        }
+        final Object versionObj = toscaJson.get(ToscaTagNamesEnum.VERSION.getElementName());
+        if (versionObj instanceof String) {
+            interfaceDef.setVersion((String) versionObj);
+        }
+
+        final Object metadataObj = toscaJson.get(ToscaTagNamesEnum.METADATA.getElementName());
+        if (metadataObj instanceof Map) {
+            interfaceDef.setToscaPresentationValue(JsonPresentationFields.METADATA, metadataObj);
+        }
+
+        final Map<String, Object> operationsMap;
+        if (toscaJson.containsKey(ToscaTagNamesEnum.OPERATIONS.getElementName())) {
+            operationsMap = (Map<String, Object>) toscaJson.get(ToscaTagNamesEnum.OPERATIONS.getElementName());
+        } else {
+            final List<String> entitySchemaEntryList = Arrays
+                .asList(ToscaTagNamesEnum.DERIVED_FROM.getElementName(),
+                    ToscaTagNamesEnum.DESCRIPTION.getElementName(),
+                    ToscaTagNamesEnum.VERSION.getElementName(),
+                    ToscaTagNamesEnum.METADATA.getElementName(),
+                    ToscaTagNamesEnum.INPUTS.getElementName(),
+                    ToscaTagNamesEnum.NOTIFICATIONS.getElementName());
+            operationsMap = toscaJson.entrySet().stream()
+                .filter(interfaceEntry -> !entitySchemaEntryList.contains(interfaceEntry.getKey()))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        }
+        interfaceDef.setOperationsMap(handleOperations(operationsMap));
         return interfaceDef;
+    }
+
+    private Map<String, Operation> handleOperations(final Map<String, Object> operationsToscaEntry) {
+        if (MapUtils.isEmpty(operationsToscaEntry)) {
+            return Collections.emptyMap();
+        }
+        return operationsToscaEntry.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey,
+                operationEntry -> createOperation((Map<String, Object>) operationEntry.getValue())));
+    }
+
+    private Operation createOperation(final Map<String, Object> toscaOperationMap) {
+        final Operation operation = new Operation();
+        operation.setDescription((String) toscaOperationMap.get(ToscaTagNamesEnum.DESCRIPTION.getElementName()));
+        return operation;
     }
 }

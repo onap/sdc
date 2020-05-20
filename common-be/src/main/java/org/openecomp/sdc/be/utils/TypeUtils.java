@@ -61,11 +61,11 @@ public class TypeUtils {
         SUBSTITUTION_MAPPINGS("substitution_mappings"), NODE_TYPE("node_type"), DIRECTIVES("directives"),
         // Attributes
         ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), ANNOTATIONS("annotations"),
+        VERSION("version"), OPERATIONS("operations"), NOTIFICATIONS("notifications"),
         //functions
         GET_INPUT("get_input");
 
-
-        private String elementName;
+        private final String elementName;
 
         ToscaTagNamesEnum(final String elementName) {
             this.elementName = elementName;

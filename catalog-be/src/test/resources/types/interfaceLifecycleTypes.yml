@@ -1,4 +1,5 @@
 tosca.interfaces.node.lifecycle.Standard:
+  derived_from: tosca.interfaces.Root
   create:
     description: Standard lifecycle create operation.
   configure:
@@ -9,3 +10,46 @@ tosca.interfaces.node.lifecycle.Standard:
     description: Standard lifecycle stop operation.
   delete:
     description: Standard lifecycle delete operation.
+tosca.interfaces.nfv.Nslcm:
+  derived_from: tosca.interfaces.Root
+  description: This interface encompasses a set of TOSCA operations corresponding to NS LCM operations defined in ETSI GS NFV-IFA 013. as well as to preamble and postamble procedures to the execution of the NS LCM operations.
+  version: "1.0.0"
+  metadata:
+    meta1: meta1
+  inputs:
+    input1:
+      type: string
+  operations:
+    instantiate_start:
+      description: Preamble to execution of the instantiate operation
+    instantiate:
+      description: Base procedure for instantiating an NS, corresponding to the Instantiate NS operation defined in GS NFV-IFA 013.
+    instantiate_end:
+      description: Postamble to the execution of the instantiate operation
+    terminate_start:
+      description: Preamble to execution of the terminate operation
+    terminate:
+      description: Base procedure for terminating an NS, corresponding to the Terminate NS operation defined in GS NFV-IFA 013.
+    terminate_end:
+      description: Postamble to the execution of the terminate operation
+    update_start:
+      description: Preamble to execution of the update operation
+    update:
+      description: Base procedure for updating an NS, corresponding to the Update NS operation defined in GS NFV-IFA 013.
+    update_end:
+      description: Postamble to the execution of the update operation
+    scale_start:
+      description: Preamble to execution of the scale operation
+    scale:
+      description: Base procedure for scaling an NS, corresponding to the Scale NS operation defined in GS NFV-IFA 013.
+    scale_end:
+      description: Postamble to the execution of the scale operation
+    heal_start:
+      description: Preamble to execution of the heal operation
+    heal:
+      description: Base procedure for healing an NS, corresponding to the Heal NS operation defined in GS NFV-IFA 013.
+    heal_end:
+      description: Postamble to the execution of the heal operation
+  notifications:
+    notification1:
+      description: notification1 description
