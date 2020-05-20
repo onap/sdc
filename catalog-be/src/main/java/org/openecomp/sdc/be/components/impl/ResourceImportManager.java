@@ -22,7 +22,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.QUOTE;
+
 import fj.data.Either;
+import java.util.LinkedHashMap;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -40,7 +43,9 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -67,7 +72,9 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
+import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -93,8 +100,16 @@ import java.util.stream.Collectors;
 
 @Component("resourceImportManager")
 public class ResourceImportManager {
+    private static final Logger log = Logger.getLogger(ResourceImportManager.class);
+
     static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("[\\w\\-\\_\\d\\:]+");
     private static final String IMPLEMENTATION = "implementation";
+    private static final String INPUTS = "inputs";
+    private static final String TYPE = "type";
+    private static final String DESCRIPTION = "description";
+    private static final String REQUIRED = "required";
+    private static final String DEFAULT = "default";
+    private static final String STATUS = "status";
 
     private ServletContext servletContext;
 
@@ -103,14 +118,12 @@ public class ResourceImportManager {
     private InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
 
     private IGraphLockOperation graphLockOperation;
-    protected ToscaOperationFacade toscaOperationFacade;
+    private ToscaOperationFacade toscaOperationFacade;
 
-    protected final ComponentsUtils componentsUtils;
+    private final ComponentsUtils componentsUtils;
     private final CapabilityTypeOperation capabilityTypeOperation;
 
     private ResponseFormatManager responseFormatManager;
-
-    private static final Logger log = Logger.getLogger(ResourceImportManager.class);
 
     @Autowired
     public ResourceImportManager(ComponentsUtils componentsUtils, CapabilityTypeOperation capabilityTypeOperation) {
@@ -268,9 +281,8 @@ public class ResourceImportManager {
 
     }
 
-    void populateResourceFromYaml(String resourceYml, Resource resource) {
+    private void populateResourceFromYaml(String resourceYml, Resource resource) {
         @SuppressWarnings("unchecked")
-//        Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         Object ymlObj = new Yaml().load(resourceYml);
         if (ymlObj instanceof Map) {
             Map<String, Object> toscaJsonAll = (Map<String, Object>) ymlObj;
@@ -331,42 +343,44 @@ public class ResourceImportManager {
     }
 
     private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(Object interfaceJson, Resource resource) {
-        InterfaceDefinition interf = new InterfaceDefinition();
+        final InterfaceDefinition interf = new InterfaceDefinition();
         Either<InterfaceDefinition, ResultStatusEnum> result = Either.left(interf);
 
         try {
             if (interfaceJson instanceof String) {
-                String requirementJsonString = (String) interfaceJson;
+                final String requirementJsonString = (String) interfaceJson;
                 interf.setType(requirementJsonString);
-            }
-            else if (interfaceJson instanceof Map && ResourceTypeEnum.VFC.equals(resource.getResourceType())) {
-                Map<String, Object> requirementJsonMap = (Map<String, Object>) interfaceJson;
-            	Map<String, OperationDataDefinition> operations = new HashMap<>();
+            } else if (interfaceJson instanceof Map && ResourceTypeEnum.VFC.equals(resource.getResourceType())) {
+                final Map<String, Object> requirementJsonMap = (Map<String, Object>) interfaceJson;
+                final Map<String, OperationDataDefinition> operations = new HashMap<>();
 
                 for (final Entry<String, Object> entry : requirementJsonMap.entrySet()) {
-                	if (entryIsInterfaceType(entry)) {
-                        String type = (String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName());
+                    if (entryIsInterfaceType(entry)) {
+                        final String type = (String) requirementJsonMap
+                            .get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName());
                         interf.setType(type);
                         interf.setUniqueId(type.toLowerCase());
-                    } else if (entryContainsImplementationForAKnownOperation(entry, interf.getType())){
-                    	
-                    	OperationDataDefinition operation = new OperationDataDefinition();
-                    	operation.setName(entry.getKey());
+                    } else if (entryContainsImplementationForAKnownOperation(entry, interf.getType())) {
 
-                    	ArtifactDataDefinition implementation = new ArtifactDataDefinition();
-                    	// Adding the artifact name in quotes to indicate that this is a literal value, rather than a reference to
-                    	// an SDC artifact
-                    	implementation.setArtifactName(Constants.ESCAPED_DOUBLE_QUOTE + ((Map<String, String>)entry.getValue()).get(IMPLEMENTATION) + Constants.ESCAPED_DOUBLE_QUOTE);
-                    	operation.setImplementation(implementation);
+                        final OperationDataDefinition operation = new OperationDataDefinition();
+                        operation.setName(entry.getKey());
 
-                    	operations.put(entry.getKey(), operation);
+                        final Map<?, ?> entryValue = (Map<?, ?>) entry.getValue();
+                        if (entryValue.containsKey(IMPLEMENTATION)) {
+                            operation.setImplementation(handleOperationImplementation(entry));
+                        }
+                        if (entryValue.containsKey(INPUTS)) {
+                            final Map<String, Object> interfaceInputs = (Map<String, Object>) entryValue
+                                .get(ToscaTagNamesEnum.INPUTS.getElementName());
+                            operation.setInputs(handleInterfaceInput(interfaceInputs));
+                        }
+                        operations.put(entry.getKey(), operation);
                     }
                 }
                 if (!operations.isEmpty()) {
-                	interf.setOperations(operations);
+                    interf.setOperations(operations);
                 }
-            }
-            else {
+            } else {
                 result = Either.right(ResultStatusEnum.GENERAL_ERROR);
             }
 
@@ -379,7 +393,58 @@ public class ResourceImportManager {
 
         return result;
     }
-    
+
+    private ArtifactDataDefinition handleOperationImplementation(final Entry<String, Object> entry) {
+        final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
+        final String artifactName = ((Map<String, String>) entry.getValue()).get(IMPLEMENTATION);
+        if (OperationArtifactUtil.artifactNameIsALiteralValue(artifactName)) {
+            implementation.setArtifactName(artifactName);
+        } else {
+            implementation.setArtifactName(QUOTE + artifactName + QUOTE);
+        }
+        return implementation;
+    }
+
+    private ListDataDefinition<OperationInputDefinition> handleInterfaceInput(final Map<String, Object> interfaceInputs) {
+        final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
+        for (final Entry<String, Object> interfaceInput : interfaceInputs.entrySet()) {
+            final OperationInputDefinition operationInput = new OperationInputDefinition();
+            operationInput.setName(interfaceInput.getKey());
+            if (interfaceInput.getValue() instanceof Map) {
+                final LinkedHashMap<String, Object> inputPropertyValue =
+                    (LinkedHashMap<String, Object>) interfaceInput.getValue();
+                log.info("createModuleInterface: i interfaceInput.getKey() {}, {} , {}  ",
+                    interfaceInput.getKey(), inputPropertyValue.keySet(),
+                    inputPropertyValue.values());
+                if (inputPropertyValue.get(TYPE) != null) {
+                    operationInput.setType(inputPropertyValue.get(TYPE).toString());
+                }
+                if (inputPropertyValue.get(DESCRIPTION) != null) {
+                    operationInput.setDescription(inputPropertyValue.get(DESCRIPTION).toString());
+                }
+                if (inputPropertyValue.get(REQUIRED) != null) {
+                    operationInput.setRequired(
+                        Boolean.getBoolean(inputPropertyValue.get(REQUIRED).toString()));
+                }
+                if (inputPropertyValue.get(DEFAULT) != null) {
+                    operationInput.setToscaDefaultValue(inputPropertyValue.get(DEFAULT).toString());
+                }
+                if (inputPropertyValue.get(STATUS) != null) {
+                    operationInput.setStatus(inputPropertyValue.get(STATUS).toString());
+                }
+
+            } else if (interfaceInput.getValue() instanceof String) {
+                final String value = (String) interfaceInput.getValue();
+                operationInput.setDefaultValue(value);
+                operationInput.setToscaDefaultValue(value);
+                operationInput.setValue(value);
+            }
+            inputs.getListToscaDataDefinition().add(operationInput);
+            inputs.add(operationInput);
+        }
+        return inputs;
+    }
+
     private boolean entryIsInterfaceType(final Entry<String, Object> entry) {
     	if(entry.getKey().equals(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
     		if (entry.getValue() instanceof String) {
@@ -991,6 +1056,5 @@ public class ResourceImportManager {
     public void setAuditingManager(AuditingManager auditingManager) {
         this.auditingManager = auditingManager;
     }
-
 
 }
