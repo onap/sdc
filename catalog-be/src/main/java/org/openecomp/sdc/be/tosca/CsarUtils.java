@@ -24,6 +24,7 @@ package org.openecomp.sdc.be.tosca;
 import fj.F;
 import fj.data.Either;
 import io.vavr.Tuple2;
+import io.vavr.control.Try;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -105,6 +106,8 @@ import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
+
+import static org.openecomp.sdc.be.tosca.FJToVavrHelper.Try0.fromEither;
 
 /**
  * @author tg851x
@@ -690,22 +693,34 @@ public class CsarUtils {
         String fileName,
         boolean isAssociatedComponent
     ) {
-        try {
-            Either<String, ToscaError> mainYaml = toscaExportUtils
-                .exportComponentInterface(component, isAssociatedComponent)
-                .left().map(ToscaRepresentation::getMainYaml);
+        // TODO: This should not be done but we need this to keep the refactoring small enough to be easily reviewable
+        return writeComponentInterface(component, fileName, isAssociatedComponent, ZipWriter.live(zip))
+            .map(void0 -> Either.<ZipOutputStream, ResponseFormat>left(zip))
+            .recover(th -> {
+                log.error("#writeComponentInterface - zip writing failed with error: ", th);
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            }).get();
+    }
 
-            // TODO: This should be done outside this function to keep this testable.
-            // We can probably achieve this once the other refactorings related to SDC-2812 are merged
-            String interfaceFileName = DEFINITIONS_PATH + ToscaExportHandler.getInterfaceFilename(fileName);
-            zip.putNextEntry(new ZipEntry(interfaceFileName));
-            zip.write(mainYaml.left().value().getBytes());
+    private Try<Void> writeComponentInterface(
+        Component component,
+        String fileName,
+        boolean isAssociatedComponent,
+        ZipWriter zw
+    ) {
+        Either<String, ToscaError> yml = toscaExportUtils
+            .exportComponentInterface(component, isAssociatedComponent)
+            .left().map(ToscaRepresentation::getMainYaml);
 
-        } catch (Exception e) {
-            log.error("#writeComponentInterface - zip writing failed with error: ", e);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        return fromEither(yml, ToscaErrorException::new)
+            .flatMap(zw.write(DEFINITIONS_PATH + ToscaExportHandler.getInterfaceFilename(fileName)));
+    }
+
+    public static class ToscaErrorException extends Exception {
+
+        ToscaErrorException(ToscaError error) {
+            super("Error while exporting component's interface (toscaError:" + error + ")");
         }
-        return Either.left(zip);
     }
 
     private Either<byte[], ActionStatus> getEntryData(String cassandraId, Component childComponent) {
