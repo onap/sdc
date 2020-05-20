@@ -2676,13 +2676,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             return Either.right(booleanResponseFormatEither.right().value());
         }
 
-        Either<CINodeFilterDataDefinition, StorageOperationStatus> result;
+        Either<CINodeFilterDataDefinition, StorageOperationStatus> result = null;
 
-        Either<Boolean, ResponseFormat> lockResult = null;
         CINodeFilterDataDefinition serviceFilterResult = null;
+        ActionStatus lockStatus = null;
         try {
             if (lock) {
-                lockComponent(storedService.getUniqueId(), storedService, "Add or Update Service Filter on Service");
+                lockStatus = lockComponentAndReturnStatus(storedService.getUniqueId(), storedService, "Add or Update Service Filter on Service");
             }
 
             Optional<ComponentInstance> componentInstanceOptional = storedService.getComponentInstanceById(componentInstanceId);
@@ -2711,7 +2711,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
             }
 
-            if (result.isRight()) {
+            if (result != null && result.isRight()) {
                 janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
@@ -2728,7 +2728,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 
         } finally {
-            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
+            if (ActionStatus.OK == lockStatus) {
                 graphLockOperation.unlockComponent(storedService.getUniqueId(), NodeTypeEnum.Service);
             }
         }
