@@ -17,7 +17,7 @@
 package org.openecomp.sdc.be.impl;
 
 import org.javatuples.Pair;
-import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
+import org.openecomp.sdc.be.components.impl.utils.DirectivesEnum;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
@@ -47,7 +47,7 @@ public class ServiceFilterUtils {
 
     private static boolean propertyIsUsedInCI(ComponentInstance ci, String ciName, String propertyName) {
         final List<String> directives = ci.getDirectives();
-        if (!directives.contains(DirectivesUtils.SELECTABLE)) {
+        if (!directives.contains(DirectivesEnum.SELECT.getValue())) {
             return false;
         }
         if (ci.getNodeFilter() == null || ci.getNodeFilter().getProperties() == null
@@ -115,7 +115,7 @@ public class ServiceFilterUtils {
 
     private static boolean isNodeFilterUsingChangedCi(ComponentInstance ci, String name) {
         final List<String> directives = ci.getDirectives();
-        if (!directives.contains(DirectivesUtils.SELECTABLE)) {
+        if (!directives.contains(DirectivesEnum.SELECT.getValue())) {
             return false;
         }
         if (ci.getNodeFilter() == null || ci.getNodeFilter().getProperties() == null
@@ -153,7 +153,7 @@ public class ServiceFilterUtils {
 
     private static boolean isNodeFilterUsingChangedInput(ComponentInstance ci, InputDefinition changedInput) {
         final List<String> directives = ci.getDirectives();
-        if (!directives.contains(DirectivesUtils.SELECTABLE)) {
+        if (!directives.contains(DirectivesEnum.SELECT.getValue())) {
             return false;
         }
         return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream()

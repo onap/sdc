@@ -22,39 +22,38 @@
 
 package org.openecomp.sdc.be.components.impl.utils;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class DirectivesUtilsTest {
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+
+public class DirectivesEnumTest {
 
     private List<String> directives;
 
     @Before
-    public void setup(){
+    public void setup() {
         directives = new ArrayList<>();
     }
 
     @Test
-    public void testGivenValidDirectives_returnsTrue(){
-        directives.add(DirectivesUtils.DIRECTIVE.SUBSTITUTABLE.toString());
-        directives.add(DirectivesUtils.DIRECTIVE.SELECTABLE.toString());
-        assertTrue(DirectivesUtils.isValid(directives));
+    public void testGivenValidDirectives_returnsTrue() {
+        directives.add(DirectivesEnum.SUBSTITUTE.getValue());
+        directives.add(DirectivesEnum.SELECT.getValue());
+        assertTrue(DirectivesEnum.isValid(directives));
     }
 
     @Test
-    public void testGivenEmptyDirectives_returnsTrue(){
-        assertTrue(DirectivesUtils.isValid(directives));
+    public void testGivenEmptyDirectives_returnsTrue() {
+        assertTrue(DirectivesEnum.isValid(directives));
     }
 
     @Test
-    public void testGivenInvalidDirectives_returnsFalse(){
+    public void testGivenInvalidDirectives_returnsFalse() {
         directives.add("Invalid");
-        assertFalse(DirectivesUtils.isValid(directives));
+        assertFalse(DirectivesEnum.isValid(directives));
     }
 }

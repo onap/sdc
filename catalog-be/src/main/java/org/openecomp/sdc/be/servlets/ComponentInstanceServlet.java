@@ -48,7 +48,7 @@ import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.components.impl.utils.DirectivesUtils;
+import org.openecomp.sdc.be.components.impl.utils.DirectivesEnum;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.ForwardingPaths;
@@ -250,7 +250,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentInstance resultValue = actionResponse.left().value();
             if (componentTypeEnum.equals(ComponentTypeEnum.SERVICE)){
                 boolean shouldCreateServiceFilter = resourceInstance.getDirectives() != null && resourceInstance.getDirectives().contains(
-                        DirectivesUtils.SELECTABLE);
+                        DirectivesEnum.SELECT.getValue());
 
                 if(shouldCreateServiceFilter) {
                     Either<CINodeFilterDataDefinition, ResponseFormat> either =
