@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,10 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,6 +45,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -62,6 +72,7 @@ public class InterfaceLifecycleTypeImportManagerTest {
 
         });
         when(commonImportManager.createElementTypesFromYml(Mockito.anyString(), Mockito.any())).thenCallRealMethod();
+        when(commonImportManager.createElementTypesFromToscaJsonMap(Mockito.any(), Mockito.any())).thenCallRealMethod();
     }
 
     @Before
@@ -70,11 +81,55 @@ public class InterfaceLifecycleTypeImportManagerTest {
     }
 
     @Test
-    public void importLiecycleTest() throws IOException {
-        String ymlContent = getYmlContent();
-        Either<List<InterfaceDefinition>, ResponseFormat> createCapabilityTypes = importManager.createLifecycleTypes(ymlContent);
+    public void createLifecycleTypesTest() throws IOException {
+        final String ymlContent = getYmlContent();
+        final Either<List<InterfaceDefinition>, ResponseFormat> createCapabilityTypes =
+            importManager.createLifecycleTypes(ymlContent);
         assertTrue(createCapabilityTypes.isLeft());
+        final List<InterfaceDefinition> interfaceDefinitionList = createCapabilityTypes.left().value();
+        assertThat("Interface definitions should not be empty", interfaceDefinitionList, is(not(empty())));
+        final int expectedSize = 2;
+        assertThat(String.format("Interface definitions should have the size %s", expectedSize),
+            interfaceDefinitionList, hasSize(expectedSize));
+        final String standardInterfaceType = "tosca.interfaces.node.lifecycle.Standard";
+        final String nslcmInterfaceType = "tosca.interfaces.nfv.Nslcm";
+        final Optional<InterfaceDefinition> standardInterfaceOpt = interfaceDefinitionList.stream().filter(
+            interfaceDefinition -> standardInterfaceType.equals(interfaceDefinition.getType()))
+            .findFirst();
+        final Optional<InterfaceDefinition> nslcmInterfaceOpt = interfaceDefinitionList.stream().filter(
+            interfaceDefinition -> nslcmInterfaceType.equals(interfaceDefinition.getType()))
+            .findFirst();
+        assertThat("", standardInterfaceOpt.isPresent(), is(true));
+        assertThat("", nslcmInterfaceOpt.isPresent(), is(true));
+        final InterfaceDefinition standardInterface = standardInterfaceOpt.get();
+        final Set<String> expectedStandardInterfaceOperationSet = Stream
+            .of("create", "configure", "start", "stop", "delete").collect(Collectors.toSet());
+        assertThat(String.format("%s derived_from should be as expected", standardInterfaceType),
+            standardInterface.getDerivedFrom(), is("tosca.interfaces.Root"));
+        assertThat(String.format("%s operations should have the expected size", standardInterfaceType),
+            standardInterface.getOperationsMap().keySet(), hasSize(expectedStandardInterfaceOperationSet.size()));
+        assertThat(String.format("%s should contains the expected operations", standardInterfaceType),
+            standardInterface.getOperationsMap().keySet(),
+            containsInAnyOrder(expectedStandardInterfaceOperationSet.toArray()));
 
+        final InterfaceDefinition nslcmInterface = nslcmInterfaceOpt.get();
+        assertThat(String.format("%s derived_from should be as expected", nslcmInterfaceType),
+            nslcmInterface.getDerivedFrom(), is("tosca.interfaces.Root"));
+        assertThat(String.format("%s description should be as expected", nslcmInterfaceType),
+            nslcmInterface.getDescription(),
+            is("This interface encompasses a set of TOSCA "
+                + "operations corresponding to NS LCM operations defined in ETSI GS NFV-IFA 013. as well as to preamble "
+                + "and postamble procedures to the execution of the NS LCM operations."));
+        final Set<String> expectedNsclmInterfaceOperationSet = Stream
+            .of("instantiate_start", "instantiate", "instantiate_end", "terminate_start", "terminate",
+                "terminate_end", "update_start", "update", "update_end", "scale_start", "scale", "scale_end",
+                "heal_start", "heal", "heal_end").collect(Collectors.toSet());
+        assertThat(String.format("%s operations should have the expected size", nslcmInterfaceType),
+            nslcmInterface.getOperationsMap().keySet(),
+            hasSize(expectedNsclmInterfaceOperationSet.size()));
+        assertThat(String.format("%s should contains the expected operations", nslcmInterfaceType),
+            nslcmInterface.getOperationsMap().keySet(),
+            containsInAnyOrder(expectedNsclmInterfaceOperationSet.toArray()));
     }
 
     private String getYmlContent() throws IOException {

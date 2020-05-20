@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 
@@ -68,11 +69,13 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
     }
 
     @JsonIgnore
-    public void setOperationsMap(Map<String, Operation> operations) {
-        Map<String, OperationDataDefinition> convertedOperation = operations.entrySet()
-                                                                            .stream()
-                                                                            .collect(Collectors.toMap(Map.Entry::getKey, e -> new OperationDataDefinition(e
-                                                                                    .getValue())));
+    public void setOperationsMap(final Map<String, Operation> operations) {
+        if (MapUtils.isEmpty(operations)) {
+            return;
+        }
+        final Map<String, OperationDataDefinition> convertedOperation = operations.entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> new OperationDataDefinition(e.getValue())));
         setOperations(convertedOperation);
     }
 

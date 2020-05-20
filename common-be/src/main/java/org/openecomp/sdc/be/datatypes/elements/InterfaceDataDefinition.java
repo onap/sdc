@@ -77,6 +77,18 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
         setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
     }
 
+    public String getDerivedFrom() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.DERIVED_FROM);
+    }
+
+    public void setDerivedFrom(final String derivedFrom) {
+        setToscaPresentationValue(JsonPresentationFields.DERIVED_FROM, derivedFrom);
+    }
+
+    public void setVersion(final String version) {
+        setToscaPresentationValue(JsonPresentationFields.VERSION, version);
+    }
+
     public String getToscaResourceName() {
         return (String) getToscaPresentationValue(TOSCA_RESOURCE_NAME);
     }
