@@ -13,7 +13,7 @@
   </parent>
 
   <properties>
-    <jersey-common.version>2.22.2</jersey-common.version>
+    <jersey-common.version>2.30.1</jersey-common.version>
   </properties>
 
   <dependencies>
