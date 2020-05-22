@@ -20,8 +20,8 @@
 package org.onap.config;
 
 import com.virtlink.commons.configuration2.jackson.JsonConfiguration;
-import net.sf.corn.cps.CPScanner;
-import net.sf.corn.cps.ResourceFilter;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
@@ -401,7 +401,9 @@ public class ConfigurationUtils {
     }
 
     public static List<URL> getAllClassPathResources() {
-        return CPScanner.scanResources(new ResourceFilter());
+        try (ScanResult scanResult = new ClassGraph().scan()) {
+            return scanResult.getAllResources().getURLs();
+        }
     }
 
     public static BasicConfigurationBuilder<FileBasedConfiguration> getConfigurationBuilder(File file) {
