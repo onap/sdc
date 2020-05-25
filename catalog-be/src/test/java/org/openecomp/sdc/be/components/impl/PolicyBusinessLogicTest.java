@@ -122,8 +122,8 @@ public class PolicyBusinessLogicTest {
     private final static String POLICY_NAME = "policyName";
     private final static String OTHER_POLICY_NAME = "otherPolicyName";
     private final static String USER_ID = "jh0003";
-    private final static String UNIQUE_ID_EXSISTS = "uniqueIdExists";
-    private final static String UNIQUE_ID_DOESNT_EXSISTS = "uniqueIdDoesntExists";
+    private final static String UNIQUE_ID_EXISTS = "uniqueIdExists";
+    private final static String UNIQUE_ID_DOESNT_EXISTS = "uniqueIdDoesntExists";
     private final static String CREATE_POLICY = "create Policy";
     private final static String PROPERTY_NAME = "propDefinition";
     private final static User user = buildUser();
@@ -197,14 +197,19 @@ public class PolicyBusinessLogicTest {
 
         List<ComponentInstance> instanceList = new ArrayList<>();
         ComponentInstance componentInstance = new ComponentInstance();
-        componentInstance.setUniqueId(UNIQUE_ID_EXSISTS);
-        componentInstance.setName(UNIQUE_ID_EXSISTS);
+        componentInstance.setUniqueId(UNIQUE_ID_EXISTS);
+        componentInstance.setName(UNIQUE_ID_EXISTS);
         instanceList.add(componentInstance);
+
+        GroupDefinition groupDefinition = new GroupDefinition();
+        groupDefinition.setUniqueId(UNIQUE_ID_EXISTS);
+        groupDefinition.setName(UNIQUE_ID_EXISTS);
 
         Resource newResource = buildResource();
         newResource.setPolicies(policies);
         newResource.setComponentInstances(instanceList);
-        
+        newResource.addGroups(Collections.singletonList(groupDefinition));
+
         when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME))).thenReturn(getPolicyTypeSuccessEither);
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(Either.left(policy));
         when(toscaOperationFacade.getToscaFullElement(eq(COMPONENT_ID))).thenReturn(Either.left(newResource));
@@ -221,7 +226,7 @@ public class PolicyBusinessLogicTest {
         assertNotNull(newPolicy.getTargets());
         assertNotNull(newPolicy.getProperties());
         assertEquals(2, newPolicy.getProperties().size());
-        assertEquals(1, newPolicy.getTargets().size());
+        assertEquals(2, newPolicy.getTargets().size());
     }
     
     @Test
@@ -497,16 +502,16 @@ public class PolicyBusinessLogicTest {
 
     private Either<Component, StorageOperationStatus> buildElementEither() {
         ResourceBuilder builder = new ResourceBuilder();
-        GroupDefinition groupDefinition = GroupDefinitionBuilder.create().setUniqueId(UNIQUE_ID_EXSISTS).build();
+        GroupDefinition groupDefinition = GroupDefinitionBuilder.create().setUniqueId(UNIQUE_ID_EXISTS).build();
         ComponentInstanceBuilder componentInstanceBuilder = new ComponentInstanceBuilder();
-        ComponentInstance componentInstance = componentInstanceBuilder.setUniqueId(UNIQUE_ID_EXSISTS).build();
+        ComponentInstance componentInstance = componentInstanceBuilder.setUniqueId(UNIQUE_ID_EXISTS).build();
         return Either.left(builder.addGroup(groupDefinition).addComponentInstance(componentInstance).build());
     }
 
     private Map<PolicyTargetType, List<String>> getTargets() {
         Map<PolicyTargetType, List<String>> targets = new HashMap<>();
-        targets.put(PolicyTargetType.COMPONENT_INSTANCES, Collections.singletonList(UNIQUE_ID_EXSISTS));
-        targets.put(PolicyTargetType.GROUPS, Collections.singletonList(UNIQUE_ID_EXSISTS));
+        targets.put(PolicyTargetType.COMPONENT_INSTANCES, Collections.singletonList(UNIQUE_ID_EXISTS));
+        targets.put(PolicyTargetType.GROUPS, Collections.singletonList(UNIQUE_ID_EXISTS));
         return targets;
     }
 
@@ -552,14 +557,14 @@ public class PolicyBusinessLogicTest {
 
     private Map<PolicyTargetType, List<String>> getTargetListFakeType() {
         Map<PolicyTargetType, List<String>> targets = new HashMap<>();
-        targets.put(PolicyTargetType.TYPE_DOES_NOT_EXIST, Collections.singletonList(UNIQUE_ID_EXSISTS));
+        targets.put(PolicyTargetType.TYPE_DOES_NOT_EXIST, Collections.singletonList(UNIQUE_ID_EXISTS));
         return targets;
     }
 
     private Map<PolicyTargetType, List<String>> getTargetListFakeId() {
         Map<PolicyTargetType, List<String>> targets = new HashMap<>();
-        targets.put(PolicyTargetType.COMPONENT_INSTANCES, Collections.singletonList(UNIQUE_ID_DOESNT_EXSISTS));
-        targets.put(PolicyTargetType.GROUPS, Collections.singletonList(UNIQUE_ID_DOESNT_EXSISTS));
+        targets.put(PolicyTargetType.COMPONENT_INSTANCES, Collections.singletonList(UNIQUE_ID_DOESNT_EXISTS));
+        targets.put(PolicyTargetType.GROUPS, Collections.singletonList(UNIQUE_ID_DOESNT_EXISTS));
         return targets;
     }
 

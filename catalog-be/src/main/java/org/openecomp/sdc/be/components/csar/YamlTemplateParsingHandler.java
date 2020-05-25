@@ -183,25 +183,32 @@ public class YamlTemplateParsingHandler {
         Map<String, Object> foundPolicies = findFirstToscaMapElement(toscaJson, POLICIES)
                                                   .left()
                                                   .on(err -> logPoliciesNotFound(fileName));
+        Map<String, Object> foundNodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES)
+                                                  .left()
+                                                  .on(err -> failIfNoNodeTemplates(fileName));
+        Map<String, Object> foundGroups = findFirstToscaMapElement(toscaJson, GROUPS)
+                                                    .left()
+                                                    .on(err -> logGroupsNotFound(fileName));
 
         if (MapUtils.isNotEmpty(foundPolicies)) {
             return foundPolicies
                            .entrySet()
                            .stream()
-                           .map(this::createPolicy)
+                           .map(policyNameValue -> createPolicy(policyNameValue, foundNodeTemplates, foundGroups))
                            .collect(Collectors.toMap(PolicyDefinition::getName, p -> p));
         }
         return Collections.emptyMap();
     }
 
-    private PolicyDefinition createPolicy(Map.Entry<String, Object> policyNameValue) {
+    private PolicyDefinition createPolicy(Map.Entry<String, Object> policyNameValue,
+        Map<String, Object> nodeTemplatesJson, Map<String, Object> groupsTemplateJson) {
         PolicyDefinition emptyPolicyDef = new PolicyDefinition();
         String policyName = policyNameValue.getKey();
         emptyPolicyDef.setName(policyName);
         try {
             if (policyNameValue.getValue() != null && policyNameValue.getValue() instanceof Map) {
                 Map<String, Object> policyTemplateJsonMap = (Map<String, Object>) policyNameValue.getValue();
-                validateAndFillPolicy(emptyPolicyDef, policyTemplateJsonMap);
+                validateAndFillPolicy(emptyPolicyDef, policyTemplateJsonMap, nodeTemplatesJson, groupsTemplateJson);
             } else {
                 rollbackWithException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
             }
@@ -217,7 +224,9 @@ public class YamlTemplateParsingHandler {
         return Collections.emptyMap();
     }
 
-    private void validateAndFillPolicy(PolicyDefinition emptyPolicyDefinition, Map<String, Object> policyTemplateJsonMap) {
+    private void validateAndFillPolicy(PolicyDefinition emptyPolicyDefinition,
+        Map<String, Object> policyTemplateJsonMap, Map<String, Object> nodeTemplatesJson,
+        Map<String, Object> groupsTemplateJson) {
         String policyTypeName = (String) policyTemplateJsonMap.get(TYPE.getElementName());
         if(StringUtils.isEmpty(policyTypeName)){
             log.debug("#validateAndFillPolicy - The 'type' member is not found under policy {}", emptyPolicyDefinition.getName());
@@ -225,7 +234,7 @@ public class YamlTemplateParsingHandler {
         }
         emptyPolicyDefinition.setType(policyTypeName);
         // set policy targets
-        emptyPolicyDefinition.setTargets(validateFillPolicyTargets(policyTemplateJsonMap));
+        emptyPolicyDefinition.setTargets(validateFillPolicyTargets(policyTemplateJsonMap, nodeTemplatesJson, groupsTemplateJson));
         PolicyTypeDefinition policyTypeDefinition = validateGetPolicyTypeDefinition(policyTypeName);
         // set policy properties
         emptyPolicyDefinition.setProperties(validateFillPolicyProperties(policyTypeDefinition, policyTemplateJsonMap));
@@ -272,12 +281,14 @@ public class YamlTemplateParsingHandler {
         return newPropertyDef;
     }
 
-    private Map<PolicyTargetType, List<String>> validateFillPolicyTargets(Map<String, Object> policyTemplateJson) {
+    private Map<PolicyTargetType, List<String>> validateFillPolicyTargets(Map<String, Object> policyTemplateJson,
+        Map<String, Object> nodeTemplatesJson, Map<String, Object> groupTemplateJson) {
         Map<PolicyTargetType, List<String>> targets = new EnumMap<>(PolicyTargetType.class);
         if (policyTemplateJson.containsKey(TARGETS.getElementName())
                     && policyTemplateJson.get(TARGETS.getElementName()) instanceof List ) {
             List<String> targetsElement = (List<String>) policyTemplateJson.get(TARGETS.getElementName());
-            targets.put(PolicyTargetType.COMPONENT_INSTANCES, targetsElement);
+            targets.put(PolicyTargetType.COMPONENT_INSTANCES, targetsElement.stream().filter(nodeTemplatesJson::containsKey).collect(toList()));
+            targets.put(PolicyTargetType.GROUPS, targetsElement.stream().filter(groupTemplateJson::containsKey).collect(toList()));
         }
         return targets;
     }
