@@ -244,7 +244,7 @@ public class ToscaExportHandler {
         return Either.left(fillImports.left().value().left);
     }
 
-    private Either<ToscaTemplate, ToscaError> convertToToscaTemplate(final Component component) {
+    public Either<ToscaTemplate, ToscaError> convertToToscaTemplate(final Component component) {
         if (null == DEFAULT_IMPORTS) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -660,7 +660,7 @@ public class ToscaExportHandler {
         return convertInterfaceNodeType(componentsCache, component, toscaNode, nodeTypes, false);
     }
 
-    private Either<ToscaTemplate, ToscaError> convertInterfaceNodeType(Map<String, Component> componentsCache,
+    public Either<ToscaTemplate, ToscaError> convertInterfaceNodeType(Map<String, Component> componentsCache,
                                                                        Component component, ToscaTemplate toscaNode,
                                                                        Map<String, ToscaNodeType> nodeTypes,
             boolean isAssociatedComponent) {
