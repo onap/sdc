@@ -296,6 +296,24 @@
     },
     {
       "key": {
+        "uuid": "6b6f1afc_f5f671eb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 4324,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T12:32:09Z",
+      "side": 1,
+      "message": "Hi @Chaya, any update on this? Can we consider this issue closed?",
+      "parentUuid": "276986ff_dcd86cb8",
+      "revId": "ce1dab0d26320e8423803bde9cc6a34282b2508f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f46545a3_9f82f432",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
         "patchSetId": 5
