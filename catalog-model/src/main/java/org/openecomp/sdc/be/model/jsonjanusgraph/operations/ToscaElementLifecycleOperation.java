@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static fj.P.p;
+
+import fj.P2;
 import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
@@ -223,54 +226,77 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
      * @return
      */
     public Either<ToscaElement, StorageOperationStatus> undoCheckout(String toscaElementId) {
-        Either<ToscaElement, StorageOperationStatus> result = null;
-        Either<GraphVertex, JanusGraphOperationStatus> getToscaElementRes = null;
-        Iterator<Edge> nextVersionComponentIter = null;
-        ToscaElementOperation operation;
-        Vertex preVersionVertex = null;
         try {
-            getToscaElementRes = janusGraphDao.getVertexById(toscaElementId, JsonParseFlagEnum.ParseMetadata);
-            if (getToscaElementRes.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getToscaElementRes.right().value()));
-            }
-            GraphVertex currVersionV = getToscaElementRes.left().value();
-            if (result == null && hasPreviousVersion(currVersionV)) {
-                // find previous version
-                nextVersionComponentIter = currVersionV.getVertex().edges(Direction.IN, EdgeLabelEnum.VERSION.name());
-                if (nextVersionComponentIter == null || !nextVersionComponentIter.hasNext()) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch previous version of tosca element with name {}. ", currVersionV.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME).toString());
-                    result = Either.right(StorageOperationStatus.NOT_FOUND);
-                }
-                if (result == null) {
-                    preVersionVertex = nextVersionComponentIter.next().outVertex();
-                    StorageOperationStatus updateOldResourceResult = updateOldToscaElementBeforeUndoCheckout(preVersionVertex);
-                    if (updateOldResourceResult != StorageOperationStatus.OK) {
-                        result = Either.right(updateOldResourceResult);
-                    }
-                }
-            }
-            if (result == null) {
-                StorageOperationStatus updateCatalogRes = updateEdgeToCatalogRootByUndoCheckout((JanusGraphVertex) preVersionVertex, currVersionV);
-                if (updateCatalogRes != StorageOperationStatus.OK) {
-                    return Either.right(updateCatalogRes);
-                }
-                operation = getToscaElementOperation(currVersionV.getLabel());
-                result = operation.deleteToscaElement(currVersionV);
-                if (result.isRight()) {
-                    return result;
-                }
-                if(preVersionVertex != null){
-                    String uniqueIdPreVer = (String) janusGraphDao.getProperty((JanusGraphVertex) preVersionVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
-                    result = operation.getToscaElement(uniqueIdPreVer);
-                }else{
-                    result = Either.left(null);
-                }
-            }
+            return janusGraphDao.getVertexById(toscaElementId, JsonParseFlagEnum.ParseMetadata)
+                .right().map(errorStatus -> {
+                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
+                    return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(errorStatus);
+                })
+                .left().bind(this::retrieveAndUpdatePreviousVersion)
+                .left().bind(this::updateEdgeToCatalogRootAndReturnPreVersionElement);
         } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during undo checkout tosca element {}. {}", toscaElementId, e.getMessage());
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occurred during undo checkout tosca element {}. {}", toscaElementId, e.getMessage());
+            return null;
         }
-        return result;
+    }
+
+    private Either<P2<GraphVertex, JanusGraphVertex>, StorageOperationStatus> retrieveAndUpdatePreviousVersion(
+        final GraphVertex currVersionV) {
+        if (!hasPreviousVersion(currVersionV)) {
+            return Either.left(p(currVersionV, null));
+        } else {
+            // find previous version
+            Iterator<Edge> nextVersionComponentIter = currVersionV.getVertex()
+                .edges(Direction.IN, EdgeLabelEnum.VERSION.name());
+
+            if (nextVersionComponentIter == null || !nextVersionComponentIter.hasNext()) {
+                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                    "Failed to fetch previous version of tosca element with name {}. ",
+                    currVersionV.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME).toString());
+                return Either.right(StorageOperationStatus.NOT_FOUND);
+            } else {
+                Vertex preVersionVertex = nextVersionComponentIter.next().outVertex();
+                StorageOperationStatus updateOldResourceResult = updateOldToscaElementBeforeUndoCheckout(
+                    preVersionVertex);
+                if (updateOldResourceResult != StorageOperationStatus.OK) {
+                    return Either.right(updateOldResourceResult);
+                } else {
+                    P2<GraphVertex, JanusGraphVertex> result = p(currVersionV, (JanusGraphVertex) preVersionVertex);
+
+                    return Either.left(result);
+                }
+            }
+        }
+    }
+
+    private Either<ToscaElement, StorageOperationStatus> updateEdgeToCatalogRootAndReturnPreVersionElement(
+        final P2<GraphVertex, JanusGraphVertex> tuple) {
+
+        final GraphVertex currVersionV = tuple._1();
+        final JanusGraphVertex preVersionVertex = tuple._2();
+
+        StorageOperationStatus updateCatalogRes = updateEdgeToCatalogRootByUndoCheckout(preVersionVertex, currVersionV);
+        if (updateCatalogRes != StorageOperationStatus.OK) {
+            return Either.right(updateCatalogRes);
+        } else {
+            final ToscaElementOperation operation = getToscaElementOperation(currVersionV.getLabel());
+
+            return operation.deleteToscaElement(currVersionV)
+                .left().bind(discarded -> getUpdatedPreVersionElement(operation, preVersionVertex));
+        }
+    }
+
+    private Either<ToscaElement, StorageOperationStatus> getUpdatedPreVersionElement(
+        final ToscaElementOperation operation,
+        final JanusGraphVertex preVersionVertex) {
+
+        if (preVersionVertex == null) {
+            return Either.left(null);
+        } else {
+            String uniqueIdPreVer = (String) janusGraphDao
+                .getProperty(preVersionVertex, GraphPropertyEnum.UNIQUE_ID.getProperty());
+            return operation.getToscaElement(uniqueIdPreVer);
+        }
     }
 
     private boolean hasPreviousVersion(GraphVertex toscaElementVertex) {
