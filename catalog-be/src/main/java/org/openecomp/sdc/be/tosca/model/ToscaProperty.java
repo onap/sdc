@@ -20,43 +20,42 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
 public class ToscaProperty {
 
-
     private Object _defaultp_;
+    @Getter
+    @Setter
     private String type;
+    @Getter
+    @Setter
     private String description;
+    @Getter
+    @Setter
     private Boolean required;
+    @Getter
+    @Setter
     private EntrySchema entry_schema;
+    @Getter
+    @Setter
+    private List<ToscaPropertyConstraint> constraints;
+    @Getter
+    @Setter
+    private String status;
 
-    public ToscaProperty(ToscaProperty toscaProperty) {
+    public ToscaProperty(final ToscaProperty toscaProperty) {
         this.type = toscaProperty.type;
         this._defaultp_ = toscaProperty._defaultp_;
         this.description = toscaProperty.description;
         this.required = toscaProperty.required;
         this.entry_schema = toscaProperty.entry_schema;
         this.status = toscaProperty.status;
-    }
-
-    private String status;
-
-    public EntrySchema getEntry_schema() {
-        return entry_schema;
-    }
-
-    public void setEntry_schema(EntrySchema entry_schema) {
-        this.entry_schema = entry_schema;
-    }
-
-    public ToscaProperty() {
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+        this.constraints = toscaProperty.constraints;
     }
 
     public Object getDefaultp() {
@@ -65,30 +64,6 @@ public class ToscaProperty {
 
     public void setDefaultp(Object defaultp) {
         this._defaultp_ = defaultp;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getRequired() {
-        return required;
-    }
-
-    public void setRequired(Boolean required) {
-        this.required = required;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
 }
