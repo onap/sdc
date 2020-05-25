@@ -38,11 +38,13 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -187,10 +189,41 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         if (MapUtils.isEmpty(targets)) {
             return policyDefinition;
         }
-        List<String> targetsToUpdate = targets.get(PolicyTargetType.COMPONENT_INSTANCES);
-        if (CollectionUtils.isEmpty(targetsToUpdate)) {
-            return policyDefinition;
+        policyDefinition.setTargets(getPolicyTargets(component, targets));
+        policyDefinition = validateAndUpdatePolicyTargets(component, policyDefinition.getUniqueId(),
+            policyDefinition.getTargets());
+        return policyDefinition;
+    }
+
+    private EnumMap<PolicyTargetType, List<String>> getPolicyTargets(Component component,
+        Map<PolicyTargetType, List<String>> targets) {
+        EnumMap<PolicyTargetType, List<String>> updatedTargets = new EnumMap<>(PolicyTargetType.class);
+        handlePolicyTargetsFromComponentInstances(component, targets, updatedTargets);
+        handlePolicyTargetsFromGroups(component, targets, updatedTargets);
+        return updatedTargets;
+    }
+
+    private void handlePolicyTargetsFromGroups(Component component, Map<PolicyTargetType, List<String>> targets,
+        EnumMap<PolicyTargetType, List<String>> updatedTargets) {
+        List<String> targetsToUpdate = targets.getOrDefault(PolicyTargetType.GROUPS, Collections.EMPTY_LIST);
+
+        List<String> targetUniqueIds = new ArrayList<>();
+
+        for (String targetName : targetsToUpdate) {
+            Optional<GroupDefinition> group = component.getGroupByInvariantName(targetName);
+            String groupUniqueId = group
+                .orElseThrow(() -> new ByActionStatusComponentException(
+                    ActionStatus.GROUP_INSTANCE_NOT_FOUND_ON_COMPONENT_INSTANCE)).getUniqueId();
+            targetUniqueIds.add(groupUniqueId);
         }
+        updatedTargets.put(PolicyTargetType.GROUPS, targetUniqueIds);
+    }
+
+    private void handlePolicyTargetsFromComponentInstances(Component component,
+        Map<PolicyTargetType, List<String>> targets, EnumMap<PolicyTargetType, List<String>> updatedTargets) {
+
+        List<String> targetsToUpdate = targets.getOrDefault(PolicyTargetType.COMPONENT_INSTANCES, Collections.EMPTY_LIST);
+
         // update targets to uniqueIds of respective component instance
         List<String> targetsUniqueIds = new ArrayList<>();
         for (String targetName : targetsToUpdate) {
@@ -204,12 +237,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
                                                .getUniqueId();
             targetsUniqueIds.add(componentUniqueId);
         }
-        EnumMap<PolicyTargetType, List<String>> updatedTargets = new EnumMap<>(PolicyTargetType.class);
         updatedTargets.put(PolicyTargetType.COMPONENT_INSTANCES, targetsUniqueIds);
-        policyDefinition.setTargets(updatedTargets);
-        policyDefinition = validateAndUpdatePolicyTargets(component, policyDefinition.getUniqueId(),
-                policyDefinition.getTargets());
-        return policyDefinition;
     }
 
     /*public Either<PolicyDefinition, ResponseFormat> createPolicy(ComponentTypeEnum componentType, String componentId, String policyTypeName, String userId, boolean shouldLock) {
