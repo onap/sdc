@@ -43,12 +43,14 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
@@ -144,20 +146,25 @@ public class CsarInfo {
     @SuppressWarnings("unchecked")
     private void extractNodeTypeInfo(Map<String, NodeTypeInfo> nodeTypesInfo,
                                      List<Map.Entry<String, byte[]>> globalSubstitutes, Map.Entry<String, byte[]> entry) {
-        if (Pattern.compile(CsarUtils.SERVICE_TEMPLATE_PATH_PATTERN).matcher(entry.getKey()).matches()) {
-            if (!isGlobalSubstitute(entry.getKey())) {
+        if (isAServiceTemplate(entry.getKey())) {
+            if (isGlobalSubstitute(entry.getKey())) {
+                globalSubstitutes.add(entry);
+            } else {
                 Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(new String(entry.getValue()));
                 findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS, ToscaElementTypeEnum.MAP)
                     .right()
                     .on(sub->handleSubstitutionMappings(nodeTypesInfo, entry, mappedToscaTemplate, (Map<String, Object>)sub));
-            }else {
-                globalSubstitutes.add(entry);
             }
         }
     }
+    
+    private boolean isAServiceTemplate(final String filePath) {
+      return Pattern.compile(CsarUtils.SERVICE_TEMPLATE_PATH_PATTERN).matcher(filePath).matches();
+  }
 
     private ResultStatusEnum handleSubstitutionMappings(Map<String, NodeTypeInfo> nodeTypesInfo, Map.Entry<String, byte[]> entry, Map<String, Object> mappedToscaTemplate, Map<String, Object> substitutionMappings) {
-        if (substitutionMappings.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName())) {
+      final Set<String> nodeTypesDefinedInTemplate = findNodeTypesDefinedInTemplate(mappedToscaTemplate);  
+      if (substitutionMappings.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName()) && !nodeTypesDefinedInTemplate.contains(substitutionMappings.get(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName()))) {
             NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
             nodeTypeInfo.setSubstitutionMapping(true);
             nodeTypeInfo.setType(
@@ -167,6 +174,17 @@ public class CsarInfo {
             nodeTypesInfo.put(nodeTypeInfo.getType(), nodeTypeInfo);
         }
         return ResultStatusEnum.OK;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Set<String> findNodeTypesDefinedInTemplate(final Map<String, Object> mappedToscaTemplate) {     
+        final Either<Object, ResultStatusEnum> nodeTypesEither = findToscaElement(mappedToscaTemplate,
+                TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
+        if (nodeTypesEither.isLeft()) {
+            final Map<String, Object> nodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
+            return nodeTypes.keySet();
+        }
+        return Collections.emptySet();
     }
 
     private boolean isGlobalSubstitute(String fileName) {
