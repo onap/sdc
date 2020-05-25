@@ -20,7 +20,17 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import javax.servlet.ServletContext;
 import org.junit.Before;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
@@ -29,7 +39,6 @@ import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
-import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
@@ -65,7 +74,6 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -79,17 +87,6 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
 
@@ -119,8 +116,6 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
     ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
     ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
     UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    protected final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
-    protected final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
     protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator(componentsUtils);
     protected ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
     protected ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
@@ -134,9 +129,6 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
     protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
     protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
     protected ServiceValidator serviceValidator = createServiceValidator();
-
-
-
 
     protected User user = null;
     protected Resource genericService = null;
@@ -218,7 +210,7 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
                 groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
                 artifactBl, distributionEngine, componentInstanceBusinessLogic,
                 serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
-                serviceFilterOperation, serviceFilterValidator, artifactToscaOperation, componentContactIdValidator,
+                artifactToscaOperation, componentContactIdValidator,
                 componentNameValidator, componentTagsValidator, componentValidator,
                 componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
         bl.setComponentContactIdValidator(componentContactIdValidator);

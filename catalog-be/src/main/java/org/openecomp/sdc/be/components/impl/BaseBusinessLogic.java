@@ -240,16 +240,6 @@ public abstract class BaseBusinessLogic {
         }
     }
 
-    protected ActionStatus lockComponentAndReturnStatus(final String componentId,
-                                                        final Component component,
-                                                        final String ecompErrorContext) {
-        final ActionStatus lock = lockElement(componentId, component, ecompErrorContext);
-        if (lock!= ActionStatus.OK) {
-            logAndThrowComponentException(lock, component.getUniqueId(), component.getName());
-        }
-        return ActionStatus.OK;
-    }
-
     protected void lockComponent(String componentId, Component component, boolean needLock, String ecompErrorContext) {
         if (needLock) {
             lockComponent(componentId, component, ecompErrorContext);

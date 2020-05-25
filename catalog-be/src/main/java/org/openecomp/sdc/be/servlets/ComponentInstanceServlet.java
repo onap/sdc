@@ -38,7 +38,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import org.apache.commons.collections.CollectionUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -46,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -66,11 +66,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -132,19 +133,19 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
     private final GroupBusinessLogic groupBL;
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-    private final ServiceBusinessLogic serviceBusinessLogic;
+    private final ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic;
 
 
     @Inject
     public ComponentInstanceServlet(UserBusinessLogic userBusinessLogic,
-        GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
-        ComponentsUtils componentsUtils, ServletUtils servletUtils,
-        ResourceImportManager resourceImportManager,
-        ServiceBusinessLogic serviceBusinessLogic) {
+                                    GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+                                    ComponentsUtils componentsUtils, ServletUtils servletUtils,
+                                    ResourceImportManager resourceImportManager,
+                                    ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.groupBL = groupBL;
         this.componentInstanceBusinessLogic = componentInstanceBL;
-        this.serviceBusinessLogic = serviceBusinessLogic;
+        this.nodeFilterBusinessLogic = nodeFilterBusinessLogic;
     }
 
     @POST
@@ -207,64 +208,67 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                     schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
                             ComponentTypeEnum.SERVICE_PARAM_NAME,
                             ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
-            @Context final HttpServletRequest request) throws IOException {
+            @Context final HttpServletRequest request) throws IOException, BusinessLogicException {
 
-        String url = request.getMethod() + " " + request.getRequestURI();
+        final String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE,StatusCode.STARTED,"update Component Instance Metadata");
+        final String userId = request.getHeader(Constants.USER_ID_HEADER);
+        componentInstanceBusinessLogic.validateUser(userId);
         try {
-
             log.debug(START_HANDLE_REQUEST_OF, url);
-
-            InputStream inputStream = request.getInputStream();
-
-            byte[] bytes = IOUtils.toByteArray(inputStream);
+            final byte[] bytes = IOUtils.toByteArray(request.getInputStream());
 
             if (bytes == null || bytes.length == 0) {
                 log.info(EMPTY_BODY_WAS_SENT);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
 
-            String userId = request.getHeader(Constants.USER_ID_HEADER);
-
-            String data = new String(bytes);
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+            final String data = new String(bytes);
+            final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR,
+                    containerComponentType));
             }
-            Either<ComponentInstance, ResponseFormat> convertResponse = convertToResourceInstance(data);
-
+            final Either<ComponentInstance, ResponseFormat> convertResponse = convertToResourceInstance(data);
             if (convertResponse.isRight()) {
                 BeEcompErrorManager.getInstance().logBeSystemError(RESOURCE_INSTANCE_UPDATE_RESOURCE_INSTANCE);
                 log.debug(FAILED_TO_CONVERT_RECEIVED_DATA_TO_BE_FORMAT);
                 return buildErrorResponse(convertResponse.right().value());
             }
 
-            ComponentInstance resourceInstance = convertResponse.left().value();
-            Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.updateComponentInstanceMetadata(containerComponentType, componentId, componentInstanceId, userId, resourceInstance);
-            loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE,actionResponse.left().value().getComponentMetadataForSupportLog(),StatusCode.COMPLETE,"update Component Instance Metadata by {}",userId);
+
+            final ComponentInstance componentInstance = convertResponse.left().value();
+            final Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic
+                .updateComponentInstanceMetadata(containerComponentType, componentId, componentInstanceId, userId, componentInstance);
+            loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE,actionResponse.left().value()
+                .getComponentMetadataForSupportLog(),StatusCode.COMPLETE,"update Component Instance Metadata by {}", userId);
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
-            ComponentInstance resultValue = actionResponse.left().value();
-            if (componentTypeEnum.equals(ComponentTypeEnum.SERVICE)){
-                if(CollectionUtils.isNotEmpty(resourceInstance.getDirectives())) {
-                    Either<CINodeFilterDataDefinition, ResponseFormat> either =
-                        serviceBusinessLogic.createIfNotAlreadyExistServiceFilter(componentId, componentInstanceId, userId,
-                            true);
-                    if (either.isRight()){
-                        BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - updateResourceInstance Failed to create service filter.");
-                        log.debug("Failed to create service filter.");
+
+            final ComponentInstance resultValue = actionResponse.left().value();
+            if (ComponentTypeEnum.SERVICE.equals(componentTypeEnum) ||
+                ComponentTypeEnum.RESOURCE.equals(componentTypeEnum) &&
+                    componentInstanceBusinessLogic.isVFC(componentInstance.getOriginType())) {
+
+                if(CollectionUtils.isNotEmpty(componentInstance.getDirectives())) {
+                    final Optional<CINodeFilterDataDefinition> nodeFilterDataDefinition =
+                            nodeFilterBusinessLogic.createNodeFilterIfNotExist(componentId, componentInstanceId,
+                                true,  componentTypeEnum);
+                    if (!nodeFilterDataDefinition.isPresent()){
+                        BeEcompErrorManager.getInstance().logBeSystemError("Failed to create node filter.");
+                        log.error("Failed to create node filter.");
                         return buildErrorResponse(convertResponse.right().value());
                     }
-                    resultValue.setNodeFilter(either.left().value());
-
+                    resultValue.setNodeFilter(nodeFilterDataDefinition.get());
                 } else {
-                    Either<String, ResponseFormat> either = serviceBusinessLogic.deleteIfNotAlreadyDeletedServiceFilter(componentId, componentInstanceId,  userId,true);
-                    if (either.isRight()){
-                        BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - updateResourceInstance Failed to delete service filter.");
-                        log.debug("Failed to delete service filter.");
+                    final Optional<String> result = nodeFilterBusinessLogic
+                        .deleteNodeFilterIfExists(componentId, componentInstanceId,  true, componentTypeEnum);
+                    if (!result.isPresent()){
+                        BeEcompErrorManager.getInstance().logBeSystemError("Failed to delete node filter.");
+                        log.error("Failed to delete node filter.");
                         return buildErrorResponse(convertResponse.right().value());
                     }
                     resultValue.setNodeFilter(null);
@@ -273,7 +277,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(UPDATE_RESOURCE_INSTANCE);
             log.debug(UPDATE_RESOURCE_INSTANCE_WITH_EXCEPTION, e);
             throw e;
@@ -377,7 +381,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Resource Instance");
             log.debug("delete resource instance with exception", e);
-            throw e;
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 

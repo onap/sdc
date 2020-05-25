@@ -21,8 +21,16 @@
  */
 package org.openecomp.sdc.be.components;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Sets;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletContext;
 import org.junit.Before;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
@@ -36,7 +44,6 @@ import org.openecomp.sdc.be.components.impl.ServiceBusinessLogicTest;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
-import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
@@ -57,7 +64,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -73,15 +79,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogicMock {
     private static final Logger log = LoggerFactory.getLogger(ServiceBusinessLogicTest.class);
     private static final String SERVICE_CATEGORY = "Mobility";
@@ -94,8 +91,6 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
     protected final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
     protected final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
     protected final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    protected final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
-    protected final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
     private ServiceBusinessLogic bl;
     private ResponseFormatManager responseManager = null;
     private IElementOperation mockElementDao;
@@ -173,7 +168,7 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
             groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactsBusinessLogic, distributionEngine, componentInstanceBusinessLogic,
             serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
-            serviceFilterOperation, serviceFilterValidator, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
+            artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
         bl.setUserAdmin(mockUserAdmin);
         bl.setGraphLockOperation(graphLockOperation);

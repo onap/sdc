@@ -22,12 +22,38 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.handleConsumptionInputMappedToCapabilityProperty;
+import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.isAssignedValueFromValidType;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
+import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
+import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
+import static org.openecomp.sdc.be.types.ServiceConsumptionSource.SERVICE_INPUT;
+import static org.openecomp.sdc.be.types.ServiceConsumptionSource.STATIC;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -41,12 +67,10 @@ import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
-import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
 import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
@@ -69,13 +93,11 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -107,7 +129,6 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
@@ -117,7 +138,6 @@ import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.plugins.ServiceCreationPlugin;
-import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -136,42 +156,15 @@ import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
-import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.handleConsumptionInputMappedToCapabilityProperty;
-import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.isAssignedValueFromValidType;
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
-import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
-import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
-import static org.openecomp.sdc.be.types.ServiceConsumptionSource.SERVICE_INPUT;
-import static org.openecomp.sdc.be.types.ServiceConsumptionSource.STATIC;
 
 
 @org.springframework.stereotype.Component("serviceBusinessLogic")
@@ -185,7 +178,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private static final String INITIAL_VERSION = "0.1";
     private static final String STATUS_SUCCESS_200 = "200";
     private static final String STATUS_DEPLOYED = "DEPLOYED";
-    private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ServiceBusinessLogic.class.getName());
     static final String IS_VALID = "isValid";
 
     private ForwardingPathOperation forwardingPathOperation;
@@ -196,8 +188,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final ServiceDistributionValidation serviceDistributionValidation;
     private final ForwardingPathValidator forwardingPathValidator;
     private final UiComponentDataConverter uiComponentDataConverter;
-    private final NodeFilterOperation serviceFilterOperation;
-    private final NodeFilterValidator serviceFilterValidator;
 
     private ServiceTypeValidator serviceTypeValidator;
     private List<ServiceCreationPlugin> serviceCreationPluginList;
@@ -230,24 +220,24 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     @Autowired
     public ServiceBusinessLogic(IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        GroupBusinessLogic groupBusinessLogic,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        ArtifactsBusinessLogic artifactsBusinessLogic,
-        IDistributionEngine distributionEngine, ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
-        ServiceDistributionValidation serviceDistributionValidation, ForwardingPathValidator forwardingPathValidator,
-        UiComponentDataConverter uiComponentDataConverter, NodeFilterOperation serviceFilterOperation,
-        NodeFilterValidator serviceFilterValidator, ArtifactsOperations artifactToscaOperation,
-        ComponentContactIdValidator componentContactIdValidator,
-        ComponentNameValidator componentNameValidator,
-        ComponentTagsValidator componentTagsValidator,
-        ComponentValidator componentValidator,
-        ComponentIconValidator componentIconValidator,
-        ComponentProjectCodeValidator componentProjectCodeValidator,
-        ComponentDescriptionValidator componentDescriptionValidator) {
+                                IGroupOperation groupOperation,
+                                IGroupInstanceOperation groupInstanceOperation,
+                                IGroupTypeOperation groupTypeOperation,
+                                GroupBusinessLogic groupBusinessLogic,
+                                InterfaceOperation interfaceOperation,
+                                InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+                                ArtifactsBusinessLogic artifactsBusinessLogic,
+                                IDistributionEngine distributionEngine, ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
+                                ServiceDistributionValidation serviceDistributionValidation, ForwardingPathValidator forwardingPathValidator,
+                                UiComponentDataConverter uiComponentDataConverter,
+                                ArtifactsOperations artifactToscaOperation,
+                                ComponentContactIdValidator componentContactIdValidator,
+                                ComponentNameValidator componentNameValidator,
+                                ComponentTagsValidator componentTagsValidator,
+                                ComponentValidator componentValidator,
+                                ComponentIconValidator componentIconValidator,
+                                ComponentProjectCodeValidator componentProjectCodeValidator,
+                                ComponentDescriptionValidator componentDescriptionValidator) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator,
                 componentNameValidator, componentTagsValidator, componentValidator,
@@ -257,9 +247,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         this.serviceDistributionValidation = serviceDistributionValidation;
         this.forwardingPathValidator = forwardingPathValidator;
         this.uiComponentDataConverter = uiComponentDataConverter;
-        this.serviceFilterOperation = serviceFilterOperation;
-        this.serviceFilterValidator = serviceFilterValidator;
-
     }
 
 
@@ -1239,7 +1226,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private void validateUserAndRole(Service serviceUpdate, User user, String errorContext) {
         user = validateUser(user, errorContext, serviceUpdate, null, false);
         validateUserRole(user, serviceUpdate, new ArrayList<>(), null, null);
-
     }
 
     @VisibleForTesting
@@ -2507,252 +2493,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
         UiComponentDataTransfer dataTransfer = uiComponentDataConverter.getUiDataTransferFromServiceByParams(service, dataParamsToReturn);
         return Either.left(dataTransfer);
-    }
-
-    public Either<String, ResponseFormat> deleteIfNotAlreadyDeletedServiceFilter(String serviceId, String resourceId, String userId, boolean lock) {
-        validateUserExists(userId);
-
-         Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
-        if (storageStatus.isRight()) {
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), ""));
-        }
-        Service service = storageStatus.left().value();
-
-        Either<Boolean, ResponseFormat> response = serviceFilterValidator.validateComponentInstanceExist(service, resourceId);
-        if (storageStatus.isRight()) {
-            return Either.right(response.right().value());
-        }
-        final Optional<ComponentInstance> optionalComponentInstance = service.getComponentInstanceById(resourceId);
-        if (!optionalComponentInstance.isPresent() ){
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
-        CINodeFilterDataDefinition nodeFilter = optionalComponentInstance.get().getNodeFilter();
-        if (nodeFilter == null){
-            return Either.left(resourceId);
-        }
-
-        Either<String, StorageOperationStatus> result;
-        try{
-            if (lock) {
-                lockComponent(service.getUniqueId(), service, "Delete Service Filter from service");
-            }
-            result = serviceFilterOperation.deleteNodeFilter(service , resourceId);
-            if (result.isRight()) {
-                log.debug("Failed to delete node filter in service {}. Response is {}. ", service.getName(), result.right().value());
-                janusGraphDao.rollback();
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE)));
-            }
-            janusGraphDao.commit();
-            log.debug("Node filter successfully changed in service {} . ", service.getSystemName());
-
-        } catch (Exception e){
-            log.error("Exception occurred during delete forwarding path : {}", e.getMessage(), e);
-            janusGraphDao.rollback();
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-        } finally {
-            graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
-        }
-        return Either.left(result.left().value());
-    }
-
-
-    public Either<CINodeFilterDataDefinition, ResponseFormat> createIfNotAlreadyExistServiceFilter(String serviceId, String componentInstanceId, String userId, boolean lock) {
-        String errorContext =  "createIfNotAlreadyExistServiceFilter";
-        User user = validateUserExists(userId);
-
-        Either<Service, StorageOperationStatus> serviceEither = toscaOperationFacade.getToscaElement(serviceId);
-        if (serviceEither.isRight()) {
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceEither.right().value(), ComponentTypeEnum.SERVICE), ""));
-        }
-        final Service service = serviceEither.left().value();
-        validateUserAndRole(service, user, errorContext);
-
-        Optional<ComponentInstance> optionalComponentInstance = service.getComponentInstanceById(componentInstanceId);
-        if (!optionalComponentInstance.isPresent()){
-            return Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
-        }
-        ComponentInstance componentInstance = optionalComponentInstance.get();
-        CINodeFilterDataDefinition serviceFilter = componentInstance.getNodeFilter();
-        if (serviceFilter != null){
-            return Either.left(serviceFilter);
-        }
-        if (lock) {
-            lockComponent(service.getUniqueId(), service, "Create Service Filter");
-        }
-        Either<CINodeFilterDataDefinition, StorageOperationStatus> result;
-
-        CINodeFilterDataDefinition serviceFilterResult;
-        try {
-            result =  serviceFilterOperation.createNodeFilter(serviceId, componentInstanceId);
-            if (result.isRight()) {
-                janusGraphDao.rollback();
-                return Either.right(componentsUtils.getResponseFormat(
-                        componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
-                        ""));
-            } else {
-                serviceFilterResult = result.left().value();
-            }
-            janusGraphDao.commit();
-
-        } catch (Exception e) {
-            janusGraphDao.rollback();
-            log.error("Exception occurred during add or update service filter property values: {}", e.getMessage(),
-                    e);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-
-        } finally {
-            graphLockOperation.unlockComponent(service.getUniqueId(), NodeTypeEnum.Service);
-        }
-        return Either.left(serviceFilterResult);
-    }
-
-
-    public Either<CINodeFilterDataDefinition, ResponseFormat> updateServiceFilter(String serviceId, String componentInstanceId,
-            List<String> constraints,  User inUser, boolean lock) {
-        User user = validateUserExists(inUser.getUserId());
-        validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
-        Either<Service, StorageOperationStatus> serviceStorageOperationStatusEither = toscaOperationFacade.getToscaElement(serviceId);
-
-        if(serviceStorageOperationStatusEither.isRight()){
-            StorageOperationStatus errorStatus = serviceStorageOperationStatusEither.right().value();
-            log.debug("Failed to fetch service information by service id, error {}", errorStatus);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
-        }
-        Service storedService = serviceStorageOperationStatusEither.left().value();
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither =
-                serviceFilterValidator.validateNodeFilter(storedService, componentInstanceId, constraints,
-                        NodeFilterConstraintAction.UPDATE);
-        if(booleanResponseFormatEither.isRight()){
-            return Either.right(booleanResponseFormatEither.right().value());
-        }
-
-
-        Either<Boolean, ResponseFormat> lockResult = null;
-        if (lock) {
-            lockComponent(storedService.getUniqueId(), storedService, "Add or Update Service Filter on Service");
-        }
-        Optional<ComponentInstance> componentInstanceOptional = storedService.getComponentInstanceById(componentInstanceId);
-        if (!componentInstanceOptional.isPresent()){
-            return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
-        }
-        CINodeFilterDataDefinition serviceFilter = componentInstanceOptional.get().getNodeFilter();
-        if(serviceFilter == null){
-            return  Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
-        }
-        CINodeFilterDataDefinition serviceFilterResult;
-        try {
-            List<RequirementNodeFilterPropertyDataDefinition> properties =  constraints.stream().map(this::getRequirementNodeFilterPropertyDataDefinition).collect(Collectors.toList());
-            Either<CINodeFilterDataDefinition, StorageOperationStatus>  result =  serviceFilterOperation.updateProperties(serviceId, componentInstanceId, serviceFilter ,properties);
-
-            if (result.isRight()) {
-                janusGraphDao.rollback();
-                return Either.right(componentsUtils.getResponseFormat(
-                        componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
-                        ""));
-            } else {
-                serviceFilterResult = result.left().value();
-            }
-            janusGraphDao.commit();
-
-        } catch (Exception e) {
-            janusGraphDao.rollback();
-            log.error("Exception occurred during add or update service filter property values: {}", e.getMessage(),
-                    e);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-
-        } finally {
-            if (lockResult != null && lockResult.isLeft() && lockResult.left().value()) {
-                graphLockOperation.unlockComponent(storedService.getUniqueId(), NodeTypeEnum.Service);
-            }
-        }
-        return Either.left(serviceFilterResult);
-    }
-
-    private RequirementNodeFilterPropertyDataDefinition getRequirementNodeFilterPropertyDataDefinition(String constraint){
-        RequirementNodeFilterPropertyDataDefinition pdd = new RequirementNodeFilterPropertyDataDefinition();
-        pdd.setConstraints(Arrays.asList(constraint));
-        return pdd;
-    }
-
-    public Either<CINodeFilterDataDefinition, ResponseFormat> addOrDeleteServiceFilter(String serviceId, String componentInstanceId,
-            NodeFilterConstraintAction action, String propertyName, String constraint, int position, User inUser, boolean lock) {
-        User user = validateUserExists(inUser.getUserId());
-        validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
-
-        Either<Service, StorageOperationStatus> serviceStorageOperationStatusEither = toscaOperationFacade.getToscaElement(serviceId);
-
-        if(serviceStorageOperationStatusEither.isRight()){
-            StorageOperationStatus errorStatus = serviceStorageOperationStatusEither.right().value();
-            log.debug("Failed to fetch service information by service id, error {}", errorStatus);
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
-        }
-        Service storedService = serviceStorageOperationStatusEither.left().value();
-
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither =
-                serviceFilterValidator.validateNodeFilter(storedService, componentInstanceId,
-                        Collections.singletonList(constraint), action);
-        if(booleanResponseFormatEither.isRight()){
-            return Either.right(booleanResponseFormatEither.right().value());
-        }
-
-        Either<CINodeFilterDataDefinition, StorageOperationStatus> result = null;
-
-        CINodeFilterDataDefinition serviceFilterResult = null;
-        ActionStatus lockStatus = null;
-        try {
-            if (lock) {
-                lockStatus = lockComponentAndReturnStatus(storedService.getUniqueId(), storedService, "Add or Update Service Filter on Service");
-            }
-
-            Optional<ComponentInstance> componentInstanceOptional = storedService.getComponentInstanceById(componentInstanceId);
-            if (!componentInstanceOptional.isPresent()) {
-                return Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
-            }
-            CINodeFilterDataDefinition serviceFilter = componentInstanceOptional.get().getNodeFilter();
-            if (serviceFilter == null) {
-                return Either.right(ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
-            }
-
-
-            switch (action) {
-                case ADD:
-                    RequirementNodeFilterPropertyDataDefinition newProperty = new RequirementNodeFilterPropertyDataDefinition();
-                    newProperty.setName(propertyName);
-                    newProperty.setConstraints(Collections.singletonList(constraint));
-                    result = serviceFilterOperation.addNewProperty(serviceId, componentInstanceId, serviceFilter, newProperty);
-                    break;
-                case DELETE:
-                    result = serviceFilterOperation.deleteConstraint(serviceId, componentInstanceId, serviceFilter, position);
-                    break;
-                default:
-                    log.error("Unsupported operation " + action);
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-
-            }
-
-            if (result != null && result.isRight()) {
-                janusGraphDao.rollback();
-                return Either.right(componentsUtils.getResponseFormat(
-                        componentsUtils.convertFromStorageResponse(result.right().value(), ComponentTypeEnum.SERVICE),
-                        ""));
-            } else {
-                serviceFilterResult = result.left().value();
-            }
-            janusGraphDao.commit();
-
-        } catch (Exception e) {
-            janusGraphDao.rollback();
-            log.error("Exception occurred during add or update node filter property values: {}", e.getMessage(),
-                    e);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-
-        } finally {
-            if (ActionStatus.OK == lockStatus) {
-                graphLockOperation.unlockComponent(storedService.getUniqueId(), NodeTypeEnum.Service);
-            }
-        }
-        return Either.left(serviceFilterResult);
     }
 
     @Autowired(required = false)

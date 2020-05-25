@@ -384,16 +384,16 @@ export class TopologyTemplateService {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES]);
     }
 
-    createServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject): Observable<any> {
-        return this.http.post<any>(this.baseUrl + 'services/' + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter', constraint);
+    createServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject, componentType: string): Observable<any> {
+        return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter', constraint);
     }
 
-    updateServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraints: ConstraintObject[]):Observable<any> {
-        return this.http.put<any>(this.baseUrl + 'services/' + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter', constraints)
+    updateServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraints: ConstraintObject[], componentType: string):Observable<any>{
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter', constraints)
     }
 
-    deleteServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraintIndex: number): Observable<any>{
-        return this.http.delete<any>(this.baseUrl + 'services/' + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter/' + constraintIndex)
+    deleteServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraintIndex: number, componentType: string): Observable<any>{
+        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter/' + constraintIndex)
     }
 
     deletePolicy(component: Component, policy: PolicyInstance): Observable<PolicyInstance> {

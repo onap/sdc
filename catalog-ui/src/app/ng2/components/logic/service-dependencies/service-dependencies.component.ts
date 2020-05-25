@@ -315,7 +315,8 @@ export class ServiceDependenciesComponent {
         this.topologyTemplateService.createServiceFilterConstraints(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
-            newRuleToCreate
+            newRuleToCreate,
+            this.compositeService.componentType
         ).subscribe( (response) => {
             this.updateRulesListEvent.emit(response.properties);
             this.isLoading = false;
@@ -331,7 +332,8 @@ export class ServiceDependenciesComponent {
         this.topologyTemplateService.updateServiceFilterConstraints(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
-            allRulesToUpdate
+            allRulesToUpdate,
+            this.compositeService.componentType
         ).subscribe((response) => {
             this.updateRulesListEvent.emit(response.properties);
             this.isLoading = false;
@@ -354,7 +356,8 @@ export class ServiceDependenciesComponent {
         this.topologyTemplateService.deleteServiceFilterConstraints(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
-            index
+            index,
+            this.compositeService.componentType
         ).subscribe( (response) => {
             this.updateRulesListEvent.emit(response.properties);
             this.isLoading = false;

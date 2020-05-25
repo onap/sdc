@@ -21,6 +21,12 @@
  */
 package org.openecomp.sdc.be.components;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +43,6 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
-import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
@@ -47,17 +52,10 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by chaya on 10/26/2017.
@@ -71,8 +69,6 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
     private final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
     private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    private final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
-    private final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
 
 
     @InjectMocks
@@ -80,7 +76,7 @@ public class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
         groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
         artifactsBusinessLogic, distributionEngine, componentInstanceBusinessLogic,
         serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
-        serviceFilterOperation, serviceFilterValidator, artifactToscaOperation, componentContactIdValidator,
+        artifactToscaOperation, componentContactIdValidator,
         componentNameValidator, componentTagsValidator, componentValidator, componentIconValidator,
         componentProjectCodeValidator, componentDescriptionValidator);
 
