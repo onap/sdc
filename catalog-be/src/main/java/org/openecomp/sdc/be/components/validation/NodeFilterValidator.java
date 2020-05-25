@@ -22,18 +22,23 @@ package org.openecomp.sdc.be.components.validation;
 
 import com.google.common.collect.ImmutableSet;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
@@ -41,17 +46,9 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-@Component("NodeFilterValidator")
+@org.springframework.stereotype.Component("NodeFilterValidator")
 public class NodeFilterValidator {
 
     private static final String SOURCE = "Source";
@@ -70,18 +67,19 @@ public class NodeFilterValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeFilterValidator.class);
 
-    public Either<Boolean, ResponseFormat> validateComponentInstanceExist(Service service, String componentInstanceId) {
-        if (service == null || StringUtils.isEmpty(componentInstanceId)) {
+    public Either<Boolean, ResponseFormat> validateComponentInstanceExist(
+        final Component component,
+        final String componentInstanceId) {
+        if (component == null || StringUtils.isEmpty(componentInstanceId)) {
             LOGGER.debug("Input data cannot be empty");
             return getErrorResponse(ActionStatus.NODE_FILTER_NOT_FOUND);
         }
-        if (CollectionUtils.isEmpty(service.getComponentInstances())) {
+        if (CollectionUtils.isEmpty(component.getComponentInstances())) {
             LOGGER.debug("Component Instance list is empty");
             return getErrorResponse(ActionStatus.NODE_FILTER_NOT_FOUND);
         }
-        boolean found =
-                service.getComponentInstances().stream().anyMatch(ci -> ci.getUniqueId().equals(componentInstanceId));
-        if (!found) {
+        if (component.getComponentInstances().stream()
+            .noneMatch(ci -> ci.getUniqueId().equals(componentInstanceId))) {
             LOGGER.debug("Component Instance list is empty");
             return getErrorResponse(ActionStatus.NODE_FILTER_NOT_FOUND);
         }
@@ -93,20 +91,16 @@ public class NodeFilterValidator {
         return Either.right(errorResponse);
     }
 
-    public Either<Boolean, ResponseFormat> validateNodeFilter(CINodeFilterDataDefinition nodeFilter, String serviceId,
-            String complonentInstanceId) {
-        return Either.left(Boolean.TRUE);
-    }
-
-
-    public Either<Boolean, ResponseFormat> validateNodeFilter(Service parentComponent, String componentInstanceId,
-            List<String> uiConstraints, NodeFilterConstraintAction action) {
+    public Either<Boolean, ResponseFormat> validateNodeFilter(final Component parentComponent,
+                                                              final String componentInstanceId,
+                                                              final List<String> uiConstraints,
+                                                              final NodeFilterConstraintAction action) {
         try {
-            for (String uiConstraint : uiConstraints) {
+            for (final String uiConstraint : uiConstraints) {
                 if (NodeFilterConstraintAction.ADD != action && NodeFilterConstraintAction.UPDATE != action) {
                     break;
                 }
-                UIConstraint constraint = new ConstraintConvertor().convert(uiConstraint);
+                final UIConstraint constraint = new ConstraintConvertor().convert(uiConstraint);
                 if (ConstraintConvertor.PROPERTY_CONSTRAINT.equals(constraint.getSourceType())) {
                     final Either<Boolean, ResponseFormat> booleanResponseFormatEither =
                             validatePropertyConstraint(parentComponent, componentInstanceId, constraint);
@@ -121,7 +115,7 @@ public class NodeFilterValidator {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.debug("Provided constraint" + uiConstraints, e);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CONSTRAINT_FORMAT_INCORRECT));
         }
@@ -129,10 +123,11 @@ public class NodeFilterValidator {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validatePropertyConstraint(Service parentComponent,
-            String componentInstanceId, UIConstraint uiConstraint) {
+    private Either<Boolean, ResponseFormat> validatePropertyConstraint(
+        final Component  parentComponent,
+        final String componentInstanceId, final UIConstraint uiConstraint) {
         String source = SOURCE;
-        Optional<ComponentInstance> brotherComponentInstance;
+        final Optional<ComponentInstance> brotherComponentInstance;
 
         List<? extends PropertyDefinition> sourcePropertyDefinition =
                 parentComponent.getName().equals(uiConstraint.getSourceName()) ? parentComponent.getProperties() :
@@ -213,12 +208,13 @@ public class NodeFilterValidator {
         }
     }
 
-    private Either<Boolean, ResponseFormat> validateStaticValueAndOperator(Service parentComponent,
-            String componentInstanceId, UIConstraint uiConstraint) {
+    private Either<Boolean, ResponseFormat> validateStaticValueAndOperator(
+        final Component  parentComponent,
+        final String componentInstanceId, final UIConstraint uiConstraint) {
         if (!(Objects.nonNull(uiConstraint) && uiConstraint.getValue() instanceof String)) {
             return Either.left(false);
         }
-        Optional<ComponentInstanceProperty> componentInstanceProperty =
+        final Optional<ComponentInstanceProperty> componentInstanceProperty =
                 parentComponent.getComponentInstancesProperties().get(componentInstanceId).stream()
                                .filter(property -> uiConstraint.getServicePropertyName().equals(property.getName()))
                                .findFirst();

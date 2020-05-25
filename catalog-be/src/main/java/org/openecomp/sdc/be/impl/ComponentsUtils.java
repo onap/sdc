@@ -30,7 +30,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fj.F;
 import fj.data.Either;
-import java.util.function.Function;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
@@ -70,13 +77,16 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
+import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
@@ -99,6 +109,7 @@ import org.openecomp.sdc.be.resources.data.auditing.model.OperationalEnvAuditDat
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.tosca.ToscaError;
+import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UiLeftPaletteComponent;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.LogLevel;
@@ -110,12 +121,6 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @org.springframework.stereotype.Component("componentUtils")
 public class ComponentsUtils {
@@ -1667,6 +1672,53 @@ public class ComponentsUtils {
         List<UiLeftPaletteComponent> uiLeftPaletteComponents = new ArrayList<>();
         components.forEach(c-> uiLeftPaletteComponents.add(new UiLeftPaletteComponent(c)));
         return uiLeftPaletteComponents;
+    }
+
+    private static Set<String> getNodesFiltersToBeDeleted(final Component component,
+                                                         final String componentInstanceName) {
+        return component.getComponentInstances().stream()
+            .filter(ci -> isNodeFilterUsingChangedCi(ci, componentInstanceName))
+            .map(ComponentInstance::getName).collect(Collectors.toSet());
+    }
+    
+    public static Set<String> getNodesFiltersToBeDeleted(final Component component, 
+                                                         final ComponentInstance componentInstance) {
+        return getNodesFiltersToBeDeleted(component, componentInstance.getName());
+    }
+
+    private static boolean isNodeFilterUsingChangedCi(final ComponentInstance componentInstance, 
+                                                      final String componentInstanceName) {
+        if (CollectionUtils.isEmpty(componentInstance.getDirectives())) {
+            return false;
+        }
+        if (componentInstance.getNodeFilter() == null || componentInstance.getNodeFilter().getProperties() == null
+            || componentInstance.getNodeFilter().getProperties().getListToscaDataDefinition() == null) {
+            return false;
+        }
+        return componentInstance.getNodeFilter().getProperties().getListToscaDataDefinition().stream()
+            .anyMatch(property -> isPropertyConstraintChangedByCi(property, componentInstanceName));
+    }
+
+    private static boolean isPropertyConstraintChangedByCi(
+        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition, 
+        final String componentInstanceName) {
+        final List<String> constraints = requirementNodeFilterPropertyDataDefinition.getConstraints();
+        if (constraints == null) {
+            return false;
+        }
+        return constraints.stream().anyMatch(constraint -> isConstraintChangedByCi(constraint, componentInstanceName));
+    }
+
+    private static boolean isConstraintChangedByCi(final String constraint, 
+                                                   final String componentInstanceName) {
+        final UIConstraint uiConstraint = new ConstraintConvertor().convert(constraint);
+        if (uiConstraint == null || uiConstraint.getSourceType() == null) {
+            return false;
+        }
+        if (!uiConstraint.getSourceType().equals(ConstraintConvertor.PROPERTY_CONSTRAINT)) {
+            return false;
+        }
+        return uiConstraint.getSourceName().equals(componentInstanceName);
     }
 
     public F<StorageOperationStatus, ResponseFormat> toResponseFormat() {

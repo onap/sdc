@@ -26,7 +26,6 @@ import fj.data.Either;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
@@ -36,7 +35,7 @@ import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
@@ -47,23 +46,21 @@ public class NodeFilterOperation extends BaseOperation {
 
     private static Logger logger = Logger.getLogger(NodeFilterOperation.class);
 
-    public Either<Set<String>, StorageOperationStatus> deleteNodeFilters(Service service,
-            Set<String> componentInstanceIds) {
-        Either<GraphVertex, JanusGraphOperationStatus> getComponentVertex;
-        Either<GraphVertex, JanusGraphOperationStatus> getNodeFilterVertex;
+    public Either<Set<String>, StorageOperationStatus> deleteNodeFilters(final Component component,
+                                                                         final Set<String> componentInstanceIds) {
+        final Either<GraphVertex, JanusGraphOperationStatus> getComponentVertex;
+        final Either<GraphVertex, JanusGraphOperationStatus> getNodeFilterVertex;
         StorageOperationStatus status;
 
-        getComponentVertex = janusGraphDao.getVertexById(service.getUniqueId(), JsonParseFlagEnum.NoParse);
+        getComponentVertex = janusGraphDao.getVertexById(component.getUniqueId(), JsonParseFlagEnum.NoParse);
         if (getComponentVertex.isRight()) {
             return Either.right(
                     DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
         }
-
-        getNodeFilterVertex =
-                janusGraphDao.getChildVertex(getComponentVertex.left().value(), EdgeLabelEnum.NODE_FILTER_TEMPLATE,
-                        JsonParseFlagEnum.NoParse);
+        getNodeFilterVertex = janusGraphDao.getChildVertex(getComponentVertex.left().value(),
+            EdgeLabelEnum.NODE_FILTER_TEMPLATE, JsonParseFlagEnum.NoParse);
         if (getNodeFilterVertex.isLeft()) {
-            status = deleteToscaDataElements(service.getUniqueId(), EdgeLabelEnum.NODE_FILTER_TEMPLATE,
+            status = deleteToscaDataElements(component.getUniqueId(), EdgeLabelEnum.NODE_FILTER_TEMPLATE,
                     new ArrayList<>(componentInstanceIds));
             if (status != StorageOperationStatus.OK) {
                 return Either.right(status);
@@ -74,9 +71,10 @@ public class NodeFilterOperation extends BaseOperation {
     }
 
 
-    public Either<String, StorageOperationStatus> deleteNodeFilter(Service service, String componentInstanceId) {
+    public Either<String, StorageOperationStatus> deleteNodeFilter(final Component component,
+                                                                   final String componentInstanceId) {
         final Either<Set<String>, StorageOperationStatus> listStorageOperationStatusEither =
-                deleteNodeFilters(service, ImmutableSet.of(componentInstanceId));
+                deleteNodeFilters(component, ImmutableSet.of(componentInstanceId));
         if (listStorageOperationStatusEither.isRight()) {
             return Either.right(listStorageOperationStatusEither.right().value());
         }

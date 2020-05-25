@@ -20,9 +20,28 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum.SERVICE_PARAM_NAME;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -33,6 +52,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
@@ -55,26 +75,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum.SERVICE_PARAM_NAME;
-
 /**
  * The test suite designed for test functionality of ComponentInstanceServlet class
  */
@@ -94,6 +94,7 @@ public class ComponentInstanceServletTest extends JerseyTest {
     private static GroupBusinessLogic groupBusinessLogic;
     private static ResourceImportManager resourceImportManager;
     private static ServiceBusinessLogic serviceBusinessLogic;
+    private static ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
 
     @BeforeClass
     public static void setup() {
@@ -261,6 +262,7 @@ public class ComponentInstanceServletTest extends JerseyTest {
                         bind(servletUtils).to(ServletUtils.class);
                         bind(resourceImportManager).to(ResourceImportManager.class);
                         bind(serviceBusinessLogic).to(ServiceBusinessLogic.class);
+                        bind(componentNodeFilterBusinessLogic).to(ComponentNodeFilterBusinessLogic.class);
                     }
                 })
                 .property("contextConfig", context);
@@ -280,6 +282,7 @@ public class ComponentInstanceServletTest extends JerseyTest {
         servletUtils = Mockito.mock(ServletUtils.class);
         responseFormat = Mockito.mock(ResponseFormat.class);
         serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
+        componentNodeFilterBusinessLogic = Mockito.mock(ComponentNodeFilterBusinessLogic.class);
     }
 
     private static void stubMethods() {
