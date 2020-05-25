@@ -56,7 +56,7 @@ public class PolicyExportParserImplTest {
 	private static final String[] POLICY_TYPE_NAMES = {"policyTypeName_1","policyTypeName_2"};
 	private static final String[] POLICY_COMPONENT_INSTANCES = {"policyComponentInstanceId"};
 	private static final String POLICY_COMPONENT_INSTANCES_NAME = "policyComponentInstanceName";
-	private static final String[] POLICY_GROUPS = {"policyGroupId"};
+	private static final String[] POLICY_GROUPS = new String[] {"PolicyGroupName"};
 	private static final String POLICY_GROUP_NAME = "PolicyGroupName";
 	
 	private PolicyExportParser policiyExportParser;

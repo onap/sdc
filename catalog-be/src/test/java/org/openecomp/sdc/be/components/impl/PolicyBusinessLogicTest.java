@@ -197,10 +197,15 @@ public class PolicyBusinessLogicTest {
         componentInstance.setName(UNIQUE_ID_EXSISTS);
         instanceList.add(componentInstance);
 
+        GroupDefinition groupDefinition = new GroupDefinition();
+        groupDefinition.setUniqueId(UNIQUE_ID_EXSISTS);
+        groupDefinition.setName(UNIQUE_ID_EXSISTS);
+
         Resource newResource = buildResource();
         newResource.setPolicies(policies);
         newResource.setComponentInstances(instanceList);
-        
+        newResource.addGroups(Collections.singletonList(groupDefinition));
+
         when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME))).thenReturn(getPolicyTypeSuccessEither);
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(Either.left(policy));
         when(toscaOperationFacade.getToscaFullElement(eq(COMPONENT_ID))).thenReturn(Either.left(newResource));
@@ -217,7 +222,7 @@ public class PolicyBusinessLogicTest {
         assertNotNull(newPolicy.getTargets());
         assertNotNull(newPolicy.getProperties());
         assertEquals(2, newPolicy.getProperties().size());
-        assertEquals(1, newPolicy.getTargets().size());
+        assertEquals(2, newPolicy.getTargets().size());
     }
     
     @Test
