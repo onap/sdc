@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7c2b4d9_1a0eb10e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/TogglingBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T11:50:29Z",
+      "side": 1,
+      "message": "This class seems to have too many parameters which probably adds an issue in Sonar. Ideally the TogglingBusinessLogic class should be chunked into smaller pieces according Object Oriented best practices.",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b5626b9_c58becaa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/TogglingBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T11:50:29Z",
+      "side": 1,
+      "message": "This condition will be always false as explained here: https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html#valueOf-java.lang.Class-java.lang.String-. If the `featureName` happens to be invalid an exception will be thrown. Please handle this case.",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54fa88fc_ae6631f9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/TogglingBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T11:50:29Z",
+      "side": 1,
+      "message": "Could you please get rid of the singleton and pass it through arguments? Singleton is used as an anti-pattern to manage global state (es explained here: https://en.wikipedia.org/wiki/Singleton_pattern).",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c2f412e_3dc78a0c",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/HealingJanusGraphDao.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T11:50:29Z",
+      "side": 1,
+      "message": "Could you please inline `optional` here? The initial declaration is redundant here.",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "570e0a1b_03bd7f5a",
+        "filename": "catalog-dao/src/test/java/org/openecomp/sdc/be/dao/cassandra/HealingPipelineDaoTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T11:50:29Z",
+      "side": 1,
+      "message": "Any reason this needs to be static? Couldn\u0027t we make it a local variable in the test it is being used?",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "137b7c32_9c0a17de",
+        "filename": "common-be/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T11:50:29Z",
+      "side": 1,
+      "message": "Please removes tabs and use Google code\u0027s style.",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fbfbe269_73cdc612",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/togglz/ToggleableFeature.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T11:50:29Z",
+      "side": 1,
+      "message": "This condition will be always false as `values` would return an empty list if the enum is empty.",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fba68918_78d7c0b7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/action-library-rest/action-library-rest-services/src/main/java/org/openecomp/sdcrests/action/rest/services/ActionsImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-25T11:50:29Z",
+      "side": 1,
+      "message": "Any way we can use `HttpStatus.OK` instead of 200 (this is considered to be a magic number used as is)?",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
