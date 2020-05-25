@@ -75,14 +75,19 @@ public class CsarInfoTest {
     @Before
     public void setup() throws ZipException, URISyntaxException {
         // given
-        final File csarFile = new File(CsarInfoTest.class.getClassLoader().getResource(PAYLOAD_NAME).toURI());
-        final Map<String, byte[]> payload = ZipUtils.readZip(csarFile, false);
-        String mainTemplateContent = new String(payload.get(MAIN_TEMPLATE_NAME));
+        csarInfo = createCsarInfo(PAYLOAD_NAME, MAIN_TEMPLATE_NAME);
 
-        csarInfo = new CsarInfo(user, CSAR_UUID, payload, RESOURCE_NAME,
-                MAIN_TEMPLATE_NAME, mainTemplateContent, true);
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
+    
+    private CsarInfo createCsarInfo(final String csarFileName, final String mainTemplateName) throws URISyntaxException, ZipException {
+      final File csarFile = new File(CsarInfoTest.class.getClassLoader().getResource(csarFileName).toURI());
+      final Map<String, byte[]> payload = ZipUtils.readZip(csarFile, false);
+      String mainTemplateContent = new String(payload.get(mainTemplateName));
+
+      return new CsarInfo(user, CSAR_UUID, payload, RESOURCE_NAME,
+              mainTemplateName, mainTemplateContent, true);
+  }
 
     @Test
     public void add2TimesTheSameNodeTest() {
@@ -150,5 +155,16 @@ public class CsarInfoTest {
         csarInfo.setCsar(new HashMap<>());
         final Optional<String> softwareInformationPath = csarInfo.getSoftwareInformationPath();
         assertThat("The software information yaml path should not be present", softwareInformationPath.isPresent(), is(false));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testCreateCsarInfoEtsiVnf() throws URISyntaxException, ZipException {
+        final CsarInfo csarInfo = createCsarInfo("etsi_vnf.csar", "Definitions/MainServiceTemplate.yaml");
+        
+        final String nodeTypeInSubstitutionMapping = (String) ((Map<String, Object>)((Map<String, Object>)csarInfo.getMappedToscaMainTemplate().get("topology_template")).get("substitution_mappings")).get("node_type");
+        assertTrue(((Map<String, Object>) csarInfo.getMappedToscaMainTemplate().get("node_types")).containsKey(nodeTypeInSubstitutionMapping));
+        
+        assertTrue(csarInfo.extractNodeTypesInfo().isEmpty());
     }
 }
