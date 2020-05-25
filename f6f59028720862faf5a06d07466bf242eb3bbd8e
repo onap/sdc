@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c82f6c3_0c18d445",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/application-config-rest/application-config-rest-services/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-25T15:22:58Z",
+      "side": 1,
+      "message": "any particular reason for NOT using ${jersey-bom.version}? are you planning to have different versions?",
+      "range": {
+        "startLine": 16,
+        "startChar": 27,
+        "endLine": 16,
+        "endChar": 33
+      },
+      "revId": "f6f59028720862faf5a06d07466bf242eb3bbd8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
