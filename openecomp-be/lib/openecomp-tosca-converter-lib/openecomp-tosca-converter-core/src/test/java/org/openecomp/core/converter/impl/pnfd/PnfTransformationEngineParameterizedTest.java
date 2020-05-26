@@ -74,7 +74,7 @@ public class PnfTransformationEngineParameterizedTest {
 
 
     @Parameterized.Parameters(name = "{index}: input: {0}, descriptor: {4}, output: {2}")
-    public static Collection input() throws IOException, URISyntaxException {
+    public static Collection<Object> input() throws IOException, URISyntaxException {
         return Files.list(getPathFromClasspath(TEST_CASES_PATH)).map(path -> {
             try {
                 return buildTestCase(path);
@@ -84,7 +84,7 @@ public class PnfTransformationEngineParameterizedTest {
         }).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
-    private static Collection buildTestCase(final Path testCasePath) throws IOException {
+    private static Collection<Object[]> buildTestCase(final Path testCasePath) throws IOException {
         final Path inputFilePath = Files.list(testCasePath)
             .filter(path -> path.toFile().getName().endsWith("yaml"))
             .findAny().orElse(null);
