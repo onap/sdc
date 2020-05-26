@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8906022_a509dc61",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/ConfigurationUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-26T21:00:03Z",
+      "side": 1,
+      "message": "remove unused import",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 37
+      },
+      "revId": "69bfd35160202ab4b01de2f6c60ffb0e3ffcae1d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
