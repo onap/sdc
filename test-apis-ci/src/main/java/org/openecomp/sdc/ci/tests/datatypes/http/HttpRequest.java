@@ -31,9 +31,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.net.www.protocol.https.DefaultHostnameVerifier;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -250,18 +248,19 @@ public class HttpRequest {
 		}
 	}
 
+	public static HttpsURLConnection getConnection(String url) throws IOException {
+		return (HttpsURLConnection) new URL(url)
+			.openConnection();
+	}
 
 	//	-----------------------------Https------------------------------------------------------------------------
 	public RestResponse httpsSendGet(String url, Map<String, String> headers) throws IOException {
 
 		RestResponse restResponse = new RestResponse();
 		url = url.replaceAll("\\s", "%20");
-		URL obj = new URL(null, url, new sun.net.www.protocol.https.Handler());
-		HttpsURLConnection con = (HttpsURLConnection)obj.openConnection();
+		HttpsURLConnection con = getConnection(url);
 // optional default is GET
 		con.setRequestMethod("GET");
-		HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
-		con.setHostnameVerifier(hostnameVerifier);
 		addHttpsRequestHeaders(headers, con);
 		Boolean multiPart = false;
 		if(headers.get(HttpHeaderEnum.ACCEPT.getValue()) != null) {
@@ -295,10 +294,7 @@ public class HttpRequest {
 	public RestResponse httpsSendPost(String url, String body, Map<String, String> headers) throws IOException {
 
 		RestResponse restResponse = new RestResponse();
-		URL obj = new URL(null, url, new sun.net.www.protocol.https.Handler());
-		HttpsURLConnection con = (HttpsURLConnection)obj.openConnection();
-		HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
-		con.setHostnameVerifier(hostnameVerifier);
+		HttpsURLConnection con = getConnection(url);
 // add request method
 		con.setRequestMethod("POST");
 // add request headers
@@ -336,10 +332,7 @@ public class HttpRequest {
 	public RestResponse httpsSendByMethod(String url, String method, String body, Map<String, String> headers) throws IOException {
 
 		RestResponse restResponse = new RestResponse();
-		URL obj = new URL(null, url, new sun.net.www.protocol.https.Handler());
-		HttpsURLConnection con = (HttpsURLConnection)obj.openConnection();
-		HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
-		con.setHostnameVerifier(hostnameVerifier);
+		HttpsURLConnection con = getConnection(url);
 // add request method
 		con.setRequestMethod(method);
 // add request headers
@@ -379,10 +372,7 @@ public class HttpRequest {
 	public RestResponse httpsSendDelete(String url, Map<String, String> headers) throws IOException {
 
 		RestResponse restResponse = new RestResponse();
-		URL obj = new URL(null, url, new sun.net.www.protocol.https.Handler());
-		HttpsURLConnection con = (HttpsURLConnection)obj.openConnection();
-		HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
-		con.setHostnameVerifier(hostnameVerifier);
+		HttpsURLConnection con = getConnection(url);
 // add request headers
 		addHttpRequestHEaders(headers, con);
 
