@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4e28211_64659fba",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/datatypes/http/HttpRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-05-26T20:54:02Z",
+      "side": 1,
+      "message": "should be private non-static",
+      "range": {
+        "startLine": 251,
+        "startChar": 1,
+        "endLine": 251,
+        "endChar": 14
+      },
+      "revId": "0da3bf6f6a8875d19d521528d8a579d6302910b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
