@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "327564f7_8258f033",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/utils/ComponentUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-27T15:40:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d46bf49_121393c9",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "700f6718beb5db684ea2f8e312934b0d3041a97f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc81058c_7c2e554f",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/ComponentUtilsTest.java",
         "patchSetId": 5
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "7ec2e395_33c60e71",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/ComponentUtilsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-27T15:40:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc81058c_7c2e554f",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "700f6718beb5db684ea2f8e312934b0d3041a97f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "20b07004_ff3b8111",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/ComponentUtilsTest.java",
         "patchSetId": 5
@@ -59,6 +107,30 @@
       "writtenOn": "2020-05-27T14:19:30Z",
       "side": 1,
       "message": "please use junit5",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 22
+      },
+      "revId": "700f6718beb5db684ea2f8e312934b0d3041a97f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a732a9b_65634bb2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/ComponentUtilsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-27T15:40:25Z",
+      "side": 1,
+      "message": "Could you please provide me an example? In the future could you provide suggestions whenever something has to be fixed? Thank you in advance.",
+      "parentUuid": "20b07004_ff3b8111",
       "range": {
         "startLine": 40,
         "startChar": 0,
@@ -91,6 +163,30 @@
       "revId": "700f6718beb5db684ea2f8e312934b0d3041a97f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d485999f_29a5e61c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/TestDataUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-27T15:40:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4726b792_eeefad0c",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "700f6718beb5db684ea2f8e312934b0d3041a97f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
