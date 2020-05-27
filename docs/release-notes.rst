@@ -6,17 +6,17 @@ Release Notes
 =============
 
 
-Version: 1.6.4
+Version: 1.6.6
 ==============
 
-:Release Date: 2020-05-14
+:Release Date: 2020-06-04
 
 SDC SDKs Versions
 -----------------
 
 -  sdc-distribution-client
 
-   :Version: 1.4.0
+   :Version: 1.4.1
 
 -  sdc-tosca
 
