@@ -167,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "62136f94_c4ec298f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/ComponentUtilsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-05-27T15:48:31Z",
+      "side": 1,
+      "message": "Never mind, I find it. I hope this is what you expect.",
+      "parentUuid": "1a732a9b_65634bb2",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 22
+      },
+      "revId": "700f6718beb5db684ea2f8e312934b0d3041a97f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4726b792_eeefad0c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/TestDataUtils.java",
         "patchSetId": 5
