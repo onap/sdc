@@ -36,6 +36,7 @@ import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1296,7 +1297,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		log.debug("************* Going to create node types from yaml {}", yamlName);
 		createResourcesFromYamlNodeTypesList(yamlName, resource, nestedVfcJsonMap, false, nodesArtifactsToHandle,
-				createdArtifacts, nodesInfo, csarInfo);
+				createdArtifacts, Collections.emptyMap(), csarInfo);
 		log.debug("************* Finished to create node types from yaml {}", yamlName);
 
 		if (nestedVfcJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {

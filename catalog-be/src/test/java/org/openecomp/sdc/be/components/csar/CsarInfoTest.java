@@ -38,7 +38,7 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
-
+import com.datastax.oss.driver.shaded.guava.common.collect.Lists;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -166,5 +166,17 @@ public class CsarInfoTest {
         assertTrue(((Map<String, Object>) csarInfo.getMappedToscaMainTemplate().get("node_types")).containsKey(nodeTypeInSubstitutionMapping));
         
         assertTrue(csarInfo.extractNodeTypesInfo().isEmpty());
+    }
+    
+    @Test
+    public void testCreateCsarInfoVnfWithNodeTypeInGlobalSub() throws URISyntaxException, ZipException {
+        final CsarInfo csarInfo = createCsarInfo("nodeTypeInGlobalSub.csar", "Definitions/MainServiceTemplate.yaml");
+
+        assertEquals(1, csarInfo.extractNodeTypesInfo().size());
+        final NodeTypeInfo nodeTypeInfo = csarInfo.extractNodeTypesInfo().get("tosca.nodes.l3vpn");
+        assertNotNull(nodeTypeInfo);
+        assertEquals("Definitions/GlobalSubstitutionTypesServiceTemplate.yaml", nodeTypeInfo.getTemplateFileName());
+        assertEquals("tosca.nodes.l3vpn", nodeTypeInfo.getType());        
+        assertEquals(Lists.newArrayList("tosca.nodes.Root"), nodeTypeInfo.getDerivedFrom());        
     }
 }
