@@ -45,6 +45,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -133,11 +134,13 @@ public class CsarInfo {
     public Map<String,NodeTypeInfo> extractNodeTypesInfo() {
         Map<String, NodeTypeInfo> nodeTypesInfo = new HashMap<>();
         List<Map.Entry<String, byte[]>> globalSubstitutes = new ArrayList<>();
+        final Set<String> nodeTypesUsedInNodeTemplates = new HashSet<>();
         for (Map.Entry<String, byte[]> entry : getCsar().entrySet()) {
-            extractNodeTypeInfo(nodeTypesInfo, globalSubstitutes, entry);
+            extractNodeTypeInfo(nodeTypesInfo, globalSubstitutes, nodeTypesUsedInNodeTemplates, entry);
         }
         if (CollectionUtils.isNotEmpty(globalSubstitutes)) {
             setDerivedFrom(nodeTypesInfo, globalSubstitutes);
+            addGlobalSubstitutionsToNodeTypes(globalSubstitutes, nodeTypesUsedInNodeTemplates, nodeTypesInfo);
         }
         markNestedVfc(getMappedToscaMainTemplate(), nodeTypesInfo);
         return nodeTypesInfo;
@@ -145,7 +148,7 @@ public class CsarInfo {
 
     @SuppressWarnings("unchecked")
     private void extractNodeTypeInfo(Map<String, NodeTypeInfo> nodeTypesInfo,
-                                     List<Map.Entry<String, byte[]>> globalSubstitutes, Map.Entry<String, byte[]> entry) {
+                                     List<Map.Entry<String, byte[]>> globalSubstitutes, final Set<String> nodeTypesUsedInNodeTemplates, Map.Entry<String, byte[]> entry) {
         if (isAServiceTemplate(entry.getKey())) {
             if (isGlobalSubstitute(entry.getKey())) {
                 globalSubstitutes.add(entry);
@@ -154,13 +157,28 @@ public class CsarInfo {
                 findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS, ToscaElementTypeEnum.MAP)
                     .right()
                     .on(sub->handleSubstitutionMappings(nodeTypesInfo, entry, mappedToscaTemplate, (Map<String, Object>)sub));
+                
+                final Either<Object, ResultStatusEnum> nodeTypesEither = findToscaElement(mappedToscaTemplate,
+                    TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
+                if (nodeTypesEither.isLeft()) {
+                    final Map<String, Map<String, Object>> nodeTemplates = (Map<String, Map<String, Object>>) nodeTypesEither.left().value();
+                    nodeTypesUsedInNodeTemplates.addAll(findNodeTypesUsedInNodeTemplates(nodeTemplates));
+                }
             }
         }
     }
     
     private boolean isAServiceTemplate(final String filePath) {
       return Pattern.compile(CsarUtils.SERVICE_TEMPLATE_PATH_PATTERN).matcher(filePath).matches();
-  }
+    }
+    
+    private final Set<String> findNodeTypesUsedInNodeTemplates(final Map<String, Map<String, Object>> nodeTemplates) {
+      final Set<String> nodeTypes = new HashSet<>();
+      for (final Map<String, Object> nodeTemplate : nodeTemplates.values()) {
+          nodeTypes.add((String)nodeTemplate.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName()));
+      }
+      return nodeTypes;
+    }
 
     private ResultStatusEnum handleSubstitutionMappings(Map<String, NodeTypeInfo> nodeTypesInfo, Map.Entry<String, byte[]> entry, Map<String, Object> mappedToscaTemplate, Map<String, Object> substitutionMappings) {
       final Set<String> nodeTypesDefinedInTemplate = findNodeTypesDefinedInTemplate(mappedToscaTemplate);  
@@ -227,11 +245,63 @@ public class CsarInfo {
                 .right()
                 .on(nts-> processNodeTemplates((Map<String, Object>)nts, nodeTypesInfo));
     }
+    
+    @SuppressWarnings("unchecked")
+    private void addGlobalSubstitutionsToNodeTypes(final List<Map.Entry<String, byte[]>> globalSubstitutes, final Set<String> nodeTypesUsedInNodeTemplates, final Map<String, NodeTypeInfo> nodeTypesInfo) {
+        for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
+            final String yamlFileContents = new String(entry.getValue());
+            final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
+            final Either<Object, ResultStatusEnum> nodeTypesEither = findToscaElement(mappedToscaTemplate,
+                    TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
+            if (nodeTypesEither.isLeft()) {
+                final Map<String, Object> nodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
+                for (final Map.Entry<String, Object> nodeType : nodeTypes.entrySet()) {
+                    
+                    if (!nodeTypesInfo.containsKey(nodeType.getKey()) && nodeTypesUsedInNodeTemplates.contains(nodeType.getKey())) {
+                        nodeTypesInfo.put(nodeType.getKey(), buildNodeTypeInfo(nodeType, entry.getKey(), mappedToscaTemplate));
+                    }
+                }
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private static ResultStatusEnum processNodeTemplates( Map<String, Object> nodeTemplates, Map<String, NodeTypeInfo> nodeTypesInfo) {
         nodeTemplates.values().forEach(nt->processNodeTemplate(nodeTypesInfo, (Map<String, Object>) nt));
         return ResultStatusEnum.OK;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private NodeTypeInfo buildNodeTypeInfo(final Map.Entry<String, Object> nodeType, final String templateFileName, final Map<String, Object> mappedToscaTemplate ) {
+        final NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
+        nodeTypeInfo.setSubstitutionMapping(false);
+        nodeTypeInfo.setNested(true);
+        nodeTypeInfo.setType(nodeType.getKey());
+        nodeTypeInfo.setTemplateFileName(templateFileName);
+        nodeTypeInfo.setMappedToscaTemplate(buildToscaTemplateForNode(nodeType.getKey(), mappedToscaTemplate));
+        
+        final Map<String, Object> nodeTypeMap = (Map<String, Object>) nodeType.getValue();
+        final List<String> derivedFrom = new ArrayList<>();
+        derivedFrom.add((String) nodeTypeMap.get(TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
+        nodeTypeInfo.setDerivedFrom(derivedFrom);
+        
+        return nodeTypeInfo;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> buildToscaTemplateForNode(final String nodeTypeName, final Map<String, Object> mappedToscaTemplate) {
+        final Map<String, Object> mappedToscaTemplateforNode = new HashMap<>(mappedToscaTemplate);
+        
+        final Either<Object, ResultStatusEnum> nodeTypesEither = findToscaElement(mappedToscaTemplate,
+                TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
+        final Map<String, Object> nodeTypes = new HashMap<>();
+        if (nodeTypesEither.isLeft()) {
+            final Map<String, Object> allNodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
+            nodeTypes.put(nodeTypeName, allNodeTypes.get(nodeTypeName));
+        }
+
+        mappedToscaTemplateforNode.put(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName(), nodeTypes);
+        return mappedToscaTemplateforNode;
     }
 
     private static void processNodeTemplate(Map<String, NodeTypeInfo> nodeTypesInfo, Map<String, Object> nodeTemplate) {
