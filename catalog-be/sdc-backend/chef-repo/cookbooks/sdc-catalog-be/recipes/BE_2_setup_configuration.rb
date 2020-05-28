@@ -19,7 +19,8 @@ template "janusgraph.properties" do
   source "BE-janusgraph.properties.erb"
   owner "jetty"
   group "jetty"
-  mode "0755"
+  mode "0644"
+  action :create_if_missing
   variables({
                 :cassandra_ip => node['Nodes']['CS'].join(",").gsub(/[|]/, ''),
                 :cassandra_cql_port => node['cassandra'][:cassandra_port],
@@ -39,7 +40,7 @@ template "catalog-be-config" do
   source "BE-configuration.yaml.erb"
   owner "jetty"
   group "jetty"
-  mode "0755"
+  mode "0644"
   action :create_if_missing
   variables({
                 :catalog_ip => node['Nodes']['BE'],
@@ -67,5 +68,6 @@ template "distribution-engine-configuration" do
   source "BE-distribution-engine-configuration.yaml.erb"
   owner "jetty"
   group "jetty"
-  mode "0755"
+  mode "0644"
+  action :create_if_missing
 end
