@@ -21,10 +21,13 @@
 package org.openecomp.sdc.be.tosca;
 
 
+import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteIfSameVersions;
+
 import fj.F;
 import fj.data.Either;
 import io.vavr.Tuple2;
 import io.vavr.control.Try;
+import io.vavr.control.Option;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -92,7 +95,6 @@ import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
-import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -276,9 +278,7 @@ public class CsarUtils {
         }
 
         //UID <cassandraId,filename,component>
-        Map<String, ImmutableTriple<String,String, Component>> innerComponentsCache = new HashMap<>();
-
-        Either<ZipOutputStream, ResponseFormat> responseFormat = getZipOutputStreamResponseFormatEither(zip, dependencies, innerComponentsCache);
+        Either<ZipOutputStream, ResponseFormat> responseFormat = getZipOutputStreamResponseFormatEither(zip, dependencies);
         if (responseFormat != null) return responseFormat;
 
         //retrieve SDC.zip from Cassandra
@@ -472,9 +472,17 @@ public class CsarUtils {
 
     private Either<ZipOutputStream, ResponseFormat> getZipOutputStreamResponseFormatEither(
         ZipOutputStream zip,
-        List<Triple<String, String, Component>> dependencies,
-        Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache
+        List<Triple<String, String, Component>> dependencies
     ) throws IOException {
+
+        ComponentCache innerComponentsCache = ComponentCache
+            .overwritable(overwriteIfSameVersions())
+            .onMerge((oldValue, newValue) -> {
+                log.warn("Overwriting component invariantID {} of version {} with a newer version {}",
+                    oldValue.id, oldValue.getComponentVersion(), newValue.getComponentVersion()
+                );
+            });
+
         if (dependencies != null && !dependencies.isEmpty()) {
             for (Triple<String, String, Component> d : dependencies) {
                 String cassandraId = d.getMiddle();
@@ -489,27 +497,21 @@ public class CsarUtils {
 
                 //fill innerComponentsCache
                 String fileName = d.getLeft();
-                // TODO: Extract the cache related functions to their own class
-                addComponentToCache(innerComponentsCache, cassandraId, fileName, childComponent);
+                innerComponentsCache.put(cassandraId, fileName, childComponent);
                 addInnerComponentsToCache(innerComponentsCache, childComponent);
             }
 
             //add inner components to CSAR
-            Either<ZipOutputStream, ResponseFormat> responseFormat = addInnerComponentsToCSAR(zip,
-                innerComponentsCache);
-            if (responseFormat != null) {
-                return responseFormat;
-            }
+            return addInnerComponentsToCSAR(zip, innerComponentsCache);
         }
         return null;
     }
 
     private Either<ZipOutputStream, ResponseFormat> addInnerComponentsToCSAR(
         ZipOutputStream zip,
-        Map<String, ImmutableTriple<String, String, Component>> innerComponentsCache
+        ComponentCache innerComponentsCache
     ) throws IOException {
-        for (Entry<String, ImmutableTriple<String, String, Component>> entry : innerComponentsCache.entrySet()) {
-            ImmutableTriple<String, String, Component> ict = entry.getValue();
+        for (ImmutableTriple<String, String, Component> ict : innerComponentsCache.iterable()) {
             Component innerComponent = ict.getRight();
 
             String icFileName = ict.getMiddle();
@@ -550,7 +552,6 @@ public class CsarUtils {
      * @param zipOutputStream stores the input stream content
      * @param schemaFileZip zip data from Cassandra
      * @param nodesFromPackage list of all nodes found on the onboarded package
-     * @param isHeatPackage true if the onboardead package is a Heat package
      */
     private void addSchemaFilesFromCassandra(final ZipOutputStream zipOutputStream,
                                              final byte[] schemaFileZip,
@@ -618,29 +619,34 @@ public class CsarUtils {
         updateZipEntry(byteArrayOutputStream, nodesYaml);
     }
 
-    private void addInnerComponentsToCache(Map<String, ImmutableTriple<String, String, Component>> componentCache,
-            Component childComponent) {
-
-        List<ComponentInstance> instances = childComponent.getComponentInstances();
-
-        if(instances != null) {
-            instances.forEach(ci -> {
-                ImmutableTriple<String, String, Component> componentRecord = componentCache.get(ci.getComponentUid());
-                if (componentRecord == null) {
-                    // all resource must be only once!
-                    Either<Resource, StorageOperationStatus> resource = toscaOperationFacade.getToscaElement(ci.getComponentUid());
-                    Component componentRI = checkAndAddComponent(componentCache, ci, resource);
-
-                    //if not atomic - insert inner components as well
-                    if(!ModelConverter.isAtomicComponent(componentRI)) {
-                        addInnerComponentsToCache(componentCache, componentRI);
-                    }
+    private void addInnerComponentsToCache(ComponentCache componentCache, Component childComponent) {
+        javaListToVavrList(childComponent.getComponentInstances())
+            .filter(ci -> componentCache.notCached(ci.getComponentUid()))
+            .forEach(ci -> {
+                // all resource must be only once!
+                Either<Resource, StorageOperationStatus> resource =
+                    toscaOperationFacade.getToscaElement(ci.getComponentUid());
+                Component componentRI = checkAndAddComponent(componentCache, ci, resource);
+                //if not atomic - insert inner components as well
+                // TODO: This could potentially create a StackOverflowException if the call stack
+                // happens to be too large. Tail-recursive optimization should be used here.
+                if (!ModelConverter.isAtomicComponent(componentRI)) {
+                    addInnerComponentsToCache(componentCache, componentRI);
                 }
             });
-        }
     }
 
-    private Component checkAndAddComponent(Map<String, ImmutableTriple<String, String, Component>> componentCache, ComponentInstance ci, Either<Resource, StorageOperationStatus> resource) {
+    // TODO: Move this function in FJToVavrHelper.java once Change 108540 is merged
+    private io.vavr.collection.List<ComponentInstance> javaListToVavrList(
+        List<ComponentInstance> componentInstances
+    ) {
+        return Option
+                .of(componentInstances)
+                .map(io.vavr.collection.List::ofAll)
+                .getOrElse(io.vavr.collection.List::empty);
+    }
+
+    private Component checkAndAddComponent(ComponentCache componentCache, ComponentInstance ci, Either<Resource, StorageOperationStatus> resource) {
         if (resource.isRight()) {
             log.debug("Failed to fetch resource with id {} for instance {}", ci.getComponentUid(), ci.getName());
         }
@@ -650,42 +656,13 @@ public class CsarUtils {
         ArtifactDefinition childArtifactDefinition = childToscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
         if (childArtifactDefinition != null) {
             //add to cache
-            addComponentToCache(componentCache, childArtifactDefinition.getEsId(), childArtifactDefinition.getArtifactName(), componentRI);
+            componentCache.put(
+                childArtifactDefinition.getEsId(),
+                childArtifactDefinition.getArtifactName(),
+                componentRI
+            );
         }
         return componentRI;
-    }
-
-    private void addComponentToCache(Map<String, ImmutableTriple<String, String, Component>> componentCache,
-            String id, String fileName, Component component) {
-
-        String uuid = component.getInvariantUUID();
-        String version = component.getVersion();
-
-        Supplier<ImmutableTriple<String, String, Component>> sup =
-            () -> new ImmutableTriple<>(id, fileName, component);
-
-        componentCache.put(uuid, updateWith(componentCache, uuid,
-            cc -> overwriteIfSameVersions(id, version, cc, sup),
-            sup
-        ));
-    }
-
-    private static <K, V> V updateWith(Map<K, V> kvs, K k, Function<V, V> f, Supplier<V> orElse) {
-        return Optional.ofNullable(kvs.get(k)).map(f).orElseGet(orElse);
-    }
-
-    private ImmutableTriple<String, String, Component> overwriteIfSameVersions(
-        String id, String version,
-        ImmutableTriple<String, String, Component> cc,
-        Supplier<ImmutableTriple<String, String, Component>> newValue
-    ) {
-        if (CommonBeUtils.compareAsdcComponentVersions(version, cc.getRight().getVersion())) {
-            log.warn("Overwriting component invariantID {} of version {} with a newer version {}", id,
-                cc.getRight().getVersion(),
-                version);
-            return newValue.get();
-        }
-        return cc;
     }
 
     private Either<ZipOutputStream, ResponseFormat> writeComponentInterface(
