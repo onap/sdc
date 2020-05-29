@@ -27,6 +27,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteIfSameVersions;
+import static org.openecomp.sdc.be.tosca.ComponentCache.entry;
 
 import fj.data.Either;
 import java.io.File;
@@ -85,6 +87,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
+import org.openecomp.sdc.be.tosca.ComponentCache.CacheEntry;
 import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -509,7 +512,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 
 	@Test
 	public void testAddInnerComponentsToCache() {
-		Map<String, ImmutableTriple<String, String, Component>> componentCache = new HashMap<>();
+		ComponentCache componentCache = ComponentCache.overwritable(overwriteIfSameVersions());
 		Component childComponent = new Resource();
 		Component componentRI = new Service();
 		List<ComponentInstance> componentInstances = new ArrayList<>();
@@ -536,7 +539,8 @@ public class CsarUtilsTest extends BeConfDependentTest {
 
 		Deencapsulation.invoke(testSubject, "addInnerComponentsToCache", componentCache, childComponent);
 
-		assertTrue(componentCache.containsValue(ImmutableTriple.of("esId","artifactName",componentRI)));
+		io.vavr.collection.List<CacheEntry> expected = io.vavr.collection.List.of(entry("esId","artifactName",componentRI));
+		assertEquals(expected, componentCache.all().toList());
 	}
 
 	@Test
@@ -570,23 +574,6 @@ public class CsarUtilsTest extends BeConfDependentTest {
 
 
 		assertTrue(componentCache.isEmpty());
-	}
-
-	@Test
-	public void testAddComponentToCache() {
-		Map<String, ImmutableTriple<String, String, Component>> componentCache = new HashMap<>();
-		String id = "id";
-		String fileName = "fileName";
-		Component component = new Resource();
-		component.setInvariantUUID("key");
-		component.setVersion("1.0");
-
-		Component cachedComponent = new Resource();
-		cachedComponent.setVersion("0.3");
-
-		componentCache.put("key", new ImmutableTriple<String, String, Component>(id, fileName, cachedComponent));
-
-		Deencapsulation.invoke(testSubject, "addComponentToCache", componentCache, id, fileName, component);
 	}
 
 	@Test
