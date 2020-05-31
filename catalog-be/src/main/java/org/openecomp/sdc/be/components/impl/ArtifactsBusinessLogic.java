@@ -28,12 +28,14 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.F;
+import static io.vavr.API.*;
 import fj.data.Either;
 import io.vavr.control.Option;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -150,6 +152,8 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 import org.yaml.snakeyaml.Yaml;
+import static io.vavr.API.*;
+import static io.vavr.Predicates.*;
 
 @org.springframework.stereotype.Component("artifactBusinessLogic")
 public class ArtifactsBusinessLogic extends BaseBusinessLogic {
@@ -1449,27 +1453,24 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return updatedGroups;
     }
 
-    private List<GroupInstance> getUpdatedGroupInstances(String artifactId, ArtifactDefinition foundArtifact, List<GroupInstance> groupInstances) {
-        List<GroupInstance> updatedGroupInstances = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(groupInstances)) {
-            boolean isUpdated = false;
-            for (GroupInstance groupInstance : groupInstances) {
-                isUpdated = false;
-                if (CollectionUtils.isNotEmpty(groupInstance.getGroupInstanceArtifacts()) && groupInstance.getGroupInstanceArtifacts().contains(artifactId)) {
-                    groupInstance.getGroupInstanceArtifacts().remove(artifactId);
-                    isUpdated = true;
-                }
-                if (CollectionUtils.isNotEmpty(groupInstance.getGroupInstanceArtifactsUuid()) && groupInstance.getGroupInstanceArtifactsUuid()
-                        .contains(foundArtifact.getArtifactUUID())) {
-                    groupInstance.getGroupInstanceArtifactsUuid().remove(foundArtifact.getArtifactUUID());
-                    isUpdated = true;
-                }
-                if (isUpdated) {
-                    updatedGroupInstances.add(groupInstance);
-                }
-            }
+    private List<GroupInstance> getUpdatedGroupInstances(
+        String artifactId, ArtifactDefinition foundArtifact, List<GroupInstance> groupInstances
+    ) {
+        if (CollectionUtils.isEmpty(groupInstances)) {
+            return new ArrayList<>();
         }
-        return updatedGroupInstances;
+        // TODO: A defensive copy should be created here for groupInstances. Modifying
+        // arguments (aka output arguments) is overall a bad practice as explained in
+        // Clean Code by Robert Martin.
+        // A better approach would be to use Lenses.
+        return io.vavr.collection.List.ofAll(groupInstances).filter(gi -> {
+            boolean groupInstanceArtifactRemoved = gi.getGroupInstanceArtifacts() != null &&
+                gi.getGroupInstanceArtifacts().remove(artifactId);
+            boolean groupInstanceArtifactUUIDRemoved = gi.getGroupInstanceArtifactsUuid() != null &&
+                gi.getGroupInstanceArtifactsUuid().remove(foundArtifact.getArtifactUUID());
+
+            return groupInstanceArtifactRemoved || groupInstanceArtifactUUIDRemoved;
+        }).toJavaList();
     }
 
     private ArtifactDataDefinition deleteOrUpdateArtifactOnGraph(Component component, String parentId, String artifactId, NodeTypeEnum parentType, ArtifactDefinition foundArtifact, Boolean cloneIsNeeded) {
