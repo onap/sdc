@@ -27,7 +27,6 @@ import static org.openecomp.sdc.be.dao.api.ActionStatus.MISMATCH_BETWEEN_ARTIFAC
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import fj.F;
 import fj.data.Either;
 import io.vavr.control.Option;
 import java.io.ByteArrayInputStream;
@@ -69,11 +68,11 @@ import org.openecomp.sdc.be.components.impl.artifact.PayloadTypeEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.components.utils.ArtifactUtils;
 import org.openecomp.sdc.be.components.impl.utils.ComponentUtils;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
+import org.openecomp.sdc.be.components.utils.ArtifactUtils;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -1454,27 +1453,25 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return updatedGroups;
     }
 
-    private List<GroupInstance> getUpdatedGroupInstances(String artifactId, ArtifactDefinition foundArtifact, List<GroupInstance> groupInstances) {
-        List<GroupInstance> updatedGroupInstances = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(groupInstances)) {
-            boolean isUpdated = false;
-            for (GroupInstance groupInstance : groupInstances) {
-                isUpdated = false;
-                if (CollectionUtils.isNotEmpty(groupInstance.getGroupInstanceArtifacts()) && groupInstance.getGroupInstanceArtifacts().contains(artifactId)) {
-                    groupInstance.getGroupInstanceArtifacts().remove(artifactId);
-                    isUpdated = true;
-                }
-                if (CollectionUtils.isNotEmpty(groupInstance.getGroupInstanceArtifactsUuid()) && groupInstance.getGroupInstanceArtifactsUuid()
-                        .contains(foundArtifact.getArtifactUUID())) {
-                    groupInstance.getGroupInstanceArtifactsUuid().remove(foundArtifact.getArtifactUUID());
-                    isUpdated = true;
-                }
-                if (isUpdated) {
-                    updatedGroupInstances.add(groupInstance);
-                }
-            }
+    private List<GroupInstance> getUpdatedGroupInstances(
+        String artifactId, ArtifactDefinition foundArtifact, List<GroupInstance> groupInstances
+    ) {
+        if (CollectionUtils.isEmpty(groupInstances)) {
+            return new ArrayList<>();
         }
-        return updatedGroupInstances;
+        // TODO: A defensive copy should be created here for groupInstances. Modifying
+        // arguments (aka output arguments) is overall a bad practice as explained in
+        // Clean Code by Robert Martin.
+        // A better approach would be to use Lenses.
+
+        return groupInstances.stream().filter(gi -> {
+            boolean groupInstanceArtifactRemoved = gi.getGroupInstanceArtifacts() != null &&
+                gi.getGroupInstanceArtifacts().remove(artifactId);
+            boolean groupInstanceArtifactUUIDRemoved = gi.getGroupInstanceArtifactsUuid() != null &&
+                gi.getGroupInstanceArtifactsUuid().remove(foundArtifact.getArtifactUUID());
+
+            return groupInstanceArtifactRemoved || groupInstanceArtifactUUIDRemoved;
+        }).collect(Collectors.toList());
     }
 
     private ArtifactDataDefinition deleteOrUpdateArtifactOnGraph(Component component, String parentId, String artifactId, NodeTypeEnum parentType, ArtifactDefinition foundArtifact, Boolean cloneIsNeeded) {
