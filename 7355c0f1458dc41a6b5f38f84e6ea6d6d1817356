@@ -22,6 +22,52 @@
       "revId": "7355c0f1458dc41a6b5f38f84e6ea6d6d1817356",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eaeb347e_c0e9ef2a",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/topology-template.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2020-06-01T09:51:21Z",
+      "side": 1,
+      "message": "it is redundant. the method this.getServerTypeUrl(componentType) returns the same results",
+      "range": {
+        "startLine": 237,
+        "startChar": 8,
+        "endLine": 237,
+        "endChar": 108
+      },
+      "revId": "7355c0f1458dc41a6b5f38f84e6ea6d6d1817356",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d856dd1_ad6860e5",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/topology-template.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2020-06-01T09:51:21Z",
+      "side": 1,
+      "message": "use:  this.getServerTypeUrl(componentType)  instead",
+      "range": {
+        "startLine": 238,
+        "startChar": 64,
+        "endLine": 238,
+        "endChar": 87
+      },
+      "revId": "7355c0f1458dc41a6b5f38f84e6ea6d6d1817356",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
