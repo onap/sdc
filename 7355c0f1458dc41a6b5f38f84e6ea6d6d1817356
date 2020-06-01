@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7254ab43_4f418b46",
+        "filename": "catalog-ui/src/app/models/graph/nodes/nodes-factory.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-06-01T07:59:20Z",
+      "side": 1,
+      "message": "Why creating a service proxy if it\u0027s a VFC?",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 86
+      },
+      "revId": "7355c0f1458dc41a6b5f38f84e6ea6d6d1817356",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
