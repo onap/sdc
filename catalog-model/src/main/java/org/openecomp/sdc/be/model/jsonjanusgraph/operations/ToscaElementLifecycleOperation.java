@@ -307,51 +307,86 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         return hasPreviousVersion;
     }
 
-    public Either<ToscaElement, StorageOperationStatus> certifyToscaElement(String toscaElementId, String modifierId, String ownerId) {
-        Either<ToscaElement, StorageOperationStatus> result = null;
-        Either<GraphVertex, StorageOperationStatus> cloneRes = null;
-        GraphVertex toscaElement = null;
-        GraphVertex modifier = null;
-        GraphVertex certifiedToscaElement = null;
-        Integer majorVersion = null;
-
-        StorageOperationStatus status;
+    public Either<ToscaElement, StorageOperationStatus> certifyToscaElement(
+        String toscaElementId,
+        String modifierId,
+        String ownerId) {
         try {
-            Either<Map<String, GraphVertex>, JanusGraphOperationStatus> getVerticesRes = janusGraphDao
-                .getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForRequestCertification(toscaElementId, modifierId, ownerId));
-            if (getVerticesRes.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVerticesRes.right().value()));
-            }
-            if (result == null) {
-                toscaElement = getVerticesRes.left().value().get(toscaElementId);
-                modifier = getVerticesRes.left().value().get(modifierId);
-                majorVersion = getMajorVersion((String) toscaElement.getMetadataProperty(GraphPropertyEnum.VERSION));
-                status = handleRelationsOfPreviousToscaElementBeforeCertifying(toscaElement, modifier, majorVersion);
-                if (status != StorageOperationStatus.OK) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to handle relations of previous tosca element before certifying {}. Status is {}. ", toscaElement.getUniqueId(), status);
-                }
-            }
-            if (result == null) {
-                cloneRes = cloneToscaElementForCertify(toscaElement, modifier, majorVersion);
-                if (cloneRes.isRight()) {
-                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to clone tosca element during certification. ");
-                    result = Either.right(cloneRes.right().value());
-                } else {
-                    certifiedToscaElement = cloneRes.left().value();
-                    status = handleRelationsOfNewestCertifiedToscaElement(toscaElement, certifiedToscaElement);
-                    if (status != StorageOperationStatus.OK) {
-                        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to handle relations of newest certified tosca element {}. Status is {}. ", certifiedToscaElement.getUniqueId(), status);
-                    }
-                }
-            }
-            if (result == null) {
-                return getToscaElementOperation(toscaElement.getLabel()).getToscaElement(certifiedToscaElement.getUniqueId());
-            }
+            return janusGraphDao
+                .getVerticesByUniqueIdAndParseFlag(
+                    prepareParametersToGetVerticesForRequestCertification(toscaElementId, modifierId, ownerId))
+                .right().map(status ->
+                    logDebugMessageAndReturnStorageOperationStatus(
+                        DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status),
+                        FAILED_TO_GET_VERTICES,
+                        toscaElementId))
+                .left().bind(verticesRes -> {
+                    GraphVertex toscaElement = verticesRes.get(toscaElementId);
+                    GraphVertex modifier = verticesRes.get(modifierId);
+                    Integer majorVersion = getMajorVersion(
+                        (String) toscaElement.getMetadataProperty(GraphPropertyEnum.VERSION));
+
+                    return handleRelationsBeforeCertifyingAndProcessClone(toscaElement,
+                        modifier, majorVersion);
+                });
         } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during certification tosca element {}. {}", toscaElementId, e.getMessage());
+            CommonUtility
+                .addRecordToLog(log, LogLevelEnum.DEBUG,
+                    "Exception occurred during certification tosca element {}.",
+                    toscaElementId, e);
+            return Either.right(StorageOperationStatus.GENERAL_ERROR);
         }
-        return result;
+    }
+
+    private Either<ToscaElement, StorageOperationStatus> handleRelationsBeforeCertifyingAndProcessClone(
+        GraphVertex toscaElement,
+        GraphVertex modifier,
+        Integer majorVersion) {
+        StorageOperationStatus status = handleRelationsOfPreviousToscaElementBeforeCertifying(toscaElement,
+            modifier, majorVersion);
+        if (status != StorageOperationStatus.OK) {
+            return Either.right(
+                logDebugMessageAndReturnStorageOperationStatus(status,
+                    "Failed to handle relations of previous tosca element before certifying {}. Status is {}. ",
+                    toscaElement.getUniqueId(), status));
+        } else {
+            return cloneToscaElementAndHandleRelations(toscaElement, modifier, majorVersion);
+        }
+    }
+
+    private Either<ToscaElement, StorageOperationStatus> cloneToscaElementAndHandleRelations(
+        GraphVertex toscaElement,
+        GraphVertex modifier,
+        Integer majorVersion) {
+        return cloneToscaElementForCertify(toscaElement, modifier, majorVersion)
+            .right().map(status -> logDebugMessageAndReturnStorageOperationStatus(status,
+                "Failed to clone tosca element during certification. "))
+            .left().bind(certifiedToscaElement ->
+                handleRelationsOfNewestCertifiedToscaElementAndReturn(toscaElement, certifiedToscaElement));
+    }
+
+    private Either<ToscaElement, StorageOperationStatus> handleRelationsOfNewestCertifiedToscaElementAndReturn(
+        GraphVertex toscaElement,
+        GraphVertex certifiedToscaElement) {
+        StorageOperationStatus status = handleRelationsOfNewestCertifiedToscaElement(toscaElement,
+            certifiedToscaElement);
+        if (status != StorageOperationStatus.OK) {
+            return Either.right(
+                logDebugMessageAndReturnStorageOperationStatus(status,
+                    "Failed to handle relations of newest certified tosca element {}. Status is {}. ",
+                    certifiedToscaElement.getUniqueId(), status));
+        } else {
+            return getToscaElementOperation(toscaElement.getLabel())
+                .getToscaElement(certifiedToscaElement.getUniqueId());
+        }
+    }
+
+    private static StorageOperationStatus logDebugMessageAndReturnStorageOperationStatus(
+        final StorageOperationStatus status,
+        final String msg,
+        final Object... args) {
+        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, msg, args);
+        return status;
     }
 
     private StorageOperationStatus handleRelationsOfNewestCertifiedToscaElement(GraphVertex toscaElement, GraphVertex certifiedToscaElement) {
