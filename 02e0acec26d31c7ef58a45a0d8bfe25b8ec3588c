@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e1d3d27_a87e4b03",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1473,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-02T16:16:13Z",
+      "side": 1,
+      "message": "wouldn\u0027t be better to use \u0027standard\u0027 java 8 stream(), filter() and collect(Collectors.toList()) instead of using external library?",
+      "range": {
+        "startLine": 1466,
+        "startChar": 8,
+        "endLine": 1473,
+        "endChar": 24
+      },
+      "revId": "02e0acec26d31c7ef58a45a0d8bfe25b8ec3588c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
