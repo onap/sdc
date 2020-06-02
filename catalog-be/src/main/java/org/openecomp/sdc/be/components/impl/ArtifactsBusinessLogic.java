@@ -1142,7 +1142,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         if (isDeploymentArtifact(artifactInfo)) {
             if (componentType != ComponentTypeEnum.RESOURCE_INSTANCE) {
                 final String artifactName = artifactInfo.getArtifactName();
-                if (operation.isCreateOrLink() || !artifactName.equalsIgnoreCase(existingArtifactInfo.getArtifactName())) {
+                final String existingArtifactName =
+                    (existingArtifactInfo == null) ? null : existingArtifactInfo.getArtifactName();
+
+                if (operation.isCreateOrLink()
+                    || ((artifactName != null) && !artifactName.equalsIgnoreCase(existingArtifactName))) {
                     validateSingleDeploymentArtifactName(artifactName, parentComponent);
                 }
             }
@@ -3833,8 +3837,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     public byte[] downloadResourceInstanceArtifactByUUIDs(ComponentTypeEnum componentType, String componentUuid,
                                                           String resourceInstanceName, String artifactUUID) {
         ComponentInstance resourceInstance = getRelatedComponentInstance(componentType, componentUuid, resourceInstanceName);
-        return downloadArtifact(resourceInstance == null ? null : resourceInstance.getDeploymentArtifacts(),
-                artifactUUID, resourceInstance.getName());
+
+        if (resourceInstance != null) {
+            return downloadArtifact(resourceInstance.getDeploymentArtifacts(), artifactUUID, resourceInstance.getName());
+        } else {
+            return downloadArtifact(null, artifactUUID, null);
+        }
     }
 
     /**
