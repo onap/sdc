@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "cda4a029_11ad7f64",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/topology-template.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2020-06-02T10:33:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eaeb347e_c0e9ef2a",
+      "range": {
+        "startLine": 237,
+        "startChar": 8,
+        "endLine": 237,
+        "endChar": 108
+      },
+      "revId": "7355c0f1458dc41a6b5f38f84e6ea6d6d1817356",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d856dd1_ad6860e5",
         "filename": "catalog-ui/src/app/ng2/services/component-services/topology-template.service.ts",
         "patchSetId": 2
@@ -68,6 +92,30 @@
       "revId": "7355c0f1458dc41a6b5f38f84e6ea6d6d1817356",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad6ec602_60ccc315",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/topology-template.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2020-06-02T10:33:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d856dd1_ad6860e5",
+      "range": {
+        "startLine": 238,
+        "startChar": 64,
+        "endLine": 238,
+        "endChar": 87
+      },
+      "revId": "7355c0f1458dc41a6b5f38f84e6ea6d6d1817356",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
