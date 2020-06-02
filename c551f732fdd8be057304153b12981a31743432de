@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f161647_aceaeb46",
+        "filename": "catalog-ui/src/app/models/graph/nodes/nodes-factory.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2020-06-02T12:22:52Z",
+      "side": 1,
+      "message": "it should be in separate CompositionCiNode model",
+      "range": {
+        "startLine": 42,
+        "startChar": 63,
+        "endLine": 42,
+        "endChar": 83
+      },
+      "revId": "c551f732fdd8be057304153b12981a31743432de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
