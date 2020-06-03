@@ -81,6 +81,30 @@
       "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ae97120_878b9333",
+        "filename": "catalog-ui/src/app/ng2/components/logic/service-dependencies/service-dependencies.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2020-06-03T11:39:55Z",
+      "side": 1,
+      "message": "in TOSCA syntax it is define as list. we should support it and not have this restriction.\nfrom TOSCA spec: \ndirectives\t| no\t| list of string\t| An optional list of directive values to provide processing instructions to orchestrators and tooling.",
+      "parentUuid": "7449194c_bdf14ee0",
+      "range": {
+        "startLine": 171,
+        "startChar": 8,
+        "endLine": 171,
+        "endChar": 109
+      },
+      "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
