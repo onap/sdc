@@ -4115,24 +4115,20 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         ResourceCommonInfo resourceCommonInfo,ArtifactOperationInfo operation) {
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         Either<ArtifactDefinition, ResponseFormat> updateArtifactResult;
-        Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = null;
-        ArtifactDefinition updateArtifact = null;
         String componentId = null;
-        ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinitionForUpdate(data, ArtifactDefinition.class);
-        String origMd5 = request.getHeader(Constants.MD5_HEADER);
-        String userId = request.getHeader(Constants.USER_ID_HEADER);
         ArtifactDefinition existingArtifactInfo = null;
         String interfaceName = null;
 
+        ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinitionForUpdate(data, ArtifactDefinition.class);
+        String origMd5 = request.getHeader(Constants.MD5_HEADER);
+        String userId = request.getHeader(Constants.USER_ID_HEADER);
+
         Either<ComponentMetadataData, ActionStatus> getComponentRes =
-            fetchLatestComponentMetadata(componentType, componentUuid).right().map(as -> {
+            fetchLatestComponentMetadata(componentType, componentUuid)
+                .right().map(as -> {
                 errorWrapper.setInnerElement(componentsUtils.getResponseFormat(as));
                 return as;
             });
-
-        if(getComponentRes.isRight()) {
-            errorWrapper.setInnerElement(componentsUtils.getResponseFormat(getComponentRes.right().value()));
-        }
 
         if (errorWrapper.isEmpty()) {
             componentId = getComponentRes.left().value().getMetadataDataDefinition().getUniqueId();
@@ -4187,26 +4183,31 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
 
         if (errorWrapper.isEmpty()) {
-                try {
-                    actionResult = Either.left(handleArtifactRequest(componentId, userId, componentType, operation,
-                            artifactUUID, artifactInfo, origMd5, data, interfaceName,
-                            operationUUID, null, null));
-                }catch (ComponentException e){
-                    errorWrapper.setInnerElement(e.getResponseFormat());
-            }
-        }
-
-        if (errorWrapper.isEmpty()) {
-            updateArtifact = actionResult.left().value().left().value();
-            updateArtifactResult = Either.left(updateArtifact);
-
-        }
-        else {
+            updateArtifactResult = handleArtifactRequestAndFlatten(componentId, userId, componentType, operation,
+                artifactUUID, artifactInfo, origMd5, data, interfaceName, operationUUID);
+        } else {
             updateArtifactResult = Either.right(errorWrapper.getInnerElement());
         }
+
         return updateArtifactResult;
     }
 
+    private Either<ArtifactDefinition, ResponseFormat> handleArtifactRequestAndFlatten(
+        String componentId, String userId, ComponentTypeEnum componentType, ArtifactOperationInfo operation,
+        String artifactId, ArtifactDefinition artifactInfo, String origMd5, String originData, String interfaceName,
+        String operationName) {
+        try {
+            return handleArtifactRequest(componentId, userId, componentType, operation,
+                artifactId, artifactInfo, origMd5, originData, interfaceName,
+                operationName, null, null)
+                .right().map(op -> {
+                    log.debug("Unexpected value returned while calling handleArtifactRequest: {}", op);
+                    return componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+                });
+        } catch (ComponentException e) {
+            return Either.right(e.getResponseFormat());
+        }
+    }
 
     private Either<ComponentMetadataData, ActionStatus> fetchLatestComponentMetadataOrThrow(
         ComponentTypeEnum componentType, String componentUuid
