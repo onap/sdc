@@ -105,6 +105,30 @@
       "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25ef8a11_93186eb8",
+        "filename": "catalog-ui/src/app/ng2/components/logic/service-dependencies/service-dependencies.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2020-06-03T12:41:49Z",
+      "side": 1,
+      "message": "I know the spec defines it as a list, but we haven\u0027t seen any example where more than one value is used, so not sure we have any use for multiple values. \nAnd also the implementation at the moment only supports setting a single value, support for multiple values can be added when a need arises. \nWe could create a separate user story for that.",
+      "parentUuid": "4ae97120_878b9333",
+      "range": {
+        "startLine": 171,
+        "startChar": 8,
+        "endLine": 171,
+        "endChar": 109
+      },
+      "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
