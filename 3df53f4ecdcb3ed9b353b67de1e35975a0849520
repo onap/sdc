@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bc6a2752_ffa9be9b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1867
+      },
+      "writtenOn": "2020-06-03T08:56:53Z",
+      "side": 1,
+      "message": "where is the check for directives.contains(DirectivesUtils.SELECT)?",
+      "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
