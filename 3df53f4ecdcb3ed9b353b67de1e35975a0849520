@@ -16,6 +16,24 @@
       "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc506bb5_cf2d80ee",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2020-06-03T09:04:00Z",
+      "side": 1,
+      "message": "As there are two different values for directives, I understood that here you only checks if there is or not a directive on the resource. The UI was only allowing to set \"select\" before this change. Why should we only check for DirectivesUtils.SELECT and not DirectivesUtils.SUBSTITUTE here?",
+      "parentUuid": "bc6a2752_ffa9be9b",
+      "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
