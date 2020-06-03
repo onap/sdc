@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c6c749ee_fad71a3e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-03T14:46:33Z",
+      "side": 1,
+      "message": "avoid loosing exception, log properly",
+      "range": {
+        "startLine": 335,
+        "startChar": 79,
+        "endLine": 336,
+        "endChar": 52
+      },
+      "revId": "f1760974fc48f2448347ba15c8656cbd65b38b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a169941_626e7c8c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-03T14:46:33Z",
+      "side": 1,
+      "message": "redundant, is \u0027private static final Logger log\u0027",
+      "range": {
+        "startLine": 385,
+        "startChar": 8,
+        "endLine": 385,
+        "endChar": 25
+      },
+      "revId": "f1760974fc48f2448347ba15c8656cbd65b38b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
