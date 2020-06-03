@@ -34,6 +34,29 @@
       "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e8bfd51_2e9a0e97",
+        "filename": "catalog-ui/src/app/ng2/components/logic/service-dependencies/service-dependencies.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1999
+      },
+      "writtenOn": "2020-06-03T10:02:33Z",
+      "side": 1,
+      "message": "I think it is not safe to fetch the first element from the array, because maybe in the future there will be another place in the app which push directives to the array. and you cannot be sure the wanted directive will be the first in the array.\nyou have to know exactly which directive is the actual and be sure this is the directive which will be deleted on uncheck()",
+      "range": {
+        "startLine": 171,
+        "startChar": 8,
+        "endLine": 171,
+        "endChar": 109
+      },
+      "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
