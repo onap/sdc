@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "98489216_918795e6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-06-03T15:02:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c6c749ee_fad71a3e",
+      "range": {
+        "startLine": 335,
+        "startChar": 79,
+        "endLine": 336,
+        "endChar": 52
+      },
+      "revId": "f1760974fc48f2448347ba15c8656cbd65b38b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a169941_626e7c8c",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementLifecycleOperation.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "f1760974fc48f2448347ba15c8656cbd65b38b9b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa490ffc_06741b83",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-06-03T15:02:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9a169941_626e7c8c",
+      "range": {
+        "startLine": 385,
+        "startChar": 8,
+        "endLine": 385,
+        "endChar": 25
+      },
+      "revId": "f1760974fc48f2448347ba15c8656cbd65b38b9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
