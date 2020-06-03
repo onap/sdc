@@ -57,6 +57,30 @@
       "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7449194c_bdf14ee0",
+        "filename": "catalog-ui/src/app/ng2/components/logic/service-dependencies/service-dependencies.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2020-06-03T10:09:12Z",
+      "side": 1,
+      "message": "We considered it safe as only 1 directive value should be set to the selected node.",
+      "parentUuid": "5e8bfd51_2e9a0e97",
+      "range": {
+        "startLine": 171,
+        "startChar": 8,
+        "endLine": 171,
+        "endChar": 109
+      },
+      "revId": "3df53f4ecdcb3ed9b353b67de1e35975a0849520",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
