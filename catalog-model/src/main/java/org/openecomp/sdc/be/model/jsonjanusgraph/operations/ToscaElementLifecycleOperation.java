@@ -330,11 +330,11 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                         modifier, majorVersion);
                 });
         } catch (Exception e) {
-            CommonUtility
-                .addRecordToLog(log, LogLevelEnum.DEBUG,
+            return Either.right(
+                logDebugMessageAndReturnStorageOperationStatus(StorageOperationStatus.GENERAL_ERROR,
                     "Exception occurred during certification tosca element {}.",
-                    toscaElementId, e);
-            return Either.right(StorageOperationStatus.GENERAL_ERROR);
+                    toscaElementId, e)
+            );
         }
     }
 
@@ -877,29 +877,50 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         return nextVersionToscaElementVertex;
     }
 
-    private Either<GraphVertex, StorageOperationStatus> cloneToscaElementForCertify(GraphVertex toscaElementVertex, GraphVertex modifierVertex, Integer majorVersion) {
-        Either<GraphVertex, StorageOperationStatus> result;
-        Either<List<GraphVertex>, StorageOperationStatus> deleteResult = null;
-        GraphVertex clonedToscaElement = null;
-        result = getToscaElementOperation(toscaElementVertex.getLabel()).cloneToscaElement(toscaElementVertex, cloneGraphVertexForCertify(toscaElementVertex, modifierVertex, majorVersion), modifierVertex);
-        if (result.isRight()) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to clone tosca element {} for certification. Sattus is {}. ", toscaElementVertex.getUniqueId(), result.right().value());
+    private Either<GraphVertex, StorageOperationStatus> cloneToscaElementForCertify(GraphVertex toscaElementVertex,
+        GraphVertex modifierVertex, Integer majorVersion) {
+        return getToscaElementOperation(toscaElementVertex.getLabel())
+            .cloneToscaElement(
+                toscaElementVertex,
+                cloneGraphVertexForCertify(toscaElementVertex, modifierVertex, majorVersion),
+                modifierVertex)
+            .right().map(status ->
+                logDebugMessageAndReturnStorageOperationStatus(status,
+                    "Failed to clone tosca element {} for certification. Status is {}. ",
+                    toscaElementVertex.getUniqueId(), status))
+            .left().bind(clonedToscaElement ->
+                updateEdgesDeleteNotCertifiedVersionsAndHandlePreviousVersions(
+                    clonedToscaElement, toscaElementVertex, majorVersion
+                ));
+    }
+
+    private Either<GraphVertex, StorageOperationStatus> updateEdgesDeleteNotCertifiedVersionsAndHandlePreviousVersions(
+        GraphVertex clonedToscaElement,
+        GraphVertex toscaElementVertex,
+        Integer majorVersion
+    ) {
+        StorageOperationStatus updateEdgeToCatalog = updateEdgeToCatalogRoot(clonedToscaElement, toscaElementVertex);
+        if (updateEdgeToCatalog != StorageOperationStatus.OK) {
+            return Either.right(updateEdgeToCatalog);
         } else {
-            clonedToscaElement = result.left().value();
-            StorageOperationStatus updateEdgeToCatalog = updateEdgeToCatalogRoot(clonedToscaElement, toscaElementVertex);
-            if (updateEdgeToCatalog != StorageOperationStatus.OK) {
-                return Either.right(updateEdgeToCatalog);
-            }
-            deleteResult = deleteAllPreviousNotCertifiedVersions(toscaElementVertex);
-            if (deleteResult.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to delete all previous npt certified versions of tosca element {}. Status is {}. ", toscaElementVertex.getUniqueId(), deleteResult.right().value());
-                result = Either.right(deleteResult.right().value());
+            Either<List<GraphVertex>, StorageOperationStatus> deleteResultEither =
+                deleteAllPreviousNotCertifiedVersions(toscaElementVertex);
+
+            if  (deleteResultEither == null) {
+                return Either.right(
+                    logDebugMessageAndReturnStorageOperationStatus(StorageOperationStatus.GENERAL_ERROR,
+                        "Failed to delete all previous not certified versions of tosca element {}. Null value returned.",
+                        toscaElementVertex.getUniqueId()));
+            } else {
+                return deleteResultEither
+                    .right().map(status ->
+                        logDebugMessageAndReturnStorageOperationStatus(status,
+                            "Failed to delete all previous not certified versions of tosca element {}. Status is {}. ",
+                            toscaElementVertex.getUniqueId(), status))
+                    .left().bind(deleteResult ->
+                        handlePreviousVersionRelation(clonedToscaElement, deleteResult, majorVersion));
             }
         }
-        if (result.isLeft()) {
-            result = handlePreviousVersionRelation(clonedToscaElement, deleteResult.left().value(), majorVersion);
-        }
-        return result;
     }
 
     private Either<GraphVertex, StorageOperationStatus> handlePreviousVersionRelation(GraphVertex clonedToscaElement, List<GraphVertex> deletedVersions, Integer majorVersion) {
@@ -970,7 +991,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 result = Either.left(previosVersions);
             }
         } catch (Exception e) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during deleteng all tosca elements by UUID {} and name {}. {} ", uuid, componentName, e.getMessage());
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occurred during deleting all tosca elements by UUID {} and name {}. {} ", uuid, componentName, e.getMessage());
         }
         return result;
     }
