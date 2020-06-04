@@ -15,7 +15,7 @@ else
   user_conf_dir = ""
 end
 
-bash "executing-create_user" do
+bash "executing-create_users" do
   code <<-EOH
     sdcuserinit -i #{node['Nodes']['BE']} -p #{be_port} #{user_conf_dir} #{https_flag}
     rc=$?
@@ -23,20 +23,9 @@ bash "executing-create_user" do
   EOH
 end
 
-template "/var/tmp/consumers.py" do
-  source "consumers.py.erb"
-  sensitive true
-  mode 0755
-  variables({
-    :protocol => protocol,
-    :be_ip => node['Nodes']['BE'],
-    :be_port => be_port
-  })
-end
-
-bash "executing-consumers" do
+bash "executing-create_consumers" do
   code <<-EOH
-    python /var/tmp/consumers.py
+    sdcconsumerinit -i #{node['Nodes']['BE']} -p #{be_port} #{https_flag}
     rc=$?
     if [[ $rc != 0 ]]; then exit $rc; fi
   EOH
