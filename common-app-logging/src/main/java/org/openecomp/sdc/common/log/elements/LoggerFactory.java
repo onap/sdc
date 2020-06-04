@@ -53,7 +53,7 @@ public class LoggerFactory {
             return (V) new LoggerError(LogFieldsMdcHandler.getInstance(), logger);
         }
 
-        if (type.getName().equals(LoggerSupportability.class.getName())) {
+        if (type.isAssignableFrom(LoggerSupportability.class)) {
             return (V) new LoggerSupportability(LogFieldsMdcHandler.getInstance(), logger);
         }
 
