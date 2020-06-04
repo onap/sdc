@@ -46,4 +46,5 @@ bash "executing-import_Normatives" do
       if [[ $rc != 0 ]]; then exit $rc; fi
     fi
   EOH
+  returns [0]
 end

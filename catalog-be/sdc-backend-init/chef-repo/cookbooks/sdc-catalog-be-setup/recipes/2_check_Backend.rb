@@ -1,27 +1,18 @@
 if node['disableHttp']
   protocol = "https"
+  https_flag = "--https"
   be_port = node['BE']['https_port']
 else
   protocol = "http"
+  https_flag = ""
   be_port = node['BE']['http_port']
 end
 
-template "/var/tmp/check_Backend_Health.py" do
-    source "check_Backend_Health.py.erb"
-    sensitive true
-    mode 0755
-    variables({
-      :protocol => protocol,
-      :be_ip => node['Nodes']['BE'],
-      :be_port => be_port
-    })
-end
-
-bash "executing-check_Backend_Health" do
+bash "executing-check_backend_health" do
    code <<-EOH
-     python /var/tmp/check_Backend_Health.py
+     sdccheckbackend -i #{node['Nodes']['BE']} -p #{be_port} #{https_flag}
      rc=$?
      if [[ $rc != 0 ]]; then exit $rc; fi
    EOH
-  returns [0]
+   returns [0]
 end

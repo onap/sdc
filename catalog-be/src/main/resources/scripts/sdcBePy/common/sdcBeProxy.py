@@ -35,6 +35,16 @@ class SdcBeProxy:
             'role': role
         }))
 
+    def check_consumer(self, consumer_name):
+        return self.con.get("/sdc2/rest/v1/consumers/" + consumer_name)
+
+    def create_consumer(self, consumer_name, slat, password):
+        return self.con.post("/sdc2/rest/v1/consumers/", json.dumps({
+            'consumerName': consumer_name,
+            'consumerSalt': slat,
+            'consumerPassword': password
+        }))
+
     def post_file(self, path, multi_part_form_data):
         return self.con.post_file(path, multi_part_form_data)
 
