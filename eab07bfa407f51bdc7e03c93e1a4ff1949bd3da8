@@ -22,6 +22,30 @@
       "revId": "eab07bfa407f51bdc7e03c93e1a4ff1949bd3da8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b344f50b_7f6ced71",
+        "filename": "common-app-logging/src/test/java/org/openecomp/sdc/common/log/elements/LoggerFactoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-05T07:24:43Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e48e619b_074d4bf5",
+      "range": {
+        "startLine": 23,
+        "startChar": 7,
+        "endLine": 24,
+        "endChar": 22
+      },
+      "revId": "eab07bfa407f51bdc7e03c93e1a4ff1949bd3da8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
