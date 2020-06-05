@@ -21,6 +21,15 @@
 package org.openecomp.sdc.be.switchover.detector;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.net.InetAddress;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -30,21 +39,11 @@ import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.net.InetAddress;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 
 @Component("switchover-detector")
 public class SwitchoverDetector {
 
-    protected static String SWITCHOVER_DETECTOR_LOG_CONTEXT = "switchover.detector";
+    private static final String SWITCHOVER_DETECTOR_LOG_CONTEXT = "switchover.detector";
 
     private SwitchoverDetectorConfig switchoverDetectorConfig;
 
@@ -66,12 +65,8 @@ public class SwitchoverDetector {
 
     private ScheduledFuture<?> scheduledFuture = null;
 
-    ScheduledExecutorService switchoverDetectorScheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            return new Thread(r, "Switchover-Detector-Task");
-        }
-    });
+    ScheduledExecutorService switchoverDetectorScheduler =
+            Executors.newSingleThreadScheduledExecutor(runnable -> new Thread(runnable, "Switchover-Detector-Task"));
 
     SwitchoverDetectorScheduledTask switchoverDetectorScheduledTask = null;
 
@@ -113,58 +108,57 @@ public class SwitchoverDetector {
         this.siteMode = mode;
     }
 
-    private Boolean queryBe() {
-        return queryGss(switchoverDetectorConfig.getgBeFqdn(), switchoverDetectorConfig.getBeVip(), maxBeQueryAttempts);
-    }
-
-    private Boolean queryFe() {
-        return queryGss(switchoverDetectorConfig.getgFeFqdn(), switchoverDetectorConfig.getFeVip(), maxFeQueryAttempts);
-    }
-
-    private void initializeSiteMode() {
-        while (siteMode.equals(SwitchoverDetectorState.UNKNOWN.getState())) {
-
-            beMatch = queryBe();
-            feMatch = queryFe();
-
-            if (beMatch != null && beMatch.equals(feMatch)) {
-                if (beMatch) {
-                    setSiteMode(SwitchoverDetectorState.ACTIVE.getState());
-                } else {
-                    setSiteMode(SwitchoverDetectorState.STANDBY.getState());
-                }
-            }
-        }
-    }
-
-    private Boolean queryGss(String fqdn, String vip, int maxAttempts) {
-
-        Boolean result = null;
-        int attempts = 0;
-
-        while (result == null && (++attempts < maxAttempts)) {
-            try {
-                InetAddress inetAddress = InetAddress.getByName(fqdn);
-                result = inetAddress.getHostAddress().equals(vip);
-
-            } catch (Exception e) {
-                String message = e.getMessage();
-                if (message == null) {
-                    message = e.getClass().getName();
-                }
-                logger.debug("Error occured during switchover detector query, Result is {}", message, e);
-            }
-        }
-        if (null == result) {
-            BeEcompErrorManager.getInstance().logFqdnResolveError(SWITCHOVER_DETECTOR_LOG_CONTEXT, "host " + fqdn + " not resolved after " + attempts + " attempts");
-        }
-        return result;
-    }
-
     public class SwitchoverDetectorScheduledTask implements Runnable {
 
-        public SwitchoverDetectorScheduledTask() {
+        private Boolean queryGss(String fqdn, String vip, int maxAttempts) {
 
+            Boolean result = null;
+            int attempts = 0;
+
+            while (result == null && (++attempts < maxAttempts)) {
+                try {
+                    InetAddress inetAddress = InetAddress.getByName(fqdn);
+                    result = inetAddress.getHostAddress().equals(vip);
+
+                } catch (Exception e) {
+                    String message = e.getMessage();
+                    if (message == null) {
+                        message = e.getClass().getName();
+                    }
+                    logger.debug("Error occurred during switchover detector query, Result is {}", message, e);
+                }
+            }
+            if (null == result) {
+                BeEcompErrorManager.getInstance().logFqdnResolveError(SWITCHOVER_DETECTOR_LOG_CONTEXT,
+                        "host " + fqdn + " not resolved after " + attempts + " attempts");
+            }
+            return result;
+        }
+
+        private Boolean queryBe() {
+            return queryGss(switchoverDetectorConfig.getgBeFqdn(), switchoverDetectorConfig.getBeVip(),
+                    maxBeQueryAttempts);
+        }
+
+        private Boolean queryFe() {
+            return queryGss(switchoverDetectorConfig.getgFeFqdn(), switchoverDetectorConfig.getFeVip(),
+                    maxFeQueryAttempts);
+        }
+
+        private void initializeSiteMode() {
+            while (siteMode.equals(SwitchoverDetectorState.UNKNOWN.getState())) {
+
+                beMatch = queryBe();
+                feMatch = queryFe();
+
+                if (beMatch != null && beMatch.equals(feMatch)) {
+                    if (beMatch) {
+                        setSiteMode(SwitchoverDetectorState.ACTIVE.getState());
+                    } else {
+                        setSiteMode(SwitchoverDetectorState.STANDBY.getState());
+                    }
+                }
+            }
         }
 
         @Override
@@ -180,7 +174,8 @@ public class SwitchoverDetector {
                 return;
             }
 
-            Boolean updateRequired = siteMode.equals(SwitchoverDetectorState.STANDBY.getState()) && (beRes || feRes) && (beMatch != beRes || feMatch != feRes);
+            Boolean updateRequired = siteMode.equals(SwitchoverDetectorState.STANDBY.getState()) && (beRes || feRes)
+                    && (!beMatch.equals(beRes) || !feMatch.equals(feRes));
             Boolean prevModeStandby = siteMode.equals(SwitchoverDetectorState.STANDBY.getState());
 
             updateSiteModeAndPriority(beRes && feRes, prevModeStandby, updateRequired);
@@ -189,12 +184,8 @@ public class SwitchoverDetector {
             feMatch = feRes;
         }
 
-        ExecutorService switchoverDetectorExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, "Switchover-Detector-Thread");
-            }
-        });
+        ExecutorService switchoverDetectorExecutor =
+                Executors.newSingleThreadExecutor(runnable -> new Thread(runnable, "Switchover-Detector-Thread"));
 
         private void updateSiteModeAndPriority(Boolean bothMatch, Boolean previousModeStandby, Boolean updateRequired) {
             if (bothMatch && previousModeStandby) {
@@ -225,7 +216,7 @@ public class SwitchoverDetector {
                 if (message == null) {
                     message = e.getClass().getName();
                 }
-                logger.debug("Error occured during change site priority request, Result is {}", message, e);
+                logger.debug("Error occurred during change site priority request, Result is {}", message, e);
             }
 
         }
@@ -241,7 +232,7 @@ public class SwitchoverDetector {
                 if (message == null) {
                     message = e.getClass().getName();
                 }
-                logger.debug("Error occured during publish network request, Result is {}", message, e);
+                logger.debug("Error occurred during publish network request, Result is {}", message, e);
             }
         }
 
@@ -256,7 +247,8 @@ public class SwitchoverDetector {
     private void init() {
         logger.info("Enter init method of SwitchoverDetector");
 
-        switchoverDetectorConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getSwitchoverDetector();
+        switchoverDetectorConfig =
+                ConfigurationManager.getConfigurationManager().getConfiguration().getSwitchoverDetector();
 
         if (!switchoverDetectorConfig.getEnabled()) {
             logger.info("switchover detector service is disabled");
@@ -265,16 +257,16 @@ public class SwitchoverDetector {
 
         Long detectorIntervalConfig = switchoverDetectorConfig.getInterval();
         if (detectorIntervalConfig != null) {
-            detectorInterval = detectorIntervalConfig.longValue();
+            detectorInterval = detectorIntervalConfig;
         }
 
         Integer maxAttempts = switchoverDetectorConfig.getBeResolveAttempts();
         if (maxAttempts != null) {
-            maxBeQueryAttempts = maxAttempts.intValue();
+            maxBeQueryAttempts = maxAttempts;
         }
         maxAttempts = switchoverDetectorConfig.getFeResolveAttempts();
         if (maxAttempts != null) {
-            maxFeQueryAttempts = maxAttempts.intValue();
+            maxFeQueryAttempts = maxAttempts;
         }
 
         logger.info("switchover detector service is enabled, interval is {} seconds", detectorInterval);
@@ -299,9 +291,13 @@ public class SwitchoverDetector {
 
     }
 
+    /**
+     * This method starts the switchover detector threads in the background.
+     */
     public void startSwitchoverDetectorTask() {
         if (this.scheduledFuture == null) {
-            this.scheduledFuture = this.switchoverDetectorScheduler.scheduleAtFixedRate(switchoverDetectorScheduledTask, 0, detectorInterval, TimeUnit.SECONDS);
+            this.scheduledFuture = this.switchoverDetectorScheduler
+                    .scheduleAtFixedRate(switchoverDetectorScheduledTask, 0, detectorInterval, TimeUnit.SECONDS);
         }
     }
 
