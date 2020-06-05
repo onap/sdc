@@ -42,7 +42,7 @@ public class HealthCheckBusinessLogicTest {
     HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
 
     @Test
-    public void checkStausUpdated() {
+    public void checkStatusUpdated() {
 
         boolean statusChanged = healthCheckBusinessLogic.anyStatusChanged(null, null);
         assertFalse("check false", statusChanged);
