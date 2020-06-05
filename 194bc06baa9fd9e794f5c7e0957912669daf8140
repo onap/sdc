@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b3c1f5d2_4fd9f9b5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/switchover/detector/SwitchoverDetector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-05T14:22:33Z",
+      "side": 1,
+      "message": "could be private",
+      "range": {
+        "startLine": 46,
+        "startChar": 4,
+        "endLine": 46,
+        "endChar": 13
+      },
+      "revId": "194bc06baa9fd9e794f5c7e0957912669daf8140",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8267fafc_6621badc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/switchover/detector/SwitchoverDetector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-05T14:22:33Z",
+      "side": 1,
+      "message": "redundant default constructor",
+      "range": {
+        "startLine": 164,
+        "startChar": 7,
+        "endLine": 167,
+        "endChar": 0
+      },
+      "revId": "194bc06baa9fd9e794f5c7e0957912669daf8140",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
