@@ -3,8 +3,9 @@ import zipfile
 
 import pycurl
 
-from sdcBePy.common.logger import debug, log, print_name_and_return_code, error_and_exit
+from sdcBePy.common.logger import debug, log, print_name_and_return_code, print_and_exit
 from sdcBePy.common.sdcBeProxy import SdcBeProxy
+from sdcBePy.common.errors import ResourceCreationError
 
 
 def process_and_create_normative_element(normative_element,
@@ -49,9 +50,11 @@ def _send_request(sdc_be_proxy, file_dir, url_suffix, element_name,
         http_res = sdc_be_proxy.post_file(url_suffix, multi_part_form_data)
         if http_res is not None:
             debug("http response =", http_res)
-        debug("response buffer", str(sdc_be_proxy.con.buffer.getvalue(), "UTF-8"))
+
+        response = sdc_be_proxy.get_response_from_buffer()
+        debug("response buffer", response)
         # c.close()
-        return element_name, http_res, sdc_be_proxy.con.buffer.getvalue()
+        return element_name, http_res, response
 
     except Exception as inst:
         print("ERROR=" + str(inst))
@@ -99,9 +102,9 @@ def print_and_check_result(result, exit_on_success):
     if result is not None:
         print_name_and_return_code(result[0], result[1])
         if result[1] is None or result[1] not in [200, 201, 409]:
-            error_and_exit(1, "Failed to create the normatives elements!!")
+            raise ResourceCreationError("Failed to create the normatives elements!!", 1)
         else:
             if exit_on_success is True:
-                error_and_exit(0, "All normatives elements created successfully!!")
+                print_and_exit(0, "All normatives elements created successfully!!")
     else:
-        error_and_exit(1, "Results is None!!")
+        raise ResourceCreationError("Results is None!", 1)
