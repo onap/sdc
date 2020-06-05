@@ -50,7 +50,9 @@ SDC is built from several projects while the parent "sdc" contains the main pom.
 - sdc-os-chef		- chefs scripts used for docker creation and startup
 - utils			- set of dev utils used for working with the project locally
 
-In order to build all the projects, go to sdc project and run the command: `mvn clean install`
+
+In order to build all the projects, as mentioned in the onap wiki https://wiki.onap.org/display/DW/Setting+Up+Your+Development+Environment, the settings.xml (https://git.onap.org/oparent/plain/settings.xml) from the oparent project must be installed in your ~/.m2 folder and referenced by your IDE.
+Once maven is set up properly, go to sdc project and run the command: `mvn clean install`
 
 Currently SDC build process also supports docker building.
 Note that if you're working on Windows, you'll need to define an environment variable on your machine with key `DOCKER_HOST` and value: `tcp://<ip_address>:2375` in order to build and upload local dockers to a local environment.
