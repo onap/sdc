@@ -3,6 +3,10 @@ import os
 import sys
 from argparse import ArgumentParser
 
+from sdcBePy.common import logger
+from sdcBePy.common.properties import init_properties
+from sdcBePy.common.sdcBeProxy import SdcBeProxy
+
 
 def usage():
     print(sys.argv[0],
@@ -53,4 +57,22 @@ def get_args():
     print('scheme =', scheme, ',be host =', be_host, ', be port =', be_port, ', user =', admin_user,
           ', debug =', debug, ', update_version =', update_version)
 
+    init_properties(defaults["retryTime"], defaults["retryAttempt"], defaults["resourceLen"])
     return scheme, be_host, be_port, admin_user, update_version, debug
+
+
+def parse_and_create_proxy():
+    scheme, be_host, be_port, admin_user, update_version, debug = get_args()
+
+    if debug is False:
+        print('Disabling debug mode')
+        logger.debugFlag = debug
+
+    try:
+        sdc_be_proxy = SdcBeProxy(be_host, be_port, scheme, admin_user, debug=debug)
+    except AttributeError:
+        usage()
+        sys.exit(3)
+
+    return sdc_be_proxy, update_version
+
