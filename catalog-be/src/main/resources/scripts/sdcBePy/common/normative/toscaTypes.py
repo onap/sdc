@@ -3,7 +3,8 @@ import zipfile
 
 import pycurl
 
-from sdcBePy.common.logger import print_name_and_return_code, error_and_exit, log, debug
+from sdcBePy.common.errors import ResourceCreationError
+from sdcBePy.common.logger import print_name_and_return_code, print_and_exit, log, debug
 from sdcBePy.common.sdcBeProxy import SdcBeProxy
 
 
@@ -32,25 +33,27 @@ def print_and_check_results(results, update_version, exit_on_success=False):
         print("----------------------------------------")
         check_results_and_exit(results, update_version, exit_on_success)
     else:
-        error_and_exit(1, "results is none -> error occurred!!")
+        raise ResourceCreationError("Results is none -> error occurred!!", 1)
 
 
 def check_results_and_exit(results, update_version, exit_on_success):
     if not _results_ok(results, _get_response_code(update_version)):
-        error_and_exit(1, "Failed to create the normatives types !!")
+        raise ResourceCreationError("Failed to create the normatives types !!", 1)
     else:
         if exit_on_success:
-            error_and_exit(0, "All normatives types created successfully!!")
+            print_and_exit(0, "All normatives types created successfully!!")
 
 
 def _create_normatives_type(file_dir, sdc_be_proxy, types, update_version):
     results = []
     response_codes = _get_response_code(update_version)
-    for normativeType in types:
-        result = _send_request(sdc_be_proxy, file_dir, normativeType, update_version)
+    for normative_type in types:
+        result = _send_request(sdc_be_proxy, file_dir, normative_type, update_version)
         results.append(result)
         if result[1] is None or result[1] not in response_codes:
-            print("Failed creating normative type " + normativeType + ". " + str(result[1]))
+            raise ResourceCreationError("Failed creating normative type " + normative_type + ". " + str(result[1]),
+                                        1,
+                                        normative_type)
     return results
 
 
@@ -67,12 +70,13 @@ def _send_request(sdc_be_proxy, file_dir, element_name, update_version):
         send = _create_send_body(file_dir, element_name)
 
         debug(send)
-        httpRes = sdc_be_proxy.post_file(url, send)
-        if httpRes is not None:
-            debug("http response=", httpRes)
-        debug(sdc_be_proxy.con.buffer.getvalue())
+        http_res = sdc_be_proxy.post_file(url, send)
+        if http_res is not None:
+            debug("http response=", http_res)
 
-        return element_name, httpRes, sdc_be_proxy.con.buffer.getvalue()
+        response = sdc_be_proxy.get_response_from_buffer()
+        debug(response)
+        return element_name, http_res, response
 
     except Exception as inst:
         print("ERROR=" + str(inst))
@@ -90,15 +94,15 @@ def _create_send_body(file_dir, element_name):
     debug(path)
     current_json_file = file_dir + element_name + "/" + element_name + ".json"
 
-    jsonFile = open(current_json_file)
+    json_file = open(current_json_file)
 
     debug("before load json")
-    json_data = json.load(jsonFile, strict=False)
+    json_data = json.load(json_file, strict=False)
     debug(json_data)
 
-    jsonAsStr = json.dumps(json_data)
+    json_as_str = json.dumps(json_data)
 
-    return [('resourceMetadata', jsonAsStr), ('resourceZip', (pycurl.FORM_FILE, path))]
+    return [('resourceMetadata', json_as_str), ('resourceZip', (pycurl.FORM_FILE, path))]
 
 
 def _results_ok(results, response_codes):
@@ -110,11 +114,11 @@ def _results_ok(results, response_codes):
 
 
 def _get_response_code(update_version):
-    responseCodes = [200, 201]
+    response_codes = [200, 201]
     if update_version is False:
-        responseCodes.append(409)
+        response_codes.append(409)
 
-    return responseCodes
+    return response_codes
 
 
 def _boolean_to_string(boolean_value):

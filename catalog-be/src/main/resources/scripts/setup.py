@@ -14,7 +14,7 @@ setup(
     entry_points={
         "console_scripts": [
             "sdcuserinit=sdcBePy.users.run:main",
-            "sdcimportall=sdcBePy.tosca.imports.run:main",
+            "sdcimportall=sdcBePy.tosca.imports.run:run",
             "sdcimportdata=sdcBePy.tosca.imports.runNormativeElement:run_import_data",
             "sdcimportcapabilities=sdcBePy.tosca.imports.runNormativeElement:run_import_capabilities",
             "sdcimportrelationship=sdcBePy.tosca.imports.runNormativeElement:run_import_relationship",
@@ -29,7 +29,7 @@ setup(
             "sdcimportsol=sdcBePy.tosca.imports.runNormativeType:run_import_sol",
             "sdcimportannotation=sdcBePy.tosca.imports.runNormativeType:run_import_annotation",
             "sdcimportgeneric=sdcBePy.tosca.imports.runGenericNormative:main",
-            "sdcupgradeall=sdcBePy.tosca.upgrade.run:main",
+            "sdcupgradeall=sdcBePy.tosca.upgrade.run:run",
             "sdcupgradenfv=sdcBePy.tosca.upgrade.runUpgradeNormative:run_upgrade_nfv",
             "sdcupgradeonap=sdcBePy.tosca.upgrade.runUpgradeNormative:run_upgrade_onap",
             "sdcupgradesol=sdcBePy.tosca.upgrade.runUpgradeNormative:run_upgrade_sol",
@@ -37,7 +37,8 @@ setup(
             "sdcupgradeheat1707_3537=sdcBePy.tosca.upgrade.runUpgradeNormative:run_upgrade_heat1707_3537",
             "sdcupgradeheatversion=sdcBePy.tosca.upgrade.runUpgradeNormative:run_upgrade_heat_version",
             "sdccheckbackend=sdcBePy.common.healthCheck:main",
-            "sdcconsumerinit=sdcBePy.consumers.run:main"
+            "sdcconsumerinit=sdcBePy.consumers.run:main",
+            "sdcinit=sdcBePy.tosca.run:run"
         ]
     }, install_requires=['pycurl']
 )

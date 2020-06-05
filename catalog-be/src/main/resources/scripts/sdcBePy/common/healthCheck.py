@@ -4,13 +4,12 @@ import time
 from argparse import ArgumentParser
 from datetime import datetime
 
+from sdcBePy import properties
 from sdcBePy.common.bColors import BColors
+from sdcBePy.common.properties import init_properties
 from sdcBePy.common.sdcBeProxy import SdcBeProxy
 
 colors = BColors()
-
-RETRY_TIME = 10
-RETRY_ATTEMPTS = 10
 
 
 def check_backend(sdc_be_proxy=None, reply_append_count=1, be_host=None, be_port=None, scheme=None, debug=False):
@@ -24,13 +23,14 @@ def check_backend(sdc_be_proxy=None, reply_append_count=1, be_host=None, be_port
         else:
             print('[WARRING]: ' + datetime.now().strftime('%Y/%m/%d %H:%M:%S') + colors.FAIL
                   + ' Backend not responding, try #' + str(i) + colors.END_C)
-            time.sleep(RETRY_TIME)
+            time.sleep(properties.retry_time)
 
     return False
 
 
 def run(be_host, be_port, protocol):
-    if not check_backend(reply_append_count=RETRY_ATTEMPTS, be_host=be_host, be_port=be_port, scheme=protocol):
+    if not check_backend(reply_append_count=properties.retry_attempts, be_host=be_host,
+                         be_port=be_port, scheme=protocol):
         print('[ERROR]: ' + time.strftime('%Y/%m/%d %H:%M:%S') + colors.FAIL + ' Backend is DOWN :-(' + colors.END_C)
         exit()
 
@@ -44,6 +44,7 @@ def get_args():
 
     args = parser.parse_args()
 
+    init_properties(10, 10)
     return [args.ip, args.port, 'https' if args.https else 'http']
 
 

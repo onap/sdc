@@ -16,7 +16,7 @@ def log(desc, arg):
     print(desc, arg)
 
 
-def error_and_exit(error_code, error_desc):
+def print_and_exit(error_code, error_desc):
     if error_code > 0:
         print("status={0}. {1}".format(error_code, '' if not error_desc else error_desc))
     else:
