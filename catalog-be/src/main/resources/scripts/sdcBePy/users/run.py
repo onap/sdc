@@ -5,8 +5,10 @@ import os
 import time
 from argparse import ArgumentParser
 
+from sdcBePy import properties
 from sdcBePy.common.bColors import BColors
-from sdcBePy.common.healthCheck import check_backend, RETRY_ATTEMPTS
+from sdcBePy.common.healthCheck import check_backend
+from sdcBePy.common.properties import init_properties
 from sdcBePy.common.sdcBeProxy import SdcBeProxy
 
 colors = BColors()
@@ -19,7 +21,7 @@ def load_users(conf_path):
 
 def be_user_init(be_ip, be_port, protocol, conf_path):
     sdc_be_proxy = SdcBeProxy(be_ip, be_port, protocol)
-    if check_backend(sdc_be_proxy, RETRY_ATTEMPTS):
+    if check_backend(sdc_be_proxy, properties.retry_attempts):
         users = load_users(conf_path)
         for user in users:
             if sdc_be_proxy.check_user(user['userId']) != 200:
@@ -53,6 +55,7 @@ def get_args():
 
     args = parser.parse_args()
 
+    init_properties(10, 10)
     return [args.ip, args.port, 'https' if args.https else 'http', args.conf]
 
 

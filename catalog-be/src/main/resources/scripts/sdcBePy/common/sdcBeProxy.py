@@ -12,6 +12,9 @@ def get_url(ip, port, protocol):
 
 class SdcBeProxy:
 
+    BODY_SEPARATOR = "\r\n\r\n"
+    CHARTSET = 'UTF-8'
+
     def __init__(self, be_ip, be_port, scheme, user_id="jh0003",
                  debug=False, connector=None):
         if not check_arguments_not_none(be_ip, be_port, scheme, user_id):
@@ -45,8 +48,19 @@ class SdcBeProxy:
             'consumerPassword': password
         }))
 
+    def get_normatives(self):
+        return self.con.get("/sdc2/rest/v1/screen", with_buffer=True)
+
     def post_file(self, path, multi_part_form_data):
         return self.con.post_file(path, multi_part_form_data)
+
+    def get_response_from_buffer(self):
+        value = self.con.buffer.getvalue()
+        self.con.buffer.truncate(0)
+        self.con.buffer.seek(0)
+
+        response = value.decode(self.CHARTSET).split(self.BODY_SEPARATOR)
+        return response[1] if len(response) == 2 else response[0]
 
 
 class CurlConnector:
@@ -71,12 +85,16 @@ class CurlConnector:
         self.url = url
         self._check_schema(scheme)
 
-    def get(self, path):
+    def get(self, path, buffer=None, with_buffer=False):
         try:
             self.c.setopt(pycurl.URL, self.url + path)
             self.c.setopt(pycurl.HTTPHEADER, [self.user_header,
                                               CurlConnector.CONTENT_TYPE_HEADER,
                                               CurlConnector.ACCEPT_HEADER])
+
+            if with_buffer:
+                write = self.buffer.write if not buffer else buffer.write
+                self.c.setopt(pycurl.WRITEFUNCTION, write)
 
             self.c.perform()
             return self.c.getinfo(pycurl.RESPONSE_CODE)
