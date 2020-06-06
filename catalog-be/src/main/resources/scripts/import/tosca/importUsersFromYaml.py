@@ -17,7 +17,7 @@ import yaml
 #		python importUsersFromYaml.py [-f <input file> | --ifile=<input file> ]												 				           									#
 #									    																											   									#
 #   PyYAML module shall be added to python.																											   									#
-#   pip install PyYAML>=3.1.0 --proxy=http://one.proxy.att.com:8080														                               									#
+#   pip install --no-cache-dir PyYAML>=3.1.0 --proxy=http://one.proxy.att.com:8080														                               									#
 #########################################################################################################################################################################################
 
 
