@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
+import javax.xml.XMLConstants;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -69,6 +70,9 @@ public class GraphMLDataAnalyzer {
     private String analyzeGraphMLData(String mlFileLocation) throws JDOMException, IOException {
         // Parse ML file
         SAXBuilder builder = new SAXBuilder();
+        builder.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        builder.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
         File xmlFile = new File(mlFileLocation);
         Document document = builder.build(xmlFile);
 
