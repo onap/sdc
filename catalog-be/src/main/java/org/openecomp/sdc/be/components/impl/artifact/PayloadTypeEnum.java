@@ -25,6 +25,7 @@ package org.openecomp.sdc.be.components.impl.artifact;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
+import javax.xml.parsers.SAXParser;
 import org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -83,7 +84,10 @@ public enum PayloadTypeEnum {
         @Override
         public Either<Boolean, ActionStatus> isValid(byte[] payload) {
             try {
-                XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+                SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+                saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+                XMLReader reader = saxParser.getXMLReader();
                 setFeatures(reader);
                 reader.parse(new InputSource(new ByteArrayInputStream(payload)));
             } catch (ParserConfigurationException | IOException | SAXException exception) {

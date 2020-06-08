@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -2072,7 +2073,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private boolean isValidXml(byte[] xmlToParse) {
         boolean isXmlValid = true;
         try {
-            XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+            saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            XMLReader reader = saxParser.getXMLReader();
             setFeatures(reader);
             reader.parse(new InputSource(new ByteArrayInputStream(xmlToParse)));
         }
