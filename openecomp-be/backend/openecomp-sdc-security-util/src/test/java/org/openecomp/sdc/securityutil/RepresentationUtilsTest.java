@@ -18,6 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 
+package org.openecomp.sdc.securityutil;
+
 import org.junit.Test;
 
 import java.io.IOException;
