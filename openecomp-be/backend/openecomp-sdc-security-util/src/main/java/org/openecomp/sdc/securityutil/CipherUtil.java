@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,43 +21,47 @@
 package org.openecomp.sdc.securityutil;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
+import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import org.apache.commons.codec.binary.Base64;
-
 public class CipherUtil {
-    private static Logger log = LoggerFactory.getLogger( CipherUtil.class.getName());
+
+    private static Logger log = LoggerFactory.getLogger(CipherUtil.class.getName());
     private static final String ALGORITHM = "AES";
-    private static final String ALGORYTHM_DETAILS = ALGORITHM + "/CBC/PKCS5PADDING";
+    private static final String ALGORITHM_DETAILS = ALGORITHM + "/GCM/NoPadding";
     private static final String CIPHER_PROVIDER = "SunJCE";
-    private static final int BLOCK_SIZE = 128;
-    private static final int BYTE_SIZE = 8;
-    private static final int IV_SIZE = BLOCK_SIZE / BYTE_SIZE;
+
+    public static final int GCM_TAG_LENGTH = 16;
+    public static final int GCM_IV_LENGTH = 12;
+
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     private static final String ALGORITHM_NAME = "SHA1PRNG";
+
+    private CipherUtil() {}
 
     /**
      * Encrypt the text using the secret key in key.properties file
      *
      * @param value string to encrypt
      * @return The encrypted string
-     * @throws CipherUtilException
-     *             In case of issue with the encryption
+     * @throws CipherUtilException In case of issue with the encryption
      */
     public static String encryptPKC(String value, String base64key) throws CipherUtilException {
         Cipher cipher;
-        byte[] iv = new byte[IV_SIZE];
+        byte[] iv = new byte[GCM_IV_LENGTH];
         byte[] finalByte;
         try {
-            cipher = Cipher.getInstance(ALGORYTHM_DETAILS, CIPHER_PROVIDER);
+            cipher = Cipher.getInstance(ALGORITHM_DETAILS, CIPHER_PROVIDER);
             SecureRandom secureRandom = SecureRandom.getInstance(ALGORITHM_NAME);
             secureRandom.nextBytes(iv);
-            IvParameterSpec ivspec = new IvParameterSpec(iv);
-            cipher.init(Cipher.ENCRYPT_MODE, getSecretKeySpec(base64key), ivspec);
+            GCMParameterSpec spec =
+                new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, getSecretKeySpec(base64key), spec);
             finalByte = cipher.doFinal(value.getBytes());
 
         } catch (Exception ex) {
@@ -70,12 +74,10 @@ public class CipherUtil {
     /**
      * Decrypts the text using the secret key in key.properties file.
      *
-     * @param message
-     *            The encrypted string that must be decrypted using the ONAP Portal
-     *            Encryption Key
+     * @param message The encrypted string that must be decrypted using the ONAP Portal Encryption
+     *                Key
      * @return The String decrypted
-     * @throws CipherUtilException
-     *             if any decryption step fails
+     * @throws CipherUtilException if any decryption step fails
      */
 
     public static String decryptPKC(String message, String base64key) throws CipherUtilException {
@@ -83,10 +85,12 @@ public class CipherUtil {
         Cipher cipher;
         byte[] decrypted;
         try {
-            cipher = Cipher.getInstance(ALGORYTHM_DETAILS, CIPHER_PROVIDER);
-            IvParameterSpec ivspec = new IvParameterSpec(subarray(encryptedMessage, 0, IV_SIZE));
-            byte[] realData = subarray(encryptedMessage, IV_SIZE, encryptedMessage.length);
-            cipher.init(Cipher.DECRYPT_MODE, getSecretKeySpec(base64key), ivspec);
+            cipher = Cipher.getInstance(ALGORITHM_DETAILS, CIPHER_PROVIDER);
+            byte[] initVector = Arrays.copyOfRange(encryptedMessage, 0, GCM_IV_LENGTH);
+            GCMParameterSpec spec =
+                new GCMParameterSpec(GCM_TAG_LENGTH * java.lang.Byte.SIZE, initVector);
+            byte[] realData = subarray(encryptedMessage, GCM_IV_LENGTH, encryptedMessage.length);
+            cipher.init(Cipher.DECRYPT_MODE, getSecretKeySpec(base64key), spec);
             decrypted = cipher.doFinal(realData);
 
         } catch (Exception ex) {
@@ -120,7 +124,7 @@ public class CipherUtil {
 
     private static byte[] subarray(byte[] array, int startIndexInclusive, int endIndexExclusive) {
         if (array == null) {
-            return null;
+            return new byte[0];
         } else {
             if (startIndexInclusive < 0) {
                 startIndexInclusive = 0;

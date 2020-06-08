@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
+package org.openecomp.sdc.securityutil;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
-import org.openecomp.sdc.securityutil.CipherUtil;
-import org.openecomp.sdc.securityutil.CipherUtilException;
 
 import static org.junit.Assert.*;
 
@@ -67,7 +67,7 @@ public class CipherUtilTest {
             CipherUtil.decryptPKC(DATA, KEY);
           fail();
        } catch (CipherUtilException ex) {
-          assertTrue(ex.getMessage().contains("Wrong IV length"));
+          assertTrue(ex.getMessage().contains("Input too short"));
         }
     }
 }
