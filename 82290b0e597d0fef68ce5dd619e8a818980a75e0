@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df9c7bd7_20f432f2",
+        "filename": "openecomp-be/backend/openecomp-sdc-security-util/src/test/java/org/openecomp/sdc/securityutil/SessionValidationFilterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-08T16:21:20Z",
+      "side": 1,
+      "message": "incorrect file path, should be \norg/openecomp/sdc/securityutil/filters/SessionValidationFilterTest.java",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 7
+      },
+      "revId": "82290b0e597d0fef68ce5dd619e8a818980a75e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
