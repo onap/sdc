@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "b91149fd_18125066",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-06-09T14:13:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37b13245_47ec7d86",
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a10a0d9f_b9006e61",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
         "patchSetId": 2
@@ -54,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "3629f31f_eb513610",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-06-09T14:13:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a10a0d9f_b9006e61",
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d3a35cb1_0d0ca86c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
         "patchSetId": 2
@@ -68,6 +104,24 @@
       "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c55ae11_c366965e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1623,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-06-09T14:13:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d3a35cb1_0d0ca86c",
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -142,6 +196,30 @@
     },
     {
       "key": {
+        "uuid": "c6eba08a_5d6f7453",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1743,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-06-09T14:13:35Z",
+      "side": 1,
+      "message": "I rewrote this (and others expecting exception) to use assertThrows, following JUnit 5 manner.",
+      "parentUuid": "1e1c4015_ed32cd69",
+      "range": {
+        "startLine": 1739,
+        "startChar": 12,
+        "endLine": 1743,
+        "endChar": 5
+      },
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e13ce279_2bb6b678",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
         "patchSetId": 2
@@ -153,6 +231,24 @@
       "writtenOn": "2020-05-05T17:20:25Z",
       "side": 1,
       "message": "Theses tests are way too long. This is probably due to the lack of factory method to create ComponentIntances and Resources. Please factor these object building with additional methods.\n\nAlso, the mocks look like these tests target the internal details of the createComponentInstance function. A test should always be done against the API of a function, not against its internals. If this is not possible, this means the function probably needs to be refactored by leveraging inversion of control and/or be split into multiple smaller functions (Considering the size of the class, I would probably go with extracting meaningful testable chunks). This is probably not possible here, but should be kept in mind in the future.",
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "176006f4_7acbb68a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1779,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-06-09T14:13:35Z",
+      "side": 1,
+      "message": "I extracted logic preparing ComponentInstances/Resources to a method (L.1552).\n\nAnd I agree that a test should be done against the API.\nCurrently, createComponentInstance is too complex and does lots of calls to other components injected by Spring, so we have to mock these calls to go through the method.\nRefactoring the method seems hard work so I left it as it was for the meantime.",
+      "parentUuid": "e13ce279_2bb6b678",
       "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
