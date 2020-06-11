@@ -6,11 +6,6 @@
   <artifactId>dmaap-publisher</artifactId>
   <version>1.0.0</version>
 
-
-  <properties>
-    <fasterxml.jackson.version>2.8.6</fasterxml.jackson.version>
-  </properties>
-
   <dependencies>
     <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
     <dependency>

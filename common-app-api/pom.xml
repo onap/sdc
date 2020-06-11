@@ -113,6 +113,12 @@
       <artifactId>jersey-media-json-jackson</artifactId>
       <version>${jersey-bom.version}</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Aspects -->
@@ -142,6 +148,12 @@
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
