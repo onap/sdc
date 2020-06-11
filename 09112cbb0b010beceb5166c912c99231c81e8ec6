@@ -53,6 +53,74 @@
     },
     {
       "key": {
+        "uuid": "25642ba4_e47ea9dd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TogglingServlet.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-11T10:17:01Z",
+      "side": 1,
+      "message": "small nitpicking, but it\u0027s 2020 😊",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "886cccf2_44eb67c9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TogglingServlet.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-11T10:17:01Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s used :)",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2272cf60_a5902927",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TogglingServlet.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-11T10:17:01Z",
+      "side": 1,
+      "message": "Same here, I don\u0027t think it\u0027s used",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87cda881_23e8f035",
+        "filename": "catalog-be/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-11T10:17:01Z",
+      "side": 1,
+      "message": "nitpicking again, but mixing tabs and spaces in the same file :)",
+      "revId": "09112cbb0b010beceb5166c912c99231c81e8ec6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4c2f412e_3dc78a0c",
         "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/HealingJanusGraphDao.java",
         "patchSetId": 5
