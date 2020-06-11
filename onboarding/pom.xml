@@ -91,7 +91,6 @@
     <javax.el-api.version>3.0.1-b04</javax.el-api.version>
     <javax.inject.version>1</javax.inject.version>
     <javax.servlet.version>2.5</javax.servlet.version>
-    <jackson.version>2.9.9</jackson.version>
     <jackson.annotations.version>${jackson.version}</jackson.annotations.version>
     <jackson.dataformat.version>${jackson.version}</jackson.dataformat.version>
     <jcommander.version>1.58</jcommander.version>
@@ -236,6 +235,12 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${jackson.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.dataformat</groupId>

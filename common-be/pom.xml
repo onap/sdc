@@ -28,12 +28,23 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
     <!-- Common of SD&C -->
     <dependency>
       <groupId>org.openecomp.sdc</groupId>
       <artifactId>common-app-api</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -68,6 +79,12 @@
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -104,6 +121,12 @@
       <groupId>org.onap.sdc.common</groupId>
       <artifactId>onap-tosca-datatype</artifactId>
       <version>${tosca.datatype.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onap.sdc.sdc-tosca</groupId>
