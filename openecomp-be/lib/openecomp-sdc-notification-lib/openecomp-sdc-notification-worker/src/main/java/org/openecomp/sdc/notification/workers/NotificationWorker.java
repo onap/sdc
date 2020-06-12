@@ -89,7 +89,7 @@ public class NotificationWorker {
 
 			for (NotificationReceiver receiver : currUsers.values()) {
 				String ownerId = receiver.getOwnerId();
-				UUID eventId = receiver.getlastEventId();
+				UUID eventId = receiver.getLastEventId();
 				NotificationsStatusDto status = news.getNewNotifications(ownerId, eventId, selectionLimit);
 				if(Objects.nonNull(status) && CollectionUtils.isNotEmpty(status.getNotifications())) {
 					receiver.setLastEventId(status.getLastScanned());
@@ -103,7 +103,7 @@ public class NotificationWorker {
 	public void register(String ownerId, UUID lastDelivered, Consumer<NotificationsStatusDto> notesProcessor) {
 		NotificationReceiver receiver = new NotificationReceiver(ownerId, lastDelivered, notesProcessor);
 		activeUsers.put(ownerId, receiver);
-		LOGGER.debug("User {} is registered with eventId: {}", ownerId, receiver.getlastEventId());
+		LOGGER.debug("User {} is registered with eventId: {}", ownerId, receiver.getLastEventId());
 	}
 
 	public void unregister(String ownerId) {
