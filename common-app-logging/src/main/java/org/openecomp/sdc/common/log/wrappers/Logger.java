@@ -132,7 +132,7 @@ public class Logger implements org.slf4j.Logger {
             metric.startTimer()
                     .stopTimer();
         } catch (Exception e) {
-            e.printStackTrace();
+            error(e.getMessage(), e);
         }
         metric.log(ONAPLogConstants.Markers.INVOKE_RETURN, LogLevel.INFO, msg, params);
     }
