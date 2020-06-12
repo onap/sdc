@@ -24,46 +24,23 @@ import org.openecomp.sdc.notification.types.NotificationsStatusDto;
 
 import java.util.UUID;
 import java.util.function.Consumer;
+import Lombok.AllArgsConstructor;
+import Lombok.Getter;
+import Lombok.NoArgsConstructor;
+import Lombok.Setter;
+import Lombok.ToString;
 
 
-
+@Getter
+@Setter
+@AllArgsConstructor
 public class NotificationReceiver {
 
-	public String ownerId = null;
-	public Consumer<NotificationsStatusDto> notesProcessor = null;
-	public UUID lastEventId = null;
-
-	NotificationReceiver(String ownerId, UUID lastEventId, Consumer<NotificationsStatusDto> notesProcessor) {
-		this.ownerId = ownerId;
-		this.lastEventId = lastEventId;
-		this.notesProcessor = notesProcessor;
-	}
+	private String ownerId = null;
+	private UUID lastEventId = null;
+	private Consumer<NotificationsStatusDto> notesProcessor = null;
 
 	NotificationReceiver(String ownerId, Consumer<NotificationsStatusDto> notesProcessor) {
 		this(ownerId, null, notesProcessor);
-	}
-
-	public void setOwnerId(String ownerId) {
-		this.ownerId = ownerId;
-	}
-
-	public String getOwnerId() {
-		return this.ownerId;
-	}
-
-	public void setNotesProcessor(Consumer<NotificationsStatusDto> notesProcessor) {
-		this.notesProcessor = notesProcessor;
-	}
-
-	public Consumer<NotificationsStatusDto> getNotesProcessor() {
-		return this.notesProcessor;
-	}
-
-	public void setLastEventId(UUID lastEventId) {
-		this.lastEventId = lastEventId;
-	}
-
-	public UUID getlastEventId() {
-		return this.lastEventId;
 	}
 }

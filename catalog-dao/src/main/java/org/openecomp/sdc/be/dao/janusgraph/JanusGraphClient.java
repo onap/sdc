@@ -209,7 +209,7 @@ public class JanusGraphClient {
 			try {
 				JanusGraphFactory.drop(graph);
 			} catch (BackendException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(),e);
 			}
 		}
 	}
