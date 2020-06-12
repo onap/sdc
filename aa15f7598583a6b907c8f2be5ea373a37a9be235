@@ -252,6 +252,24 @@
       "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6154ff9_20eb7478",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1779,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-12T14:57:14Z",
+      "side": 1,
+      "message": "Sounds fair, I\u0027m struggling with the same issues (long functions with too many arguments with low level of cohesion). Could you please add a TODO comment mentioning this? Also, I am trying to push for cleaning up SDC by following some best practices. Please contribute to this JIRA if you are interested: https://jira.onap.org/browse/SDC-2888",
+      "parentUuid": "176006f4_7acbb68a",
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

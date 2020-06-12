@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03f73b0c_f33556ec",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-12T14:57:14Z",
+      "side": 1,
+      "message": "Any reason not to make these private?",
+      "range": {
+        "startLine": 183,
+        "startChar": 5,
+        "endLine": 183,
+        "endChar": 9
+      },
+      "revId": "d97ec8781ec81375fad154587d61d7532d86af9f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f143951c_2fcf9f6b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-12T14:57:14Z",
+      "side": 1,
+      "message": "Any Reason not to make these public? That\u0027s the standard as far as I know.",
+      "range": {
+        "startLine": 202,
+        "startChar": 9,
+        "endLine": 202,
+        "endChar": 35
+      },
+      "revId": "d97ec8781ec81375fad154587d61d7532d86af9f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
