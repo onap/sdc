@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25475e95_7562f17f",
+        "filename": "catalog-be/src/main/resources/scripts/sdcBePy/consumers/run.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5097
+      },
+      "writtenOn": "2020-06-12T07:23:40Z",
+      "side": 1,
+      "message": "Hand crafted logger-like print statements instead of native logging class facilities are used here for some specific reason?",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 54
+      },
+      "revId": "002d1c434c883291b9124a4b692069710bf053da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
