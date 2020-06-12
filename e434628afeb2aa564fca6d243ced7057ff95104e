@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ad8a8ca_94c4186c",
+        "filename": "openecomp-be/lib/openecomp-sdc-notification-lib/openecomp-sdc-notification-worker/src/main/java/org/openecomp/sdc/notification/workers/NotificationReceiver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-12T12:03:23Z",
+      "side": 1,
+      "message": "replace with lombok \n@Getter\n@Setter\n@AllArgsConstructor",
+      "range": {
+        "startLine": 32,
+        "startChar": 1,
+        "endLine": 68,
+        "endChar": 2
+      },
+      "revId": "e434628afeb2aa564fca6d243ced7057ff95104e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
