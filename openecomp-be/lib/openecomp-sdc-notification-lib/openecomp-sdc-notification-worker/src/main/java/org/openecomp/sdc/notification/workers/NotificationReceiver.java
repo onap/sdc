@@ -29,9 +29,9 @@ import java.util.function.Consumer;
 
 public class NotificationReceiver {
 
-	public String ownerId = null;
-	public Consumer<NotificationsStatusDto> notesProcessor = null;
-	public UUID lastEventId = null;
+	private String ownerId = null;
+	private Consumer<NotificationsStatusDto> notesProcessor = null;
+	private UUID lastEventId = null;
 
 	NotificationReceiver(String ownerId, UUID lastEventId, Consumer<NotificationsStatusDto> notesProcessor) {
 		this.ownerId = ownerId;
