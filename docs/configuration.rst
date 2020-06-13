@@ -1085,7 +1085,7 @@ BE-distribution-engine-configuration.yaml
     currentArtifactInstallationTimeout: 120
 
 BE-janusgraph.properties
-*******************
+************************
 
 ::
 
@@ -1382,20 +1382,20 @@ FE-plugins-configuration.yaml
    connectionTimeout: 1000
 
 FE-workspace-configuration.yaml
-*****************************
+*******************************
 ::
 
-# this file contains the different configurable UI workspace items that can be set according to resource and service type.
-# the workspaceMenuConfiguration entry defines the workspace menus that are displayed according to type/subtype of the component in the workspace
-# in addition, they can also be disabled for specific roles. the key is the resource type or service type and it will return the list of the menu
-# items that will be displayed.
-#
-# each key had a list of menu items with the following data:
-#   - text: display text,
-#   - state: the state for the screen
-#   - action: action associated
-#   - index: optional - an integer that will be used to decide on the order of appearance
-# following are 2 example
+    # this file contains the different configurable UI workspace items that can be set according to resource and service type.
+    # the workspaceMenuConfiguration entry defines the workspace menus that are displayed according to type/subtype of the component in the workspace
+    # in addition, they can also be disabled for specific roles. the key is the resource type or service type and it will return the list of the menu
+    # items that will be displayed.
+    #
+    # each key had a list of menu items with the following data:
+    #   - text: display text,
+    #   - state: the state for the screen
+    #   - action: action associated
+    #   - index: optional - an integer that will be used to decide on the order of appearance
+    # following are 2 example
     workspaceMenuConfiguration:
       VFC:
       - text: General
