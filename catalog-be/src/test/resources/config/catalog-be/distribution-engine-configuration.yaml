@@ -1,11 +1,10 @@
 uebServers:
-   - uebsb91kcdc.it.att.com
-   - uebsb92kcdc.it.att.com
-#   - uebsb93kcdc.it.att.com
+   - test1.onap.org
+   - test2.onap.org
 
-uebPublicKey: 8F3MDAtMSBwwpSMy
+uebPublicKey: public
 
-uebSecretKey: gzFmsTxSCtO5RQfAccM6PqqX
+uebSecretKey: secret
 
 distributionNotifTopicName: ASDC-DISTR-NOTIF-TOPIC
 distributionStatusTopicName: ASDC-DISTR-STATUS-TOPIC
@@ -28,8 +27,8 @@ environments:
 distributionStatusTopic:
    pollingIntervalSec: 60
    fetchTimeSec: 15
-   consumerGroup: asdc
-   consumerId: asdc-id
+   consumerGroup: sdc
+   consumerId: sdc-id
 
 distributionNotificationTopic:
    minThreadPoolSize: 0
@@ -47,7 +46,7 @@ allowedTimeBeforeStaleSec: 300
 
 aaiConfig:
    httpRequestConfig:
-      serverRootUrl: https://aai-uint3.test.att.com:8443
+      serverRootUrl: https://aai.test.onap.org:8443
       resourceNamespaces:
          operationalEnvironments: /aai/v12/cloud-infrastructure/operational-environments
 
@@ -57,7 +56,7 @@ aaiConfig:
          connectTimeoutMs: 1000
       clientCertificate:
          keyStore: /opt/app/jetty/base/be/etc/non-prod.jks
-         keyStorePassword: hmXYcznAljMSisdy8zgcag==
+         keyStorePassword: XyCUPhFx9u70aklYGo6OiA==
       headers:
          X-FromAppId: asdc
       numOfRetries: 3
@@ -73,6 +72,6 @@ msoConfig:
           readTimeoutMs: 2000
           connectTimeoutMs: 500
        basicAuthorization:
-          userName: asdc
-          password: OTLEp5lfVhYdyw5EAtTUBQ==
+          userName: sdc@sdc.com
+          password: XyCUPhFx9u70aklYGo6OiA==
        numOfRetries: 3
