@@ -270,6 +270,24 @@
       "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aee47934_2771f51f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1779,
+      "author": {
+        "id": 5233
+      },
+      "writtenOn": "2020-06-15T07:02:55Z",
+      "side": 1,
+      "message": "Okay. Added a TODO comment.",
+      "parentUuid": "b6154ff9_20eb7478",
+      "revId": "aa15f7598583a6b907c8f2be5ea373a37a9be235",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
