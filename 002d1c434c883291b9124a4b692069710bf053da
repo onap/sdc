@@ -22,6 +22,30 @@
       "revId": "002d1c434c883291b9124a4b692069710bf053da",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27774ce9_3d7d1ffa",
+        "filename": "catalog-be/src/main/resources/scripts/sdcBePy/consumers/run.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-06-15T09:47:45Z",
+      "side": 1,
+      "message": "I plan to refactor the logging as a next step, to not complicate this commit to much. For now, I leave the old way of presenting information for the users.",
+      "parentUuid": "25475e95_7562f17f",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 54
+      },
+      "revId": "002d1c434c883291b9124a4b692069710bf053da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
