@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "976033ce_c5e8c7e7",
+        "filename": "docs/delivery.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-06-15T07:41:58Z",
+      "side": 1,
+      "message": "was removed from deployment",
+      "range": {
+        "startLine": 24,
+        "startChar": 2,
+        "endLine": 24,
+        "endChar": 8
+      },
+      "revId": "4842e80babd6c40141ec0298ddc675c916f7a7b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49d17dc1_c3183f97",
+        "filename": "docs/delivery.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-06-15T07:41:58Z",
+      "side": 1,
+      "message": "was removed from deployment",
+      "range": {
+        "startLine": 26,
+        "startChar": 2,
+        "endLine": 26,
+        "endChar": 13
+      },
+      "revId": "4842e80babd6c40141ec0298ddc675c916f7a7b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b94e525_6b661ade",
+        "filename": "docs/delivery.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 653
+      },
+      "writtenOn": "2020-06-15T07:41:58Z",
+      "side": 1,
+      "message": "was removed from deployment",
+      "range": {
+        "startLine": 28,
+        "startChar": 2,
+        "endLine": 28,
+        "endChar": 12
+      },
+      "revId": "4842e80babd6c40141ec0298ddc675c916f7a7b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
