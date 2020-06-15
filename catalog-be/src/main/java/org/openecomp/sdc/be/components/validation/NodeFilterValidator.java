@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -96,22 +96,21 @@ public class NodeFilterValidator {
                                                               final List<String> uiConstraints,
                                                               final NodeFilterConstraintAction action) {
         try {
-            for (final String uiConstraint : uiConstraints) {
-                if (NodeFilterConstraintAction.ADD != action && NodeFilterConstraintAction.UPDATE != action) {
-                    break;
-                }
-                final UIConstraint constraint = new ConstraintConvertor().convert(uiConstraint);
-                if (ConstraintConvertor.PROPERTY_CONSTRAINT.equals(constraint.getSourceType())) {
-                    final Either<Boolean, ResponseFormat> booleanResponseFormatEither =
+            if (NodeFilterConstraintAction.ADD == action || NodeFilterConstraintAction.UPDATE == action) {
+                for (final String uiConstraint : uiConstraints) {
+                    final UIConstraint constraint = new ConstraintConvertor().convert(uiConstraint);
+                    if (ConstraintConvertor.PROPERTY_CONSTRAINT.equals(constraint.getSourceType())) {
+                        final Either<Boolean, ResponseFormat> booleanResponseFormatEither =
                             validatePropertyConstraint(parentComponent, componentInstanceId, constraint);
-                    if (booleanResponseFormatEither.isRight()) {
-                        return booleanResponseFormatEither;
-                    }
-                } else if (ConstraintConvertor.STATIC_CONSTRAINT.equals(constraint.getSourceType())) {
-                    final Either<Boolean, ResponseFormat> booleanResponseFormatEither =
+                        if (booleanResponseFormatEither.isRight()) {
+                            return booleanResponseFormatEither;
+                        }
+                    } else if (ConstraintConvertor.STATIC_CONSTRAINT.equals(constraint.getSourceType())) {
+                        final Either<Boolean, ResponseFormat> booleanResponseFormatEither =
                             validateStaticValueAndOperator(parentComponent, componentInstanceId, constraint);
-                    if (booleanResponseFormatEither.isRight()) {
-                        return booleanResponseFormatEither;
+                        if (booleanResponseFormatEither.isRight()) {
+                            return booleanResponseFormatEither;
+                        }
                     }
                 }
             }

@@ -120,7 +120,7 @@ public abstract class BaseBusinessLogic {
     protected IGroupInstanceOperation groupInstanceOperation;
     protected InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
     protected PolicyTypeOperation policyTypeOperation;
-    protected  ArtifactsOperations artifactToscaOperation;
+    protected ArtifactsOperations artifactToscaOperation;
     protected UserValidations userValidations;
 
     DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();

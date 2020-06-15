@@ -145,9 +145,9 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
                 LOGGER.debug(FAILED_TO_PARSE_COMPONENT);
                 return buildErrorResponse(convertResponse.right().value());
             }
-            final Optional<CINodeFilterDataDefinition> actionResponse;
             final String constraint = new ConstraintConvertor().convert(uiConstraint);
-            actionResponse = componentNodeFilterBusinessLogic
+
+            final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD,
                     uiConstraint.getServicePropertyName(), constraint, true, componentTypeEnum);
 
@@ -163,7 +163,6 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_CREATION);
             LOGGER.error(CREATE_NODE_FILTER_WITH_AN_ERROR, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-
         }
     }
 
@@ -214,10 +213,8 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
                 LOGGER.debug("failed to parse data");
                 return buildErrorResponse(convertResponse.right().value());
             }
-            final Optional<CINodeFilterDataDefinition> actionResponse;
             final List<String> constraints = new ConstraintConvertor().convertToList(uiConstraints);
-
-            actionResponse = componentNodeFilterBusinessLogic
+            final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, constraints,
                     true, componentTypeEnum);
 
@@ -262,8 +259,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         componentNodeFilterBusinessLogic.validateUser(userId);
 
         try {
-            final Optional<CINodeFilterDataDefinition> actionResponse;
-            actionResponse = componentNodeFilterBusinessLogic
+            final Optional<CINodeFilterDataDefinition>actionResponse = componentNodeFilterBusinessLogic
                 .deleteNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.DELETE,
                     null, index, true, ComponentTypeEnum.findByParamName(componentType));
 
