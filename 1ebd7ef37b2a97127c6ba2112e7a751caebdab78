@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a75939e6_3255128e",
+        "filename": "openecomp-be/lib/openecomp-sdc-tosca-generator-lib/openecomp-sdc-tosca-generator-api/src/main/java/org/openecomp/sdc/generator/util/GeneratorConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-15T09:40:18Z",
+      "side": 1,
+      "message": "2 spaces on this one and 4 on the other :)",
+      "revId": "1ebd7ef37b2a97127c6ba2112e7a751caebdab78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
