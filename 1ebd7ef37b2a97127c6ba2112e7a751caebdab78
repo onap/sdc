@@ -16,6 +16,24 @@
       "revId": "1ebd7ef37b2a97127c6ba2112e7a751caebdab78",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d136d1aa_63e09ace",
+        "filename": "openecomp-be/lib/openecomp-sdc-tosca-generator-lib/openecomp-sdc-tosca-generator-api/src/main/java/org/openecomp/sdc/generator/util/GeneratorConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2020-06-15T09:52:16Z",
+      "side": 1,
+      "message": "Done\n\nYou\u0027re right, it should be 4 :-) : https://wiki.onap.org/display/DW/Java+code+style",
+      "parentUuid": "a75939e6_3255128e",
+      "revId": "1ebd7ef37b2a97127c6ba2112e7a751caebdab78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
