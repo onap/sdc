@@ -18,7 +18,7 @@ package org.openecomp.core.converter.datatypes;
 
 import java.io.File;
 
-public class Constants {
+public final class Constants {
     public static final String mainStName = "MainServiceTemplate.yaml";
     public static final String globalStName = "GlobalSubstitutionTypesServiceTemplate.yaml";
     public static final String manifestFileName = "MainServiceTemplate.mf";
@@ -59,4 +59,9 @@ public class Constants {
     public static final String globalSubstitution = "GlobalSubstitutionTypes";
 
     public static final String externalFilesFolder = "External" + File.separator;
+
+    // prevent utility class instantiation
+    private Constants () {
+    }
+
 }

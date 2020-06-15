@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.generator.util;
 
-public class GeneratorConstants {
+public final class GeneratorConstants {
   public static final String ALLOWED_FLAVORS_PROPERTY = "allowed_flavors";
   public static final String IMAGES_PROPERTY = "images";
   public static final String RELEASE_VENDOR = "releaseVendor";
@@ -41,6 +41,8 @@ public class GeneratorConstants {
   public static final String DISK_SIZE_PROP_DESC_PREFIX  = "Disk size for ";
   public static final String MEM_SIZE_PROP_DESC_PREFIX  = "Memory size for ";
 
-
+  // prevent utility class instantiation
+  private GeneratorConstants() {
+  }
 
 }
