@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ff2d807_15445830",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 648,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-16T08:42:58Z",
+      "side": 1,
+      "message": "108540 is merged",
+      "range": {
+        "startLine": 639,
+        "startChar": 3,
+        "endLine": 648,
+        "endChar": 0
+      },
+      "revId": "4f6fb3efdbdfeabc07329fea5510be04e6123c01",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
