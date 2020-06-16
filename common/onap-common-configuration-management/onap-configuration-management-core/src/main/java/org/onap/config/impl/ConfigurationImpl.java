@@ -435,17 +435,18 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             field.setAccessible(true);
             Config fieldConfAnnotation = field.getAnnotation(Config.class);
             Class<?> fieldType = field.getType();
-            if (fieldConfAnnotation != null) {
-                if (ConfigurationUtils.isAPrimitiveOrWrapper(fieldType) ||
-                        ConfigurationUtils.isAPrimitivesOrWrappersArray(fieldType)) {
-                    setPrimitiveField(field, objToReturn, tenant, namespace, keyPrefix, hints);
-                }
-                if (ConfigurationUtils.isACollection(fieldType)) {
-                    setCollectionField(field, objToReturn, tenant, namespace, keyPrefix, hints);
-                }
-                if (ConfigurationUtils.isAMap(fieldType)) {
-                    setMapField(field, objToReturn, tenant, namespace, keyPrefix);
-                }
+            if (fieldConfAnnotation == null) {
+                continue;
+            }
+            if (ConfigurationUtils.isAPrimitiveOrWrapper(fieldType) ||
+                ConfigurationUtils.isAPrimitivesOrWrappersArray(fieldType)) {
+                setPrimitiveField(field, objToReturn, tenant, namespace, keyPrefix, hints);
+            }
+            if (ConfigurationUtils.isACollection(fieldType)) {
+                setCollectionField(field, objToReturn, tenant, namespace, keyPrefix, hints);
+            }
+            if (ConfigurationUtils.isAMap(fieldType)) {
+                setMapField(field, objToReturn, tenant, namespace, keyPrefix);
             }
         }
         return objToReturn;
@@ -471,30 +472,31 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         Object obj = get(tenant, namespace, keyPrefix + fieldConfAnnotationKey,
                 ConfigurationUtils.getArrayClass(ConfigurationUtils.getCollectionGenericType(field)),
                 hints);
-        if (obj != null) {
-            List<Object> list = Arrays.asList((Object[]) obj);
-            Class clazzToInstantiate;
-            if (fieldType.isInterface()) {
-                clazzToInstantiate = ConfigurationUtils.getConcreteCollection(fieldType).getClass();
-            } else if (Modifier.isAbstract(fieldType.getModifiers())) {
-                clazzToInstantiate =
-                        ConfigurationUtils.getCompatibleCollectionForAbstractDef(fieldType)
-                                .getClass();
-            } else {
-                clazzToInstantiate = fieldType;
-            }
-            Constructor construct = getConstructorWithArguments(clazzToInstantiate, Collection.class);
+        if (obj == null) {
+            return;
+        }
+        List<Object> list = Arrays.asList((Object[]) obj);
+        Class clazzToInstantiate;
+        if (fieldType.isInterface()) {
+            clazzToInstantiate = ConfigurationUtils.getConcreteCollection(fieldType).getClass();
+        } else if (Modifier.isAbstract(fieldType.getModifiers())) {
+            clazzToInstantiate =
+                    ConfigurationUtils.getCompatibleCollectionForAbstractDef(fieldType)
+                            .getClass();
+        } else {
+            clazzToInstantiate = fieldType;
+        }
+        Constructor construct = getConstructorWithArguments(clazzToInstantiate, Collection.class);
 
+        if (construct != null) {
+            construct.setAccessible(true);
+            field.set(objToReturn, construct.newInstance(list));
+        } else {
+            construct = getConstructorWithArguments(clazzToInstantiate, Integer.class,
+                   Boolean.class, Collection.class);
             if (construct != null) {
                 construct.setAccessible(true);
-                field.set(objToReturn, construct.newInstance(list));
-            } else {
-                construct = getConstructorWithArguments(clazzToInstantiate, Integer.class,
-                        Boolean.class, Collection.class);
-                if (construct != null) {
-                    construct.setAccessible(true);
-                    field.set(objToReturn, construct.newInstance(list.size(), true, list));
-                }
+                field.set(objToReturn, construct.newInstance(list.size(), true, list));
             }
         }
     }
