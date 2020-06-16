@@ -73,6 +73,62 @@ public class ConfigurationTest {
     }
 
     @Test
+    public void testGetAsStringValues() {
+        Assert.assertEquals(0, configuration.getAsStringValues("key").size());
+        Assert.assertEquals(0, configuration.getAsStringValues("namespace", "key").size());
+        Assert.assertEquals(0, configuration.getAsStringValues("tenantId", "namespace", "key").size());
+    }
+
+    @Test
+    public void testGetAsByteValues() {
+        Assert.assertEquals(0, configuration.getAsByteValues("key").size());
+        Assert.assertEquals(0, configuration.getAsByteValues("namespace", "key").size());
+        Assert.assertEquals(0, configuration.getAsByteValues("tenantId", "namespace", "key").size());
+    }
+
+    @Test
+    public void testGetAsShortValues() {
+        Assert.assertEquals(0, configuration.getAsShortValues("key").size());
+        Assert.assertEquals(0, configuration.getAsShortValues("namespace", "key").size());
+        Assert.assertEquals(0, configuration.getAsShortValues("tenantId", "namespace", "key").size());
+    }
+
+    @Test
+    public void testGetAsIntegerValues() {
+        Assert.assertEquals(0, configuration.getAsIntegerValues("key").size());
+        Assert.assertEquals(0, configuration.getAsIntegerValues("namespace", "key").size());
+        Assert.assertEquals(0, configuration.getAsIntegerValues("tenantId", "namespace", "key").size());
+    }
+
+    @Test
+    public void testGetAsDoubleValues() {
+        Assert.assertEquals(0, configuration.getAsDoubleValues("key").size());
+        Assert.assertEquals(0, configuration.getAsDoubleValues("namespace", "key").size());
+        Assert.assertEquals(0, configuration.getAsDoubleValues("tenantId", "namespace", "key").size());
+    }
+
+    @Test
+    public void testGetAsFloatValues() {
+        Assert.assertEquals(0, configuration.getAsFloatValues("key").size());
+        Assert.assertEquals(0, configuration.getAsFloatValues("namespace", "key").size());
+        Assert.assertEquals(0, configuration.getAsFloatValues("tenantId", "namespace", "key").size());
+    }
+
+    @Test
+    public void testGetAsBooleanValues() {
+        Assert.assertEquals(0, configuration.getAsBooleanValues("key").size());
+        Assert.assertEquals(0, configuration.getAsBooleanValues("namespace", "key").size());
+        Assert.assertEquals(0, configuration.getAsBooleanValues("tenantId", "namespace", "key").size());
+    }
+
+    @Test
+    public void testGetAsCharacterValues() {
+        Assert.assertEquals(0, configuration.getAsCharacterValues("key").size());
+        Assert.assertEquals(0, configuration.getAsCharacterValues("namespace", "key").size());
+        Assert.assertEquals(0, configuration.getAsCharacterValues("tenantId", "namespace", "key").size());
+    }
+
+    @Test
     public void tenantDoesNotPropagateToAnotherThread() throws ExecutionException, InterruptedException {
         final String currentTenant = "xyz";
         Configuration.setTenantId(currentTenant);
