@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8cf4fade_b998e257",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-16T07:26:08Z",
+      "side": 1,
+      "message": "I don\u0027t think that it\u0027s necessary to declare a private method final :)",
+      "revId": "fb513e1107b1b5d7fd0f4cb1a8a1e527cb75236b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
