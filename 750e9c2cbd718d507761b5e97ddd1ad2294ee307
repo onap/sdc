@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7e000b0_f70d93c2",
+        "filename": "catalog-be/sdc-backend-init/Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-16T10:08:50Z",
+      "side": 1,
+      "message": "Hey, sorry if it\u0027s a stupid question, but where do you find this image ? I don\u0027t see a 1.7.0 tag on sdc-docker-base 😕\nAnd subsequent question for anyone out there, am I right in guessing that https://jenkins.onap.org/view/sdc/job/sdc-master-verify-java/configure doesn\u0027t build the docker images ? I don\u0027t see the docker profile being specified",
+      "revId": "750e9c2cbd718d507761b5e97ddd1ad2294ee307",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
