@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "903b32bb_1e4db97e",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/report/ReportFileNioHelper.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-16T07:02:11Z",
+      "side": 1,
+      "message": "I don\u0027t think that it\u0027s used :)",
+      "revId": "c22669b25e6ac833ac8c78a0c07ad0649e5d4e86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "822e556e_a61b995a",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/report/ReportFileWriterTestFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-16T07:02:11Z",
+      "side": 1,
+      "message": "Shouldn\u0027t be 2020 ?",
+      "revId": "c22669b25e6ac833ac8c78a0c07ad0649e5d4e86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
