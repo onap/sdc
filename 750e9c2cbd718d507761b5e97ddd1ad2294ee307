@@ -16,6 +16,24 @@
       "revId": "750e9c2cbd718d507761b5e97ddd1ad2294ee307",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e1d90ad_ef5b017b",
+        "filename": "catalog-be/sdc-backend-init/Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-06-16T11:04:32Z",
+      "side": 1,
+      "message": "This is the actual very good question :) This image should be built by the maven in the https://gerrit.onap.org/r/admin/repos/sdc/sdc-docker-base repository.\n\nLike you can see in the comment under review: \nhttps://gerrit.onap.org/r/c/sdc/sdc-docker-base/+/108763\n(changes that provide python3 for uses by this commit).\n\nCurrently, the image is produced with tag 1.6.1-SNAPSHOT-20200615T080732Z. So this should be adjusted.",
+      "parentUuid": "a7e000b0_f70d93c2",
+      "revId": "750e9c2cbd718d507761b5e97ddd1ad2294ee307",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
