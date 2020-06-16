@@ -84,18 +84,19 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
 
     private Object getInput(Map<String, Object> input) {
         Object toReturn = null;
-        if (input != null) {
-            try {
-                toReturn = Class.forName(input.get("ImplClass").toString()).newInstance();
-                Method[] methods = toReturn.getClass().getMethods();
-                for (Method method : methods) {
-                    if (input.containsKey(method.getName())) {
-                        method.invoke(toReturn, input.get(method.getName()));
-                    }
+        if (input == null) {
+            return toReturn;
+        }
+        try {
+            toReturn = Class.forName(input.get("ImplClass").toString()).newInstance();
+            Method[] methods = toReturn.getClass().getMethods();
+            for (Method method : methods) {
+                if (input.containsKey(method.getName())) {
+                    method.invoke(toReturn, input.get(method.getName()));
                 }
-            } catch (Exception exception) {
-                LOGGER.warn("Error occurred while processing input: {}", input, exception);
             }
+        } catch (Exception exception) {
+            LOGGER.warn("Error occurred while processing input: {}", input, exception);
         }
         return toReturn;
     }
