@@ -22,6 +22,30 @@
       "revId": "0f6b14797d26e05be55cbc327f0be04c95738e7a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02df9be8_b61b6f13",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/impl/ConfigurationImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2020-06-16T13:13:49Z",
+      "side": 1,
+      "message": "Seems so, I will remove it.",
+      "parentUuid": "7a5315d3_18abf159",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "0f6b14797d26e05be55cbc327f0be04c95738e7a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
