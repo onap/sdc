@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7eeac58_c4272667",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/impl/CliConfigurationImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-16T10:20:40Z",
+      "side": 1,
+      "message": "Might as well return null here :)",
+      "revId": "9c9988063fa26d12c972dca93a17227dc651eb72",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
