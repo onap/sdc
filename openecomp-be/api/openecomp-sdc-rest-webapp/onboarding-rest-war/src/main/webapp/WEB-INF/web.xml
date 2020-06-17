@@ -13,7 +13,7 @@
 
     <context-param>
         <param-name>org.togglz.core.manager.TogglzConfig</param-name>
-        <param-value>org.openecomp.sdc.common.togglz.TogglzConfiguration</param-value>
+        <param-value>org.openecomp.sdc.be.togglz.TogglzConfiguration</param-value>
     </context-param>
 
 

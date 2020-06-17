@@ -62,7 +62,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <onap.logging.version>1.6.1</onap.logging.version>
 
     <commons.collections.version>4.1</commons.collections.version>
-    <ws.rs.version>2.0.1</ws.rs.version>
+    <ws.rs.version>2.1</ws.rs.version>
 
     <jetty.version>9.4.18.v20190429</jetty.version>
 

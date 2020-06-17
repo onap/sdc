@@ -22,7 +22,7 @@ package org.openecomp;
 
 import com.google.common.collect.Sets;
 import org.junit.Test;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdcrests.togglz.rest.TogglzFeatures;
 import org.openecomp.sdcrests.togglz.rest.mapping.MapToggleableFeatureToDto;
 import org.openecomp.sdcrests.togglz.rest.services.TogglzFeaturesImpl;
