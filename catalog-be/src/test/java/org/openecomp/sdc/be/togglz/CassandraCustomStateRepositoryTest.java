@@ -29,7 +29,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.FeatureToggleDao;
 import org.openecomp.sdc.be.resources.data.togglz.FeatureToggleEvent;
-import org.openecomp.sdc.be.resources.data.togglz.ToggleableFeature;
 import org.togglz.core.Feature;
 import org.togglz.core.repository.FeatureState;
 

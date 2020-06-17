@@ -40,7 +40,7 @@ import static org.openecomp.sdc.common.api.Constants.HEALTH_CHECK_SERVICE_ATTR;
 public class FeHealthCheckServletTest {
 
     private final FeHealthCheckServlet healthCheckServlet = new FeHealthCheckServlet();
-    private final Response response = Response.status(200).entity("Ok").build();
+    private final Response response = Response.ok().entity("Ok").build();
 
     @Mock
     private HealthCheckService healthCheckService;

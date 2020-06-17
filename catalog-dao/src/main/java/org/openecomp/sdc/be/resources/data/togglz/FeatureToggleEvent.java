@@ -26,6 +26,7 @@ import com.datastax.driver.mapping.annotations.Table;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.togglz.core.Feature;
