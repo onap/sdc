@@ -28,6 +28,10 @@ public class CapabilityFilter {
 
     private List<Map<String, List<Constraint>>> properties;
 
+    public CapabilityFilter() {
+        //default constructor
+    }
+
     public List<Map<String, List<Constraint>>> getProperties() {
         return properties;
     }
@@ -41,7 +45,4 @@ public class CapabilityFilter {
         return "CapabilityFilter{" + "properties=" + properties + '}';
     }
 
-    public CapabilityFilter() {
-        //default constructor
-    }
 }

@@ -58,6 +58,10 @@ public class YamlParser implements AutoCloseable {
     private Stream<Object> parsedYamlContent;
     private InputStream inputStream;
     private Set<String> filters;
+    private Function<Object, List<SimpleEntry<String, ? extends Collection<Object>>>> containsKeys = parsedYamlSingleDocument -> {
+        JsonElement jsonElement = new Gson().toJsonTree(parsedYamlSingleDocument);
+        return findInJson(filters, jsonElement);
+    };
 
     public YamlParser() {
         this.parsedYamlContent = Stream.empty();
@@ -140,11 +144,6 @@ public class YamlParser implements AutoCloseable {
             parsedYamlContent = Stream.empty();
         }
     }
-
-    private Function<Object, List<SimpleEntry<String, ? extends Collection<Object>>>> containsKeys = parsedYamlSingleDocument -> {
-        JsonElement jsonElement = new Gson().toJsonTree(parsedYamlSingleDocument);
-        return findInJson(filters, jsonElement);
-    };
 
     private List<SimpleEntry<String, ? extends Collection<Object>>> findInJson(Set<String> keys,
         JsonElement document) {
