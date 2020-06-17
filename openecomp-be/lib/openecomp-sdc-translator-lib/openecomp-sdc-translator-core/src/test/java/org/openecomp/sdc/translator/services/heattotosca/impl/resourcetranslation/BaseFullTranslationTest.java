@@ -16,6 +16,20 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import static org.junit.Assert.assertEquals;
+import static org.openecomp.sdc.translator.TestUtils.getErrorAsString;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -24,26 +38,15 @@ import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.validation.util.MessageContainerUtil;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
 import org.togglz.testing.TestFeatureManager;
 import org.togglz.testing.TestFeatureManagerProvider;
-
-import java.io.*;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.ZipInputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.openecomp.sdc.translator.TestUtils.getErrorAsString;
 
 
 public class BaseFullTranslationTest {
@@ -88,8 +91,7 @@ public class BaseFullTranslationTest {
         }
 
         try (ByteArrayInputStream fis = new ByteArrayInputStream(translatedZipFile);
-             BufferedInputStream bis = new BufferedInputStream(fis);
-             ZipInputStream zis = new ZipInputStream(bis)) {
+             BufferedInputStream bis = new BufferedInputStream(fis); ZipInputStream zis = new ZipInputStream(bis)) {
             TestUtils.compareTranslatedOutput(expectedResultFileNameSet, expectedResultMap, zis);
         }
         assertEquals(0, expectedResultFileNameSet.size());
@@ -105,8 +107,8 @@ public class BaseFullTranslationTest {
                 MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, translatorOutput.getErrorMessages()))) {
             throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(
                     "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
-                                                                      .withId("Validation Error")
-                                                                      .withCategory(ErrorCategory.APPLICATION).build());
+                                            .withId("Validation Error").withCategory(ErrorCategory.APPLICATION)
+                                            .build());
         }
 
         return new ToscaFileOutputServiceCsarImpl().createOutputFile(translatorOutput.getToscaServiceModel(), null);

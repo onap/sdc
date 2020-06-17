@@ -18,18 +18,33 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.common.togglz;
+package org.openecomp.sdc.be.togglz;
 
 import org.togglz.core.Feature;
-import org.togglz.core.annotation.Label;
-import org.togglz.core.context.FeatureContext;
+import org.togglz.core.manager.TogglzConfig;
+import org.togglz.core.repository.StateRepository;
+import org.togglz.core.repository.file.FileBasedStateRepository;
+import org.togglz.core.user.SimpleFeatureUser;
+import org.togglz.core.user.UserProvider;
 
-public enum ToggleableFeature implements Feature {
+import java.io.File;
 
-    @Label("Default Feature")
-    DEFAULT_FEATURE;
+public class TogglzConfiguration implements TogglzConfig {
 
-    public boolean isActive() {
-        return FeatureContext.getFeatureManager().isActive(this);
-    }
+  private static final String TOGGLZ_FILE_LOCATION = "/tmp/features.properties";
+
+  @Override
+  public Class<? extends Feature> getFeatureClass() {
+    return ToggleableFeature.class;
+  }
+
+  @Override
+  public StateRepository getStateRepository() {
+    return new FileBasedStateRepository(new File(TOGGLZ_FILE_LOCATION));
+  }
+
+  @Override
+  public UserProvider getUserProvider() {
+    return () -> new SimpleFeatureUser("admin", true);
+  }
 }
