@@ -69,6 +69,24 @@
       "revId": "c22669b25e6ac833ac8c78a0c07ad0649e5d4e86",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32447e84_d05e814c",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/report/ReportFileWriterTestFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-17T04:41:23Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "fbf0cc5b_eb4bf8ce",
+      "revId": "c22669b25e6ac833ac8c78a0c07ad0649e5d4e86",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
