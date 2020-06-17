@@ -46,6 +46,30 @@
       "revId": "0748f3fb75e9ae7bf923924288e8124729eb1a0d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5eba4618_d834432c",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/report/Report.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-17T14:35:19Z",
+      "side": 1,
+      "message": "see example\nhttps://gerrit.onap.org/r/c/sdc/+/108429/7..8/asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/report/FileType.java",
+      "parentUuid": "b5a8aedd_7b7ad33b",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 40
+      },
+      "revId": "0748f3fb75e9ae7bf923924288e8124729eb1a0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
