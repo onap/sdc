@@ -28,10 +28,12 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ScalarUnitValidator {
 
-    private static ScalarUnitValidator scalarUnitValidator = new ScalarUnitValidator();
+    private static final ScalarUnitValidator scalarUnitValidator = new ScalarUnitValidator();
 
     /**
      *  Tosca Scalar Unit Types structure.
+     *
+     *  At least positive integers, no single white space, 1 to 3 chars
      */
     private final Pattern pattern = Pattern.compile("\\d+\\s*[a-zA-Z]{1,3}");
 
