@@ -22,6 +22,30 @@
       "revId": "88bce50ff16c89f74a99e5911399eb9a6965490e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c2e1fbf_3adab20b",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/ScalarUnitValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-17T13:20:21Z",
+      "side": 1,
+      "message": "Indeed 😊",
+      "parentUuid": "3741998e_cd5b01b4",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 28
+      },
+      "revId": "88bce50ff16c89f74a99e5911399eb9a6965490e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
