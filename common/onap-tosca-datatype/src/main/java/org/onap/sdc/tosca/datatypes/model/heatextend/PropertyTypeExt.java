@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,54 +29,40 @@ import java.util.Map;
  */
 public enum PropertyTypeExt {
 
-  /**
-   * Json property type ext.
-   */
-  JSON("json");
+    /**
+     * Json property type ext.
+     */
+    JSON("json");
 
-  private static final Map<String, PropertyTypeExt> M_MAP =
-      Collections.unmodifiableMap(initializeMapping());
-  private String displayName;
+    private static final Map<String, PropertyTypeExt> M_MAP =
+            Collections.unmodifiableMap(initializeMapping());
+    private String displayName;
 
-  PropertyTypeExt(String displayName) {
-
-    this.displayName = displayName;
-  }
-
-  /**
-   * Initialize mapping map.
-   *
-   * @return the map
-   */
-  public static Map<String, PropertyTypeExt> initializeMapping() {
-    Map<String, PropertyTypeExt> typeMap = new HashMap<String, PropertyTypeExt>();
-    for (PropertyTypeExt v : PropertyTypeExt.values()) {
-      typeMap.put(v.displayName, v);
+    PropertyTypeExt(String displayName) {
+        this.displayName = displayName;
     }
-    return typeMap;
-  }
 
-  /**
-   * Gets property type by display name.
-   *
-   * @param displayName the display name
-   * @return the property type by display name
-   */
-  public static PropertyTypeExt getPropertyTypeByDisplayName(String displayName) {
-    if (M_MAP.containsKey(displayName)) {
-      return M_MAP.get(displayName);
+    /**
+     * Initialize mapping map.
+     *
+     * @return the map
+     */
+    public static Map<String, PropertyTypeExt> initializeMapping() {
+        Map<String, PropertyTypeExt> typeMap = new HashMap<>();
+        for (PropertyTypeExt v : PropertyTypeExt.values()) {
+            typeMap.put(v.displayName, v);
+        }
+        return typeMap;
     }
-    return null;
-  }
 
-  /**
-   * Gets display name.
-   *
-   * @return the display name
-   */
-  public String getDisplayName() {
-    return displayName;
-  }
+    /**
+     * Gets display name.
+     *
+     * @return the display name
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
 
 
 }
