@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ddc1aa76_160ebe84",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TogglingServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-17T13:48:52Z",
+      "side": 1,
+      "message": "Wouldn\u0027t just @Tag \u0026 @Server be enough, without the enclosing @Tags \u0026 @Servers",
+      "revId": "a60aae47ef9e6df6a209f93535c9165e53d80ec5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a4da32a_edf38133",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/togglz/CassandraCustomStateRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-17T13:48:52Z",
+      "side": 1,
+      "message": "Sonar is probably going to complaint about final static instead of static final :)",
+      "revId": "a60aae47ef9e6df6a209f93535c9165e53d80ec5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ed48264_c84fa60e",
+        "filename": "catalog-be/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-17T13:48:52Z",
+      "side": 1,
+      "message": "very small nitpicking but this file is mixing tabs and spaces :)",
+      "revId": "a60aae47ef9e6df6a209f93535c9165e53d80ec5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63d1ee0d_edd1014c",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/impl/heal/HealJanusGraphDao.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-17T13:48:52Z",
+      "side": 1,
+      "message": "It seems a little off to have the type \u003cInteger\u003e specified on one line but not on the next",
+      "revId": "a60aae47ef9e6df6a209f93535c9165e53d80ec5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4433e5aa_8fe4fffa",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/togglz/ToggleableFeature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-17T13:48:52Z",
+      "side": 1,
+      "message": "Looks like we are back in time :)",
+      "revId": "a60aae47ef9e6df6a209f93535c9165e53d80ec5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
