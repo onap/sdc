@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15a59694_0ccaedef",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/report/Report.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-17T12:29:24Z",
+      "side": 1,
+      "message": "in case of modifying file should add \nModified by .........\ninstead of altering this line",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 40
+      },
+      "revId": "0748f3fb75e9ae7bf923924288e8124729eb1a0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
