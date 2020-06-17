@@ -32,6 +32,8 @@ public class ScalarUnitValidator {
 
     /**
      *  Tosca Scalar Unit Types structure.
+     *
+     *  At least positive integers, no single white space, 1 to 3 chars
      */
     private final Pattern pattern = Pattern.compile("\\d+\\s*[a-zA-Z]{1,3}");
 
