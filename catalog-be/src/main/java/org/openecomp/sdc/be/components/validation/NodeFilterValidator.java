@@ -59,28 +59,28 @@ public class NodeFilterValidator {
     public static final Set<String> comparableConstraintsOperators =
             ImmutableSet.of(ConstraintConvertor.GREATER_THAN_OPERATOR, ConstraintConvertor.LESS_THAN_OPERATOR);
 
-    @Autowired
-    protected ToscaOperationFacade toscaOperationFacade;
-
-    @Autowired
-    protected ComponentsUtils componentsUtils;
+    protected final ToscaOperationFacade toscaOperationFacade;
+    protected final ComponentsUtils componentsUtils;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeFilterValidator.class);
 
-    public Either<Boolean, ResponseFormat> validateComponentInstanceExist(
-        final Component component,
-        final String componentInstanceId) {
+    @Autowired
+    public NodeFilterValidator(final ToscaOperationFacade toscaOperationFacade,
+                               final ComponentsUtils componentsUtils) {
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.componentsUtils = componentsUtils;
+    }
+
+    public Either<Boolean, ResponseFormat> validateComponentInstanceExist(final Component component,
+                                                                          final String componentInstanceId) {
         if (component == null || StringUtils.isEmpty(componentInstanceId)) {
-            LOGGER.debug("Input data cannot be empty");
+            LOGGER.error("Input data cannot be empty");
             return getErrorResponse(ActionStatus.NODE_FILTER_NOT_FOUND);
         }
-        if (CollectionUtils.isEmpty(component.getComponentInstances())) {
-            LOGGER.debug("Component Instance list is empty");
-            return getErrorResponse(ActionStatus.NODE_FILTER_NOT_FOUND);
-        }
-        if (component.getComponentInstances().stream()
-            .noneMatch(ci -> ci.getUniqueId().equals(componentInstanceId))) {
-            LOGGER.debug("Component Instance list is empty");
+        if (CollectionUtils.isEmpty(component.getComponentInstances()) ||
+            component.getComponentInstances().stream()
+                .noneMatch(ci -> ci.getUniqueId().equals(componentInstanceId))) {
+            LOGGER.error("Component Instance list is empty");
             return getErrorResponse(ActionStatus.NODE_FILTER_NOT_FOUND);
         }
         return Either.left(Boolean.TRUE);
