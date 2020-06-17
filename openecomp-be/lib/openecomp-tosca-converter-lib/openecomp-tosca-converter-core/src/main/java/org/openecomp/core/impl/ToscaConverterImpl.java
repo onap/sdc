@@ -25,8 +25,8 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.openecomp.core.converter.datatypes.Constants.globalStName;
-import static org.openecomp.core.converter.datatypes.Constants.mainStName;
+import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_ST_NAME;
+import static org.openecomp.core.converter.datatypes.Constants.MAIN_ST_NAME;
 
 public class ToscaConverterImpl extends AbstractToscaConverter {
 
@@ -42,11 +42,11 @@ public class ToscaConverterImpl extends AbstractToscaConverter {
           CsarFileTypes fileType = getFileType(fileEntry.getKey());
           switch (fileType) {
               case mainServiceTemplate:
-                  handleServiceTemplate(mainStName, fileEntry.getKey(), csarFiles, serviceTemplates);
+                  handleServiceTemplate(MAIN_ST_NAME, fileEntry.getKey(), csarFiles, serviceTemplates);
                   break;
 
               case globalServiceTemplate:
-                  handleServiceTemplate(globalStName, fileEntry.getKey(), csarFiles, serviceTemplates);
+                  handleServiceTemplate(GLOBAL_ST_NAME, fileEntry.getKey(), csarFiles, serviceTemplates);
                   break;
 
               case externalFile:
@@ -63,7 +63,7 @@ public class ToscaConverterImpl extends AbstractToscaConverter {
           }
       }
       handleMetadataFile(csarFiles);
-      updateToscaServiceModel(toscaServiceModel, serviceTemplates, artifacts, gsst, csarFiles, mainStName);
+      updateToscaServiceModel(toscaServiceModel, serviceTemplates, artifacts, gsst, csarFiles, MAIN_ST_NAME);
       return toscaServiceModel;
     }
 

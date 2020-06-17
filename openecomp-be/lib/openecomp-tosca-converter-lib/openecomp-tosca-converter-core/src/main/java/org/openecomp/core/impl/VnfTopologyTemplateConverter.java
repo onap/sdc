@@ -45,11 +45,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.openecomp.core.converter.datatypes.Constants.capabilities;
-import static org.openecomp.core.converter.datatypes.Constants.inputs;
-import static org.openecomp.core.converter.datatypes.Constants.nodeType;
-import static org.openecomp.core.converter.datatypes.Constants.outputs;
-import static org.openecomp.core.converter.datatypes.Constants.requirements;
+import static org.openecomp.core.converter.datatypes.Constants.CAPABILITIES;
+import static org.openecomp.core.converter.datatypes.Constants.INPUTS;
+import static org.openecomp.core.converter.datatypes.Constants.NODE_TYPE;
+import static org.openecomp.core.converter.datatypes.Constants.OUTPUTS;
+import static org.openecomp.core.converter.datatypes.Constants.REQUIREMENTS;
 
 public class VnfTopologyTemplateConverter {
 
@@ -63,12 +63,12 @@ public class VnfTopologyTemplateConverter {
 
     private void convertInputs(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
         Map<String, Object> inputs = readerService.getInputs();
-        addInputsOrOutputsToServiceTemplate(serviceTemplate, inputs, Constants.inputs);
+        addInputsOrOutputsToServiceTemplate(serviceTemplate, inputs, Constants.INPUTS);
     }
 
     private void convertOutputs(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
         Map<String, Object> outputs = readerService.getOutputs();
-        addInputsOrOutputsToServiceTemplate(serviceTemplate, outputs, Constants.outputs);
+        addInputsOrOutputsToServiceTemplate(serviceTemplate, outputs, Constants.OUTPUTS);
     }
 
     private void addInputsOrOutputsToServiceTemplate(ServiceTemplate serviceTemplate, Map<String, Object> mapToConvert,
@@ -93,9 +93,9 @@ public class VnfTopologyTemplateConverter {
 
     private void addToServiceTemplateAccordingToSection(ServiceTemplate serviceTemplate, String inputsOrOutputs,
             String parameterId, ParameterDefinition parameterDefinition) {
-        if (inputsOrOutputs.equals(inputs)) {
+        if (inputsOrOutputs.equals(INPUTS)) {
             DataModelUtil.addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
-        } else if (inputsOrOutputs.equals(outputs)) {
+        } else if (inputsOrOutputs.equals(OUTPUTS)) {
             DataModelUtil.addOutputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
         }
     }
@@ -163,11 +163,11 @@ public class VnfTopologyTemplateConverter {
     private SubstitutionMapping convertSubstitutionMappings(Map<String, Object> substitutionMappings) {
         SubstitutionMapping substitutionMapping = new SubstitutionMapping();
 
-        substitutionMapping.setNode_type((String) substitutionMappings.get(nodeType));
+        substitutionMapping.setNode_type((String) substitutionMappings.get(NODE_TYPE));
         substitutionMapping.setCapabilities(
-                convertSubstitutionMappingsSections(capabilities, substitutionMappings.get(capabilities)));
+                convertSubstitutionMappingsSections(CAPABILITIES, substitutionMappings.get(CAPABILITIES)));
         substitutionMapping.setRequirements(
-                convertSubstitutionMappingsSections(requirements, substitutionMappings.get(requirements)));
+                convertSubstitutionMappingsSections(REQUIREMENTS, substitutionMappings.get(REQUIREMENTS)));
 
         return substitutionMapping;
     }

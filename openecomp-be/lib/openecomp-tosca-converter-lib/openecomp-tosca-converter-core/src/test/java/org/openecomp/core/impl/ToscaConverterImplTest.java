@@ -41,8 +41,8 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.openecomp.core.converter.datatypes.Constants.globalStName;
-import static org.openecomp.core.converter.datatypes.Constants.mainStName;
+import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_ST_NAME;
+import static org.openecomp.core.converter.datatypes.Constants.MAIN_ST_NAME;
 
 public class ToscaConverterImplTest {
 
@@ -167,7 +167,7 @@ public class ToscaConverterImplTest {
 
   private void validateConvertorOutput(String outputFilesPath, ToscaServiceModel toscaServiceModel)
       throws IOException {
-    ServiceTemplate mainSt = toscaServiceModel.getServiceTemplates().get(mainStName);
+    ServiceTemplate mainSt = toscaServiceModel.getServiceTemplates().get(MAIN_ST_NAME);
     Map<String, ServiceTemplate> expectedOutserviceTemplates = new HashMap<>();
     loadServiceTemplates(outputFilesPath, new ToscaExtensionYamlUtil(),
         expectedOutserviceTemplates);
@@ -227,12 +227,12 @@ public class ToscaConverterImplTest {
     YamlUtil yamlUtil = new YamlUtil();
     if (Objects.nonNull(gloablSubstitutionServiceTemplate)) {
       assertEquals("difference global substitution service template: ",
-          yamlUtil.objectToYaml(expectedOutserviceTemplates.get(globalStName)),
+          yamlUtil.objectToYaml(expectedOutserviceTemplates.get(GLOBAL_ST_NAME)),
           yamlUtil.objectToYaml(gloablSubstitutionServiceTemplate));
     }
     if (Objects.nonNull(mainServiceTemplate)) {
       assertEquals("difference main service template: ",
-          yamlUtil.objectToYaml(expectedOutserviceTemplates.get(mainStName)),
+          yamlUtil.objectToYaml(expectedOutserviceTemplates.get(MAIN_ST_NAME)),
           yamlUtil.objectToYaml(mainServiceTemplate));
     }
   }
