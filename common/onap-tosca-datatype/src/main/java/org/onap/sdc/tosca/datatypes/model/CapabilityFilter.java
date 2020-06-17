@@ -41,7 +41,4 @@ public class CapabilityFilter {
         return "CapabilityFilter{" + "properties=" + properties + '}';
     }
 
-    public CapabilityFilter() {
-        //default constructor
-    }
 }
