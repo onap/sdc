@@ -276,11 +276,6 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
             throw new BusinessLogicException(componentsUtils
                 .getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
         }
-        boolean wasLocked = false;
-        if (shouldLock) {
-            lockComponent(component.getUniqueId(), component,"Update Node Filter on Component");
-            wasLocked = true;
-        }
         final Optional<ComponentInstance> componentInstance = getComponentInstance(componentInstanceId,
             component);
         if (!componentInstance.isPresent()) {
@@ -289,10 +284,14 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         }
         CINodeFilterDataDefinition nodeFilterDataDefinition = componentInstance.get().getNodeFilter();
         if (nodeFilterDataDefinition == null) {
-            throw new BusinessLogicException(componentsUtils
-                .getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
+            throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
         }
+        boolean wasLocked = false;
         try {
+            if (shouldLock) {
+                lockComponent(component.getUniqueId(), component,"Update Node Filter on Component");
+                wasLocked = true;
+            }
             final List<RequirementNodeFilterPropertyDataDefinition> properties = constraints.stream()
                 .map(this::getRequirementNodeFilterPropertyDataDefinition).collect(Collectors.toList());
             final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = nodeFilterOperation

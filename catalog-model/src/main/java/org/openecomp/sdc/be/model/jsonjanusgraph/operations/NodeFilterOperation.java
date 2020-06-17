@@ -97,18 +97,20 @@ public class NodeFilterOperation extends BaseOperation {
         return addOrUpdateNodeFilter(true, serviceId, componentInstanceId, nodeFilterDataDefinition);
     }
 
-    public Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewProperty(String serviceId,
-            String componentInstanceId, CINodeFilterDataDefinition nodeFilterDataDefinition,
-            RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition) {
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> addNewProperty(
+        final String componentId, final String componentInstanceId,
+        final CINodeFilterDataDefinition nodeFilterDataDefinition,
+        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition) {
+
         ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties =
-                nodeFilterDataDefinition.getProperties();
+            nodeFilterDataDefinition.getProperties();
         if (properties == null) {
             properties = new ListDataDefinition<>();
             nodeFilterDataDefinition.setProperties(properties);
         }
         properties.getListToscaDataDefinition().add(requirementNodeFilterPropertyDataDefinition);
         nodeFilterDataDefinition.setProperties(properties);
-        return addOrUpdateNodeFilter(true, serviceId, componentInstanceId, nodeFilterDataDefinition);
+        return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
     }
 
     public Either<CINodeFilterDataDefinition, StorageOperationStatus> updateProperties(String serviceId,
