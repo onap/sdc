@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ac9eb739_888a12c4",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/report/FileType.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-17T11:54:04Z",
+      "side": 1,
+      "message": "Done. This actually made me realized that I never set the Intellectual property properly. I\u0027ve changed it in the other files I\u0027ve added and set it to Bell.",
+      "parentUuid": "29b3436e_fc22ac50",
+      "revId": "b58614bb87ec5111cff9b261dbd96af7d3d62d30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "52016c27_8b5eabd6",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/report/ReportFile.java",
         "patchSetId": 7
@@ -33,6 +51,24 @@
       "revId": "b58614bb87ec5111cff9b261dbd96af7d3d62d30",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "968c3785_59d04e37",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/report/ReportFile.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-17T11:54:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52016c27_8b5eabd6",
+      "revId": "b58614bb87ec5111cff9b261dbd96af7d3d62d30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
