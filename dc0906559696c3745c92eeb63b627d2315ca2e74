@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "01aeefb8_cd105b17",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/togglz/FeatureToggleEvent.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-17T14:56:40Z",
+      "side": 1,
+      "message": "unused?",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 53
+      },
+      "revId": "dc0906559696c3745c92eeb63b627d2315ca2e74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb980379_b4d94c86",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/togglz-rest/togglz-rest-services/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-17T14:56:40Z",
+      "side": 1,
+      "message": "needless, parent pom has this dependency already.",
+      "range": {
+        "startLine": 53,
+        "startChar": 8,
+        "endLine": 58,
+        "endChar": 21
+      },
+      "revId": "dc0906559696c3745c92eeb63b627d2315ca2e74",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
