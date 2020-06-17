@@ -16,49 +16,25 @@
 
 package org.openecomp.core.converter.datatypes;
 
-import java.io.File;
-
 public final class Constants {
-    public static final String mainStName = "MainServiceTemplate.yaml";
-    public static final String globalStName = "GlobalSubstitutionTypesServiceTemplate.yaml";
-    public static final String manifestFileName = "MainServiceTemplate.mf";
-    public static final String definitionsDir = "Definitions/";
-    public static final String metadataFile = "TOSCA-Metadata/TOSCA.meta";
-
-
-    private static final String DEFAULT_NAMESPACE = "tosca_default_namespace";
-    private static final String TEMPLATE_NAME = "template_name";
-    public static final String topologyTemplate = "topology_template";
-    private static final String TEMPLATE_AUTHOR = "template_author";
-    private static final String TEMPLATE_VERSION = "template_version";
-    private static final String DESCRIPTION = "description";
-    private static final String IMPORTS = "imports";
-    private static final String DSL_DEFINITIONS = "dsl_definitions";
-    public static final String nodeType = "node_type";
-    public static final String nodeTypes = "node_types";
-    private static final String RELATIONSHIP_TYPES = "relationship_types";
-    private static final String RELATIONSHIP_TEMPLATES = "relationship_templates";
-    private static final String CAPABILITY_TYPES = "capability_types";
-    private static final String ARTIFACT_TYPES = "artifact_types";
-    private static final String DATA_TYPES = "data_types";
-    private static final String INTERFACE_TYPES = "interface_types";
-    private static final String POLICY_TYPES = "policy_types";
-    private static final String GROUP_TYPES = "group_types";
-    private static final String REPOSITORIES = "repositories";
-    public static final String metadata = "metadata";
-    public static final String nodeTemplates = "node_templates";
-    public static final String inputs = "inputs";
-    public static final String outputs = "outputs";
-    public static final String substitutionMappings = "substitution_mappings";
-    public static final String capabilities = "capabilities";
-    public static final String requirements = "requirements";
+    public static final String MAIN_ST_NAME = "MainServiceTemplate.yaml";
+    public static final String GLOBAL_ST_NAME = "GlobalSubstitutionTypesServiceTemplate.yaml";
+    public static final String DEFINITIONS_DIR = "Definitions/";
+    public static final String TOPOLOGY_TEMPLATE = "topology_template";
+    public static final String NODE_TYPE = "node_type";
+    public static final String NODE_TYPES = "node_types";
+    public static final String METADATA = "metadata";
+    public static final String NODE_TEMPLATES = "node_templates";
+    public static final String INPUTS = "inputs";
+    public static final String OUTPUTS = "outputs";
+    public static final String SUBSTITUTION_MAPPINGS = "substitution_mappings";
+    public static final String CAPABILITIES = "capabilities";
+    public static final String REQUIREMENTS = "requirements";
     public static final String POLICIES = "policies";
 
-    public static final String openecompHeatIndex = "openecomp_heat_index";
+    public static final String OPENECOMP_HEAT_INDEX = "openecomp_heat_index";
     public static final String ONAP_INDEX = "onap_index";
-    public static final String globalSubstitution = "GlobalSubstitutionTypes";
-
-    public static final String externalFilesFolder = "External" + File.separator;
+    public static final String GLOBAL_SUBSTITUTION = "GlobalSubstitutionTypes";
 
     // prevent utility class instantiation
     private Constants () {

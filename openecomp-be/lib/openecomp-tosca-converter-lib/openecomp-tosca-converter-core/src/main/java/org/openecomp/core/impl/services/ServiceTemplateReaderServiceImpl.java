@@ -21,13 +21,13 @@
 package org.openecomp.core.impl.services;
 
 import static org.openecomp.core.converter.datatypes.Constants.POLICIES;
-import static org.openecomp.core.converter.datatypes.Constants.inputs;
-import static org.openecomp.core.converter.datatypes.Constants.metadata;
-import static org.openecomp.core.converter.datatypes.Constants.nodeTemplates;
-import static org.openecomp.core.converter.datatypes.Constants.nodeTypes;
-import static org.openecomp.core.converter.datatypes.Constants.outputs;
-import static org.openecomp.core.converter.datatypes.Constants.substitutionMappings;
-import static org.openecomp.core.converter.datatypes.Constants.topologyTemplate;
+import static org.openecomp.core.converter.datatypes.Constants.INPUTS;
+import static org.openecomp.core.converter.datatypes.Constants.METADATA;
+import static org.openecomp.core.converter.datatypes.Constants.NODE_TEMPLATES;
+import static org.openecomp.core.converter.datatypes.Constants.NODE_TYPES;
+import static org.openecomp.core.converter.datatypes.Constants.OUTPUTS;
+import static org.openecomp.core.converter.datatypes.Constants.SUBSTITUTION_MAPPINGS;
+import static org.openecomp.core.converter.datatypes.Constants.TOPOLOGY_TEMPLATE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DATA_TYPES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IMPORTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION;
@@ -72,7 +72,7 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
 
     @Override
     public Object getMetadata() {
-        return this.readServiceTemplate.get(metadata);
+        return this.readServiceTemplate.get(METADATA);
     }
 
     @Override
@@ -82,38 +82,38 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
 
     @Override
     public Map<String, Object> getNodeTypes() {
-        return Objects.isNull(this.readServiceTemplate.get(nodeTypes)) ? new HashMap<>()
-            : (Map<String, Object>) this.readServiceTemplate.get(nodeTypes);
+        return Objects.isNull(this.readServiceTemplate.get(NODE_TYPES)) ? new HashMap<>()
+            : (Map<String, Object>) this.readServiceTemplate.get(NODE_TYPES);
     }
 
     @Override
     public Object getTopologyTemplate() {
-        return this.readServiceTemplate.get(topologyTemplate);
+        return this.readServiceTemplate.get(TOPOLOGY_TEMPLATE);
     }
 
     @Override
     public Map<String, Object> getNodeTemplates() {
         return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
-            : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(nodeTemplates);
+            : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(NODE_TEMPLATES);
     }
 
     @Override
     public Map<String, Object> getInputs() {
         return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
-            : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(inputs);
+            : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(INPUTS);
     }
 
     @Override
     public Map<String, Object> getOutputs() {
         return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
-            : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(outputs);
+            : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate()).get(OUTPUTS);
     }
 
     @Override
     public Map<String, Object> getSubstitutionMappings() {
         return Objects.isNull(this.getTopologyTemplate()) ? new HashMap<>()
             : (Map<String, Object>) ((Map<String, Object>) this.getTopologyTemplate())
-                .get(substitutionMappings);
+                .get(SUBSTITUTION_MAPPINGS);
     }
 
     @Override

@@ -23,11 +23,11 @@
 package org.openecomp.core.impl;
 
 import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
-import static org.openecomp.core.converter.datatypes.Constants.definitionsDir;
-import static org.openecomp.core.converter.datatypes.Constants.globalStName;
-import static org.openecomp.core.converter.datatypes.Constants.globalSubstitution;
-import static org.openecomp.core.converter.datatypes.Constants.mainStName;
-import static org.openecomp.core.converter.datatypes.Constants.openecompHeatIndex;
+import static org.openecomp.core.converter.datatypes.Constants.DEFINITIONS_DIR;
+import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_ST_NAME;
+import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_SUBSTITUTION;
+import static org.openecomp.core.converter.datatypes.Constants.MAIN_ST_NAME;
+import static org.openecomp.core.converter.datatypes.Constants.OPENECOMP_HEAT_INDEX;
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME;
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_INDEX_IMPORT_FILE;
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.ONAP_INDEX_IMPORT_FILE;
@@ -183,9 +183,9 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
 
     private void convertImports(ServiceTemplate serviceTemplate) {
         List<Map<String, Import>> imports = new ArrayList<>();
-        imports.add(createImportMap(openecompHeatIndex, HEAT_INDEX_IMPORT_FILE));
+        imports.add(createImportMap(OPENECOMP_HEAT_INDEX, HEAT_INDEX_IMPORT_FILE));
         imports.add(createImportMap(ONAP_INDEX, ONAP_INDEX_IMPORT_FILE));
-        imports.add(createImportMap(globalSubstitution, globalStName));
+        imports.add(createImportMap(GLOBAL_SUBSTITUTION, GLOBAL_ST_NAME));
         serviceTemplate.setImports(imports);
     }
 
@@ -264,7 +264,7 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
     }
 
     protected boolean isMainServiceTemplate(String fileName) {
-        return fileName.endsWith(mainStName);
+        return fileName.endsWith(MAIN_ST_NAME);
     }
 
     protected boolean isMetadataFile(String fileName) {
@@ -272,11 +272,11 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
     }
 
     protected boolean isGlobalServiceTemplate(String fileName) {
-        return fileName.endsWith(globalStName);
+        return fileName.endsWith(GLOBAL_ST_NAME);
     }
 
     protected boolean isDefinitions(String fileName) {
-        return fileName.startsWith(definitionsDir);
+        return fileName.startsWith(DEFINITIONS_DIR);
     }
 
     private String getTemplateNameFromStName(String serviceTemplateName) {

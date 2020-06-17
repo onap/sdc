@@ -22,7 +22,7 @@
 
 package org.openecomp.core.impl;
 
-import static org.openecomp.core.converter.datatypes.Constants.globalStName;
+import static org.openecomp.core.converter.datatypes.Constants.GLOBAL_ST_NAME;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
@@ -73,7 +73,7 @@ public abstract class AbstractToscaSolConverter extends AbstractToscaConverter {
         for (Map.Entry<String, byte[]> fileEntry : csarFiles.entrySet()) {
             if (!handledDefinitionFilesList.contains(fileEntry.getKey()) && !isMetadataFile(fileEntry.getKey())) {
                 if (isGlobalServiceTemplate(fileEntry.getKey())) {
-                    handleServiceTemplate(globalStName, fileEntry.getKey(), csarFiles, serviceTemplates);
+                    handleServiceTemplate(GLOBAL_ST_NAME, fileEntry.getKey(), csarFiles, serviceTemplates);
                 } else {
                     artifacts.addFile(
                             getConcreteArtifactFileName(fileEntry.getKey()), fileEntry.getValue());
