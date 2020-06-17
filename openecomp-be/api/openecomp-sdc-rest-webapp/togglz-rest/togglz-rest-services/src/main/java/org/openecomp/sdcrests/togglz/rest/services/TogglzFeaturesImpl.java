@@ -15,12 +15,11 @@
  */
 
 package org.openecomp.sdcrests.togglz.rest.services;
-
-import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdcrests.togglz.rest.TogglzFeatures;
 import org.openecomp.sdcrests.togglz.rest.mapping.MapToggleableFeatureToDto;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
+import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.togglz.core.Feature;

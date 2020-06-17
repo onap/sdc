@@ -24,7 +24,6 @@ import com.google.common.annotations.VisibleForTesting;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.FeatureToggleDao;
 import org.openecomp.sdc.be.resources.data.togglz.FeatureToggleEvent;
-import org.openecomp.sdc.be.resources.data.togglz.ToggleableFeature;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 import org.togglz.core.Feature;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
 @Component
 public class CassandraCustomStateRepository implements StateRepository {
 
-    private final static Logger logger = Logger.getLogger(CassandraCustomStateRepository.class);
+    private static final Logger logger = Logger.getLogger(CassandraCustomStateRepository.class);
     private final FeatureToggleDao featureToggleDao;
 
     public CassandraCustomStateRepository(FeatureToggleDao featureToggleDao) {

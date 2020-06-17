@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,26 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.common.togglz;
+package org.openecomp.sdc.be.togglz;
 
+import java.util.Arrays;
 import org.togglz.core.Feature;
 import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum ToggleableFeature implements Feature {
-
     @Label("Default Feature")
-    DEFAULT_FEATURE;
+    DEFAULT_FEATURE,
+
+    @Label("Healing")
+    HEALING;
+
+    public static Feature getFeatureByName(String featureName) {
+        return Arrays.stream(values()).
+                filter(e -> e.name().equals(featureName))
+                .findFirst()
+                .orElse(null);
+    }
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

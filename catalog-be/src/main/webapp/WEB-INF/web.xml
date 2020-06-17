@@ -20,10 +20,10 @@
                 org.openecomp.sdc.be.filters.BeServletFilter,
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
                 org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature,
-				org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
+                org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.ConstraintViolationExceptionMapper,
-				org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
+                org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,
                 org.openecomp.sdc.be.view.MixinModelWriter,
                 org.openecomp.sdc.config.ObjectMapperProvider
             </param-value>
@@ -81,29 +81,29 @@
         <async-supported>true</async-supported>
     </servlet>
 
-<!--    <filter>-->
-<!--        <filter-name>CadiAuthFilter</filter-name>-->
-<!--        <filter-class>org.onap.portalsdk.core.onboarding.crossapi.CadiAuthFilter</filter-class>-->
-<!--        <init-param>-->
-<!--            <param-name>cadi_prop_files</param-name>-->
-<!--            &lt;!&ndash; Add Absolute path of cadi.properties &ndash;&gt;-->
-<!--            <param-value>etc/cadi.properties</param-value>-->
-<!--        </init-param>-->
-<!--        &lt;!&ndash;Add param values with comma delimited values &ndash;&gt;-->
-<!--        &lt;!&ndash; for example /api/v3/*,/auxapi/*&ndash;&gt;-->
-<!--        <init-param>-->
-<!--            <param-name>include_url_endpoints</param-name>-->
-<!--            <param-value>/api/v3/roles,/api/v3/user/*,/api/v3/user/*/roles,/api/v3/users,/api/v3/sessionTimeOuts,/api/v3/updateSessionTimeOuts</param-value>-->
-<!--        </init-param>-->
-<!--        <init-param>-->
-<!--            <param-name>exclude_url_endpoints</param-name>-->
-<!--            <param-value>/api/v3/analytics,/api/v3/storeAnalytics</param-value>-->
-<!--        </init-param>-->
-<!--    </filter>-->
-<!--    <filter-mapping>-->
-<!--        <filter-name>CadiAuthFilter</filter-name>-->
-<!--        <url-pattern>/api/v3/*</url-pattern>-->
-<!--    </filter-mapping>-->
+    <!--    <filter>-->
+    <!--        <filter-name>CadiAuthFilter</filter-name>-->
+    <!--        <filter-class>org.onap.portalsdk.core.onboarding.crossapi.CadiAuthFilter</filter-class>-->
+    <!--        <init-param>-->
+    <!--            <param-name>cadi_prop_files</param-name>-->
+    <!--            &lt;!&ndash; Add Absolute path of cadi.properties &ndash;&gt;-->
+    <!--            <param-value>etc/cadi.properties</param-value>-->
+    <!--        </init-param>-->
+    <!--        &lt;!&ndash;Add param values with comma delimited values &ndash;&gt;-->
+    <!--        &lt;!&ndash; for example /api/v3/*,/auxapi/*&ndash;&gt;-->
+    <!--        <init-param>-->
+    <!--            <param-name>include_url_endpoints</param-name>-->
+    <!--            <param-value>/api/v3/roles,/api/v3/user/*,/api/v3/user/*/roles,/api/v3/users,/api/v3/sessionTimeOuts,/api/v3/updateSessionTimeOuts</param-value>-->
+    <!--        </init-param>-->
+    <!--        <init-param>-->
+    <!--            <param-name>exclude_url_endpoints</param-name>-->
+    <!--            <param-value>/api/v3/analytics,/api/v3/storeAnalytics</param-value>-->
+    <!--        </init-param>-->
+    <!--    </filter>-->
+    <!--    <filter-mapping>-->
+    <!--        <filter-name>CadiAuthFilter</filter-name>-->
+    <!--        <url-pattern>/api/v3/*</url-pattern>-->
+    <!--    </filter-mapping>-->
 
     <servlet>
         <servlet-name>ViewStatusMessages</servlet-name>
@@ -151,10 +151,10 @@
     <!--<async-supported>true</async-supported>-->
     <!--</filter>-->
 
-<!--    <filter>-->
-<!--    <filter-name>gatewayFilter</filter-name>-->
-<!--    <filter-class>org.openecomp.sdc.be.filters.GatewayFilter</filter-class>-->
-<!--    </filter>-->
+    <!--    <filter>-->
+    <!--    <filter-name>gatewayFilter</filter-name>-->
+    <!--    <filter-class>org.openecomp.sdc.be.filters.GatewayFilter</filter-class>-->
+    <!--    </filter>-->
 
     <filter>
         <filter-name>gatewayFilter</filter-name>
@@ -173,35 +173,35 @@
         <url-pattern>/sdc/*</url-pattern>
     </filter-mapping>
 
-<!--    <filter>-->
-<!--        <filter-name>beRestrictionAccessFilter</filter-name>-->
-<!--        <filter-class>-->
-<!--            org.springframework.web.filter.DelegatingFilterProxy-->
-<!--        </filter-class>-->
-<!--        <init-param>-->
-<!--            <param-name>targetFilterLifecycle</param-name>-->
-<!--            <param-value>true</param-value>-->
-<!--        </init-param>-->
-<!--    </filter>-->
-<!--    <filter-mapping>-->
-<!--        <filter-name>beRestrictionAccessFilter</filter-name>-->
-<!--        <url-pattern>/sdc2/rest/*</url-pattern>-->
-<!--    </filter-mapping>-->
+    <!--    <filter>-->
+    <!--        <filter-name>beRestrictionAccessFilter</filter-name>-->
+    <!--        <filter-class>-->
+    <!--            org.springframework.web.filter.DelegatingFilterProxy-->
+    <!--        </filter-class>-->
+    <!--        <init-param>-->
+    <!--            <param-name>targetFilterLifecycle</param-name>-->
+    <!--            <param-value>true</param-value>-->
+    <!--        </init-param>-->
+    <!--    </filter>-->
+    <!--    <filter-mapping>-->
+    <!--        <filter-name>beRestrictionAccessFilter</filter-name>-->
+    <!--        <url-pattern>/sdc2/rest/*</url-pattern>-->
+    <!--    </filter-mapping>-->
 
-<!--    <filter>-->
-<!--        <filter-name>CADI</filter-name>-->
-<!--        <filter-class>org.openecomp.sdc.be.filters.BeCadiServletFilter</filter-class>-->
-<!--        <init-param>-->
-<!--            <param-name>cadi_prop_files</param-name>-->
-<!--            <param-value>etc/cadi.properties</param-value>-->
-<!--        </init-param>-->
-<!--    </filter>-->
+    <!--    <filter>-->
+    <!--        <filter-name>CADI</filter-name>-->
+    <!--        <filter-class>org.openecomp.sdc.be.filters.BeCadiServletFilter</filter-class>-->
+    <!--        <init-param>-->
+    <!--            <param-name>cadi_prop_files</param-name>-->
+    <!--            <param-value>etc/cadi.properties</param-value>-->
+    <!--        </init-param>-->
+    <!--    </filter>-->
 
-<!--    <filter-mapping>-->
-<!--        <filter-name>CADI</filter-name>-->
-<!--        <url-pattern>/sdc/*</url-pattern>-->
-<!--        <url-pattern>/sdc2/rest/*</url-pattern>-->
-<!--    </filter-mapping>-->
+    <!--    <filter-mapping>-->
+    <!--        <filter-name>CADI</filter-name>-->
+    <!--        <url-pattern>/sdc/*</url-pattern>-->
+    <!--        <url-pattern>/sdc2/rest/*</url-pattern>-->
+    <!--    </filter-mapping>-->
 
     <filter>
         <filter-name>reqValidationFilter</filter-name>
@@ -224,14 +224,19 @@
         <exception-type>java.lang.RuntimeException</exception-type>
         <location>/sdc2/rest/v1/catalog/handleException/</location>
     </error-page>
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:application-context.xml</param-value>
-	</context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:application-context.xml</param-value>
+    </context-param>
 
-	<listener>
-		<listener-class>org.openecomp.sdc.be.listen.BEAppContextListener</listener-class>
-	</listener>
+    <context-param>
+        <param-name>org.togglz.core.manager.TogglzConfig</param-name>
+        <param-value>org.openecomp.sdc.be.togglz.TogglzConfiguration</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.openecomp.sdc.be.listen.BEAppContextListener</listener-class>
+    </listener>
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
