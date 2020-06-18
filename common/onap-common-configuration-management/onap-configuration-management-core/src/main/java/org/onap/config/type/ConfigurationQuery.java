@@ -17,7 +17,9 @@
 package org.onap.config.type;
 
 import org.onap.config.Constants;
+import lombok.ToString;
 
+@ToString
 public class ConfigurationQuery {
 
     private String tenant = Constants.DEFAULT_TENANT;
@@ -94,18 +96,5 @@ public class ConfigurationQuery {
 
     public boolean isLatest() {
         return latest;
-    }
-
-    @Override
-    public String toString() {
-        return "ConfigurationQuery{" +
-                "tenant='" + tenant + '\'' +
-                ", namespace='" + namespace + '\'' +
-                ", key='" + key + '\'' +
-                ", fallback=" + fallback +
-                ", externalLookup=" + externalLookup +
-                ", latest=" + latest +
-                ", nodeSpecific=" + nodeSpecific +
-                '}';
     }
 }
