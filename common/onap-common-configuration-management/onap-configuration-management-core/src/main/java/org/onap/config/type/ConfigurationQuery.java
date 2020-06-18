@@ -17,11 +17,17 @@
 package org.onap.config.type;
 
 import org.onap.config.Constants;
+import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 public class ConfigurationQuery {
 
+    @Getter
     private String tenant = Constants.DEFAULT_TENANT;
+    @Getter
     private String namespace = Constants.DEFAULT_NAMESPACE;
+    @Getter
     private String key;
     private boolean fallback;
     private boolean externalLookup;
@@ -68,18 +74,6 @@ public class ConfigurationQuery {
         return this;
     }
 
-    public String getTenant() {
-        return tenant.toUpperCase();
-    }
-
-    public String getNamespace() {
-        return namespace.toUpperCase();
-    }
-
-    public String getKey() {
-        return key;
-    }
-
     public boolean isFallback() {
         return fallback;
     }
@@ -94,18 +88,5 @@ public class ConfigurationQuery {
 
     public boolean isLatest() {
         return latest;
-    }
-
-    @Override
-    public String toString() {
-        return "ConfigurationQuery{" +
-                "tenant='" + tenant + '\'' +
-                ", namespace='" + namespace + '\'' +
-                ", key='" + key + '\'' +
-                ", fallback=" + fallback +
-                ", externalLookup=" + externalLookup +
-                ", latest=" + latest +
-                ", nodeSpecific=" + nodeSpecific +
-                '}';
     }
 }
