@@ -27,7 +27,7 @@ In the OOM deployment the log location in the docker is /var/log/onap
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 |                               | /data/logs/BE/SDC/SDC-BE/error.log       | application logging | This log holds the info and error level output of the application.                                                                                                                        | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/BE/SDC/SDC-BE/transaction.log | application logging | Not currently in use, will be used in future releases.                                                                                                                                     | rolls at 20 MB      |
+|                               | /data/logs/BE/SDC/SDC-BE/transaction.log | application logging | Not currently in use, will be used in future releases.                                                                                                                                    | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 |                               | /data/logs/BE/SDC/SDC-BE/all.log         | application logging | On demand, we can enable log aggregation into one file for easier debugging. This is done by editing the logback.xml inside the server docker.                                            | rolls at 20 MB      |
 |                               |                                          |                     | The file is located under: config/catalog-be/logback.xml.                                                                                                                                 |                     |
@@ -41,13 +41,13 @@ In the OOM deployment the log location in the docker is /var/log/onap
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 |                               | /data/logs/FE/SDC/SDC-FE/error.log       | application logging | This log holds the Info and Error level output of the application.                                                                                                                        | rolls at 20 MB      |
 +                               +------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
-|                               | /data/logs/FE/SDC/SDC-FE/all.log         | application logging | On demand we can enable log aggregation into one file for easier debugging, by editing the logback.xml inside the server docker.The file is located under: config/catalog-fe/logback.xml.  | rolls               |
+|                               | /data/logs/FE/SDC/SDC-FE/all.log         | application logging | On demand we can enable log aggregation into one file for easier debugging, by editing the logback.xml inside the server docker.The file is located under: config/catalog-fe/logback.xml. | rolls               |
 |                               |                                          |                     | To allow this logger set this property to true                                                                                                                                            |                     |
 |                               |                                          |                     | This log holds all the logging output of the application.                                                                                                                                 |                     |
 +-------------------------------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 
 Changing log level
----------------------------
+------------------
 SDC uses logback for logging.
 In order to change the level you will need to access the docker.
 Update the logback.xml inside the docker according to your need - the change does not require a restart of the docker.
@@ -79,7 +79,7 @@ Error / Warning Messages
 ------------------------
 
 Response Types
-=============
+==============
 
 ::
 

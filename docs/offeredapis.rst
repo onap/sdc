@@ -1,10 +1,10 @@
 .. This work is licensed under a Creative Commons Attribution 4.0 International License.
 .. http://creativecommons.org/licenses/by/4.0
-.. _offeredapis:
+.. _sdcofferedapis:
 
-============
-Offered APIs
-============
+================
+SDC Offered APIs
+================
 
 The list of APIs that SDC offers can be found from the following table:
 
