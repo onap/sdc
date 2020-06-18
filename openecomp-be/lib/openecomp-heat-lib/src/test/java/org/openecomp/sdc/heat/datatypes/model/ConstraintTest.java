@@ -21,6 +21,7 @@ package org.openecomp.sdc.heat.datatypes.model;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -28,5 +29,15 @@ public class ConstraintTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
         assertThat(Constraint.class, hasValidGettersAndSettersExcluding("range"));
+    }
+
+    @Test
+    public void testAddValidValue() {
+        Constraint constraint = new Constraint();
+
+        Object validValue = "testValidValue";
+        constraint.addValidValue(validValue);
+        assertEquals(constraint.getValidValues().size(), 1);
+        assertEquals(constraint.getValidValues().get(0), validValue);
     }
 }
