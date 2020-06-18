@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "918d3b80_4754ddb9",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBL.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-18T11:50:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3575d883_a1884f1e",
+      "range": {
+        "startLine": 35,
+        "startChar": 77,
+        "endLine": 35,
+        "endChar": 87
+      },
+      "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37df55bc_72355ff7",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceValidatorExecuter.java",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2020-06-18T11:46:52Z",
       "side": 1,
       "message": "can\u0027t we just inherit it ?",
+      "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b527e10_e5310099",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-18T11:50:47Z",
+      "side": 1,
+      "message": "Sorry I am not sure to understand what you mean, could you please elaborate?",
+      "parentUuid": "37df55bc_72355ff7",
       "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -59,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "77e22be7_b6c1a745",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/TopologyTemplateValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-18T11:50:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e696b4cb_84fff991",
+      "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cb46d983_228e226a",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerTest.java",
         "patchSetId": 1
@@ -73,6 +133,24 @@
       "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9610fa70_521f335c",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-18T11:50:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb46d983_228e226a",
+      "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
