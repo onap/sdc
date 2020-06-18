@@ -78,9 +78,7 @@ public class ReportFileNioHelper {
      * @param <A>               The type returned by the function consuming the file
      */
     public static <A> A withTxtFile(String txtReportFilePath, Function<ReportFile.TXTFile, A> f) {
-        // TODO: Switch to makeTxtFile once all the report file business logic has been moved to
-        // ReportFile
-        ReportFile.TXTFile file = ReportFile.makeAppendableTxtFile(makeNioWriter(txtReportFilePath));
+        ReportFile.TXTFile file = ReportFile.makeTxtFile(makeNioWriter(txtReportFilePath));
         A result = f.apply(file);
         try {
             Files.delete(Paths.get(txtReportFilePath));

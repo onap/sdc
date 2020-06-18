@@ -31,7 +31,6 @@ import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.CSVFile;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriter;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;

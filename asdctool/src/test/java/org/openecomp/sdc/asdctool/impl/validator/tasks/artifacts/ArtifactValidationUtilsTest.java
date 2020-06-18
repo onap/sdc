@@ -37,17 +37,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManagerHelper;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -101,16 +97,6 @@ public class ArtifactValidationUtilsTest {
         when(vertex.getUniqueId()).thenReturn(UNIQUE_ID_VERTEX);
     }
 
-    @BeforeEach
-    public void setup() {
-        ReportManager.make(txtReportFilePath);
-    }
-
-    @AfterEach
-    public void clean() {
-        ReportManagerHelper.cleanReports(txtReportFilePath);
-    }
-
     @Test
     public void testValidateArtifactsAreInCassandra() {
         // given
@@ -119,15 +105,17 @@ public class ArtifactValidationUtilsTest {
         artifacts.add(artifactDataDefinition);
 
         // when
-        ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, txtReportFilePath);
+        withTxtFile(txtReportFilePath, file -> {
+            ArtifactsVertexResult result =
+                testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, file);
 
-        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+            List<String> reportOutputFile = readFileAsList(txtReportFilePath);
 
-        // then
-        assertTrue(result.getStatus());
-        assertEquals(0, result.notFoundArtifacts.size());
-        assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
+            // then
+            assertTrue(result.getStatus());
+            assertEquals(0, result.notFoundArtifacts.size());
+            assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
+        });
     }
 
     @Test
@@ -141,7 +129,7 @@ public class ArtifactValidationUtilsTest {
         // when
         withTxtFile(txtReportFilePath, file -> {
             ArtifactsVertexResult result =
-                testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, txtReportFilePath);
+                testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, file);
             file.reportEndOfToolRun(report);
 
             List<String> reportOutputFile = readFileAsList(txtReportFilePath);
@@ -219,17 +207,19 @@ public class ArtifactValidationUtilsTest {
             .thenReturn(Either.left(topologyTemplate));
 
         // when
-        ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME, txtReportFilePath);
+        withTxtFile(txtReportFilePath, file -> {
+            ArtifactsVertexResult result =
+                testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME, file);
 
-        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+            List<String> reportOutputFile = readFileAsList(txtReportFilePath);
 
-        // then
-        assertTrue(result.getStatus());
-        assertEquals(0, result.notFoundArtifacts.size());
+            // then
+            assertTrue(result.getStatus());
+            assertEquals(0, result.notFoundArtifacts.size());
 
-        IntStream.range(2, reportOutputFile.size()).forEach(
-            i -> assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(i)));
+            IntStream.range(2, reportOutputFile.size()).forEach(
+                i -> assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(i)));
+        });
     }
 
     @Test
@@ -240,10 +230,11 @@ public class ArtifactValidationUtilsTest {
             .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         // when
-        ArtifactsVertexResult result =
-            testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME, txtReportFilePath);
-
-        // then
-        assertFalse(result.getStatus());
+        withTxtFile(txtReportFilePath, file -> {
+            ArtifactsVertexResult result =
+                testSubject.validateTopologyTemplateArtifacts(report, vertex, TASK_NAME, file);
+            // then
+            assertFalse(result.getStatus());
+        });
     }
 }

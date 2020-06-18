@@ -29,11 +29,6 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
  */
 public class ReportFile {
 
-    // TODO: Delete this function once all the report file business logic has been moved to ReportFile
-    static public TXTFile makeAppendableTxtFile(ReportFileWriter<FileType.TXT> writer) {
-        return new TXTFile(writer);
-    }
-
     static public TXTFile makeTxtFile(ReportFileWriter<FileType.TXT> writer) {
         writer.writeln("-----------------------Validation Tool Results:-------------------------");
         return new TXTFile(writer);
@@ -82,7 +77,7 @@ public class ReportFile {
             );
         }
 
-     public void reportValidatorTypeSummary(
+        public void reportValidatorTypeSummary(
             String validatorName,
             Set<String> failedTasksNames,
             Set<String> successTasksNames
@@ -99,16 +94,21 @@ public class ReportFile {
         public void reportEndOfToolRun(Report report) {
             StrBuilder sb = new StrBuilder();
             sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
-            report.forEachFailure((taskName, failedVertices) -> {
+            report.forEachFailure((taskName, failedVertices) ->
                 sb.append("Task: ")
                     .append(taskName)
                     .appendNewLine()
                     .append("FailedVertices: ")
                     .append(String.valueOf(failedVertices))
-                    .appendNewLine();
-            });
+                    .appendNewLine());
+
             writer.writeln("");
             writer.write(sb.toString());
+        }
+
+        public void writeReportLineToFile(String message) {
+            writer.writeln("");
+            writer.write(message);
         }
     }
 

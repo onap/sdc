@@ -21,24 +21,21 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
-import org.openecomp.sdc.asdctool.impl.validator.report.Report;
-import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileNioHelper;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileNioHelper;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
 public class ReportManagerTest {
 
@@ -73,17 +70,6 @@ public class ReportManagerTest {
     private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
 
     private final GraphVertex vertexScanned = Mockito.mock(GraphVertex.class);
-
-    @BeforeEach
-    public void setup() {
-        ReportManager.make(txtReportFilePath);
-        successResult.setStatus(true);
-    }
-
-    @AfterEach
-    public void clean() {
-        ReportManagerHelper.cleanReports(txtReportFilePath);
-    }
 
     @Test
     public void testReportTaskEnd() {
@@ -144,15 +130,15 @@ public class ReportManagerTest {
     @Test
     public void testWriteReportLineToFile() {
         // when
-        ReportManager.writeReportLineToFile(DUMMY_MESSAGE, txtReportFilePath);
-
-        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+        List<String> reportTxtFile = ReportFileNioHelper.withTxtFile(txtReportFilePath, file -> {
+            file.writeReportLineToFile(DUMMY_MESSAGE);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
-        assertNotNull(reportOutputFile);
-
-        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
-        assertEquals(DUMMY_MESSAGE, reportOutputFile.get(2));
+        assertNotNull(reportTxtFile);
+        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportTxtFile.get(0));
+        assertEquals(DUMMY_MESSAGE, reportTxtFile.get(2));
     }
 
     @Test

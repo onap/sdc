@@ -21,11 +21,12 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks;
 
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
 public interface TopologyTemplateValidationTask {
-    VertexResult validate(Report report, GraphVertex vertex, String outputFilePath);
+    VertexResult validate(Report report, GraphVertex vertex, ReportFile.TXTFile reportFile);
     String getTaskName();
     String getTaskResultStatus();
     void setTaskResultStatus(String status);
