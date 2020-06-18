@@ -193,15 +193,16 @@ public class ReportManagerTest {
         when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
 
         // when
-        ReportManager.reportStartTaskRun(vertexScanned, TASK_1_NAME, txtReportFilePath);
-
-        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+        List<String> reportTxtFile = ReportFileNioHelper.withTxtFile(txtReportFilePath, file -> {
+            file.reportStartTaskRun(vertexScanned, TASK_1_NAME);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
-        assertNotNull(reportOutputFile);
-        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
+        assertNotNull(reportTxtFile);
+        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportTxtFile.get(0));
         assertEquals("-----------------------Vertex: " + UNIQUE_ID + ", Task " + TASK_1_NAME
-            + " Started-----------------------", reportOutputFile.get(2));
+            + " Started-----------------------", reportTxtFile.get(2));
     }
 
     private String getCsvExpectedResult(String vertexID, String taskID) {

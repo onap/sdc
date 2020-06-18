@@ -29,6 +29,7 @@ import org.openecomp.sdc.asdctool.impl.validator.report.FileType;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.CSVFile;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriter;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -49,6 +50,7 @@ public class ValidationTool {
         String csvReportFilePath = ValidationConfigManager.csvReportFilePath(outputPath, System::currentTimeMillis);
 
         CSVFile csvFile = ReportFile.makeCsvFile(makeNioWriter(Paths.get(csvReportFilePath)));
+        TXTFile textFile = ReportFile.makeTxtFile(makeNioWriter(Paths.get(txtReportFilePath)));
 
         String appConfigDir = args[1];
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
@@ -56,7 +58,7 @@ public class ValidationTool {
 
         log.info("Start Validation Tool");
         Report report = Report.make();
-        boolean result = validationToolBL.validateAll(report, txtReportFilePath);
+        boolean result = validationToolBL.validateAll(report, textFile, txtReportFilePath);
         ReportManager.reportEndOfToolRun(report, txtReportFilePath);
         csvFile.printAllResults(report);
         if (result) {
