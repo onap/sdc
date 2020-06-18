@@ -58,6 +58,13 @@ public class ReportFile {
             writer.writeln("-----------------------Vertex: " + vertex.getUniqueId() +
                 ", Task " + taskName + " Started-----------------------");
         }
+
+        public void reportStartValidatorRun(String validatorName, int componentsNum) {
+            writer.writeln("");
+            writer.writeln("------ValidatorExecuter " +
+                validatorName + " Validation Started, on " +
+                componentsNum + " components---------");
+        }
     }
 
     /**
