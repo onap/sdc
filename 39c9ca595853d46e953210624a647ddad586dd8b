@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "042c614b_736ed0d8",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/Utils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 6597
+      },
+      "writtenOn": "2020-06-18T15:54:25Z",
+      "side": 1,
+      "message": "Not directly related to this particular change request but I find it disturbing to catch an Exception and return a null value.\nWe (the community) should maybe deprecate this method and wrap it into another method that returns an `Optional\u003cJanusGraph\u003e` instead?",
+      "revId": "39c9ca595853d46e953210624a647ddad586dd8b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
