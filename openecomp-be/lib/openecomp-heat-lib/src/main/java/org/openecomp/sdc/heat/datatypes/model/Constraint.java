@@ -25,9 +25,11 @@ import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Data
+@NoArgsConstructor
 public class Constraint {
 
     private Object[] length;
@@ -36,22 +38,7 @@ public class Constraint {
     private List<Object> validValues;
     private String pattern;
 
-    public Constraint() {
-    }
-
     public void setRange(Integer[] inRange) {
         this.range = new Integer[] {inRange[0], inRange[1]};
-    }
-
-    /**
-     * Add valid value.
-     *
-     * @param validValue the valid value
-     */
-    public void addValidValue(Object validValue) {
-        if (this.validValues == null) {
-            this.validValues = new ArrayList<>();
-        }
-        validValues.add(validValue);
     }
 }

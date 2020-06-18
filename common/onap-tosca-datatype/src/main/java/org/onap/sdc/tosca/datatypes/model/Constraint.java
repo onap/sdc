@@ -23,65 +23,34 @@ package org.onap.sdc.tosca.datatypes.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@NoArgsConstructor
 public class Constraint implements Cloneable {
+  @Setter
   private Object equal;
+  @Setter
   private Object greater_or_equal;
+  @Setter
   private Object greater_than;
+  @Setter
   private Object less_than;
+  @Setter
   private Object less_or_equal;
   private Object[] in_range;
+  @Setter
   private List<Object> valid_values;
+  @Setter
   private Integer length;
+  @Setter
   private Integer min_length;
+  @Setter
   private Integer max_length;
+  @Setter
   private Object pattern;
-
-  public Constraint() {
-  }
-
-  public Object getGreater_or_equal() {
-    return greater_or_equal;
-  }
-
-  public void setGreater_or_equal(Object greater_or_equal) {
-    this.greater_or_equal = greater_or_equal;
-  }
-
-  public Object getEqual() {
-    return equal;
-  }
-
-  public void setEqual(Object equal) {
-    this.equal = equal;
-  }
-
-  public Object getGreater_than() {
-    return greater_than;
-  }
-
-  public void setGreater_than(Object greater_than) {
-    this.greater_than = greater_than;
-  }
-
-  public Object getLess_than() {
-    return less_than;
-  }
-
-  public void setLess_than(Object less_than) {
-    this.less_than = less_than;
-  }
-
-  public Object getLess_or_equal() {
-    return less_or_equal;
-  }
-
-  public void setLess_or_equal(Object less_or_equal) {
-    this.less_or_equal = less_or_equal;
-  }
-
-  public Object[] getIn_range() {
-    return in_range;
-  }
 
   /**
    * Sets in_range attribute.
@@ -91,57 +60,6 @@ public class Constraint implements Cloneable {
     this.in_range = new Object[2];
     this.in_range[0] = in_range[0];
     this.in_range[1] = in_range[1];
-  }
-
-  public List<Object> getValid_values() {
-    return valid_values;
-  }
-
-  public void setValid_values(List<Object> valid_values) {
-    this.valid_values = valid_values;
-  }
-
-  /**
-   * Add Valid value
-   * @param validValue object.
-   */
-  public void addValidValue(Object validValue) {
-    if (this.valid_values == null) {
-      this.valid_values = new ArrayList<>();
-    }
-    valid_values.add(validValue);
-  }
-
-  public Integer getLength() {
-    return length;
-  }
-
-  public void setLength(Integer length) {
-    this.length = length;
-  }
-
-  public Integer getMin_length() {
-    return min_length;
-  }
-
-  public void setMin_length(Integer min_length) {
-    this.min_length = min_length;
-  }
-
-  public Integer getMax_length() {
-    return max_length;
-  }
-
-  public void setMax_length(Integer max_length) {
-    this.max_length = max_length;
-  }
-
-  public Object getPattern() {
-    return pattern;
-  }
-
-  public void setPattern(Object pattern) {
-    this.pattern = pattern;
   }
 
   @Override
