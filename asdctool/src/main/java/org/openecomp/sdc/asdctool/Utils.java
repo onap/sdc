@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,108 +37,91 @@ import java.util.Map.Entry;
 
 public class Utils {
 
-	private static Logger log = Logger.getLogger(Utils.class.getName());
+    private static final Logger log = Logger.getLogger(Utils.class.getName());
 
-	public static final String NEW_LINE = System.getProperty("line.separator");
+    public static final String NEW_LINE = System.getProperty("line.separator");
 
-	private Utils() {
-	}
+    private Utils() {
+    }
 
-	public static Response buildOkResponse(
-			/*
-			 * ResponseFormat errorResponseWrapper,
-			 */int status, Object entity, Map<String, String> additionalHeaders) {
-		ResponseBuilder responseBuilder = Response.status(status);
-		if (entity != null) {
-			log.trace("returned entity is {}", entity.toString());
-			responseBuilder = responseBuilder.entity(entity);
-		}
-		if (additionalHeaders != null) {
-			for (Entry<String, String> additionalHeader : additionalHeaders.entrySet()) {
-				String headerName = additionalHeader.getKey();
-				String headerValue = additionalHeader.getValue();
-				log.trace("Adding header {} with value {} to the response", headerName, headerValue);
-				responseBuilder.header(headerName, headerValue);
-			}
-		}
-		return responseBuilder.build();
-	}
+    /**
+     * ResponseFormat errorResponseWrapper,
+     */
+    public static Response buildOkResponse(int status, Object entity, Map<String, String> additionalHeaders) {
+        ResponseBuilder responseBuilder = Response.status(status);
+        if (entity != null) {
+            log.trace("returned entity is {}", entity.toString());
+            responseBuilder = responseBuilder.entity(entity);
+        }
+        if (additionalHeaders != null) {
+            for (Entry<String, String> additionalHeader : additionalHeaders.entrySet()) {
+                String headerName = additionalHeader.getKey();
+                String headerValue = additionalHeader.getValue();
+                log.trace("Adding header {} with value {} to the response", headerName, headerValue);
+                responseBuilder.header(headerName, headerValue);
+            }
+        }
+        return responseBuilder.build();
+    }
 
-	public static JanusGraph openGraph(Configuration conf) {
+    public static JanusGraph openGraph(Configuration conf) {
+        try {
+            return JanusGraphFactory.open(conf);
+        } catch (Exception e) {
+            log.error("Failed to start open graph", e);
+        }
+        return null;
+    }
 
-		JanusGraph graph = null;
-		try {
+    public static boolean vertexLeftContainsRightProps(Map<String, Object> leftProps, Map<String, Object> rightProps) {
+        if (rightProps == null)
+            return true;
+        for (Entry<String, Object> entry : rightProps.entrySet()) {
+            String key = entry.getKey();
+            Object leftValue = leftProps.get(key);
+            Object rightValue = entry.getValue();
+            if (leftValue == null) {
+                if (rightValue == null) {
+                    continue;
+                } else {
+                    log.debug("The key {} cannot be found in the properties {}", key, leftProps);
+                    return false;
+                }
+            }
+            if (!leftValue.equals(rightValue)) {
+                log.trace("The value of key {} is differnet between properties. {} vs {}", key, leftValue, rightValue);
+                return false;
+            }
+        }
+        return true;
+    }
 
-			graph = JanusGraphFactory.open(conf);
+    public static void setProperties(Element element, Map<String, Object> properties) {
+        if (properties != null && !properties.isEmpty()) {
+            Object[] propertyKeyValues = new Object[properties.size() * 2];
+            int i = 0;
+            for (Entry<String, Object> entry : properties.entrySet()) {
+                propertyKeyValues[i++] = entry.getKey();
+                propertyKeyValues[i++] = entry.getValue();
+            }
+            ElementHelper.attachProperties(element, propertyKeyValues);
+        }
+    }
 
-		} catch (Exception e) {
-			log.error("Failed to start open graph", e);
-		}
+    public static Map<String, Object> getProperties(Element element) {
+        Map<String, Object> result = new HashMap<>();
 
-		return graph;
+        if (element != null && CollectionUtils.isNotEmpty(element.keys())) {
+            Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
+                    element.keys().toArray(new String[element.keys().size()]));
 
-	}
+            for (Entry<String, Property> entry : propertyMap.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue().value();
 
-	public static boolean vertexLeftContainsRightProps(Map<String, Object> leftProps, Map<String, Object> rightProps) {
-
-		if (rightProps != null) {
-
-			for (Entry<String, Object> entry : rightProps.entrySet()) {
-				String key = entry.getKey();
-				Object leftValue = leftProps.get(key);
-				Object rightValue = entry.getValue();
-				if (leftValue == null) {
-					if (rightValue == null) {
-						continue;
-					} else {
-						log.debug("The key {} cannot be found in the properties {}",key,leftProps);
-						return false;
-					}
-				}
-
-				if (!leftValue.equals(rightValue)) {
-					log.trace("The value of key {} is differnet between properties. {} vs {}",key,leftValue,rightValue);
-					return false;
-				}
-			}
-
-		}
-
-		return true;
-	}
-
-	public static void setProperties(Element element, Map<String, Object> properties) {
-
-		if (properties != null && !properties.isEmpty()) {
-
-			Object[] propertyKeyValues = new Object[properties.size() * 2];
-			int i = 0;
-			for (Entry<String, Object> entry : properties.entrySet()) {
-				propertyKeyValues[i++] = entry.getKey();
-				propertyKeyValues[i++] = entry.getValue();
-			}
-
-			ElementHelper.attachProperties(element, propertyKeyValues);
-
-		}
-
-	}
-
-	public static Map<String, Object> getProperties(Element element) {
-
-		Map<String, Object> result = new HashMap<>();
-
-		if (CollectionUtils.isNotEmpty(element.keys())) {
-			Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
-					element.keys().toArray(new String[element.keys().size()]));
-
-			for (Entry<String, Property> entry : propertyMap.entrySet()) {
-				String key = entry.getKey();
-				Object value = entry.getValue().value();
-
-				result.put(key, value);
-			}
-		}
-		return result;
-	}
+                result.put(key, value);
+            }
+        }
+        return result;
+    }
 }
