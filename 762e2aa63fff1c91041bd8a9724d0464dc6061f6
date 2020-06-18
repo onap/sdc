@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "95de7787_2f777878",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/test/java/org/onap/config/test/ConfigurationQueryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-18T11:13:18Z",
+      "side": 1,
+      "message": "I\u0027d suggest to\ninstead of testing toString() replace it with lombok @ToString\n\nP.S. on same class also possible to replace all getters and default constructor with lombok annotations.",
+      "range": {
+        "startLine": 54,
+        "startChar": 8,
+        "endLine": 57,
+        "endChar": 75
+      },
+      "revId": "762e2aa63fff1c91041bd8a9724d0464dc6061f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
