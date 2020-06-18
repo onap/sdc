@@ -46,6 +46,30 @@
       "revId": "762e2aa63fff1c91041bd8a9724d0464dc6061f6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edd89e49_535ea93d",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/test/java/org/onap/config/test/ConfigurationQueryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-18T13:23:10Z",
+      "side": 1,
+      "message": "Quite sure it is not a problem.\n\nyou can increase test coverage by replacing getter/setter/constructors with lombok annotations also, bcz it will exclude those methods/constructors from coverage.",
+      "parentUuid": "54fe61bb_d7e4bd0c",
+      "range": {
+        "startLine": 54,
+        "startChar": 8,
+        "endLine": 57,
+        "endChar": 75
+      },
+      "revId": "762e2aa63fff1c91041bd8a9724d0464dc6061f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
