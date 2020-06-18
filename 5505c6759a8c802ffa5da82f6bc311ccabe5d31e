@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "ab8ea17b_509acd4f",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-18T11:53:58Z",
+      "side": 1,
+      "message": "Oh you mean the getName function? Sure, let\u0027s remove it :D",
+      "parentUuid": "6ff370f5_ef8eacce",
+      "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e696b4cb_84fff991",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/TopologyTemplateValidatorExecuter.java",
         "patchSetId": 1
