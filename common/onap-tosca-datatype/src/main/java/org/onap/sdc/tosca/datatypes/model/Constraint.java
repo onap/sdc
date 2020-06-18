@@ -101,17 +101,6 @@ public class Constraint implements Cloneable {
     this.valid_values = valid_values;
   }
 
-  /**
-   * Add Valid value
-   * @param validValue object.
-   */
-  public void addValidValue(Object validValue) {
-    if (this.valid_values == null) {
-      this.valid_values = new ArrayList<>();
-    }
-    valid_values.add(validValue);
-  }
-
   public Integer getLength() {
     return length;
   }
