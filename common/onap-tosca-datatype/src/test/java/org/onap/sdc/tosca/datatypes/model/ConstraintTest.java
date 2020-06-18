@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,27 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.heat.datatypes.model;
+package org.onap.sdc.tosca.datatypes.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.junit.Test;
 
-@Data
-@NoArgsConstructor
-public class Constraint {
+public class ConstraintTest {
+    @Test
+    public void shouldHaveValidGettersAndSetters() {
+        assertThat(Constraint.class, hasValidGettersAndSettersExcluding("in_range"));
+    }
 
-    private Object[] length;
-    @Setter(AccessLevel.NONE)
-    private Integer[] range;
-    private List<Object> validValues;
-    private String pattern;
-
-    public void setRange(Integer[] inRange) {
-        this.range = new Integer[] {inRange[0], inRange[1]};
+    @Test
+    public void setInRangeTest() {
+        Constraint constraint = new Constraint();
+        Object[] tmpInRange = new Object[] {"str1","str2","str3"};
+        constraint.setIn_range(tmpInRange);
+        assertEquals(constraint.getIn_range().length, 2);
+        assertEquals(constraint.getIn_range()[0], "str1");
+        assertEquals(constraint.getIn_range()[1], "str2");
     }
 }
