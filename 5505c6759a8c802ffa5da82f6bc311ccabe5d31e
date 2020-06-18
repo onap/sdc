@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "37df55bc_72355ff7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ServiceValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-18T11:46:52Z",
+      "side": 1,
+      "message": "can\u0027t we just inherit it ?",
+      "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e696b4cb_84fff991",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/TopologyTemplateValidatorExecuter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-18T11:46:52Z",
+      "side": 1,
+      "message": "has you changed the other logger to be final, might as well change this one ? :)",
+      "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb46d983_228e226a",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-18T11:46:52Z",
+      "side": 1,
+      "message": "a sneaky space crept in there :3",
+      "revId": "5505c6759a8c802ffa5da82f6bc311ccabe5d31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
