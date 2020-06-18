@@ -1,9 +1,9 @@
 .. This work is licensed under a Creative Commons Attribution 4.0 International License.
-.. _release_notes:
+.. _sdc_release_notes:
 
-=============
-Release Notes
-=============
+=================
+SDC Release Notes
+=================
 
 
 Version: 1.6.6
