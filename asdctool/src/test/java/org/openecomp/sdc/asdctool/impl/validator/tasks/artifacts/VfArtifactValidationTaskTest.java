@@ -22,6 +22,7 @@ package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
@@ -29,6 +30,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
 
 public class VfArtifactValidationTaskTest {
 
@@ -42,9 +44,10 @@ public class VfArtifactValidationTaskTest {
         Report report = Report.make();
         GraphVertex vertex = null;
         VfArtifactValidationTask testSubject = createTestSubject();
-        // Initially no outputFilePath was passed to this function (hence it is set to null)
-        // TODO: Fix this null and see if the argument is used by this function
-        VertexResult actual = testSubject.validate(report, vertex, null);
+        VertexResult actual = testSubject.validate(
+            report, vertex,
+            makeTxtFile(ReportFileWriterTestFactory.makeConsoleWriter())
+        );
         assertThat(actual, is(nullValue()));
     }
 }

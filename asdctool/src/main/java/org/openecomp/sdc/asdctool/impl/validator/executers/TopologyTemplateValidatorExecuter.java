@@ -21,10 +21,15 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -35,13 +40,6 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class TopologyTemplateValidatorExecuter {
 
@@ -85,8 +83,7 @@ public class TopologyTemplateValidatorExecuter {
         Report report,
         List<? extends TopologyTemplateValidationTask> tasks,
         List<GraphVertex> vertices,
-        TXTFile reportFile,
-        String outputFilePath
+        TXTFile reportFile
     ) {
         reportFile.reportStartValidatorRun(getName(), vertices.size());
         Set<String> failedTasks = new HashSet<>();
@@ -100,7 +97,7 @@ public class TopologyTemplateValidatorExecuter {
             boolean successAllTasks = true;
             for (TopologyTemplateValidationTask task : tasks) {
                 reportFile.reportStartTaskRun(vertex, task.getTaskName());
-                VertexResult result = task.validate(report, vertex, outputFilePath);
+                VertexResult result = task.validate(report, vertex, reportFile);
                 if (!result.getStatus()) {
                     failedTasks.add(task.getTaskName());
                     successAllVertices = false;

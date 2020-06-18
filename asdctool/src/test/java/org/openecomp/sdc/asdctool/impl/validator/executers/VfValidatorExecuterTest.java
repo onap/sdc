@@ -48,8 +48,6 @@ public class VfValidatorExecuterTest {
     @Test(expected = NullPointerException.class)
     public void testExecuteValidations() {
         Report report = Report.make();
-        // Initially no outputFilePath was passed to this function (hence it is set to null)
-        // TODO: Fix this null and see if the argument is used by this function
-        createTestSubject().executeValidations(report, makeTxtFile(makeConsoleWriter()), null);
+        createTestSubject().executeValidations(report, makeTxtFile(makeConsoleWriter()));
     }
 }

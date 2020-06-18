@@ -22,8 +22,13 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -37,22 +42,13 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-/**
- * Created by chaya on 7/6/2017.
- */
 public class ArtifactValidationUtils {
 
     private static final Logger logger = Logger.getLogger(ArtifactValidationUtils.class);
 
-    private ArtifactCassandraDao artifactCassandraDao;
+    private final ArtifactCassandraDao artifactCassandraDao;
 
-    private TopologyTemplateOperation topologyTemplateOperation;
+    private final TopologyTemplateOperation topologyTemplateOperation;
 
     @Autowired
     public ArtifactValidationUtils(ArtifactCassandraDao artifactCassandraDao,
@@ -61,14 +57,19 @@ public class ArtifactValidationUtils {
         this.topologyTemplateOperation = topologyTemplateOperation;
     }
 
-    public ArtifactsVertexResult validateArtifactsAreInCassandra(Report report, GraphVertex vertex, String taskName,
-        List<ArtifactDataDefinition> artifacts, String outputFilePath) {
+    public ArtifactsVertexResult validateArtifactsAreInCassandra(
+        Report report,
+        GraphVertex vertex,
+        String taskName,
+        List<ArtifactDataDefinition> artifacts,
+        ReportFile.TXTFile reportFile
+    ) {
         ArtifactsVertexResult result = new ArtifactsVertexResult(true);
         for (ArtifactDataDefinition artifact : artifacts) {
             boolean isArtifactExist = isArtifactInCassandra(artifact.getEsId());
             String status = isArtifactExist ? "Artifact " + artifact.getEsId() + " is in Cassandra" :
                 "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
-            ReportManager.writeReportLineToFile(status, outputFilePath);
+            reportFile.writeReportLineToFile(status);
             if (!isArtifactExist) {
                 report.addFailure(taskName, vertex.getUniqueId());
                 result.setStatus(false);
@@ -99,8 +100,12 @@ public class ArtifactValidationUtils {
         return artifacts;
     }
 
-    public ArtifactsVertexResult validateTopologyTemplateArtifacts(Report report, GraphVertex vertex, String taskName,
-        String outputFilePath) {
+    public ArtifactsVertexResult validateTopologyTemplateArtifacts(
+        Report report,
+        GraphVertex vertex,
+        String taskName,
+        ReportFile.TXTFile reportFile
+    ) {
         ArtifactsVertexResult result = new ArtifactsVertexResult();
         ComponentParametersView paramView = new ComponentParametersView();
         paramView.disableAll();
@@ -135,6 +140,6 @@ public class ArtifactValidationUtils {
                 allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
         }
 
-        return validateArtifactsAreInCassandra(report, vertex, taskName, allArtifacts, outputFilePath);
+        return validateArtifactsAreInCassandra(report, vertex, taskName, allArtifacts, reportFile);
     }
 }
