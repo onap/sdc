@@ -90,13 +90,6 @@ public class ReportManager {
         writeReportLineToFile(sb.toString(), outputFilePath);
     }
 
-    public static void reportStartValidatorRun(String validatorName, int componenentsNum, String outputFilePath) {
-        StrBuilder sb = new StrBuilder();
-        sb.appendln("------ValidatorExecuter " + validatorName + " Validation Started, on " + componenentsNum
-            + " components---------");
-        writeReportLineToFile(sb.toString(), outputFilePath);
-    }
-
     public static void reportEndOfToolRun(Report report, String outputFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");

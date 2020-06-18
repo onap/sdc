@@ -176,15 +176,16 @@ public class ReportManagerTest {
     @Test
     public void testReportStartValidatorRun() {
         // when
-        ReportManager.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM, txtReportFilePath);
-
-        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+        List<String> reportTxtFile = ReportFileNioHelper.withTxtFile(txtReportFilePath, file -> {
+            file.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
-        assertNotNull(reportOutputFile);
-        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
+        assertNotNull(reportTxtFile);
+        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportTxtFile.get(0));
         assertEquals("------ValidatorExecuter " + VALIDATOR_NAME + " Validation Started, on "
-            + COMPONENT_SUM + " components---------", reportOutputFile.get(2));
+            + COMPONENT_SUM + " components---------", reportTxtFile.get(2));
     }
 
     @Test

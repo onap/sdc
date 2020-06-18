@@ -88,7 +88,7 @@ public class TopologyTemplateValidatorExecuter {
         TXTFile reportFile,
         String outputFilePath
     ) {
-        ReportManager.reportStartValidatorRun(getName(), vertices.size(), outputFilePath);
+        reportFile.reportStartValidatorRun(getName(), vertices.size());
         Set<String> failedTasks = new HashSet<>();
         Set<String> successTasks = new HashSet<>();
         boolean successAllVertices = true;
