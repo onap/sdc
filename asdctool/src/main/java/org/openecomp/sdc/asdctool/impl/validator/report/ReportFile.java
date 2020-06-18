@@ -20,14 +20,44 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.report;
 
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+
 /**
  * Provides business logic in regards to file writing required by the validation tools
  */
 public class ReportFile {
 
+    // TODO: Delete this function once all the report file business logic has been moved to ReportFile
+    static public TXTFile makeAppendableTxtFile(ReportFileWriter<FileType.TXT> writer) {
+        return new TXTFile(writer);
+    }
+
+    static public TXTFile makeTxtFile(ReportFileWriter<FileType.TXT> writer) {
+        writer.writeln("-----------------------Validation Tool Results:-------------------------");
+        return new TXTFile(writer);
+    }
+
     static public CSVFile makeCsvFile(ReportFileWriter<FileType.CSV> writer) {
         writer.writeln("Vertex ID,Task Name,Success,Result Details,Result Description");
         return new CSVFile(writer);
+    }
+
+    /**
+     * Provides csv writing business logic related to {@link org.openecomp.sdc.asdctool.main.ValidationTool}
+     */
+    public static final class TXTFile extends ReportFile {
+
+        private final ReportFileWriter<FileType.TXT> writer;
+
+        private TXTFile(ReportFileWriter<FileType.TXT> writer) {
+            this.writer = writer;
+        }
+
+        public void reportStartTaskRun(GraphVertex vertex, String taskName) {
+            writer.writeln("");
+            writer.writeln("-----------------------Vertex: " + vertex.getUniqueId() +
+                ", Task " + taskName + " Started-----------------------");
+        }
     }
 
     /**

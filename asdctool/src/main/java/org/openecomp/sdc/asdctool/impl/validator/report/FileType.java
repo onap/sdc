@@ -25,5 +25,7 @@ package org.openecomp.sdc.asdctool.impl.validator.report;
  * a {@link org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriter }.
  */
 public interface FileType {
+    interface TXT extends FileType { }
+
     interface CSV extends FileType { }
 }
