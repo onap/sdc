@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0c0e0393_3039335f",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/types/MessageContainer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-18T14:23:56Z",
+      "side": 1,
+      "message": "You could first internally use a Set and expose a list, then look at where getErrorMessageListByLevel is called and see if any functions related to a list is used. The only thing that may be hard to verify is if the order of the messages matters or not.",
+      "parentUuid": "ee7285b9_ab6c007a",
+      "revId": "9811abf60f747087724ab614c97e04d7455f5193",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "564478af_dd6d38b3",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/test/java/org/openecomp/core/validation/types/MessageContainerTest.java",
         "patchSetId": 1
