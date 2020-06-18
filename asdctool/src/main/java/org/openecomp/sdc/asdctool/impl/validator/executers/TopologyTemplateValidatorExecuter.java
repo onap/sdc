@@ -108,7 +108,7 @@ public class TopologyTemplateValidatorExecuter {
                 } else if (successAllTasks && vertexNum == verticesSize) {
                     successTasks.add(task.getTaskName());
                 }
-                ReportManager.printValidationTaskStatus(vertex, task.getTaskName(), result.getStatus(), outputFilePath);
+                reportFile.printValidationTaskStatus(vertex, task.getTaskName(), result.getStatus());
                 report.addSuccess(vertex.getUniqueId(), task.getTaskName(), result);
             }
             String componentScanStatus = successAllTasks ? "success" : "failed";

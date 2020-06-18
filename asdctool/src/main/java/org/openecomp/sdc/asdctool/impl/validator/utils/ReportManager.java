@@ -59,17 +59,6 @@ public class ReportManager {
         }
     }
 
-    public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success,
-        String outputFilePath) {
-        String successStatus = success ? "success" : "failed";
-        String line =
-            "-----------------------Vertex: " + vertexScanned.getUniqueId() + ", Task " + taskName + " " + successStatus
-                + "-----------------------";
-        StrBuilder sb = new StrBuilder();
-        sb.appendln(line);
-        writeReportLineToFile(line, outputFilePath);
-    }
-
     public static void writeReportLineToFile(String message, String outputFilePath) {
         try {
             Files.write(Paths.get(outputFilePath), new StrBuilder().appendNewLine().toString().getBytes(),

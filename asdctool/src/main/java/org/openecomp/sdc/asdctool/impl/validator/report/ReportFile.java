@@ -65,6 +65,20 @@ public class ReportFile {
                 validatorName + " Validation Started, on " +
                 componentsNum + " components---------");
         }
+
+        public void printValidationTaskStatus(
+            GraphVertex vertexScanned,
+            String taskName,
+            boolean success
+        ) {
+            String successStatus = success ? "success" : "failed";
+            writer.writeln("");
+            writer.writeln("-----------------------Vertex: " +
+                vertexScanned.getUniqueId() + ", Task " +
+                taskName + " " + successStatus +
+                "-----------------------"
+            );
+        }
     }
 
     /**
