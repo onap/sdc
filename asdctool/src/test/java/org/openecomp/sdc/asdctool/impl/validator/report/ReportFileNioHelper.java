@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 
 /**
  * Provides facilities to for writing report files when testing
@@ -53,6 +55,19 @@ public class ReportFileNioHelper {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * Provides a transactional context for TXT report file writing
+     *
+     * @param txtReportFilePath The resulting file path
+     * @param f                 The function consuming the TXT file
+     */
+    public static void withTxtFile(String txtReportFilePath, Consumer<TXTFile> f) {
+        withTxtFile(txtReportFilePath, file -> {
+            f.accept(file);
+            return null;
+        });
     }
 
    /**

@@ -27,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileNioHelper.readFileAsList;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileNioHelper.withTxtFile;
 
 import fj.data.Either;
 import java.io.File;
@@ -137,22 +139,24 @@ public class ArtifactValidationUtilsTest {
         artifacts.add(artifactDataDefinitionNotInCassandra);
 
         // when
-        ArtifactsVertexResult result =
-            testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, txtReportFilePath);
-        ReportManager.reportEndOfToolRun(report, txtReportFilePath);
+        withTxtFile(txtReportFilePath, file -> {
+            ArtifactsVertexResult result =
+                testSubject.validateArtifactsAreInCassandra(report, vertex, TASK_NAME, artifacts, txtReportFilePath);
+            file.reportEndOfToolRun(report);
 
-        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+            List<String> reportOutputFile = readFileAsList(txtReportFilePath);
 
-        // then
-        assertFalse(result.getStatus());
-        assertEquals(1, result.notFoundArtifacts.size());
-        assertEquals(UNIQUE_ID, result.notFoundArtifacts.iterator().next());
+            // then
+            assertFalse(result.getStatus());
+            assertEquals(1, result.notFoundArtifacts.size());
+            assertEquals(UNIQUE_ID, result.notFoundArtifacts.iterator().next());
 
-        assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
-        assertEquals("Artifact " + ES_ID_NOT_IN_CASS + " doesn't exist in Cassandra",
-            reportOutputFile.get(3));
-        assertEquals("Task: " + TASK_NAME, reportOutputFile.get(5));
-        assertEquals("FailedVertices: [" + UNIQUE_ID_VERTEX + "]", reportOutputFile.get(6));
+            assertEquals("Artifact " + ES_ID + " is in Cassandra", reportOutputFile.get(2));
+            assertEquals("Artifact " + ES_ID_NOT_IN_CASS + " doesn't exist in Cassandra",
+                reportOutputFile.get(3));
+            assertEquals("Task: " + TASK_NAME, reportOutputFile.get(5));
+            assertEquals("FailedVertices: [" + UNIQUE_ID_VERTEX + "]", reportOutputFile.get(6));
+        });
     }
 
     @Test
