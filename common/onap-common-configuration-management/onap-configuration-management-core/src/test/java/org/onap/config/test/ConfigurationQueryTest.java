@@ -50,5 +50,10 @@ public class ConfigurationQueryTest {
         assertTrue(configurationQuery.isFallback());
         assertTrue(configurationQuery.isLatest());
         assertTrue(configurationQuery.isNodeSpecific());
+
+        String configurationQueryStr = "ConfigurationQuery{" + "tenant='" + TENANT + '\'' +
+            ", namespace='" + NAMESPACE + '\'' + ", key='" + KEY + '\'' +
+            ", fallback=true, externalLookup=true, latest=true, nodeSpecific=true}";
+        assertEquals(configurationQuery.toString(), configurationQueryStr);
     }
 }
