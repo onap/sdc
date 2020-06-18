@@ -42,8 +42,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
-//import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 
 @Path("/janusgraph")
 public class ExportImportJanusGraphServlet {
@@ -76,18 +76,15 @@ public class ExportImportJanusGraphServlet {
 
 		conf.setProperty("storage.machine-id-appendix", System.currentTimeMillis() % 1000);
 
-		try(JanusGraph openGraph = Utils.openGraph(conf)){
-			
-			if (openGraph == null) {
-				Response buildErrorResponse = Utils.buildOkResponse(500, "failed to open graph", null);
-				return buildErrorResponse;
+		Optional<JanusGraph> openGraph = Utils.openGraph(conf);
+		if (openGraph.isPresent()) {
+			try {
+				return Utils.buildOkResponse(200, "ok man", null);
+			} finally {
+				openGraph.get().close();
 			}
-	
-			// Open JanusGraph Graph
-	
-			Response buildOkResponse = Utils.buildOkResponse(200, "ok man", null);
-	
-			return buildOkResponse;
+		} else {
+			return Utils.buildOkResponse(500, "failed to open graph", null);
 		}
 	}
 
