@@ -22,6 +22,7 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
@@ -44,7 +45,7 @@ import java.util.Set;
 
 public class TopologyTemplateValidatorExecuter {
 
-    private static Logger log = Logger.getLogger(VfValidatorExecuter.class.getName());
+    private static final Logger log = Logger.getLogger(VfValidatorExecuter.class);
 
     protected JanusGraphDao janusGraphDao;
 
@@ -80,8 +81,13 @@ public class TopologyTemplateValidatorExecuter {
         return results.left().value();
     }
 
-    protected boolean validate(Report report, List<? extends TopologyTemplateValidationTask> tasks, List<GraphVertex> vertices,
-        String outputFilePath) {
+    protected boolean validate(
+        Report report,
+        List<? extends TopologyTemplateValidationTask> tasks,
+        List<GraphVertex> vertices,
+        TXTFile reportFile,
+        String outputFilePath
+    ) {
         ReportManager.reportStartValidatorRun(getName(), vertices.size(), outputFilePath);
         Set<String> failedTasks = new HashSet<>();
         Set<String> successTasks = new HashSet<>();
@@ -93,7 +99,7 @@ public class TopologyTemplateValidatorExecuter {
             vertexNum++;
             boolean successAllTasks = true;
             for (TopologyTemplateValidationTask task : tasks) {
-                ReportManager.reportStartTaskRun(vertex, task.getTaskName(), outputFilePath);
+                reportFile.reportStartTaskRun(vertex, task.getTaskName());
                 VertexResult result = task.validate(report, vertex, outputFilePath);
                 if (!result.getStatus()) {
                     failedTasks.add(task.getTaskName());
