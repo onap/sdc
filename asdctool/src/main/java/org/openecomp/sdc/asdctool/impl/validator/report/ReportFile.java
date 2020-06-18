@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.report;
 
+import java.util.Set;
+import org.apache.commons.text.StrBuilder;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
 /**
@@ -78,6 +80,20 @@ public class ReportFile {
                 taskName + " " + successStatus +
                 "-----------------------"
             );
+        }
+
+     public void reportValidatorTypeSummary(
+            String validatorName,
+            Set<String> failedTasksNames,
+            Set<String> successTasksNames
+        ) {
+            StrBuilder sb = new StrBuilder();
+            sb.appendln("-----------------------ValidatorExecuter " + validatorName
+                + " Validation Summary-----------------------");
+            sb.appendln("Failed tasks: " + failedTasksNames);
+            sb.appendln("Success tasks: " + successTasksNames);
+            writer.writeln("");
+            writer.write(sb.toString());
         }
     }
 
