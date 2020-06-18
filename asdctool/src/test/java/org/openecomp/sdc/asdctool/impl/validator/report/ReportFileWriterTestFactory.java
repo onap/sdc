@@ -51,4 +51,17 @@ public class ReportFileWriterTestFactory {
     public static <A extends FileType> ReportFileWriter<A> makeNioWriter(Path path) {
         return ReportFileWriter.makeNioWriter(path, ex -> fail(ex.getMessage()));
     }
+
+    /**
+     * Creates a writer rendering the data written in the console
+     * @param <A> a Phantom type used only for type-safety
+     */
+    public static <A extends FileType> ReportFileWriter<A> makeConsoleWriter() {
+        return new ReportFileWriter<A>() {
+            @Override
+            public void write(String line) {
+                System.out.print(line);
+            }
+        };
+    }
 }

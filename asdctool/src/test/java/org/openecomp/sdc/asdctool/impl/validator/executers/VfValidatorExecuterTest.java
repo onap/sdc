@@ -20,15 +20,16 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import static org.mockito.Mockito.mock;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeConsoleWriter;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
 
 public class VfValidatorExecuterTest {
 
@@ -49,6 +50,6 @@ public class VfValidatorExecuterTest {
         Report report = Report.make();
         // Initially no outputFilePath was passed to this function (hence it is set to null)
         // TODO: Fix this null and see if the argument is used by this function
-        createTestSubject().executeValidations(report, null);
+        createTestSubject().executeValidations(report, makeTxtFile(makeConsoleWriter()), null);
     }
 }
