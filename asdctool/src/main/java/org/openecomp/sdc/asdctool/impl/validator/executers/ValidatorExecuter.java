@@ -21,9 +21,10 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 
 public interface ValidatorExecuter {
 
-    boolean executeValidations(Report report, String outputFilePath);
+    boolean executeValidations(Report report, TXTFile textFile, String outputFilePath);
     String getName();
 }

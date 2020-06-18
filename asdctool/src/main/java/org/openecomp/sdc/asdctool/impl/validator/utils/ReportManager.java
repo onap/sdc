@@ -23,6 +23,7 @@ package org.openecomp.sdc.asdctool.impl.validator.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Set;
@@ -49,9 +50,13 @@ public class ReportManager {
     }
 
     private void initReportFile(String txtReportFilePath) throws IOException {
-        StrBuilder sb = new StrBuilder();
-        sb.appendln("-----------------------Validation Tool Results:-------------------------");
-        Files.write(Paths.get(txtReportFilePath), sb.toString().getBytes());
+        Path path = Paths.get(txtReportFilePath);
+        // TODO: Remove this once all the report file business logic has been moved to ReportFile
+        if(Files.notExists(path)) {
+            StrBuilder sb = new StrBuilder();
+            sb.appendln("-----------------------Validation Tool Results:-------------------------");
+            Files.write(path, sb.toString().getBytes());
+        }
     }
 
     public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success,
@@ -89,13 +94,6 @@ public class ReportManager {
         StrBuilder sb = new StrBuilder();
         sb.appendln("------ValidatorExecuter " + validatorName + " Validation Started, on " + componenentsNum
             + " components---------");
-        writeReportLineToFile(sb.toString(), outputFilePath);
-    }
-
-    public static void reportStartTaskRun(GraphVertex vertex, String taskName, String outputFilePath) {
-        StrBuilder sb = new StrBuilder();
-        sb.appendln("-----------------------Vertex: " + vertex.getUniqueId() + ", Task " + taskName
-            + " Started-----------------------");
         writeReportLineToFile(sb.toString(), outputFilePath);
     }
 

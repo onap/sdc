@@ -20,10 +20,15 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.report;
 
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeNioWriter;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Provides facilities to for writing report files when testing
@@ -47,6 +52,38 @@ public class ReportFileNioHelper {
             return result;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+   /**
+     * Provides a transactional context for TXT report file writing
+     *
+     * @param txtReportFilePath The resulting file path
+     * @param f                 The function to write in a TXT file
+     * @param <A>               The type returned by the function consuming the file
+     */
+    public static <A> A withTxtFile(String txtReportFilePath, Function<ReportFile.TXTFile, A> f) {
+        // TODO: Switch to makeTxtFile once all the report file business logic has been moved to
+        // ReportFile
+        ReportFile.TXTFile file = ReportFile.makeAppendableTxtFile(makeNioWriter(txtReportFilePath));
+        A result = f.apply(file);
+        try {
+            Files.delete(Paths.get(txtReportFilePath));
+            return result;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Reads the content of a file and store each line in a list
+     * @param filePath The path to the file
+     */
+    public static List<String> readFileAsList(String filePath) {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(filePath))) {
+            return br.lines().collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

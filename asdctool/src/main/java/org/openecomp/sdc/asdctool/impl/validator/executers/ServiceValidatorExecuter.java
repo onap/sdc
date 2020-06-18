@@ -21,6 +21,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -43,13 +44,8 @@ public class ServiceValidatorExecuter extends TopologyTemplateValidatorExecuter 
     }
 
     @Override
-    public boolean executeValidations(Report report, String outputFilePath) {
+    public boolean executeValidations(Report report, TXTFile reportFile, String outputFilePath) {
         List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.SERVICE);
-        return validate(report, tasks, vertices, outputFilePath);
-    }
-
-    @Override
-    public String getName() {
-        return super.getName();
+        return validate(report, tasks, vertices, reportFile, outputFilePath);
     }
 }
