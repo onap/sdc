@@ -68,16 +68,4 @@ public class ReportManager {
             log.info("write to file failed - {}", e.getClass().getSimpleName(), e);
         }
     }
-
-    public static void reportEndOfToolRun(Report report, String outputFilePath) {
-        StrBuilder sb = new StrBuilder();
-        sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
-        report.forEachFailure((taskName, failedVertices) -> {
-            sb.append("Task: " + taskName);
-            sb.appendNewLine();
-            sb.append("FailedVertices: " + failedVertices);
-            sb.appendNewLine();
-        });
-        writeReportLineToFile(sb.toString(), outputFilePath);
-    }
 }

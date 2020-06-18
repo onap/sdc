@@ -110,15 +110,17 @@ public class ReportManagerTest {
         Report report = Report.make();
         report.addFailure(TASK_1_NAME, VERTEX_1_ID);
 
-        ReportManager.reportEndOfToolRun(report, txtReportFilePath);
-        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+        List<String> reportTxtFile = ReportFileNioHelper.withTxtFile(txtReportFilePath, file -> {
+            file.reportEndOfToolRun(report);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
-        assertNotNull(reportOutputFile);
-        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
-        assertEquals(EXPECTED_OUTPUT_FILE_SUMMARY, reportOutputFile.get(2));
-        assertEquals("Task: " + TASK_1_NAME, reportOutputFile.get(3));
-        assertEquals("FailedVertices: [" + VERTEX_1_ID + "]", reportOutputFile.get(4));
+        assertNotNull(reportTxtFile);
+        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportTxtFile.get(0));
+        assertEquals(EXPECTED_OUTPUT_FILE_SUMMARY, reportTxtFile.get(2));
+        assertEquals("Task: " + TASK_1_NAME, reportTxtFile.get(3));
+        assertEquals("FailedVertices: [" + VERTEX_1_ID + "]", reportTxtFile.get(4));
     }
 
     @Test
