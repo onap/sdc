@@ -114,7 +114,7 @@ public class TopologyTemplateValidatorExecuter {
             String componentScanStatus = successAllTasks ? "success" : "failed";
             log.info("Topology Template " + vertex.getUniqueId() + " Validation finished with " + componentScanStatus);
         }
-        ReportManager.reportValidatorTypeSummary(getName(), failedTasks, successTasks, outputFilePath);
+        reportFile.reportValidatorTypeSummary(getName(), failedTasks, successTasks);
         return successAllVertices;
     }
 }

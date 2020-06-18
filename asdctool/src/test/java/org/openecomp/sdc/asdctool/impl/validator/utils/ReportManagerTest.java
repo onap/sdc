@@ -156,21 +156,18 @@ public class ReportManagerTest {
     @Test
     public void testReportValidatorTypeSummary() {
         // when
-        ReportManager
-            .reportValidatorTypeSummary(VALIDATOR_NAME, failedTasksNames, successTasksNames, txtReportFilePath);
-
-        List<String> reportOutputFile = ReportManagerHelper.getReportOutputFileAsList(txtReportFilePath);
+        List<String> reportTxtFile = ReportFileNioHelper.withTxtFile(txtReportFilePath, file -> {
+            file.reportValidatorTypeSummary(VALIDATOR_NAME, failedTasksNames, successTasksNames);
+            return ReportFileNioHelper.readFileAsList(txtReportFilePath);
+        });
 
         // then
-        assertNotNull(reportOutputFile);
-        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportOutputFile.get(0));
-
+        assertNotNull(reportTxtFile);
+        assertEquals(EXPECTED_OUTPUT_FILE_HEADER, reportTxtFile.get(0));
         assertEquals("-----------------------ValidatorExecuter " + VALIDATOR_NAME
-            + " Validation Summary-----------------------", reportOutputFile.get(2));
-        assertEquals("Failed tasks: [" + TASK_1_FAILED_NAME + ", " + TASK_2_FAILED_NAME + "]",
-            reportOutputFile.get(3));
-        assertEquals("Success tasks: [" + TASK_1_NAME + ", " + TASK_2_NAME + "]",
-            reportOutputFile.get(4));
+                        + " Validation Summary-----------------------", reportTxtFile.get(2));
+        assertEquals("Failed tasks: [" + TASK_1_FAILED_NAME + ", " + TASK_2_FAILED_NAME + "]", reportTxtFile.get(3));
+        assertEquals("Success tasks: [" + TASK_1_NAME + ", " + TASK_2_NAME + "]", reportTxtFile.get(4));
     }
 
     @Test

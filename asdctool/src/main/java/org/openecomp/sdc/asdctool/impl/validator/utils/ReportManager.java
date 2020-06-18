@@ -69,16 +69,6 @@ public class ReportManager {
         }
     }
 
-    public static void reportValidatorTypeSummary(String validatorName, Set<String> failedTasksNames,
-        Set<String> successTasksNames, String outputFilePath) {
-        StrBuilder sb = new StrBuilder();
-        sb.appendln(
-            "-----------------------ValidatorExecuter " + validatorName + " Validation Summary-----------------------");
-        sb.appendln("Failed tasks: " + failedTasksNames);
-        sb.appendln("Success tasks: " + successTasksNames);
-        writeReportLineToFile(sb.toString(), outputFilePath);
-    }
-
     public static void reportEndOfToolRun(Report report, String outputFilePath) {
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
