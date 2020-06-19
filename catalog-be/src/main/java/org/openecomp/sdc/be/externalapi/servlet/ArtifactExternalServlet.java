@@ -29,9 +29,25 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -59,35 +75,15 @@ import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * This Servlet serves external users operations on artifacts.
  *
  * @author mshitrit
- *
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC External APIs")})
-@Servers({@Server(url = "/sdc")})
+@Tag(name = "SDC External APIs")
+@Server(url = "/sdc")
 @Controller
 public class ArtifactExternalServlet extends AbstractValidationsServlet {
 
@@ -101,13 +97,13 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(ArtifactExternalServlet.class);
 
-    private static String startLog = "Start handle request of ";
+    private static final String START_LOG = "Start handle request of ";
 
     @Inject
     public ArtifactExternalServlet(UserBusinessLogic userBusinessLogic,
-            ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
-            ServletUtils servletUtils, ResourceImportManager resourceImportManager,
-            ArtifactsBusinessLogic artifactsBusinessLogic) {
+                                   ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+                                   ServletUtils servletUtils, ResourceImportManager resourceImportManager,
+                                   ArtifactsBusinessLogic artifactsBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.artifactsBusinessLogic = artifactsBusinessLogic;
     }
@@ -160,17 +156,17 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             @Parameter(description = "The uuid of the asset as published in the metadata",
                     required = true) @PathParam("uuid") final String uuid,
             @Parameter(description = "The uuid of the interface",
-                    required = true) @PathParam("interfaceUUID") final String interfaceUUID,
+                    required = true) @PathParam("interfaceUUID") final String interfaceUuid,
             @Parameter(description = "The uuid of the operation",
-                    required = true) @PathParam("operationUUID") final String operationUUID,
+                    required = true) @PathParam("operationUUID") final String operationUuid,
             @Parameter(description = "The uuid of the artifact",
-                    required = true) @PathParam("artifactUUID") final String artifactUUID,
+                    required = true) @PathParam("artifactUUID") final String artifactUuid,
             @Parameter(hidden = true) String data) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug("{} {}", startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(assetType);
         ArtifactDefinition artifactDefinition = null;
 
@@ -188,35 +184,41 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             if (responseWrapper.isEmpty()) {
                 Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsBusinessLogic
                         .updateArtifactOnInterfaceOperationByResourceUUID(data, request, ComponentTypeEnum
-                                        .findByParamName(assetType), uuid, interfaceUUID, operationUUID, artifactUUID,
-                                resourceCommonInfo, new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                                                                                  .findByParamName(assetType), uuid, interfaceUuid, operationUuid, artifactUuid,
+                                                                          resourceCommonInfo,
+                                                                          new ArtifactOperationInfo(true, false,
+                                                                                                    ArtifactOperationEnum.UPDATE));
                 if (uploadArtifactEither.isRight()) {
                     log.debug(FAILED_TO_UPDATE_ARTIFACT);
                     responseFormat = uploadArtifactEither.right().value();
                     responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
                 } else {
-                    artifactDefinition=uploadArtifactEither.left().value();
+                    artifactDefinition = uploadArtifactEither.left().value();
                     Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                     Map<String, String> headers = new HashMap<>();
-                    headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
+                    headers.put(Constants.MD5_HEADER,
+                                GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
                     responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                    responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
+                    responseWrapper.setInnerElement(
+                            buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation,
+                                            headers));
                 }
             }
         } catch (Exception e) {
             final String message = "failed to update artifact on a resource or service";
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
             log.debug(message, e);
-            responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            responseWrapper.setInnerElement(
+                    buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
         } finally {
             getComponentsUtils().auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_UPLOAD_BY_API,
-                    resourceCommonInfo, request, artifactDefinition, null);
+                                                      resourceCommonInfo, request, artifactDefinition, null);
         }
         return responseWrapper.getInnerElement();
     }
 
     /**
-     * Uploads an artifact to resource or service
+     * Uploads an artifact to resource or service.
      */
     @POST
     @Path("/{assetType}/{uuid}/artifacts")
@@ -263,7 +265,8 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @Parameter(description = "The username and password",
                     required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),description = "The requested asset type",
+            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),
+                    description = "The requested asset type",
                     required = true) @PathParam("assetType") final String assetType,
             @Parameter(description = "The uuid of the asset as published in the metadata",
                     required = true) @PathParam("uuid") final String uuid,
@@ -272,9 +275,9 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         init();
 
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug(DOUBLE_CURLY_BRACKETS, startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         String componentTypeValue = componentType == null ? null : componentType.getValue();
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentTypeValue);
@@ -284,22 +287,27 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
         if (responseWrapper.isEmpty()) {
-            validateXECOMPInstanceIDHeader(instanceIdHeader, responseWrapper);
+            validateXEcompInstanceIdHeader(instanceIdHeader, responseWrapper);
         }
-        if (responseWrapper.isEmpty() ) {
+        if (responseWrapper.isEmpty()) {
             validateHttpCspUserIdHeader(userId, responseWrapper);
         }
         Response response = null;
         ArtifactDefinition artifactDefinition = null;
         try {
             if (responseWrapper.isEmpty()) {
-                artifactDefinition = artifactsBusinessLogic.uploadArtifactToComponentByUUID(data, request, componentType, uuid,
-                        resourceCommonInfo, new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
+                artifactDefinition =
+                        artifactsBusinessLogic.uploadArtifactToComponentByUUID(data, request, componentType, uuid,
+                                                                               resourceCommonInfo,
+                                                                               new ArtifactOperationInfo(true, false,
+                                                                                                         ArtifactOperationEnum.CREATE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
+                headers.put(Constants.MD5_HEADER,
+                            GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
                 responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.OK));
-                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers);
+                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation,
+                                           headers);
             }
         } catch (IOException e) {
             final String message = "failed to upload artifact to a resource or service";
@@ -307,14 +315,15 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             log.debug(message, e);
             responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             response = buildErrorResponse(responseWrapper.getInnerElement());
-        }   catch (ComponentException e){
+        } catch (ComponentException e) {
             responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(e));
-        }finally {
-            if( response == null ){
+        } finally {
+            if (response == null) {
                 response = buildErrorResponse(responseWrapper.getInnerElement());
             }
-            getComponentsUtils().auditExternalCrudApi(responseWrapper.getInnerElement(), AuditingActionEnum.ARTIFACT_UPLOAD_BY_API,
-                    resourceCommonInfo, request, artifactDefinition, null);
+            getComponentsUtils()
+                    .auditExternalCrudApi(responseWrapper.getInnerElement(), AuditingActionEnum.ARTIFACT_UPLOAD_BY_API,
+                                          resourceCommonInfo, request, artifactDefinition, null);
         }
         return response;
     }
@@ -367,9 +376,11 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @Parameter(description = "The username and password",
                     required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),description = "The requested asset type",
+            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),
+                    description = "The requested asset type",
                     required = true) @PathParam("assetType") final String assetType,
-            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),description = "The uuid of the asset as published in the metadata",
+            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),
+                    description = "The uuid of the asset as published in the metadata",
                     required = true) @PathParam("uuid") final String uuid,
             @Parameter(description = "The component instance name (as publishedin the response of the detailed query)",
                     required = true) @PathParam("resourceInstanceName") final String resourceInstanceName,
@@ -377,9 +388,9 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug(DOUBLE_CURLY_BRACKETS, startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         String componentTypeValue = componentType == null ? null : componentType.getValue();
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(resourceInstanceName, componentTypeValue);
@@ -402,26 +413,30 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         }
         try {
             if (responseWrapper.isEmpty()) {
-                artifactDefinition = artifactsBusinessLogic.uploadArtifactToRiByUUID(data, request, componentType, uuid, resourceInstanceName,
-                        new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
+                artifactDefinition = artifactsBusinessLogic
+                        .uploadArtifactToRiByUUID(data, request, componentType, uuid, resourceInstanceName,
+                                                  new ArtifactOperationInfo(true, false, ArtifactOperationEnum.CREATE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
+                headers.put(Constants.MD5_HEADER,
+                            GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
+                responseWrapper.setInnerElement(
+                        buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation,
+                                        headers));
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
             final String message = "failed to upload artifact to a resource instance";
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
             log.debug(message, e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
-        }finally {
+        } finally {
             getComponentsUtils().auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_UPLOAD_BY_API,
-                    resourceCommonInfo, request, artifactDefinition, null);
+                                                      resourceCommonInfo, request, artifactDefinition, null);
         }
         return responseWrapper.getInnerElement();
     }
@@ -470,20 +485,21 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @Parameter(description = "The username and password",
                     required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),description = "The requested asset type",
+            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),
+                    description = "The requested asset type",
                     required = true) @PathParam("assetType") final String assetType,
             @Parameter(description = "The uuid of the asset as published in the metadata",
                     required = true) @PathParam("uuid") final String uuid,
             @Parameter(
                     description = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
-                    required = true) @PathParam("artifactUUID") final String artifactUUID,
+                    required = true) @PathParam("artifactUUID") final String artifactUuid,
             @Parameter(hidden = true) String data) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug(DOUBLE_CURLY_BRACKETS, startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         String componentTypeValue = componentType == null ? null : componentType.getValue();
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentTypeValue);
@@ -506,13 +522,18 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ArtifactDefinition artifactDefinition = null;
         try {
             if (responseWrapper.isEmpty()) {
-                artifactDefinition = artifactsBusinessLogic.updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUUID,
-                        resourceCommonInfo, new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                artifactDefinition = artifactsBusinessLogic
+                        .updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUuid,
+                                                         resourceCommonInfo, new ArtifactOperationInfo(true, false,
+                                                                                                       ArtifactOperationEnum.UPDATE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
+                headers.put(Constants.MD5_HEADER,
+                            GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
+                responseWrapper.setInnerElement(
+                        buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation,
+                                        headers));
             }
         } catch (IOException e) {
             final String message = "failed to update artifact on a resource or service";
@@ -520,19 +541,19 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             log.debug(message, e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-        }  catch (ComponentException e){
+        } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
-        }
-        finally{
-            getComponentsUtils().auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_UPDATE_BY_API, resourceCommonInfo,
-                    request, artifactDefinition, artifactUUID);
+        } finally {
+            getComponentsUtils()
+                    .auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_UPDATE_BY_API, resourceCommonInfo,
+                                          request, artifactDefinition, artifactUuid);
         }
         return responseWrapper.getInnerElement();
     }
 
     /**
-     * updates an artifact on a resource instance
+     * updates an artifact on a resource instance.
      */
     @POST
     @Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
@@ -577,22 +598,23 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @Parameter(description = "The username and password",
                     required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),description = "The requested asset type",
+            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),
+                    description = "The requested asset type",
                     required = true) @PathParam("assetType") final String assetType,
             @Parameter(description = "The uuid of the asset as published in the metadata",
                     required = true) @PathParam("uuid") final String uuid,
             @Parameter(
                     description = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
-                    required = true) @PathParam("artifactUUID") final String artifactUUID,
-            @Parameter(description = "The component instance name (as publishedin the response of the detailed query)",
+                    required = true) @PathParam("artifactUUID") final String artifactUuid,
+            @Parameter(description = "The component instance name (as published in the response of the detailed query)",
                     required = true) @PathParam("resourceInstanceName") final String resourceInstanceName,
             @Parameter(hidden = true) String data) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug(DOUBLE_CURLY_BRACKETS, startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         String componentTypeValue = componentType == null ? null : componentType.getValue();
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(resourceInstanceName, componentTypeValue);
@@ -616,11 +638,14 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ArtifactDefinition artifactDefinition = null;
         try {
             if (responseWrapper.isEmpty()) {
-                artifactDefinition = artifactsBusinessLogic.updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName, artifactUUID,
-                        new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
+                artifactDefinition = artifactsBusinessLogic
+                        .updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName,
+                                                  artifactUuid,
+                                                  new ArtifactOperationInfo(true, false, ArtifactOperationEnum.UPDATE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
+                headers.put(Constants.MD5_HEADER,
+                            GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 responseWrapper.setInnerElement(buildOkResponse(responseFormat, representation, headers));
             }
@@ -630,19 +655,19 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             log.debug(message, e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-        }  catch (ComponentException e){
+        } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
-        }
-        finally{
-            getComponentsUtils().auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_UPDATE_BY_API, resourceCommonInfo,
-                    request, artifactDefinition, artifactUUID);
+        } finally {
+            getComponentsUtils()
+                    .auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_UPDATE_BY_API, resourceCommonInfo,
+                                          request, artifactDefinition, artifactUuid);
         }
         return responseWrapper.getInnerElement();
     }
 
     /**
-     * deletes an artifact of a resource or service
+     * deletes an artifact of a resource or service.
      */
     @DELETE
     @Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
@@ -682,19 +707,20 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @Parameter(description = "The username and password",
                     required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),description = "The requested asset type",
+            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),
+                    description = "The requested asset type",
                     required = true) @PathParam("assetType") final String assetType,
             @Parameter(description = "The uuid of the asset as published in the metadata",
                     required = true) @PathParam("uuid") final String uuid,
             @Parameter(
                     description = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
-                    required = true) @PathParam("artifactUUID") final String artifactUUID) {
+                    required = true) @PathParam("artifactUUID") final String artifactUuid) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug(DOUBLE_CURLY_BRACKETS, startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         String componentTypeValue = componentType == null ? null : componentType.getValue();
 
@@ -719,13 +745,18 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 
         try {
             if (responseWrapper.isEmpty()) {
-                artifactDefinition = artifactsBusinessLogic.deleteArtifactOnComponentByUUID(request, componentType, uuid, artifactUUID,
-                        resourceCommonInfo, new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
+                artifactDefinition = artifactsBusinessLogic
+                        .deleteArtifactOnComponentByUUID(request, componentType, uuid, artifactUuid,
+                                                         resourceCommonInfo, new ArtifactOperationInfo(true, false,
+                                                                                                       ArtifactOperationEnum.DELETE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
+                headers.put(Constants.MD5_HEADER,
+                            GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
+                responseWrapper.setInnerElement(
+                        buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation,
+                                        headers));
             }
         } catch (IOException e) {
             final String message = "failed to delete an artifact of a resource or service";
@@ -733,19 +764,19 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             log.debug(message, e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-        }  catch (ComponentException e){
+        } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
-        }
-        finally{
-            getComponentsUtils().auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_DELETE_BY_API, resourceCommonInfo,
-                    request, artifactDefinition, artifactUUID);
+        } finally {
+            getComponentsUtils()
+                    .auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_DELETE_BY_API, resourceCommonInfo,
+                                          request, artifactDefinition, artifactUuid);
         }
         return responseWrapper.getInnerElement();
     }
 
     /**
-     * deletes an artifact of a resource instance
+     * deletes an artifact of a resource instance.
      */
     @DELETE
     @Path("{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
@@ -785,50 +816,55 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @Parameter(description = "The username and password",
                     required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),description = "The requested asset type",
+            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),
+                    description = "The requested asset type",
                     required = true) @PathParam("assetType") final String assetType,
             @Parameter(description = "The uuid of the asset as published in the metadata",
                     required = true) @PathParam("uuid") final String uuid,
             @Parameter(
                     description = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
-                    required = true) @PathParam("artifactUUID") final String artifactUUID,
-            @Parameter(description = "The component instance name (as publishedin the response of the detailed query)",
+                    required = true) @PathParam("artifactUUID") final String artifactUuid,
+            @Parameter(description = "The component instance name (as published in the response of the detailed query)",
                     required = true) @PathParam("resourceInstanceName") final String resourceInstanceName) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug(DOUBLE_CURLY_BRACKETS, startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         String componentTypeValue = componentType == null ? null : componentType.getValue();
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(resourceInstanceName, componentTypeValue);
 
         if (componentType == null) {
-            log.debug("deleteArtifactOnResourceInsatnce: assetType parameter {} is not valid", assetType);
+            log.debug("deleteArtifactOnResourceInstance: assetType parameter {} is not valid", assetType);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
         }
         if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
-            log.debug("deleteArtifactOnResourceInsatnce: Missing X-ECOMP-InstanceID header");
+            log.debug("deleteArtifactOnResourceInstance: Missing X-ECOMP-InstanceID header");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
         }
         if (responseWrapper.isEmpty() && (userId == null || userId.isEmpty())) {
-            log.debug("deleteArtifactOnResourceInsatnce: Missing USER_ID header");
+            log.debug("deleteArtifactOnResourceInstance: Missing USER_ID header");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_USER_ID);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
         }
         ArtifactDefinition artifactDefinition = null;
         try {
             if (responseWrapper.isEmpty()) {
-                artifactDefinition = artifactsBusinessLogic.deleteArtifactOnRiByUUID(request, componentType, uuid, resourceInstanceName, artifactUUID,
-                        new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
+                artifactDefinition = artifactsBusinessLogic
+                        .deleteArtifactOnRiByUUID(request, componentType, uuid, resourceInstanceName, artifactUuid,
+                                                  new ArtifactOperationInfo(true, false, ArtifactOperationEnum.DELETE));
                 Object representation = RepresentationUtils.toRepresentation(artifactDefinition);
                 Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
+                headers.put(Constants.MD5_HEADER,
+                            GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
+                responseWrapper.setInnerElement(
+                        buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation,
+                                        headers));
             }
         } catch (IOException e) {
             final String message = "failed to delete an artifact of a resource instance";
@@ -836,19 +872,19 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             log.debug(message, e);
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-        }  catch (ComponentException e){
+        } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
-        }
-        finally{
-            getComponentsUtils().auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_DELETE_BY_API, resourceCommonInfo,
-                    request, artifactDefinition, artifactUUID);
+        } finally {
+            getComponentsUtils()
+                    .auditExternalCrudApi(responseFormat, AuditingActionEnum.ARTIFACT_DELETE_BY_API, resourceCommonInfo,
+                                          request, artifactDefinition, artifactUuid);
         }
         return responseWrapper.getInnerElement();
     }
 
     /**
-     * downloads an artifact of a component (either a service or a resource) by artifactUUID
+     * downloads an artifact of a component (either a service or a resource) by artifactUUID.
      */
     @GET
     @Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
@@ -879,19 +915,20 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     required = false) @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
             @Parameter(description = "The username and password",
                     required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),description = "The requested asset type",
+            @Parameter(schema = @Schema(allowableValues = {"resources,services"}),
+                    description = "The requested asset type",
                     required = true) @PathParam("assetType") final String assetType,
             @Parameter(description = "The uuid of the asset as published in the metadata",
                     required = true) @PathParam("uuid") final String uuid,
             @Parameter(
                     description = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
-                    required = true) @PathParam("artifactUUID") final String artifactUUID) {
+                    required = true) @PathParam("artifactUUID") final String artifactUuid) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug(DOUBLE_CURLY_BRACKETS, startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         String componentTypeValue = componentType == null ? null : componentType.getValue();
         if (componentType == null) {
@@ -907,26 +944,27 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentTypeValue);
         try {
             if (responseWrapper.isEmpty()) {
-                byte[] value = artifactsBusinessLogic.downloadComponentArtifactByUUIDs(componentType, uuid, artifactUUID, resourceCommonInfo);
+                byte[] value = artifactsBusinessLogic
+                        .downloadComponentArtifactByUUIDs(componentType, uuid, artifactUuid, resourceCommonInfo);
                 InputStream is = new ByteArrayInputStream(value);
                 Map<String, String> headers = new HashMap<>();
                 headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
             }
-        }  catch (ComponentException e){
+        } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
-        }
-        finally{
+        } finally {
             getComponentsUtils().auditExternalDownloadArtifact(responseFormat, resourceCommonInfo,
-                    new DistributionData(instanceIdHeader, requestURI), requestId, artifactUUID, userId);
+                                                               new DistributionData(instanceIdHeader, requestUri),
+                                                               requestId, artifactUuid, userId);
         }
         return responseWrapper.getInnerElement();
     }
 
     /**
-     * downloads an artifact of a resource instance of a component (either a service or a resource) by artifactUUID
+     * downloads an artifact of a resource instance of a component (either a service or a resource) by artifactUUID.
      */
     @GET
     @Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
@@ -964,15 +1002,15 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
                     required = true) @PathParam("uuid") final String uuid,
             @Parameter(
                     description = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation",
-                    required = true) @PathParam("artifactUUID") final String artifactUUID,
-            @Parameter(description = "The component instance name (as publishedin the response of the detailed query)",
+                    required = true) @PathParam("artifactUUID") final String artifactUuid,
+            @Parameter(description = "The component instance name (as published in the response of the detailed query)",
                     required = true) @PathParam("resourceInstanceName") final String resourceInstanceName) {
 
         Wrapper<Response> responseWrapper = new Wrapper<>();
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
-        log.debug(DOUBLE_CURLY_BRACKETS, startLog, url);
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
+        log.debug(DOUBLE_CURLY_BRACKETS, START_LOG, url);
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
         String componentTypeValue = componentType == null ? null : componentType.getValue();
         if (componentType == null) {
@@ -987,20 +1025,24 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         }
         try {
             if (responseWrapper.isEmpty()) {
-                byte[] value = artifactsBusinessLogic.downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID);
+                byte[] value = artifactsBusinessLogic
+                        .downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName,
+                                                                 artifactUuid);
                 InputStream is = new ByteArrayInputStream(value);
                 Map<String, String> headers = new HashMap<>();
                 headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
             }
-        }  catch (ComponentException e){
+        } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
-        }
-        finally{
-            getComponentsUtils().auditExternalDownloadArtifact(responseFormat, new ResourceCommonInfo(resourceInstanceName, componentTypeValue),
-                    new DistributionData(instanceIdHeader, requestURI), requestId, artifactUUID, userId);
+        } finally {
+            getComponentsUtils().auditExternalDownloadArtifact(responseFormat,
+                                                               new ResourceCommonInfo(resourceInstanceName,
+                                                                                      componentTypeValue),
+                                                               new DistributionData(instanceIdHeader, requestUri),
+                                                               requestId, artifactUuid, userId);
         }
         return responseWrapper.getInnerElement();
     }
