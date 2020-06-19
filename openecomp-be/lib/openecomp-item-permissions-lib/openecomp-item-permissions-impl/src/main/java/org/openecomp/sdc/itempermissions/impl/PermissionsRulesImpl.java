@@ -55,18 +55,9 @@ public class PermissionsRulesImpl implements PermissionsRules {
                     return true;
 
                 case Edit_Item:
-                    if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
-                            (PermissionTypes.Owner.name())) {
-                        return true;
-                    }
-                    break;
                 case Commit_Item:
-                    if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
-                            (PermissionTypes.Owner.name())) {
-                        return true;
-                    }
-                    break;
                 case Delete_Item:
+                case Submit_Item:
                     if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
                             (PermissionTypes.Owner.name())) {
                         return true;
@@ -75,13 +66,6 @@ public class PermissionsRulesImpl implements PermissionsRules {
 
                 case Change_Item_Permissions:
                     if (permission.equals(PermissionTypes.Owner.name())) {
-                        return true;
-                    }
-                    break;
-
-                case Submit_Item:
-                    if (permission.equals(PermissionTypes.Contributor.name()) || permission.equals
-                            (PermissionTypes.Owner.name())) {
                         return true;
                     }
                     break;
