@@ -18,9 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson;
+package org.openecomp.sdc.asdctool.impl.validator.tasks.module.json;
 
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
@@ -37,14 +44,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ModuleJsonTask extends ServiceValidationTask {
 
@@ -68,7 +67,7 @@ public class ModuleJsonTask extends ServiceValidationTask {
         paramView.setIgnoreGroups(false);
         paramView.setIgnoreComponentInstances(false);
         Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation
-            .getToscaElement(vertex.getUniqueId(), paramView);
+                .getToscaElement(vertex.getUniqueId(), paramView);
         if (toscaElementEither.isRight()) {
             return new VertexResult(false);
         }
@@ -77,39 +76,32 @@ public class ModuleJsonTask extends ServiceValidationTask {
         Map<String, MapArtifactDataDefinition> instDeploymentArtifacts = element.getInstDeploymentArtifacts();
 
         for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups)
-            .orElse(Collections.emptyMap()).entrySet()) {
+                .orElse(Collections.emptyMap()).entrySet()) {
             MapGroupsDataDefinition groups = pair.getValue();
             if (groups != null && !groups.getMapToscaDataDefinition().isEmpty()) {
                 return new VertexResult(
-                    findCoordinateModuleJson(report, pair, instDeploymentArtifacts, vertex, outputFilePath));
+                        findCoordinateModuleJson(report, pair, instDeploymentArtifacts, vertex, outputFilePath));
             }
-            return new VertexResult(true);
         }
         return new VertexResult(true);
     }
 
-    private boolean findCoordinateModuleJson(
-        Report report,
-        Map.Entry<String, MapGroupsDataDefinition> pair,
-        Map<String, MapArtifactDataDefinition> instDeploymentArtifacts,
-        GraphVertex vertex, String outputFilePath
-    ) {
+    private boolean findCoordinateModuleJson(Report report, Map.Entry<String, MapGroupsDataDefinition> pair,
+                                             Map<String, MapArtifactDataDefinition> instDeploymentArtifacts,
+                                             GraphVertex vertex, String outputFilePath) {
         String groupKey = pair.getKey();
         String[] split = groupKey.split("\\.");
         String instanceName = split[split.length - 1];
         MapArtifactDataDefinition deploymentsArtifacts = instDeploymentArtifacts.get(groupKey);
         if (deploymentsArtifacts != null && !deploymentsArtifacts.getMapToscaDataDefinition().isEmpty()) {
             List<ArtifactDataDefinition> moduleJsonArtifacts = deploymentsArtifacts.getMapToscaDataDefinition().values()
-                .stream().filter(artifact -> {
-                    String artifactName = artifact.getArtifactName();
-                    if (artifactName.startsWith(instanceName) && artifactName.endsWith("modules.json")) {
-                        return true;
-                    }
-                    return false;
-                }).collect(Collectors.toList());
-            if (moduleJsonArtifacts.size() > 0) {
-                String status =
-                    "Instance " + instanceName + " has a corresponding modules.json file: " + moduleJsonArtifacts.get(0)
+                    .stream().filter(artifact -> {
+                        String artifactName = artifact.getArtifactName();
+                        return (artifactName.startsWith(instanceName) && artifactName.endsWith("modules.json"));
+                    }).collect(Collectors.toList());
+            if (!moduleJsonArtifacts.isEmpty()) {
+                String status = "Instance " + instanceName + " has a corresponding modules.json file: "
+                        + moduleJsonArtifacts.get(0)
                         .getArtifactName();
                 ReportManager.writeReportLineToFile(status, outputFilePath);
                 return true;

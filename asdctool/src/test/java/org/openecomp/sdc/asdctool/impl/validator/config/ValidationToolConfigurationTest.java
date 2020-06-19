@@ -31,7 +31,7 @@ import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
-import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask;
+import org.openecomp.sdc.asdctool.impl.validator.tasks.module.json.ModuleJsonTask;
 import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
