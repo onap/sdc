@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "047736d5_dbade7d2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentNodeFilterBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T13:56:26Z",
+      "side": 1,
+      "message": "small nitpicking but maybe move this directly to a lambda ? `() -\u003e componentNodeFilterBusinessLogic`",
+      "revId": "a290c11d2b1eb06eea3bf0ba1d335fd72a8ac160",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
