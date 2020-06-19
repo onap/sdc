@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2019 European Support Limited
+ * Modifications © 2020 AT&T
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -283,7 +284,7 @@ public class UiComponentDataConverterTest {
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("policies"));
 
-        assertThat(CollectionUtils.isNotEmpty(uiComponentDataTransfer.getPolicies()));
+        assertThat(uiComponentDataTransfer.getPolicies()).isNotEmpty();
     }
 
     @Test
@@ -292,7 +293,7 @@ public class UiComponentDataConverterTest {
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("nodeFilter"));
 
-        assertThat(MapUtils.isEmpty(uiComponentDataTransfer.getNodeFilter()));
+        assertThat(uiComponentDataTransfer.getNodeFilter()).isNull();
     }
 
     @Test
@@ -309,7 +310,7 @@ public class UiComponentDataConverterTest {
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("nodeFilter"));
 
-        assertThat(MapUtils.isNotEmpty(uiComponentDataTransfer.getNodeFilter()));
+        assertThat(uiComponentDataTransfer.getNodeFilter()).isNotEmpty();
     }
 
     private Resource buildResourceWithGroups() {
