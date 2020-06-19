@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2017 European Support Limited
+ * Modifications © 2020 AT&T
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,22 +52,22 @@ public class CommonMethodsTest {
 
     @Test
     public void testArrayToCommaSeparatedString() {
-        assertEquals(CommonMethods.arrayToCommaSeparatedString(ARRAY), "A,B,C");
+        assertEquals("A,B,C", CommonMethods.arrayToCommaSeparatedString(ARRAY));
     }
 
     @Test
     public void testArrayToCommaSeparatedStringEmpty() {
-        assertEquals(CommonMethods.arrayToCommaSeparatedString(new String[0]), "");
+        assertEquals("", CommonMethods.arrayToCommaSeparatedString(new String[0]));
     }
 
     @Test
     public void testArrayToCommaSeparatedStringNulls() {
-        assertEquals(CommonMethods.arrayToCommaSeparatedString(new String[] {null, null}), "null,null");
+        assertEquals("null,null", CommonMethods.arrayToCommaSeparatedString(new String[] {null, null}));
     }
 
     @Test
     public void testArrayToCommaSeparatedStringEmptyStrings() {
-        assertEquals(CommonMethods.arrayToCommaSeparatedString(new String[] {"", ""}), ",");
+        assertEquals(",", CommonMethods.arrayToCommaSeparatedString(new String[] {"", ""}));
     }
 
     @Test(expected = NullPointerException.class)
@@ -76,22 +77,22 @@ public class CommonMethodsTest {
 
     @Test
     public void testArrayToSeparatedString() {
-        assertEquals(CommonMethods.arrayToSeparatedString(ARRAY, '/'), "A/B/C");
+        assertEquals("A/B/C", CommonMethods.arrayToSeparatedString(ARRAY, '/'));
     }
 
     @Test
     public void testArrayToSeparatedStringEmpty() {
-        assertEquals(CommonMethods.arrayToSeparatedString(new String[0], '/'), "");
+        assertEquals("", CommonMethods.arrayToSeparatedString(new String[0], '/'));
     }
 
     @Test
     public void testArrayToSeparatedStringNulls() {
-        assertEquals(CommonMethods.arrayToSeparatedString(new String[] {null, null}, '/'), "null/null");
+        assertEquals("null/null", CommonMethods.arrayToSeparatedString(new String[] {null, null}, '/'));
     }
 
     @Test
     public void testArrayToSeparatedStringEmptyStrings() {
-        assertEquals(CommonMethods.arrayToSeparatedString(new String[] {"", ""}, '/'), "/");
+        assertEquals("/", CommonMethods.arrayToSeparatedString(new String[] {"", ""}, '/'));
     }
 
     @Test(expected = NullPointerException.class)
@@ -101,22 +102,22 @@ public class CommonMethodsTest {
 
     @Test
     public void testCollectionToCommaSeparatedString() {
-        assertEquals(CommonMethods.collectionToCommaSeparatedString(Arrays.asList(ARRAY)), "A,B,C");
+        assertEquals("A,B,C", CommonMethods.collectionToCommaSeparatedString(Arrays.asList(ARRAY)));
     }
 
     @Test
     public void testCollectionToCommaSeparatedStringNulls() {
-        assertEquals(CommonMethods.collectionToCommaSeparatedString(Arrays.asList(null, null)), "null,null");
+        assertEquals("null,null", CommonMethods.collectionToCommaSeparatedString(Arrays.asList(null, null)));
     }
 
     @Test
     public void testCollectionToCommaSeparatedStringEmptyStrings() {
-        assertEquals(CommonMethods.collectionToCommaSeparatedString(Arrays.asList("", "")), ",");
+        assertEquals(",", CommonMethods.collectionToCommaSeparatedString(Arrays.asList("", "")));
     }
 
     @Test
     public void testCollectionToCommaSeparatedStringEmtpy() {
-        assertEquals(CommonMethods.collectionToCommaSeparatedString(Collections.emptySet()), "");
+        "", assertEquals(CommonMethods.collectionToCommaSeparatedString(Collections.emptySet()));
     }
 
     @Test(expected = NullPointerException.class)
@@ -136,7 +137,7 @@ public class CommonMethodsTest {
 
         String []resultArray = CommonMethods.concat(firstArray, secondArray);
 
-        assertEquals(resultArray.length, 4);
+        assertEquals(4, resultArray.length);
         assertTrue(ArrayUtils.contains(resultArray, secondArray[0])
                 && ArrayUtils.contains(resultArray, firstArray[0]));
     }
@@ -147,7 +148,7 @@ public class CommonMethodsTest {
 
         String []resultArray = CommonMethods.concat(firstArray, null);
 
-        assertEquals(resultArray.length, 2);
+        assertEquals(2, resultArray.length);
         assertTrue(Arrays.asList(resultArray).containsAll(Arrays.asList(firstArray)));
     }
 
@@ -157,7 +158,7 @@ public class CommonMethodsTest {
 
         String []resultArray = CommonMethods.concat(null, secondArray);
 
-        assertEquals(resultArray.length, 2);
+        assertEquals(2, resultArray.length);
         assertTrue(Arrays.asList(resultArray).containsAll(Arrays.asList(secondArray)));
     }
 
@@ -216,7 +217,7 @@ public class CommonMethodsTest {
 
         String[] duplicateStrArray = duplicateStr.split("#");
         assertTrue(duplicateStr.contains("Duplicate"));
-        assertEquals(duplicateStrArray.length, 4);
+        assertEquals(4, duplicateStrArray.length);
     }
 
     @Test
@@ -251,7 +252,7 @@ public class CommonMethodsTest {
 
         List<Map<String, String>> resultList = CommonMethods.mergeListsOfMap(list1, list2);
 
-        assertEquals(resultList.size(), 6);
+        assertEquals(6, resultList.size());
 
         //Verify for duplicate key
         int count = 0;
@@ -270,7 +271,7 @@ public class CommonMethodsTest {
 
         List<String> resultList = CommonMethods.mergeLists(list1, list2);
 
-        assertEquals(resultList.size(), 4);
+        assertEquals(4, resultList.size());
         assertTrue(resultList.containsAll(list1));
         assertTrue(resultList.containsAll(list2));
     }
@@ -292,7 +293,7 @@ public class CommonMethodsTest {
 
         Map<String, String> resultMap = CommonMethods.mergeMaps(map1, map2);
 
-        assertEquals(resultMap.size(), 4);
-        assertEquals(resultMap.get("Port"), "VMI");
+        assertEquals(4, resultMap.size());
+        assertEquals("VMI", resultMap.get("Port"));
     }
 }
