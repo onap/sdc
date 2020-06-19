@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,10 +20,29 @@
 
 package org.openecomp.sdc.be.components.csar;
 
+import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.FAILED_UPLOAD_ARTIFACT_TO_COMPONENT;
+import static org.openecomp.sdc.be.tosca.CsarUtils.ARTIFACTS_PATH;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -44,6 +63,7 @@ import org.openecomp.sdc.be.config.Configuration.VfModuleProperty;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -79,35 +99,11 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.FAILED_UPLOAD_ARTIFACT_TO_COMPONENT;
-import static org.openecomp.sdc.be.tosca.CsarUtils.ARTIFACTS_PATH;
-
-
 @org.springframework.stereotype.Component("csarArtifactsAndGroupsBusinessLogic")
 public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(CsarArtifactsAndGroupsBusinessLogic.class.getName());
-    private static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME = "Artifact  file is not in expected formatr, fileName  {}";
     private static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME = "Artifact  file is not in expected format, fileName  {}";
-    private static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMATR_FILE_NAME1 = "Artifact  file is not in expected formatr, fileName ";
-    private static final String ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME1 = "Artifact  file is not in expected format, fileName ";
     private static final String ARTIFACT_INTERNALS_ARE_INVALID = "Artifact internals are invalid";
     private static final String ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE = "Artifact with name {} and type {} already exist with type  {}";
     private final Gson gson = new Gson();
@@ -186,8 +182,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         List<ArtifactTemplateInfo> artifactsWithoutGroups = parsedArtifactsMap.remove(ArtifactTemplateInfo.CSAR_ARTIFACT);
         Collection<List<ArtifactTemplateInfo>> parsedArifactsCollection = parsedArtifactsMap.values();
 
-        Either<Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>>, ResponseFormat> parsedArtifactsPerGroupEither = createArtifactsTemplateCollection(csarInfo, updatedResource, createdNewArtifacts, shouldLock, inTransaction,
-                createdDeploymentArtifactsAfterDelete, labelCounter, parsedArifactsCollection);
+        Either<Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>>, ResponseFormat> parsedArtifactsPerGroupEither = createArtifactsTemplateCollection(csarInfo, updatedResource, createdNewArtifacts,
+                                                                                                                                                       createdDeploymentArtifactsAfterDelete, labelCounter, parsedArifactsCollection);
         if(parsedArtifactsPerGroupEither.isRight()){
             log.error("Failed to parse artifacts. Status is {} ", parsedArtifactsPerGroupEither.right().value());
             return Either.right(parsedArtifactsPerGroupEither.right().value());
@@ -240,7 +236,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
         createdDeploymentArtifactsAfterDelete = deploymentArtifact.values().stream()
                                                                         .collect(Collectors.toList());
-        
+
         // update vfModule names
         Set<GroupDefinition> groupForAssociateWithMembers = mergedgroup.keySet();
         Either<Resource, ResponseFormat> validateUpdateVfGroupNamesRes = updateVfModuleNames(createdNewArtifacts,
@@ -361,7 +357,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             artifactsGroup.addAll(updatedGroupDef.getArtifacts());
             associateMembersToArtifacts(createdNewArtifacts, createdDeploymentArtifactsAfterDelete, heatGroups,
                     artifactsGroup, members);
-            
+
             updatedGroupDef.setMembers(members);
         }
     }
@@ -405,7 +401,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             List<GroupDefinition> listToDelete =  groups.stream()
                                                         .filter(g -> g.getType().equals(groupType))
                                                         .collect(Collectors.toList());
-            
+
             groupBusinessLogic.deleteGroups(resource, listToDelete);
         }
     }
@@ -448,10 +444,10 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     if (op.isPresent() && !op.get().getArtifactType().equalsIgnoreCase(template.getType())) {
                         artifactsToDelete.add(op.get());
                     }
-                } 
+                }
             }
         }
-	        
+
         return artifactsToDelete;
     }
 
@@ -479,8 +475,9 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
     }
 
 
-    private Either<Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>>, ResponseFormat> createArtifactsTemplateCollection(CsarInfo csarInfo, Resource resource,
-            List<ArtifactDefinition> createdNewArtifacts, boolean shouldLock, boolean inTransaction,
+    private Either<Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>>, ResponseFormat> createArtifactsTemplateCollection(
+            CsarInfo csarInfo, Resource resource,
+            List<ArtifactDefinition> createdNewArtifacts,
             List<ArtifactDefinition> createdDeploymentArtifactsAfterDelete, int labelCounter,
             Collection<List<ArtifactTemplateInfo>> parsedArifactsCollection) {
 
@@ -646,7 +643,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             if (resStatus.isRight()) {
                 return resStatus;
             }
-            Map<String, ArtifactDefinition> createdArtifactsMap = createdArtifacts.stream().collect(Collectors.toMap(artifact -> artifact.getArtifactLabel(), artifact -> artifact));
+            Map<String, ArtifactDefinition> createdArtifactsMap = createdArtifacts.stream().collect(Collectors.toMap(
+                    ArtifactDataDefinition::getArtifactLabel, artifact -> artifact));
             resource.setDeploymentArtifacts(createdArtifactsMap);
             if (groupName != null && !groupName.isEmpty()) {
 
@@ -658,7 +656,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 needToCreate.add(groupDefinitionEither.left().value());
             }
         }
-        Map<String, ArtifactDefinition> createdArtifactsMap = createdArtifacts.stream().collect(Collectors.toMap(artifact -> artifact.getArtifactLabel(), artifact -> artifact));
+        Map<String, ArtifactDefinition> createdArtifactsMap = createdArtifacts.stream().collect(Collectors.toMap(
+                ArtifactDataDefinition::getArtifactLabel, artifact -> artifact));
         resource.setDeploymentArtifacts(createdArtifactsMap);
 
         Either<List<GroupDefinition>, ResponseFormat> createGroups = groupBusinessLogic
@@ -1193,15 +1192,12 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                         && artifactType.equalsIgnoreCase(template.getType())) {
                     isNeedToDeleteArtifact = false;
                     break;
-
                 } else {
-
-                    if (generatedFromArt != null) {
-                        if (generatedFromArt.getArtifactName().equalsIgnoreCase(template.getFileName())
-                                && generatedFromArt.getArtifactType().equalsIgnoreCase(template.getType())) {
+                    if (generatedFromArt != null
+                            && generatedFromArt.getArtifactName().equalsIgnoreCase(template.getFileName())
+                            && generatedFromArt.getArtifactType().equalsIgnoreCase(template.getType())) {
                             isNeedToDeleteArtifact = false;
                             break;
-                        }
                     }
                 }
             }
@@ -1774,7 +1770,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 .map(rf ->  componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(rf), component))
                 .left()
                 .map (c -> (Resource) c);
-        
+
 
     }
 
