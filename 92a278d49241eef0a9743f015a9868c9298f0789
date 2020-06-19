@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6808f4e7_f01d7f0e",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/tasks/module/json/ModuleJsonTask.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T14:06:47Z",
+      "side": 0,
+      "message": "might as well make it final :)",
+      "revId": "92a278d49241eef0a9743f015a9868c9298f0789",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
