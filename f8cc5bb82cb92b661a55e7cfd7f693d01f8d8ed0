@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9565482e_ec508cc3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/ArtifactExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T13:19:32Z",
+      "side": 1,
+      "message": "could be final too :)",
+      "revId": "f8cc5bb82cb92b661a55e7cfd7f693d01f8d8ed0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62fd118c_cae7f0b3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/ArtifactExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T13:19:32Z",
+      "side": 1,
+      "message": "It\u0027s required false by default. Imo there is already way too much text here",
+      "revId": "f8cc5bb82cb92b661a55e7cfd7f693d01f8d8ed0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65c6d934_11624aaf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T13:19:32Z",
+      "side": 1,
+      "message": "Those comments are not really helping :)",
+      "revId": "f8cc5bb82cb92b661a55e7cfd7f693d01f8d8ed0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aaa9d8ea_052f2a91",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/CrudExternalServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T13:19:32Z",
+      "side": 1,
+      "message": "I\u0027m not sure where to start on this method",
+      "revId": "f8cc5bb82cb92b661a55e7cfd7f693d01f8d8ed0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a0788ed_c605e7b6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/AbstractValidationsServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 973,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T13:19:32Z",
+      "side": 1,
+      "message": "My ide says it\u0027s not used",
+      "revId": "f8cc5bb82cb92b661a55e7cfd7f693d01f8d8ed0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
