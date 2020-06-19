@@ -26,7 +26,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import fj.data.Either;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -67,21 +81,6 @@ import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.yaml.snakeyaml.Yaml;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
@@ -603,11 +602,10 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             }
 
             // User Defined Type Resources
-            if (resourceAuthorityEnum.isUserTypeResource() && !CsarValidationUtils.isCsarPayloadName(uploadResourceInfoWrapper.getInnerElement().getPayloadName())) {
-                if (responseWrapper.isEmpty()) {
-                    validatePayloadNameSpace(responseWrapper, uploadResourceInfoWrapper.getInnerElement(), user, yamlStringWrapper.getInnerElement());
-                }
-
+            if (resourceAuthorityEnum.isUserTypeResource()
+                    && !CsarValidationUtils.isCsarPayloadName(uploadResourceInfoWrapper.getInnerElement().getPayloadName())
+                    && responseWrapper.isEmpty()) {
+                            validatePayloadNameSpace(responseWrapper, uploadResourceInfoWrapper.getInnerElement(), user, yamlStringWrapper.getInnerElement());
             }
         }
     }
@@ -814,8 +812,6 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             csar = ZipUtils.readZip(decodedPayload, false);
         } catch (final ZipException e) {
             log.info("Failed to unzip received csar {}", csarUUID, e);
-        }
-        if (MapUtils.isEmpty(csar)) {
         }
         return csar;
     }
