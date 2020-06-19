@@ -283,7 +283,7 @@ public class UiComponentDataConverterTest {
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("policies"));
 
-        assertThat(CollectionUtils.isNotEmpty(uiComponentDataTransfer.getPolicies()));
+        assertThat(uiComponentDataTransfer.getPolicies()).isNotEmpty();
     }
 
     @Test
@@ -292,7 +292,7 @@ public class UiComponentDataConverterTest {
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("nodeFilter"));
 
-        assertThat(MapUtils.isEmpty(uiComponentDataTransfer.getNodeFilter()));
+        assertThat(uiComponentDataTransfer.getNodeFilter()).isNull();
     }
 
     @Test
@@ -309,7 +309,7 @@ public class UiComponentDataConverterTest {
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("nodeFilter"));
 
-        assertThat(MapUtils.isNotEmpty(uiComponentDataTransfer.getNodeFilter()));
+        assertThat(uiComponentDataTransfer.getNodeFilter()).isNotEmpty();
     }
 
     private Resource buildResourceWithGroups() {
