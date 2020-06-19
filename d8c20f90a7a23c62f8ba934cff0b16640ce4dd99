@@ -16,6 +16,24 @@
       "revId": "d8c20f90a7a23c62f8ba934cff0b16640ce4dd99",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1b820cf_513a6402",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/composition/CompositionDataExtractorImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-19T23:07:29Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "591655a7_453d0eee",
+      "revId": "d8c20f90a7a23c62f8ba934cff0b16640ce4dd99",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
