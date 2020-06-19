@@ -2326,8 +2326,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 						.value());
 			} else {
 
-				return csarArtifactsAndGroupsBusinessLogic.deleteVFModules(resource, csarInfo, shouldLock,
-						inTransaction);
+				return csarArtifactsAndGroupsBusinessLogic.deleteVfModules(resource, csarInfo, shouldLock,
+                                                                           inTransaction);
 
 			}
 		}
