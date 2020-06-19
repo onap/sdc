@@ -16,6 +16,24 @@
       "revId": "a290c11d2b1eb06eea3bf0ba1d335fd72a8ac160",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9cad9ab_4053ef01",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentNodeFilterBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2020-06-19T14:39:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "047736d5_dbade7d2",
+      "revId": "a290c11d2b1eb06eea3bf0ba1d335fd72a8ac160",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
