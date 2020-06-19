@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "545f13c2_fd470f7f",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/type/ConfigurationQuery.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-19T08:39:50Z",
+      "side": 1,
+      "message": "move @Getter to class scope, and remove rest of the getters.",
+      "range": {
+        "startLine": 26,
+        "startChar": 4,
+        "endLine": 35,
+        "endChar": 33
+      },
+      "revId": "b3953478a0826cdcd5313c7d88a6d5c649c56ea3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12e0976f_63215ea7",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/type/ConfigurationQuery.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-19T08:39:50Z",
+      "side": 1,
+      "message": "remove this, covered by @Getter",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 91,
+        "endChar": 5
+      },
+      "revId": "b3953478a0826cdcd5313c7d88a6d5c649c56ea3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
