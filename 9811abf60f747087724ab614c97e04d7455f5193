@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "459043aa_42f37f20",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/types/MessageContainer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T07:08:48Z",
+      "side": 1,
+      "message": "Any idea how big this list gets in practice ?",
+      "parentUuid": "0c0e0393_3039335f",
+      "revId": "9811abf60f747087724ab614c97e04d7455f5193",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "564478af_dd6d38b3",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/test/java/org/openecomp/core/validation/types/MessageContainerTest.java",
         "patchSetId": 1
