@@ -57,6 +57,24 @@
       "revId": "39c9ca595853d46e953210624a647ddad586dd8b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "175c50cb_c6340eb7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/Utils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-19T07:04:36Z",
+      "side": 1,
+      "message": "I agree too :) \nTo be honest I didn\u0027t look at what the callers were doing with it and I didn\u0027t feel familiar with the app enough to modify it. But I will gladly do so",
+      "parentUuid": "65dbdb44_0f534f6b",
+      "revId": "39c9ca595853d46e953210624a647ddad586dd8b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
