@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson;
+package org.openecomp.sdc.asdctool.impl.validator.tasks.module.json;
 
 import fj.data.Either;
 import org.junit.Test;
