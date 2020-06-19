@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
+import java.io.IOException;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -53,27 +63,14 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-
 /**
  * Created by chaya on 10/17/2017.
  */
 @SuppressWarnings("ALL")
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC External APIs")})
-@Servers({@Server(url = "/sdc")})
+@Tag(name = "SDC External APIs")
+@Server(url = "/sdc")
 @Controller
 public class ServiceActivationServlet extends AbstractValidationsServlet {
 
@@ -86,16 +83,16 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
 
     @Inject
     public ServiceActivationServlet(UserBusinessLogic userBusinessLogic,
-        ComponentInstanceBusinessLogic componentInstanceBL,
-        ComponentsUtils componentsUtils, ServletUtils servletUtils,
-        ResourceImportManager resourceImportManager,
-        ServiceBusinessLogic serviceBusinessLogic) {
+                                    ComponentInstanceBusinessLogic componentInstanceBL,
+                                    ComponentsUtils componentsUtils, ServletUtils servletUtils,
+                                    ResourceImportManager resourceImportManager,
+                                    ServiceBusinessLogic serviceBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.serviceBusinessLogic = serviceBusinessLogic;
     }
 
     /**
-     * Activates a service on a specific environment
+     * Activates a service on a specific environment.
      */
     @POST
     @Path("/services/{serviceUUID}/distribution/{opEnvId}/activate")
@@ -138,7 +135,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
             @Parameter(description = "The username and password",
                     required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
             @Parameter(description = "The serviceUUid to activate",
-                    required = true) @PathParam("serviceUUID") final String serviceUUID,
+                    required = true) @PathParam("serviceUUID") final String serviceUuid,
             @Parameter(description = "The operational environment on which to activate the service on",
                     required = true) @PathParam("opEnvId") final String opEnvId,
             String data) throws IOException {
@@ -146,8 +143,8 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
         init();
 
         ResponseFormat responseFormat = null;
-        String requestURI = request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
+        String requestUri = request.getRequestURI();
+        String url = request.getMethod() + " " + requestUri;
         log.debug("Start handle request of {}", url);
 
         User modifier = new User();
@@ -161,7 +158,8 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
                 log.debug("modifier id is {}", userId);
 
                 ServiceDistributionReqInfo reqMetadata = convertJsonToActivationMetadata(data);
-                Either<String, ResponseFormat> distResponse = serviceBusinessLogic.activateServiceOnTenantEnvironment(serviceUUID, opEnvId, modifier, reqMetadata);
+                Either<String, ResponseFormat> distResponse = serviceBusinessLogic
+                        .activateServiceOnTenantEnvironment(serviceUuid, opEnvId, modifier, reqMetadata);
 
                 if (distResponse.isRight()) {
                     log.debug("failed to activate service distribution");
@@ -183,14 +181,15 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
             throw e;
         } finally {
             getComponentsUtils().auditExternalActivateService(responseFormat,
-                    new DistributionData(instanceIdHeader, requestURI), requestId, serviceUUID, modifier);
+                                                              new DistributionData(instanceIdHeader, requestUri),
+                                                              requestId, serviceUuid, modifier);
         }
     }
 
     private Wrapper<ResponseFormat> validateRequestHeaders(String instanceIdHeader, String userId) {
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         if (responseWrapper.isEmpty()) {
-            validateXECOMPInstanceIDHeader(instanceIdHeader, responseWrapper);
+            validateXEcompInstanceIdHeader(instanceIdHeader, responseWrapper);
         }
         if (responseWrapper.isEmpty()) {
             validateHttpCspUserIdHeader(userId, responseWrapper);
@@ -211,7 +210,7 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
     @Override
     protected void validateHttpCspUserIdHeader(String header, Wrapper<ResponseFormat> responseWrapper) {
         ResponseFormat responseFormat;
-        if( StringUtils.isEmpty(header)){
+        if (StringUtils.isEmpty(header)) {
             log.debug("MissingUSER_ID");
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.AUTH_FAILED);
             responseWrapper.setInnerElement(responseFormat);
