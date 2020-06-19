@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,8 @@
  */
 
 package org.openecomp.sdc.be.externalapi.servlet;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Loggable;
@@ -30,9 +32,23 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -81,31 +97,10 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
-
-
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC External APIs")})
-@Servers({@Server(url = "/sdc")})
+@Tag(name = "SDC External APIs")
+@Server(url = "/sdc")
 @Controller
 public class CrudExternalServlet extends AbstractValidationsServlet {
 
@@ -228,7 +223,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(ComponentTypeEnum.RESOURCE.getValue());
         Service service = null;
 
-        ServletContext context = request.getSession().getServletContext();
         try {
             // Validate X-ECOMP-InstanceID Header
             if (responseWrapper.isEmpty()) {
@@ -328,12 +322,9 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 
                 }
                 //validate name exist
-                if(responseWrapper.isEmpty()){
-                    if(isNullOrEmpty(resource.getName())){
+                if(responseWrapper.isEmpty() && isNullOrEmpty(resource.getName())){
                         responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(
                                 ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue()));
-
-                    }
                 }
 
                 if(responseWrapper.isEmpty()){
@@ -634,10 +625,10 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
             validateHttpCspUserIdHeader(request.getHeader(Constants.USER_ID_HEADER),responseWrapper);
         }
         // Validate assetType
-        if (responseWrapper.isEmpty()) {
-            if( !AssetTypeEnum.RESOURCES.getValue().equals(assetType) &&  !AssetTypeEnum.SERVICES.getValue().equals(assetType)){
+        if (responseWrapper.isEmpty()
+                && !AssetTypeEnum.RESOURCES.getValue().equals(assetType)
+                && !AssetTypeEnum.SERVICES.getValue().equals(assetType)) {
                 responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
-            }
         }
 
         return responseWrapper;

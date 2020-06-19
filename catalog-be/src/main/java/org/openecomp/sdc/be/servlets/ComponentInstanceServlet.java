@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,9 +35,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -104,12 +102,12 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
 /**
- * Root resource (exposed at "/" path) .json
+ * Root resource (exposed at "/" path) .json.
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDC Internal APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@Tag(name = "SDC Internal APIs")
+@Server(url = "/sdc2/rest")
 @Controller
 public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
@@ -132,7 +130,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ComponentInstanceServlet.class.getName());
 
     private final GroupBusinessLogic groupBL;
-    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     private final ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic;
 
 
@@ -144,7 +141,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                                     ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.groupBL = groupBL;
-        this.componentInstanceBusinessLogic = componentInstanceBL;
         this.nodeFilterBusinessLogic = nodeFilterBusinessLogic;
     }
 
@@ -168,7 +164,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
                     required = true) String userId,
             @Context final HttpServletRequest request) {
-        
+
         validateNotEmptyBody(data);
         ComponentInstance componentInstance = null;
         try {
@@ -214,8 +210,13 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         log.debug(START_HANDLE_REQUEST_OF, url);
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE,StatusCode.STARTED,"update Component Instance Metadata");
         final String userId = request.getHeader(Constants.USER_ID_HEADER);
-        componentInstanceBusinessLogic.validateUser(userId);
-        try {
+         try {
+            if (componentInstanceBusinessLogic == null) {
+                log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR,
+                                                                                 containerComponentType));
+            }
+            componentInstanceBusinessLogic.validateUser(userId);
             log.debug(START_HANDLE_REQUEST_OF, url);
             final byte[] bytes = IOUtils.toByteArray(request.getInputStream());
 
@@ -226,11 +227,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             final String data = new String(bytes);
             final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            if (componentInstanceBusinessLogic == null) {
-                log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR,
-                    containerComponentType));
-            }
             final Either<ComponentInstance, ResponseFormat> convertResponse = convertToResourceInstance(data);
             if (convertResponse.isRight()) {
                 BeEcompErrorManager.getInstance().logBeSystemError(RESOURCE_INSTANCE_UPDATE_RESOURCE_INSTANCE);
@@ -317,7 +313,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             String userId = request.getHeader(Constants.USER_ID_HEADER);
 
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
@@ -363,12 +358,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                             ComponentTypeEnum.SERVICE_PARAM_NAME,
                             ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
 
         try {
             log.debug(START_HANDLE_REQUEST_OF, url);
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
@@ -414,7 +408,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        Response response = null;
         loggerSupportability.log(LoggerSupportabilityActions.ASSOCIATE_RI_TO_RI, StatusCode.STARTED,"Starting to associate RI To RI for component {} ",componentId + " by " +  userId );
         try {
 
@@ -524,10 +517,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             String userId = request.getHeader(Constants.USER_ID_HEADER);
-
             String data = new String(bytes);
 
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
@@ -599,7 +590,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                 return buildErrorResponse(errorWrapper.getInnerElement());
         }
         log.debug(START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS, propertiesToUpdate);
-        
+
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
@@ -664,7 +655,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                 return buildErrorResponse(errorWrapper.getInnerElement());
         }
         log.debug(START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS, inputsToUpdate);
-        
+
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
@@ -786,7 +777,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                     value = Constants.USER_ID_HEADER) String userId,
             @Context final HttpServletRequest request) {
 
-        
+
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_PROPERTIES, StatusCode.STARTED,"Starting to delete Resource Instance Property for component {} ",componentId + " by " +  userId );
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -842,10 +833,8 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             }
 
             String userId = request.getHeader(Constants.USER_ID_HEADER);
-
             String data = new String(bytes);
 
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
@@ -918,7 +907,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             log.debug(START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS, property);
 
-            
+
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
@@ -999,7 +988,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(GET_START_HANDLE_REQUEST_OF, url);
 
@@ -1027,13 +1016,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @PathParam("capabilityName") final String capabilityName, @PathParam("ownerId") final String ownerId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(GET_START_HANDLE_REQUEST_OF, url);
 
         try {
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-
             List<ComponentInstanceProperty> componentInstancePropertiesById = componentInstanceBusinessLogic.getComponentInstanceCapabilityPropertiesById(containerComponentType, containerComponentId, componentInstanceUniqueId,
                     capabilityType, capabilityName, ownerId, userId);
 
@@ -1168,16 +1155,14 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                     schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
                             ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
         try {
             log.debug(START_HANDLE_REQUEST_OF, url);
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
-            String userId = request.getHeader(Constants.USER_ID_HEADER);
             Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceBusinessLogic.deleteServiceProxy();
 
             if (actionResponse.isRight()) {
@@ -1209,15 +1194,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                     schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
                             ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
-        
+
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         try {
-
-            String userId = request.getHeader(Constants.USER_ID_HEADER);
-
-            ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
@@ -1260,7 +1241,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @PathParam("componentId") final String componentId, @PathParam("relationId") final String relationId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(GET_START_HANDLE_REQUEST_OF, url);
         try {
@@ -1332,8 +1313,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         if (convertStatus.isRight()) {
             throw new ByActionStatusComponentException(convertStatus.right().value());
         }
-        RequirementCapabilityRelDef requirementCapabilityRelDef = convertStatus.left().value();
-        return requirementCapabilityRelDef;
+        return convertStatus.left().value();
     }
 
     public <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
@@ -1376,11 +1356,10 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         if (newComponentInstanceId == null){
             return  buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.MISSING_NEW_COMPONENT_INSTANCE));
         }
-        
+
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         if (componentInstanceBusinessLogic == null) {
             log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
@@ -1472,7 +1451,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
 
             if (componentInstanceBusinessLogic == null) {
-                log.error("Unsupported component type {}", containerComponentType);
+                log.error(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
 
@@ -1480,7 +1459,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             if (convertResponse.isRight()) {
                 BeEcompErrorManager.getInstance().logBeSystemError("Resource Instance - batchDeleteResourceInstances");
-                log.error("Failed to convert received data to BE format.");
+                log.error(FAILED_TO_CONVERT_RECEIVED_DATA_TO_BE_FORMAT);
                 return buildErrorResponse(convertResponse.right().value());
             }
 
@@ -1520,7 +1499,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @Parameter(description = "RelationshipInfo", required = true) String data,
             @Context final HttpServletRequest request) {
-        
+
 
         try {
             if (data == null || data.length() == 0) {
@@ -1531,7 +1510,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
 
             if (componentInstanceBusinessLogic == null) {
-                log.debug("Unsupported component type {}", containerComponentType);
+                log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
 
