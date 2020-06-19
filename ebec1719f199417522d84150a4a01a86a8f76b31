@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "166a3f1d_e8d0c857",
+        "filename": "common/onap-tosca-datatype/src/main/java/org/onap/sdc/tosca/datatypes/model/Constraint.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-19T08:34:38Z",
+      "side": 1,
+      "message": "avoid repetition of @Setter, move it to class scope, like you have in other file,\nany method present in class override default Lombok implementation.",
+      "range": {
+        "startLine": 33,
+        "startChar": 2,
+        "endLine": 54,
+        "endChar": 0
+      },
+      "revId": "ebec1719f199417522d84150a4a01a86a8f76b31",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
