@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,8 +29,8 @@ import org.slf4j.MDC;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
+import java.util.function.LongSupplier;
 
 import static org.openecomp.sdc.action.ActionConstants.*;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.*;
@@ -38,254 +38,198 @@ import static org.openecomp.sdc.action.types.ActionLogResponseCode.*;
 
 public class ActionUtil {
 
-  private static final String UTC_DATE_FORMAT = "dd MMM yyyy kk:mm:ss z";
-  private static final String LOG_UTC_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    private static final String UTC_DATE_FORMAT = "dd MMM yyyy kk:mm:ss z";
+    private static final String LOG_UTC_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    private static final ActionLogResponseCode defaultResponseCode = INTERNAL_SERVER_ERROR;
+    private static final Map<String, ActionLogResponseCode> errorCodeMap = initErrorCodeMap();
+    private static final EnumMap<CategoryLogLevel, String> errorTypeMap = initErrorTypeMap();
 
-  /**
-   * Get Current Timestamp in UTC format.
-   *
-   * @return Current Timestamp in UTC format
-   */
-  public static Date getCurrentTimeStampUtc() {
-    return Date.from(java.time.ZonedDateTime.now(ZoneOffset.UTC).toInstant());
-  }
-
-  /**
-   * Convert timestamp to UTC format date string.
-   *
-   * @param timeStamp UTC timestamp to be converted to the UTC Date format
-   * @return UTC formatted Date string from timestamp
-   */
-  public static String getUtcDateStringFromTimestamp(Date timeStamp) {
-    DateFormat df = new SimpleDateFormat(UTC_DATE_FORMAT);
-    df.setTimeZone(TimeZone.getTimeZone("GMT"));
-    return df.format(timeStamp);
-  }
-
-  /**
-   * Convert timestamp to UTC format date string.
-   *
-   * @param timeStamp UTC timestamp to be converted to the UTC Date format
-   * @return UTC formatted Date string from timestamp
-   */
-  public static String getLogUtcDateStringFromTimestamp(Date timeStamp) {
-    DateFormat df = new SimpleDateFormat(LOG_UTC_DATE_FORMAT);
-    df.setTimeZone(TimeZone.getTimeZone("GMT"));
-    return df.format(timeStamp);
-  }
-
-  /**
-   * Method to set up specific attributes MDC for the current logging operation.
-   *
-   * @param subOperation Request Name
-   */
-  public static void actionLogPreProcessor(ActionSubOperation subOperation, String targetEntity) {
-    MDC.put(BEGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
-    if (subOperation != null) {
-      MDC.put(TARGET_SERVICE_NAME, subOperation.name());
+    private static Map<String, ActionLogResponseCode> initErrorCodeMap() {
+        Map<String, ActionLogResponseCode> map = new HashMap<>();
+        map.put(ACTION_REQUEST_INVALID_GENERIC_CODE, INVALID_REQUEST_PARAM);
+        map.put(ACTION_AUTHENTICATION_ERR_CODE, INTERNAL_SERVER_ERROR);
+        map.put(ACTION_AUTHORIZATION_ERR_CODE, MISSING_AUTHORIZATION);
+        map.put(ACTION_INVALID_INSTANCE_ID_CODE, MISSING_INSTANCE_ID_HEADER);
+        map.put(ACTION_INVALID_REQUEST_ID_CODE, MISSING_REQUEST_ID_HEADER);
+        map.put(ACTION_INVALID_PARAM_CODE, INVALID_REQUEST_PARAM);
+        map.put(ACTION_INVALID_REQUEST_BODY_CODE, MISSING_REQUEST_BODY);
+        map.put(ACTION_UPDATE_NOT_ALLOWED_CODE_NAME, ACTION_NAME_UPDATE_NOT_ALLOWED);
+        map.put(ACTION_CHECKOUT_ON_LOCKED_ENTITY, CHECKOUT_ON_LOCKED_ENTITY);
+        map.put(ACTION_ENTITY_UNIQUE_VALUE_ERROR, ACTION_NAME_ALREADY_EXISTS);
+        map.put(ACTION_INVALID_SEARCH_CRITERIA, INVALID_SEARCH_FILTER_CRITERIA);
+        map.put(ACTION_MULT_SEARCH_CRITERIA, MULTIPLE_FILTER_CRITERIA_NOT_SUPPORTED);
+        map.put(ACTION_UPDATE_ON_UNLOCKED_ENTITY, UPDATE_ON_UNLOCKED_ENTITY);
+        map.put(ACTION_UPDATE_INVALID_VERSION, INVALID_REQUESTED_VERSION);
+        map.put(ACTION_UPDATE_NOT_ALLOWED_CODE, UPDATE_NOT_ALLOWED);
+        map.put(ACTION_CHECKIN_ON_UNLOCKED_ENTITY, CHECKIN_ON_UNLOCKED_ENTITY);
+        map.put(ACTION_SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED, SUBMIT_ON_FINAL_ENTITY);
+        map.put(ACTION_SUBMIT_LOCKED_ENTITY_NOT_ALLOWED, SUBMIT_ON_LOCKED_ENTITY_OTHER_USER);
+        map.put(ACTION_UNDO_CHECKOUT_ON_UNLOCKED_ENTITY, UNDO_CHECKOUT_ON_UNLOCKED_ENTITY);
+        map.put(ACTION_NOT_LOCKED_CODE, ACTION_NOT_LOCKED);
+        map.put(ACTION_ARTIFACT_CHECKSUM_ERROR_CODE, CHECKSUM_ERROR);
+        map.put(ACTION_ARTIFACT_TOO_BIG_ERROR_CODE, ARTIFACT_TOO_BIG);
+        map.put(ACTION_ARTIFACT_ALREADY_EXISTS_CODE, ARTIFACT_ALREADY_EXISTS);
+        map.put(ACTION_ARTIFACT_UPDATE_READ_ONLY, ARTIFACT_UPDATE_READ_ONLY);
+        map.put(ACTION_ARTIFACT_DELETE_READ_ONLY, ARTIFACT_DELETE_READ_ONLY);
+        map.put(ACTION_ARTIFACT_INVALID_PROTECTION_CODE, ARTIFACT_PROTECTION_INVALID);
+        map.put(ACTION_ARTIFACT_INVALID_NAME_CODE, ARTIFACT_NAME_INVALID);
+        map.put(ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER, UPDATE_ON_LOCKED_ENTITY);
+        map.put(ACTION_CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER, CHECKIN_ON_LOCKED_ENTITY_OTHER_USER);
+        map.put(ACTION_CHECKOUT_ON_LOCKED_ENTITY_OTHER_USER, CHECKOUT_ON_LOCKED_ENTITY);
+        map.put(ACTION_UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER, UNDO_CHECKOUT_ON_LOCKED_ENTITY);
+        map.put(ACTION_ENTITY_NOT_EXIST_CODE, ACTION_NOT_FOUND);
+        map.put(ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE, ARTIFACT_NOT_FOUND);
+        map.put(ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER_CODE, DELETE_ARTIFACT_ON_LOCKED_ENTITY);
+        map.put(ACTION_DELETE_ON_LOCKED_ENTITY_CODE, DELETE_ON_LOCKED_ENTITY_OTHER_USER);
+        map.put(ACTION_INTERNAL_SERVER_ERR_CODE, INTERNAL_SERVER_ERROR);
+        map.put(ACTION_QUERY_FAILURE_CODE, QUERY_FAILURE);
+        return map;
     }
 
-    MDC.put(TARGET_ENTITY, targetEntity);
-  }
-
-  /**
-   * Method to enhance the MDC after the logging operation for Metrics and Audit logs.
-   *
-   * @param statusCode Response code for the current operation
-   */
-  public static void actionLogPostProcessor(ResponseStatus statusCode) {
-    actionLogPostProcessor(statusCode, false);
-  }
-
-  public static void actionLogPostProcessor(ResponseStatus statusCode, boolean isServiceMetricLog) {
-    actionLogPostProcessor(statusCode, null, isServiceMetricLog);
-  }
-
-  public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
-                                            boolean isServiceMetricLog) {
-    actionLogPostProcessor(statusCode, responseCode, null, isServiceMetricLog);
-  }
-
-  /**
-   * Action log post processor.
-   *
-   * @param statusCode          the status code
-   * @param responseCode        the response code
-   * @param responseDescription the response description
-   * @param isServiceMetricLog  the is service metric log
-   */
-  public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
-                                            String responseDescription,
-                                            boolean isServiceMetricLog) {
-    MDC.put(STATUS_CODE, statusCode.name());
-    if (responseCode != null) {
-      int logResponseCode = getLogResponseCode(responseCode);
-      MDC.put(RESPONSE_CODE, Integer.toString(logResponseCode));
+    private static EnumMap<CategoryLogLevel, String> initErrorTypeMap() {
+        EnumMap<CategoryLogLevel, String> map = new EnumMap<>(CategoryLogLevel.class);
+        map.put(CategoryLogLevel.WARN, "W");
+        map.put(CategoryLogLevel.ERROR, "E");
+        map.put(CategoryLogLevel.FATAL, "F");
+        return map;
     }
-    MDC.put(RESPONSE_DESCRIPTION, responseDescription);
-    long beginTimestamp;
-    if (isServiceMetricLog) {
-      beginTimestamp = Long.valueOf(MDC.get(SERVICE_METRIC_BEGIN_TIMESTAMP));
-    } else {
-      beginTimestamp = Long.valueOf(MDC.get(BEGIN_TIMESTAMP));
-    }
-    long endTimestamp = System.currentTimeMillis();
-    MDC.put(BEGIN_TIMESTAMP, getLogUtcDateStringFromTimestamp(new Date(beginTimestamp)));
-    MDC.put(END_TIMESTAMP, getLogUtcDateStringFromTimestamp(new Date(endTimestamp)));
-    MDC.put(ELAPSED_TIME, String.valueOf(endTimestamp - beginTimestamp));
-  }
 
-  /**
-   * Action Library Error logging Helper.
-   *
-   * @param errorCategory    WARN or ERROR
-   * @param errorCode        Action Library exception code
-   * @param errorDescription Description of the error
-   */
-  public static void actionErrorLogProcessor(CategoryLogLevel errorCategory, String errorCode,
-                                             String errorDescription) {
-    MDC.put(ERROR_CATEGORY, errorCategory.name());
-    if (errorCode != null) {
-      String errorType = "";
-      switch (errorCategory) {
-        case WARN:
-          errorType = "W";
-          break;
-        case ERROR:
-          errorType = "E";
-          break;
-        case FATAL:
-          errorType = "F";
-          break;
-        default:
-      }
-      MDC.put(ERROR_CODE, getLogResponseCode(errorCode) + errorType);
+    private ActionUtil() {
     }
-    MDC.put(ERROR_DESCRIPTION, errorDescription);
-  }
 
-  /**
-   * Method to convert Action Library exception codes to OPENECOMP Audit codes in {@link
-   * ActionLogResponseCode} e.g: ACT1060 --> 201
-   *
-   * @param errorCode Action library exception code
-   * @return Audit log code corresponding to the Action Library exception
-   */
-  public static int getLogResponseCode(String errorCode) {
-    ActionLogResponseCode responseCode = INTERNAL_SERVER_ERROR;
-    switch (errorCode) {
-      case ACTION_REQUEST_INVALID_GENERIC_CODE:
-        responseCode = INVALID_REQUEST_PARAM;
-        break;
-      case ACTION_AUTHENTICATION_ERR_CODE:
-        break;
-      case ACTION_AUTHORIZATION_ERR_CODE:
-        responseCode = MISSING_AUTHORIZATION;
-        break;
-      case ACTION_INVALID_INSTANCE_ID_CODE:
-        responseCode = MISSING_INSTANCE_ID_HEADER;
-        break;
-      case ACTION_INVALID_REQUEST_ID_CODE:
-        responseCode = MISSING_REQUEST_ID_HEADER;
-        break;
-      case ACTION_INVALID_PARAM_CODE:
-        responseCode = INVALID_REQUEST_PARAM;
-        break;
-      case ACTION_INVALID_REQUEST_BODY_CODE:
-        responseCode = MISSING_REQUEST_BODY;
-        break;
-      case ACTION_UPDATE_NOT_ALLOWED_CODE_NAME:
-        responseCode = ACTION_NAME_UPDATE_NOT_ALLOWED;
-        break;
-      case ACTION_CHECKOUT_ON_LOCKED_ENTITY:
-        responseCode = CHECKOUT_ON_LOCKED_ENTITY;
-        break;
-      case ACTION_ENTITY_UNIQUE_VALUE_ERROR:
-        responseCode = ACTION_NAME_ALREADY_EXISTS;
-        break;
-      case ACTION_INVALID_SEARCH_CRITERIA:
-        responseCode = INVALID_SEARCH_FILTER_CRITERIA;
-        break;
-      case ACTION_MULT_SEARCH_CRITERIA:
-        responseCode = MULTIPLE_FILTER_CRITERIA_NOT_SUPPORTED;
-        break;
-      case ACTION_UPDATE_ON_UNLOCKED_ENTITY:
-        responseCode = UPDATE_ON_UNLOCKED_ENTITY;
-        break;
-      case ACTION_UPDATE_INVALID_VERSION:
-        responseCode = INVALID_REQUESTED_VERSION;
-        break;
-      case ACTION_UPDATE_NOT_ALLOWED_CODE:
-        responseCode = UPDATE_NOT_ALLOWED;
-        break;
-      case ACTION_CHECKIN_ON_UNLOCKED_ENTITY:
-        responseCode = CHECKIN_ON_UNLOCKED_ENTITY;
-        break;
-      case ACTION_SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED:
-        responseCode = SUBMIT_ON_FINAL_ENTITY;
-        break;
-      case ACTION_SUBMIT_LOCKED_ENTITY_NOT_ALLOWED:
-        responseCode = SUBMIT_ON_LOCKED_ENTITY_OTHER_USER;
-        break;
-      case ACTION_UNDO_CHECKOUT_ON_UNLOCKED_ENTITY:
-        responseCode = UNDO_CHECKOUT_ON_UNLOCKED_ENTITY;
-        break;
-      case ACTION_NOT_LOCKED_CODE:
-        responseCode = ACTION_NOT_LOCKED;
-        break;
-      case ACTION_ARTIFACT_CHECKSUM_ERROR_CODE:
-        responseCode = CHECKSUM_ERROR;
-        break;
-      case ACTION_ARTIFACT_TOO_BIG_ERROR_CODE:
-        responseCode = ARTIFACT_TOO_BIG;
-        break;
-      case ACTION_ARTIFACT_ALREADY_EXISTS_CODE:
-        responseCode = ARTIFACT_ALREADY_EXISTS;
-        break;
-      case ACTION_ARTIFACT_UPDATE_READ_ONLY:
-        responseCode = ARTIFACT_UPDATE_READ_ONLY;
-        break;
-      case ACTION_ARTIFACT_DELETE_READ_ONLY:
-        responseCode = ARTIFACT_DELETE_READ_ONLY;
-        break;
-      case ACTION_ARTIFACT_INVALID_PROTECTION_CODE:
-        responseCode = ARTIFACT_PROTECTION_INVALID;
-        break;
-      case ACTION_ARTIFACT_INVALID_NAME_CODE:
-        responseCode = ARTIFACT_NAME_INVALID;
-        break;
-      case ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER:
-        responseCode = UPDATE_ON_LOCKED_ENTITY;
-        break;
-      case ACTION_CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER:
-        responseCode = CHECKIN_ON_LOCKED_ENTITY_OTHER_USER;
-        break;
-      case ACTION_CHECKOUT_ON_LOCKED_ENTITY_OTHER_USER:
-        responseCode = CHECKOUT_ON_LOCKED_ENTITY;
-        break;
-      case ACTION_UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER:
-        responseCode = UNDO_CHECKOUT_ON_LOCKED_ENTITY;
-        break;
-      case ACTION_ENTITY_NOT_EXIST_CODE:
-        responseCode = ACTION_NOT_FOUND;
-        break;
-      case ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE:
-        responseCode = ARTIFACT_NOT_FOUND;
-        break;
-      case ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER_CODE:
-        responseCode = DELETE_ARTIFACT_ON_LOCKED_ENTITY;
-        break;
-      case ACTION_DELETE_ON_LOCKED_ENTITY_CODE:
-        responseCode = DELETE_ON_LOCKED_ENTITY_OTHER_USER;
-        break;
-      case ACTION_INTERNAL_SERVER_ERR_CODE:
-        responseCode = INTERNAL_SERVER_ERROR;
-        break;
-      case ACTION_QUERY_FAILURE_CODE:
-        responseCode = QUERY_FAILURE;
-        break;
-      default:
+    /**
+     * Get Current Timestamp in UTC format.
+     *
+     * @return Current Timestamp in UTC format
+     */
+    public static Date getCurrentTimeStampUtc() {
+        return Date.from(java.time.ZonedDateTime.now(ZoneOffset.UTC).toInstant());
     }
-    return responseCode.getValue();
-  }
+
+    /**
+     * Convert timestamp to UTC format date string.
+     *
+     * @param timeStamp UTC timestamp to be converted to the UTC Date format
+     * @return UTC formatted Date string from timestamp
+     */
+    public static String getUtcDateStringFromTimestamp(Date timeStamp) {
+        DateFormat df = new SimpleDateFormat(UTC_DATE_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return df.format(timeStamp);
+    }
+
+    /**
+     * Convert timestamp to UTC format date string.
+     *
+     * @param timeStamp UTC timestamp to be converted to the UTC Date format
+     * @return UTC formatted Date string from timestamp
+     */
+    public static String getLogUtcDateStringFromTimestamp(Date timeStamp) {
+        DateFormat df = new SimpleDateFormat(LOG_UTC_DATE_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return df.format(timeStamp);
+    }
+
+    /**
+     * Method to set up specific attributes MDC for the current logging operation.
+     *
+     * @param subOperation Request Name
+     */
+    public static void actionLogPreProcessor(ActionSubOperation subOperation, String targetEntity) {
+        MDC.put(BEGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+        if (subOperation != null) {
+            MDC.put(TARGET_SERVICE_NAME, subOperation.name());
+        }
+
+        MDC.put(TARGET_ENTITY, targetEntity);
+    }
+
+    /**
+     * Method to enhance the MDC after the logging operation for Metrics and Audit logs.
+     *
+     * @param statusCode Response code for the current operation
+     */
+    public static void actionLogPostProcessor(ResponseStatus statusCode) {
+        actionLogPostProcessor(statusCode, false);
+    }
+
+    public static void actionLogPostProcessor(ResponseStatus statusCode, boolean isServiceMetricLog) {
+        actionLogPostProcessor(statusCode, null, isServiceMetricLog);
+    }
+
+    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
+                                              boolean isServiceMetricLog) {
+        actionLogPostProcessor(statusCode, responseCode, null, isServiceMetricLog);
+    }
+
+    /**
+     * Action log post processor.
+     *
+     * @param statusCode          the status code
+     * @param responseCode        the response code
+     * @param responseDescription the response description
+     * @param isServiceMetricLog  the is service metric log
+     */
+    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
+                                              String responseDescription,
+                                              boolean isServiceMetricLog) {
+        actionLogPostProcessor(statusCode, responseCode, responseDescription, isServiceMetricLog, System::currentTimeMillis);
+    }
+
+    /**
+     * Action log post processor.
+     *
+     * @param statusCode          the status code
+     * @param responseCode        the response code
+     * @param responseDescription the response description
+     * @param isServiceMetricLog  the is service metric log
+     */
+    public static void actionLogPostProcessor(ResponseStatus statusCode, String responseCode,
+                                              String responseDescription,
+                                              boolean isServiceMetricLog,
+                                              LongSupplier getCurrentTime) {
+        MDC.put(STATUS_CODE, statusCode.name());
+        if (responseCode != null) {
+            int logResponseCode = getLogResponseCode(responseCode);
+            MDC.put(RESPONSE_CODE, Integer.toString(logResponseCode));
+        }
+        MDC.put(RESPONSE_DESCRIPTION, responseDescription);
+        long beginTimestamp;
+        if (isServiceMetricLog) {
+            beginTimestamp = Long.parseLong(MDC.get(SERVICE_METRIC_BEGIN_TIMESTAMP));
+        } else {
+            beginTimestamp = Long.parseLong(MDC.get(BEGIN_TIMESTAMP));
+        }
+        long endTimestamp = getCurrentTime.getAsLong();
+        MDC.put(BEGIN_TIMESTAMP, getLogUtcDateStringFromTimestamp(new Date(beginTimestamp)));
+        MDC.put(END_TIMESTAMP, getLogUtcDateStringFromTimestamp(new Date(endTimestamp)));
+        MDC.put(ELAPSED_TIME, String.valueOf(endTimestamp - beginTimestamp));
+    }
+
+    /**
+     * Action Library Error logging Helper.
+     *
+     * @param errorCategory    WARN or ERROR
+     * @param errorCode        Action Library exception code
+     * @param errorDescription Description of the error
+     */
+    public static void actionErrorLogProcessor(CategoryLogLevel errorCategory, String errorCode,
+                                               String errorDescription) {
+        MDC.put(ERROR_CATEGORY, errorCategory.name());
+        if (errorCode != null) {
+            MDC.put(ERROR_CODE, getLogResponseCode(errorCode) + (errorTypeMap.getOrDefault(errorCategory, "")));
+        }
+        MDC.put(ERROR_DESCRIPTION, errorDescription);
+    }
+
+    /**
+     * Method to convert Action Library exception codes to OPENECOMP Audit codes in {@link
+     * ActionLogResponseCode} e.g: ACT1060 --> 201
+     *
+     * @param errorCode Action library exception code
+     * @return Audit log code corresponding to the Action Library exception
+     */
+    public static int getLogResponseCode(String errorCode) {
+        return errorCodeMap.getOrDefault(errorCode, defaultResponseCode).getValue();
+    }
 }
