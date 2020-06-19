@@ -93,6 +93,30 @@
       "revId": "b3953478a0826cdcd5313c7d88a6d5c649c56ea3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e76cd7ce_fb45e75e",
+        "filename": "common/onap-common-configuration-management/onap-configuration-management-core/src/main/java/org/onap/config/type/ConfigurationQuery.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2020-06-19T08:54:38Z",
+      "side": 1,
+      "message": "I was wrong, indeed the @Getter will generate the same method. I will use the annotation",
+      "parentUuid": "1bf77bad_3595562f",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 91,
+        "endChar": 5
+      },
+      "revId": "b3953478a0826cdcd5313c7d88a6d5c649c56ea3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
