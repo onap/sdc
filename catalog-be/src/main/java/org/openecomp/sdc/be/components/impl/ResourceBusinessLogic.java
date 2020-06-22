@@ -1389,8 +1389,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		final String nameWithouNamespacePrefix = nodeTypefullName.substring(nodeTypeNamePrefix.length());
 		final String[] findTypes = nameWithouNamespacePrefix.split("\\.");
-		final String resourceType = findTypes[0];
-		return nameWithouNamespacePrefix.substring(resourceType.length());
+
+		if(findTypes.length > 1){
+			final String resourceType = findTypes[0];
+			return nameWithouNamespacePrefix.substring(resourceType.length());
+		}
+		return nameWithouNamespacePrefix;
 	}
 
 	private ImmutablePair<Resource, ActionStatus> createNodeTypeResourceFromYaml(final String yamlName,
