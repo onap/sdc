@@ -178,13 +178,13 @@ public enum ToscaType {
 				try {
 					return ConstraintUtil.parseToCollection(value, new TypeReference<List<Object>>() {});
 				} catch (ConstraintValueDoNotMatchPropertyTypeException e) {
-					throw new IllegalArgumentException("Value must be a valid timestamp", e);
+					throw new IllegalArgumentException("Value must be a valid List", e);
 				}
 			case MAP:
 				try {
 					return ConstraintUtil.parseToCollection(value, new TypeReference<Map<String, Object>>() {});
 				} catch (ConstraintValueDoNotMatchPropertyTypeException e) {
-					throw new IllegalArgumentException("Value must be a valid timestamp", e);
+					throw new IllegalArgumentException("Value must be a valid Map", e);
 				}
 			default:
 				return null;
