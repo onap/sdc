@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "013d7892_973c7aa3",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/RestUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-22T14:30:41Z",
+      "side": 1,
+      "message": "I know this was not done in this change, but returning null is dangerous. An Option\u003cInteger\u003e should be returned, or Optional\u003cInteger\u003e depending on if VAVR is available in this asdctool or not.\n\nAnother (better) approach could be to return a Try\u003cInteger\u003e. The successful branch would return a Try.of(status) while the error branches would respectfully return a Try.failure(ProductDeletionException(message)) and a Try.failure(ProductDeletionException(message, exception)).\n\nThis would ensure that no matter what happens, a non-null value is always returned. Making functions total is actually a best practice.\n\nSome references:\n- https://www.baeldung.com/vavr-try\n- https://www.javadoc.io/doc/io.vavr/vavr/0.9.2/io/vavr/control/Try.html",
+      "revId": "90a1fecdbdb753f68636db9b119fda5da6c2baf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
