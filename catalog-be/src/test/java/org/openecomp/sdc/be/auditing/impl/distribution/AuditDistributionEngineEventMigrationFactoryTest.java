@@ -43,7 +43,7 @@ public class AuditDistributionEngineEventMigrationFactoryTest {
         User user = new User("firstName", "lastName", "userId", "emailAddress", "role",
             1L);
         String userName = AuditDistributionEngineEventMigrationFactory.buildUserNameExtended(user);
-        assertEquals(userName, "userId, firstName lastName, emailAddress, role");
+        assertEquals("userId, firstName lastName, emailAddress, role", userName);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class AuditDistributionEngineEventMigrationFactoryTest {
         AuditDistributionEngineEventMigrationFactory auditDistributionEngineEventMigrationFactory = new AuditDistributionEngineEventMigrationFactory(
             AuditingActionEnum.ACTIVATE_SERVICE_BY_API, commonFields, distributionTopicData,
             "consumerId", "apiKey", "envName", "role", "1");
-        assertEquals(auditDistributionEngineEventMigrationFactory.getLogMessageParams().length, 0);
-        assertEquals(auditDistributionEngineEventMigrationFactory.getLogPattern(), "");
+        assertEquals(0,auditDistributionEngineEventMigrationFactory.getLogMessageParams().length);
+        assertEquals("", auditDistributionEngineEventMigrationFactory.getLogPattern());
     }
 }
