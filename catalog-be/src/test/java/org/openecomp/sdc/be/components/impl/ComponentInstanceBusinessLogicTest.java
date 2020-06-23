@@ -1556,7 +1556,7 @@ class ComponentInstanceBusinessLogicTest {
         componentInst.setDeploymentArtifacts(component.getDeploymentArtifacts());
         return componentInst;
     }
-
+    
     // Prepare ComponentInstance & Resource objects used in createComponentInstance() tests
     private Pair<ComponentInstance, Resource> prepareResourcesForCreateComponentInstanceTest() {
         ComponentInstance instanceToBeCreated = new ComponentInstance();
@@ -1801,5 +1801,81 @@ class ComponentInstanceBusinessLogicTest {
             .addComponentInstanceToTopologyTemplate(service, originComponent, instanceToBeCreated, false, user);
         // Check graph db change was committed
         verify(janusGraphDao, times(1)).commit();
+    }
+    
+    @Test
+    void testCreateComponentInstanceServiceSubstitutionSuccess() {
+        ComponentInstance instanceToBeCreated = createServiceSubstitutionComponentInstance();
+        Service originService = createServiceSubstitutionOriginService();
+        Component serviceBaseComponent = createServiceSubstitutionServiceDerivedFromComponent();
+
+        Service updatedService = new Service();
+        updatedService.setComponentInstances(Collections.singletonList(instanceToBeCreated));
+        updatedService.setUniqueId(service.getUniqueId());
+        
+        when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(service));
+        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+            .thenReturn(Either.left(originService));
+        when(toscaOperationFacade.getLatestByToscaResourceName(eq(originService.getDerivedFromGenericType())))
+            .thenReturn(Either.left(serviceBaseComponent));
+        when(toscaOperationFacade.getToscaElement(eq(ORIGIN_COMPONENT_ID), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(originService));
+        Mockito.doNothing().when(compositionBusinessLogic).validateAndSetDefaultCoordinates(instanceToBeCreated);
+        when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.addComponentInstanceToTopologyTemplate(service, serviceBaseComponent, instanceToBeCreated, false, user))
+            .thenReturn(Either.left(new ImmutablePair<>(updatedService, COMPONENT_INSTANCE_ID)));
+        when(artifactsBusinessLogic.getArtifacts(
+                "baseComponentId", NodeTypeEnum.Resource, ArtifactGroupTypeEnum.DEPLOYMENT, null))
+            .thenReturn(Either.left(new HashMap<>()));
+        when(toscaOperationFacade
+            .addInformationalArtifactsToInstance(service.getUniqueId(), instanceToBeCreated, originService.getArtifacts()))
+            .thenReturn(StorageOperationStatus.OK);
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(COMPONENT_ID, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+
+        ComponentInstance result = componentInstanceBusinessLogic.createComponentInstance(
+            ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, instanceToBeCreated);
+        assertThat(result).isEqualTo(instanceToBeCreated);
+        assertThat(instanceToBeCreated.getComponentVersion()).isEqualTo(originService.getVersion());
+        assertThat(instanceToBeCreated.getIcon()).isEqualTo(originService.getIcon());
+        verify(compositionBusinessLogic, times(1)).validateAndSetDefaultCoordinates(instanceToBeCreated);
+        verify(toscaOperationFacade, times(1))
+            .addComponentInstanceToTopologyTemplate(service, serviceBaseComponent, instanceToBeCreated, false, user);
+        // Check graph db change was committed
+        verify(janusGraphDao, times(1)).commit();
+    }
+    
+    private ComponentInstance createServiceSubstitutionComponentInstance() {
+        final ComponentInstance instanceToBeCreated = new ComponentInstance();
+        instanceToBeCreated.setName(COMPONENT_INSTANCE_NAME);
+        instanceToBeCreated.setUniqueId(COMPONENT_INSTANCE_ID);
+        instanceToBeCreated.setComponentUid(ORIGIN_COMPONENT_ID);
+        instanceToBeCreated.setOriginType(OriginTypeEnum.ServiceSubstitution);
+        
+        return instanceToBeCreated;
+    }
+    
+    private Service createServiceSubstitutionOriginService() {
+        final Service originComponent = new Service();
+        originComponent.setLifecycleState(LifecycleStateEnum.CERTIFIED);
+        originComponent.setVersion(ORIGIN_COMPONENT_VERSION);
+        originComponent.setIcon(ICON_NAME);
+        originComponent.setDerivedFromGenericType("org.openecomp.resource.abstract.nodes.service");
+        originComponent.setName("myService");
+        return originComponent;
+    }
+    
+    
+    private Component createServiceSubstitutionServiceDerivedFromComponent() {
+        final Resource component = new Resource();
+        component.setLifecycleState(LifecycleStateEnum.CERTIFIED);
+        component.setVersion(ORIGIN_COMPONENT_VERSION);
+        component.setIcon(ICON_NAME);
+        component.setToscaResourceName("org.openecomp.resource.abstract.nodes.service");
+        component.setUniqueId("baseComponentId");
+        return component;
     }
 }

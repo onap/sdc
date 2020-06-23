@@ -42,6 +42,7 @@ export * from './models/componentsInstances/componentInstance';
 export * from './models/componentsInstances/resourceInstance';
 export * from './models/componentsInstances/serviceInstance';
 export * from './models/componentsInstances/serviceProxyInstance';
+export * from './models/componentsInstances/serviceSubstitutionInstance';
 export * from './models/graph/zones/group-instance';
 export * from './models/graph/zones/policy-instance';
 export * from './models/graph/zones/zone';
@@ -83,6 +84,7 @@ export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-configuration';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-service';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-service-proxy';
+export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-service-substitution';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-ucpe-cp';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-ucpe';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-vf';

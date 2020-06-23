@@ -27,7 +27,8 @@ public enum OriginTypeEnum {
     CVFC("CVFC", "CVFC (Complex Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE, false),
     PNF("PNF", "PNF (Physical Network Function)", "resource instance", ComponentTypeEnum.RESOURCE, false),
     CR("CR", "CR (Complex Resource)", "resource instance", ComponentTypeEnum.RESOURCE, false),
-    ServiceProxy("Service Proxy", "Service Proxy", "service proxy", ComponentTypeEnum.RESOURCE, false);
+    ServiceProxy("Service Proxy", "Service Proxy", "service proxy", ComponentTypeEnum.RESOURCE, false),
+    ServiceSubstitution("Service Substitution", "Service Substitution", "service substitution", ComponentTypeEnum.RESOURCE, false);
 
     private String value;
     private String displayValue;

@@ -39,6 +39,7 @@ export class ComponentType {
     static RESOURCE = 'RESOURCE';
     static RESOURCE_INSTANCE = 'RESOURCE_INSTANCE';
     static SERVICE_PROXY = 'ServiceProxy'
+    static SERVICE_SUBSTITUTION = 'ServiceSubstitution'
 }
 
 export class ServerTypeUrl {

@@ -50,7 +50,7 @@ public enum GraphPropertyEnum {
     LAST_LOGIN_TIME("lastLoginTime", Long.class, false, false),
     //used for category (old format, no json for categories)
     ICONS("icons", String.class, false, false),
-
+    USE_SUBSTITUTION_FOR_NESTED_SERVICES("useServiceSubstitutionForNestedServices", Boolean.class, false, false),
     //Archive/Restore
     IS_ARCHIVED("isArchived", Boolean.class, false, true),
     IS_VSP_ARCHIVED("isVspArchived", Boolean.class, false, true),

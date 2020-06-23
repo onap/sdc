@@ -110,7 +110,7 @@ export class InfoTabComponent implements OnInit, OnDestroy {
                     }, onCancel);
             };
 
-            if (this.component.isService() || this.component.isServiceProxy()) {
+            if (this.component.isService() || this.component.isServiceProxy() || this.component.isServiceSubstitution()) {
                 this.serviceService.checkComponentInstanceVersionChange(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId,
                     this.component.uniqueId, newVersionValue).subscribe((pathsToDelete:string[]) => {
                     if (pathsToDelete && pathsToDelete.length) {

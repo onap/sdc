@@ -622,7 +622,7 @@ export class CompositionGraphComponent implements AfterViewInit {
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_START, (dragElement, dragComponent) => {
             this.dragElement = dragElement;
-            this.dragComponent = ComponentInstanceFactory.createComponentInstanceFromComponent(dragComponent);
+            this.dragComponent = ComponentInstanceFactory.createComponentInstanceFromComponent(dragComponent, this.workspaceService.metadata.categories[0].useServiceSubstitutionForNestedServices);
         });
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_ACTION, (position: Point) => {

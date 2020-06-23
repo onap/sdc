@@ -116,8 +116,7 @@ export class CompositionGraphPaletteUtils {
      * @param component
      */
     private _createComponentInstanceOnGraphFromPaletteComponent(cy:Cy.Instance, fullComponent:LeftPaletteComponent, event:DragEvent) {
-
-        let componentInstanceToCreate:ComponentInstance = ComponentInstanceFactory.createComponentInstanceFromComponent(fullComponent); 
+        let componentInstanceToCreate:ComponentInstance = ComponentInstanceFactory.createComponentInstanceFromComponent(fullComponent, this.workspaceService.metadata.categories[0].useServiceSubstitutionForNestedServices); 
         let cytoscapePosition:Cy.Position = this.commonGraphUtils.getCytoscapeNodePosition(cy, event);
         componentInstanceToCreate.posX = cytoscapePosition.x;
         componentInstanceToCreate.posY = cytoscapePosition.y;

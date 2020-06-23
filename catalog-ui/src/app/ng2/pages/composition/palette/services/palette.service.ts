@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { LeftPaletteComponent, LeftPaletteMetadataTypes } from 'app/models/components/displayComponent';
 import { GroupMetadata } from 'app/models/group-metadata';
 import { PolicyMetadata } from 'app/models/policy-metadata';
+import { IComponentMetadata } from 'app/models/component-metadata';
 import { SdcConfigToken } from 'app/ng2/config/sdc-config.config';
 import { ISdcConfig } from 'app/ng2/config/sdc-config.config.factory';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
@@ -75,10 +76,20 @@ export class CompositionPaletteService {
 
     private combineResoponses(resInstances: object, resGrouops: object, resPolicies: object) {
         const retValObject = {};
-        // Generic will be the 1st category in the left Pallete
+        
         if (resInstances['Generic']) {
-            retValObject['Generic'] = resInstances['Generic'];
-        }
+	        if (this.isSubstitutionForNestedServices()) {
+	            const serviceGroup = this.createServiceGroup(resInstances);
+	            if (serviceGroup) {
+	                retValObject['Service'] = serviceGroup;
+	            }
+	        }
+	        else {
+	            // Generic will be the 1st category in the left Pallete
+	        	retValObject['Generic'] = resInstances['Generic'];
+	        }
+	    }
+        
         // Add all other categories
         for (const category in resInstances) {
             if (category === 'Generic') {
@@ -95,4 +106,25 @@ export class CompositionPaletteService {
 
         return retValObject;
     }
+    
+    private isSubstitutionForNestedServices(): boolean {
+	    return this.workspaceService.metadata.categories[0].useServiceSubstitutionForNestedServices;
+	}
+    
+    private createServiceGroup(resInstances: object): object {
+	    const servicesList = resInstances['Generic']['Generic'];
+	    if (Array.isArray(servicesList) && servicesList.length > 0) {
+	        delete resInstances['Generic']['Generic'];
+	        return servicesList.reduce(function (map, component) {
+	            if (map[component.categories[0].name]) {
+	                map[component.categories[0].name].push(component);
+	            } else {
+	                map[component.categories[0].name] = [component];
+	            }
+	            return map;
+	        }, {});
+	    }
+	    return null;
+	}
+	
 }

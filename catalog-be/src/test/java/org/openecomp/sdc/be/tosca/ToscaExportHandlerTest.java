@@ -997,6 +997,38 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         result = Deencapsulation.invoke(testSubject, "createProxyNodeTypes", componentCache, container);
         Assert.assertNotNull(result);
     }
+    
+    @Test
+    public void testCreateServiceSubstitutionNodeTypes() throws Exception {
+        Map<String, Component> componentCache = new HashMap<>();
+              
+        Component referencedService = getNewService();
+        referencedService.setInvariantUUID("uuid");
+        referencedService.setUUID("uuid");
+        referencedService.setUniqueId("targetModelUid");
+        referencedService.setDescription("desc");
+        componentCache.put("targetModelUid", referencedService);
+
+        Component containerService = new Service();
+        List<ComponentInstance> componentInstances = new ArrayList<>();
+        ComponentInstance instance = new ComponentInstance();
+        instance.setOriginType(OriginTypeEnum.ServiceSubstitution);
+        instance.setSourceModelUid("targetModelUid");
+
+        componentInstances.add(instance);
+        containerService.setComponentInstances(componentInstances);
+        
+        Mockito.when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+            .thenReturn(Either.left(Collections.emptyMap()));
+        Mockito.when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        Mockito.when(capabiltyRequirementConvertor.convertRequirements(any(Map.class), any(Service.class),
+            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+
+        ToscaTemplate toscaNode = new ToscaTemplate("1_1");
+
+        Deencapsulation.invoke(testSubject, "createServiceSubstitutionNodeTypes", componentCache, containerService, toscaNode);
+        Assert.assertNotNull(toscaNode.getNode_types());
+    }
 
     @Test
     public void testCreateProxyNodeTypesWhenGetLatestByNameReturnValue() {

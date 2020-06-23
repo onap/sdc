@@ -28,6 +28,7 @@ import { PolicyMetadata } from '../policy-metadata';
 import { GroupMetadata } from '../group-metadata';
 import { RequirementsGroup } from '../requirement';
 import { CapabilitiesGroup } from '../capability';
+import { IMainCategory } from '../category';
 
 export enum LeftPaletteMetadataTypes {
     Component = 'COMPONENT',
@@ -77,7 +78,6 @@ export class LeftPaletteComponent {
     }
 
     private initComponent(component: ComponentMetadata): void {
-
         this.version = component.version;
         this.uniqueId = component.uniqueId;
         this.uuid = component.uuid;

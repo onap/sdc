@@ -9,6 +9,7 @@ exports[`composition-panel component should match current snapshot of compositio
   isConfiguration={[Function Function]}
   isPNF={[Function Function]}
   selectedComponentIsServiceProxyInstance={[Function Function]}
+  selectedComponentIsServiceSubstitutionInstance={[Function Function]}
   selectedComponentIsVfcInstance={[Function Function]}
   setActive={[Function Function]}
   store={[Function Store]}
