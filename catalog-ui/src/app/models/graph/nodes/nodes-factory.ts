@@ -30,6 +30,7 @@ import {
     NodeUcpe,
     CompositionCiNodeService,
     CompositionCiNodeServiceProxy,
+    CompositionCiNodeServiceSubstitution,
     CompositionCiNodeBase,
     ComponentInstance,
     CompositionCiNodeVfc
@@ -41,10 +42,10 @@ import {Injectable} from "@angular/core";
 @Injectable()
 export class NodesFactory {
 
-    constructor(private imageCreator:ImageCreatorService) {
+    constructor(private imageCreator: ImageCreatorService) {
     }
 
-    public createNode = (instance:ComponentInstance):CompositionCiNodeBase => {
+    public createNode = (instance: ComponentInstance): CompositionCiNodeBase => {
 
         if (instance.isUcpe()) {
             return new NodeUcpe(instance, this.imageCreator);
@@ -54,6 +55,9 @@ export class NodesFactory {
         }
         if (instance.originType === ComponentType.SERVICE_PROXY) {
             return new CompositionCiNodeServiceProxy(instance, this.imageCreator);
+        }
+        if (instance.originType === ComponentType.SERVICE_SUBSTITUTION) {
+            return new CompositionCiNodeServiceSubstitution(instance, this.imageCreator);
         }
         if (instance.originType == ResourceType.VFC) {
             return new CompositionCiNodeVfc(instance, this.imageCreator);
@@ -71,11 +75,11 @@ export class NodesFactory {
         return new CompositionCiNodeVf(instance, this.imageCreator);
     };
 
-    public createModuleNode = (module:Module):ModuleNodeBase => {
+    public createModuleNode = (module: Module): ModuleNodeBase => {
         return new ModuleNodeBase(module);
     };
 
-    public createUcpeCpNode = (instance:ComponentInstance):CompositionCiNodeCp => {
+    public createUcpeCpNode = (instance: ComponentInstance): CompositionCiNodeCp => {
 
         return new CompositionCiNodeUcpeCp(instance, this.imageCreator);
     }

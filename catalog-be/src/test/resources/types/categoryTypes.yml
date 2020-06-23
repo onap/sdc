@@ -11,6 +11,14 @@ services:
     VoIP_Call_Control:
       name: "VoIP Call Control"
       icons: ['call_controll']
+    Category_With_ServiceSubstitution_True:
+      name: "Category With Service Substitution True"
+      icons: ['network_l_4']
+      useServiceSubstitutionForNestedServices: true
+    Category_With_ServiceSubstitution_False:
+      name: "Category With Service Substitution False"
+      icons: ['network_l_4']
+      useServiceSubstitutionForNestedServices: false
 resources:
   NetworkLayer23:
     name: "Network Layer 2-3"

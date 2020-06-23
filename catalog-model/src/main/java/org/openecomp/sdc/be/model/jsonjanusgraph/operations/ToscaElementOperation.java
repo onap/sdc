@@ -980,6 +980,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         category.setUniqueId((String) categoryV.property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value());
         category.setNormalizedName(categoryNormalizedName);
         category.setName((String) categoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
+        category.setUseServiceSubstitutionForNestedServices((Boolean) categoryV.property(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES.getProperty()).orElse(false));
 
         categories.add(category);
         catalogComponent.setCategories(categories);

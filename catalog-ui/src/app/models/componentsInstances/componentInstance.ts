@@ -157,13 +157,17 @@ export class ComponentInstance implements IComponentInstance{
     public isServiceProxy = ():boolean => {
         return this.originType === ComponentType.SERVICE_PROXY;
     }
+    
+    public isServiceSubstitution = ():boolean => {
+        return this.originType === ComponentType.SERVICE_SUBSTITUTION;
+    }
 
     public isVFC = ():boolean => {
         return this.originType === ResourceType.VFC;
     }
 
     public getComponentUid = ():string => {
-        return this.isServiceProxy()? this.sourceModelUid : this.componentUid;
+        return this.isServiceProxy() || this.isServiceSubstitution() ? this.sourceModelUid : this.componentUid;
     }
 
     public setInstanceRC = ():void=> {
