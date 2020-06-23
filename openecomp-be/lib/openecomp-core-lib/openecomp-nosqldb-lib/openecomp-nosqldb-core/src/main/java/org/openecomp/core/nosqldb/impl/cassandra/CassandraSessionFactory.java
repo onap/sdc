@@ -149,7 +149,7 @@ public class CassandraSessionFactory {
 
         try (FileInputStream tsf = new FileInputStream(truststorePath)) {
 
-            SSLContext ctx = SSLContext.getInstance("SSL");
+            SSLContext ctx = SSLContext.getInstance("TLS");
 
             KeyStore ts = KeyStore.getInstance("JKS");
             ts.load(tsf, trustStorePassword.toCharArray());
