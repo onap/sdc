@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7523e196_142a2087",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/TopologyTemplateValidatorExecuter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-23T13:49:02Z",
+      "side": 1,
+      "message": "Here we remove a dependency on the file system and provide a way to write a file on some output (could be in memory, in a file, in the console, ...). We achieve this by abstracting this dependency with TXTFile.",
+      "revId": "bdbfc2e460ccb561c3e174260b2908b974996d4f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11eaaf2d_6d9e70a3",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/utils/ReportManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-23T13:49:02Z",
+      "side": 0,
+      "message": "Removing this file and this logic in particular enables us to stop relying on any static mutable state. This is actually the main goal of SCD-2499.",
+      "revId": "8c6ad373281722ce410a1108c67de5f1adf350ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9469b63e_3105ea71",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/VfValidatorExecuterTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-23T13:49:02Z",
+      "side": 0,
+      "message": "Thanks to the refactoring done by this change, we don\u0027t need to provide an outputFilePath (which is set to null in this case) anymore.",
+      "revId": "8c6ad373281722ce410a1108c67de5f1adf350ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38399614_6a261503",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/tasks/artifacts/ArtifactValidationUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-23T13:49:02Z",
+      "side": 0,
+      "message": "Creation and deletion of the resulting file is now managed by the `withTxtFile` function.",
+      "revId": "8c6ad373281722ce410a1108c67de5f1adf350ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
