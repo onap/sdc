@@ -355,15 +355,36 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     }
                     origComponent = serviceProxyOrigin.left().value();
 
-                    StorageOperationStatus fillProxyRes = fillProxyInstanceData(resourceInstance, origComponent);
+                    StorageOperationStatus fillProxyRes = fillInstanceData(resourceInstance, origComponent);
                     if (isFillProxyRes(fillProxyRes)) {
                         throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(fillProxyRes));
                     }
-                }
-                else {
+                    validateOriginAndResourceInstanceTypes(containerComponent, origComponent, originType);
+                    
+	            } else if (originType == OriginTypeEnum.ServiceSubstitution){
+	            	
+	            	final Either<Component, StorageOperationStatus> getServiceResult = toscaOperationFacade.getToscaFullElement(resourceInstance.getComponentUid());
+	                if (getServiceResult.isRight()) {
+	                	throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
+	                }
+                	final Component service = getServiceResult.left().value();
+                	
+                	final Either<Component, StorageOperationStatus> getServiceDerivedFromTypeResult = toscaOperationFacade.getLatestByToscaResourceName(service.getDerivedFromGenericType());
+	                if (getServiceDerivedFromTypeResult.isRight()) {
+	                	throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
+	                }
+
+                    origComponent = getServiceDerivedFromTypeResult.left().value();
+	
+                    final StorageOperationStatus fillProxyRes = fillInstanceData(resourceInstance, origComponent);
+                    if (isFillProxyRes(fillProxyRes)) {
+                        throw new ByActionStatusComponentException(
+                            componentsUtils.convertFromStorageResponse(fillProxyRes));
+                    }
+                } else {
                     origComponent = getAndValidateOriginComponentOfComponentInstance(containerComponent, resourceInstance);
+                    validateOriginAndResourceInstanceTypes(containerComponent, origComponent, originType);
                 }
-                validateOriginAndResourceInstanceTypes(containerComponent, origComponent, originType);
                 validateResourceInstanceState(containerComponent, origComponent);
                 overrideFields(origComponent, resourceInstance);
                 compositionBusinessLogic.validateAndSetDefaultCoordinates(resourceInstance);
@@ -494,9 +515,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return false;
     }
 
-    private StorageOperationStatus fillProxyInstanceData(ComponentInstance resourceInstance, Component proxyTemplate) {
-        resourceInstance.setIsProxy(true);
-        ComponentParametersView filter = new ComponentParametersView(true);
+    private StorageOperationStatus fillInstanceData(ComponentInstance resourceInstance, Component origComponent) {
+        final ComponentParametersView filter = new ComponentParametersView(true);
         filter.setIgnoreCapabilities(false);
         filter.setIgnoreCapabiltyProperties(false);
         filter.setIgnoreComponentInstances(false);
@@ -509,38 +529,55 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (serviceRes.isRight()) {
             return serviceRes.right().value();
         }
-        Component service = serviceRes.left().value();
-        Map<String, List<CapabilityDefinition>> capabilities = service.getCapabilities();
+        final Component service = serviceRes.left().value();
+        final Map<String, List<CapabilityDefinition>> capabilities = service.getCapabilities();
         resourceInstance.setCapabilities(capabilities);
-        Map<String, List<RequirementDefinition>> req = service.getRequirements();
+        final Map<String, List<RequirementDefinition>> req = service.getRequirements();
         resourceInstance.setRequirements(req);
-        Map<String, InterfaceDefinition> serviceInterfaces = service.getInterfaces();
+        final Map<String, InterfaceDefinition> serviceInterfaces = service.getInterfaces();
         if(MapUtils.isNotEmpty(serviceInterfaces)) {
             serviceInterfaces.forEach(resourceInstance::addInterface);
         }
-
-
         resourceInstance.setProperties(PropertiesUtils.getProperties(service));
 
-        List<InputDefinition> serviceInputs = service.getInputs();
+        final List<InputDefinition> serviceInputs = service.getInputs();
         resourceInstance.setInputs(serviceInputs);
-
-        String name = ValidationUtils.normalizeComponentInstanceName(service.getName()) + ToscaOperationFacade.PROXY_SUFFIX;
-        String toscaResourceName = ((Resource) proxyTemplate).getToscaResourceName();
-        int lastIndexOf = toscaResourceName.lastIndexOf('.');
-        if (lastIndexOf != -1) {
-            String proxyToscaName = toscaResourceName.substring(0, lastIndexOf + 1) + name;
-            resourceInstance.setToscaComponentName(proxyToscaName);
-        }
-        resourceInstance.setName(name);
-        resourceInstance.setIsProxy(true);
         resourceInstance.setSourceModelInvariant(service.getInvariantUUID());
         resourceInstance.setSourceModelName(service.getName());
         resourceInstance.setSourceModelUuid(service.getUUID());
         resourceInstance.setSourceModelUid(service.getUniqueId());
-        resourceInstance.setComponentUid(proxyTemplate.getUniqueId());
-        resourceInstance.setDescription("A Proxy for Service " + service.getName());
+        resourceInstance.setComponentUid(origComponent.getUniqueId());
         resourceInstance.setComponentVersion(service.getVersion());
+        
+        switch(resourceInstance.getOriginType()) {
+        case ServiceProxy:
+        	return fillProxyInstanceData(resourceInstance, origComponent, service);
+        case ServiceSubstitution:
+        	return fillServiceSubstitutableNodeTypeData(resourceInstance, service);
+        default: 
+        	return StorageOperationStatus.OK;
+        }
+    }
+    
+    private StorageOperationStatus fillProxyInstanceData(final ComponentInstance resourceInstance, final Component origComponent, final Component service) {
+        final String name = ValidationUtils.normalizeComponentInstanceName(service.getName()) + ToscaOperationFacade.PROXY_SUFFIX;
+        final String toscaResourceName = ((Resource) origComponent).getToscaResourceName();
+        final int lastIndexOf = toscaResourceName.lastIndexOf('.');
+        if (lastIndexOf != -1) {
+            final String proxyToscaName = toscaResourceName.substring(0, lastIndexOf + 1) + name;
+            resourceInstance.setToscaComponentName(proxyToscaName);
+        }
+        resourceInstance.setName(name);
+        resourceInstance.setIsProxy(true);
+        resourceInstance.setDescription("A Proxy for Service " + service.getName());
+        return StorageOperationStatus.OK;
+    }
+    
+    private StorageOperationStatus fillServiceSubstitutableNodeTypeData(final ComponentInstance resourceInstance, final Component service) {
+      	resourceInstance.setToscaComponentName("org.openecomp.service." + ValidationUtils.convertToSystemName(service.getName()));
+        resourceInstance.setName(ValidationUtils.normalizeComponentInstanceName(service.getName()));
+        resourceInstance.setIsProxy(false);
+        resourceInstance.setDescription("A substitutable node type for service " + service.getName());
 
         return StorageOperationStatus.OK;
     }
@@ -2350,6 +2387,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 Component origComponent = null;
                 OriginTypeEnum originType = currentResourceInstance.getOriginType();
                 if (originType == OriginTypeEnum.ServiceProxy) {
+                    newComponentInstance.setOriginType(originType);
                     Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade
                         .getLatestByName("serviceProxy");
                     if (isServiceProxyOrigin(serviceProxyOrigin)) {
@@ -2358,13 +2396,33 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     }
                     origComponent = serviceProxyOrigin.left().value();
 
-                    StorageOperationStatus fillProxyRes = fillProxyInstanceData(newComponentInstance, origComponent);
+                    StorageOperationStatus fillProxyRes = fillInstanceData(newComponentInstance, origComponent);
 
                     if (isFillProxyRes(fillProxyRes)) {
                         throw new ByActionStatusComponentException(
                             componentsUtils.convertFromStorageResponse(fillProxyRes));
                     }
+                } else if (originType == OriginTypeEnum.ServiceSubstitution){
                     newComponentInstance.setOriginType(originType);
+
+	            	final Either<Component, StorageOperationStatus> getServiceResult = toscaOperationFacade.getToscaFullElement(newComponentInstance.getComponentUid());
+	                if (getServiceResult.isRight()) {
+	                	throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
+	                }
+                	final Component service = getServiceResult.left().value();
+                	
+                	final Either<Component, StorageOperationStatus> getServiceDerivedFromTypeResult = toscaOperationFacade.getLatestByToscaResourceName(service.getDerivedFromGenericType());
+	                if (getServiceDerivedFromTypeResult.isRight()) {
+	                	throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
+	                }
+
+                    origComponent = getServiceDerivedFromTypeResult.left().value();
+	
+                    final StorageOperationStatus fillProxyRes = fillInstanceData(newComponentInstance, origComponent);
+                    if (isFillProxyRes(fillProxyRes)) {
+                        throw new ByActionStatusComponentException(
+                            componentsUtils.convertFromStorageResponse(fillProxyRes));
+                    }
                 } else {
                     origComponent = getOriginComponentFromComponentInstance(newComponentInstance);
                     newComponentInstance.setName(resResourceInfo.getName());

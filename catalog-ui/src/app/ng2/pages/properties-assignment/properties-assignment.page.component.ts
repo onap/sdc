@@ -316,7 +316,8 @@ export class PropertiesAssignmentComponent {
             this.selectedInstance_FlattenCapabilitiesList,
             (result, cap: Capability) => {
                 isCapabilityOwnedByInstance = cap.ownerId === currentUniqueId ||
-                    selectedComponentInstanceData.isServiceProxy() && cap.ownerId === selectedComponentInstanceData.sourceModelUid;
+                    selectedComponentInstanceData.isServiceProxy() || selectedComponentInstanceData.isServiceSubstitution() && 
+                    cap.ownerId === selectedComponentInstanceData.sourceModelUid;
                 if (cap.properties && isCapabilityOwnedByInstance) {
                     _.forEach(cap.properties, prop => {
                         if (!prop.origName) {

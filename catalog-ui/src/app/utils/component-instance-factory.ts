@@ -22,7 +22,7 @@
  */
 'use strict';
 import { ComponentType } from 'app/utils';
-import { Component, ComponentInstance, ResourceInstance, ServiceInstance, ServiceProxyInstance } from '../models';
+import { Component, ComponentInstance, ResourceInstance, ServiceInstance, ServiceSubstitutionInstance, ServiceProxyInstance } from '../models';
 import { LeftPaletteComponent } from '../models/components/displayComponent';
 
 export class ComponentInstanceFactory {
@@ -35,6 +35,9 @@ export class ComponentInstanceFactory {
                 break;
            case ComponentType.SERVICE_PROXY:
                 newComponentInstance = new ServiceProxyInstance(componentInstance);
+                break;
+           case ComponentType.SERVICE_SUBSTITUTION:
+                newComponentInstance = new ServiceSubstitutionInstance(componentInstance);
                 break;
             default :
                 newComponentInstance = new ResourceInstance(componentInstance);
@@ -52,6 +55,9 @@ export class ComponentInstanceFactory {
             case ComponentType.SERVICE_PROXY:
                 newComponentInstance = new ServiceProxyInstance();
                 break;
+           case ComponentType.SERVICE_SUBSTITUTION:
+                newComponentInstance = new ServiceSubstitutionInstance();
+                break;
             default :
                 newComponentInstance = new ResourceInstance();
                 break;
@@ -59,7 +65,7 @@ export class ComponentInstanceFactory {
         return newComponentInstance;
     }
 
-    static createComponentInstanceFromComponent = (component: LeftPaletteComponent): ComponentInstance => {
+    static createComponentInstanceFromComponent = (component: LeftPaletteComponent, useServiceSubstitutionForNestedServices?: boolean): ComponentInstance => {
         const newComponentInstance: ComponentInstance = ComponentInstanceFactory.createEmptyComponentInstance(component.componentType);
         newComponentInstance.uniqueId = component.uniqueId + (new Date()).getTime();
         newComponentInstance.posX = 0;
@@ -78,7 +84,11 @@ export class ComponentInstanceFactory {
                 return component.componentSubType;
             } else {
                 if (component.componentType === ComponentType.SERVICE) {
-                    return ComponentType.SERVICE_PROXY;
+	                if (useServiceSubstitutionForNestedServices){
+			           return ComponentType.SERVICE_SUBSTITUTION;
+                    } else {
+                       return ComponentType.SERVICE_PROXY;
+                    }
                 } else {
                     return component.resourceType;
                 }

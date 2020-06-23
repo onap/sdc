@@ -40,6 +40,7 @@ export class SdcElementIconComponent {
                 this.elementIcon = new ElementIcon(this.iconName, "services_24", "lightBlue");
                 break;
             case ComponentType.SERVICE_PROXY:
+            case ComponentType.SERVICE_SUBSTITUTION:
                 this.elementIcon = new ElementIcon(this.iconName, "services_24", "white", "primary");
                 break;
             case ResourceType.CONFIGURATION:

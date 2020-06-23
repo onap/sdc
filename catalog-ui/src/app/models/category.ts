@@ -37,6 +37,7 @@ export interface ICategoryBase {
 
 export interface IMainCategory extends ICategoryBase {
     subcategories:Array<ISubCategory>;
+    useServiceSubstitutionForNestedServices:boolean;
 }
 
 export interface ISubCategory extends ICategoryBase {

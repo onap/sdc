@@ -122,6 +122,7 @@ public enum GraphPropertiesDictionary {
 	CONTACTS			("contacts",				String.class, 				false,		false),
 	//categorys
 	ICONS				("icons",					String.class, 				false,		false),
+	USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES   ("useServiceSubstitutionForNestedServices",      Boolean.class,                 false,      false),
 	//relation
 	CAPABILITY_OWNER_ID	("capOwnerId",				String.class, 				false,		false),
 	REQUIREMENT_OWNER_ID ("reqOwnerId",				String.class, 				false,		false),
