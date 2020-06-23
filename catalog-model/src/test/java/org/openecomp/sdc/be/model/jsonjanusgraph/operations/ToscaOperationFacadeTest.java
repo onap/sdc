@@ -106,6 +106,7 @@ public class ToscaOperationFacadeTest {
     private static final String ICON_NAME = "icon";
     private static final String SERVICE_MODEL_NAME = "Test_Service";
     private static final String SERVICE_PROXY_INSTANCE0_NAME = "testservice_proxy0";
+    private static final String SERVICE_SUBSTITUTION_INSTANCE0_NAME = "testservice0";
 
     @InjectMocks
     private ToscaOperationFacade testInstance;
@@ -637,7 +638,7 @@ public class ToscaOperationFacadeTest {
     }
 
     @Test
-    public void testAddComponentInstanceToTopologyTemplate() {
+    public void testAddComponentInstanceToTopologyTemplate_ServiceProxy() {
         Component containerComponent = new Service();
         Component originalComponent = new Service();
         ComponentInstance componentInstance = new ComponentInstance();
@@ -674,6 +675,45 @@ public class ToscaOperationFacadeTest {
         assertEquals(componentInstance.getIcon(), ICON_NAME);
         assertEquals(result.left().value().getRight(), COMPONENT_ID);
         // the instance counter must be 1 because the service proxy instance with suffix 0 already exists.
+        verify(nodeTemplateOperationMock, times(1))
+            .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(user));
+    }
+    @Test
+    public void testAddComponentInstanceToTopologyTemplate_ServiceSubstitution() {
+        Component containerComponent = new Service();
+        Component originalComponent = new Service();
+        ComponentInstance componentInstance = new ComponentInstance();
+        ComponentInstance existingComponentInstance = new ComponentInstance();
+        User user = new User();
+
+        containerComponent.setComponentType(ComponentTypeEnum.SERVICE);
+
+        originalComponent.setComponentType(ComponentTypeEnum.SERVICE);
+        originalComponent.setIcon(ICON_NAME);
+
+        componentInstance.setOriginType(OriginTypeEnum.ServiceSubstitution);
+        componentInstance.setSourceModelName(SERVICE_MODEL_NAME);
+
+        List<ComponentInstance> existingInstances = new ArrayList<>();
+        existingComponentInstance.setNormalizedName(SERVICE_SUBSTITUTION_INSTANCE0_NAME);
+        existingInstances.add(existingComponentInstance);
+        containerComponent.setComponentInstances(existingInstances);
+
+        when(nodeTemplateOperationMock
+            .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(user)))
+            .thenReturn(Either.left(new ImmutablePair<>(new TopologyTemplate(), COMPONENT_ID)));
+        TopologyTemplate topologyTemplate = new TopologyTemplate();
+        topologyTemplate.setMetadataValue(JsonPresentationFields.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+        when(topologyTemplateOperationMock.getToscaElement(containerComponent.getUniqueId()))
+            .thenReturn(Either.left(topologyTemplate));
+
+        Either<ImmutablePair<Component, String>, StorageOperationStatus> result =
+            testInstance.addComponentInstanceToTopologyTemplate(
+                containerComponent, originalComponent, componentInstance, false, user);
+
+        assertTrue(result.isLeft());
+        assertEquals(ICON_NAME, componentInstance.getIcon());
+        assertEquals(COMPONENT_ID, result.left().value().getRight());
         verify(nodeTemplateOperationMock, times(1))
             .addComponentInstanceToTopologyTemplate(any(), any(), eq("1"), eq(componentInstance), eq(false), eq(user));
     }

@@ -148,6 +148,7 @@ export class ComponentFactory {
         switch (componentType) {
             case ComponentType.SERVICE_PROXY:
             case ComponentType.SERVICE:
+            case ComponentType.SERVICE_SUBSTITUTION:
                 newComponent = new Service(this.ServiceService, this.$q);
                 break;
 

@@ -465,6 +465,7 @@ export class TopologyTemplateService {
         switch (componentType) {
             case ComponentType.SERVICE:
             case ComponentType.SERVICE_PROXY:
+            case ComponentType.SERVICE_SUBSTITUTION:
                 return ServerTypeUrl.SERVICES;
             default:
                 return ServerTypeUrl.RESOURCES;

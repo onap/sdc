@@ -66,7 +66,7 @@ export class FullComponentInstance extends ComponentInstance {
         this.directives = componentInstance.directives;
 
 
-        if(originComponent.componentType === ComponentType.SERVICE || originComponent.componentType === ComponentType.SERVICE_PROXY){
+        if(originComponent.componentType === ComponentType.SERVICE || originComponent.componentType === ComponentType.SERVICE_PROXY || ComponentType.SERVICE_SUBSTITUTION){
             this.isServiceInstance = true;
             this.serviceApiArtifacts = (<Service>originComponent).serviceApiArtifacts;
             this.serviceType = (<Service>originComponent).serviceType;

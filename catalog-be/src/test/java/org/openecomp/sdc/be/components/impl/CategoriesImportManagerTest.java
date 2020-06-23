@@ -43,7 +43,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Optional;
+import java.util.stream.Stream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -86,8 +89,21 @@ public class CategoriesImportManagerTest {
     public void importCategoriesTest() throws IOException {
         String ymlContent = getYmlContent();
         Either<Map<String, List<CategoryDefinition>>, ResponseFormat> createCapabilityTypes = importManager.createCategories(ymlContent);
-        assertTrue(createCapabilityTypes.isLeft());
+        
+        assertTrue(createCapabilityTypes.isLeft());        
+        final Map<String, List<CategoryDefinition>> categories = createCapabilityTypes.left().value();
+        final Optional<CategoryDefinition> categoryVoIPCallControl = categories.get("services").stream().filter(category -> category.getName().equals("VoIP Call Control")).findAny();
+        final Optional<CategoryDefinition> categoryWithServiceSubstitutionTrue = categories.get("services").stream().filter(category -> category.getName().equals("Category With Service Substitution True")).findAny();
+        final Optional<CategoryDefinition> categoryWithServiceSubstitutionFalse = categories.get("services").stream().filter(category -> category.getName().equals("Category With Service Substitution False")).findAny();
 
+        
+        
+        assertTrue(categoryVoIPCallControl.isPresent());
+        assertFalse(categoryVoIPCallControl.get().isUseServiceSubstitutionForNestedServices());
+        assertTrue(categoryWithServiceSubstitutionTrue.isPresent());
+        assertTrue(categoryWithServiceSubstitutionTrue.get().isUseServiceSubstitutionForNestedServices());
+        assertTrue(categoryWithServiceSubstitutionFalse.isPresent());
+        assertFalse(categoryWithServiceSubstitutionFalse.get().isUseServiceSubstitutionForNestedServices());
     }
 
     private String getYmlContent() throws IOException {

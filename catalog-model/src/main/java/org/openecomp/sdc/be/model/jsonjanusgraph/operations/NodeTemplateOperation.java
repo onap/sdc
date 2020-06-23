@@ -165,7 +165,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 }
                 result = Either.right(status);
             }
-            if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy) {
+            if (componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
                 TopologyTemplate updatedContainer = addComponentInstanceRes.left().value();
                 result = addCapAndReqToProxyServiceInstance(updatedContainer, componentInstance, componentInstanceData);
                 if(result.isRight()) {
@@ -292,7 +292,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
         Either<String, StorageOperationStatus> result = null;
         String instanceName = componentInstance.getName();
-        if (StringUtils.isEmpty(instanceName) || instanceName.equalsIgnoreCase(originToscaElement.getName()) || componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy) {
+        if (StringUtils.isEmpty(instanceName) || instanceName.equalsIgnoreCase(originToscaElement.getName()) || componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy || componentInstance.getOriginType() == OriginTypeEnum.ServiceSubstitution) {
             instanceName = buildComponentInstanceName(instanceNumberSuffix, instanceName);
         } else if (!isUniqueInstanceName(container, componentInstance.getName())) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to create component instance with name {} on component container {}. The instance with the same name already exists. ", componentInstance.getName(), container.getName());

@@ -121,29 +121,29 @@ export class CompositionPanelComponent {
         }
 
         // Deployment artifacts
-        if (!this.isPNF() && !this.isConfiguration() && !this.selectedComponentIsServiceProxyInstance()) {
+        if (!this.isPNF() && !this.isConfiguration() && !this.selectedComponentIsServiceProxyInstance() && !this.selectedComponentIsServiceSubstitutionInstance()) {
             this.tabs.push(tabs.deploymentArtifacts);
         }
 
         // Properties or Inputs
-        if (component.isResource() || this.selectedComponentIsServiceProxyInstance()) {
+        if (component.isResource() || this.selectedComponentIsServiceProxyInstance() || this.selectedComponentIsServiceSubstitutionInstance()) {
             this.tabs.push(tabs.properties);
         } else {
             this.tabs.push(tabs.inputs);
         }
 
-        if (!this.isConfiguration() && !this.selectedComponentIsServiceProxyInstance()) {
+        if (!this.isConfiguration() && !this.selectedComponentIsServiceProxyInstance() && !this.selectedComponentIsServiceSubstitutionInstance()) {
             this.tabs.push(tabs.infoArtifacts);
         }
 
-        if (!(component.isService()) || this.selectedComponentIsServiceProxyInstance()) {
+        if (!(component.isService()) || this.selectedComponentIsServiceProxyInstance() || this.selectedComponentIsServiceSubstitutionInstance()) {
             this.tabs.push(tabs.reqAndCapabilities);
         }
 
-        if (component.isService() && !this.selectedComponentIsServiceProxyInstance()) {
+        if (component.isService() && !this.selectedComponentIsServiceProxyInstance() && !this.selectedComponentIsServiceSubstitutionInstance()) {
             this.tabs.push(tabs.apiArtifacts);
         }
-        if (component.isService() && this.selectedComponentIsServiceProxyInstance()) {
+        if (component.isService() && (this.selectedComponentIsServiceProxyInstance() || this.selectedComponentIsServiceSubstitutionInstance())) {
             this.tabs.push(tabs.consumption);
             this.tabs.push(tabs.dependencies);
             this.tabs.push(tabs.substitutionFilter)
@@ -172,6 +172,10 @@ export class CompositionPanelComponent {
 
     private selectedComponentIsServiceProxyInstance = (): boolean => {
         return this.isComponentInstanceSelected() && this.selectedComponent.isServiceProxy();
+    }
+    
+    private selectedComponentIsServiceSubstitutionInstance = (): boolean => {
+        return this.isComponentInstanceSelected() && this.selectedComponent.isServiceSubstitution();
     }
 
     private selectedComponentIsVfcInstance = (): boolean => {

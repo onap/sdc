@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -237,6 +238,10 @@ public class CategoriesImportManager {
             catDef.setIcons(icons);
             String normalizedName = ValidationUtils.normalizeCategoryName4Uniqueness(catName);
             catDef.setNormalizedName(normalizedName);
+            final Object useServiceSubstitutionForNestedServicesProperty = category.get("useServiceSubstitutionForNestedServices");
+            final boolean useServiceSubstitutionForNestedServices = useServiceSubstitutionForNestedServicesProperty == null ? 
+                    false : (Boolean) useServiceSubstitutionForNestedServicesProperty;
+            catDef.setUseServiceSubstitutionForNestedServices(useServiceSubstitutionForNestedServices);
             categroiesDef.add(catDef);
         }
 
