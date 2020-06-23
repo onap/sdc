@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3a4ca722_440d232d",
+        "filename": "catalog-be/sdc-backend-init/Dockerfile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5335
+      },
+      "writtenOn": "2020-06-23T13:16:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4e1d90ad_ef5b017b",
+      "revId": "750e9c2cbd718d507761b5e97ddd1ad2294ee307",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "62b1f2b8_84e49be6",
         "filename": "catalog-be/src/main/resources/scripts/sdcBePy/users/run.py",
         "patchSetId": 4
