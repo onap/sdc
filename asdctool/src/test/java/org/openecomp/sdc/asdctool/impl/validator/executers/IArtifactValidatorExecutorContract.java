@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 Bell Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,31 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
-public class ServiceToscaArtifactsValidatorExecutorTest
-    extends IArtifactValidatorExecutorContract implements ArtifactValidatorExecutorContract {
+import static org.mockito.Mockito.mock;
 
-    @Override
-    public ServiceToscaArtifactsValidatorExecutor createTestSubject(
+public abstract class IArtifactValidatorExecutorContract {
+
+    protected abstract IArtifactValidatorExecutor createTestSubject(
         JanusGraphDao janusGraphDao,
         ToscaOperationFacade toscaOperationFacade
-    ) {
-        return new ServiceToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
+    );
+
+    private IArtifactValidatorExecutor createTestSubject() {
+        return createTestSubject(mock(JanusGraphDao.class), mock(ToscaOperationFacade.class));
+    }
+
+    @Test
+    public void testExecuteValidations() {
+        Assertions.assertThrows(NullPointerException.class, () ->
+            // Initially no outputFilePath was passed to this function (hence it is set to null)
+            // TODO: Fix this null and see if the argument is used by this function
+            createTestSubject().executeValidations(null)
+        );
     }
 }
+

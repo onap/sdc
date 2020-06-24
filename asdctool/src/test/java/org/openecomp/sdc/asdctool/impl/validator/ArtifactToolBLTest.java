@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import org.junit.Test;
-import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
@@ -43,7 +43,7 @@ public class ArtifactToolBLTest {
 
         ArtifactToolBL testSubject = createTestSubject();
         testSubject.validators = new LinkedList<>();
-        testSubject.validators.add(new NodeToscaArtifactsValidatorExecuter(janusGraphDaoMock, toscaOperationFacade));
+        testSubject.validators.add(new NodeToscaArtifactsValidatorExecutor(janusGraphDaoMock, toscaOperationFacade));
         // Initially no outputFilePath was passed to this function (hence it is set to null)
         // TODO: Fix this null and see if the argument is used by this function
         testSubject.validateAll(null);

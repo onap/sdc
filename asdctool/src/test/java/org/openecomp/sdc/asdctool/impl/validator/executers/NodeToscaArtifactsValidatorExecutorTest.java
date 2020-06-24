@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 Bell Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,14 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
-public class ServiceToscaArtifactsValidatorExecutorTest
+public class NodeToscaArtifactsValidatorExecutorTest
     extends IArtifactValidatorExecutorContract implements ArtifactValidatorExecutorContract {
 
     @Override
-    public ServiceToscaArtifactsValidatorExecutor createTestSubject(
+    public NodeToscaArtifactsValidatorExecutor createTestSubject(
         JanusGraphDao janusGraphDao,
         ToscaOperationFacade toscaOperationFacade
     ) {
-        return new ServiceToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
+        return new NodeToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
     }
 }

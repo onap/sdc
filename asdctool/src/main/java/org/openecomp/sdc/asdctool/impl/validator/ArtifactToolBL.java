@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator;
 
-import org.openecomp.sdc.asdctool.impl.validator.executers.IArtifactValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.IArtifactValidatorExecutor;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,18 +30,18 @@ public class ArtifactToolBL {
 
     private static Logger log = Logger.getLogger(ValidationToolBL.class.getName());
 
-    protected List<IArtifactValidatorExecuter> validators;
+    protected List<IArtifactValidatorExecutor> validators;
 
     private boolean allValid = true;
 
     @Autowired
     public ArtifactToolBL(
-        List<IArtifactValidatorExecuter> validators) {
+        List<IArtifactValidatorExecutor> validators) {
         this.validators = validators;
     }
 
     public boolean validateAll(String outputFilePath) {
-        for (IArtifactValidatorExecuter validatorExec : validators) {
+        for (IArtifactValidatorExecutor validatorExec : validators) {
             log.debug("ValidatorExecuter " + validatorExec.getName() + " started");
             if (!validatorExec.executeValidations(outputFilePath)) {
                 allValid = false;

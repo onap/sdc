@@ -44,7 +44,7 @@ public class ValidationToolBL {
         this.validators = validators;
     }
 
-    public boolean validateAll(Report report, ReportFile.TXTFile textFile, String outputFilePath) {
+    public boolean validateAll(Report report, ReportFile.TXTFile textFile) {
         for (ValidatorExecuter validatorExec: validators) {
             log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
             if (!validatorExec.executeValidations(report, textFile)) {
