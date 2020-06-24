@@ -22,6 +22,7 @@ public final class Constants {
     public static final String DEFINITIONS_DIR = "Definitions/";
     public static final String TOPOLOGY_TEMPLATE = "topology_template";
     public static final String NODE_TYPE = "node_type";
+    public static final String NODE_FILTER = "node_filter";
     public static final String NODE_TYPES = "node_types";
     public static final String METADATA = "metadata";
     public static final String NODE_TEMPLATES = "node_templates";

@@ -26,6 +26,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -71,8 +72,10 @@ public class UiComponentDataTransfer {
     private Map<String, InterfaceDefinition> interfaces;
 
     private Map<String, CINodeFilterDataDefinition> nodeFilter;
+    private Map<String, SubstitutionFilterDataDefinition> substitutionFilter;
 
     private Map<String, UINodeFilter> nodeFilterforNode;
+    private Map<String, UINodeFilter> substitutionFilterForTopologyTemplate;
     private List<PropertyDefinition> properties;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
 

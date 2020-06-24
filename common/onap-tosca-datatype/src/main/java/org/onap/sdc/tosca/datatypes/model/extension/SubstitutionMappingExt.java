@@ -16,37 +16,23 @@
 
 package org.onap.sdc.tosca.datatypes.model.extension;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.onap.sdc.tosca.datatypes.model.NodeFilter;
 import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class SubstitutionMappingExt extends SubstitutionMapping {
 
+    @Override
+    public void setSubstitution_filter(NodeFilter substitution_filter) {
+        super.setSubstitution_filter(substitution_filter);
+    }
+
     private SubstitutionFilter substitution_filter;
-
-    public SubstitutionFilter getSubstitution_filter() {
-        return substitution_filter;
-    }
-
-    public void setSubstitution_filter(SubstitutionFilter substitution_filter) {
-        this.substitution_filter = substitution_filter;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof SubstitutionMappingExt)) {
-            return false;
-        }
-
-        SubstitutionMappingExt that = (SubstitutionMappingExt) o;
-
-        return getSubstitution_filter() != null ? getSubstitution_filter().equals(that.getSubstitution_filter())
-                : that.getSubstitution_filter() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return getSubstitution_filter() != null ? getSubstitution_filter().hashCode() : 0;
-    }
 }

@@ -484,7 +484,7 @@ public class ToscaModelTest {
         Assert.assertNotNull(substitutionMappings.getRequirements());
         Assert.assertEquals(1,substitutionMappings.getRequirements().size());
         Assert.assertEquals(true, substitutionMappings instanceof SubstitutionMappingExt);
-        SubstitutionFilter substitutionFilter = ((SubstitutionMappingExt) substitutionMappings).getSubstitution_filter();
+        SubstitutionFilter substitutionFilter = (SubstitutionFilter) substitutionMappings.getSubstitution_filter();
         Assert.assertNotNull(substitutionFilter);
         Assert.assertNotNull(substitutionFilter.getProperties());
         Assert.assertEquals(2,substitutionFilter.getProperties().size());

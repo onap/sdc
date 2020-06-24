@@ -18,40 +18,19 @@ package org.onap.sdc.tosca.datatypes.model.extension;
 
 
 import java.util.List;
-
 import java.util.Map;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.onap.sdc.tosca.datatypes.model.Constraint;
-import org.onap.sdc.tosca.services.DataModelNormalizeUtil;
+import org.onap.sdc.tosca.datatypes.model.NodeFilter;
 
-public class SubstitutionFilter {
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+public class SubstitutionFilter extends NodeFilter {
 
     private List<Map<String, List<Constraint>>> properties;
-
-    public List<Map<String, List<Constraint>>> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<Map<String, List<Constraint>>> properties) {
-        this.properties = DataModelNormalizeUtil.getNormalizePropertiesFilter(properties);
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof SubstitutionFilter)) {
-            return false;
-        }
-
-        SubstitutionFilter that = (SubstitutionFilter) o;
-
-        return getProperties() != null ? getProperties().equals(that.getProperties()) : that.getProperties() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return getProperties() != null ? getProperties().hashCode() : 0;
-    }
 }

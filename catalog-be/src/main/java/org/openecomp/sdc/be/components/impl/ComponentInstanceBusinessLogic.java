@@ -975,7 +975,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (containerComponent instanceof Service){
                     Either<ComponentInstance, ResponseFormat> renameEither =
                             renameServiceFilter((Service) containerComponent, newInstanceName,
-                                    oldComponentInstance.getName());
+                                oldComponentInstance.getName());
                     if (renameEither.isRight()) {
                         throw new ByResponseFormatComponentException(renameEither.right().value());
                     }
@@ -1011,8 +1011,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
 
-    public Either<ComponentInstance, ResponseFormat> renameServiceFilter(Service containerComponent,
-            String newInstanceName, String oldInstanceName) {
+    public Either<ComponentInstance, ResponseFormat> renameServiceFilter(final Service containerComponent,
+                                                                         final String newInstanceName,
+                                                                         final String oldInstanceName) {
 
         Map<String, CINodeFilterDataDefinition> renamedNodesFilter =
                 ServiceFilterUtils.getRenamedNodesFilter((Service) containerComponent,
@@ -1144,10 +1145,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 }
                 final ComponentInstance componentInstanceToBeUpdated = componentInstanceById.get();
                 final List<String> directives = componentInstanceToBeUpdated.getDirectives();
-                if (CollectionUtils.isNotEmpty(directives)) {
-                    directives.removeAll(directives);
-                    componentInstanceToBeUpdated.setDirectives(Collections.emptyList());
-                }
+                componentInstanceToBeUpdated.setDirectives(Collections.emptyList());
                 final Either<ComponentInstance, ResponseFormat> componentInstanceResponseFormatEither =
                     updateComponentInstanceMetadata(containerComponentType.getValue(), component.getUniqueId(),
                         componentInstanceToBeUpdated.getUniqueId(), userId, componentInstanceToBeUpdated, true, false);

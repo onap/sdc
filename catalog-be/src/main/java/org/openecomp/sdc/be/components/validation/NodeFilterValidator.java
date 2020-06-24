@@ -53,11 +53,11 @@ public class NodeFilterValidator {
 
     private static final String SOURCE = "Source";
     public static final Set<String> comparableTypes = ImmutableSet.of(ToscaPropertyType.STRING.getType(),
-            ToscaPropertyType.INTEGER.getType(), ToscaPropertyType.FLOAT.getType());
+        ToscaPropertyType.INTEGER.getType(), ToscaPropertyType.FLOAT.getType());
     public static final Set<String> schemableTypes =
-            ImmutableSet.of(ToscaPropertyType.MAP.getType(), ToscaPropertyType.LIST.getType());
+        ImmutableSet.of(ToscaPropertyType.MAP.getType(), ToscaPropertyType.LIST.getType());
     public static final Set<String> comparableConstraintsOperators =
-            ImmutableSet.of(ConstraintConvertor.GREATER_THAN_OPERATOR, ConstraintConvertor.LESS_THAN_OPERATOR);
+        ImmutableSet.of(ConstraintConvertor.GREATER_THAN_OPERATOR, ConstraintConvertor.LESS_THAN_OPERATOR);
 
     protected final ToscaOperationFacade toscaOperationFacade;
     protected final ComponentsUtils componentsUtils;
@@ -75,13 +75,13 @@ public class NodeFilterValidator {
                                                                           final String componentInstanceId) {
         if (component == null || StringUtils.isEmpty(componentInstanceId)) {
             LOGGER.error("Input data cannot be empty");
-            return getErrorResponse(ActionStatus.NODE_FILTER_NOT_FOUND);
+            return getErrorResponse(ActionStatus.FILTER_NOT_FOUND);
         }
         if (CollectionUtils.isEmpty(component.getComponentInstances()) ||
             component.getComponentInstances().stream()
                 .noneMatch(ci -> ci.getUniqueId().equals(componentInstanceId))) {
             LOGGER.error("Component Instance list is empty");
-            return getErrorResponse(ActionStatus.NODE_FILTER_NOT_FOUND);
+            return getErrorResponse(ActionStatus.FILTER_NOT_FOUND);
         }
         return Either.left(Boolean.TRUE);
     }
@@ -91,10 +91,10 @@ public class NodeFilterValidator {
         return Either.right(errorResponse);
     }
 
-    public Either<Boolean, ResponseFormat> validateNodeFilter(final Component parentComponent,
-                                                              final String componentInstanceId,
-                                                              final List<String> uiConstraints,
-                                                              final NodeFilterConstraintAction action) {
+    public Either<Boolean, ResponseFormat> validateFilter(final Component parentComponent,
+                                                          final String componentInstanceId,
+                                                          final List<String> uiConstraints,
+                                                          final NodeFilterConstraintAction action) {
         try {
             if (NodeFilterConstraintAction.ADD == action || NodeFilterConstraintAction.UPDATE == action) {
                 for (final String uiConstraint : uiConstraints) {
@@ -122,44 +122,44 @@ public class NodeFilterValidator {
         return Either.left(true);
     }
 
-    private Either<Boolean, ResponseFormat> validatePropertyConstraint(
-        final Component  parentComponent,
-        final String componentInstanceId, final UIConstraint uiConstraint) {
+    private Either<Boolean, ResponseFormat> validatePropertyConstraint(final Component parentComponent,
+                                                                       final String componentInstanceId,
+                                                                       final UIConstraint uiConstraint) {
         String source = SOURCE;
-        final Optional<ComponentInstance> brotherComponentInstance;
+        final Optional<ComponentInstance> optionalComponentInstance;
 
+        final List<PropertyDefinition> propertyDefinitions = parentComponent.getProperties();
         List<? extends PropertyDefinition> sourcePropertyDefinition =
-                parentComponent.getName().equals(uiConstraint.getSourceName()) ? parentComponent.getProperties() :
-                        Collections.emptyList();
-
+            parentComponent.getName().equals(uiConstraint.getSourceName()) &&
+                propertyDefinitions != null ? propertyDefinitions : Collections.emptyList();
 
         if (sourcePropertyDefinition.isEmpty() && !parentComponent.getName().equals(uiConstraint.getSourceName())) {
-            brotherComponentInstance = parentComponent.getComponentInstances().stream()
-                                                      .filter(componentInstance -> uiConstraint.getSourceName()
-                                                                                               .equals(componentInstance
-                                                                                                               .getName()))
-                                                      .findFirst();
+            optionalComponentInstance = parentComponent.getComponentInstances().stream()
+                .filter(componentInstance -> uiConstraint.getSourceName()
+                    .equals(componentInstance
+                        .getName()))
+                .findFirst();
 
-            if (brotherComponentInstance.isPresent()) {
+            if (optionalComponentInstance.isPresent()) {
                 final List<ComponentInstanceProperty> componentInstanceProperties =
-                        parentComponent.getComponentInstancesProperties()
-                                       .get(brotherComponentInstance.get().getUniqueId());
+                    parentComponent.getComponentInstancesProperties()
+                        .get(optionalComponentInstance.get().getUniqueId());
                 sourcePropertyDefinition =
-                        componentInstanceProperties == null ? new ArrayList<>() : componentInstanceProperties;
+                    componentInstanceProperties == null ? new ArrayList<>() : componentInstanceProperties;
             }
         }
 
         if (!CollectionUtils.isEmpty(sourcePropertyDefinition)) {
-            Optional<? extends PropertyDefinition> sourceSelectedProperty = sourcePropertyDefinition.stream()
-                                                                                                    .filter(property -> uiConstraint
-                                                                                                                                .getValue()
-                                                                                                                                .equals(property.getName()))
-                                                                                                    .findFirst();
+            final Optional<? extends PropertyDefinition> sourceSelectedProperty = sourcePropertyDefinition.stream()
+                .filter(property -> uiConstraint
+                    .getValue()
+                    .equals(property.getName()))
+                .findFirst();
 
-            Optional<? extends PropertyDefinition> targetComponentInstanceProperty =
-                    parentComponent.getComponentInstancesProperties().get(componentInstanceId).stream()
-                                   .filter(property -> uiConstraint.getServicePropertyName().equals(property.getName()))
-                                   .findFirst();
+            final Optional<? extends PropertyDefinition> targetComponentInstanceProperty =
+                parentComponent.getComponentInstancesProperties().get(componentInstanceId).stream()
+                    .filter(property -> uiConstraint.getServicePropertyName().equals(property.getName()))
+                    .findFirst();
 
             source = !targetComponentInstanceProperty.isPresent() ? "Target" : SOURCE;
             if (sourceSelectedProperty.isPresent() && targetComponentInstanceProperty.isPresent()) {
@@ -167,16 +167,16 @@ public class NodeFilterValidator {
             }
         }
 
-        String missingProperty =
-                source.equals(SOURCE) ? uiConstraint.getValue().toString() : uiConstraint.getServicePropertyName();
+        final String missingProperty =
+            source.equals(SOURCE) ? uiConstraint.getValue().toString() : uiConstraint.getServicePropertyName();
 
         return Either.right(
-                componentsUtils.getResponseFormat(ActionStatus.MAPPED_PROPERTY_NOT_FOUND, source, missingProperty));
+            componentsUtils.getResponseFormat(ActionStatus.MAPPED_PROPERTY_NOT_FOUND, source, missingProperty));
     }
 
     private Either<Boolean, ResponseFormat> validatePropertyData(UIConstraint uiConstraint,
-            Optional<? extends PropertyDefinition> sourceSelectedProperty,
-            Optional<? extends PropertyDefinition> targetComponentInstanceProperty) {
+                                                                 Optional<? extends PropertyDefinition> sourceSelectedProperty,
+                                                                 Optional<? extends PropertyDefinition> targetComponentInstanceProperty) {
         if (sourceSelectedProperty.isPresent() && targetComponentInstanceProperty.isPresent()) {
             final PropertyDefinition sourcePropDefinition = sourceSelectedProperty.get();
             final String sourceType = sourcePropDefinition.getType();
@@ -208,28 +208,28 @@ public class NodeFilterValidator {
     }
 
     private Either<Boolean, ResponseFormat> validateStaticValueAndOperator(
-        final Component  parentComponent,
+        final Component parentComponent,
         final String componentInstanceId, final UIConstraint uiConstraint) {
         if (!(Objects.nonNull(uiConstraint) && uiConstraint.getValue() instanceof String)) {
             return Either.left(false);
         }
         final Optional<ComponentInstanceProperty> componentInstanceProperty =
-                parentComponent.getComponentInstancesProperties().get(componentInstanceId).stream()
-                               .filter(property -> uiConstraint.getServicePropertyName().equals(property.getName()))
-                               .findFirst();
+            parentComponent.getComponentInstancesProperties().get(componentInstanceId).stream()
+                .filter(property -> uiConstraint.getServicePropertyName().equals(property.getName()))
+                .findFirst();
 
         if (!componentInstanceProperty.isPresent()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.SELECTED_PROPERTY_NOT_PRESENT,
-                    uiConstraint.getServicePropertyName()));
+                uiConstraint.getServicePropertyName()));
         }
         if (comparableConstraintsOperators.contains(uiConstraint.getConstraintOperator()) && !comparableTypes.contains(
-                componentInstanceProperty.get().getType())) {
+            componentInstanceProperty.get().getType())) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_OPERATOR_PROVIDED,
-                    uiConstraint.getServicePropertyName(), uiConstraint.getConstraintOperator()));
+                uiConstraint.getServicePropertyName(), uiConstraint.getConstraintOperator()));
         }
 
         return isValidValueCheck(componentInstanceProperty.get().getType(), String.valueOf(uiConstraint.getValue()),
-                uiConstraint.getServicePropertyName());
+            uiConstraint.getServicePropertyName());
     }
 
     private Either<Boolean, ResponseFormat> isValidValueCheck(String type, String value, String propertyName) {
@@ -237,13 +237,13 @@ public class NodeFilterValidator {
         ToscaPropertyType toscaPropertyType = ToscaPropertyType.isValidType(type);
         if (Objects.isNull(toscaPropertyType)) {
             return Either.right(
-                    componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_PROPERTY_TYPE, type, propertyName));
+                componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_PROPERTY_TYPE, type, propertyName));
         }
         if (toscaPropertyType.getValidator().isValid(value, null)) {
             return Either.left(Boolean.TRUE);
         }
         return Either.right(
-                componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, type, propertyName, value));
+            componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, type, propertyName, value));
     }
 
 
