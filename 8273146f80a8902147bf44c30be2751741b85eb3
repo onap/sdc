@@ -34,6 +34,24 @@
       "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0500281f_7b890a44",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-24T15:06:30Z",
+      "side": 1,
+      "message": "you dont need JanusGraph graph to execute rollback, but just \nTransaction tx \u003d graph.tx();",
+      "parentUuid": "b8dabc5f_5e71b8a7",
+      "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
