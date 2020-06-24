@@ -12,28 +12,4 @@
     <groupId>org.onap.sdc.common</groupId>
     <version>1.7.0-SNAPSHOT</version>
   </parent>
-
-  <dependencies>
-    <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!--JUnit Jupiter Engine to depend on the JUnit4 engine and JUnit 4 API  -->
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
 </project>

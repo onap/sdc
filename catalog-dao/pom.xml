@@ -34,20 +34,6 @@ Modifications copyright (c) 2018 Nokia
   </parent>
 
   <dependencies>
-    <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!--JUnit Jupiter Engine to depend on the JUnit4 engine and JUnit 4 API  -->
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
 
     <!-- Common of SDC -->
     <dependency>
@@ -153,12 +139,6 @@ Modifications copyright (c) 2018 Nokia
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-regex</artifactId>
       <version>${regex.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
