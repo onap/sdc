@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec979a78_dbf089a1",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/ArtifactToolBL.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-24T15:28:34Z",
+      "side": 1,
+      "message": "nitpicking (and i know it\u0027s not link to your changes), but our Onap Checkstyle do not like 2 capital letters like BL.\nAcronym should be avoided so that it\u0027s easier for newcomers to know what we are talking about :-)",
+      "revId": "ee5d8df1792b49eebec4c69c9b5e8654543714ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2712a2f8_10baa9ff",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecutorContract.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-24T15:28:34Z",
+      "side": 1,
+      "message": "no need to have this variable",
+      "revId": "ee5d8df1792b49eebec4c69c9b5e8654543714ac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
