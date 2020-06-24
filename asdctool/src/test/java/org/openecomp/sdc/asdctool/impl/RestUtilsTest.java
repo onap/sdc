@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
+
+import org.apache.http.HttpStatus;
+import org.junit.Assert;
 import org.junit.Test;
+
 
 public class RestUtilsTest {
 
@@ -39,6 +43,9 @@ public class RestUtilsTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.deleteProduct(productUid, beHost, bePort, adminUser);
+		Assert.assertEquals(Integer.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR), testSubject.deleteProduct(productUid,
+																											beHost,
+																											bePort,
+																											adminUser));
 	}
 }
