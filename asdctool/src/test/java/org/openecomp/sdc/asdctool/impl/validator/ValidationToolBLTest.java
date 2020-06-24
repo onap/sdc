@@ -46,8 +46,6 @@ public class ValidationToolBLTest {
         testSubject.validators = new LinkedList<>();
         testSubject.validators.add(new ServiceValidatorExecuter(janusGraphDaoMock));
         Report report = Report.make();
-        // Initially no outputFilePath was passed to this function (hence it is set to null)
-        // TODO: Fix this null and see if the argument is used by this function
-        testSubject.validateAll(report, makeTxtFile(makeConsoleWriter()), null);
+        testSubject.validateAll(report, makeTxtFile(makeConsoleWriter()));
     }
 }
