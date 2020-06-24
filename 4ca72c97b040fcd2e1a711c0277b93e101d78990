@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cae29708_8e8acd14",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecutor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-24T17:10:19Z",
+      "side": 1,
+      "message": "if you changed className, maybe should change package name also? what you think?",
+      "range": {
+        "startLine": 21,
+        "startChar": 50,
+        "endLine": 21,
+        "endChar": 59
+      },
+      "revId": "4ca72c97b040fcd2e1a711c0277b93e101d78990",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
