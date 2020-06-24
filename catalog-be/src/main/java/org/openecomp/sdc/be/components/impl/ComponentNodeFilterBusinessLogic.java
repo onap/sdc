@@ -271,7 +271,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         final Component component = getComponent(componentId);
 
         final Either<Boolean, ResponseFormat> response = nodeFilterValidator
-            .validateNodeFilter(component, componentInstanceId, constraints, NodeFilterConstraintAction.UPDATE);
+            .validateFilter(component, componentInstanceId, constraints, NodeFilterConstraintAction.UPDATE);
         if (response.isRight()) {
             throw new BusinessLogicException(componentsUtils
                 .getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
@@ -333,21 +333,6 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return user;
     }
 
-    private Component getComponent(final String componentId) throws BusinessLogicException {
-
-        final Either<Component, StorageOperationStatus> result =
-            toscaOperationFacade.getToscaElement(componentId);
-
-        if (result.isRight()) {
-            final StorageOperationStatus errorStatus = result.right().value();
-            LOGGER.error(BUSINESS_PROCESS_ERROR, this.getClass().getName(),
-                "Failed to fetch component information by component id, error {}", errorStatus);
-            throw new BusinessLogicException(componentsUtils.getResponseFormat(
-                componentsUtils.convertFromStorageResponse(errorStatus)));
-        }
-        return result.left().value();
-    }
-
     private Optional<ComponentInstance> getComponentInstance(final String componentInstanceId,
                                                              final Component component) {
         return component.getComponentInstanceById(componentInstanceId);
@@ -407,7 +392,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
                                     final NodeFilterConstraintAction action,
                                     final String constraint) throws BusinessLogicException {
         final Either<Boolean, ResponseFormat> response = nodeFilterValidator
-            .validateNodeFilter(component, componentInstanceId, Collections.singletonList(constraint), action);
+            .validateFilter(component, componentInstanceId, Collections.singletonList(constraint), action);
         if (response.isRight()) {
             throw new BusinessLogicException(componentsUtils
                 .getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));

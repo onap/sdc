@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,38 +21,22 @@
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.Map;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class SubstitutionMapping {
+
     private String node_type;
     private Map<String, String[]> capabilities;
     private Map<String, String[]> requirements;
+    private NodeFilter substitution_filter;
 
-    public SubstitutionMapping() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-    public String getNode_type() {
-        return node_type;
-    }
-
-    public void setNode_type(String node_type) {
-        this.node_type = node_type;
-    }
-
-    public Map<String, String[]> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(Map<String, String[]> capabilities) {
-        this.capabilities = capabilities;
-    }
-
-    public Map<String, String[]> getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(Map<String, String[]> requirements) {
-        this.requirements = requirements;
-    }
 }

@@ -47,6 +47,7 @@ import java.util.Optional;
 
 import static org.openecomp.core.converter.datatypes.Constants.CAPABILITIES;
 import static org.openecomp.core.converter.datatypes.Constants.INPUTS;
+import static org.openecomp.core.converter.datatypes.Constants.NODE_FILTER;
 import static org.openecomp.core.converter.datatypes.Constants.NODE_TYPE;
 import static org.openecomp.core.converter.datatypes.Constants.OUTPUTS;
 import static org.openecomp.core.converter.datatypes.Constants.REQUIREMENTS;
@@ -122,7 +123,7 @@ public class VnfTopologyTemplateConverter {
         nodeTemplate.setDescription((String) nodeTemplateAsMap.get("description"));
         nodeTemplate.setDirectives((List<String>) nodeTemplateAsMap.get("directives"));
         nodeTemplate.setInterfaces((Map<String, Object>) nodeTemplateAsMap.get("interfaces"));
-        nodeTemplate.setNode_filter((NodeFilter) nodeTemplateAsMap.get("node_filter"));
+        nodeTemplate.setNode_filter((NodeFilter) nodeTemplateAsMap.get(NODE_FILTER));
         nodeTemplate.setProperties((Map<String, Object>) nodeTemplateAsMap.get("properties"));
         nodeTemplate.setRequirements((List<Map<String, RequirementAssignment>>) nodeTemplateAsMap.get("requirements"));
         nodeTemplate.setType((String) nodeTemplateAsMap.get("type"));
@@ -168,6 +169,7 @@ public class VnfTopologyTemplateConverter {
                 convertSubstitutionMappingsSections(CAPABILITIES, substitutionMappings.get(CAPABILITIES)));
         substitutionMapping.setRequirements(
                 convertSubstitutionMappingsSections(REQUIREMENTS, substitutionMappings.get(REQUIREMENTS)));
+        substitutionMapping.setSubstitution_filter((NodeFilter) substitutionMappings.get(NODE_FILTER));
 
         return substitutionMapping;
     }

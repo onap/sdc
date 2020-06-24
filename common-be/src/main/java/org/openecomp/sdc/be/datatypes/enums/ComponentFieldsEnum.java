@@ -45,6 +45,7 @@ public enum ComponentFieldsEnum {
     POLICIES("policies"),
     NON_EXCLUDED_POLICIES("nonExcludedPolicies"),
     NODE_FILTER("nodeFilter"),
+    SUBSTITUTION_FILTER("substitutionFilter"),
     COMPONENT_INSTANCES_INTERFACES("componentInstancesInterfaces"),
     DATA_TYPES("dataTypes");
 

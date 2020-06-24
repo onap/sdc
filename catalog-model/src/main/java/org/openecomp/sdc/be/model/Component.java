@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -83,6 +84,7 @@ public abstract class Component implements PropertiesOwner {
     private String derivedFromGenericVersion;
     private String toscaType;
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
+    private Map<String, SubstitutionFilterDataDefinition> substitutionFilterComponents;
     private Map<String, InterfaceDefinition> interfaces;
     private List<DataTypeDefinition> dataTypes;
 

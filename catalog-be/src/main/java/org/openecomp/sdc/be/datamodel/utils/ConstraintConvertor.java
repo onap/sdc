@@ -78,10 +78,12 @@ public class ConstraintConvertor {
         if (content3 instanceof String || content3 instanceof Number || content3 instanceof Boolean) {
             uiConstraint.setValue(content3);
             uiConstraint.setSourceType(STATIC_CONSTRAINT);
+            uiConstraint.setSourceName(STATIC_CONSTRAINT);
             return uiConstraint;
         } else if (content3 instanceof List) {
             List list1 = (List) content3;
             uiConstraint.setSourceType(STATIC_CONSTRAINT);
+            uiConstraint.setSourceName(STATIC_CONSTRAINT);
             uiConstraint.setValue(list1);
             return uiConstraint;
         } else if (content3 instanceof Map) {

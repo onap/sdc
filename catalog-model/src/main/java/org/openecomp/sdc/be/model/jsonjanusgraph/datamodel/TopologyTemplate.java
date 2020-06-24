@@ -60,6 +60,7 @@ public class TopologyTemplate extends ToscaElement{
     private Map<String, DataTypeDataDefinition> dataTypes;
 
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
+    private Map<String, SubstitutionFilterDataDefinition> substitutionFilterDataDefinitionMap;
     //Component Instances External References (instanceId -> ExternalRefsMap)
     //-----------------------------------------------------------------------
     private Map<String, MapComponentInstanceExternalRefs> mapComponentInstancesExternalRefs;
@@ -238,6 +239,15 @@ public class TopologyTemplate extends ToscaElement{
 
     public void setNodeFilterComponents(Map<String, CINodeFilterDataDefinition> nodeFilters) {
         this.nodeFilterComponents = nodeFilters;
+    }
+
+    public Map<String, SubstitutionFilterDataDefinition> getSubstitutionFilterDataDefinitionMap() {
+        return substitutionFilterDataDefinitionMap;
+    }
+
+    public void setSubstitutionFilterDataDefinitionMap(
+        Map<String, SubstitutionFilterDataDefinition> substitutionFilterDataDefinitionMap) {
+        this.substitutionFilterDataDefinitionMap = substitutionFilterDataDefinitionMap;
     }
 
     /**

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -168,7 +168,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) @Parameter(description = "USER_ID of modifier user",
                     required = true) String userId,
             @Context final HttpServletRequest request) {
-        
+
         validateNotEmptyBody(data);
         ComponentInstance componentInstance = null;
         try {
@@ -363,7 +363,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                             ComponentTypeEnum.SERVICE_PARAM_NAME,
                             ComponentTypeEnum.PRODUCT_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
 
         try {
@@ -599,7 +599,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                 return buildErrorResponse(errorWrapper.getInnerElement());
         }
         log.debug(START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS, propertiesToUpdate);
-        
+
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
@@ -664,7 +664,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                 return buildErrorResponse(errorWrapper.getInnerElement());
         }
         log.debug(START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS, inputsToUpdate);
-        
+
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         if (componentInstanceBusinessLogic == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
@@ -786,7 +786,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                     value = Constants.USER_ID_HEADER) String userId,
             @Context final HttpServletRequest request) {
 
-        
+
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_PROPERTIES, StatusCode.STARTED,"Starting to delete Resource Instance Property for component {} ",componentId + " by " +  userId );
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -918,7 +918,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
             log.debug(START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS, property);
 
-            
+
 
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
             if (componentInstanceBusinessLogic == null) {
@@ -999,7 +999,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(GET_START_HANDLE_REQUEST_OF, url);
 
@@ -1027,7 +1027,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @PathParam("capabilityName") final String capabilityName, @PathParam("ownerId") final String ownerId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(GET_START_HANDLE_REQUEST_OF, url);
 
@@ -1168,7 +1168,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                     schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
                             ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
         try {
             log.debug(START_HANDLE_REQUEST_OF, url);
@@ -1209,7 +1209,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                     schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
                             ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
             @Context final HttpServletRequest request) {
-        
+
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -1260,7 +1260,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @PathParam("componentId") final String componentId, @PathParam("relationId") final String relationId,
             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
-        
+
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(GET_START_HANDLE_REQUEST_OF, url);
         try {
@@ -1376,7 +1376,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         if (newComponentInstanceId == null){
             return  buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.MISSING_NEW_COMPONENT_INSTANCE));
         }
-        
+
 
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -1520,7 +1520,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
             @Parameter(description = "RelationshipInfo", required = true) String data,
             @Context final HttpServletRequest request) {
-        
+
 
         try {
             if (data == null || data.length() == 0) {

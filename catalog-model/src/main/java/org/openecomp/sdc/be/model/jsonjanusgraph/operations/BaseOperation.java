@@ -882,7 +882,12 @@ public abstract class BaseOperation {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ToscaDataDefinition> StorageOperationStatus updateOrAddToscaData(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel, List<T> toscaDataList, JsonPresentationFields mapKeyField, boolean isUpdate) {
+    private <T extends ToscaDataDefinition> StorageOperationStatus updateOrAddToscaData(GraphVertex toscaElement,
+                                                                                        EdgeLabelEnum edgeLabel,
+                                                                                        VertexTypeEnum vertexLabel,
+                                                                                        List<T> toscaDataList,
+                                                                                        JsonPresentationFields mapKeyField,
+                                                                                        boolean isUpdate) {
         StorageOperationStatus result = null;
         GraphVertex toscaDataVertex = null;
         Map<String, T> existingToscaDataMap = null;
@@ -892,7 +897,9 @@ public abstract class BaseOperation {
             .getChildVertex(toscaElement, edgeLabel, JsonParseFlagEnum.ParseJson);
         if (toscaDataVertexRes.isRight() && toscaDataVertexRes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
             JanusGraphOperationStatus status = toscaDataVertexRes.right().value();
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_CHILD_VERTEX_OF_THE_TOSCA_ELEMENT_BY_LABEL_STATUS_IS, toscaElement.getUniqueId(), edgeLabel, status);
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                FAILED_TO_GET_CHILD_VERTEX_OF_THE_TOSCA_ELEMENT_BY_LABEL_STATUS_IS, toscaElement.getUniqueId(),
+                edgeLabel, status);
             result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(toscaDataVertexRes.right().value());
         }
         if (result == null) {
@@ -1423,14 +1430,6 @@ public abstract class BaseOperation {
         return status;
     }
 
-//    public StorageOperationStatus updateDataOnGraph(GraphVertex dataVertex) {
-//        Either<GraphVertex, JanusGraphOperationStatus> updateVertex = janusGraphDao.updateVertex(dataVertex);
-//        if (updateVertex.isRight()) {
-//            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateVertex.right().value());
-//        }
-//        return StorageOperationStatus.OK;
-//    }
-
     protected GroupInstanceDataDefinition buildGroupInstanceDataDefinition(GroupDataDefinition group, ComponentInstanceDataDefinition componentInstance, Map<String, ArtifactDataDefinition> instDeplArtifMap) {
 
         String componentInstanceName = componentInstance.getName();
@@ -1449,21 +1448,6 @@ public abstract class BaseOperation {
         groupInstance.setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
         groupInstance.setArtifacts(group.getArtifacts());
 
-//        List<String> fixedArtifactsUuid;
-//        List<String> artifactsUuid = group.getArtifactsUuid();
-//        if (instDeplArtifMap != null) {
-//              fixedArtifactsUuid = new ArrayList<>();
-//              artifactsUuid.forEach(u -> {
-//                    Optional<ArtifactDataDefinition> findFirst = instDeplArtifMap.values().stream().filter(a -> u.equals(a.getUniqueId())).findFirst();
-//                    if (findFirst.isPresent()) {
-//                          fixedArtifactsUuid.add(findFirst.get().getArtifactUUID());
-//                    } else {
-//                          fixedArtifactsUuid.add(u);
-//                    }
-//              });
-//        } else {
-//              fixedArtifactsUuid = artifactsUuid;
-//        }
         groupInstance.setArtifactsUuid(group.getArtifactsUuid());
         groupInstance.setProperties(group.getProperties());
         convertPropertiesToInstanceProperties(groupInstance.getProperties());
