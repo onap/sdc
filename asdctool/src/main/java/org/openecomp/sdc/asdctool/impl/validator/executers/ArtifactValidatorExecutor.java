@@ -20,20 +20,9 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import fj.data.Either;
-import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
+import fj.data.Either;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -48,30 +37,39 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
-public class ArtifactValidatorExecuter {
+public abstract class ArtifactValidatorExecutor {
 
-    protected JanusGraphDao janusGraphDao;
-    protected ToscaOperationFacade toscaOperationFacade;
+    private static final Logger log = Logger.getLogger(ArtifactValidatorExecutor.class);
 
-    public ArtifactValidatorExecuter(JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade) {
+    private final JanusGraphDao janusGraphDao;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final String name;
+
+    public ArtifactValidatorExecutor(
+        JanusGraphDao janusGraphDao,
+        ToscaOperationFacade toscaOperationFacade,
+        String name
+    ) {
         this.janusGraphDao = janusGraphDao;
         this.toscaOperationFacade = toscaOperationFacade;
-    }
-
-    private static Logger log = Logger.getLogger(ArtifactValidatorExecuter.class.getName());
-
-    protected String name;
-
-    public void setName(String name) {
         this.name = name;
     }
 
     public String getName() {
         return name;
     }
-
 
     public Map<String, List<Component>> getVerticesToValidate(VertexTypeEnum type,
         Map<GraphPropertyEnum, Object> hasProps) {
@@ -87,7 +85,7 @@ public class ArtifactValidatorExecuter {
         componentsList.forEach(vertex -> {
             String ivariantUuid = (String) vertex.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID);
             if (!result.containsKey(ivariantUuid)) {
-                List<Component> compList = new ArrayList<Component>();
+                List<Component> compList = new ArrayList<>();
                 result.put(ivariantUuid, compList);
             }
             List<Component> compList = result.get(ivariantUuid);
@@ -114,7 +112,7 @@ public class ArtifactValidatorExecuter {
         boolean result = true;
         long time = System.currentTimeMillis();
         String fileName = outputFilePath + this.getName() + "_" + time + ".csv";
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"))) {
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF_8))) {
             writer.write("name, UUID, invariantUUID, state, version\n");
             Collection<List<Component>> collection = vertices.values();
             for (List<Component> compList : collection) {
@@ -149,12 +147,10 @@ public class ArtifactValidatorExecuter {
         try {
             // "service name, service id, state, version
             for (Component component : components) {
-                StringBuffer sb = new StringBuffer(component.getName());
-                sb.append(",").append(component.getUniqueId()).append(",").append(component.getInvariantUUID())
-                    .append(",").append(component.getLifecycleState()).append(",").append(component.getVersion());
-
-                sb.append("\n");
-                writer.write(sb.toString());
+                String sb = component.getName() + "," + component.getUniqueId() + "," + component.getInvariantUUID()
+                    + "," + component.getLifecycleState() + "," + component.getVersion()
+                    + "\n";
+                writer.write(sb);
             }
         } catch (IOException e) {
             log.error("Failed to write module result to file ", e);

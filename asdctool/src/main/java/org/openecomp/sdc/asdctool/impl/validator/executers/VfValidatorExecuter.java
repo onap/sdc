@@ -32,7 +32,7 @@ import java.util.List;
 
 public class VfValidatorExecuter extends TopologyTemplateValidatorExecuter implements ValidatorExecuter {
 
-    private List<VfValidationTask> tasks;
+    private final List<VfValidationTask> tasks;
 
     @Autowired(required = false)
     public VfValidatorExecuter(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
