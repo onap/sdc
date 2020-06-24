@@ -20,115 +20,98 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 public class MapDataDefinitionTest {
 
-	private MapDataDefinition createTestSubject() {
-		return new MapDataDefinition();
+	private MapDataDefinition mapDataDefinition = new MapDataDefinition();
+	private ArtifactDataDefinition artifactDataDefinition1 = new ArtifactDataDefinition();
+
+	@BeforeEach
+	public void initMapDataDefinition() {
+		artifactDataDefinition1.setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, "testUniqueId");
+		mapDataDefinition.put("key1", artifactDataDefinition1);
+		mapDataDefinition.setOwnerIdIfEmpty("testOwner1");
+
+		ArtifactDataDefinition artifactDataDefinition2 = new ArtifactDataDefinition();
+		artifactDataDefinition2.setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, "testUniqueId2");
+		mapDataDefinition.put("key2", artifactDataDefinition2);
 	}
-	
+
 	@Test
 	public void testCopyConstructor() throws Exception {
-		new MapDataDefinition(createTestSubject());
-	}
-	
-	@Test
-	public void testDelete() throws Exception {
-		MapDataDefinition testSubject;
-		String key = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.delete(key);
-	}
-
-	@Test
-	public void testSetOwnerIdIfEmpty() throws Exception {
-		MapDataDefinition testSubject;
-		String ownerId = "";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setOwnerIdIfEmpty(ownerId);
-	}
-
-	@Test
-	public void testFindKeyByItemUidMatch() throws Exception {
-		MapDataDefinition testSubject;
-		String uid = "";
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.findKeyByItemUidMatch(uid);
-	}
-
-	@Test
-	public void testGetMapToscaDataDefinition() throws Exception {
-		MapDataDefinition testSubject;
-		Map<String, MapDataDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getMapToscaDataDefinition();
+		MapDataDefinition mapDataDefinitionNew = new MapDataDefinition(mapDataDefinition);
+		assertTrue(mapDataDefinitionNew.findByKey("key1").equals(artifactDataDefinition1));
+		assertNotNull(mapDataDefinitionNew.findByKey("key2"));
 	}
 
 	@Test
 	public void testPut() throws Exception {
-		MapDataDefinition testSubject;
-		String key = "";
-		ToscaDataDefinition value = null;
+		ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+		mapDataDefinition.put("key3", artifactDataDefinition);
+		assertTrue(mapDataDefinition.findByKey("key3").equals(artifactDataDefinition));
+	}
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.put(key, value);
+	@Test
+	public void testDelete() throws Exception {
+		mapDataDefinition.delete("key1");
+		assertNull(mapDataDefinition.findByKey("key1"));
+	}
+
+	@Test
+	public void testSetOwnerIdIfEmpty() throws Exception {
+		mapDataDefinition.setOwnerIdIfEmpty("testOwner2");
+		assertTrue(mapDataDefinition.findByKey("key1").getOwnerId().equals("testOwner1"));
+		assertTrue(mapDataDefinition.findByKey("key2").getOwnerId().equals("testOwner2"));
 	}
 
 	@Test
 	public void testFindByKey() throws Exception {
-		MapDataDefinition testSubject;
-		String key = "";
-		ToscaDataDefinition result;
+		assertNull(mapDataDefinition.findByKey("wrongKey"));
+		assertTrue(mapDataDefinition.findByKey("key1").equals(artifactDataDefinition1));
+	}
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.findByKey(key);
+	@Test
+	public void testFindKeyByItemUidMatch() throws Exception {
+		assertNull(mapDataDefinition.findKeyByItemUidMatch(null));
+		assertNull(mapDataDefinition.findKeyByItemUidMatch("wrongUniqueId"));
+		assertTrue(mapDataDefinition.findKeyByItemUidMatch("testUniqueId").equals("key1"));
+		assertTrue(mapDataDefinition.findKeyByItemUidMatch("testUniqueId2").equals("key2"));
 	}
 
 	@Test
 	public void testRemoveByOwnerId() throws Exception {
-		MapDataDefinition testSubject;
-		ToscaDataDefinition result;
+		Set<String> ownerIdSet =  new HashSet<String> ();
+		ownerIdSet.add("testOwner1");
+		mapDataDefinition.removeByOwnerId(ownerIdSet);
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.removeByOwnerId(new HashSet<>());
+		assertNull(mapDataDefinition.findByKey("key1"));
+		assertNotNull(mapDataDefinition.findByKey("key2"));
 	}
 
 	@Test
 	public void testUpdateIfExist() throws Exception {
-		MapDataDefinition testSubject;
-		ToscaDataDefinition other = null;
-		boolean allowDefaultValueOverride = true;
-		ToscaDataDefinition result;
+		MapDataDefinition mapDataDefinitionNew = new MapDataDefinition();
+		ArtifactDataDefinition artifactDataDefinition2 = new ArtifactDataDefinition();
+		artifactDataDefinition2.setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, "testUniqueId2");
+		mapDataDefinitionNew.put("key2", artifactDataDefinition2);
+		mapDataDefinitionNew.setOwnerIdIfEmpty("testOwner2");
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.updateIfExist(testSubject, allowDefaultValueOverride);
+		assertNull(mapDataDefinition.findByKey("key2").getOwnerId());
+		mapDataDefinition.updateIfExist(mapDataDefinitionNew, true);
+		assertTrue(mapDataDefinition.findByKey("key2").getOwnerId().equals("testOwner2"));
 	}
 
 	@Test
 	public void testIsEmpty() throws Exception {
-		MapDataDefinition testSubject;
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.isEmpty();
+		assertTrue(!mapDataDefinition.isEmpty());
 	}
 }
