@@ -20,20 +20,24 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.apache.commons.collections.MapUtils;
-import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
-import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.log.api.ILogConfiguration;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.collections.MapUtils;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.log.api.ILogConfiguration;
 
-public class ComponentInstance extends ComponentInstanceDataDefinition implements PropertiesOwner{
+@Getter
+@Setter
+public class ComponentInstance extends ComponentInstanceDataDefinition implements PropertiesOwner {
 
     private Map<String, List<CapabilityDefinition>> capabilities;
     private Map<String, List<RequirementDefinition>> requirements;
@@ -43,6 +47,7 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
     private Map<String, Object> interfaces;
     private List<PropertyDefinition> properties;
     private CINodeFilterDataDefinition nodeFilter;
+    private SubstitutionFilterDataDefinition substitutionFilter;
     private List<InputDefinition> inputs;
 
     public ComponentInstance() {
@@ -53,26 +58,6 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
         super(r);
     }
 
-    public Map<String, List<CapabilityDefinition>> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(Map<String, List<CapabilityDefinition>> capabilities) {
-        this.capabilities = capabilities;
-    }
-
-    public Map<String, List<RequirementDefinition>> getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(Map<String, List<RequirementDefinition>> requirements) {
-        this.requirements = requirements;
-    }
-
-    public Map<String, ArtifactDefinition> getDeploymentArtifacts() {
-        return deploymentArtifacts;
-    }
-
     public Map<String, ArtifactDefinition> safeGetDeploymentArtifacts() {
         return deploymentArtifacts == null ? Collections.emptyMap() : deploymentArtifacts;
     }
@@ -81,28 +66,8 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
         return artifacts == null ? Collections.emptyMap() : deploymentArtifacts;
     }
 
-    public void setDeploymentArtifacts(Map<String, ArtifactDefinition> deploymentArtifacts) {
-        this.deploymentArtifacts = deploymentArtifacts;
-    }
-
-    public Map<String, ArtifactDefinition> getArtifacts() {
-        return artifacts;
-    }
-
     public Map<String, ArtifactDefinition> safeGetArtifacts() {
         return artifacts == null ? Collections.emptyMap() : artifacts;
-    }
-
-    public void setArtifacts(Map<String, ArtifactDefinition> artifacts) {
-        this.artifacts = artifacts;
-    }
-
-    public List<GroupInstance> getGroupInstances() {
-        return groupInstances;
-    }
-
-    public void setGroupInstances(List<GroupInstance> groupInstances) {
-        this.groupInstances = groupInstances;
     }
 
     public String getActualComponentUid() {
@@ -116,57 +81,24 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
         return safeGetInformationalArtifacts().get(artifactLabel) != null;
     }
 
-    public Map<String, Object> getInterfaces() {
-        return interfaces;
-    }
-
-    public void setInterfaces(Map<String, Object> interfaces) {
-        this.interfaces = interfaces;
-    }
-
     public void addInterface(String interfaceName, Object interfaceDefinition) {
-        if(MapUtils.isEmpty(this.interfaces)) {
+        if (MapUtils.isEmpty(this.interfaces)) {
             this.interfaces = new HashMap<>();
         }
-
         this.interfaces.put(interfaceName, interfaceDefinition);
     }
 
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
-    public CINodeFilterDataDefinition getNodeFilter() {
-        return nodeFilter;
-    }
-
-    public void setNodeFilter(CINodeFilterDataDefinition nodeFilter) {
-        this.nodeFilter = nodeFilter;
-    }
-
     //supportability log method return map of component metadata teddy.h
-    public Map<String,String> getComponentMetadataForSupportLog(){
-        Map<String,String>componentMetadata=new HashMap<>();
-        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME,getName());
-        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION,getVersion());
+    public Map<String, String> getComponentMetadataForSupportLog() {
+        Map<String, String> componentMetadata = new HashMap<>();
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_NAME, getName());
+        componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_VERSION, getVersion());
         componentMetadata.put(ILogConfiguration.MDC_SUPPORTABLITY_COMPONENT_UUID, getSourceModelUuid());
         return componentMetadata;
     }
 
-    public boolean isCreatedFromCsar(){
+    public boolean isCreatedFromCsar() {
         return CreatedFrom.CSAR.equals(this.getCreatedFrom());
-    }
-
-    public List<InputDefinition> getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(List<InputDefinition> inputs) {
-        this.inputs = inputs;
     }
 
 }

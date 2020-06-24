@@ -71,6 +71,7 @@ import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -217,6 +218,9 @@ public class ModelConverter {
         convertDataTypes(topologyTemplate, service);
 
         convertNodeFiltersComponents(topologyTemplate, service);
+
+        convertSubstitutionFiltersComponents(topologyTemplate, service);
+
         setCapabilitiesToComponent(topologyTemplate, service);
         setRequirementsToComponent(topologyTemplate, service);
         return service;
@@ -879,15 +883,31 @@ public class ModelConverter {
         component.setDeploymentArtifacts(copy);
     }
 
-    private static void convertNodeFiltersComponents(TopologyTemplate topologyTemplate, Component component) {
-        Map<String, CINodeFilterDataDefinition> filters = topologyTemplate.getNodeFilterComponents();
-        Map<String, CINodeFilterDataDefinition> copy;
-        if (filters != null) {
-            copy = filters.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new CINodeFilterDataDefinition(e.getValue())));
+    private static void convertNodeFiltersComponents(final TopologyTemplate topologyTemplate,
+                                                     final Component component) {
+        final Map<String, CINodeFilterDataDefinition> filters = topologyTemplate.getNodeFilterComponents();
+        final Map<String, CINodeFilterDataDefinition> copy;
+        if (MapUtils.isNotEmpty(filters)) {
+            copy = filters.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> new CINodeFilterDataDefinition(e.getValue())));
         } else {
             copy = new HashMap<>();
         }
         component.setNodeFilterComponents(copy);
+    }
+
+    private static void convertSubstitutionFiltersComponents(final TopologyTemplate topologyTemplate,
+                                                             final Component component) {
+        final Map<String, SubstitutionFilterDataDefinition> filters = topologyTemplate
+            .getSubstitutionFilterDataDefinitionMap();
+        final Map<String, SubstitutionFilterDataDefinition> copy;
+        if (MapUtils.isNotEmpty(filters)) {
+            copy = filters.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> new SubstitutionFilterDataDefinition(e.getValue())));
+        } else {
+            copy = new HashMap<>();
+        }
+        component.setSubstitutionFilterComponents(copy);
     }
 
     private static void convertServiceApiArtifacts(TopologyTemplate topologyTemplate, Service service) {
@@ -1328,6 +1348,8 @@ public class ModelConverter {
         List<ComponentInstance> componentInstances = new ArrayList<>();
         ComponentInstance currComponentInstance;
         Map<String, CINodeFilterDataDefinition> nodeFilterComponents = topologyTemplate.getNodeFilterComponents();
+        Map<String, SubstitutionFilterDataDefinition> substitutionFilterDataDefinitionMap = topologyTemplate
+            .getSubstitutionFilterDataDefinitionMap();
 
         for (Map.Entry<String, ComponentInstanceDataDefinition> entry : topologyTemplate.getComponentInstances().entrySet()) {
             String key = entry.getKey();
@@ -1337,8 +1359,11 @@ public class ModelConverter {
                 currComponentInstance.setGroupInstances(groupInstances);
             }
             setComponentInstanceSource(currComponentInstance, component);
-            if(nodeFilterComponents != null && nodeFilterComponents.containsKey(key)){
+            if(MapUtils.isNotEmpty(nodeFilterComponents) && nodeFilterComponents.containsKey(key)){
                 currComponentInstance.setNodeFilter(nodeFilterComponents.get(key));
+            }
+            if(MapUtils.isNotEmpty(substitutionFilterDataDefinitionMap) && substitutionFilterDataDefinitionMap.containsKey(key)) {
+                currComponentInstance.setSubstitutionFilter(substitutionFilterDataDefinitionMap.get(key));
             }
             if(topologyTemplate.getInstProperties() != null && topologyTemplate.getInstProperties().containsKey(key) && topologyTemplate.getInstProperties().get(key) != null ){
                 List<PropertyDefinition> instanceProps = topologyTemplate.getInstProperties().get(key).getMapToscaDataDefinition().entrySet().stream().map(e -> new PropertyDefinition(e.getValue())).collect(Collectors.toList());
