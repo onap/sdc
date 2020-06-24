@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23c7d618_d2a881fb",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecutor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-24T13:53:16Z",
+      "side": 1,
+      "message": "The name attribute has be set to final in order to get rid of the `setName` setter, and to simplify the tests.",
+      "revId": "c5079c84d30911a4c79eecef6ac99994e99ca723",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67c08b9f_4c74d446",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/ArtifactValidatorExecutorContract.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-24T13:53:16Z",
+      "side": 1,
+      "message": "A Test Contract is a specification of the rules any implementation of an interface or an abstract class should satisfy. Concretely, a contract is implemented/inherited by the test classes specific to each implementation.",
+      "revId": "c5079c84d30911a4c79eecef6ac99994e99ca723",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

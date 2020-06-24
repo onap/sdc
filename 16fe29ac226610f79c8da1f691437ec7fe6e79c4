@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b3e322b0_54112fb2",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/ValidationToolBL.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-24T13:53:16Z",
+      "side": 0,
+      "message": "`outputFilePath` is not used anymore",
+      "revId": "16fe29ac226610f79c8da1f691437ec7fe6e79c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c957811b_a7ed6213",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/validator/executers/NodeToscaArtifactsValidatorExecutor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-24T13:53:16Z",
+      "side": 0,
+      "message": "This method is already inherited from `ArtifactValidatorExecutor`.",
+      "revId": "16fe29ac226610f79c8da1f691437ec7fe6e79c4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
