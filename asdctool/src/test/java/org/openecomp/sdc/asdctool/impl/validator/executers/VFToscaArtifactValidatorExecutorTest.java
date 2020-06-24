@@ -20,51 +20,17 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
-import static org.mockito.Mockito.mock;
+public class VFToscaArtifactValidatorExecutorTest
+    extends IArtifactValidatorExecutorContract implements ArtifactValidatorExecutorContract {
 
-public class VFToscaArtifactValidatorExecutorTest {
-
-    private VFToscaArtifactValidatorExecutor createTestSubject() {
-        JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-        ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
-
-        return new VFToscaArtifactValidatorExecutor(janusGraphDaoMock, toscaOperationFacade);
-    }
-
-    @Test
-    public void testExecuteValidations() {
-        VFToscaArtifactValidatorExecutor testSubject;
-        boolean result;
-
-        // default test
-        testSubject = createTestSubject();
-        // Initially no outputFilePath was passed to this function (hence it is set to null)
-        // TODO: Fix this null and see if the argument is used by this function
-        Assertions.assertThrows(NullPointerException.class, () -> testSubject.executeValidations(null));
-    }
-
-    @Test
-    public void testGetName() throws Exception {
-        VFToscaArtifactValidatorExecutor testSubject;
-        String result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getName();
-    }
-
-    @Test
-    public void testSetName() throws Exception {
-        VFToscaArtifactValidatorExecutor testSubject;
-        String name = "";
-
-        // default test
-        testSubject = createTestSubject();
-        testSubject.setName(name);
+    @Override
+    public VFToscaArtifactValidatorExecutor createTestSubject(
+        JanusGraphDao janusGraphDao,
+        ToscaOperationFacade toscaOperationFacade
+    ) {
+        return new VFToscaArtifactValidatorExecutor(janusGraphDao, toscaOperationFacade);
     }
 }

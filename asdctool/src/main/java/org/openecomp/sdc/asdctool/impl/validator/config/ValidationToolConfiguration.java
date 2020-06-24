@@ -23,8 +23,8 @@ package org.openecomp.sdc.asdctool.impl.validator.config;
 import org.openecomp.sdc.asdctool.impl.VrfObjectFixHandler;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
-import org.openecomp.sdc.asdctool.impl.validator.executers.IArtifactValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.IArtifactValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.executers.VFToscaArtifactValidatorExecutor;
@@ -83,9 +83,9 @@ public class ValidationToolConfiguration {
     }
 
     @Bean
-    public NodeToscaArtifactsValidatorExecuter NodeToscaArtifactsValidatorValidator(JanusGraphDao janusGraphDao,
+    public NodeToscaArtifactsValidatorExecutor NodeToscaArtifactsValidatorValidator(JanusGraphDao janusGraphDao,
         ToscaOperationFacade toscaOperationFacade) {
-        return new NodeToscaArtifactsValidatorExecuter(janusGraphDao, toscaOperationFacade);
+        return new NodeToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
     }
 
     @Bean
@@ -121,7 +121,7 @@ public class ValidationToolConfiguration {
     }
 
     @Bean
-    public ArtifactToolBL artifactToolBL(List<IArtifactValidatorExecuter> validators) {
+    public ArtifactToolBL artifactToolBL(List<IArtifactValidatorExecutor> validators) {
         return new ArtifactToolBL(validators);
     }
 
