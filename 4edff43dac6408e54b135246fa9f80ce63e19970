@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e7db63f_c93937e9",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/elements/MapDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-24T15:32:41Z",
+      "side": 1,
+      "message": "bad tab to remove",
+      "revId": "4edff43dac6408e54b135246fa9f80ce63e19970",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
