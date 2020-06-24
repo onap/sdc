@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e294b573_8101a5ca",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-24T14:12:31Z",
+      "side": 1,
+      "message": "Hmm I might have missed something, but why play around with graph and graphResource ? Can\u0027t we just use graph and drop graphResource ?",
+      "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
