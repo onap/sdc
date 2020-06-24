@@ -38,9 +38,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class PortalRestAPICentralServiceImplTest {
+public class PortalRestApiCentralServiceImplTest {
 
-    private PortalRestAPICentralServiceImpl testSubject;
+    private PortalRestApiCentralServiceImpl testSubject;
     private UserBusinessLogic ubl;
     private  UserBusinessLogicExt uble;
 
@@ -48,7 +48,7 @@ public class PortalRestAPICentralServiceImplTest {
     public void createTestSubject() {
         ubl = Mockito.mock(UserBusinessLogic.class);
         uble = Mockito.mock(UserBusinessLogicExt.class);
-        testSubject = new PortalRestAPICentralServiceImpl(ubl, uble);
+        testSubject = new PortalRestApiCentralServiceImpl(ubl, uble);
 
     }
 
