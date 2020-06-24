@@ -70,6 +70,24 @@
       "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9c47d5d7_142ba1fb",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-24T16:12:38Z",
+      "side": 1,
+      "message": "something like following:\n...................................................................\n\t\tTransaction tx \u003d null;\n\t\ttry (JanusGraph graph \u003d openGraph(janusGraphFile)) {\n\t\t\ttx \u003d graph.tx();\n...................................................................\n\t\t\ttx.commit();\n...................................................................\n                 catch (Exception e) {\n\t\t\tlog.info(\"get All Products failed \", e);\n\t\t\tif (tx !\u003d null) {\n\t\t\t\ttx.rollback();\n\t\t\t}",
+      "parentUuid": "526eb6f6_0ec32acf",
+      "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
