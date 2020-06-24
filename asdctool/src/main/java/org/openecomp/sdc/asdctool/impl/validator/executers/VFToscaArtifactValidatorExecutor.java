@@ -33,12 +33,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VFToscaArtifactValidatorExecutor extends ArtifactValidatorExecuter implements IArtifactValidatorExecuter {
+public class VFToscaArtifactValidatorExecutor
+    extends ArtifactValidatorExecutor implements IArtifactValidatorExecutor {
 
-    public VFToscaArtifactValidatorExecutor(JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade) {
-        super(janusGraphDao, toscaOperationFacade);
-        setName("VF_TOSCA_ARTIFACTS");
+    public VFToscaArtifactValidatorExecutor(JanusGraphDao janusGraphDao, ToscaOperationFacade toscaOperationFacade) {
+        super(janusGraphDao, toscaOperationFacade, "VF_TOSCA_ARTIFACTS");
     }
 
     @Override
@@ -51,14 +50,5 @@ public class VFToscaArtifactValidatorExecutor extends ArtifactValidatorExecuter 
         Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps);
         return validate(vertices, outputFilePath);
 
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }
