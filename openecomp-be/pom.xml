@@ -33,20 +33,6 @@
   </parent>
 
   <dependencies>
-    <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!--JUnit Jupiter Engine to depend on the JUnit4 engine and JUnit 4 API  -->
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>com.github.testng-team</groupId>
       <artifactId>testng-junit5</artifactId>

@@ -64,11 +64,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.onap.sdc.common</groupId>
             <artifactId>onap-configuration-management-core</artifactId>
             <version>${project.version}</version>

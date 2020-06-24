@@ -7,21 +7,6 @@
   <version>1.0.0</version>
 
   <dependencies>
-    <!--JUnit Jupiter Engine to depend on the JUnit5 engine and JUnit 5 API -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!--JUnit Jupiter Engine to depend on the JUnit4 engine and JUnit 4 API  -->
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>${junitJupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <!--spock testing-->
     <dependency>
       <groupId>org.spockframework</groupId>
@@ -66,13 +51,6 @@
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <version>1.18</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
