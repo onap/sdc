@@ -16,6 +16,24 @@
       "revId": "90a1fecdbdb753f68636db9b119fda5da6c2baf3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "387fd65e_bea8fa39",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/RestUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-24T09:28:51Z",
+      "side": 1,
+      "message": "I agree, i have opened another pr to change those stuffs.\nThanks",
+      "parentUuid": "013d7892_973c7aa3",
+      "revId": "90a1fecdbdb753f68636db9b119fda5da6c2baf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
