@@ -51,8 +51,7 @@ public class RestUtils {
             return status;
         } catch (Exception e) {
             log.error("Product uid:{} delete failed with exception", productUid, e);
+            return HttpStatus.SC_INTERNAL_SERVER_ERROR;
         }
-        return null;
     }
-
 }
