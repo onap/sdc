@@ -31,15 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -48,8 +39,6 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
-import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
@@ -62,13 +51,16 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -791,6 +783,14 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             }
         }
 
+        if (!componentParametersView.isIgnoreSubstitutionFilter()) {
+            status = setSubstitutionFilterComponentFromGraph(componentV, toscaElement);
+            if (status != JanusGraphOperationStatus.OK) {
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+
+            }
+        }
+
         if (!componentParametersView.isIgnoreInterfaces()) {
             JanusGraphOperationStatus storageStatus = setInterfacesFromGraph(componentV, toscaElement);
             if (storageStatus != JanusGraphOperationStatus.OK) {
@@ -996,11 +996,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return JanusGraphOperationStatus.OK;
     }
 
-    private JanusGraphOperationStatus setNodeFilterComponentFromGraph(GraphVertex componentV,
-            TopologyTemplate topologyTemplate) {
-        Either<Map<String, CINodeFilterDataDefinition>, JanusGraphOperationStatus> result =
-                getDataFromGraph(componentV,
-                        EdgeLabelEnum.NODE_FILTER_TEMPLATE);
+    private JanusGraphOperationStatus setNodeFilterComponentFromGraph(final GraphVertex componentV,
+                                                                      final TopologyTemplate topologyTemplate) {
+
+        final Either<Map<String, CINodeFilterDataDefinition>, JanusGraphOperationStatus> result =
+            getDataFromGraph(componentV, EdgeLabelEnum.NODE_FILTER_TEMPLATE);
         if (result.isLeft()) {
             topologyTemplate.setNodeFilterComponents(result.left().value());
         } else {
@@ -1010,6 +1010,22 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         }
         return JanusGraphOperationStatus.OK;
     }
+
+    private JanusGraphOperationStatus setSubstitutionFilterComponentFromGraph(final GraphVertex componentV,
+                                                                              final TopologyTemplate topologyTemplate) {
+
+        final Either<Map<String, SubstitutionFilterDataDefinition>, JanusGraphOperationStatus> result =
+            getDataFromGraph(componentV, EdgeLabelEnum.SUBSTITUTION_FILTER_TEMPLATE);
+        if (result.isLeft()) {
+            topologyTemplate.setSubstitutionFilterDataDefinitionMap(result.left().value());
+        } else {
+            if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
+                return result.right().value();
+            }
+        }
+        return JanusGraphOperationStatus.OK;
+    }
+
 
     @Override
     protected <T extends ToscaElement> JanusGraphOperationStatus setRequirementsFromGraph(GraphVertex componentV, T toscaElement) {

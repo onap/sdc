@@ -22,6 +22,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
+
 import com.google.gson.JsonElement;
 import fj.data.Either;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import java.util.function.Function;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -98,7 +101,7 @@ public abstract class BaseBusinessLogic {
 
     private static final String FAILED_TO_LOCK_COMPONENT_ERROR = "Failed to lock component {} error - {}";
 
-    private static final Logger log = Logger.getLogger(BaseBusinessLogic.class.getName());
+    private static final Logger log = Logger.getLogger(BaseBusinessLogic.class);
     private static final String EMPTY_VALUE = null;
     private static final String SCHEMA_DOESN_T_EXISTS_FOR_PROPERTY_OF_TYPE = "Schema doesn't exists for property of type {}";
     private static final String PROPERTY_IN_SCHEMA_DEFINITION_INSIDE_PROPERTY_OF_TYPE_DOESN_T_EXIST = "Property in Schema Definition inside property of type {} doesn't exist";
@@ -818,6 +821,20 @@ public abstract class BaseBusinessLogic {
 
     protected List<ComponentInstanceProperty> componentInstancePropertyListException(StorageOperationStatus storageOperationStatus) {
         throw new StorageException(storageOperationStatus);
+    }
+
+    protected Component getComponent(final String componentId) throws BusinessLogicException {
+
+        final Either<Component, StorageOperationStatus> result = toscaOperationFacade.getToscaElement(componentId);
+
+        if (result.isRight()) {
+            final StorageOperationStatus errorStatus = result.right().value();
+            log.error(BUSINESS_PROCESS_ERROR, this.getClass().getName(),
+                "Failed to fetch component information by component id, error {}", errorStatus);
+            throw new BusinessLogicException(componentsUtils.getResponseFormat(
+                componentsUtils.convertFromStorageResponse(errorStatus)));
+        }
+        return result.left().value();
     }
 
 }

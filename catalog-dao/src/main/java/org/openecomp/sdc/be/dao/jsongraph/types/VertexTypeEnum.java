@@ -22,8 +22,28 @@ package org.openecomp.sdc.be.dao.jsongraph.types;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.openecomp.sdc.be.datatypes.elements.*;
-import org.openecomp.sdc.be.resources.data.DataTypeData;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapComponentInstanceExternalRefs;
+import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 
 @Getter
 @AllArgsConstructor
@@ -66,6 +86,7 @@ public enum VertexTypeEnum {
 	INTERFACE		            ("interface",			        InterfaceDataDefinition.class),
 	INTERFACE_OPERATION			("interfaceOperation",		OperationDataDefinition.class),
 	NODE_FILTER_TEMPLATE		("NodeTemplateFilter",        CINodeFilterDataDefinition.class),
+	SUBSTITUTION_FILTER_TEMPLATE ("substitution_mapping",     SubstitutionFilterDataDefinition.class),
 	INST_INTERFACES             ("InstInterfaces",            MapInterfaceDataDefinition.class),
 	DATA_TYPES					("data_types", 				DataTypeDataDefinition.class);
 

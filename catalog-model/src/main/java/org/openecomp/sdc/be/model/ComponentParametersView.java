@@ -50,7 +50,9 @@ public class ComponentParametersView {
     private boolean ignoreServicePath = true;
     private boolean ignorePolicies = false;
     private boolean ignoreNodeFilterRequirements = false;
+    private boolean ignoreSubstitutionFilterRequirements = false;
     private boolean ignoreNodeFilter = false;
+    private boolean ignoreSubstitutionFilter = false;
     private boolean ignoreDataType = false;
 
     public ComponentParametersView() {
@@ -95,6 +97,7 @@ public class ComponentParametersView {
                     this.setIgnoreCapabilities(false);
                     this.setIgnoreRequirements(false);
                     this.setIgnoreNodeFilter(false);
+                    this.setIgnoreSubstitutionFilter(false);
                     this.setIgnoreCapabiltyProperties(false);
                     break;
                 case COMPONENT_INSTANCES_PROPERTIES:
@@ -152,6 +155,10 @@ public class ComponentParametersView {
                 case NODE_FILTER:
                     this.setIgnoreNodeFilterRequirements(false);
                     this.setIgnoreNodeFilter(false);
+                    break;
+                case SUBSTITUTION_FILTER:
+                    this.setIgnoreSubstitutionFilterRequirements(false);
+                    this.setIgnoreSubstitutionFilter(false);
                     break;
                 case COMPONENT_INSTANCES_INTERFACES:
                     this.setIgnoreComponentInstances(false);
@@ -216,6 +223,9 @@ public class ComponentParametersView {
         if (ignoreNodeFilterRequirements){
           component.setNodeFilterComponents(null);
         }
+        if (ignoreSubstitutionFilterRequirements){
+            component.setSubstitutionFilterComponents(null);
+        }
         if (ignoreInterfaces && ignoreInterfaceInstances &&
             componentType == ComponentTypeEnum.RESOURCE) {
             component.setInterfaces(null);
@@ -241,6 +251,9 @@ public class ComponentParametersView {
         if (ignoreNodeFilter){
             component.setNodeFilterComponents(null);
         }
+        if (ignoreSubstitutionFilter){
+            component.setSubstitutionFilterComponents(null);
+        }
         if (ignoreDataType) {
             component.setDataTypes(null);
         }
@@ -253,6 +266,14 @@ public class ComponentParametersView {
 
     public void setIgnoreNodeFilterRequirements(boolean ignoreNodeFilter) {
         this.ignoreNodeFilterRequirements = ignoreNodeFilter;
+    }
+
+    public boolean isIgnoreSubstitutionFilterRequirements() {
+        return ignoreSubstitutionFilterRequirements;
+    }
+
+    public void setIgnoreSubstitutionFilterRequirements(boolean ignoreSubstitutionFilterRequirements) {
+        this.ignoreSubstitutionFilterRequirements = ignoreSubstitutionFilterRequirements;
     }
 
     public void disableAll() {
@@ -278,7 +299,9 @@ public class ComponentParametersView {
         ignoreCapabiltyProperties = true;
         ignoreServicePath = true;
         ignoreNodeFilterRequirements = true;
+        ignoreSubstitutionFilterRequirements = true;
         ignoreNodeFilter = true;
+        ignoreSubstitutionFilter = true;
         ignoreDataType = true;
     }
 
@@ -460,6 +483,14 @@ public class ComponentParametersView {
 
     public void setIgnoreNodeFilter(boolean ignoreNodeFilter) {
         this.ignoreNodeFilter = ignoreNodeFilter;
+    }
+
+    public boolean isIgnoreSubstitutionFilter() {
+        return ignoreSubstitutionFilter;
+    }
+
+    public void setIgnoreSubstitutionFilter(boolean ignoreSubstitutionFilter) {
+        this.ignoreSubstitutionFilter = ignoreSubstitutionFilter;
     }
 
     public boolean isIgnoreDataType() {

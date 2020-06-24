@@ -21,6 +21,9 @@
  */
 package org.openecomp.sdc.be.components.validation;
 
+import static org.openecomp.sdc.be.dao.api.ActionStatus.USER_INACTIVE;
+
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -29,12 +32,9 @@ import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-
-import static org.openecomp.sdc.be.dao.api.ActionStatus.USER_INACTIVE;
 
 @Component
 public class UserValidations {
@@ -42,46 +42,47 @@ public class UserValidations {
     private static final Logger log = Logger.getLogger(UserValidations.class);
 	private final UserBusinessLogic userAdmin;
 
-    public UserValidations(UserBusinessLogic userAdmin) {
+    public UserValidations(final UserBusinessLogic userAdmin) {
 		this.userAdmin = userAdmin;
     }
 
-    public void validateUserRole(User user, List<Role> roles) {
-		Role userRole = Role.valueOf(user.getRole());
-		if (roles != null) {
-			if (!roles.contains(userRole)) {
-				log.debug("user is not in appropriate role to perform action");
-                throw new ByActionStatusComponentException(ActionStatus.RESTRICTED_OPERATION);
-			}
+    public void validateUserRole(final User user, final List<Role> roles) {
+		final Role userRole = Role.valueOf(user.getRole());
+		if (roles != null && !roles.contains(userRole)) {
+			log.error(EcompLoggerErrorCode.PERMISSION_ERROR, this.getClass().getName(),
+				"user is not in appropriate role to perform action");
+			throw new ByActionStatusComponentException(ActionStatus.RESTRICTED_OPERATION);
 		}
 	}
 
-	public ActionStatus validateUserExistsActionStatus(String userId) {
+	public ActionStatus validateUserExistsActionStatus(final String userId) {
 	    if (!userAdmin.hasActiveUser(userId)) {
 			return ActionStatus.RESTRICTED_OPERATION;
 		}
 		return ActionStatus.OK;
 	}
 
-    public User validateUserNotEmpty(User user, String ecompErrorContext) {
-		String userId = user.getUserId();
+    public User validateUserNotEmpty(final User user,
+									 final String ecompErrorContext) {
+		final String userId = user.getUserId();
 		if (StringUtils.isEmpty(userId)) {
-			log.debug("User header is missing ");
+			log.error(EcompLoggerErrorCode.PERMISSION_ERROR, this.getClass().getName(),
+				"User header is missing ");
 			BeEcompErrorManager.getInstance().logBeUserMissingError(ecompErrorContext, user.getUserId());
             throw new ByActionStatusComponentException(ActionStatus.MISSING_USER_ID);
 		}
         return user;
 	}
 
-	public User validateUserExists(String userId) {
-		User user = userAdmin.getUser(userId);
+	public User validateUserExists(final String userId) {
+		final User user = userAdmin.getUser(userId);
 		if (UserStatusEnum.INACTIVE == user.getStatus()) {
 			throw new ByActionStatusComponentException(USER_INACTIVE, userId);
 		}
 		return user;
 	}
 
-	public User validateUserExists(User user) {
+	public User validateUserExists(final User user) {
 		return validateUserExists(user.getUserId());
 	}
 

@@ -52,8 +52,6 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignmentExt;
-import org.onap.sdc.tosca.datatypes.model.extension.SubstitutionFilter;
-import org.onap.sdc.tosca.datatypes.model.extension.SubstitutionMappingExt;
 import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
@@ -89,7 +87,7 @@ public class ToscaModelTest {
     private static final String STRING_TYPE = "string";
     private static final String ST_WITH_SERVICE_FILTER = "/serviceTemplateWithServiceFilter.yaml";
     private static final String SUBSTITUTION_MAPPING = "/serviceTemplateWithSubstitutionMapping.yaml";
-    private static final String SUBSTITUTION_MAPPING_EXT = "/substitutionMappingExt.yaml";
+    private static final String SUBSTITUTION_MAPPING_WITH_FILTER = "/substitutionMappingWithFilter.yaml";
 
     @Test
     public void testServiceTemplateJavaToYaml() {
@@ -460,40 +458,33 @@ public class ToscaModelTest {
 
     @Test
     public void testSubstitutionMapping() throws IOException {
-        ServiceTemplate serviceTemplate = getServiceTemplateExt(BASE_DIR + SUBSTITUTION_MAPPING);
-
-        SubstitutionMapping substitutionMappings = DataModelUtil.getSubstitutionMappings(serviceTemplate);
+        final ServiceTemplate serviceTemplate = getServiceTemplateExt(BASE_DIR + SUBSTITUTION_MAPPING);
+        final SubstitutionMapping substitutionMappings = DataModelUtil.getSubstitutionMappings(serviceTemplate);
         Assert.assertEquals("myNodeType.node", substitutionMappings.getNode_type());
         Assert.assertNotNull(substitutionMappings.getCapabilities());
         Assert.assertEquals(1,substitutionMappings.getCapabilities().size());
         Assert.assertNotNull(substitutionMappings.getRequirements());
         Assert.assertEquals(1,substitutionMappings.getRequirements().size());
-        Assert.assertEquals(true, substitutionMappings instanceof SubstitutionMappingExt);
-        Assert.assertNull(((SubstitutionMappingExt)substitutionMappings).getSubstitution_filter());
-
+        Assert.assertNull(substitutionMappings.getSubstitution_filter());
     }
 
     @Test
-    public void testSubstitutionMappingExt() throws IOException {
-        ServiceTemplate serviceTemplate = getServiceTemplateExt(BASE_DIR + SUBSTITUTION_MAPPING_EXT);
+    public void testSubstitutionMappingWithFilter() throws IOException {
+        final ServiceTemplate serviceTemplate = getServiceTemplateExt(BASE_DIR + SUBSTITUTION_MAPPING_WITH_FILTER);
 
-        SubstitutionMapping substitutionMappings = DataModelUtil.getSubstitutionMappings(serviceTemplate);
+        final SubstitutionMapping substitutionMappings = DataModelUtil.getSubstitutionMappings(serviceTemplate);
         Assert.assertEquals("myNodeType.node", substitutionMappings.getNode_type());
         Assert.assertNotNull(substitutionMappings.getCapabilities());
         Assert.assertEquals(1,substitutionMappings.getCapabilities().size());
         Assert.assertNotNull(substitutionMappings.getRequirements());
         Assert.assertEquals(1,substitutionMappings.getRequirements().size());
-        Assert.assertEquals(true, substitutionMappings instanceof SubstitutionMappingExt);
-        SubstitutionFilter substitutionFilter = ((SubstitutionMappingExt) substitutionMappings).getSubstitution_filter();
+        final NodeFilter substitutionFilter = substitutionMappings.getSubstitution_filter();
         Assert.assertNotNull(substitutionFilter);
         Assert.assertNotNull(substitutionFilter.getProperties());
         Assert.assertEquals(2,substitutionFilter.getProperties().size());
-        List<Constraint> vendorFilter = substitutionFilter.getProperties().get(0).get("vendor");
+        final List<Constraint> vendorFilter = substitutionFilter.getProperties().get(0).get("vendor");
         Assert.assertNotNull(vendorFilter);
         Assert.assertNotNull(vendorFilter.get(0).getEqual());
-
-
-
     }
 
     private ServiceTemplate getServiceTemplate(String inputPath) throws IOException {
