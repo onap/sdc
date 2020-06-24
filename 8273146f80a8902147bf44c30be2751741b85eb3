@@ -52,6 +52,24 @@
       "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "526eb6f6_0ec32acf",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-24T15:52:11Z",
+      "side": 1,
+      "message": "Yeah, ok instead of the graph reference, i could have the transac. That\u0027s what you meant ?",
+      "parentUuid": "0500281f_7b890a44",
+      "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
