@@ -33,6 +33,23 @@
       "revId": "c5079c84d30911a4c79eecef6ac99994e99ca723",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "984164f2_563f0fdc",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/validator/executers/IArtifactValidatorExecutorContract.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-24T14:32:13Z",
+      "side": 1,
+      "message": "Missing the license ?",
+      "revId": "c5079c84d30911a4c79eecef6ac99994e99ca723",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
