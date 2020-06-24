@@ -16,6 +16,24 @@
       "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8dabc5f_5e71b8a7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-24T14:39:51Z",
+      "side": 1,
+      "message": "no as the graph var is not visible in the catch scope for the rollback.\nI don\u0027t like it neither, if someone has a better idea to rationalize, I\u0027m opened :-)",
+      "parentUuid": "e294b573_8101a5ca",
+      "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
