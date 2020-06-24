@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "8ea2911e_f4be8f1e",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-24T13:45:53Z",
+      "side": 1,
+      "message": "Ok got it, thanks for the input :) That\u0027s a better option indeed",
+      "parentUuid": "8a0cc34b_dfe2d92c",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 42
+      },
+      "revId": "4984665b5f4b4cef236058cb8b84c2e5a3631a61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7aee42e1_fad64b56",
         "filename": "pom.xml",
         "patchSetId": 1
@@ -132,6 +156,30 @@
       "side": 1,
       "message": "ok, I see what you mean :\n[WARNING] ... sdc/catalog-be/src/test/resources/normativeTypes/importToscaProperties.yml: Duplicate field \u0027integer_prop03\u0027\n at [Source: (File); line: 195, column: 23]\nand others\n\nthere are two ways:\n1. use this commit to fix all those warning by removing duplicated entrance in yaml files (make code more clean) and upgrade to 1.0.4 (I\u0027d prefer this one) \n2. leave for later and stuck with 1.0.2 (somebody will have to fix it anyway)\n\nIt is up to you.",
       "parentUuid": "1b341d24_fea08c3d",
+      "range": {
+        "startLine": 377,
+        "startChar": 10,
+        "endLine": 377,
+        "endChar": 34
+      },
+      "revId": "4984665b5f4b4cef236058cb8b84c2e5a3631a61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c5b8654_239cea9a",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-24T13:45:53Z",
+      "side": 1,
+      "message": "Yeah I prefer to go with option 2 and investigate it separately :)",
+      "parentUuid": "3e8669c4_a82aacfe",
       "range": {
         "startLine": 377,
         "startChar": 10,
