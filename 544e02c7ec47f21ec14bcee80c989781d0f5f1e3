@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5e4d840_765d0524",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-24T11:40:35Z",
+      "side": 1,
+      "message": "could be final",
+      "range": {
+        "startLine": 37,
+        "startChar": 7,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "544e02c7ec47f21ec14bcee80c989781d0f5f1e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b9bd687_cc27c4d7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-24T11:40:35Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 67,
+        "startChar": 49,
+        "endLine": 67,
+        "endChar": 51
+      },
+      "revId": "544e02c7ec47f21ec14bcee80c989781d0f5f1e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf856dbb_d14b200f",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/RestUtilsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-24T11:40:35Z",
+      "side": 1,
+      "message": "avoid usage of TestNg, bcz of incompatibility with Junit5.\n\nI\u0027d suggest to migrate this TC to Junit5",
+      "range": {
+        "startLine": 26,
+        "startChar": 11,
+        "endLine": 26,
+        "endChar": 17
+      },
+      "revId": "544e02c7ec47f21ec14bcee80c989781d0f5f1e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
