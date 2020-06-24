@@ -57,7 +57,7 @@ public class ValidationTool {
 
         log.info("Start Validation Tool");
         Report report = Report.make();
-        boolean result = validationToolBL.validateAll(report, textFile, txtReportFilePath);
+        boolean result = validationToolBL.validateAll(report, textFile);
         textFile.reportEndOfToolRun(report);
         csvFile.printAllResults(report);
         if (result) {

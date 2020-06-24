@@ -23,7 +23,7 @@ package org.openecomp.sdc.asdctool.impl.validator.config;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
-import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.executers.VFToscaArtifactValidatorExecutor;
@@ -227,7 +227,7 @@ public class ValidationToolConfigurationTest {
 	@Test
 	public void testNodeToscaArtifactsValidatorValidator() {
 		ValidationToolConfiguration testSubject;
-		NodeToscaArtifactsValidatorExecuter result;
+		NodeToscaArtifactsValidatorExecutor result;
 		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
 		ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
 

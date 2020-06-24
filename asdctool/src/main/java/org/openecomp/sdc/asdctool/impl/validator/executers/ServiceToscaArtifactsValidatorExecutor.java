@@ -34,14 +34,13 @@ import java.util.List;
 import java.util.Map;
 
 @org.springframework.stereotype.Component
-public class ServiceToscaArtifactsValidatorExecutor extends ArtifactValidatorExecuter implements
-    IArtifactValidatorExecuter {
+public class ServiceToscaArtifactsValidatorExecutor
+    extends ArtifactValidatorExecutor implements IArtifactValidatorExecutor {
 
     @Autowired
     public ServiceToscaArtifactsValidatorExecutor(JanusGraphDao janusGraphDao,
         ToscaOperationFacade toscaOperationFacade) {
-        super(janusGraphDao, toscaOperationFacade);
-        setName("SERVICE_TOSCA_ARTIFACTS");
+        super(janusGraphDao, toscaOperationFacade, "SERVICE_TOSCA_ARTIFACTS");
     }
 
     @Override
@@ -52,14 +51,5 @@ public class ServiceToscaArtifactsValidatorExecutor extends ArtifactValidatorExe
 
         Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps);
         return validate(vertices, outputFilePath);
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

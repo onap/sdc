@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-public interface IArtifactValidatorExecuter {
+// TODO: Merge this interface with ArtifactValidatorExecutor
+public interface IArtifactValidatorExecutor {
 
     boolean executeValidations(String outputFilePath);
 

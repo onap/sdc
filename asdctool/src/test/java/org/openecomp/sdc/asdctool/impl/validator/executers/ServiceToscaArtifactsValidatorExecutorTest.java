@@ -20,45 +20,17 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
-import static org.mockito.Mockito.mock;
+public class ServiceToscaArtifactsValidatorExecutorTest
+    extends IArtifactValidatorExecutorContract implements ArtifactValidatorExecutorContract {
 
-public class ServiceToscaArtifactsValidatorExecutorTest {
-
-    private ServiceToscaArtifactsValidatorExecutor createTestSubject() {
-        JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-        ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
-
-        return new ServiceToscaArtifactsValidatorExecutor(janusGraphDaoMock, toscaOperationFacade);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testExecuteValidations() {
-        // Initially no outputFilePath was passed to this function (hence it is set to null)
-        // TODO: Fix this null and see if the argument is used by this function
-        createTestSubject().executeValidations(null);
-    }
-
-    @Test
-    public void testGetName() throws Exception {
-        ServiceToscaArtifactsValidatorExecutor testSubject;
-        String result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.getName();
-    }
-
-    @Test
-    public void testSetName() throws Exception {
-        ServiceToscaArtifactsValidatorExecutor testSubject;
-        String name = "";
-
-        // default test
-        testSubject = createTestSubject();
-        testSubject.setName(name);
+    @Override
+    public ServiceToscaArtifactsValidatorExecutor createTestSubject(
+        JanusGraphDao janusGraphDao,
+        ToscaOperationFacade toscaOperationFacade
+    ) {
+        return new ServiceToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
     }
 }
