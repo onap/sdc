@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,9 @@
 package org.openecomp.sdc.be.ecomp;
 
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.onap.portalsdk.core.onboarding.crossapi.IPortalRestCentralService;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.portalsdk.core.onboarding.exception.PortalAPIException;
@@ -40,11 +43,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-
-public final class PortalRestAPICentralServiceImpl implements IPortalRestCentralService {
+public final class PortalRestApiCentralServiceImpl implements IPortalRestCentralService {
     private static final String FAILED_TO_UPDATE_USER_CREDENTIALS = "Failed to update user credentials";
     private static final String FAILED_TO_DEACTIVATE_USER = "Failed to deactivate user {}";
     private static final String FAILED_TO_EDIT_USER = "Failed to edit user";
@@ -59,25 +58,26 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
     private static final String JH0003 = "jh0003";
     private static final String PUSH_USER = "PushUser";
     private static final String RECEIVED_NULL_FOR_ARGUMENT_USER = "Received null for argument user";
-    private static final Logger log = Logger.getLogger(PortalRestAPICentralServiceImpl.class);
+    private static final Logger log = Logger.getLogger(PortalRestApiCentralServiceImpl.class);
     private UserBusinessLogic userBusinessLogic;
     private UserBusinessLogicExt userBusinessLogicExt;
 
-    public PortalRestAPICentralServiceImpl() throws PortalAPIException {
+    public PortalRestApiCentralServiceImpl() throws PortalAPIException {
         try {
             ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
             userBusinessLogic = (UserBusinessLogic) ctx.getBean("userBusinessLogic");
             userBusinessLogicExt = (UserBusinessLogicExt) ctx.getBean("userBusinessLogicExt");
         } catch (Exception e) {
             log.debug("Failed to get user UserBusinessLogic", e);
-            BeEcompErrorManager.getInstance().logInvalidInputError("constructor", "Exception thrown" + e.getMessage(), BeEcompErrorManager.ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance().logInvalidInputError("constructor", "Exception thrown" + e.getMessage(),
+                                                                   BeEcompErrorManager.ErrorSeverity.ERROR);
             throw new PortalAPIException("SDC Internal server error");
         }
-        log.debug("PortalRestAPICentralServiceImpl Class Instantiated");
+        log.debug("PortalRestApiCentralServiceImpl Class Instantiated");
     }
 
     //For testing purposes
-    PortalRestAPICentralServiceImpl(UserBusinessLogic ubl, UserBusinessLogicExt uble) {
+    PortalRestApiCentralServiceImpl(UserBusinessLogic ubl, UserBusinessLogicExt uble) {
         this.userBusinessLogic = ubl;
         this.userBusinessLogicExt = uble;
     }
@@ -85,11 +85,11 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
     @Override
     public Map<String, String> getAppCredentials() throws PortalAPIException {
         Map<String, String> credMap = new HashMap<>();
-        String portal_user = PortalApiProperties.getProperty(PortalPropertiesEnum.USER.value());
+        String portalUser = PortalApiProperties.getProperty(PortalPropertiesEnum.USER.value());
         String password = PortalApiProperties.getProperty(PortalPropertiesEnum.PASSWORD.value());
         String appName = PortalApiProperties.getProperty(PortalPropertiesEnum.APP_NAME.value());
         try {
-            credMap.put("username", CipherUtil.decryptPKC(portal_user));
+            credMap.put("username", CipherUtil.decryptPKC(portalUser));
             credMap.put("password", CipherUtil.decryptPKC(password));
             credMap.put("appName", CipherUtil.decryptPKC(appName));
         } catch (CipherUtilException e) {
@@ -105,7 +105,8 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
         log.debug("Start handle request of ECOMP pushUser");
 
         if (user == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, RECEIVED_NULL_FOR_ARGUMENT_USER, BeEcompErrorManager.ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, RECEIVED_NULL_FOR_ARGUMENT_USER,
+                                                                   BeEcompErrorManager.ErrorSeverity.INFO);
             log.debug(RECEIVED_NULL_FOR_ARGUMENT_USER);
             throw new PortalAPIException(RECEIVED_NULL_FOR_ARGUMENT_USER);
         }
@@ -116,12 +117,13 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
 
         User convertedAsdcUser = EcompUserConverter.convertEcompUserToUser(user);
 
-        try{
+        try {
             log.debug("Before creating ecomp user {} sdc user {}", user, convertedAsdcUser);
             userBusinessLogic.createUser(modifierAttId, convertedAsdcUser);
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.debug(FAILED_TO_CREATE_USER, user, e);
-            BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER, FAILED_TO_CREATE_USER, BeEcompErrorManager.ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance()
+                    .logInvalidInputError(PUSH_USER, FAILED_TO_CREATE_USER, BeEcompErrorManager.ErrorSeverity.ERROR);
             throw new PortalAPIException(FAILED_TO_CREATE_USER + e.getMessage());
         }
 
@@ -132,38 +134,42 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
     public void editUser(String loginId, EcompUser user) throws PortalAPIException {
         if (user == null) {
             log.debug(RECEIVED_NULL_FOR_ARGUMENT_USER);
-            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, RECEIVED_NULL_FOR_ARGUMENT_USER, BeEcompErrorManager.ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, RECEIVED_NULL_FOR_ARGUMENT_USER,
+                                                                   BeEcompErrorManager.ErrorSeverity.INFO);
             throw new PortalAPIException(RECEIVED_NULL_FOR_ARGUMENT_USER);
         } else if (loginId == null) {
             log.debug(RECEIVED_NULL_FOR_ARGUMENT_LOGIN_ID);
-            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, RECEIVED_NULL_FOR_ARGUMENT_LOGIN_ID, BeEcompErrorManager.ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, RECEIVED_NULL_FOR_ARGUMENT_LOGIN_ID,
+                                                                   BeEcompErrorManager.ErrorSeverity.INFO);
             throw new PortalAPIException(RECEIVED_NULL_FOR_ARGUMENT_LOGIN_ID);
         }
 
-        log.debug("Start handle request of ECOMP editUser {} with loginId {} with follopwing roles {}", user, loginId, user.getRoles());
+        log.debug("Start handle request of ECOMP editUser {} with loginId {} with follopwing roles {}", user, loginId,
+                  user.getRoles());
 
         final String modifierAttId = JH0003;
         log.debug("modifier id is {}", modifierAttId);
 
         if (user.getLoginId() != null && !user.getLoginId().equals(loginId)) {
             log.debug("loginId and user loginId not equal");
-            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, "loginId and user loginId not equal", BeEcompErrorManager.ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, "loginId and user loginId not equal",
+                                                                   BeEcompErrorManager.ErrorSeverity.INFO);
             throw new PortalAPIException("loginId not equals to the user loginId field");
         } else if (user.getLoginId() == null) {
             user.setLoginId(loginId);
         }
 
         Either<User, ActionStatus> verifyNewUser;
-        try{
+        try {
             verifyNewUser = userBusinessLogic.verifyNewUserForPortal(user.getLoginId());
-        } catch (ComponentException e){
+        } catch (ComponentException e) {
             log.debug("Failed to verify new user", e);
             throw new PortalAPIException(e.getCause());
         }
 
-        if(verifyNewUser.isRight() &&
-                (ActionStatus.USER_NOT_FOUND.equals(verifyNewUser.right().value()) ||
-                        ActionStatus.USER_INACTIVE.equals(verifyNewUser.right().value()))){
+        if (verifyNewUser.isRight()
+                && (ActionStatus.USER_NOT_FOUND.equals(verifyNewUser.right().value())
+                || ActionStatus.USER_INACTIVE.equals(verifyNewUser.right().value()))) {
             log.debug("Edit user for user that not exist in DB, executing push user flow {}", user);
             pushUser(user);
             return;
@@ -175,18 +181,20 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
 
         if (updateUserCredentialsResponse.isRight()) {
             log.debug(FAILED_TO_UPDATE_USER_CREDENTIALS);
-            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, FAILED_TO_UPDATE_USER_CREDENTIALS, BeEcompErrorManager.ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance().logInvalidInputError(EDIT_USER, FAILED_TO_UPDATE_USER_CREDENTIALS,
+                                                                   BeEcompErrorManager.ErrorSeverity.ERROR);
             throw new PortalAPIException(FAILED_TO_EDIT_USER + updateUserCredentialsResponse.right().value());
         }
 
-        if(user.getRoles() == null || user.getRoles().isEmpty()){
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
             try {
                 log.debug("Before deactivating ecomp user {} sdc user {}", user, asdcUser);
                 userBusinessLogicExt.deActivateUser(modifierAttId, loginId);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.debug("Error: Failed to deactivate user {}", loginId);
-                BeEcompErrorManager.getInstance().logInvalidInputError(FAILED_TO_DEACTIVATE_USER, "Failed to deactivate user", BeEcompErrorManager.ErrorSeverity.INFO);
+                BeEcompErrorManager.getInstance()
+                        .logInvalidInputError(FAILED_TO_DEACTIVATE_USER, "Failed to deactivate user",
+                                              BeEcompErrorManager.ErrorSeverity.INFO);
                 throw new PortalAPIException("Error: Failed to deactivate user" + e);
             }
         } else {
@@ -194,9 +202,11 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
             try {
                 log.debug("Before updating ecomp user {} sdc user {}", user, asdcUser);
                 userBusinessLogic.updateUserRole(modifierAttId, loginId, asdcUser.getRole());
-            }catch (Exception e) {
+            } catch (Exception e) {
                 log.debug("Error: Failed to update user role {}", loginId);
-                BeEcompErrorManager.getInstance().logInvalidInputError(FAILED_TO_EDIT_USER, "Failed to update user role", BeEcompErrorManager.ErrorSeverity.INFO);
+                BeEcompErrorManager.getInstance()
+                        .logInvalidInputError(FAILED_TO_EDIT_USER, "Failed to update user role",
+                                              BeEcompErrorManager.ErrorSeverity.INFO);
                 throw new PortalAPIException("Error: Failed to update user role" + e);
             }
         }
@@ -208,7 +218,8 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
         String header = request.getHeader(Constants.USER_ID_HEADER);
         if (header == null) {
             log.debug(FAILED_TO_GET_USER_ID_HEADER);
-            BeEcompErrorManager.getInstance().logInvalidInputError("getUserId", FAILED_TO_GET_USER_ID_HEADER, BeEcompErrorManager.ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance().logInvalidInputError("getUserId", FAILED_TO_GET_USER_ID_HEADER,
+                                                                   BeEcompErrorManager.ErrorSeverity.ERROR);
             throw new PortalAPIException(FAILED_TO_GET_USER_ID_HEADER);
         }
         return header;
@@ -216,13 +227,15 @@ public final class PortalRestAPICentralServiceImpl implements IPortalRestCentral
 
 
     public static void checkIfSingleRoleProvided(EcompUser user) throws PortalAPIException {
-        if(user.getRoles() == null) {
+        if (user.getRoles() == null) {
             log.debug(RECEIVED_NULL_ROLES, user);
-            BeEcompErrorManager.getInstance().logInvalidInputError(CHECK_ROLES, RECEIVED_NULL_ROLES, BeEcompErrorManager.ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance()
+                    .logInvalidInputError(CHECK_ROLES, RECEIVED_NULL_ROLES, BeEcompErrorManager.ErrorSeverity.ERROR);
             throw new PortalAPIException(RECEIVED_NULL_ROLES + user);
-        }else if(user.getRoles().size() > 1) {
+        } else if (user.getRoles().size() > 1) {
             log.debug(RECEIVED_MULTIPLE_ROLES, user);
-            BeEcompErrorManager.getInstance().logInvalidInputError(CHECK_ROLES, RECEIVED_MULTIPLE_ROLES2, BeEcompErrorManager.ErrorSeverity.ERROR);
+            BeEcompErrorManager.getInstance().logInvalidInputError(CHECK_ROLES, RECEIVED_MULTIPLE_ROLES2,
+                                                                   BeEcompErrorManager.ErrorSeverity.ERROR);
             throw new PortalAPIException(RECEIVED_MULTIPLE_ROLES2 + user);
         }
     }
