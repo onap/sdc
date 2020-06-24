@@ -131,6 +131,7 @@
                   </includes>
                 </validationSet>
               </validationSets>
+              <skip>${skipYamlJsonValidator}</skip>
             </configuration>
           </execution>
         </executions>

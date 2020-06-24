@@ -419,6 +419,7 @@ Modifications copyright (c) 2018 Nokia
                     </includes>
                   </validationSet>
                 </validationSets>
+                <skip>${skipYamlJsonValidator}</skip>
               </configuration>
             </execution>
           </executions>

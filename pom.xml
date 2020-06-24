@@ -71,6 +71,8 @@ Modifications copyright (c) 2018-2019 Nokia
     <jackson-annotations.version>${jackson.version}</jackson-annotations.version>
     <jackson.mapper.version>1.9.13</jackson.mapper.version>
     <clearspring.version>2.1.1</clearspring.version>
+    <skipYamlJsonValidator>false</skipYamlJsonValidator>
+    <skipCheckstyle>false</skipCheckstyle>
 
     <!-- Yaml for properties -->
     <snakeyaml.version>1.14</snakeyaml.version>
@@ -372,7 +374,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <plugin>
           <groupId>com.github.sylvainlaurent.maven</groupId>
           <artifactId>yaml-json-validator-maven-plugin</artifactId>
-          <version>1.0.1</version>
+          <version>1.0.2</version>
         </plugin>
         <plugin>
           <groupId>pl.project13.maven</groupId>
@@ -389,6 +391,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <configuration>
           <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
           <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+          <skip>${skipCheckstyle}</skip>
         </configuration>
       </plugin>
       <!-- plugin for parsing the project version -->
@@ -601,6 +604,33 @@ Modifications copyright (c) 2018-2019 Nokia
       </activation>
       <modules>
         <module>onboarding</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>fast-build</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+        <skipYamlJsonValidator>true</skipYamlJsonValidator>
+        <skipCheckstyle>true</skipCheckstyle>
+        <jacoco.skip>true</jacoco.skip>
+      </properties>
+      <modules>
+        <module>ui-ci</module>
+        <module>asdctool</module>
+        <module>common-be</module>
+        <module>onboarding</module>
+        <module>catalog-be</module>
+        <module>catalog-ui</module>
+        <module>catalog-fe</module>
+        <module>catalog-dao</module>
+        <module>sdc-os-chef</module>
+        <module>test-apis-ci</module>
+        <module>catalog-model</module>
+        <module>common-app-api</module>
+        <module>common-app-logging</module>
       </modules>
     </profile>
 
