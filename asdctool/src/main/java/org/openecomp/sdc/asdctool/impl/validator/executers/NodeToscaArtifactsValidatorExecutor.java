@@ -32,15 +32,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NodeToscaArtifactsValidatorExecuter extends ArtifactValidatorExecuter implements
-    IArtifactValidatorExecuter {
+public class NodeToscaArtifactsValidatorExecutor
+    extends ArtifactValidatorExecutor implements IArtifactValidatorExecutor {
 
-    protected String name;
-
-    public NodeToscaArtifactsValidatorExecuter(JanusGraphDao janusGraphDao,
+    public NodeToscaArtifactsValidatorExecutor(JanusGraphDao janusGraphDao,
         ToscaOperationFacade toscaOperationFacade) {
-        super(janusGraphDao, toscaOperationFacade);
-        setName("RESOURCE_TOSCA_ARTIFACTS");
+        super(janusGraphDao, toscaOperationFacade, "RESOURCE_TOSCA_ARTIFACTS");
     }
 
     @Override
@@ -51,14 +48,5 @@ public class NodeToscaArtifactsValidatorExecuter extends ArtifactValidatorExecut
 
         Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.NODE_TYPE, hasProps);
         return validate(vertices, outputFilePath);
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }
