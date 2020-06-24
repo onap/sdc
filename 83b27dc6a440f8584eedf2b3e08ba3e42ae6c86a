@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f3857d9_bb078ff0",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 15
+      },
+      "writtenOn": "2020-06-24T12:40:35Z",
+      "side": 1,
+      "message": "can\u0027t we just do a try with resources ?",
+      "revId": "83b27dc6a440f8584eedf2b3e08ba3e42ae6c86a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
