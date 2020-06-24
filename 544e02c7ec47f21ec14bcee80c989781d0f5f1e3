@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "d29d17f3_64927544",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-24T12:57:03Z",
+      "side": 1,
+      "message": "log.error takes two parameters, String and Throwable, so you dont need \u0027{}\u0027",
+      "parentUuid": "036f0a2b_8ac6eed0",
+      "range": {
+        "startLine": 67,
+        "startChar": 49,
+        "endLine": 67,
+        "endChar": 51
+      },
+      "revId": "544e02c7ec47f21ec14bcee80c989781d0f5f1e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bf856dbb_d14b200f",
         "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/RestUtilsTest.java",
         "patchSetId": 1
