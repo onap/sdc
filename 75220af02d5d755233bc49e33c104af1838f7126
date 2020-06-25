@@ -16,6 +16,24 @@
       "revId": "75220af02d5d755233bc49e33c104af1838f7126",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4b361a9_428d80dd",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/RestUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-25T11:21:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "25664d02_16841138",
+      "revId": "75220af02d5d755233bc49e33c104af1838f7126",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
