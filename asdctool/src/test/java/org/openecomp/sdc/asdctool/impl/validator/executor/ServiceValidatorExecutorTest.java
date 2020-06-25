@@ -18,19 +18,31 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
+import static org.mockito.Mockito.mock;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
+import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeConsoleWriter;
+
+import org.junit.Test;
+import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
-public class ServiceToscaArtifactsValidatorExecutorTest
-    extends IArtifactValidatorExecutorContract implements ArtifactValidatorExecutorContract {
+public class ServiceValidatorExecutorTest {
 
-    @Override
-    public ServiceToscaArtifactsValidatorExecutor createTestSubject(
-        JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade
-    ) {
-        return new ServiceToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
+    private ServiceValidatorExecutor createTestSubject() {
+        JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+        return new ServiceValidatorExecutor(janusGraphDaoMock);
+    }
+
+    @Test
+    public void testGetName() {
+        createTestSubject().getName();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testExecuteValidations() {
+        Report report = Report.make();
+        createTestSubject().executeValidations(report, makeTxtFile(makeConsoleWriter()));
     }
 }

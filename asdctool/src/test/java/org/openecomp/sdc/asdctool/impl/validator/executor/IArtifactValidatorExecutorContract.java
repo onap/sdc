@@ -18,19 +18,33 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
-public class NodeToscaArtifactsValidatorExecutorTest
-    extends IArtifactValidatorExecutorContract implements ArtifactValidatorExecutorContract {
+import static org.mockito.Mockito.mock;
 
-    @Override
-    public NodeToscaArtifactsValidatorExecutor createTestSubject(
+public abstract class IArtifactValidatorExecutorContract {
+
+    protected abstract IArtifactValidatorExecutor createTestSubject(
         JanusGraphDao janusGraphDao,
         ToscaOperationFacade toscaOperationFacade
-    ) {
-        return new NodeToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
+    );
+
+    private IArtifactValidatorExecutor createTestSubject() {
+        return createTestSubject(mock(JanusGraphDao.class), mock(ToscaOperationFacade.class));
+    }
+
+    @Test
+    public void testExecuteValidations() {
+        Assertions.assertThrows(NullPointerException.class, () ->
+            // Initially no outputFilePath was passed to this function (hence it is set to null)
+            // TODO: Fix this null and see if the argument is used by this function
+            createTestSubject().executeValidations(null)
+        );
     }
 }
+

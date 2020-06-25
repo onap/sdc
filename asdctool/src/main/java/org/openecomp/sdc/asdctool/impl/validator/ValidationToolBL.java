@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator;
 
-import org.openecomp.sdc.asdctool.impl.validator.executers.ValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executor.ValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -34,18 +34,18 @@ public class ValidationToolBL {
 
     private static final Logger log = Logger.getLogger(ValidationToolBL.class);
 
-    protected List<ValidatorExecuter> validators;
+    protected List<ValidatorExecutor> validators;
 
     private boolean allValid = true;
 
     @Autowired
     public ValidationToolBL(
-        List<ValidatorExecuter> validators) {
+        List<ValidatorExecutor> validators) {
         this.validators = validators;
     }
 
     public boolean validateAll(Report report, ReportFile.TXTFile textFile) {
-        for (ValidatorExecuter validatorExec: validators) {
+        for (ValidatorExecutor validatorExec: validators) {
             log.debug("ValidatorExecuter "+validatorExec.getName()+" started");
             if (!validatorExec.executeValidations(report, textFile)) {
                 allValid = false;

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import org.junit.Test;
-import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executor.NodeToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 

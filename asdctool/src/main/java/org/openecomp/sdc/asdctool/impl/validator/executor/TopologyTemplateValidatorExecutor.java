@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
 import fj.data.Either;
 import java.util.ArrayList;
@@ -41,16 +41,16 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class TopologyTemplateValidatorExecuter {
+public class TopologyTemplateValidatorExecutor {
 
-    private static final Logger log = Logger.getLogger(VfValidatorExecuter.class);
+    private static final Logger log = Logger.getLogger(VfValidatorExecutor.class);
 
     protected JanusGraphDao janusGraphDao;
 
     protected String name;
 
     @Autowired
-    public TopologyTemplateValidatorExecuter(JanusGraphDao janusGraphDao) {
+    public TopologyTemplateValidatorExecutor(JanusGraphDao janusGraphDao) {
         this.janusGraphDao = janusGraphDao;
     }
 

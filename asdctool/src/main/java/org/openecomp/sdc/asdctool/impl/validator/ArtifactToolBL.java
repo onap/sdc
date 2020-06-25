@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator;
 
-import org.openecomp.sdc.asdctool.impl.validator.executers.IArtifactValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executor.IArtifactValidatorExecutor;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -18,19 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+// TODO: Merge this interface with ArtifactValidatorExecutor
+public interface IArtifactValidatorExecutor {
 
-public class VFToscaArtifactValidatorExecutorTest
-    extends IArtifactValidatorExecutorContract implements ArtifactValidatorExecutorContract {
+    boolean executeValidations(String outputFilePath);
 
-    @Override
-    public VFToscaArtifactValidatorExecutor createTestSubject(
-        JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade
-    ) {
-        return new VFToscaArtifactValidatorExecutor(janusGraphDao, toscaOperationFacade);
-    }
+    String getName();
 }

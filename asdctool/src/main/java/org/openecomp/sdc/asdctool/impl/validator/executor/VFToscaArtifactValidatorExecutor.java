@@ -18,12 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
@@ -32,21 +33,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NodeToscaArtifactsValidatorExecutor
+public class VFToscaArtifactValidatorExecutor
     extends ArtifactValidatorExecutor implements IArtifactValidatorExecutor {
 
-    public NodeToscaArtifactsValidatorExecutor(JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade) {
-        super(janusGraphDao, toscaOperationFacade, "RESOURCE_TOSCA_ARTIFACTS");
+    public VFToscaArtifactValidatorExecutor(JanusGraphDao janusGraphDao, ToscaOperationFacade toscaOperationFacade) {
+        super(janusGraphDao, toscaOperationFacade, "VF_TOSCA_ARTIFACTS");
     }
 
     @Override
     public boolean executeValidations(String outputFilePath) {
         Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
         hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+        hasProps.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF);
         hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 
-        Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.NODE_TYPE, hasProps);
+        Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps);
         return validate(vertices, outputFilePath);
+
     }
 }

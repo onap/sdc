@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executor.VfValidatorExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
  */
 public enum ElementTypeEnum {
 
-    VF ("vf", VfValidatorExecuter.class);
+    VF ("vf", VfValidatorExecutor.class);
     //SERVICE("service", ServiceValidatorExecuter.class)
 
     private String elementType;

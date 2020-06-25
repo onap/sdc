@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
@@ -30,12 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class VfValidatorExecuter extends TopologyTemplateValidatorExecuter implements ValidatorExecuter {
+public class VfValidatorExecutor extends TopologyTemplateValidatorExecutor implements ValidatorExecutor {
 
     private final List<VfValidationTask> tasks;
 
     @Autowired(required = false)
-    public VfValidatorExecuter(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
+    public VfValidatorExecutor(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
         super(janusGraphDao);
         this.tasks = tasks;
         setName("BASIC_VF_VALIDATOR");
