@@ -88,6 +88,24 @@
       "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "708d4306_b2eb81a7",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-25T08:43:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c47d5d7_142ba1fb",
+      "revId": "8273146f80a8902147bf44c30be2751741b85eb3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
