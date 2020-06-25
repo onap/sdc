@@ -23,11 +23,11 @@ package org.openecomp.sdc.asdctool.impl.validator.config;
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
-import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceToscaArtifactsValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
-import org.openecomp.sdc.asdctool.impl.validator.executers.VFToscaArtifactValidatorExecutor;
-import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executor.NodeToscaArtifactsValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executor.ServiceToscaArtifactsValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executor.ServiceValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executor.VFToscaArtifactValidatorExecutor;
+import org.openecomp.sdc.asdctool.impl.validator.executor.VfValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
@@ -57,7 +57,7 @@ public class ValidationToolConfigurationTest {
 	@Test
 	public void testBasicServiceValidator() {
 		ValidationToolConfiguration testSubject;
-		ServiceValidatorExecuter result;
+		ServiceValidatorExecutor result;
 		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
 
 		// default test
@@ -111,7 +111,7 @@ public class ValidationToolConfigurationTest {
 	@Test
 	public void testBasicVfValidator() {
 		ValidationToolConfiguration testSubject;
-		VfValidatorExecuter result;
+		VfValidatorExecutor result;
 		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
 
 		// default test

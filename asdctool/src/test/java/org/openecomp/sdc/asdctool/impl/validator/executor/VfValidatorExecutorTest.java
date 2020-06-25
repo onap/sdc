@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
 import static org.mockito.Mockito.mock;
 import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
@@ -31,13 +31,13 @@ import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 
-public class VfValidatorExecuterTest {
+public class VfValidatorExecutorTest {
 
-    private VfValidatorExecuter createTestSubject() {
+    private VfValidatorExecutor createTestSubject() {
         List<VfValidationTask> validationTasks = new ArrayList<>();
         JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
 
-        return new VfValidatorExecuter(validationTasks, janusGraphDaoMock);
+        return new VfValidatorExecutor(validationTasks, janusGraphDaoMock);
     }
 
     @Test

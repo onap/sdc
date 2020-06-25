@@ -18,34 +18,48 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator.executers;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
-import org.openecomp.sdc.asdctool.impl.validator.report.Report;
-import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
-import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.mockito.Mockito.mock;
 
-@Component
-public class ServiceValidatorExecuter extends TopologyTemplateValidatorExecuter implements ValidatorExecuter {
+public class TopologyTemplateValidatorExecutorTest {
 
-    List<ServiceValidationTask> tasks = new ArrayList<>();
+	private TopologyTemplateValidatorExecutor createTestSubject() {
+		JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
+		return new TopologyTemplateValidatorExecutor(janusGraphDaoMock);
+	}
 
-    @Autowired(required = false)
-    public ServiceValidatorExecuter(JanusGraphDao janusGraphDao) {
-        super(janusGraphDao);
-        setName("SERVICE_VALIDATOR");
-    }
+	@Test
+	public void testSetName() {
+		TopologyTemplateValidatorExecutor testSubject;
+		String name = "";
 
-    @Override
-    public boolean executeValidations(Report report, TXTFile reportFile) {
-        List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.SERVICE);
-        return validate(report, tasks, vertices, reportFile);
-    }
+		// default test
+		testSubject = createTestSubject();
+		testSubject.setName(name);
+	}
+
+	@Test
+	public void testGetName() {
+		TopologyTemplateValidatorExecutor testSubject;
+		String result;
+
+		// default test
+		testSubject = createTestSubject();
+		result = testSubject.getName();
+	}
+
+	@Test
+	public void testGetVerticesToValidate() {
+		TopologyTemplateValidatorExecutor testSubject;
+
+		// default test
+		testSubject = createTestSubject();
+		Assertions.assertThrows(NullPointerException.class, () -> testSubject.getVerticesToValidate(ComponentTypeEnum.PRODUCT));
+	}
 }

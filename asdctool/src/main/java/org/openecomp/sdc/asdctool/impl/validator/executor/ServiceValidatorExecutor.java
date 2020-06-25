@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,34 +18,34 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.validator;
+package org.openecomp.sdc.asdctool.impl.validator.executor;
 
-import org.junit.Test;
-import org.openecomp.sdc.asdctool.impl.validator.executor.ServiceValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
+import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
+import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-
-import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
-import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory.makeConsoleWriter;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
-import static org.mockito.Mockito.mock;
+@Component
+public class ServiceValidatorExecutor extends TopologyTemplateValidatorExecutor implements ValidatorExecutor {
 
-public class ValidationToolBLTest {
+    List<ServiceValidationTask> tasks = new ArrayList<>();
 
-    private ValidationToolBL createTestSubject() {
-        return new ValidationToolBL(new ArrayList<>());
+    @Autowired(required = false)
+    public ServiceValidatorExecutor(JanusGraphDao janusGraphDao) {
+        super(janusGraphDao);
+        setName("SERVICE_VALIDATOR");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testValidateAll() {
-        JanusGraphDao janusGraphDaoMock = mock(JanusGraphDao.class);
-        ValidationToolBL testSubject = createTestSubject();
-        testSubject.validators = new LinkedList<>();
-        testSubject.validators.add(new ServiceValidatorExecutor(janusGraphDaoMock));
-        Report report = Report.make();
-        testSubject.validateAll(report, makeTxtFile(makeConsoleWriter()));
+    @Override
+    public boolean executeValidations(Report report, TXTFile reportFile) {
+        List<GraphVertex> vertices = getVerticesToValidate(ComponentTypeEnum.SERVICE);
+        return validate(report, tasks, vertices, reportFile);
     }
 }
