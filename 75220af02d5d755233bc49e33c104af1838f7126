@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25664d02_16841138",
+        "filename": "asdctool/src/test/java/org/openecomp/sdc/asdctool/impl/RestUtilsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2020-06-25T09:22:25Z",
+      "side": 1,
+      "message": "I think SDC are upgrading Junit from 4 to 5 gradually. Could you please use Junit5 here, just use the following classes instead.\n\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport org.junit.jupiter.api.Test;",
+      "revId": "75220af02d5d755233bc49e33c104af1838f7126",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
