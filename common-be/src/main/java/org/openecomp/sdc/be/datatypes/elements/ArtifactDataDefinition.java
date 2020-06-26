@@ -92,7 +92,7 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
     }
 
     public boolean isHeatEnvType() {
-        return getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.getType());
+        return ArtifactTypeEnum.HEAT_ENV.getType().equals(getArtifactType());
     }
 
     public void setArtifactType(String artifactType) {
