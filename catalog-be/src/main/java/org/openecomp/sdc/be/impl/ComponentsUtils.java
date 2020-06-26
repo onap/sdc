@@ -34,6 +34,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -112,6 +114,7 @@ import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UiLeftPaletteComponent;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.enums.LogLevel;
 import org.openecomp.sdc.common.log.enums.Severity;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -1433,7 +1436,7 @@ public class ComponentsUtils {
     }
 
     public ActionStatus convertFromStorageResponseForConsumer(StorageOperationStatus storageResponse) {
-        ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
+        ActionStatus responseEnum;
 
         switch (storageResponse) {
             case OK:
@@ -1724,4 +1727,47 @@ public class ComponentsUtils {
     public F<StorageOperationStatus, ResponseFormat> toResponseFormat() {
         return sos -> getResponseFormat(convertFromStorageResponse(sos));
     }
+
+
+    public Optional<UIConstraint> parseToConstraint(final String componentJson,
+                                                    final User user,
+                                                    final ComponentTypeEnum componentTypeEnum) {
+        final Either<UIConstraint, ResponseFormat> uiConstraintResponseFormatEither =
+            convertJsonToObjectUsingObjectMapper(componentJson, user, UIConstraint.class,
+                AuditingActionEnum.CREATE_RESOURCE, componentTypeEnum);
+        if (uiConstraintResponseFormatEither.isRight()) {
+            return Optional.empty();
+        }
+        return Optional.of(uiConstraintResponseFormatEither.left().value());
+    }
+
+    private Either<List, ResponseFormat> parseToConstraints(final String componentJson,
+                                                           final User user,
+                                                           final ComponentTypeEnum componentTypeEnum) {
+        return convertJsonToObjectUsingObjectMapper(componentJson, user, List.class, AuditingActionEnum.CREATE_RESOURCE,
+            componentTypeEnum);
+    }
+
+    public List<UIConstraint> validateAndParseConstraint(final ComponentTypeEnum componentTypeEnum,
+                                                         final String constraintData,
+                                                         final User userModifier) {
+
+        final String FAILED_TO_PARSE_CONSTRAINT_DATA = "Failed to Parse Constraint Data {}";
+        final Either<List, ResponseFormat> convertResponse = parseToConstraints(constraintData, userModifier, componentTypeEnum);
+        if (convertResponse.isRight()) {
+            log.error(EcompLoggerErrorCode.DATA_ERROR, FAILED_TO_PARSE_CONSTRAINT_DATA, constraintData,
+                convertResponse.right().value());
+            return Collections.emptyList();
+        }
+        final List<Map<String, String>> uiConstraintsMaps = (List<Map<String, String>>) convertResponse.left().value();
+        if (uiConstraintsMaps == null) {
+            log.error(EcompLoggerErrorCode.DATA_ERROR, FAILED_TO_PARSE_CONSTRAINT_DATA, constraintData);
+            return Collections.emptyList();
+        }
+
+        return uiConstraintsMaps.stream().map(dataMap -> new org.codehaus.jackson.map.ObjectMapper()
+            .convertValue(dataMap, UIConstraint.class)).collect(Collectors.toList());
+    }
+
+
 }
