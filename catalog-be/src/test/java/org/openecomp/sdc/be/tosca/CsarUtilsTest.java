@@ -235,8 +235,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		ByteBuffer bufferData = ByteBuffer.wrap(data);
 		artifactData.setData(bufferData);
 
-		ToscaRepresentation tosca = new ToscaRepresentation();
-		tosca.setMainYaml("value");
+		ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
@@ -322,8 +321,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		dependencies.add(triple);
 		toscaTemplate.setDependencies(dependencies);
 
-		ToscaRepresentation tosca = new ToscaRepresentation();
-		tosca.setMainYaml("value");
+		ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
@@ -438,8 +436,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		dependencies.add(triple);
 		toscaTemplate.setDependencies(dependencies);
 
-		ToscaRepresentation tosca = new ToscaRepresentation();
-		tosca.setMainYaml(new String(contentData, StandardCharsets.UTF_8));
+		ToscaRepresentation tosca = ToscaRepresentation.make(contentData);
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
@@ -489,8 +486,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		dependencies.add(triple);
 		toscaTemplate.setDependencies(dependencies);
 
-		ToscaRepresentation tosca = new ToscaRepresentation();
-		tosca.setMainYaml(new String(contentData, StandardCharsets.UTF_8));
+		ToscaRepresentation tosca = ToscaRepresentation.make(contentData);
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
@@ -579,8 +575,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	@Test
 	public void testWriteComponentInterface() throws IOException {
 		String fileName = "name.hello";
-		ToscaRepresentation tosca = new ToscaRepresentation();
-		tosca.setMainYaml("value");
+		ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
 
 		Mockito.when(toscaExportUtils.exportComponentInterface(Mockito.any(Component.class), Mockito.any(Boolean.class)))
 				.thenReturn(Either.left(tosca));

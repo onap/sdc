@@ -38,6 +38,7 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
+import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -152,7 +153,7 @@ public class CsarGenerator extends CommonInternalTool {
         return csarUtils.createCsar(component, true, true).either( l -> l, r -> null);
     }
     private byte[] generateToscaPayload(Component component){
-       return toscaExportHandler.exportComponent(component).either(l -> l.getMainYaml().getBytes(), r -> null);
+       return toscaExportHandler.exportComponent(component).either(ToscaRepresentation::getMainYaml, r -> null);
     }
 
     private JanusGraphOperationStatus savePayload(org.openecomp.sdc.be.model.Component component, ArtifactDefinition csarArtifact, Supplier<byte[]> supplier) {

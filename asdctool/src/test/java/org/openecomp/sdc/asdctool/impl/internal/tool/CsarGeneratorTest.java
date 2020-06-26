@@ -95,9 +95,6 @@ public class CsarGeneratorTest {
     @Mock
     private ArtifactDefinition toscaCsar;
 
-    @Mock
-    ToscaRepresentation toscaRepresentation;
-
     private static final String ANSWER = "yes";
     private static final String UUID = "123";
     private static final String UNIQUE_ID = "321";
@@ -235,9 +232,8 @@ public class CsarGeneratorTest {
         when(janusGraphDao.getChildVertex(graphVertex, EdgeLabelEnum.TOSCA_ARTIFACTS,
             JsonParseFlagEnum.ParseJson)).thenReturn(Either.left(graphVertex));
 
-        when(toscaRepresentation.getMainYaml()).thenReturn(PAYLOAD);
         when(toscaExportHandler.exportComponent(component))
-            .thenReturn(Either.left(toscaRepresentation));
+            .thenReturn(Either.left(ToscaRepresentation.make(PAYLOAD.getBytes())));
 
         when(csarUtils.createCsar(component, true, true))
             .thenReturn(Either.left(PAYLOAD.getBytes()));

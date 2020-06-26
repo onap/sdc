@@ -16,9 +16,20 @@
 
 package org.openecomp.sdc.be.tosca.utils;
 
+import static org.mockito.Mockito.mock;
+import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
+import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.addInterfaceTypeElement;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,7 +52,6 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.ServiceMetadataDefinition;
-import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.be.tosca.InterfacesOperationsConverter;
 import org.openecomp.sdc.be.tosca.PropertyConvertor;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
@@ -49,17 +59,8 @@ import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import static org.mockito.Mockito.mock;
-import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
-import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.addInterfaceTypeElement;
 @RunWith(MockitoJUnitRunner.class)
 public class InterfacesOperationsConverterTest {
 
@@ -109,8 +110,10 @@ public class InterfacesOperationsConverterTest {
         template.setInterface_types(interfaceTypeElement);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
-        Assert.assertFalse(toscaRepresentation.getMainYaml().contains("operations"));
-        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("NodeTypeName"));
+        Assert.assertTrue(all(
+            containsAll("NodeTypeName"),
+            containsNone("operations")
+        ).apply(new String(toscaRepresentation.getMainYaml())));
     }
 
     @Test
@@ -135,8 +138,10 @@ public class InterfacesOperationsConverterTest {
         template.setInterface_types(interfaceTypeElement);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
-        Assert.assertFalse(toscaRepresentation.getMainYaml().contains("operations"));
-        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("NodeTypeName"));
+        Assert.assertTrue(all(
+            containsAll("NodeTypeName"),
+            containsNone("operations")
+        ).apply(new String(toscaRepresentation.getMainYaml())));
     }
 
     @Test
@@ -161,15 +166,13 @@ public class InterfacesOperationsConverterTest {
         template.setNode_types(nodeTypes);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
-        String mainYaml = toscaRepresentation.getMainYaml();
-        Assert.assertFalse(mainYaml.contains("operations"));
-        Assert.assertTrue(mainYaml.contains("resourceName:"));
-        Assert.assertTrue(mainYaml.contains("inputs:"));
+        String mainYaml = new String(toscaRepresentation.getMainYaml());
+        Assert.assertTrue(all(
+            containsAll("resourceName:", "inputs:", "has description", MAPPED_PROPERTY_NAME, "com.some.resource.or.other.resourceName"),
+            containsNone("operations", "defaultp")
+        ).apply(mainYaml));
+
         validateOperationInputs(mainYaml, 2, null);
-        Assert.assertFalse(mainYaml.contains("defaultp"));
-        Assert.assertTrue(mainYaml.contains("has description"));
-        Assert.assertTrue(mainYaml.contains(MAPPED_PROPERTY_NAME));
-        Assert.assertTrue(mainYaml.contains("com.some.resource.or.other.resourceName"));
     }
 
     @Test
@@ -192,15 +195,12 @@ public class InterfacesOperationsConverterTest {
         nodeTypes.put(NODE_TYPE_NAME, nodeType);
         template.setNode_types(nodeTypes);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-        String mainYaml = toscaRepresentation.getMainYaml();
-        Assert.assertFalse(mainYaml.contains("operations"));
-        Assert.assertTrue(mainYaml.contains("serviceName:"));
-        Assert.assertTrue(mainYaml.contains("inputs:"));
+        String mainYaml = new String(toscaRepresentation.getMainYaml());
+        Assert.assertTrue(all(
+            containsAll("serviceName", "inputs:", "has description", MAPPED_PROPERTY_NAME, "com.some.service.or.other.serviceName"),
+            containsNone("operations", "defaultp")
+        ).apply(mainYaml));
         validateOperationInputs(mainYaml, 2, null);
-        Assert.assertFalse(mainYaml.contains("defaultp"));
-        Assert.assertTrue(mainYaml.contains("has description"));
-        Assert.assertTrue(mainYaml.contains(MAPPED_PROPERTY_NAME));
-        Assert.assertTrue(mainYaml.contains("com.some.service.or.other.serviceName"));
     }
 
 
@@ -226,15 +226,12 @@ public class InterfacesOperationsConverterTest {
         template.setNode_types(nodeTypes);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
-        String mainYaml = toscaRepresentation.getMainYaml();
-        Assert.assertFalse(mainYaml.contains("operations"));
-        Assert.assertTrue(mainYaml.contains("resourceName:"));
-        Assert.assertTrue(mainYaml.contains("inputs:"));
+        String mainYaml = new String(toscaRepresentation.getMainYaml());
+        Assert.assertTrue(all(
+            containsAll("resourceName:", "inputs:", "has description", MAPPED_PROPERTY_NAME, "com.some.resource.or.other.resourceName"),
+            containsNone("operations", "defaultp")
+        ).apply(mainYaml));
         validateServiceProxyOperationInputs(mainYaml);
-        Assert.assertFalse(mainYaml.contains("defaultp"));
-        Assert.assertTrue(mainYaml.contains("has description"));
-        Assert.assertTrue(mainYaml.contains(MAPPED_PROPERTY_NAME));
-        Assert.assertTrue(mainYaml.contains("com.some.resource.or.other.resourceName"));
     }
 
     @Test
@@ -258,12 +255,10 @@ public class InterfacesOperationsConverterTest {
         template.setNode_types(nodeTypes);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
-        Assert.assertFalse(toscaRepresentation.getMainYaml().contains("operations"));
-        Assert.assertFalse(toscaRepresentation.getMainYaml().contains(INPUT_NAME_PREFIX));
-        Assert.assertFalse(toscaRepresentation.getMainYaml().contains("defaultp"));
-        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("resourceNameNoInputs:"));
-        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("has description"));
-        Assert.assertTrue(toscaRepresentation.getMainYaml().contains("com.some.resource.or.other.resourceName"));
+        Assert.assertTrue(all(
+            containsAll("resourceNameNoInputs", "has description", "com.some.resource.or.other.resourceName"),
+            containsNone("operations", INPUT_NAME_PREFIX, "defaultp")
+        ).apply(new String(toscaRepresentation.getMainYaml())));
     }
 
     @Test
@@ -293,10 +288,11 @@ public class InterfacesOperationsConverterTest {
         nodeTypes.put("test", nodeType);
         template.setNode_types(nodeTypes);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-        String mainYaml = toscaRepresentation.getMainYaml();
-        Assert.assertFalse(mainYaml.contains("operations"));
-        Assert.assertTrue(mainYaml.contains("resourceNameInputMappedToOutput:"));
-        Assert.assertTrue(mainYaml.contains("inputs:"));
+        String mainYaml = new String(toscaRepresentation.getMainYaml());
+        Assert.assertTrue(all(
+            containsAll("resourceNameInputMappedToOutput:", "inputs:"),
+            containsNone("operations")
+        ).apply(mainYaml));
         validateOperationInputs(mainYaml, 2, "name_for_op_1");
     }
 
@@ -342,11 +338,27 @@ public class InterfacesOperationsConverterTest {
         template.setNode_types(nodeTypes);
         final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
 
-        String mainYaml = toscaRepresentation.getMainYaml();
-        Assert.assertFalse(mainYaml.contains("operations"));
-        Assert.assertTrue(mainYaml.contains("resourceNameInputMappedToOutput:"));
-        Assert.assertTrue(mainYaml.contains("inputs:"));
+        String mainYaml = new String(toscaRepresentation.getMainYaml());
+        Assert.assertTrue(all(
+            containsAll("resourceNameInputMappedToOutput:", "inputs:"),
+            containsNone("operations")
+        ).apply(mainYaml));
         validateOperationInputs(mainYaml, 2, "name_for_op_1");
+    }
+
+    @FunctionalInterface
+    interface MainYamlAssertion extends Function<String, Boolean> {}
+
+    private static Function<String, Boolean> all(MainYamlAssertion...fs) {
+        return s -> io.vavr.collection.List.of(fs).map(f -> f.apply(s)).fold(true, (l, r) -> l && r);
+    }
+
+    private static MainYamlAssertion containsNone(String...expected) {
+        return s -> io.vavr.collection.List.of(expected).map(e -> !s.contains(e)).fold(true, (l, r) -> l && r);
+    }
+
+    private static MainYamlAssertion containsAll(String...expected) {
+        return s -> io.vavr.collection.List.of(expected).map(s::contains).fold(true, (l, r) -> l && r);
     }
 
     private void addOperationsToInterface(Component component, InterfaceDefinition addedInterface, int numOfOps,
@@ -426,17 +438,17 @@ public class InterfacesOperationsConverterTest {
         operationInputDefinition.setName(outputName);
         operationInputDefinition.setType(inputTypes[index]);
         operationInputDefinition.setRequired(index % 2 == 0);
-        Map<String, List<String>> toscaDefaultValueMap = new HashMap<>();
         List<String> toscaDefaultValues = new ArrayList<>();
         toscaDefaultValues.add(SELF);
         toscaDefaultValues.add(interfaceName);
         toscaDefaultValues.add(operationName);
         toscaDefaultValues.add(outputName);
+        Map<String, List<String>> toscaDefaultValueMap = new HashMap<>();
         toscaDefaultValueMap.put(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName(), toscaDefaultValues);
         return operationInputDefinition;
     }
 
-    private void validateOperationInputs(String mainYaml, int numOfInputsPerOp, String mappedOperationName) {
+    private void validateOperationInputs(final String mainYaml, int numOfInputsPerOp, String mappedOperationName) {
         String nodeTypeKey = NODE_TYPE_NAME + ":";
         String nodeTypesRepresentation = mainYaml.substring(mainYaml.indexOf(nodeTypeKey) + nodeTypeKey.length(),
                 mainYaml.lastIndexOf(MAPPED_PROPERTY_NAME) + MAPPED_PROPERTY_NAME.length()
