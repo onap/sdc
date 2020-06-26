@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce0e3cb0_0c9fcbfb",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-26T15:08:50Z",
+      "side": 1,
+      "message": "did you decide to revert those changes and NOT use try-with-resource ?",
+      "range": {
+        "startLine": 55,
+        "startChar": 8,
+        "endLine": 56,
+        "endChar": 59
+      },
+      "revId": "3b71b537833ec34bc488f0f9a1ee8a2437a31e20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
