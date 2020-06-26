@@ -253,7 +253,7 @@ public class CsarUtils {
             .getToscaArtifacts()
             .get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
 
-        Either<MainYamlWithDependencies, ResponseFormat> toscaRepresentation =
+        Either<ToscaRepresentation, ResponseFormat> toscaRepresentation =
             fetchToscaRepresentation(component, getFromCS, artifactDef);
 
         // This should not be done but in order to keep the refactoring small enough we stop here.
@@ -261,8 +261,8 @@ public class CsarUtils {
         byte[] mainYaml;
         List<Triple<String, String, Component>> dependencies;
         if(toscaRepresentation.isLeft()) {
-            mainYaml = toscaRepresentation.left().value().mainYaml;
-            dependencies = toscaRepresentation.left().value().dependencies.orElse(null);
+            mainYaml = toscaRepresentation.left().value().getMainYaml();
+            dependencies = toscaRepresentation.left().value().getDependencies().getOrElse(new ArrayList<>());
         } else {
             return Either.right(toscaRepresentation.right().value());
         }
@@ -315,7 +315,7 @@ public class CsarUtils {
         return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
     }
 
-    private Either<MainYamlWithDependencies, ResponseFormat> fetchToscaRepresentation(
+    private Either<ToscaRepresentation, ResponseFormat> fetchToscaRepresentation(
         Component component,
         boolean getFromCS,
         ArtifactDefinition artifactDef
@@ -326,14 +326,14 @@ public class CsarUtils {
             !(lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN ||
                 lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 
-        Either<MainYamlWithDependencies, ResponseFormat> toscaRepresentation =
+        Either<ToscaRepresentation, ResponseFormat> toscaRepresentation =
             shouldBeFetchedFromCassandra ?
                 fetchToscaRepresentation(artifactDef) :
                 generateToscaRepresentation(component);
 
         return toscaRepresentation.left().bind(iff(
-            myd -> !myd.dependencies.isPresent(),
-            myd -> fetchToscaTemplateDependencies(myd.mainYaml, component)
+            myd -> !myd.getDependencies().isDefined(),
+            myd -> fetchToscaTemplateDependencies(myd.getMainYaml(), component)
         ));
     }
 
@@ -341,7 +341,7 @@ public class CsarUtils {
         return l -> p.test(l) ? ifTrue.apply(l) : Either.left(l);
     }
 
-    private Either<MainYamlWithDependencies, ResponseFormat> fetchToscaTemplateDependencies(
+    private Either<ToscaRepresentation, ResponseFormat> fetchToscaTemplateDependencies(
         byte[] mainYml,
         Component component
     ) {
@@ -349,47 +349,21 @@ public class CsarUtils {
             log.debug("Failed to retrieve dependencies for component {}, error {}",
                 component.getUniqueId(), toscaError);
             return componentsUtils.getResponseFormat(componentsUtils.convertFromToscaError(toscaError));
-        }).left().map(tt -> MainYamlWithDependencies.make(mainYml, tt));
+        }).left().map(tt -> ToscaRepresentation.make(mainYml, tt));
     }
 
-    private Either<MainYamlWithDependencies, ResponseFormat> generateToscaRepresentation(Component component) {
+    private Either<ToscaRepresentation, ResponseFormat> generateToscaRepresentation(Component component) {
         return toscaExportUtils.exportComponent(component).right().map(toscaError -> {
-            log.debug("exportComponent failed", toscaError);
+            log.debug("exportComponent failed {}", toscaError);
             return componentsUtils.getResponseFormat(componentsUtils.convertFromToscaError(toscaError));
-        }).left().map(MainYamlWithDependencies::make);
+        });
     }
 
-    private Either<MainYamlWithDependencies, ResponseFormat> fetchToscaRepresentation(ArtifactDefinition artifactDef) {
+    private Either<ToscaRepresentation, ResponseFormat> fetchToscaRepresentation(ArtifactDefinition artifactDef) {
         return getFromCassandra(artifactDef.getEsId()).right().map(as -> {
             log.debug(ARTIFACT_NAME_UNIQUE_ID, artifactDef.getArtifactName(), artifactDef.getUniqueId());
             return componentsUtils.getResponseFormat(as);
-        }).left().map(MainYamlWithDependencies::make);
-    }
-
-    // TODO: Refactor the ToscaRepresentation class in order to remove the following one
-    // This will be done in a separate change
-    private static class MainYamlWithDependencies {
-
-        private final byte[] mainYaml;
-        private final Optional<List<Triple<String, String, Component>>> dependencies;
-
-        private MainYamlWithDependencies(byte[] mainYaml,
-            Optional<List<Triple<String, String, Component>>> dependencies) {
-            this.mainYaml = mainYaml;
-            this.dependencies = dependencies;
-        }
-
-        public static MainYamlWithDependencies make(byte[] mainYaml) {
-            return new MainYamlWithDependencies(mainYaml, Optional.empty());
-        }
-
-        public static MainYamlWithDependencies make(ToscaRepresentation tr) {
-            return new MainYamlWithDependencies(tr.getMainYaml().getBytes(), Optional.ofNullable(tr.getDependencies()));
-        }
-
-        public static MainYamlWithDependencies make(byte[] mainYaml, ToscaTemplate tt) {
-            return new MainYamlWithDependencies(mainYaml, Optional.ofNullable(tt.getDependencies()));
-        }
+        }).left().map(ToscaRepresentation::make);
     }
 
     /**
@@ -686,7 +660,7 @@ public class CsarUtils {
         boolean isAssociatedComponent,
         ZipWriter zw
     ) {
-        Either<String, ToscaError> yml = toscaExportUtils
+        Either<byte[], ToscaError> yml = toscaExportUtils
             .exportComponentInterface(component, isAssociatedComponent)
             .left().map(ToscaRepresentation::getMainYaml);
 
@@ -705,7 +679,7 @@ public class CsarUtils {
         if (cassandraId == null || cassandraId.isEmpty()) {
             return toscaExportUtils.exportComponent(childComponent)
                 .right().map(toscaErrorToActionStatus(childComponent))
-                .left().map(toscaRepresentation -> toscaRepresentation.getMainYaml().getBytes());
+                .left().map(ToscaRepresentation::getMainYaml);
         } else {
             return getFromCassandra(cassandraId);
         }

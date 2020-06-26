@@ -170,15 +170,7 @@ public class ToscaExportHandler {
     public ToscaExportHandler(){}
 
     public Either<ToscaRepresentation, ToscaError> exportComponent(Component component) {
-
-        Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertToToscaTemplate(component);
-        if (toscaTemplateRes.isRight()) {
-            return Either.right(toscaTemplateRes.right().value());
-        }
-
-        ToscaTemplate toscaTemplate = toscaTemplateRes.left().value();
-        ToscaRepresentation toscaRepresentation = this.createToscaRepresentation(toscaTemplate);
-        return Either.left(toscaRepresentation);
+        return convertToToscaTemplate(component).left().map(this::createToscaRepresentation);
     }
 
     public Either<ToscaRepresentation, ToscaError> exportComponentInterface(final Component component,
@@ -227,11 +219,7 @@ public class ToscaExportHandler {
         sb.append(yamlAsString);
         sb.append(ConfigurationManager.getConfigurationManager().getConfiguration().getHeatEnvArtifactFooter());
 
-        ToscaRepresentation toscaRepresentation = new ToscaRepresentation();
-        toscaRepresentation.setMainYaml(sb.toString());
-        toscaRepresentation.setDependencies(toscaTemplate.getDependencies());
-
-        return toscaRepresentation;
+        return ToscaRepresentation.make(sb.toString().getBytes(), toscaTemplate);
     }
 
     public Either<ToscaTemplate, ToscaError> getDependencies(Component component) {

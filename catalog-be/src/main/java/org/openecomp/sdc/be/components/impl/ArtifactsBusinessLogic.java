@@ -396,7 +396,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 .exportComponent(parent)
                 .left().map(toscaRepresentation -> {
                     log.debug("Tosca yaml exported for component {} ", parent.getUniqueId());
-                    return toscaRepresentation.getMainYaml().getBytes();
+                    return toscaRepresentation.getMainYaml();
                 }).right().map(toscaError -> {
                     log.debug("Failed export tosca yaml for component {} error {}", parent.getUniqueId(), toscaError);
                     return new ByActionStatusComponentException(componentsUtils.convertFromToscaError(toscaError));
