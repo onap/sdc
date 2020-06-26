@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.preRequisites;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
+//import org.apache.log4j.lf5.util.ResourceUtils;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -57,7 +57,7 @@ public abstract class SimpleOneRsrcOneServiceTest extends ComponentBaseTest {
 
 	protected User sdncDesignerDetails;
 	protected ArtifactReqDetails defaultArtifactDetails;
-	protected ResourceUtils resourceUtils;
+//	protected ResourceUtils resourceUtils;
 	protected ArtifactUtils artifactUtils;
 	protected Utils utils;
 

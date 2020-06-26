@@ -25,7 +25,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
@@ -54,7 +55,7 @@ public final class Utils {
 
 	Gson gson = new Gson();
 
-	static Logger logger = Logger.getLogger(Utils.class.getName());
+	static Logger logger = LogManager.getLogger(Utils.class);
 
 	String contentTypeHeaderData = "application/json";
 	String acceptHeaderDate = "application/json";

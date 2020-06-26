@@ -26,7 +26,8 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import org.janusgraph.core.JanusGraph;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -62,7 +63,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 public abstract class ComponentBaseTest {
 
-    protected static Logger logger = Logger.getLogger(ComponentBaseTest.class);
+    protected static Logger logger = LogManager.getLogger(ComponentBaseTest.class);
 
     protected static final String REPORT_FOLDER = "." + File.separator + "ExtentReport" + File.separator;
     private static final String VERSIONS_INFO_FILE_NAME = "versions.info";

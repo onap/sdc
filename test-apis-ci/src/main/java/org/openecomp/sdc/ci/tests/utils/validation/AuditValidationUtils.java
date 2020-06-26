@@ -22,7 +22,8 @@ package org.openecomp.sdc.ci.tests.utils.validation;
 
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.Row;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -64,14 +65,14 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class AuditValidationUtils {
-	protected static Logger logger = Logger.getLogger(AuditValidationUtils.class.getName());
+	protected static Logger logger = LogManager.getLogger(AuditValidationUtils.class);
 	private static final String auditKeySpaceName = "sdcaudit";
 
 	public AuditValidationUtils() {
 		super();
 
 		StartTest.enableLogger();
-		logger = Logger.getLogger(AuditValidationUtils.class.getName());
+		logger = LogManager.getLogger(AuditValidationUtils.class);
 
 	}
 
