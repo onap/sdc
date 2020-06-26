@@ -56,7 +56,8 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.*;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -118,7 +119,7 @@ public class ResponseParser {
 	public static final String ORIGIN_TYPE = "originType";
 	public static final String TOSCA_RESOURCE_NAME = "toscaResourceName";
 
-	static Logger logger = Logger.getLogger(ResponseParser.class.getName());
+	static Logger logger = LogManager.getLogger(ResponseParser.class.getName());
 
 	public static String getValueFromJsonResponse(String response, String fieldName) {
 		try {
