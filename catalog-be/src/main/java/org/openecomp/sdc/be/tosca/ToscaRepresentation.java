@@ -20,30 +20,40 @@
 
 package org.openecomp.sdc.be.tosca;
 
+import io.vavr.control.Option;
 import org.apache.commons.lang3.tuple.Triple;
 import org.openecomp.sdc.be.model.Component;
 
 import java.util.List;
+import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 
 public class ToscaRepresentation {
 
-    private String mainYaml;
-    private List<Triple<String, String, Component>> dependencies;
+    private final byte[] mainYaml;
+    private final Option<List<Triple<String, String, Component>>> dependencies;
 
-    public String getMainYaml() {
+    private ToscaRepresentation(byte[] mainYaml, Option<List<Triple<String, String, Component>>> dependencies) {
+        this.mainYaml = mainYaml;
+        this.dependencies = dependencies;
+    }
+
+    public static ToscaRepresentation make(byte[] mainYaml) {
+        return new ToscaRepresentation(mainYaml, Option.none());
+    }
+
+    public static ToscaRepresentation make(byte[] mainYaml, List<Triple<String, String, Component>> dependencies) {
+        return new ToscaRepresentation(mainYaml, Option.of(dependencies));
+    }
+
+    public static ToscaRepresentation make(byte[] mainYaml, ToscaTemplate tt) {
+        return new ToscaRepresentation(mainYaml, Option.of(tt.getDependencies()));
+    }
+
+    public byte[] getMainYaml() {
         return mainYaml;
     }
 
-    public void setMainYaml(String mainYaml) {
-        this.mainYaml = mainYaml;
-    }
-
-    public List<Triple<String, String, Component>> getDependencies() {
+    public Option<List<Triple<String, String, Component>>> getDependencies() {
         return dependencies;
     }
-
-    public void setDependencies(List<Triple<String, String, Component>> dependancies) {
-        this.dependencies = dependancies;
-    }
-
 }
