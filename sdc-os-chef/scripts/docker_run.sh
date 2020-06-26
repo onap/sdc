@@ -28,7 +28,7 @@ CS_PORT=${CS_PORT:-9042}
 BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4000,server=y,suspend=n -Xmx1536m -Xms1536m"
 FE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=6000,server=y,suspend=n -Xmx256m -Xms256m"
 ONBOARD_BE_JAVA_OPTIONS="-Xdebug -agentlib:jdwp=transport=dt_socket,address=4001,server=y,suspend=n -Xmx1g -Xms1g"
-SIM_JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m -Dlog4j.configuration=file:///${JETTY_BASE}/config/sdc-simulator/log4j.properties"
+SIM_JAVA_OPTIONS=" -Xmx128m -Xms128m -Xss1m -Dlog4j.configuration=file:///${JETTY_BASE}/config/sdc-simulator/log4j2.properties"
 API_TESTS_JAVA_OPTIONS="-Xmx512m -Xms512m"
 UI_TESTS_JAVA_OPTIONS="-Xmx1024m -Xms1024m"
 #Define this as variable, so it can be excluded in run commands on Docker for OSX, as /etc/localtime cant be mounted there.
