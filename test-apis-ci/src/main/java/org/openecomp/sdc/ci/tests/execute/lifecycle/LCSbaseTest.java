@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.lifecycle;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
+
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -71,7 +71,7 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
     protected ArtifactReqDetails heatNetArtifactDetails;
 
     protected ArtifactReqDetails defaultArtifactDetails;
-    protected ResourceUtils resourceUtils;
+
     protected ArtifactUtils artifactUtils;
 
     // protected static ServiceUtils serviceUtils = new ServiceUtils();

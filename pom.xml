@@ -87,6 +87,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <commons-codec>1.10</commons-codec>
     <commons-logging>1.2</commons-logging>
     <janino.version>3.0.6</janino.version>
+    <log4j.version>2.13.1</log4j.version>
 
     <!-- aspects -->
     <jcabi.version>0.20.1</jcabi.version>

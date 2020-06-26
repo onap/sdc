@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.execute.product;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
+
 import org.junit.Before;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -53,7 +53,7 @@ public class ProductTestBase extends ProductBaseTest {
 	protected User sdncUserDetails;
 	protected ArtifactReqDetails heatArtifactDetails;
 	protected ArtifactReqDetails defaultArtifactDetails;
-	protected ResourceUtils resourceUtils;
+
 	protected ArtifactUtils artifactUtils;
 	protected Resource resource;
 	protected Service service;

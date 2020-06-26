@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.preRequisites;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
+
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Service;
@@ -53,7 +53,7 @@ public class DownloadArtifactBaseTest extends ComponentBaseTest {
 	protected ArtifactReqDetails heatArtifactDetails;
 
 	protected ArtifactReqDetails defaultArtifactDetails;
-	protected ResourceUtils resourceUtils;
+
 	protected ArtifactUtils artifactUtils;
 	protected Service service;
 

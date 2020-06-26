@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -43,7 +44,7 @@ import static org.testng.AssertJUnit.*;
 
 public class ProductValidationUtils {
 
-	static Logger logger = Logger.getLogger(ProductValidationUtils.class.getName());
+	static Logger logger = LogManager.getLogger(ProductValidationUtils.class);
 
 	public static void compareExpectedAndActualProducts(Product expectedProduct, Product actualProduct) {
 		compareExpectedAndActualProducts(expectedProduct, actualProduct, null);

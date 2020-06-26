@@ -69,7 +69,7 @@ then
 else
         FULL_PATH=$CURRENT_DIR/$BASEDIR
 fi
-LOGS_PROP_FILE=file:${FULL_PATH}/conf/log4j.properties
+LOGS_PROP_FILE=file:${FULL_PATH}/conf/log4j2.properties
 #############################################
 TARGET_DIR=${FULL_PATH}/target
 CONF_FILE=${FULL_PATH}/conf/attsdc.yaml

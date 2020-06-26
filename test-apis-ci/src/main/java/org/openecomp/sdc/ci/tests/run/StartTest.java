@@ -20,7 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.run;
 
-import org.apache.log4j.PropertyConfigurator;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.slf4j.Logger;
@@ -99,14 +101,17 @@ public class StartTest {
 
 			String log4jPropsFile = System.getProperty("log4j.configuration");
 			if (System.getProperty("os.name").contains("Windows")) {
-				String logProps = "src/main/resources/ci/conf/log4j.properties";
+				String logProps = "src/main/resources/ci/conf/log4j2.properties";
 				if (log4jPropsFile == null) {
 					System.setProperty("targetlog", "target/");
 					log4jPropsFile = logProps;
 				}
 
 			}
-			PropertyConfigurator.configureAndWatch(log4jPropsFile);
+
+			LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
+			File file = new File(log4jPropsFile);
+			context.setConfigLocation(file.toURI());
 
 		}
 	}
