@@ -54,8 +54,12 @@ public interface ZipWriter {
      *
      * @param entryName The entry's name to use in the zip file
      */
-    default Function<String, Try<Void>> write(String entryName) {
+    default Function<String, Try<Void>> writeString(String entryName) {
         return payload -> write(entryName, payload.getBytes());
+    }
+
+    default Function<byte[], Try<Void>> write(String entryName) {
+        return payload -> write(entryName, payload);
     }
 
     /**

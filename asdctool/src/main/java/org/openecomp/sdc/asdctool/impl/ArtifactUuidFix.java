@@ -1237,9 +1237,8 @@ public class ArtifactUuidFix {
 					return Either.right(exportComponent.right().value());
 				}
 				log.debug("Tosca yaml exported for component {} ", parent.getUniqueId());
-				String payload = exportComponent.left().value().getMainYaml();
 
-				toscaArtifact.setPayloadData(payload);
+				toscaArtifact.setPayload(exportComponent.left().value().getMainYaml());
 				byte[] decodedPayload = toscaArtifact.getPayloadData();
 
 				String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(parent.getUniqueId(),
