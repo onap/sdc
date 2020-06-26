@@ -113,7 +113,7 @@ public class StartTest2backup {
 
 			String log4jPropsFile = System.getProperty("log4j.configuration");
 			if (System.getProperty("os.name").contains("Windows")) {
-				String logProps = "src/main/resources/ci/conf/log4j.properties";
+				String logProps = "src/main/resources/ci/conf/log4j2.properties";
 				if (log4jPropsFile == null) {
 					System.setProperty("targetlog", "target/");
 					log4jPropsFile = logProps;
