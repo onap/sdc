@@ -159,9 +159,9 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         assertThat(sourceType).isEqualToIgnoringCase(uiConstraint.getSourceType());
         assertThat(sourceName).isEqualToIgnoringCase(uiConstraint.getSourceName());
         assertThat(propertyValue).isEqualToIgnoringCase(uiConstraint.getValue().toString());
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(anyString(), any(User.class),
-            ArgumentMatchers.<Class<UIConstraint>>any(),
-            nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class))).thenReturn(Either.left(uiConstraint));
+
+        when(componentsUtils.parseToConstraint(anyString(), any(User.class),ArgumentMatchers.any(ComponentTypeEnum.class)))
+            .thenReturn(Optional.of(uiConstraint));
 
         assertNotNull(constraint);
         assertNotNull(ciNodeFilterDataDefinition);
@@ -314,10 +314,8 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
 
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
 
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(anyString(), any(User.class),
-            ArgumentMatchers.<Class<List>>any(),
-            nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class)))
-            .thenReturn(Either.left(Arrays.asList(new ObjectMapper().convertValue(uiConstraint, Map.class))));
+        when(componentsUtils.validateAndParseConstraint(ArgumentMatchers.any(ComponentTypeEnum.class), anyString(), any(User.class)))
+            .thenReturn(Collections.singletonList(uiConstraint));
 
         when(componentNodeFilterBusinessLogic
             .updateNodeFilter(componentId, componentInstance, Collections.singletonList(constraint),
@@ -347,10 +345,8 @@ public class ComponentNodeFilterServletTest extends JerseyTest {
         when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
 
-        when(componentsUtils.convertJsonToObjectUsingObjectMapper(anyString(), any(User.class),
-            ArgumentMatchers.<Class<List>>any(),
-            nullable(AuditingActionEnum.class), nullable(ComponentTypeEnum.class)))
-            .thenReturn(Either.right(new ResponseFormat(HttpStatus.INTERNAL_SERVER_ERROR_500)));
+        when(componentsUtils.validateAndParseConstraint(ArgumentMatchers.any(ComponentTypeEnum.class), anyString(), any(User.class)))
+            .thenReturn(Collections.emptyList());
 
         final Response response = target()
             .path(path)

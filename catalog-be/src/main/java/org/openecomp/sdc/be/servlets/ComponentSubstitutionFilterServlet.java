@@ -43,7 +43,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentSubstitutionFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -51,12 +51,12 @@ import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.tosca.utils.NodeFilterConverter;
+import org.openecomp.sdc.be.tosca.utils.SubstitutionFilterConverter;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UINodeFilter;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -64,68 +64,66 @@ import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Path("/v1/catalog/{componentType}/{componentId}/resourceInstances/{componentInstanceId}/nodeFilter")
+@Path("/v1/catalog/{componentType}/{componentId}/resourceInstances/{componentInstanceId}/substitutionFilter")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
-public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
+public class ComponentSubstitutionFilterServlet extends AbstractValidationsServlet {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentNodeFilterServlet.class);
-    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
-    private static final String MODIFIER_ID_IS = "modifier id is {}";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentSubstitutionFilterServlet.class);
+    private static final String START_HANDLE_REQUEST_OF = "Start handle {} request of {}";
+    private static final String MODIFIER_ID_IS = "Modifier id is {}";
+    private static final String FAILED_TO_PARSE_COMPONENT = "Failed to parse component";
 
-    private static final String FAILED_TO_PARSE_COMPONENT = "failed to parse component";
+    private static final String FAILED_TO_ADD_SUBSTITUTION_FILTER = "Failed to add substitution filter";
+    private static final String ADD_SUBSTITUTION_FILTER = "Add Substitution Filter";
+    private static final String ADD_SUBSTITUTION_FILTER_WITH_AN_ERROR = "Add substitution filter with an error";
 
-    private static final String FAILED_TO_CREATE_NODE_FILTER = "failed to create node filter";
-    private static final String NODE_FILTER_CREATION = "Node Filter Creation";
-    private static final String CREATE_NODE_FILTER_WITH_AN_ERROR = "create node filter with an error";
+    private static final String FAILED_TO_UPDATE_SUBSTITUTION_FILTER = "Failed to update substitution filter";
+    private static final String SUBSTITUTION_FILTER_UPDATE = "Substitution Filter Update";
+    private static final String UPDATE_SUBSTITUTION_FILTER_WITH_AN_ERROR = "Update substitution filter with an error {}";
 
-    private static final String FAILED_TO_UPDATE_NODE_FILTER = "failed to update node filter";
-    private static final String NODE_FILTER_UPDATE = "Node Filter Update";
-    private static final String UPDATE_NODE_FILTER_WITH_AN_ERROR = "update node filter with an error";
+    private static final String FAILED_TO_DELETE_SUBSTITUTION_FILTER = "Failed to delete substitution filter";
+    private static final String SUBSTITUTION_FILTER_DELETE = "Substitution Filter Delete";
+    private static final String DELETE_SUBSTITUTION_FILTER_WITH_AN_ERROR = "Delete substitution filter with an error";
 
-    private static final String FAILED_TO_DELETE_NODE_FILTER = "failed to delete node filter";
-    private static final String NODE_FILTER_DELETE = "Node Filter Delete";
-    private static final String DELETE_NODE_FILTER_WITH_AN_ERROR = "delete node filter with an error";
-
-    private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
+    private final ComponentSubstitutionFilterBusinessLogic componentSubstitutionFilterBusinessLogic;
 
     @Inject
-    public ComponentNodeFilterServlet(final UserBusinessLogic userBusinessLogic,
-                                      final ComponentInstanceBusinessLogic componentInstanceBL,
-                                      final ComponentsUtils componentsUtils,
-                                      final ServletUtils servletUtils,
-                                      final ResourceImportManager resourceImportManager,
-                                      final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic) {
+    public ComponentSubstitutionFilterServlet(final UserBusinessLogic userBusinessLogic,
+                                              final ComponentInstanceBusinessLogic componentInstanceBL,
+                                              final ComponentsUtils componentsUtils,
+                                              final ServletUtils servletUtils,
+                                              final ResourceImportManager resourceImportManager,
+                                              final ComponentSubstitutionFilterBusinessLogic componentSubstitutionFilterBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
-        this.componentNodeFilterBusinessLogic = componentNodeFilterBusinessLogic;
+        this.componentSubstitutionFilterBusinessLogic = componentSubstitutionFilterBusinessLogic;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    @Operation(description = "Add Component Filter Constraint", method = "POST",
-        summary = "Add Component Filter Constraint", responses = {
+    @Operation(description = "Add Component Substitution Filter Constraint", method = "POST",
+        summary = "Add Component Substitution Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-        @ApiResponse(responseCode = "201", description = "Create Component Filter"),
+        @ApiResponse(responseCode = "201", description = "Add Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response addComponentFilterConstraint(
+    public Response addSubstitutionFilter(
         @Parameter(description = "UIConstraint data", required = true) String constraintData,
         @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
         @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
-        @Parameter(description = "valid values: resources / services",
+        @Parameter(description = "valid value: services",
             schema = @Schema(allowableValues = {
-                ComponentTypeEnum.RESOURCE_PARAM_NAME,
                 ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
         @Context final HttpServletRequest request,
         @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
-        final User userModifier = componentNodeFilterBusinessLogic.validateUser(userId);
+        final User userModifier = componentSubstitutionFilterBusinessLogic.validateUser(userId);
 
         final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         try {
@@ -135,24 +133,34 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
                 LOGGER.error(FAILED_TO_PARSE_COMPONENT);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
+
+            final Optional<SubstitutionFilterDataDefinition> substitutionFilter =
+                componentSubstitutionFilterBusinessLogic.createSubstitutionFilterIfNotExist(componentId,
+                    componentInstanceId, true, componentTypeEnum);
+            if (!substitutionFilter.isPresent()) {
+                LOGGER.error("Failed to create substitution filter.");
+                BeEcompErrorManager.getInstance().logBeRestApiGeneralError(ADD_SUBSTITUTION_FILTER);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            }
+
             final UIConstraint uiConstraint = convertResponse.get();
             final String constraint = new ConstraintConvertor().convert(uiConstraint);
 
-            final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD,
+            final Optional<SubstitutionFilterDataDefinition> actionResponse = componentSubstitutionFilterBusinessLogic
+                .addSubstitutionFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD,
                     uiConstraint.getServicePropertyName(), constraint, true, componentTypeEnum);
 
             if (!actionResponse.isPresent()) {
-                LOGGER.error(FAILED_TO_CREATE_NODE_FILTER);
+                LOGGER.error(FAILED_TO_ADD_SUBSTITUTION_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            final UINodeFilter nodeFilter = new NodeFilterConverter().convertToUi(actionResponse.get());
+            final UINodeFilter uiFilter = new SubstitutionFilterConverter().convertToUi(actionResponse.get());
 
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), nodeFilter);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), uiFilter);
 
         } catch (final Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_CREATION);
-            LOGGER.error(CREATE_NODE_FILTER_WITH_AN_ERROR, e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(ADD_SUBSTITUTION_FILTER);
+            LOGGER.error(ADD_SUBSTITUTION_FILTER_WITH_AN_ERROR, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
@@ -161,52 +169,53 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    @Operation(description = "Update Component Filter Constraint", method = "PUT",
-        summary = "Update Component Filter Constraint", responses = {
+    @Operation(description = "Update Component Substitution Filter Constraint", method = "PUT",
+        summary = "Update Component Substitution Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-        @ApiResponse(responseCode = "201", description = "Create Component Filter"),
+        @ApiResponse(responseCode = "201", description = "Update Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response updateComponentFilterConstraint(
+    public Response updateSubstitutionFilter(
         @Parameter(description = "UIConstraint data", required = true) String constraintData,
         @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
         @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
-        @Parameter(description = "valid values: resources / services",
+        @Parameter(description = "valid value: services",
             schema = @Schema(allowableValues = {
-                ComponentTypeEnum.RESOURCE_PARAM_NAME,
                 ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
-        final User userModifier = componentNodeFilterBusinessLogic.validateUser(userId);
+        final User userModifier = componentSubstitutionFilterBusinessLogic.validateUser(userId);
 
         try {
             final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
             final List<UIConstraint>  uiConstraints = componentsUtils
                 .validateAndParseConstraint(componentTypeEnum, constraintData, userModifier);
             if (CollectionUtils.isEmpty(uiConstraints)) {
-                LOGGER.error("Failed to Parse Constraint data {} when executing {} ", constraintData, NODE_FILTER_UPDATE);
+                LOGGER.error("Failed to Parse Constraint data {} when executing {} ",
+                    constraintData, SUBSTITUTION_FILTER_UPDATE);
                 return buildErrorResponse(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR,
-                    "Failed to parse constraint data", constraintData));
+                    "Failed to parse constraint data"));
             }
+
             final List<String> constraints = new ConstraintConvertor().convertToList(uiConstraints);
-            final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, constraints,
+            final Optional<SubstitutionFilterDataDefinition> actionResponse = componentSubstitutionFilterBusinessLogic
+                .updateSubstitutionFilter(componentId.toLowerCase(), componentInstanceId, constraints,
                     true, componentTypeEnum);
 
             if (!actionResponse.isPresent()) {
-                LOGGER.error(FAILED_TO_UPDATE_NODE_FILTER);
+                LOGGER.error(FAILED_TO_UPDATE_SUBSTITUTION_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
 
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                new NodeFilterConverter().convertToUi(actionResponse.get()));
+                new SubstitutionFilterConverter().convertToUi(actionResponse.get()));
 
         } catch (final Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_UPDATE);
-            LOGGER.error(UPDATE_NODE_FILTER_WITH_AN_ERROR, e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(SUBSTITUTION_FILTER_UPDATE);
+            LOGGER.error(UPDATE_SUBSTITUTION_FILTER_WITH_AN_ERROR, e.getMessage(), e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
@@ -215,43 +224,43 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{constraintIndex}")
-    @Operation(description = "Delete Component Filter Constraint", method = "Delete",
-        summary = "Delete Component Filter Constraint", responses = {
+    @Operation(description = "Delete Component Substitution Filter Constraint", method = "Delete",
+        summary = "Delete Component Substitution Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
-        @ApiResponse(responseCode = "201", description = "Delete Component Filter Constraint"),
+        @ApiResponse(responseCode = "201", description = "Delete Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteComponentFilterConstraint(
+    public Response deleteSubstitutionFilterConstraint(
         @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
         @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
         @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
-        @Parameter(description = "valid values: resources / services",
+        @Parameter(description = "valid value: services",
             schema = @Schema(allowableValues = {
-                ComponentTypeEnum.RESOURCE_PARAM_NAME,
                 ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
-        componentNodeFilterBusinessLogic.validateUser(userId);
+        componentSubstitutionFilterBusinessLogic.validateUser(userId);
 
         try {
-            final Optional<CINodeFilterDataDefinition>actionResponse = componentNodeFilterBusinessLogic
-                .deleteNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.DELETE,
+            final Optional<SubstitutionFilterDataDefinition> actionResponse = componentSubstitutionFilterBusinessLogic
+                .deleteSubstitutionFilter(componentId.toLowerCase(), componentInstanceId,
+                    NodeFilterConstraintAction.DELETE,
                     null, index, true, ComponentTypeEnum.findByParamName(componentType));
 
             if (!actionResponse.isPresent()) {
-                LOGGER.debug(FAILED_TO_DELETE_NODE_FILTER);
+                LOGGER.debug(FAILED_TO_DELETE_SUBSTITUTION_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
 
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                new NodeFilterConverter().convertToUi(actionResponse.get()));
+                new SubstitutionFilterConverter().convertToUi(actionResponse.get()));
 
         } catch (final Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_DELETE);
-            LOGGER.debug(DELETE_NODE_FILTER_WITH_AN_ERROR, e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(SUBSTITUTION_FILTER_DELETE);
+            LOGGER.debug(DELETE_SUBSTITUTION_FILTER_WITH_AN_ERROR, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 
         }
