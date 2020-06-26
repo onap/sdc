@@ -22,6 +22,30 @@
       "revId": "3b71b537833ec34bc488f0f9a1ee8a2437a31e20",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e91e98a_8db8ac79",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ProductLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2020-06-26T17:34:12Z",
+      "side": 1,
+      "message": "no, not at all, something wrong happened ... let me fix that",
+      "parentUuid": "ce0e3cb0_0c9fcbfb",
+      "range": {
+        "startLine": 55,
+        "startChar": 8,
+        "endLine": 56,
+        "endChar": 59
+      },
+      "revId": "3b71b537833ec34bc488f0f9a1ee8a2437a31e20",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
