@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2959b245_fe6f7993",
+        "filename": "catalog-dao/src/test/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8708a23_eb1e72fa",
+        "filename": "test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j throughout the file?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "477f763c_118e9543",
+        "filename": "test-apis-ci/src/main/resources/ci/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ebbebca_bcc76a20",
+        "filename": "test-apis-ci/src/main/resources/ci/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf75ee56_43a32842",
+        "filename": "test-apis-ci/src/main/resources/ci/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d30142f_42467a83",
+        "filename": "test-apis-ci/src/main/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "995caab7_f2e78f71",
+        "filename": "test-apis-ci/src/main/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f352c55_43d14639",
+        "filename": "test-apis-ci/src/main/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbd8fe7e_d43929a3",
+        "filename": "test-apis-ci/src/main/resources/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a8d4c7b_d7847086",
+        "filename": "ui-ci/src/main/resources/ci/conf/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acb0786e_69e69408",
+        "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0ed8f64_59646029",
+        "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec26d6d4_65885ace",
+        "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/log4j2.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 943
+      },
+      "writtenOn": "2020-06-27T00:02:37Z",
+      "side": 1,
+      "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
