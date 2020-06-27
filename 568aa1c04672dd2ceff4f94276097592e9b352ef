@@ -19,6 +19,52 @@
     },
     {
       "key": {
+        "uuid": "ebc39db0_6724a1ad",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-27T11:42:50Z",
+      "side": 1,
+      "message": "any particular reason for not using this version but not latest .3 ?",
+      "range": {
+        "startLine": 89,
+        "startChar": 24,
+        "endLine": 89,
+        "endChar": 25
+      },
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54a6fda9_0ce20474",
+        "filename": "test-apis-ci/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-27T11:42:50Z",
+      "side": 1,
+      "message": "redundant, log4j-core is enough",
+      "range": {
+        "startLine": 87,
+        "startChar": 4,
+        "endLine": 92,
+        "endChar": 17
+      },
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d8708a23_eb1e72fa",
         "filename": "test-apis-ci/sdc-api-tests/chef-repo/cookbooks/sdc-api-tests/files/default/conf/log4j2.properties",
         "patchSetId": 1
@@ -30,6 +76,52 @@
       "writtenOn": "2020-06-27T00:02:37Z",
       "side": 1,
       "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j throughout the file?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb31d97c_132ae4ac",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/Utils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-27T11:42:50Z",
+      "side": 1,
+      "message": "redundant, can be removed",
+      "range": {
+        "startLine": 58,
+        "startChar": 56,
+        "endLine": 58,
+        "endChar": 66
+      },
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9083abaf_35968e9f",
+        "filename": "test-apis-ci/src/main/java/org/openecomp/sdc/ci/tests/utils/rest/ResponseParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-27T11:42:50Z",
+      "side": 1,
+      "message": "redundant, can be removed",
+      "range": {
+        "startLine": 122,
+        "startChar": 65,
+        "endLine": 122,
+        "endChar": 75
+      },
       "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -166,6 +258,29 @@
       "writtenOn": "2020-06-27T00:02:37Z",
       "side": 1,
       "message": "Why is the path org.apache.log4j and not org.apache.logging.log4j?",
+      "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74249933_dce5f0b6",
+        "filename": "utils/webseal-simulator/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-27T11:42:50Z",
+      "side": 1,
+      "message": "redundant, log4j-core is enough.",
+      "range": {
+        "startLine": 97,
+        "startChar": 4,
+        "endLine": 102,
+        "endChar": 17
+      },
       "revId": "568aa1c04672dd2ceff4f94276097592e9b352ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
