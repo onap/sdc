@@ -492,6 +492,12 @@
       <artifactId>testng-junit5</artifactId>
       <version>0.0.1</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.junit.platform</groupId>
+          <artifactId>junit-platform-engine</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -506,14 +512,6 @@
       <version>${bean-matchers.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>com.github.stefanbirkner</groupId>
-      <artifactId>system-rules</artifactId>
-      <version>1.19.0</version>
-      <scope>test</scope>
-    </dependency>
-
     <!-- testing end -->
 
     <dependency>

@@ -66,11 +66,7 @@
       <artifactId>httpcore</artifactId>
       <version>${http.core.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <scope>test</scope>
-    </dependency>
+
     <!-- Java Stuff -->
     <dependency>
       <groupId>javax.inject</groupId>

@@ -218,7 +218,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.11</version>
+      <version>${testng.version}</version>
       <scope>compile</scope>
     </dependency>
 
