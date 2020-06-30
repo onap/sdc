@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "240e72be_62f7b761",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaRepresentation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2020-06-30T16:40:11Z",
+      "side": 1,
+      "message": "@Getter could be one line on class-level",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 6
+      },
+      "revId": "7c2ed9bf1090e8e701a2123eaa554c762c4df0d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
