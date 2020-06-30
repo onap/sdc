@@ -1,0 +1,10 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Sébastien Determe <sebastien.determe@intl.att.com>
+Code-Review+1: Anderson Ribeiro <anderson.ribeiro@est.tech>
+Code-Review+1: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Code-Review+2: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-by: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-at: Tue, 30 Jun 2020 10:35:42 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/109644
+Project: sdc
+Branch: refs/heads/master
