@@ -22,6 +22,30 @@
       "revId": "b9184184874103a20d35ec0cd825891685248214",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c12af1a2_cd0654da",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaRepresentation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 6614
+      },
+      "writtenOn": "2020-06-30T16:23:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec973ae4_5163cbcb",
+      "range": {
+        "startLine": 52,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 5
+      },
+      "revId": "b9184184874103a20d35ec0cd825891685248214",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
