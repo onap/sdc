@@ -47,7 +47,7 @@ import { ServiceGenericResponse } from 'app/ng2/services/responses/service-gener
 import { WorkspaceState } from 'app/ng2/store/states/workspace.state';
 import { EventListenerService } from 'app/services';
 import { ComponentInstanceFactory, EVENTS, SdcElementType } from 'app/utils';
-import { ComponentType, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS } from 'app/utils/constants';
+import { ComponentType, GRAPH_EVENTS, GraphColors, DEPENDENCY_EVENTS , SUBSTITUTION_FILTER_EVENTS} from 'app/utils/constants';
 import * as _ from 'lodash';
 import { DndDropEvent } from 'ngx-drag-drop/ngx-drag-drop';
 import { SdcUiServices } from 'onap-ui-angular';
@@ -143,6 +143,7 @@ export class CompositionGraphComponent implements AfterViewInit {
         });
         this.eventListenerService.unRegisterObserver(EVENTS.ON_CHECKOUT);
         this.eventListenerService.unRegisterObserver(DEPENDENCY_EVENTS.ON_DEPENDENCY_CHANGE);
+        this.eventListenerService.unRegisterObserver(SUBSTITUTION_FILTER_EVENTS.ON_SUBSTITUTION_FILTER_CHANGE);
     }
 
     public isViewOnly = (): boolean => {

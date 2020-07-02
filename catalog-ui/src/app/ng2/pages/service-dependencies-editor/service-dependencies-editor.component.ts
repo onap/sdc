@@ -136,9 +136,11 @@ export class ServiceDependenciesEditorComponent {
             const selectedSourceType: UIDropDownSourceTypesElement = this.sourceTypes.find(
                 (t) => t.value === this.currentRule.sourceName && t.type === this.currentRule.sourceType
             );
-            this.listOfSourceOptions = selectedSourceType.options || [];
-            this.assignedValueLabel = selectedSourceType.assignedLabel || this.SOURCE_TYPES.STATIC.label;
-            this.filterOptionsByType();
+            if(selectedSourceType) {
+                this.listOfSourceOptions = selectedSourceType.options || [];
+                this.assignedValueLabel = selectedSourceType.assignedLabel || this.SOURCE_TYPES.STATIC.label;
+                this.filterOptionsByType();
+            }
         }
     }
 
