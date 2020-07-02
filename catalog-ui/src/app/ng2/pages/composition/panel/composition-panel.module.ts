@@ -47,6 +47,8 @@ import { ServiceConsumptionTabComponent } from "./panel-tabs/service-consumption
 import { ServiceDependenciesTabComponent } from "./panel-tabs/service-dependencies-tab/service-dependencies-tab.component";
 import { ServiceDependenciesModule } from "../../../components/logic/service-dependencies/service-dependencies.module";
 import { ServiceConsumptionModule } from "../../../components/logic/service-consumption/service-consumption.module";
+import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
+import {SubstitutionFilterModule} from "../../../components/logic/substitution-filter/substitution-filter.module";
 
 
 
@@ -63,6 +65,7 @@ import { ServiceConsumptionModule } from "../../../components/logic/service-cons
         ReqAndCapabilitiesTabComponent,
         ServiceConsumptionTabComponent,
         ServiceDependenciesTabComponent,
+        SubstitutionFilterTabComponent,
         RequirementListComponent,
         EnvParamsComponent
     ],
@@ -77,7 +80,8 @@ import { ServiceConsumptionModule } from "../../../components/logic/service-cons
         TranslateModule,
         NgxDatatableModule,
         ServiceDependenciesModule,
-        ServiceConsumptionModule
+        ServiceConsumptionModule,
+        SubstitutionFilterModule
         // EnvParamsModule
     ],
     entryComponents: [
@@ -91,6 +95,7 @@ import { ServiceConsumptionModule } from "../../../components/logic/service-cons
         ReqAndCapabilitiesTabComponent,
         ServiceConsumptionTabComponent,
         ServiceDependenciesTabComponent,
+        SubstitutionFilterTabComponent,
         RequirementListComponent,
         PanelTabComponent,
         EnvParamsComponent

@@ -57,6 +57,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public additionalInformation:any;
     public derivedList:Array<any>;
     public nodeFilterData: Array<any>;
+    public substitutionFilterForTopologyTemplate: Array<any>;
 
     deserialize (response): ComponentGenericResponse {
 
@@ -121,6 +122,9 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
         }
         if(response.nodeFilterData) {
             this.nodeFilterData = response.nodeFilterData;
+        }
+        if(response.substitutionFilterForTopologyTemplate) {
+            this.substitutionFilterForTopologyTemplate = response.substitutionFilterForTopologyTemplate;
         }
         return this;
     }

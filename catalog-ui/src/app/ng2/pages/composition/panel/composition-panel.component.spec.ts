@@ -157,7 +157,7 @@ describe('composition-panel component', () => {
         fixture.componentInstance.ngOnInit();
 
         // Expect that
-        expect (fixture.componentInstance.tabs.length).toBe(5);
+        expect (fixture.componentInstance.tabs.length).toBe(6);
         expect (fixture.componentInstance.tabs[0]).toEqual(tabs.infoTab);
         expect (fixture.componentInstance.tabs[1]).toEqual(tabs.properties);
         expect (fixture.componentInstance.tabs[2]).toEqual(tabs.reqAndCapabilities);
