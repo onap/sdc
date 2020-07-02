@@ -380,6 +380,10 @@ export class TopologyTemplateService {
         return this.getComponentDataByFieldsName(componentType, componentId, [SERVICE_FIELDS.NODE_FILTER]);
     }
 
+    getSubstitutionFilterConstraints(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId, [SERVICE_FIELDS.SUBSTITUTION_FILTER]);
+    }
+
     getComponentInstanceProperties(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES]);
     }
@@ -394,6 +398,18 @@ export class TopologyTemplateService {
 
     deleteServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraintIndex: number, componentType: string): Observable<any>{
         return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/nodeFilter/' + constraintIndex)
+    }
+
+    createSubstitutionFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject, componentType: string): Observable<any> {
+        return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/substitutionFilter', constraint);
+    }
+
+    updateSubstitutionFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject, componentType: string): Observable<any> {
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/substitutionFilter', constraint);
+    }
+
+    deleteSubstitutionFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraintIndex: number, componentType: string): Observable<any>{
+        return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/resourceInstances/' + componentInstanceId + '/substitutionFilter/' + constraintIndex)
     }
 
     deletePolicy(component: Component, policy: PolicyInstance): Observable<PolicyInstance> {

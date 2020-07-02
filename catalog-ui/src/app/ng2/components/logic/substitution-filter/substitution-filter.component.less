@@ -1,0 +1,105 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2020 Nordix Foundation. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+@import './../../../../../assets/styles/variables.less';
+@import './../../../../../assets/styles/variables-old.less';
+@import './../../../../../assets/styles/mixins_old.less';
+@import './../../../../../assets/styles/mixins.less';
+
+.substitution-filter {
+
+  /deep/ .checkbox-label-mark-as-dependent {
+    padding: 7px 18px;
+    position: relative;
+    height: 61px;
+    color: @main_color_a;
+    box-shadow: 0 2px 7px @main_color_o;
+    border-bottom: 1px solid @main_color_o;
+    .checkbox-label {
+      margin-top: 14px;
+      .checkbox-label-content {
+        font-size: 14px;
+      }
+    }
+    .checkbox-container input[type=checkbox].checkbox-hidden[disabled] ~ .checkbox-label-content {
+      opacity: 0.5;
+    }
+    .delete-btn {
+      background-position: -137px -415px;
+      width: 24px;
+      height: 24px
+    }
+
+    loader {
+      top: 20px;
+    }
+  }
+
+
+  .i-sdc-designer-sidebar-section-content-item-rules-section {
+    .i-sdc-designer-sidebar-section-content-item-rule {
+      border-bottom: 1px solid @main_color_o;
+      padding: 5px 10px 5px 18px;
+      position: relative;
+      height: 61px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .rule-details {
+        // .s_1;
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: space-between;
+        margin-left: 5px;
+        width: 180px;
+        .delete-icon {
+          visibility: hidden;
+        }
+        &:not(.readonly):hover {
+          .a_1;
+        }
+        &:hover .delete-icon{
+          visibility: visible;
+        }
+        &.readonly {
+          opacity: 0.5;
+        }
+      }
+      .rule-desc {
+        .sdc-ellipsis;
+        width: 220px;
+        position: relative;
+        padding-right: 1em;
+      }
+
+    }
+  }
+  .w-sdc-designer-sidebar-section-footer {
+    margin-top: 10px;
+    text-align: center;
+    width: 100%;
+  }
+  .w-sdc-designer-sidebar-section-footer-action {
+    width: 180px;
+    margin-top: 10px;
+  }
+}

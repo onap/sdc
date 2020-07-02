@@ -1,0 +1,50 @@
+<!--
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2020 Nordix Foundation. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+-->
+
+<div class="substitution-filter">
+
+  <div *ngIf="compositeService.isService()"
+       class="i-sdc-designer-sidebar-section-content-item-rules-section">
+
+    <div class="i-sdc-designer-sidebar-section-content-item-rule" [ngClass]="{'hand': !readonly}"
+         *ngFor="let constraint of constraintObjects; let i = index">
+      <div class="rule-details" [ngClass]="{'readonly': readonly}">
+        <div class="rule-desc" (click)="!readonly && onSelectFilter(i)" tooltips
+             tooltip="{{constraint.servicePropertyName + ' ' + getSymbol(constraint.constraintOperator) + ' '
+             + (constraint.sourceName ? constraint.sourceName + ':' : '') + constraint.value}}">
+          {{constraint.servicePropertyName + ' ' + getSymbol(constraint.constraintOperator) + ' '
+        + (constraint.sourceName ? constraint.sourceName + ':' : '') + constraint.value}}
+        </div>
+        <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
+              (click)="openDeleteModal(i)" data-tests-id="delete-input-button"></span>
+      </div>
+    </div>
+
+    <div *ngIf="!isSubstitutionFilterSet()" class="w-sdc-designer-sidebar-section-footer">
+      <button
+          class="w-sdc-designer-sidebar-section-footer-action tlv-btn blue"
+          data-tests-id="add-rule-button"
+          (click)="onAddSubstitutionFilter()"
+          [disabled]="readonly">
+        {{'ADD_SUBSTITUTION_FILTER' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

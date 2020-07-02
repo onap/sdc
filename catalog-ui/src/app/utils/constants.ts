@@ -366,6 +366,10 @@ export class DEPENDENCY_EVENTS {
     static ON_DEPENDENCY_CHANGE = 'onDependencyStatusChange';
 }
 
+export class SUBSTITUTION_FILTER_EVENTS {
+    static ON_SUBSTITUTION_FILTER_CHANGE = 'onSubstitutionFilterChange';
+}
+
 
 export class COMPONENT_FIELDS {
     static COMPONENT_INSTANCES_PROPERTIES = "componentInstancesProperties";
@@ -396,6 +400,7 @@ export class COMPONENT_FIELDS {
 export class SERVICE_FIELDS {
     static FORWARDING_PATHS = "forwardingPaths";
     static NODE_FILTER = "nodeFilter";
+    static SUBSTITUTION_FILTER = "substitutionFilter";
 }
 
 export class API_QUERY_PARAMS {
