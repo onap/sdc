@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "278d679b_56d85150",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 3479
+      },
+      "writtenOn": "2020-07-03T17:02:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "127c3db1_2ea36532",
+      "range": {
+        "startLine": 291,
+        "startChar": 120,
+        "endLine": 291,
+        "endChar": 130
+      },
+      "revId": "9a58b5f37945f4ea88761ab94a9cce33e26c8053",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "66d0d57b_f840d929",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogicTest.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "aee22140_e3d7e904",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 3479
+      },
+      "writtenOn": "2020-07-03T17:02:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "66d0d57b_f840d929",
+      "range": {
+        "startLine": 205,
+        "startChar": 36,
+        "endLine": 205,
+        "endChar": 53
+      },
+      "revId": "9a58b5f37945f4ea88761ab94a9cce33e26c8053",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b181ff97_1cafafb4",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/PolicyExportParserImplTest.java",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "9a58b5f37945f4ea88761ab94a9cce33e26c8053",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87fb40a3_99e546bc",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/PolicyExportParserImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3479
+      },
+      "writtenOn": "2020-07-03T17:02:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b181ff97_1cafafb4",
+      "range": {
+        "startLine": 59,
+        "startChar": 47,
+        "endLine": 59,
+        "endChar": 60
+      },
+      "revId": "9a58b5f37945f4ea88761ab94a9cce33e26c8053",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
