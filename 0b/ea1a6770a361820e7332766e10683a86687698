@@ -1,0 +1,10 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Julien Bertozzi <julien.bertozzi@intl.att.com>
+Code-Review+1: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Code-Review+1: Christophe Closset <christophe.closset@intl.att.com>
+Code-Review+2: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-by: Ofir Sonsino <ofir.sonsino@intl.att.com>
+Submitted-at: Sun, 05 Jul 2020 08:46:24 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/109357
+Project: sdc
+Branch: refs/heads/master
