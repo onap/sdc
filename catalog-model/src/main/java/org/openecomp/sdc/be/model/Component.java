@@ -73,7 +73,7 @@ public abstract class Component implements PropertiesOwner {
     private List<RequirementCapabilityRelDef> componentInstancesRelations;
     private Map<String, List<ComponentInstanceInput>> componentInstancesInputs;
     private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
-    private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
+    private Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes;
     private Map<String, List<CapabilityDefinition>> capabilities;
     private Map<String, List<RequirementDefinition>> requirements;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;

@@ -20,8 +20,19 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.builder.HashCodeExclude;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor
 public class ConsumerDataDefinition extends ToscaDataDefinition {
 
     // ECOMP Consumer Name - UTF-8 string up to 255 characters containing the
@@ -55,10 +66,6 @@ public class ConsumerDataDefinition extends ToscaDataDefinition {
     private Long consumerDetailsLastupdatedtime;
     private String lastModfierAtuid;
 
-    public ConsumerDataDefinition() {
-
-    }
-
     public ConsumerDataDefinition(ConsumerDataDefinition a) {
         this.consumerName = a.consumerName;
         this.consumerPassword = a.consumerPassword;
@@ -66,140 +73,6 @@ public class ConsumerDataDefinition extends ToscaDataDefinition {
         this.consumerLastAuthenticationTime = a.consumerLastAuthenticationTime;
         this.consumerDetailsLastupdatedtime = a.consumerDetailsLastupdatedtime;
         this.lastModfierAtuid = a.lastModfierAtuid;
-
-    }
-
-    public String getConsumerName() {
-        return consumerName;
-    }
-
-    public void setConsumerName(String consumerName) {
-        this.consumerName = consumerName;
-    }
-
-    public String getConsumerPassword() {
-        return consumerPassword;
-    }
-
-    public void setConsumerPassword(String consumerPassword) {
-        this.consumerPassword = consumerPassword;
-    }
-
-    public String getConsumerSalt() {
-        return consumerSalt;
-    }
-
-    public void setConsumerSalt(String consumerSalt) {
-        this.consumerSalt = consumerSalt;
-    }
-
-    public Long getConsumerLastAuthenticationTime() {
-        return consumerLastAuthenticationTime;
-    }
-
-    public void setConsumerLastAuthenticationTime(Long consumerLastAuthenticationTime) {
-        this.consumerLastAuthenticationTime = consumerLastAuthenticationTime;
-    }
-
-    public Long getConsumerDetailsLastupdatedtime() {
-        return consumerDetailsLastupdatedtime;
-    }
-
-    public void setConsumerDetailsLastupdatedtime(Long consumerDetailsLastupdatedtime) {
-        this.consumerDetailsLastupdatedtime = consumerDetailsLastupdatedtime;
-    }
-
-    public String getLastModfierAtuid() {
-        return lastModfierAtuid;
-    }
-
-    public void setLastModfierAtuid(String lastModfierAtuid) {
-        this.lastModfierAtuid = lastModfierAtuid;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("ConsumerDataDefinition [").append("consumerName=").append(consumerName).append(",")
-                .append("consumerPassword=").append(consumerPassword).append(",").append("consumerSalt=")
-                .append(consumerSalt).append(",").append("consumerLastAuthenticationTime=")
-                .append(consumerLastAuthenticationTime).append(",").append("consumerDetailsLastupdatedtime=")
-                .append(consumerDetailsLastupdatedtime).append(",").append("lastModfierAtuid=").append(lastModfierAtuid)
-                .append("]");
-        return sb.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((consumerName == null) ? 0 : consumerName.hashCode());
-        result = prime * result + ((consumerPassword == null) ? 0 : consumerPassword.hashCode());
-        result = prime * result + ((consumerSalt == null) ? 0 : consumerSalt.hashCode());
-        result = prime * result
-                + ((consumerLastAuthenticationTime == null) ? 0 : consumerLastAuthenticationTime.hashCode());
-        result = prime * result
-                + ((consumerDetailsLastupdatedtime == null) ? 0 : consumerDetailsLastupdatedtime.hashCode());
-        result = prime * result + ((lastModfierAtuid == null) ? 0 : lastModfierAtuid.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ConsumerDataDefinition other = (ConsumerDataDefinition) obj;
-        if (consumerName == null) {
-            if (other.consumerName != null) {
-                return false;
-            }
-        } else if (!consumerName.equals(other.consumerName)) {
-            return false;
-        }
-        if (consumerPassword == null) {
-            if (other.consumerPassword != null) {
-                return false;
-            }
-        } else if (!consumerPassword.equals(other.consumerPassword)) {
-            return false;
-        }
-
-        if (consumerSalt == null) {
-            if (other.consumerSalt != null) {
-                return false;
-            }
-        } else if (!consumerSalt.equals(other.consumerSalt)) {
-            return false;
-        }
-
-        if (consumerLastAuthenticationTime == null) {
-            if (other.consumerLastAuthenticationTime != null) {
-                return false;
-            }
-        } else if (!consumerLastAuthenticationTime.equals(other.consumerLastAuthenticationTime)) {
-            return false;
-        }
-
-        if (consumerDetailsLastupdatedtime == null) {
-            if (other.consumerDetailsLastupdatedtime != null) {
-                return false;
-            }
-        } else if (!consumerDetailsLastupdatedtime.equals(other.consumerDetailsLastupdatedtime)) {
-            return false;
-        }
-
-        if (lastModfierAtuid == null) {
-            return other.lastModfierAtuid == null;
-        } else {
-            return lastModfierAtuid.equals(other.lastModfierAtuid);
-        }
 
     }
 
