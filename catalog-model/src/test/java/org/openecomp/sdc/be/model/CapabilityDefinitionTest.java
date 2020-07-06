@@ -21,12 +21,7 @@
  */
 package org.openecomp.sdc.be.model;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEqualsFor;
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCodeFor;
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToStringFor;
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,27 +39,6 @@ public class CapabilityDefinitionTest {
 	private static final String EQ = "eq";
 	private static final String PROPERTIES = "properties";
 	private static final String VALUE = "VALUE";
-
-	@Test
-	public void hasValidGettersAndSettersTest() {
-		assertThat(CapabilityDefinition.class,
-			hasValidGettersAndSettersExcluding("empty", "ownerIdIfEmpty", "version"));
-	}
-
-	@Test
-	public void shouldHaveValidToString() {
-		assertThat(CapabilityDefinition.class, hasValidBeanToStringFor(PROPERTIES));
-	}
-
-	@Test
-	public void shouldHaveEquals() {
-		assertThat(CapabilityDefinition.class, hasValidBeanEqualsFor(PROPERTIES));
-	}
-
-	@Test
-	public void shouldHaveHashCode() {
-		assertThat(CapabilityDefinition.class, hasValidBeanHashCodeFor(PROPERTIES));
-	}
 
 	@Test
 	public void testParamConstructor() {

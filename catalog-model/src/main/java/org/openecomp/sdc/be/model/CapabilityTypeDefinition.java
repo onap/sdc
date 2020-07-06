@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.be.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
 
@@ -30,31 +34,15 @@ import java.util.stream.Collectors;
  * Specifies the capabilities that the Node Type exposes.
  */
 @SuppressWarnings("serial")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(callSuper = true)
 public class CapabilityTypeDefinition extends CapabilityTypeDataDefinition {
 
     private String derivedFrom;
 
     private Map<String, PropertyDefinition> properties;
-
-    public String getDerivedFrom() {
-        return derivedFrom;
-    }
-
-    public void setDerivedFrom(String derivedFrom) {
-        this.derivedFrom = derivedFrom;
-    }
-
-    public Map<String, PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
-    public CapabilityTypeDefinition() {
-        super();
-    }
 
     public CapabilityTypeDefinition(CapabilityTypeDataDefinition p) {
         super(p);
@@ -75,8 +63,4 @@ public class CapabilityTypeDefinition extends CapabilityTypeDataDefinition {
 		this.setValidSourceTypes( ctd.getCapabilityTypeDataDefinition().getValidSourceTypes()); 
 	}
 
-    @Override
-    public String toString() {
-        return super.toString() + " [ derivedFrom=" + derivedFrom + ", properties=" + properties + " ]";
-    }
 }
