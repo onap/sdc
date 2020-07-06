@@ -54,6 +54,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundExcept
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -1059,6 +1060,14 @@ public class ToscaExportHandler {
             String derivedFrom = null != component.getDerivedFromGenericType() ? component.getDerivedFromGenericType()
                 : NATIVE_ROOT;
             toscaNodeType.setDerived_from(derivedFrom);
+        }
+        if (component instanceof Resource) {
+            final List<AttributeDataDefinition> attributes = ((Resource) component).getAttributes();
+            if (CollectionUtils.isNotEmpty(attributes)) {
+                final Map<String, AttributeDataDefinition> attributeDataDefinitionMap
+                    = attributes.stream().collect(Collectors.toMap(AttributeDataDefinition::getName, a -> a));
+                toscaNodeType.setAttributes(attributeDataDefinitionMap);
+            }
         }
         return toscaNodeType;
     }

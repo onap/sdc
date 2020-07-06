@@ -23,6 +23,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.QUOTE;
+import static org.openecomp.sdc.be.utils.TypeUtils.setField;
 
 import fj.data.Either;
 import java.util.LinkedHashMap;
@@ -43,6 +44,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -53,7 +55,9 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -100,6 +104,7 @@ import java.util.stream.Collectors;
 
 @Component("resourceImportManager")
 public class ResourceImportManager {
+
     private static final Logger log = Logger.getLogger(ResourceImportManager.class);
 
     static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("[\\w\\-\\_\\d\\:]+");
@@ -136,27 +141,46 @@ public class ResourceImportManager {
         this.toscaOperationFacade = toscaOperationFacade;
     }
 
-    public ImmutablePair<Resource, ActionStatus> importNormativeResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator, boolean createNewVersion, boolean needLock) {
+    public ImmutablePair<Resource, ActionStatus> importNormativeResource(String resourceYml,
+                                                                         UploadResourceInfo resourceMetaData,
+                                                                         User creator, boolean createNewVersion,
+                                                                         boolean needLock) {
 
         LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
         lifecycleChangeInfo.setUserRemarks("certification on import");
-        Function<Resource, Boolean> validator = resource -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
+        Function<Resource, Boolean> validator = resource -> resourceBusinessLogic
+            .validatePropertiesDefaultValues(resource);
 
-        return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false, null, null, false);
+        return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false,
+            createNewVersion, needLock, null, null, false, null, null, false);
     }
 
-    public ImmutablePair<Resource, ActionStatus> importNormativeResourceFromCsar(String resourceYml, UploadResourceInfo resourceMetaData, User creator, boolean createNewVersion, boolean needLock) {
+    public ImmutablePair<Resource, ActionStatus> importNormativeResourceFromCsar(String resourceYml,
+                                                                                 UploadResourceInfo resourceMetaData,
+                                                                                 User creator, boolean createNewVersion,
+                                                                                 boolean needLock) {
 
         LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
         lifecycleChangeInfo.setUserRemarks("certification on import");
-        Function<Resource, Boolean> validator = resource -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
+        Function<Resource, Boolean> validator = resource -> resourceBusinessLogic
+            .validatePropertiesDefaultValues(resource);
 
-        return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false, null, null, false);
+        return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false,
+            createNewVersion, needLock, null, null, false, null, null, false);
     }
 
-    public ImmutablePair<Resource, ActionStatus> importCertifiedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator,
+    public ImmutablePair<Resource, ActionStatus> importCertifiedResource(String resourceYml,
+                                                                         UploadResourceInfo resourceMetaData,
+                                                                         User creator,
                                                                          Function<Resource, Boolean> validationFunction,
-                                                                         LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo, String nodeName, boolean isNested) {
+                                                                         LifecycleChangeInfoWithAction lifecycleChangeInfo,
+                                                                         boolean isInTransaction,
+                                                                         boolean createNewVersion, boolean needLock,
+                                                                         Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle,
+                                                                         List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
+                                                                         boolean forceCertificationAllowed,
+                                                                         CsarInfo csarInfo, String nodeName,
+                                                                         boolean isNested) {
         Resource resource = new Resource();
         ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<>(resource, ActionStatus.CREATED);
         Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> response = Either.left(responsePair);
@@ -170,32 +194,38 @@ public class ResourceImportManager {
             populateResourceFromYaml(resourceYml, resource);
 
             Boolean isValidResource = validationFunction.apply(resource);
-                if (!createNewVersion) {
-                    Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByName(resource.getName());
-                    if (latestByName.isLeft()) {
-                        throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, resource.getName());
-                    }
+            if (!createNewVersion) {
+                Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade
+                    .getLatestByName(resource.getName());
+                if (latestByName.isLeft()) {
+                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST,
+                        resource.getName());
                 }
-                resource = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock, csarInfo, nodeName, isNested).left;
-                Resource changeStateResponse;
+            }
+            resource = resourceBusinessLogic
+                .createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock, csarInfo, nodeName,
+                    isNested).left;
+            Resource changeStateResponse;
 
-                if (nodeTypeArtifactsToHandle != null && !nodeTypeArtifactsToHandle.isEmpty()) {
-                    Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes =
-                            resourceBusinessLogic.handleNodeTypeArtifacts(resource, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, creator, isInTransaction, false);
-                    if (handleNodeTypeArtifactsRes.isRight()) {
-                        //TODO: should be used more correct action
-                        throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
-                    }
+            if (nodeTypeArtifactsToHandle != null && !nodeTypeArtifactsToHandle.isEmpty()) {
+                Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes =
+                    resourceBusinessLogic
+                        .handleNodeTypeArtifacts(resource, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts,
+                            creator, isInTransaction, false);
+                if (handleNodeTypeArtifactsRes.isRight()) {
+                    //TODO: should be used more correct action
+                    throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
                 }
-                latestCertifiedResourceId = getLatestCertifiedResourceId(resource);
-                changeStateResponse = resourceBusinessLogic.propagateStateToCertified(creator, resource, lifecycleChangeInfo, isInTransaction, needLock, forceCertificationAllowed);
-                responsePair = new ImmutablePair<>(changeStateResponse, response.left()
-                        .value().right);
-        }
-        catch (RuntimeException e) {
+            }
+            latestCertifiedResourceId = getLatestCertifiedResourceId(resource);
+            changeStateResponse = resourceBusinessLogic
+                .propagateStateToCertified(creator, resource, lifecycleChangeInfo, isInTransaction, needLock,
+                    forceCertificationAllowed);
+            responsePair = new ImmutablePair<>(changeStateResponse, response.left()
+                .value().right);
+        } catch (RuntimeException e) {
             handleImportResourceException(resourceMetaData, creator, true, e);
-        }
-        finally {
+        } finally {
             if (latestCertifiedResourceId != null && needLock) {
                 log.debug("unlock resource {}", latestCertifiedResourceId);
                 graphLockOperation.unlockComponent(latestCertifiedResourceId, NodeTypeEnum.Resource);
@@ -206,9 +236,11 @@ public class ResourceImportManager {
     }
 
     private ResponseFormat getResponseFormatFromComponentException(RuntimeException e) {
-        if(e instanceof ComponentException){
+        if (e instanceof ComponentException) {
             return ((ComponentException) e).getResponseFormat() == null ?
-                    componentsUtils.getResponseFormat(((ComponentException) e).getActionStatus(), ((ComponentException) e).getParams()) :
+                componentsUtils
+                    .getResponseFormat(((ComponentException) e).getActionStatus(), ((ComponentException) e).getParams())
+                :
                     ((ComponentException) e).getResponseFormat();
         }
         return null;
@@ -225,8 +257,7 @@ public class ResourceImportManager {
                 }
             }
             return allVersions.get(String.valueOf(latestCertifiedVersion));
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -250,7 +281,9 @@ public class ResourceImportManager {
         }
     }
 
-    public ImmutablePair<Resource, ActionStatus> importUserDefinedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator, boolean isInTransaction) {
+    public ImmutablePair<Resource, ActionStatus> importUserDefinedResource(String resourceYml,
+                                                                           UploadResourceInfo resourceMetaData,
+                                                                           User creator, boolean isInTransaction) {
 
         Resource resource = new Resource();
         ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<>(resource, ActionStatus.CREATED);
@@ -271,10 +304,9 @@ public class ResourceImportManager {
             Boolean validatePropertiesTypes = resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
             responsePair = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator,
-                        false, isInTransaction, true, null, null, false);
+                false, isInTransaction, true, null, null, false);
 
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             handleImportResourceException(resourceMetaData, creator, false, e);
         }
         return responsePair;
@@ -289,9 +321,11 @@ public class ResourceImportManager {
             Map<String, Object> toscaJson = toscaJsonAll;
 
             // Checks if exist and builds the node_types map
-            if (toscaJsonAll.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName()) && resource.getResourceType() != ResourceTypeEnum.CVFC) {
+            if (toscaJsonAll.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName())
+                && resource.getResourceType() != ResourceTypeEnum.CVFC) {
                 toscaJson = new HashMap<>();
-                toscaJson.put(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName(), toscaJsonAll.get(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName()));
+                toscaJson.put(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName(),
+                    toscaJsonAll.get(TypeUtils.ToscaTagNamesEnum.NODE_TYPES.getElementName()));
             }
             // Derived From
             Resource parentResource = setDerivedFrom(toscaJson, resource);
@@ -303,15 +337,15 @@ public class ResourceImportManager {
             setProperties(toscaJson, resource);
             setRequirements(toscaJson, resource, parentResource);
             setInterfaceLifecycle(toscaJson, resource);
-        }
-        else {
+        } else {
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
 
     }
 
     private void setToscaResourceName(Map<String, Object> toscaJson, Resource resource) {
-        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(toscaJson, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
+        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils
+            .findFirstToscaMapElement(toscaJson, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
         if (toscaElement.isLeft() || toscaElement.left().value().size() == 1) {
             String toscaResourceName = toscaElement.left().value().keySet().iterator().next();
             resource.setToscaResourceName(toscaResourceName);
@@ -319,7 +353,8 @@ public class ResourceImportManager {
     }
 
     private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource) {
-        Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils.findFirstToscaMapElement(toscaJson, TypeUtils.ToscaTagNamesEnum.INTERFACES);
+        Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
+            .findFirstToscaMapElement(toscaJson, TypeUtils.ToscaTagNamesEnum.INTERFACES);
         if (toscaInterfaces.isLeft()) {
             Map<String, Object> jsonInterfaces = toscaInterfaces.left().value();
             Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
@@ -327,11 +362,11 @@ public class ResourceImportManager {
             while (interfacesNameValue.hasNext()) {
                 Entry<String, Object> interfaceNameValue = interfacesNameValue.next();
                 Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue
-                        .getValue(), resource);
+                    .getValue(), resource);
                 if (eitherInterface.isRight()) {
-                    log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(), resource.getName());
-                }
-                else {
+                    log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(),
+                        resource.getName());
+                } else {
                     moduleInterfaces.put(interfaceNameValue.getKey(), eitherInterface.left().value());
                 }
 
@@ -342,7 +377,8 @@ public class ResourceImportManager {
         }
     }
 
-    private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(Object interfaceJson, Resource resource) {
+    private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(Object interfaceJson,
+                                                                                Resource resource) {
         final InterfaceDefinition interf = new InterfaceDefinition();
         Either<InterfaceDefinition, ResultStatusEnum> result = Either.left(interf);
 
@@ -384,8 +420,7 @@ public class ResourceImportManager {
                 result = Either.right(ResultStatusEnum.GENERAL_ERROR);
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeSystemError("Import Resource- create interface");
             log.debug("error when creating interface, message:{}", e.getMessage(), e);
             result = Either.right(ResultStatusEnum.GENERAL_ERROR);
@@ -405,7 +440,8 @@ public class ResourceImportManager {
         return implementation;
     }
 
-    private ListDataDefinition<OperationInputDefinition> handleInterfaceInput(final Map<String, Object> interfaceInputs) {
+    private ListDataDefinition<OperationInputDefinition> handleInterfaceInput(
+        final Map<String, Object> interfaceInputs) {
         final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
         for (final Entry<String, Object> interfaceInput : interfaceInputs.entrySet()) {
             final OperationInputDefinition operationInput = new OperationInputDefinition();
@@ -446,52 +482,60 @@ public class ResourceImportManager {
     }
 
     private boolean entryIsInterfaceType(final Entry<String, Object> entry) {
-    	if(entry.getKey().equals(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
-    		if (entry.getValue() instanceof String) {
-    			return true;
-    		}
-    		throw new ByActionStatusComponentException(ActionStatus.INVALID_YAML);
-    	}
-    	return false;
-    }
-    
-    private boolean entryContainsImplementationForAKnownOperation(final Entry<String, Object> entry, final String interfaceType) {
-    	if (entry.getValue() instanceof Map && ((Map<?, ?>)entry.getValue()).containsKey(IMPLEMENTATION)) {
-    		if (isAKnownOperation(interfaceType, entry.getKey())){
-    			return true;
-    		}
-    		throw new ByActionStatusComponentException(ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
-    	}
-    	return false;
-    }
-    
-    private boolean isAKnownOperation(String interfaceType, String operation) {    	
-    	 Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceLifecycleTypes = interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
-         if (interfaceLifecycleTypes.isRight() || interfaceLifecycleTypes.left().value() == null) {
-             return false;
-         }
-         
-         for (Entry<String, InterfaceDefinition> interfaceLifecycleType : interfaceLifecycleTypes.left().value().entrySet()) {
-        	 if (interfaceTypeAndOperationMatches(interfaceLifecycleType, interfaceType, operation)) {
-        		 return true;
-        	 }
-         }
-         return false;
-    }
-    
-    private boolean interfaceTypeAndOperationMatches(Entry<String, InterfaceDefinition> interfaceLifecycleType, String interfaceType, String operation) {
-    	if (interfaceLifecycleType.getKey().equalsIgnoreCase(interfaceType) && interfaceLifecycleType.getValue().getOperations() != null) {
-    		for (String interfaceLifecycleTypeOperation : interfaceLifecycleType.getValue().getOperations().keySet()) {
-    			if (interfaceLifecycleTypeOperation != null && interfaceLifecycleTypeOperation.equalsIgnoreCase(operation)){
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
+        if (entry.getKey().equals(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
+            if (entry.getValue() instanceof String) {
+                return true;
+            }
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_YAML);
+        }
+        return false;
     }
 
-    private void setRequirements(Map<String, Object> toscaJson, Resource resource, Resource parentResource) {// Note that parentResource can be null
-        Either<List<Object>, ResultStatusEnum> toscaRequirements = ImportUtils.findFirstToscaListElement(toscaJson, TypeUtils.ToscaTagNamesEnum.REQUIREMENTS);
+    private boolean entryContainsImplementationForAKnownOperation(final Entry<String, Object> entry,
+                                                                  final String interfaceType) {
+        if (entry.getValue() instanceof Map && ((Map<?, ?>) entry.getValue()).containsKey(IMPLEMENTATION)) {
+            if (isAKnownOperation(interfaceType, entry.getKey())) {
+                return true;
+            }
+            throw new ByActionStatusComponentException(ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
+        }
+        return false;
+    }
+
+    private boolean isAKnownOperation(String interfaceType, String operation) {
+        Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceLifecycleTypes = interfaceOperationBusinessLogic
+            .getAllInterfaceLifecycleTypes();
+        if (interfaceLifecycleTypes.isRight() || interfaceLifecycleTypes.left().value() == null) {
+            return false;
+        }
+
+        for (Entry<String, InterfaceDefinition> interfaceLifecycleType : interfaceLifecycleTypes.left().value()
+            .entrySet()) {
+            if (interfaceTypeAndOperationMatches(interfaceLifecycleType, interfaceType, operation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean interfaceTypeAndOperationMatches(Entry<String, InterfaceDefinition> interfaceLifecycleType,
+                                                     String interfaceType, String operation) {
+        if (interfaceLifecycleType.getKey().equalsIgnoreCase(interfaceType)
+            && interfaceLifecycleType.getValue().getOperations() != null) {
+            for (String interfaceLifecycleTypeOperation : interfaceLifecycleType.getValue().getOperations().keySet()) {
+                if (interfaceLifecycleTypeOperation != null && interfaceLifecycleTypeOperation
+                    .equalsIgnoreCase(operation)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void setRequirements(Map<String, Object> toscaJson, Resource resource,
+                                 Resource parentResource) {// Note that parentResource can be null
+        Either<List<Object>, ResultStatusEnum> toscaRequirements = ImportUtils
+            .findFirstToscaListElement(toscaJson, TypeUtils.ToscaTagNamesEnum.REQUIREMENTS);
         if (toscaRequirements.isLeft()) {
             List<Object> jsonRequirements = toscaRequirements.left().value();
             Map<String, List<RequirementDefinition>> moduleRequirements = new HashMap<>();
@@ -506,17 +550,19 @@ public class ResourceImportManager {
                 String requirementName = requirementJsonWrapper.keySet().iterator().next();
                 String reqNameLowerCase = requirementName.toLowerCase();
                 if (reqNames.contains(reqNameLowerCase)) {
-                    log.debug("More than one requirement with same name {} (case-insensitive) in imported TOSCA file is invalid", reqNameLowerCase);
-                    throw new ByActionStatusComponentException(ActionStatus.IMPORT_DUPLICATE_REQ_CAP_NAME, "requirement", reqNameLowerCase);
+                    log.debug(
+                        "More than one requirement with same name {} (case-insensitive) in imported TOSCA file is invalid",
+                        reqNameLowerCase);
+                    throw new ByActionStatusComponentException(ActionStatus.IMPORT_DUPLICATE_REQ_CAP_NAME,
+                        "requirement", reqNameLowerCase);
                 }
                 reqNames.add(reqNameLowerCase);
                 RequirementDefinition requirementDef = createRequirementFromImportFile(requirementJsonWrapper
-                        .get(requirementName));
+                    .get(requirementName));
                 requirementDef.setName(requirementName);
                 if (moduleRequirements.containsKey(requirementDef.getCapability())) {
                     moduleRequirements.get(requirementDef.getCapability()).add(requirementDef);
-                }
-                else {
+                } else {
                     List<RequirementDefinition> list = new ArrayList<>();
                     list.add(requirementDef);
                     moduleRequirements.put(requirementDef.getCapability(), list);
@@ -524,13 +570,15 @@ public class ResourceImportManager {
 
                 // Validating against req/cap of "derived from" node
                 Boolean validateVsParentCap = validateCapNameVsDerived(reqName2TypeMap, requirementDef
-                        .getCapability(), requirementDef.getName());
+                    .getCapability(), requirementDef.getName());
                 if (!validateVsParentCap) {
                     String parentResourceName = parentResource != null ? parentResource.getName() : "";
-                    log.debug("Requirement with name {} already exists in parent {}", requirementDef.getName(), parentResourceName);
-                    throw new ByActionStatusComponentException(ActionStatus.IMPORT_REQ_CAP_NAME_EXISTS_IN_DERIVED, "requirement", requirementDef
-                            .getName()
-                            .toLowerCase(), parentResourceName);
+                    log.debug("Requirement with name {} already exists in parent {}", requirementDef.getName(),
+                        parentResourceName);
+                    throw new ByActionStatusComponentException(ActionStatus.IMPORT_REQ_CAP_NAME_EXISTS_IN_DERIVED,
+                        "requirement", requirementDef
+                        .getName()
+                        .toLowerCase(), parentResourceName);
                 }
             }
             if (moduleRequirements.size() > 0) {
@@ -538,7 +586,7 @@ public class ResourceImportManager {
             }
 
         }
-   }
+    }
 
     private RequirementDefinition createRequirementFromImportFile(Object requirementJson) {
         RequirementDefinition requirement = new RequirementDefinition();
@@ -546,11 +594,11 @@ public class ResourceImportManager {
         if (requirementJson instanceof String) {
             String requirementJsonString = (String) requirementJson;
             requirement.setCapability(requirementJsonString);
-        }
-        else if (requirementJson instanceof Map) {
+        } else if (requirementJson instanceof Map) {
             Map<String, Object> requirementJsonMap = (Map<String, Object>) requirementJson;
             if (requirementJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.CAPABILITY.getElementName())) {
-                requirement.setCapability((String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.CAPABILITY.getElementName()));
+                requirement.setCapability(
+                    (String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.CAPABILITY.getElementName()));
             }
 
             if (requirementJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.NODE.getElementName())) {
@@ -558,16 +606,17 @@ public class ResourceImportManager {
             }
 
             if (requirementJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.RELATIONSHIP.getElementName())) {
-                requirement.setRelationship((String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.RELATIONSHIP.getElementName()));
+                requirement.setRelationship(
+                    (String) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.RELATIONSHIP.getElementName()));
             }
             if (requirementJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName())) {
-                List<Object> occurrencesList = (List) requirementJsonMap.get(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName());
+                List<Object> occurrencesList = (List) requirementJsonMap
+                    .get(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName());
                 validateOccurrences(occurrencesList);
                 requirement.setMinOccurrences(occurrencesList.get(0).toString());
                 requirement.setMaxOccurrences(occurrencesList.get(1).toString());
             }
-        }
-        else {
+        } else {
             throw new ByActionStatusComponentException(ActionStatus.INVALID_YAML);
         }
         return requirement;
@@ -576,7 +625,8 @@ public class ResourceImportManager {
     private void setProperties(Map<String, Object> toscaJson, Resource resource) {
         Map<String, Object> reducedToscaJson = new HashMap<>(toscaJson);
         ImportUtils.removeElementFromJsonMap(reducedToscaJson, "capabilities");
-        Either<Map<String, PropertyDefinition>, ResultStatusEnum> properties = ImportUtils.getProperties(reducedToscaJson);
+        Either<Map<String, PropertyDefinition>, ResultStatusEnum> properties = ImportUtils
+            .getProperties(reducedToscaJson);
         if (properties.isLeft()) {
             List<PropertyDefinition> propertiesList = new ArrayList<>();
             Map<String, PropertyDefinition> value = properties.left().value();
@@ -584,8 +634,11 @@ public class ResourceImportManager {
                 for (Entry<String, PropertyDefinition> entry : value.entrySet()) {
                     String name = entry.getKey();
                     if (!PROPERTY_NAME_PATTERN_IGNORE_LENGTH.matcher(name).matches()) {
-                        log.debug("The property with invalid name {} occured upon import resource {}. ", name, resource.getName());
-                        throw new ByActionStatusComponentException(componentsUtils.convertFromResultStatusEnum(ResultStatusEnum.INVALID_PROPERTY_NAME, JsonPresentationFields.PROPERTY));
+                        log.debug("The property with invalid name {} occured upon import resource {}. ", name,
+                            resource.getName());
+                        throw new ByActionStatusComponentException(componentsUtils
+                            .convertFromResultStatusEnum(ResultStatusEnum.INVALID_PROPERTY_NAME,
+                                JsonPresentationFields.PROPERTY));
                     }
                     PropertyDefinition propertyDefinition = entry.getValue();
                     propertyDefinition.setName(name);
@@ -593,44 +646,45 @@ public class ResourceImportManager {
                 }
             }
             resource.setProperties(propertiesList);
-        }
-        else if (properties.right().value() != ResultStatusEnum.ELEMENT_NOT_FOUND) {
+        } else if (properties.right().value() != ResultStatusEnum.ELEMENT_NOT_FOUND) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromResultStatusEnum(properties
-                    .right()
-                    .value(), JsonPresentationFields.PROPERTY));
+                .right()
+                .value(), JsonPresentationFields.PROPERTY));
         }
     }
 
     private ResultStatusEnum setAttributes(Map<String, Object> toscaJson, Resource resource) {
         ResultStatusEnum result = ResultStatusEnum.OK;
-        Either<Map<String, PropertyDefinition>, ResultStatusEnum> attributes = ImportUtils.getAttributes(toscaJson);
+        Either<Map<String, AttributeDataDefinition>, ResultStatusEnum> attributes = ImportUtils
+            .getAttributes(toscaJson);
         if (attributes.isLeft()) {
-            List<PropertyDefinition> attributeList = new ArrayList<>();
-            Map<String, PropertyDefinition> value = attributes.left().value();
+            List<AttributeDataDefinition> attributeList = new ArrayList<>();
+            Map<String, AttributeDataDefinition> value = attributes.left().value();
             if (value != null) {
-                for (Entry<String, PropertyDefinition> entry : value.entrySet()) {
+                for (Entry<String, AttributeDataDefinition> entry : value.entrySet()) {
                     String name = entry.getKey();
-                    PropertyDefinition attributeDef = entry.getValue();
+                    AttributeDataDefinition attributeDef = entry.getValue();
                     attributeDef.setName(name);
                     attributeList.add(attributeDef);
                 }
             }
             resource.setAttributes(attributeList);
-        }
-        else {
+        } else {
             result = attributes.right().value();
         }
         return result;
     }
 
     private Resource setDerivedFrom(Map<String, Object> toscaJson, Resource resource) {
-        Either<String, ResultStatusEnum> toscaDerivedFromElement = ImportUtils.findFirstToscaStringElement(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM);
+        Either<String, ResultStatusEnum> toscaDerivedFromElement = ImportUtils
+            .findFirstToscaStringElement(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM);
         Resource derivedFromResource = null;
         if (toscaDerivedFromElement.isLeft()) {
             String derivedFrom = toscaDerivedFromElement.left().value();
             log.debug("Derived from TOSCA name is {}", derivedFrom);
             resource.setDerivedFrom(Arrays.asList(new String[]{derivedFrom}));
-            Either<Resource, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade.getLatestByToscaResourceName(derivedFrom);
+            Either<Resource, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade
+                .getLatestByToscaResourceName(derivedFrom);
 
             if (latestByToscaResourceName.isRight()) {
                 StorageOperationStatus operationStatus = latestByToscaResourceName.right().value();
@@ -640,7 +694,7 @@ public class ResourceImportManager {
                 log.debug("Error when fetching parent resource {}, error: {}", derivedFrom, operationStatus);
                 ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(operationStatus);
                 BeEcompErrorManager.getInstance()
-                                   .logBeComponentMissingError("Import TOSCA YAML", "resource", derivedFrom);
+                    .logBeComponentMissingError("Import TOSCA YAML", "resource", derivedFrom);
                 throw new ByActionStatusComponentException(convertFromStorageResponse, derivedFrom);
             }
             derivedFromResource = latestByToscaResourceName.left().value();
@@ -648,8 +702,10 @@ public class ResourceImportManager {
         return derivedFromResource;
     }
 
-    private void setCapabilities(Map<String, Object> toscaJson, Resource resource, Resource parentResource) {// Note that parentResource can be null
-        Either<Map<String, Object>, ResultStatusEnum> toscaCapabilities = ImportUtils.findFirstToscaMapElement(toscaJson, TypeUtils.ToscaTagNamesEnum.CAPABILITIES);
+    private void setCapabilities(Map<String, Object> toscaJson, Resource resource,
+                                 Resource parentResource) {// Note that parentResource can be null
+        Either<Map<String, Object>, ResultStatusEnum> toscaCapabilities = ImportUtils
+            .findFirstToscaMapElement(toscaJson, TypeUtils.ToscaTagNamesEnum.CAPABILITIES);
         if (toscaCapabilities.isLeft()) {
             Map<String, Object> jsonCapabilities = toscaCapabilities.left().value();
             Map<String, List<CapabilityDefinition>> moduleCapabilities = new HashMap<>();
@@ -664,18 +720,20 @@ public class ResourceImportManager {
                 // Validating that no req/cap duplicates exist in imported YAML
                 String capNameLowerCase = capabilityNameValue.getKey().toLowerCase();
                 if (capNames.contains(capNameLowerCase)) {
-                    log.debug("More than one capability with same name {} (case-insensitive) in imported TOSCA file is invalid", capNameLowerCase);
-                    throw new ByActionStatusComponentException(ActionStatus.IMPORT_DUPLICATE_REQ_CAP_NAME, "capability", capNameLowerCase);
+                    log.debug(
+                        "More than one capability with same name {} (case-insensitive) in imported TOSCA file is invalid",
+                        capNameLowerCase);
+                    throw new ByActionStatusComponentException(ActionStatus.IMPORT_DUPLICATE_REQ_CAP_NAME, "capability",
+                        capNameLowerCase);
                 }
                 capNames.add(capNameLowerCase);
 
                 CapabilityDefinition capabilityDef = createCapabilityFromImportFile(capabilityNameValue
-                        .getValue());
+                    .getValue());
                 capabilityDef.setName(capabilityNameValue.getKey());
                 if (moduleCapabilities.containsKey(capabilityDef.getType())) {
                     moduleCapabilities.get(capabilityDef.getType()).add(capabilityDef);
-                }
-                else {
+                } else {
                     List<CapabilityDefinition> list = new ArrayList<>();
                     list.add(capabilityDef);
                     moduleCapabilities.put(capabilityDef.getType(), list);
@@ -683,17 +741,19 @@ public class ResourceImportManager {
 
                 // Validating against req/cap of "derived from" node
                 Boolean validateVsParentCap = validateCapNameVsDerived(capName2TypeMap, capabilityDef
-                        .getType(), capabilityDef.getName());
+                    .getType(), capabilityDef.getName());
 
                 if (!validateVsParentCap) {
                     // Here parentResource is for sure not null, so it's
                     // null-safe
                     // Check added to avoid sonar warning
                     String parentResourceName = parentResource != null ? parentResource.getName() : "";
-                    log.debug("Capability with name {} already exists in parent {}", capabilityDef.getName(), parentResourceName);
-                    throw new ByActionStatusComponentException(ActionStatus.IMPORT_REQ_CAP_NAME_EXISTS_IN_DERIVED, "capability", capabilityDef
-                            .getName()
-                            .toLowerCase(), parentResourceName);
+                    log.debug("Capability with name {} already exists in parent {}", capabilityDef.getName(),
+                        parentResourceName);
+                    throw new ByActionStatusComponentException(ActionStatus.IMPORT_REQ_CAP_NAME_EXISTS_IN_DERIVED,
+                        "capability", capabilityDef
+                        .getName()
+                        .toLowerCase(), parentResourceName);
                 }
             }
             if (moduleCapabilities.size() > 0) {
@@ -712,9 +772,12 @@ public class ResourceImportManager {
                         String nameLowerCase = capDefinition.getName().toLowerCase();
                         if (capName2type.get(nameLowerCase) != null) {
                             String parentResourceName = parentResource.getName();
-                            log.debug("Resource with name {} has more than one capability with name {}, ignoring case", parentResourceName, nameLowerCase);
+                            log.debug("Resource with name {} has more than one capability with name {}, ignoring case",
+                                parentResourceName, nameLowerCase);
                             BeEcompErrorManager.getInstance()
-                                               .logInternalDataError("Import resource", "Parent resource " + parentResourceName + " of imported resource has one or more capabilities with name " + nameLowerCase, ErrorSeverity.ERROR);
+                                .logInternalDataError("Import resource", "Parent resource " + parentResourceName
+                                        + " of imported resource has one or more capabilities with name " + nameLowerCase,
+                                    ErrorSeverity.ERROR);
                             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
                         }
                         capName2type.put(nameLowerCase, capDefinition.getType());
@@ -735,9 +798,12 @@ public class ResourceImportManager {
                         String nameLowerCase = reqDefinition.getName().toLowerCase();
                         if (reqName2type.get(nameLowerCase) != null) {
                             String parentResourceName = parentResource.getName();
-                            log.debug("Resource with name {} has more than one requirement with name {}, ignoring case", parentResourceName, nameLowerCase);
+                            log.debug("Resource with name {} has more than one requirement with name {}, ignoring case",
+                                parentResourceName, nameLowerCase);
                             BeEcompErrorManager.getInstance()
-                                               .logInternalDataError("Import resource", "Parent resource " + parentResourceName + " of imported resource has one or more requirements with name " + nameLowerCase, ErrorSeverity.ERROR);
+                                .logInternalDataError("Import resource", "Parent resource " + parentResourceName
+                                        + " of imported resource has one or more requirements with name " + nameLowerCase,
+                                    ErrorSeverity.ERROR);
                             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
                         }
                         reqName2type.put(nameLowerCase, reqDefinition.getCapability());
@@ -748,19 +814,24 @@ public class ResourceImportManager {
         return reqName2type;
     }
 
-    private Boolean validateCapNameVsDerived(Map<String, String> parentCapName2Type, String childCapabilityType, String reqCapName) {
+    private Boolean validateCapNameVsDerived(Map<String, String> parentCapName2Type, String childCapabilityType,
+                                             String reqCapName) {
         String capNameLowerCase = reqCapName.toLowerCase();
         log.trace("Validating capability {} vs parent resource", capNameLowerCase);
         String parentCapType = parentCapName2Type.get(capNameLowerCase);
         if (parentCapType != null) {
             if (childCapabilityType.equals(parentCapType)) {
-                log.debug("Capability with name {} is of same type {} for imported resource and its parent - this is OK", capNameLowerCase, childCapabilityType);
+                log.debug(
+                    "Capability with name {} is of same type {} for imported resource and its parent - this is OK",
+                    capNameLowerCase, childCapabilityType);
                 return true;
             }
-            Either<Boolean, StorageOperationStatus> capabilityTypeDerivedFrom = capabilityTypeOperation.isCapabilityTypeDerivedFrom(childCapabilityType, parentCapType);
+            Either<Boolean, StorageOperationStatus> capabilityTypeDerivedFrom = capabilityTypeOperation
+                .isCapabilityTypeDerivedFrom(childCapabilityType, parentCapType);
             if (capabilityTypeDerivedFrom.isRight()) {
                 log.debug("Couldn't check whether imported resource capability derives from its parent's capability");
-                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(capabilityTypeDerivedFrom
+                throw new ByActionStatusComponentException(
+                    componentsUtils.convertFromStorageResponse(capabilityTypeDerivedFrom
                         .right()
                         .value()));
             }
@@ -776,69 +847,73 @@ public class ResourceImportManager {
         if (capabilityJson instanceof String) {
             String capabilityJsonString = (String) capabilityJson;
             capabilityDefinition.setType(capabilityJsonString);
-        }
-        else if (capabilityJson instanceof Map) {
+        } else if (capabilityJson instanceof Map) {
             Map<String, Object> capabilityJsonMap = (Map<String, Object>) capabilityJson;
             // Type
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName())) {
-                capabilityDefinition.setType((String) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName()));
+                capabilityDefinition
+                    .setType((String) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.TYPE.getElementName()));
             }
             // ValidSourceTypes
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES.getElementName())) {
-                capabilityDefinition.setValidSourceTypes((List<String>) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES
+                capabilityDefinition.setValidSourceTypes(
+                    (List<String>) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES
                         .getElementName()));
             }
             // ValidSourceTypes
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName())) {
-                capabilityDefinition.setDescription((String) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName()));
+                capabilityDefinition.setDescription(
+                    (String) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName()));
             }
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName())) {
-                List<Object> occurrencesList = (List) capabilityJsonMap.get(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName());
+                List<Object> occurrencesList = (List) capabilityJsonMap
+                    .get(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName());
                 validateOccurrences(occurrencesList);
                 capabilityDefinition.setMinOccurrences(occurrencesList.get(0).toString());
                 capabilityDefinition.setMaxOccurrences(occurrencesList.get(1).toString());
             }
             if (capabilityJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.PROPERTIES.getElementName())) {
 
-                Either<Map<String, PropertyDefinition>, ResultStatusEnum> propertiesRes = ImportUtils.getProperties(capabilityJsonMap);
+                Either<Map<String, PropertyDefinition>, ResultStatusEnum> propertiesRes = ImportUtils
+                    .getProperties(capabilityJsonMap);
                 if (propertiesRes.isRight()) {
                     throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND);
-                }
-                else {
+                } else {
                     propertiesRes.left()
-                                 .value()
-                                 .entrySet()
-                                 .stream()
-                                 .forEach(e -> e.getValue().setName(e.getKey().toLowerCase()));
+                        .value()
+                        .entrySet()
+                        .stream()
+                        .forEach(e -> e.getValue().setName(e.getKey().toLowerCase()));
                     List<ComponentInstanceProperty> capabilityProperties = propertiesRes.left()
-                                                                                        .value()
-                                                                                        .values()
-                                                                                        .stream()
-                                                                                        .map(p -> new ComponentInstanceProperty(p, p
-                                                                                                .getDefaultValue(), null))
-                                                                                        .collect(Collectors.toList());
+                        .value()
+                        .values()
+                        .stream()
+                        .map(p -> new ComponentInstanceProperty(p, p
+                            .getDefaultValue(), null))
+                        .collect(Collectors.toList());
                     capabilityDefinition.setProperties(capabilityProperties);
                 }
             }
-        }
-        else if (!(capabilityJson instanceof List)) {
+
+        } else if (!(capabilityJson instanceof List)) {
             throw new ByActionStatusComponentException(ActionStatus.INVALID_YAML);
         }
         return capabilityDefinition;
     }
 
-    private void handleImportResourceException(UploadResourceInfo resourceMetaData, User user, boolean isNormative, RuntimeException e) {
+    private void handleImportResourceException(UploadResourceInfo resourceMetaData, User user, boolean isNormative,
+                                               RuntimeException e) {
         ResponseFormat responseFormat;
         ComponentException newException;
         if (e instanceof ComponentException) {
-            ComponentException componentException = (ComponentException)e;
+            ComponentException componentException = (ComponentException) e;
             responseFormat = componentException.getResponseFormat();
             if (responseFormat == null) {
-                responseFormat = getResponseFormatManager().getResponseFormat(componentException.getActionStatus(), componentException.getParams());
+                responseFormat = getResponseFormatManager()
+                    .getResponseFormat(componentException.getActionStatus(), componentException.getParams());
             }
             newException = componentException;
-        }
-        else{
+        } else {
             responseFormat = getResponseFormatManager().getResponseFormat(ActionStatus.GENERAL_ERROR);
             newException = new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
@@ -849,13 +924,13 @@ public class ResourceImportManager {
         throw newException;
     }
 
-    private void auditErrorImport(UploadResourceInfo resourceMetaData, User user, ResponseFormat errorResponseWrapper, boolean isNormative) {
+    private void auditErrorImport(UploadResourceInfo resourceMetaData, User user, ResponseFormat errorResponseWrapper,
+                                  boolean isNormative) {
         String version, lifeCycleState;
         if (isNormative) {
             version = TypeUtils.getFirstCertifiedVersionVersion();
             lifeCycleState = LifecycleStateEnum.CERTIFIED.name();
-        }
-        else {
+        } else {
             version = "";
             lifeCycleState = LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name();
 
@@ -867,23 +942,22 @@ public class ResourceImportManager {
         }
         message += errorResponseWrapper.getFormattedMessage();
 
-
         AuditEventFactory factory = new AuditImportResourceAdminEventFactory(
-                CommonAuditData.newBuilder()
-                               .status(errorResponseWrapper.getStatus())
-                               .description(message)
-                               .requestId(ThreadLocalsHolder.getUuid())
-                               .build(),
-                new ResourceCommonInfo(resourceMetaData.getName(), ComponentTypeEnum.RESOURCE.getValue()),
-                ResourceVersionInfo.newBuilder()
-                                 .state(lifeCycleState)
-                                 .version(version)
-                                 .build(),
-                ResourceVersionInfo.newBuilder()
-                                 .state("")
-                                 .version("")
-                                 .build(),
-                "", user, "");
+            CommonAuditData.newBuilder()
+                .status(errorResponseWrapper.getStatus())
+                .description(message)
+                .requestId(ThreadLocalsHolder.getUuid())
+                .build(),
+            new ResourceCommonInfo(resourceMetaData.getName(), ComponentTypeEnum.RESOURCE.getValue()),
+            ResourceVersionInfo.newBuilder()
+                .state(lifeCycleState)
+                .version(version)
+                .build(),
+            ResourceVersionInfo.newBuilder()
+                .state("")
+                .version("")
+                .build(),
+            "", user, "");
         getAuditingManager().auditEvent(factory);
 
     }
@@ -895,15 +969,58 @@ public class ResourceImportManager {
         final String payloadData = resourceMetaData.getPayloadData();
         if (payloadData != null) {
             resource.setToscaVersion(getToscaVersion(payloadData));
+            resource.setAttributes(getAttributes(payloadData));
         }
 
         final List<CategoryDefinition> categories = resourceMetaData.getCategories();
         calculateResourceIsAbstract(resource, categories);
     }
 
-    private String getToscaVersion(final String payloadData) {
+    private List<AttributeDataDefinition> getAttributes(final String payloadData) {
+        final Map<String, Object> mappedToscaTemplate = decodePayload(payloadData);
+
+        final List<AttributeDataDefinition> attributeDataDefinitionList = new ArrayList<>();
+
+        final Either<Map<String, Object>, ResultStatusEnum> firstToscaMapElement = ImportUtils
+            .findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.ATTRIBUTES);
+        if (firstToscaMapElement.isRight()) {
+            return attributeDataDefinitionList;
+        }
+        final Map<String, Object> attributes = firstToscaMapElement.left().value();
+
+        final Iterator<Entry<String, Object>> propertiesNameValue = attributes.entrySet().iterator();
+        while (propertiesNameValue.hasNext()) {
+            final Entry<String, Object> attributeNameValue = propertiesNameValue.next();
+            final Object value = attributeNameValue.getValue();
+            final String key = attributeNameValue.getKey();
+            if (value instanceof Map) {
+
+                final Map<String, Object> attributeMap = (Map<String, Object>) value;
+
+                final AttributeDefinition attributeDefinition = new AttributeDefinition();
+                attributeDefinition.setName(key);
+
+                setField(attributeMap, ToscaTagNamesEnum.DESCRIPTION, attributeDefinition::setDescription);
+                setField(attributeMap, ToscaTagNamesEnum.TYPE, attributeDefinition::setType);
+                setField(attributeMap, ToscaTagNamesEnum.STATUS, attributeDefinition::setStatus);
+                setField(attributeMap, ToscaTagNamesEnum.ENTRY_SCHEMA, attributeDefinition::setEntry_schema);
+                attributeDataDefinitionList.add(attributeDefinition);
+            } else {
+                final AttributeDefinition attributeDefinition = new AttributeDefinition();
+                attributeDefinition.setName(key);
+                attributeDataDefinitionList.add(attributeDefinition);
+            }
+        }
+        return attributeDataDefinitionList;
+    }
+
+    private Map<String, Object> decodePayload(final String payloadData) {
         final String decodedPayload = new String(Base64.decodeBase64(payloadData));
-        final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(decodedPayload);
+        return (Map<String, Object>) new Yaml().load(decodedPayload);
+    }
+
+    private String getToscaVersion(final String payloadData) {
+        final Map<String, Object> mappedToscaTemplate = decodePayload(payloadData);
         final Either<String, ResultStatusEnum> findFirstToscaStringElement =
             ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
         return findFirstToscaStringElement.left().value();
@@ -914,7 +1031,7 @@ public class ResourceImportManager {
             CategoryDefinition categoryDef = categories.get(0);
             resource.setAbstract(false);
             if (categoryDef != null && categoryDef.getName() != null && categoryDef.getName()
-                                                                                   .equals(Constants.ABSTRACT_CATEGORY_NAME)) {
+                .equals(Constants.ABSTRACT_CATEGORY_NAME)) {
                 SubCategoryDefinition subCategoryDef = categoryDef.getSubcategories().get(0);
                 if (subCategoryDef != null && subCategoryDef.getName().equals(Constants.ABSTRACT_SUBCATEGORY)) {
                     resource.setAbstract(true);
@@ -929,8 +1046,7 @@ public class ResourceImportManager {
         if (shouldBeCertified) {
             version = TypeUtils.getFirstCertifiedVersionVersion();
             state = ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE;
-        }
-        else {
+        } else {
             version = ImportUtils.Constants.FIRST_NON_CERTIFIED_VERSION;
             state = ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE_NOT_CERTIFIED_CHECKOUT;
         }
@@ -959,8 +1075,7 @@ public class ResourceImportManager {
         Integer maxOccurrences;
         if (minObj instanceof Integer) {
             minOccurrences = (Integer) minObj;
-        }
-        else {
+        } else {
             log.debug("Invalid occurrenses format. low_bound occurrense must be Integer {}", minObj);
             throw new ByActionStatusComponentException(ActionStatus.INVALID_OCCURRENCES);
         }
@@ -969,23 +1084,22 @@ public class ResourceImportManager {
             throw new ByActionStatusComponentException(ActionStatus.INVALID_OCCURRENCES);
         }
 
-        if (maxObj instanceof String){
-            if(!"UNBOUNDED".equals(maxObj)) {
+        if (maxObj instanceof String) {
+            if (!"UNBOUNDED".equals(maxObj)) {
                 log.debug("Invalid occurrenses format. Max occurrence is {}", maxObj);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_OCCURRENCES);
             }
-        }
-        else {
+        } else {
             if (maxObj instanceof Integer) {
                 maxOccurrences = (Integer) maxObj;
-            }
-            else {
+            } else {
                 log.debug("Invalid occurrenses format.  Max occurrence is {}", maxObj);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_OCCURRENCES);
             }
 
             if (maxOccurrences <= 0 || maxOccurrences < minOccurrences) {
-                log.debug("Invalid occurrenses format.  min occurrence is {}, Max occurrence is {}", minOccurrences, maxOccurrences);
+                log.debug("Invalid occurrenses format.  min occurrence is {}, Max occurrence is {}", minOccurrences,
+                    maxOccurrences);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_OCCURRENCES);
             }
         }
@@ -1004,7 +1118,8 @@ public class ResourceImportManager {
     }
 
     private ResourceBusinessLogic getResourceBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(org.openecomp.sdc.common.api.Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+            .getAttribute(org.openecomp.sdc.common.api.Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
         WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
         return webApplicationContext.getBean(ResourceBusinessLogic.class);
     }
@@ -1033,7 +1148,7 @@ public class ResourceImportManager {
     public void setResourceBusinessLogic(ResourceBusinessLogic resourceBusinessLogic) {
         this.resourceBusinessLogic = resourceBusinessLogic;
     }
-    
+
     @Autowired
     public void setInterfaceOperationBusinessLogic(InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
         this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;

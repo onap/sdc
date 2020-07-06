@@ -82,6 +82,7 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -133,7 +134,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @org.springframework.stereotype.Component
 public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
-    private static final Logger log = Logger.getLogger(ComponentInstanceBusinessLogic.class.getName());
+    private static final Logger log = Logger.getLogger(ComponentInstanceBusinessLogic.class);
     private static final String VF_MODULE = "org.openecomp.groups.VfModule";
     private static final String TRY_TO_CREATE_ENTRY_ON_GRAPH = "Try to create entry on graph";
     private static final String CLOUD_SPECIFIC_FIXED_KEY_WORD = "cloudtech";
@@ -2885,14 +2886,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         log.info("start to copy component instance with attributes");
 
-        List<ComponentInstanceProperty> sourceAttributeList = null;
+        List<ComponentInstanceAttribute> sourceAttributeList = null;
         if (sourceComponent.getComponentInstancesAttributes() != null
                 && sourceComponent.getComponentInstancesAttributes().get(sourceComponentInstanceId) != null) {
             sourceAttributeList = sourceComponent.getComponentInstancesAttributes().get(sourceComponentInstanceId);
             log.info("sourceAttributes {}");
         }
 
-        List<ComponentInstanceProperty> destAttributeList = null;
+        List<ComponentInstanceAttribute> destAttributeList = null;
         if (destComponent.getComponentInstancesAttributes() != null
                 && destComponent.getComponentInstancesAttributes().get(destComponentInstanceId) != null) {
             destAttributeList = destComponent.getComponentInstancesAttributes().get(destComponentInstanceId);
@@ -2901,18 +2902,18 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (null != sourceAttributeList && null != destAttributeList) {
             log.info("set attribute");
 
-            for (ComponentInstanceProperty sourceAttribute : sourceAttributeList) {
+            for (ComponentInstanceAttribute sourceAttribute : sourceAttributeList) {
                 String sourceAttributeName = sourceAttribute.getName();
-                for (ComponentInstanceProperty destAttribute : destAttributeList) {
+                for (ComponentInstanceAttribute destAttribute : destAttributeList) {
                     if (sourceAttributeName.equals(destAttribute.getName())) {
-                        if (sourceAttribute.getValue() != null && !sourceAttribute.getValue().isEmpty()) {
+//                        if (sourceAttribute.getValue() != null && !sourceAttribute.getValue().isEmpty()) {
                             log.debug("Start to copy the attribute exists {}", sourceAttributeName);
 
                             sourceAttribute.setUniqueId(
                                     UniqueIdBuilder.buildResourceInstanceUniuqeId(
                                             "attribute" , destComponentInstanceId.split("\\.")[1] , sourceAttributeName));
 
-                            Either<ComponentInstanceProperty, ResponseFormat> updateAttributeValueEither =
+                            Either<ComponentInstanceAttribute, ResponseFormat> updateAttributeValueEither =
                                     createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum.SERVICE,
                                             destComponent.getUniqueId(), destComponentInstanceId, sourceAttribute,
                                             userId);
@@ -2923,7 +2924,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                                 "Failed to paste component instance to the canvas, attribute copy"));
                             }
                             break;
-                        }
+//                        }
                     }
                 }
             }
@@ -2932,13 +2933,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(COPY_COMPONENT_INSTANCE_OK);
     }
 
-    private Either<ComponentInstanceProperty, ResponseFormat> createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum componentTypeEnum,
+    private Either<ComponentInstanceAttribute, ResponseFormat> createOrUpdateAttributeValueForCopyPaste(ComponentTypeEnum componentTypeEnum,
                                                                                                        String componentId,
                                                                                                        String resourceInstanceId,
-                                                                                                       ComponentInstanceProperty attribute,
+                                                                                                       ComponentInstanceAttribute attribute,
                                                                                                        String userId) {
 
-        Either<ComponentInstanceProperty, ResponseFormat> resultOp = null;
+        Either<ComponentInstanceAttribute, ResponseFormat> resultOp = null;
 
         validateUserExists(userId);
 
@@ -2989,10 +2990,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
         }
 
-        List<ComponentInstanceProperty> instanceAttributes = containerComponent.
-                getComponentInstancesAttributes().get(resourceInstanceId);
-        Optional<ComponentInstanceProperty> instanceAttribute =
-                instanceAttributes.stream().filter(p -> p.getUniqueId().equals(attribute.getUniqueId())).findAny();
+        List<ComponentInstanceAttribute> instanceAttributes = containerComponent.getComponentInstancesAttributes().get(resourceInstanceId);
+        Optional<ComponentInstanceAttribute> instanceAttribute = instanceAttributes.stream().filter(p -> p.getUniqueId().equals(attribute.getUniqueId())).findAny();
         StorageOperationStatus status;
 
         if (instanceAttribute.isPresent()) {
@@ -3024,9 +3023,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         resultOp = Either.left(attribute);
         return resultOp;
-
-
-
     }
 
     private Either<String, ResponseFormat> updateComponentInstanceProperty(String containerComponentId,
