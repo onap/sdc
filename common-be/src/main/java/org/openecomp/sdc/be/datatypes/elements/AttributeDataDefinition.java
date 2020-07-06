@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020, Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,36 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+package org.openecomp.sdc.be.datatypes.elements;
 
-package org.openecomp.sdc.be.model.jsonjanusgraph.datamodel;
-
-import java.util.List;
-import java.util.Map;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @Getter
 @Setter
-public class NodeType extends ToscaElement {
+@NoArgsConstructor
+public class AttributeDataDefinition extends ToscaDataDefinition{
 
-    public NodeType() {
-        super(ToscaElementTypeEnum.NODE_TYPE);
+    private String uniqueId;
+    private String name;
+    private SchemaDefinition schema;
+    private String value;
+
+    public AttributeDataDefinition(final AttributeDataDefinition attributeDataDefinition) {
+        super();
+        this.setUniqueId(attributeDataDefinition.getUniqueId());
+        this.setName(attributeDataDefinition.getName());
+        this.setSchema(attributeDataDefinition.getSchema());
+        this.setValue(attributeDataDefinition.getValue());
     }
 
-    private List<String> derivedFrom;
-    private List<String> derivedList;
-    private Map<String, String> derivedFromMapOfIdToName;
-    private Map<String, AttributeDataDefinition> attributes;
-    private Map<String, InterfaceDataDefinition> interfaceArtifacts;
+    public String getParentUniqueId() {
+        return getOwnerId();
+    }
+
+    public void setParentUniqueId(final String parentUniqueId) {
+        setOwnerId(parentUniqueId);
+    }
 }

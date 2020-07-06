@@ -22,9 +22,12 @@ package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -57,6 +60,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -88,6 +93,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -120,6 +126,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
  */
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ComponentInstanceBusinessLogicTest {
 
     private final static String USER_ID = "jh0003";
@@ -486,8 +493,7 @@ class ComponentInstanceBusinessLogicTest {
         ComponentInstance responseFormatEither = componentInstanceBusinessLogic
             .deleteForwardingPathsRelatedTobeDeletedComponentInstance(
                 containerComponentID, containerComponentType, ci);
-        assertThat(!responseFormatEither.isEmpty()).isEqualTo(true);
-
+        assertFalse(responseFormatEither.isEmpty());
     }
 
     @Test
@@ -624,7 +630,7 @@ class ComponentInstanceBusinessLogicTest {
             componentInstanceBusinessLogic
                 .getRelationById(COMPONENT_ID, RELATION_ID, USER_ID, component.getComponentType());
         } catch (ByActionStatusComponentException e) {
-            assertSame(e.getActionStatus(), ActionStatus.USER_NOT_FOUND);
+            assertSame(ActionStatus.USER_NOT_FOUND, e.getActionStatus());
         }
     }
 
@@ -887,7 +893,7 @@ class ComponentInstanceBusinessLogicTest {
         // default test
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "validateParent", new Object[]{resource, nodeTemplateId});
-        assertNotNull(result);
+        assertFalse(result);
     }
 
     @Test
@@ -940,6 +946,7 @@ class ComponentInstanceBusinessLogicTest {
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "findRelation",
             new Object[]{relationId, requirementCapabilityRelations});
+        assertNull(result);
     }
 
     @Test
@@ -990,6 +997,7 @@ class ComponentInstanceBusinessLogicTest {
         testSubject = createTestSubject();
         result = Deencapsulation.invoke(testSubject, "updateCapabilityPropertyOnContainerComponent",
             new Object[]{property, newValue, resource, toInstance, capabilityType, capabilityName});
+        assertNull(result);
     }
 
     @Test
@@ -1224,7 +1232,7 @@ class ComponentInstanceBusinessLogicTest {
     @Test
     void testCreateOrUpdateAttributeValueForCopyPaste() {
         ComponentInstance serviceComponentInstance = createComponetInstanceFromComponent(service);
-        ComponentInstanceProperty attribute = new ComponentInstanceProperty();
+        ComponentInstanceAttribute attribute = new ComponentInstanceAttribute();
         attribute.setType("string");
         attribute.setUniqueId("testCreateOrUpdateAttributeValueForCopyPaste");
         SchemaDefinition def = Mockito.mock(SchemaDefinition.class);
@@ -1234,9 +1242,9 @@ class ComponentInstanceBusinessLogicTest {
         service.setLastUpdaterUserId(USER_ID);
         service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 
-        Map<String, List<ComponentInstanceProperty>> instAttrsMap = new HashMap<>();
-        List<ComponentInstanceProperty> instAttrsList = new ArrayList<>();
-        ComponentInstanceProperty prop = new ComponentInstanceProperty();
+        Map<String, List<ComponentInstanceAttribute>> instAttrsMap = new HashMap<>();
+        List<ComponentInstanceAttribute> instAttrsList = new ArrayList<>();
+        ComponentInstanceAttribute prop = new ComponentInstanceAttribute();
         prop.setUniqueId(attribute.getUniqueId());
         instAttrsList.add(prop);
         instAttrsMap.put(toInstance.getUniqueId(), instAttrsList);
@@ -1250,7 +1258,7 @@ class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service))
             .thenReturn(serviceEitherLeft);
 
-        Either<ComponentInstanceProperty, ResponseFormat> result = Deencapsulation
+        Either<ComponentInstanceAttribute, ResponseFormat> result = Deencapsulation
             .invoke(componentInstanceBusinessLogic,
                 "createOrUpdateAttributeValueForCopyPaste",
                 ComponentTypeEnum.SERVICE,
@@ -1264,8 +1272,8 @@ class ComponentInstanceBusinessLogicTest {
         service.setLifecycleState(oldLifeCycleState);
 
         assertThat(result.isLeft()).isTrue();
-        ComponentInstanceProperty resultProp = result.left().value();
-        assertEquals(resultProp.getPath().size(), 1);
+        ComponentInstanceAttribute resultProp = result.left().value();
+        assertEquals(1, resultProp.getPath().size());
         assertEquals(resultProp.getPath().get(0), toInstance.getUniqueId());
     }
 
@@ -1496,8 +1504,8 @@ class ComponentInstanceBusinessLogicTest {
         Optional<ComponentInstanceProperty> propertyCandidate =
             getComponentInstanceProperty(PROP_NAME);
 
-        assertThat(propertyCandidate.isPresent()).isTrue();
-        assertEquals(propertyCandidate.get().getName(), PROP_NAME);
+        assertThat(propertyCandidate).isPresent();
+        assertEquals(PROP_NAME, propertyCandidate.get().getName());
     }
 
     @Test

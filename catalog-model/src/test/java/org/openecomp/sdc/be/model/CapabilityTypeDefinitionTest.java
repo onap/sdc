@@ -22,11 +22,8 @@
 
 package org.openecomp.sdc.be.model;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
-import java.util.Collections;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition.OwnerType;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityTypeDataDefinition;
@@ -40,24 +37,6 @@ public class CapabilityTypeDefinitionTest {
 	private static final String TYPE = "TYPE";
 	private static final String DESCRIPTION = "DESCRIPTION";
 	private static final String UNIQUE_ID = "UNIQUE_ID";
-
-	@Test
-	public void hasValidGettersAndSettersTest() {
-		assertThat(CapabilityTypeDefinition.class,
-			hasValidGettersAndSettersExcluding("empty", "ownerIdIfEmpty"));
-	}
-
-	@Test
-	public void shouldHaveValidToString() {
-		CapabilityDefinition capabilityDefinition = new CapabilityDefinition(
-			new CapabilityTypeDefinition(), OWNER_NAME, NAME, RESOURCE);
-		capabilityDefinition.setProperties(Collections.emptyList());
-		capabilityDefinition.setType(TYPE);
-		capabilityDefinition.setDescription(DESCRIPTION);
-		CapabilityTypeDefinition capabilityTypeDefinitionTest = new CapabilityTypeDefinition(capabilityDefinition);
-		String toStringRepr = capabilityTypeDefinitionTest.toString();
-		assertEquals(toStringRepr, "CapabilityTypeDataDefinition [uniqueId=null, description=DESCRIPTION, type=TYPE, validSourceTypes=[], version=null, creationTime=null, modificationTime=null] [ derivedFrom=null, properties={} ]");
-	}
 
 	@Test
 	public void shouldCreateCapabilityTypeDefinitionFromCapabilityTypeData() {

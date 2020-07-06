@@ -16,16 +16,18 @@
 
 package org.openecomp.sdc.be.model;
 
-import com.google.common.annotations.VisibleForTesting;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class ComponentInstanceInterface extends InterfaceDefinition {
   private String interfaceId;
   private InterfaceInstanceDataDefinition interfaceInstanceDataDefinition;
-
-  @VisibleForTesting
-  ComponentInstanceInterface() {}
 
   public ComponentInstanceInterface(String interfaceId,
                                     InterfaceInstanceDataDefinition interfaceInstanceDataDefinition) {
@@ -38,20 +40,4 @@ public class ComponentInstanceInterface extends InterfaceDefinition {
     this.interfaceId = interfaceId;
   }
 
-  public String getInterfaceId() {
-    return interfaceId;
-  }
-
-  public void setInterfaceId(String interfaceId) {
-    this.interfaceId = interfaceId;
-  }
-
-  public InterfaceInstanceDataDefinition getInterfaceInstanceDataDefinition() {
-    return interfaceInstanceDataDefinition;
-  }
-
-  public void setInterfaceInstanceDataDefinition(
-      InterfaceInstanceDataDefinition interfaceInstanceDataDefinition) {
-    this.interfaceInstanceDataDefinition = interfaceInstanceDataDefinition;
-  }
 }
