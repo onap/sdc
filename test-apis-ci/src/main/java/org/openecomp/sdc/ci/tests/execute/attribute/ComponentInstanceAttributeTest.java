@@ -27,7 +27,7 @@ import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
@@ -68,15 +68,15 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 				.addComponentInstanceToComponentContainer(vfcWithAttributes, vf).left().value();
 
 		// util method to get the specific attribute from the vf
-		Function<Resource, ComponentInstanceProperty> attributeGetter = resourceVf -> resourceVf
+		Function<Resource, ComponentInstanceAttribute> attributeGetter = resourceVf -> resourceVf
 				.getComponentInstancesAttributes().values().iterator().next().stream()
 				.filter(att -> att.getName().equals("private_address")).findAny().get();
 		// update attribute on vfc instance
 		final Resource vfWithInsatncePreUpdate = swallowException(
 				() -> (Resource) AtomicOperationUtils.getComponentObject(vf, UserRoleEnum.DESIGNER));
-		ComponentInstanceProperty attributeOfRI = attributeGetter.apply(vfWithInsatncePreUpdate);
+		ComponentInstanceAttribute attributeOfRI = attributeGetter.apply(vfWithInsatncePreUpdate);
 		final String newAttValue = "NewValue";
-		attributeOfRI.setValue(newAttValue);
+		attributeOfRI.setValueUniqueUid(newAttValue);
 		String body = gson.toJson(attributeOfRI);
 		String url = String.format(Urls.UPDATE_ATTRIBUTE_ON_RESOURCE_INSTANCE, config.getCatalogBeHost(),
 				config.getCatalogBePort(), ComponentTypeEnum.findParamByType(ComponentTypeEnum.RESOURCE),
@@ -86,8 +86,8 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 		// Retrieve updated vf and verify attribute was updated
 		final Resource vfWithInsatncePostUpdate = swallowException(
 				() -> (Resource) AtomicOperationUtils.getComponentObject(vf, UserRoleEnum.DESIGNER));
-		ComponentInstanceProperty updatedAttribute = attributeGetter.apply(vfWithInsatncePostUpdate);
-		assertEquals(updatedAttribute.getValue(), newAttValue);
+		ComponentInstanceAttribute updatedAttribute = attributeGetter.apply(vfWithInsatncePostUpdate);
+		assertEquals(updatedAttribute.getValueUniqueUid(), newAttValue);
 
 	}
 }

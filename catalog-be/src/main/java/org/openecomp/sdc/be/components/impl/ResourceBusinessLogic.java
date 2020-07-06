@@ -94,6 +94,7 @@ import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
@@ -109,6 +110,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -2617,8 +2619,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					resource.getUniqueId(), yamlName);
 			loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS,resource.getComponentMetadataForSupportLog(),	StatusCode.ERROR,"No instances found in the resource: {}, is empty, yaml template file name: {}",resource.getName(),yamlName);
 			BeEcompErrorManager.getInstance()
-					.logInternalDataError("createResourceInstancesRelations",
-							"No instances found in a resource or nn yaml template. ", ErrorSeverity.ERROR);
+				.logInternalDataError("createResourceInstancesRelations",
+					"No instances found in a resource or nn yaml template. ", ErrorSeverity.ERROR);
 			throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
 		}
 		Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
@@ -2626,17 +2628,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
 		Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
 		Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-		Map<String, List<PropertyDefinition>> instAttributes = new HashMap<>();
+		Map<String, List<AttributeDataDefinition>> instAttributes = new HashMap<>();
 		List<RequirementCapabilityRelDef> relations = new ArrayList<>();
 		Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
 		log.debug("#createResourceInstancesRelations - Before get all datatypes. ");
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
 		if (allDataTypes.isRight()) {
 			JanusGraphOperationStatus status = allDataTypes.right()
-					.value();
+				.value();
 			BeEcompErrorManager.getInstance()
-					.logInternalFlowError("UpdatePropertyValueOnComponentInstance",
+				.logInternalFlowError("UpdatePropertyValueOnComponentInstance",
 							"Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
 			loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS,resource.getComponentMetadataForSupportLog(),
 					StatusCode.ERROR,"ERROR while update property value on instance. Status is: "+status);
@@ -2683,32 +2685,39 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 											Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilities,
 											Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
 											Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts,
-											Map<String, Map<String, ArtifactDefinition>> instArtifacts, Map<String, List<ComponentInstanceProperty>> instProperties, Map<String, List<ComponentInstanceInput>> instInputs, Map<String, List<PropertyDefinition>> instAttributes) {
+											Map<String, Map<String, ArtifactDefinition>> instArtifacts, Map<String,
+											List<ComponentInstanceProperty>> instProperties, Map<String,
+											List<ComponentInstanceInput>> instInputs,
+											Map<String, List<AttributeDataDefinition>> instAttributes) {
 		Optional<ComponentInstance> foundInstance = findInstance(oldResource, instance);
-		if(foundInstance.isPresent()){
-			if(MapUtils.isNotEmpty(foundInstance.get().getCapabilities())){
+		if (foundInstance.isPresent()) {
+			if (MapUtils.isNotEmpty(foundInstance.get().getCapabilities())) {
 				instCapabilities.put(instance, foundInstance.get().getCapabilities());
 			}
-			if(MapUtils.isNotEmpty(foundInstance.get().getRequirements())){
+			if (MapUtils.isNotEmpty(foundInstance.get().getRequirements())) {
 				instRequirements.put(instance, foundInstance.get().getRequirements());
 			}
-			if(MapUtils.isNotEmpty(foundInstance.get().getDeploymentArtifacts())){
+			if (MapUtils.isNotEmpty(foundInstance.get().getDeploymentArtifacts())) {
 				instDeploymentArtifacts.put(instance.getUniqueId(), foundInstance.get().getDeploymentArtifacts());
 			}
 			if(MapUtils.isNotEmpty(foundInstance.get().getArtifacts())){
 				instArtifacts.put(instance.getUniqueId(), foundInstance.get().getArtifacts());
 			}
-			if(MapUtils.isNotEmpty(oldResource.getComponentInstancesProperties()) &&
-					CollectionUtils.isNotEmpty(oldResource.getComponentInstancesProperties().get(foundInstance.get().getUniqueId()))){
-				instProperties.put(instance.getUniqueId(), oldResource.getComponentInstancesProperties().get(foundInstance.get().getUniqueId()));
+			if (MapUtils.isNotEmpty(oldResource.getComponentInstancesProperties()) &&
+				CollectionUtils
+					.isNotEmpty(oldResource.getComponentInstancesProperties().get(foundInstance.get().getUniqueId()))) {
+				instProperties.put(instance.getUniqueId(),
+					oldResource.getComponentInstancesProperties().get(foundInstance.get().getUniqueId()));
 			}
-			if(MapUtils.isNotEmpty(oldResource.getComponentInstancesInputs()) &&
-					CollectionUtils.isNotEmpty(oldResource.getComponentInstancesInputs().get(foundInstance.get().getUniqueId()))){
-				instInputs.put(instance.getUniqueId(), oldResource.getComponentInstancesInputs().get(foundInstance.get().getUniqueId()));
+			if (MapUtils.isNotEmpty(oldResource.getComponentInstancesInputs()) &&
+				CollectionUtils
+					.isNotEmpty(oldResource.getComponentInstancesInputs().get(foundInstance.get().getUniqueId()))) {
+				instInputs.put(instance.getUniqueId(),
+					oldResource.getComponentInstancesInputs().get(foundInstance.get().getUniqueId()));
 			}
 			if(MapUtils.isNotEmpty(oldResource.getComponentInstancesAttributes()) &&
 					CollectionUtils.isNotEmpty(oldResource.getComponentInstancesAttributes().get(foundInstance.get().getUniqueId()))){
-				instAttributes.put(instance.getUniqueId(), oldResource.getComponentInstancesAttributes().get(foundInstance.get().getUniqueId()).stream().map(PropertyDefinition::new).collect(toList()));
+				instAttributes.put(instance.getUniqueId(), oldResource.getComponentInstancesAttributes().get(foundInstance.get().getUniqueId()).stream().map(AttributeDefinition::new).collect(toList()));
 			}
 		}
 	}
@@ -2735,14 +2744,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private void associateInstAttributeToComponentToInstances(String yamlName, Resource resource,
-															  Map<String, List<PropertyDefinition>> instAttributes) {
+															  Map<String, List<AttributeDataDefinition>> instAttributes) {
 		StorageOperationStatus addArtToInst;
 		addArtToInst = toscaOperationFacade.associateInstAttributeToComponentToInstances(instAttributes,
-				resource);
+			resource);
 		if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
 			log.debug("failed to associate attributes of resource {} status is {}", resource.getUniqueId(),
-					addArtToInst);
-			throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName);
+				addArtToInst);
+			throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(addArtToInst),
+				yamlName);
 		}
 	}
 
@@ -2890,7 +2900,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 										  Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
 										  Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts,
 										  Map<String, Map<String, ArtifactDefinition>> instArtifacts,
-										  Map<String, List<PropertyDefinition>> instAttributes, Map<String, Resource> originCompMap,
+										  Map<String, List<AttributeDataDefinition>> instAttributes,
+										  Map<String, Resource> originCompMap,
 										  Map<String, List<ComponentInstanceInput>> instInputs,
 										  UploadComponentInstanceInfo uploadComponentInstanceInfo) {
 		Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
@@ -2914,24 +2925,22 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		if (isNotEmpty(originResource.getCapabilities())) {
 			processComponentInstanceCapabilities(allDataTypes, instCapabilties, uploadComponentInstanceInfo,
-					currentCompInstance, originResource);
+				currentCompInstance, originResource);
 		}
 		if (originResource.getDeploymentArtifacts() != null && !originResource.getDeploymentArtifacts()
-				.isEmpty()) {
+			.isEmpty()) {
 			instDeploymentArtifacts.put(resourceInstanceId, originResource.getDeploymentArtifacts());
 		}
-		if (originResource.getArtifacts() != null && !originResource.getArtifacts()
-				.isEmpty()) {
+		if (originResource.getArtifacts() != null && !originResource.getArtifacts().isEmpty()) {
 			instArtifacts.put(resourceInstanceId, originResource.getArtifacts());
 		}
-		if (originResource.getAttributes() != null && !originResource.getAttributes()
-				.isEmpty()) {
+		if (originResource.getAttributes() != null && !originResource.getAttributes().isEmpty()) {
 			instAttributes.put(resourceInstanceId, originResource.getAttributes());
 		}
 		if (originResource.getResourceType() != ResourceTypeEnum.CVFC) {
 			ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, resource,
-					originResource, currentCompInstance, instProperties, allDataTypes.left()
-							.value());
+				originResource, currentCompInstance, instProperties, allDataTypes.left()
+					.value());
 			if (addPropertiesValueToRiRes.getStatus() != 200) {
 				throw new ByResponseFormatComponentException(addPropertiesValueToRiRes);
 			}
@@ -3982,11 +3991,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			mergeOldResourceMetadataWithNew(oldResource, newResource);
 
 			validateResourceFieldsBeforeUpdate(oldResource, newResource, inTransaction, isNested);
-			validateCapabilityTypesCreate(user, getCapabilityTypeOperation(), newResource,
-					AuditingActionEnum.IMPORT_RESOURCE, inTransaction);
+			validateCapabilityTypesCreate(user, getCapabilityTypeOperation(), newResource, AuditingActionEnum.IMPORT_RESOURCE, inTransaction);
 			// contact info normalization
-			newResource.setContactId(newResource.getContactId()
-					.toLowerCase());
+			newResource.setContactId(newResource.getContactId().toLowerCase());
 			PropertyConstraintsUtils.validatePropertiesConstraints(newResource, oldResource);
 			// non-updatable fields
 			newResource.setCreatorUserId(user.getUserId());
@@ -4008,58 +4015,56 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 			newResource.setAbstract(oldResource.isAbstract());
 
-			if (newResource.getDerivedFrom() == null || newResource.getDerivedFrom()
-					.isEmpty()) {
+			if (CollectionUtils.isEmpty(newResource.getDerivedFrom())) {
 				newResource.setDerivedFrom(oldResource.getDerivedFrom());
 			}
-			if (newResource.getDerivedFromGenericType() == null || newResource.getDerivedFromGenericType()
-					.isEmpty()) {
+			if (StringUtils.isEmpty(newResource.getDerivedFromGenericType())) {
 				newResource.setDerivedFromGenericType(oldResource.getDerivedFromGenericType());
 			}
-			if (newResource.getDerivedFromGenericVersion() == null || newResource.getDerivedFromGenericVersion()
-					.isEmpty()) {
+			if (StringUtils.isEmpty(newResource.getDerivedFromGenericVersion())) {
 				newResource.setDerivedFromGenericVersion(oldResource.getDerivedFromGenericVersion());
 			}
 			// add for new)
 			// created without tosca artifacts - add the placeholders
-			if (newResource.getToscaArtifacts() == null || newResource.getToscaArtifacts()
-					.isEmpty()) {
+			if (MapUtils.isEmpty(newResource.getToscaArtifacts())) {
 				setToscaArtifactsPlaceHolders(newResource, user);
 			}
 
-			if (newResource.getInterfaces() == null || newResource.getInterfaces().isEmpty()) {
+			if (MapUtils.isEmpty(newResource.getInterfaces())) {
 				newResource.setInterfaces(oldResource.getInterfaces());
 			}
+			if (CollectionUtils.isEmpty(newResource.getAttributes())) {
+				newResource.setAttributes(oldResource.getAttributes());
+			}
 
-            if (CollectionUtils.isEmpty(newResource.getProperties())) {
-                newResource.setProperties(oldResource.getProperties());
-            }
+			if (CollectionUtils.isEmpty(newResource.getProperties())) {
+				newResource.setProperties(oldResource.getProperties());
+			}
 
-			Either<Resource, StorageOperationStatus> overrideResource = toscaOperationFacade
-					.overrideComponent(newResource, oldResource);
+			Either<Resource, StorageOperationStatus> overrideResource = toscaOperationFacade.overrideComponent(newResource, oldResource);
 
 			if (overrideResource.isRight()) {
 				ResponseFormat responseFormat = componentsUtils
-						.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(overrideResource.right()
-								.value()), newResource);
+					.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(overrideResource.right()
+						.value()), newResource);
 				componentsUtils.auditResource(responseFormat, user, newResource, AuditingActionEnum.IMPORT_RESOURCE);
 
 				throwComponentException(responseFormat);
 			}
 			updateCatalog(overrideResource.left()
-					.value(), ChangeTypeEnum.LIFECYCLE);
+				.value(), ChangeTypeEnum.LIFECYCLE);
 
 			log.debug("Resource updated successfully!!!");
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
 			componentsUtils.auditResource(responseFormat, user, newResource, AuditingActionEnum.IMPORT_RESOURCE,
-					ResourceVersionInfo.newBuilder()
-							.state(oldResource.getLifecycleState()
-									.name())
-							.version(oldResource.getVersion())
-							.build());
+				ResourceVersionInfo.newBuilder()
+					.state(oldResource.getLifecycleState()
+						.name())
+					.version(oldResource.getVersion())
+					.build());
 
 			resourcePair = new ImmutablePair<>(overrideResource.left()
-					.value(), ActionStatus.OK);
+				.value(), ActionStatus.OK);
 			return resourcePair;
 		} finally {
 			if (resourcePair == null) {
@@ -4439,7 +4444,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
 			throw e;
 		} finally {
-			if (!inTransaction) {
+            if (!inTransaction) {
 				graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(),
 						NodeTypeEnum.Resource);
 			}
