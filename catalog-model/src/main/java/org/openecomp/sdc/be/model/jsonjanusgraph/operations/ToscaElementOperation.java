@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -41,12 +42,14 @@ import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
@@ -91,7 +94,6 @@ public abstract class ToscaElementOperation extends BaseOperation {
     protected Gson getGson() {
         return gson;
     }
-
 
     protected Either<GraphVertex, StorageOperationStatus> getComponentByLabelAndId(String uniqueId, ToscaElementTypeEnum nodeType, JsonParseFlagEnum parseFlag) {
 
@@ -912,6 +914,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         switch (label) {
             case NODE_TYPE:
                 toscaElement = new NodeType();
+                ((NodeType) toscaElement).setAttributes(getAttributesFromComponentV(componentV));
                 break;
             case TOPOLOGY_TEMPLATE:
                 toscaElement = new TopologyTemplate();
@@ -923,8 +926,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
         if (toscaElement != null) {
             final Map<String, Object> jsonMetada = componentV.getMetadataJson();
+            if (MapUtils.isNotEmpty(jsonMetada)) {
             toscaElement.setMetadata(jsonMetada);
-            if (jsonMetada != null) {
                 final Object toscaVersion = jsonMetada.get(ToscaTagNamesEnum.TOSCA_VERSION.getElementName());
                 if (toscaVersion != null) {
                     toscaElement.setToscaVersion((String) toscaVersion);
@@ -932,6 +935,28 @@ public abstract class ToscaElementOperation extends BaseOperation {
             }
         }
         return (T) toscaElement;
+    }
+
+    private Map<String, AttributeDataDefinition> getAttributesFromComponentV(final GraphVertex componentV) {
+        final Map<String, Object> jsonMetada = componentV.getMetadataJson();
+        final Map<String, AttributeDataDefinition> attributeDataDefinitionMap = new HashMap<>();
+        if (MapUtils.isNotEmpty(jsonMetada)) {
+            final Object attributes = jsonMetada.get(ToscaTagNamesEnum.ATTRIBUTES.getElementName());
+            if (attributes instanceof Map) {
+                final Map<String, Object> map = (Map<String, Object>) attributes;
+                attributeDataDefinitionMap.putAll(map.values().stream().map(attributeMap -> {
+                    final AttributeDefinition attributeDef = new AttributeDefinition();
+                    final String name = (String) ((Map<String, Object>) attributeMap).get("name");
+                    attributeDef.setName(name);
+                    final String type = (String) ((Map<String, Object>) attributeMap).get("type");
+                    attributeDef.setType(type);
+                    final String description = (String) ((Map<String, Object>) attributeMap).get("description");
+                    attributeDef.setDescription(description);
+                    return attributeDef;
+                }).collect(Collectors.toMap(AttributeDefinition::getName, a -> a)));
+            }
+        }
+        return attributeDataDefinitionMap;
     }
 
     protected JanusGraphOperationStatus setResourceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
@@ -1320,8 +1345,9 @@ public abstract class ToscaElementOperation extends BaseOperation {
             ResourceTypeEnum resourceType = ResourceTypeEnum.getType((String) resourceTypeStr);
             if (!CollectionUtils.isEmpty(excludeTypes)) {
                 Optional<ResourceTypeEnum> op = excludeTypes.stream().filter(rt -> rt == resourceType).findAny();
-                if (op.isPresent())
+                if (op.isPresent()) {
                     isAddToCatalog = false;
+                }
             }
         }
         return isAddToCatalog;
